@@ -1,0 +1,34 @@
+FROM GITHUB.COM, HOW TO GIT :
+    Global setup:
+
+     Set up git
+      git config --global user.name "goFrendiAsgard"
+      git config --global user.email goFrendiAsgard@gmail.com
+            
+
+     Next steps:
+
+      mkdir Neo-CMS
+      cd Neo-CMS
+      git init
+      touch README
+      git add README
+      git commit -m 'first commit'
+      git remote add origin git@github.com:goFrendiAsgard/Neo-CMS.git
+      git push -u origin master
+          
+
+    Existing Git Repo?
+
+      cd existing_git_repo
+      git remote add origin git@github.com:goFrendiAsgard/Neo-CMS.git
+      git push -u origin master
+      
+      
+      
+    After changing something
+      
+      git add . -A
+      git commit -m 'the comment'
+      git tag -a v1.4 -m 'version 1.4'
+      git push -u origin master --tags   
