@@ -1,0 +1,24 @@
+Neo-CMS = CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template
+Neo-CMS already has perfect working user authorization and authentication.
+Thus, you can focus only on your logic
+
+You can make your own modules in modules directory
+
+In CodeIgniter, you might load a view by using:
+$this->load->view('some_view');
+
+In Neo-CMS, you can do the same, but if you want the header, navigation menu etc also loaded,
+you can use
+$this->view('some_view');
+If you want to pass some data, you can use:
+$this->view('some_view', $data);
+
+For Authorization sake, you can also add navigation and privilege parameter:
+$this->view('some_view', $data, 'main_user', 'manage_cms');
+That would means: Only user who can see main_user page and have manage_cms privilege will see some_view,
+another user will see 404 not found
+
+If you want to use grocery_crud feature, you can load view:
+$this->view('grocery_CRUD', $output);
+
+You can make your own template in template directory (please refer to default theme)

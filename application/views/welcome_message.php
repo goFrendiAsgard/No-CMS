@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Welcome to CodeIgniter</title>
+	<title>Welcome to Neo-CMS (CodeIgniter + HMVC+groceryCRUD + PhilSturgeon's Template)</title>
 
 	<style type="text/css">
 
@@ -67,7 +67,7 @@
 <body>
 
 <div id="container">
-	<h1>Welcome to CodeIgniter!</h1>
+	<h1>Welcome to Neo-CMS (CodeIgniter + HMVC+groceryCRUD + PhilSturgeon's Template) !</h1>
 
 	<div id="body">
 		<p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
@@ -79,6 +79,7 @@
 		<code>application/controllers/welcome.php</code>
 
 		<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="user_guide/">User Guide</a>.</p>
+                <p>If you you don't care about any technical stuff <i>(for your sake, you should :D)</i> and just want to install Neo-CMS, you can just  <a href="install/">install it now</a>.</p>
 	</div>
 
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
