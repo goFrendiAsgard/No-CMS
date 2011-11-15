@@ -1,14 +1,25 @@
-Neo-CMS = CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template
+Neo-CMS = CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template + My Own Logics
 Neo-CMS already has perfect working user authorization and authentication.
 Thus, you can focus only on your logic
 
+Neo-CMS is CodeIgniter. This means that since you didn't install it, Neo-CMS is only CodeIgniter with some plugins added.
+
+Once you've install Neo-CMS, you can still make any code just as in CodeIgniter.
+Any code worked in CodeIgniter will also worked in Neo-CMS
+
+
 You can make your own modules in modules directory
+
+In CodeIgniter, your controller will extends CI_Controller:
+class MyController extends CI_Controller{}
+
+In Neo-CMS, you can still do the same, but it is recommended that your controller extends CMS_Controller:
+class MyController extends CMS_Controller{}
 
 In CodeIgniter, you might load a view by using:
 $this->load->view('some_view');
 
-In Neo-CMS, you can do the same, but if you want the header, navigation menu etc also loaded,
-you can use
+In Neo-CMS, you can still do the same, but it is recommended to use this way:
 $this->view('some_view');
 If you want to pass some data, you can use:
 $this->view('some_view', $data);
@@ -22,3 +33,10 @@ If you want to use grocery_crud feature, you can load view:
 $this->view('grocery_CRUD', $output);
 
 You can make your own template in template directory (please refer to default theme)
+
+For your layout setting (headeer, slogan, etc) you can edit
+application/config/cms.php <-- promise me you won't break anything :D
+
+goFrendiAsgard(c) 2011
+My Own logics are under GNU license
+CodeIgniter, HMVC, groceryCRUD, Phil Sturgeon's template are under their own licenses

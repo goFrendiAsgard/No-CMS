@@ -19,7 +19,7 @@ class CMS_Controller extends CI_Controller{
         /* ------------------ */	
 
         $this->load->library('grocery_CRUD');
-        $this->load->library('template');
+        $this->load->library('template');        
 
         $this->is_mobile = $this->agent->is_mobile();
     }
@@ -88,7 +88,8 @@ class CMS_Controller extends CI_Controller{
     private function get_navigation_parent($navigation_name){
         if(!$navigation_name) return false;
         $query = $this->db->query(
-                "SELECT navigation_name FROM cms_navigation 
+                "SELECT navigation_id, navigation_name, title, description, url  
+                    FROM cms_navigation 
                     WHERE navigation_id = (
                         SELECT parent_id FROM cms_navigation
                         WHERE navigation_name = '".addslashes($navigation_name)."'
@@ -97,17 +98,42 @@ class CMS_Controller extends CI_Controller{
         if($query->num_rows == 0) return false;
         else{
             foreach($query->result() as $row){
-                return $row->navigation_name;
+                return array(
+                    "navigation_name" => $row->navigation_name,
+                    "title" => $row->title,
+                    "description" => $row->description,
+                    "url" => $row->url
+                );
+            }
+        }
+    }
+    
+    private function get_navigation($navigation_name){
+        if(!$navigation_name) return false;
+        $query = $this->db->query(
+                "SELECT navigation_id, navigation_name, title, description, url 
+                    FROM cms_navigation 
+                    WHERE navigation_name = '".addslashes($navigation_name)."'"
+                );
+        if($query->num_rows == 0) return false;
+        else{
+            foreach($query->result() as $row){
+                return array(
+                    "navigation_name" => $row->navigation_name,
+                    "title" => $row->title,
+                    "description" => $row->description,
+                    "url" => $row->url
+                );
             }
         }
     }
     
     private function get_navigation_path($navigation_name = NULL){
         if(!isset($navigation_name)) return array();
-        $result = array($navigation_name);
-        while($parent_name = $this->get_navigation_parent($navigation_name)){
-            $result[] = $parent_name;
-            $navigation_name = $parent_name;
+        $result = array($this->get_navigation($navigation_name));
+        while($parent = $this->get_navigation_parent($navigation_name)){
+            $result[] = $parent;
+            $navigation_name = $parent["navigation_name"];
         }
         //result should be in reverse order
         for($i=0; $i<ceil(count($result)/2); $i++){
@@ -222,6 +248,7 @@ class CMS_Controller extends CI_Controller{
     }
     
     protected function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL){  
+                
         //check allowance
         if(!isset($navigation_name) || $this->allow_navigate($navigation_name)){
             if(!isset($privilege_required)){
@@ -249,8 +276,11 @@ class CMS_Controller extends CI_Controller{
                 $data_partial = $this->config->config['cms'];
                 
                 //get navigations
-                $data_partial['navigations'] = $this->cms_navigations();
-                $data_partial['navigation_path'] = $this->get_navigation_path($navigation_name);
+                $this->load->library('CMS_layout');
+                $navigations = $this->cms_navigations();
+                $navigation_path = $this->get_navigation_path($navigation_name);
+                $data_partial['navigations'] = $this->cms_layout->build_menu($navigations, $navigation_path);
+                $data_partial['navigation_path'] = $this->cms_layout->build_menu_path($navigation_path);
                 $data_partial['user_name'] = $this->cms_username();
                 
                 //determine theme from configuration

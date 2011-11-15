@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Welcome to Neo-CMS (CodeIgniter + HMVC+groceryCRUD + PhilSturgeon's Template)</title>
+	<title>Welcome to Neo-CMS (CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template + Some Modification)</title>
 
 	<style type="text/css">
 
@@ -67,7 +67,7 @@
 <body>
 
 <div id="container">
-	<h1>Welcome to Neo-CMS (CodeIgniter + HMVC+groceryCRUD + PhilSturgeon's Template) !</h1>
+	<h1>Welcome to Neo-CMS (CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template + Some Modification) !</h1>
 
 	<div id="body">
 		<p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
