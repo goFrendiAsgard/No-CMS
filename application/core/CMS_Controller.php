@@ -39,8 +39,8 @@ class CMS_Controller extends CI_Controller{
         return $this->set_userdata('cms_username', $username);
     }
     
-    protected function cms_userid($username = NULL){
-        return $this->set_userdata('cms_userid', $username);
+    protected function cms_userid($userid = NULL){
+        return $this->set_userdata('cms_userid', $userid);
     }
     
     private function cms_navigations($parent_id = NULL){
@@ -184,20 +184,24 @@ class CMS_Controller extends CI_Controller{
         return $this->set_userdata('cms_partial', $active);     
     }
     
-    private function allow_navigate($navigation, $navigations = NULL){
+    private function _allow_navigate($navigation, $navigations = NULL){
         if(!isset($navigations)) $navigations = $this->cms_navigations();
         for($i=0; $i<count($navigations); $i++){
             if($navigation == $navigations[$i]["navigation_name"] || 
-                $this->allow_navigate($navigation, $navigations[$i]["child"])) 
+                $this->_allow_navigate($navigation, $navigations[$i]["child"])) 
             return true;
         }
         return false;
     }
     
-    private function have_privilege($privilege){
+    protected function allow_navigate($navigation){
+        return $this->_allow_navigate($navigation);
+    }
+    
+    protected function have_privilege($privilege){
         $privileges = $this->cms_privileges();
         for($i=0; $i<count($privileges); $i++){
-            if($privileges == $privilege) return true;
+            if($privilege == $privileges[$i]["privilege_name"]) return true;
         }
         return false;
     }
@@ -250,7 +254,7 @@ class CMS_Controller extends CI_Controller{
     protected function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL){  
                 
         //check allowance
-        if(!isset($navigation_name) || $this->allow_navigate($navigation_name)){
+        if(!isset($navigation_name) || $this->_allow_navigate($navigation_name)){
             if(!isset($privilege_required)){
                 $allowed = true;
             }else if(count($privilege_required)>0){//privilege_required is array
