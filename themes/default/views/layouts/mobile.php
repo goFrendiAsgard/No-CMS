@@ -2,16 +2,13 @@
 <html>
     <head>
         <title><?php echo $template['title'];?></title>
-        <script type="text/javascript" src ="<?php echo base_url().'themes/default/assets/jquery-1.7.min.js';?>"></script>
+        <script type="text/javascript" src ="<?php echo base_url().'assets/jquery.js';?>"></script>
         <style type="text/css">
             body{
                 padding : 5px;
             }
-            div#layout_navigation{
-                z-index : 100;
-            }
             div#layout_header, div#layout_content, div#layout_footer{
-                z-index : 0;
+                margin : 0px;
             }
             div#layout_header{
                 background-color : #CFCFCF;
@@ -50,6 +47,7 @@
             .layout_nav{
                 list-style-type: none;
                 padding : 0px;
+                margin : 0px;
             }
             .layout_nav li{
                 background-color : #DFDFDF;
@@ -96,9 +94,14 @@
                     return false;
                 });
                 
-                $("#button_switch").click(function(){
-                    $("#layout_navigation").toggle();
-                    $("#layout_content").toggle();
+                $("#layout_button_menu").click(function(){
+                    $("#layout_content").hide();
+                    $("#layout_navigation").show();                    
+                    return false;
+                });
+                $(".layout_nav li a:not(.expand)").click(function(){                    
+                    $("#layout_navigation").hide();
+                    $("#layout_content").show();
                 });
 
             });
@@ -106,12 +109,10 @@
     </head>
     <body>
         <div id="layout_header"><?php echo $template['partials']['header'];?></div>
-        <div>
-            <input id="button_switch" value="switch" type="buton" />
-        </div>
         <div id="layout_center">
             <div id="layout_navigation" class="invisible"><?php echo $template['partials']['navigation'];?></div>
             <div id="layout_content">
+                <a id="layout_button_menu" href="#">Show Menu</a>
                 <?php echo $navigation_path;?>
                 <br />
                 <?php echo $template['body'];?>

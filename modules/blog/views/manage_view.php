@@ -1,7 +1,1 @@
-<?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-?>
+Here you can manage the blog, enjoy :D

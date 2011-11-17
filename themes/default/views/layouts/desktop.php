@@ -2,7 +2,7 @@
 <html>
     <head>
         <title><?php echo $template['title'];?></title>
-        <script type="text/javascript" src ="<?php echo base_url().'themes/default/assets/jquery-1.7.min.js';?>"></script>
+        <script type="text/javascript" src ="<?php echo base_url().'assets/jquery.js';?>"></script>
         <style type="text/css">
             body{
                 padding : 5px;

@@ -65,6 +65,9 @@ form{
     border : 1px solid black;
     color : black;
     padding : 5px;
+    position : absolute;
+    left : 600px;
+    width : 400px;
 }
 .input{
     position : absolute;

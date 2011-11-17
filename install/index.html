@@ -1,6 +1,6 @@
 <head>
     <link rel="stylesheet" type="text/css" href="assets/style.css"></link>
-    <script type="text/javascript" src="assets/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="../assets/jquery.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             check_all();
@@ -8,14 +8,18 @@
                 $("#infoMessage").html("");
                 if(check_all()){
                     $("#button_install").show();
+                    $('#button_install').removeAttr('disabled');                    
                 }else{
                     $("#button_install").hide();
+                    $('#button_install').attr('disabled', 'disabled');
                 }
             })
         })
         
         function check_all(){
-            return check_connection() && check_password();
+            connection_checked = check_connection() 
+            password_checked = check_password();
+            return connection_checked && password_checked;
         }
         
         function check_connection(){
