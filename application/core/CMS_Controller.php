@@ -311,4 +311,36 @@ class CMS_Controller extends CI_Controller{
             show_404();
         }   
     }
+    
+    protected function is_module_installed($module_name){
+        $query = $this->db->query(
+                "SELECT count(*) as reccount FROM cms_module WHERE module_name = '".addslashes($module_name)."'");
+        foreach($query->result() as $row){
+            if($row->reccount>0){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        return false;
+    }
+    protected function get_module_list(){
+        $this->load->helper('directory');
+        $directories = directory_map('modules',1);
+        $module = array();
+        foreach($directories as $directory){
+            if(!is_dir('modules/'.$directory)) continue;
+            
+            //temporary module_name = directory_name
+            //TODO : extract information from controller
+            $module_name=$directory;
+            
+            $module[]=array(                    
+                "path"=>$directory,
+                "installed"=>$this->is_module_installed($module_name)
+            );
+        }
+        return $module;
+    }
 }

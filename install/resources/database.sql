@@ -2,6 +2,8 @@ DROP TRIGGER IF EXISTS `trg_before_insert_cms_navigation`;
 /*split*/
 DROP TRIGGER IF EXISTS `trg_before_update_cms_navigation`;
 /*split*/
+DROP TABLE IF EXISTS `cms_module`;
+/*split*/
 DROP TABLE IF EXISTS `cms_group_privilege`;
 /*split*/
 DROP TABLE IF EXISTS `cms_group_navigation`;
@@ -73,7 +75,6 @@ CREATE TABLE `cms_user` (
   `user_name` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
-
   `real_name` varchar(45) DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`user_id`),
@@ -114,6 +115,17 @@ CREATE TABLE `cms_group_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
+CREATE TABLE `cms_module` (
+  `module_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
+  `module_name` varchar(50) NOT NULL,
+  `user_id` int(20) unsigned NOT NULL,
+  PRIMARY KEY (`module_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `cms_module_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `cms_user` (`user_id`),
+  UNIQUE KEY `module_name` (`module_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+/*split*/
+
 
 
 DELIMITER ;;
@@ -150,16 +162,17 @@ INSERT INTO `cms_user` (`user_id`, `user_name`, `email`, `password`, `real_name`
 
 
 INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `is_root`) VALUES
-(1, 'main_login', NULL, 'login', '<p>Visitor need to login for authentication</p>\n<p>&nbsp;</p>', 'main/login', 2, 1),
-(2, 'main_logout', NULL, 'logout', '<p>Logout for deauthentication</p>\n<p>&nbsp;</p>', 'main/logout', 3, 1),
-(3, 'main_management', NULL, 'CMS Management', '<p>The main management of the CMS. Including User, Group, Privilege and Navigation Management</p>\n<p>&nbsp;</p>', 'main/management', 4, 1),
-(4, 'main_register', NULL, 'Register', '<p>New User Registration</p>\n<p>&nbsp;</p>', 'main/register', 2, 1),
+(1, 'main_login', NULL, 'login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1),
+(2, 'main_logout', NULL, 'logout', '<p>Logout for deauthentication</p>', 'main/logout', 3, 1),
+(3, 'main_management', NULL, 'CMS Management', '<p>The main management of the CMS. Including User, Group, Privilege and Navigation Management</p>', 'main/management', 4, 1),
+(4, 'main_register', NULL, 'Register', '<p>New User Registration</p>', 'main/register', 2, 1),
 (5, 'main_change_profile', NULL, 'Change Profile', '<p>Change Current Profile</p>', 'main/change_profile', 3, 1),
-(6, 'main_group_management', 3, 'Group Management', '<p>Group Management</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>', 'main/group', 4, 0),
-(7, 'main_navigation_management', 3, 'Navigation Management', '<p>Navigation management</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>', 'main/navigation', 4, 0),
-(8, 'main_privilege_management', 3, 'Privilege Management', '<p>Privilege Management</p>\n<p>&nbsp;</p>', 'main/privilege', 4, 0),
-(9, 'main_user_management', 3, 'User Management', '<p>Manage User</p>\n<p>&nbsp;</p>', 'main/user', 4, 0),
-(10, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
+(6, 'main_group_management', 3, 'Group Management', '<p>Group Management</p>', 'main/group', 4, 0),
+(7, 'main_navigation_management', 3, 'Navigation Management', '<p>Navigation management</p>', 'main/navigation', 4, 0),
+(8, 'main_privilege_management', 3, 'Privilege Management', '<p>Privilege Management</p>', 'main/privilege', 4, 0),
+(9, 'main_user_management', 3, 'User Management', '<p>Manage User</p>', 'main/user', 4, 0),
+(10, 'main_module_management', 3, 'Module Management', '<p>Install Or Uninstall Thirdparty Module</p>', 'main/module_list', 4, 0),
+(11, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
 /*split*/
 
 INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES

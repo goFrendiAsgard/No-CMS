@@ -6,6 +6,7 @@
  * @author gofrendi
  */
 class Install extends CMS_Module_Installer {
+    protected $module_name='blog';
     
     protected function do_install(){
         $this->remove_all();

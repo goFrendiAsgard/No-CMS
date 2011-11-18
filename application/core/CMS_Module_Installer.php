@@ -7,17 +7,20 @@
  */
 class CMS_Module_Installer extends CMS_Controller {
     //put your code here
-    public function index($parameter = "install"){
+    protected $module_name='default'; //this should be overridden by module developer
+    public function index(){
         $this->install();
     }
     
     public function install(){
         if($this->have_privilege('cms_install_module')){
-            $this->do_install();
+            $this->register_module();
+            $this->do_install();            
         }        
     }
     public function uninstall(){
         if($this->have_privilege('cms_install_module')){
+            $this->unregister_module();
             $this->do_uninstall();
         }
     }
@@ -101,6 +104,20 @@ class CMS_Module_Installer extends CMS_Controller {
             $where = array("privilege_id"=>$privilege_id);
             $this->db->delete("cms_privilege",$where);
         }
+    }
+    
+    private function register_module(){
+        $data = array(
+            'module_name'=>$this->module_name,
+            'user_id'=>$this->cms_userid($userid)
+        );
+        $this->db->insert('cms_module',$data);
+    }
+    private function unregister_module(){
+        $where = array(
+            'module_name'=>$this->module_name
+        );
+        $this->db->delete('cms_module',$where);
     }
 }
 

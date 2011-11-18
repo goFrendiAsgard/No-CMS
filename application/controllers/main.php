@@ -208,6 +208,11 @@ class Main extends CMS_Controller {
 
         $this->view('grocery_CRUD', $output, 'main_privilege_management');
     }
+    
+    public function module_list(){
+        $data['modules'] = $this->get_module_list();
+        $this->view('main/module_list',$data,'main_module_management');
+    }
 }
 
 ?>
