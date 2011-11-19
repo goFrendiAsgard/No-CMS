@@ -40,3 +40,25 @@ application/config/cms.php <-- promise me you won't break anything :D
 goFrendiAsgard(c) 2011
 My Own logics are under GNU license
 CodeIgniter, HMVC, groceryCRUD, Phil Sturgeon's template are under their own licenses
+
+FEATURES LIST :
+-Group Management
+-User Management
+-Privilege Management
+-Navigation Management
+-Module Management
+-Integrated groceryCRUD
+-Mobile and Desktop Layout
+
+FUTURE FEATURES :
+-Widget and Widget Management
+-Readmore in blog module
+-Automatically read module name without define $module_name in module/module_name/install.php
+
+BUGS AND KNOWN ISSUES
+-Recursive navigation menu can bring to a problem
+-Admin group can be deleted
+-The only user in admin group can also be deleted
+-The configuration files should be writeable, but installation progress doesn't check this
+-The installation progress can be cheated by point to http://localhost/Neo-CMS/install.php directly
+-Need grammatical check since I'm not a native english speaker :D

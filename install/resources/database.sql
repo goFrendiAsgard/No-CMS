@@ -27,7 +27,7 @@ CREATE TABLE `cms_authorization` (
   `description` text,
   PRIMARY KEY (`authorization_id`),
   UNIQUE KEY `authorization_name` (`authorization_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
 CREATE TABLE `cms_group` (
@@ -36,7 +36,7 @@ CREATE TABLE `cms_group` (
   `description` text,
   PRIMARY KEY (`group_id`),
   UNIQUE KEY `group_name` (`group_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
 CREATE TABLE `cms_navigation` (
@@ -54,7 +54,7 @@ CREATE TABLE `cms_navigation` (
   KEY `authorization_id` (`authorization_id`),
   CONSTRAINT `cms_navigation_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `cms_navigation` (`navigation_id`),
   CONSTRAINT `cms_navigation_ibfk_2` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
 CREATE TABLE `cms_privilege` (
@@ -67,7 +67,7 @@ CREATE TABLE `cms_privilege` (
   UNIQUE KEY `privilege_name` (`privilege_name`),
   KEY `authorization_id` (`authorization_id`),
   CONSTRAINT `cms_privilege_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
 CREATE TABLE `cms_user` (
@@ -79,7 +79,7 @@ CREATE TABLE `cms_user` (
   `active` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_name` (`user_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
 CREATE TABLE `cms_group_navigation` (
@@ -123,7 +123,7 @@ CREATE TABLE `cms_module` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `cms_module_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `cms_user` (`user_id`),
   UNIQUE KEY `module_name` (`module_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
 
