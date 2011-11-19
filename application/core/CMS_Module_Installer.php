@@ -109,7 +109,7 @@ class CMS_Module_Installer extends CMS_Controller {
     private function register_module(){
         $data = array(
             'module_name'=>$this->module_name,
-            'user_id'=>$this->cms_userid($userid)
+            'user_id'=>$this->cms_userid()
         );
         $this->db->insert('cms_module',$data);
     }

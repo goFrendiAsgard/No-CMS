@@ -41,6 +41,15 @@ goFrendiAsgard(c) 2011
 My Own logics are under GNU license
 CodeIgniter, HMVC, groceryCRUD, Phil Sturgeon's template are under their own licenses
 
+CONTRIBUTORS :
+-goFrendiAsgard <-- The one who make Neo-CMS based on already exists plugins, that's me :D
+-EllisLab <-- A company who make codeIgniter and make it available for free. There is no Neo-CMS without codeIgniter
+-WanWizard <-- The one who make HMVC plugin. The plugin he made allowed me to make separation between modules
+-Phil Sturgeon <-- The one who make Phil Sturgeon's template. The plugin he made allowed me to make separation between layouts
+-John Skoumbourdis <-- The one who make groceryCRUD. It boost the development of Neo-CMS by provide very easy CRUD
+-Wahyu Eka Putra <-- The one who reports some bugs 
+    - core/CMS_Module_Installer.php line 112 undefined variable userid
+
 FEATURES LIST :
 -Group Management
 -User Management
@@ -56,6 +65,7 @@ FUTURE FEATURES :
 -Automatically read module name without define $module_name in module/module_name/install.php
 
 BUGS AND KNOWN ISSUES
+-core/CMS_Module_Installer.php line 112 undefined variable userid [Reported by: Wahyu Eka Putra, status: repaired but not tested]
 -Recursive navigation menu can bring to a problem
 -Admin group can be deleted
 -The only user in admin group can also be deleted

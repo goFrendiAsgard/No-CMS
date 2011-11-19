@@ -69,7 +69,7 @@ But <i>(depend on your situation)</i> you still have some more things to do:
         Why? Because anyone can change database setting and admin user easily.
         Quiet easy, just as easy as what you have done
     </li>
-    <li>Change application/config/database.php into readOnly (chmod 777 /application/config/database.php)<br />
+    <li>Change application/config/database.php into readOnly (chmod 755 /application/config/database.php)<br />
         Why? Because anyone with ftp access or whatever can change the content of the file manually
     </li>
     <li>Click <a href="../">here</a><br />
