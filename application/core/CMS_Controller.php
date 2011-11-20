@@ -43,11 +43,24 @@ class CMS_Controller extends CI_Controller{
         return $this->set_userdata('cms_userid', $userid);
     }
     
-    private function cms_navigations($parent_id = NULL){
+    private function cms_navigations($parent_id = NULL, $max_menu_depth = NULL){
         $user_name = $this->cms_username();    
         $user_id = $this->cms_userid(); 
         $not_login = !$user_name?"TRUE":"FALSE";
         $login = $user_name?"TRUE":"FALSE";
+        $super_user = $user_id==1?"TRUE":"FALSE";
+        
+        //get max_menu_depth from configuration
+        if(!isset($parent_id)){
+            $this->config->load('cms', true);
+            $max_menu_depth = $this->config->config['cms']['max_menu_depth'];
+        }
+        
+        if($max_menu_depth>0){
+            $max_menu_depth--;            
+        }else{
+            return array();
+        }
         
         $where_is_root = !isset($parent_id)?"is_root=1":"is_root=0 AND parent_id = '".addslashes($parent_id)."'";
         $query = $this->db->query(
@@ -61,7 +74,7 @@ class CMS_Controller extends CI_Controller{
                             (authorization_id = 4 AND $login) AND 
                             (
                                 (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='".addslashes($user_id)."')>0
-                                OR
+                                    OR $super_user OR
                                 (SELECT COUNT(*) FROM cms_group_navigation AS gn
                                     WHERE 
                                         gn.navigation_id=n.navigation_id AND
@@ -79,7 +92,7 @@ class CMS_Controller extends CI_Controller{
                 "title" => $row->title,
                 "description" => $row->description,
                 "url" => $row->url,
-                "child" => $this->cms_navigations($row->navigation_id)
+                "child" => $this->cms_navigations($row->navigation_id, $max_menu_depth)
             );
         }
         return $result;
@@ -149,6 +162,8 @@ class CMS_Controller extends CI_Controller{
         $user_id = $this->cms_userid(); 
         $not_login = !isset($user_name)?"TRUE":"FALSE";
         $login = isset($user_name)?"TRUE":"FALSE";
+        $super_user = $user_id==1?"TRUE":"FALSE";
+        
         $query = $this->db->query(
                 "SELECT privilege_name, title, description 
                 FROM cms_privilege AS p WHERE
@@ -159,7 +174,7 @@ class CMS_Controller extends CI_Controller{
                         (authorization_id = 4 AND $login AND 
                         (
                             (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='".addslashes($user_id)."')>0
-                            OR
+                                OR $super_user OR
                             (SELECT COUNT(*) FROM cms_group_privilege AS gp
                                 WHERE 
                                     gp.privilege_id=p.privilege_id AND
@@ -277,7 +292,10 @@ class CMS_Controller extends CI_Controller{
             }else{
                 //get configuration
                 $this->config->load('cms', true);
-                $data_partial = $this->config->config['cms'];
+                $data_partial['site_title'] = $this->config->config['cms']['site_title'];
+                $data_partial['site_slogan'] = $this->config->config['cms']['site_slogan'];
+                $data_partial['site_footer'] = $this->config->config['cms']['site_footer'];
+                $data_partial['site_theme'] = $this->config->config['cms']['site_theme'];
                 
                 //get navigations
                 $this->load->library('CMS_layout');

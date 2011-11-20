@@ -132,6 +132,7 @@ class Main extends CMS_Controller {
         
         $crud->set_relation_n_n('groups', 'cms_group_user', 'cms_group', 'user_id', 'group_id' , 'group_name');
         $crud->callback_before_insert(array($this,'before_insert_user'));
+        $crud->callback_before_delete(array($this,'before_delete_user'));
         
         
         $output = $crud->render();
@@ -143,7 +144,15 @@ class Main extends CMS_Controller {
     {
         $post_array['password'] = md5($post_array['password']);
         return $post_array;
-    }    
+    }
+    
+    public function before_delete_user($post_array)
+    {
+        if($post_array['user_id']==1){
+            return false;
+        }
+        return $post_array;
+    } 
 
     public function group(){
         $crud = new grocery_CRUD();
@@ -161,11 +170,20 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('users', 'cms_group_user', 'cms_user', 'group_id', 'user_id' , 'user_name');
         $crud->set_relation_n_n('navigations', 'cms_group_navigation', 'cms_navigation', 'group_id', 'navigation_id' , 'navigation_name');
         $crud->set_relation_n_n('privileges', 'cms_group_privilege', 'cms_privilege', 'group_id', 'privilege_id' , 'privilege_name');
+        $crud->callback_before_delete(array($this,'before_delete_group'));
 
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_group_management');
     }
+    
+    public function before_delete_group($post_array)
+    {
+        if($post_array['group_id']==1){
+            return false;
+        }
+        return $post_array;
+    } 
     
     public function navigation(){
         $crud = new grocery_CRUD();

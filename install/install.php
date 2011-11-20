@@ -12,6 +12,14 @@
     $adm_password = get_secure_input("adm_password");
     $adm_confirmpassword = get_secure_input("adm_confirmpassword");
     
+    $check_db = check_db($db_server, $db_port, $db_username, $db_password);
+    if(($adm_password == '') || ($adm_password!=$adm_confirmpassword) || 
+       (!$check_db["success"]) || !is_writable('../application/config/database.php') || 
+       !is_writable('../application/config/routes.php'))
+    {
+        header('location:index.html');
+    }
+    
     //database.php
     $str = file_get_contents('./resources/database.php');
     $str = replace($str,

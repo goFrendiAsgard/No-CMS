@@ -17,9 +17,10 @@
         })
         
         function check_all(){
-            connection_checked = check_connection() 
+            writeable_checked = check_writeable();
+            connection_checked = check_connection(); 
             password_checked = check_password();
-            return connection_checked && password_checked;
+            return writeable_checked && connection_checked && password_checked;
         }
         
         function check_connection(){
@@ -36,6 +37,24 @@
                     db_password : $("#db_password").val(),
                     db_schema : $("#db_schema").val()
                 },
+                success : function(response){
+                    result = response.success;
+                    if(!result){
+                        $("#infoMessage").append(response.message+'<br />');
+                    }
+                    
+                }
+            });
+            return result;
+        }
+        
+        function check_writeable(){
+            var result = false;
+            $.ajax({
+                type : "POST",
+                url : "check_writeable.php",
+                dataType: "json",
+                async : false,
                 success : function(response){
                     result = response.success;
                     if(!result){

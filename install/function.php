@@ -18,4 +18,27 @@ function replace($str,$search,$replace){
     return $str;
 }
 
+function check_db($server, $port, $username, $password){
+    $return = array(
+        "success"=>true,
+        "message"=>""
+    );
+    
+    $connection = @mysql_connect($server.':'.$port,$username,$password);
+    if(!$connection){
+        $return["success"] = false;
+        $return["message"] .= "Cannot connect to database<br />";
+    }else{
+        $result = @mysql_query('SHOW VARIABLES LIKE \'have_innodb\';', $connection);
+        $row = mysql_fetch_array($result);
+        $innodb = $row['Value'];
+        if(!$innodb){
+            $return["success"] = false;
+            $return["message"] .= "Your database doesn't support Innodb<br />";
+        }
+    }
+    
+    return $return;
+}
+
 ?>

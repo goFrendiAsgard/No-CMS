@@ -129,18 +129,22 @@ CREATE TABLE `cms_module` (
 
 
 DELIMITER ;;
+/*split*/
 CREATE TRIGGER `trg_before_insert_cms_navigation` BEFORE INSERT ON `cms_navigation` FOR EACH ROW IF NEW.is_root = 1 THEN
  SET NEW.parent_id = NULL; 
 END IF
 ;;
+/*split*/
 DELIMITER ;
 /*split*/
 
 DELIMITER ;;
+/*split*/
 CREATE TRIGGER `trg_before_update_cms_navigation` BEFORE UPDATE ON `cms_navigation` FOR EACH ROW IF NEW.is_root = 1 THEN
  SET NEW.parent_id = NULL; 
 END IF
 ;;
+/*split*/
 DELIMITER ;
 /*split*/
 

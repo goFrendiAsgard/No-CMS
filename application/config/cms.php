@@ -5,3 +5,5 @@ $config['site_title']	= 'Neo-CMS';
 $config['site_slogan']  = 'Your web kickstart';
 $config['site_footer']  = 'goFrendiAsgard &copy; 2011';
 $config['site_theme']   = 'default';
+
+$config['max_menu_depth'] = 5;
