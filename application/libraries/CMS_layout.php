@@ -49,7 +49,8 @@ class CMS_layout
                 $str .= " >> ";
             }
         }
-        return '<div id="layout_nav_path">You are here : '.$str.'</div>';
+        return $str;
+        //return '<div id="layout_nav_path">You are here : '.$str.'</div>';
     }
 }
 ?>

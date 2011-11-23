@@ -55,7 +55,7 @@
                 padding : 3px;
                 margin : 3px;
             }
-            .layout_nav a{
+            .layout_nav a, #layout_button_menu{
                 font-family : serif;
                 color : black;
             }
@@ -99,7 +99,7 @@
                     $("#layout_navigation").show();                    
                     return false;
                 });
-                $(".layout_nav li a:not(.expand)").click(function(){                    
+                $(".layout_nav li a:not(.layout_expand)").click(function(){                    
                     $("#layout_navigation").hide();
                     $("#layout_content").show();
                 });
@@ -111,9 +111,8 @@
         <div id="layout_header"><?php echo $template['partials']['header'];?></div>
         <div id="layout_center">
             <div id="layout_navigation" class="invisible"><?php echo $template['partials']['navigation'];?></div>
-            <div id="layout_content">
-                <a id="layout_button_menu" href="#">Show Menu</a>
-                <?php echo $navigation_path;?>
+            <div id="layout_content">                
+                <div id="layout_nav_path"><a id="layout_button_menu" href="#">Show Menu</a> || You are here : <?php echo $navigation_path;?></div>
                 <br />
                 <?php echo $template['body'];?>
             </div>

@@ -24,25 +24,50 @@ class CMS_Controller extends CI_Controller{
         $this->is_mobile = $this->agent->is_mobile();
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : key,value   
+     * @desc : if value specified, this will set CI session, else, it will return CI session  
+     */
     private function set_userdata($key, $value = NULL){
         if (isset($value)){
             $this->session->set_userdata($key, $value);
         }
-        return $this->session->userdata($key);              
+        return $this->session->userdata($key);
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : key   
+     * @desc : delete a CI session 
+     */
     private function unset_userdata($key){
         $this->session->unset_userdata($key);
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : username  
+     * @desc : if username specified, this will set cms_username session, else, it will return cms_username  
+     */
     protected function cms_username($username = NULL){
         return $this->set_userdata('cms_username', $username);
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : userid
+     * @desc : if userid specified, this will set cms_userid session, else, it will return cms_userid  
+     */
     protected function cms_userid($userid = NULL){
         return $this->set_userdata('cms_userid', $userid);
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : parent_id, max_menu_depth
+     * @desc : return navigation child if parent_id specified, else it will return root navigation
+     */
     private function cms_navigations($parent_id = NULL, $max_menu_depth = NULL){
         $user_name = $this->cms_username();    
         $user_id = $this->cms_userid(); 
@@ -98,6 +123,11 @@ class CMS_Controller extends CI_Controller{
         return $result;
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : navigation_name
+     * @desc : return parent of navigation_name's detail, only used for get_navigation_path
+     */
     private function get_navigation_parent($navigation_name){
         if(!$navigation_name) return false;
         $query = $this->db->query(
@@ -121,6 +151,11 @@ class CMS_Controller extends CI_Controller{
         }
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : navigation_name
+     * @desc : return navigation detail, only used for get_navigation_path
+     */
     private function get_navigation($navigation_name){
         if(!$navigation_name) return false;
         $query = $this->db->query(
@@ -141,6 +176,11 @@ class CMS_Controller extends CI_Controller{
         }
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : navigation_name
+     * @desc : return navigation path, used for layout
+     */    
     private function get_navigation_path($navigation_name = NULL){
         if(!isset($navigation_name)) return array();
         $result = array($this->get_navigation($navigation_name));
@@ -157,6 +197,10 @@ class CMS_Controller extends CI_Controller{
         return $result;
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @desc : return privileges of current user
+     */
     private function cms_privileges(){
         $user_name = $this->cms_username();
         $user_id = $this->cms_userid(); 
@@ -195,10 +239,20 @@ class CMS_Controller extends CI_Controller{
         return $result;
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : active
+     * @desc : next call of $this->view will only load content. Will be used if you plan to use ajax
+     */
     public function cms_partial($active = NULL){
         return $this->set_userdata('cms_partial', $active);     
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : navigation, navigations
+     * @desc : only used in allow_navigate
+     */
     private function _allow_navigate($navigation, $navigations = NULL){
         if(!isset($navigations)) $navigations = $this->cms_navigations();
         for($i=0; $i<count($navigations); $i++){
@@ -209,10 +263,20 @@ class CMS_Controller extends CI_Controller{
         return false;
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : navigation
+     * @desc : check if user authorized to navigate into a page specified in parameter
+     */
     protected function allow_navigate($navigation){
         return $this->_allow_navigate($navigation);
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : privilege
+     * @desc : check if user have privilege specified in parameter
+     */
     protected function have_privilege($privilege){
         $privileges = $this->cms_privileges();
         for($i=0; $i<count($privileges); $i++){
@@ -221,6 +285,11 @@ class CMS_Controller extends CI_Controller{
         return false;
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : identity, password
+     * @desc : login
+     */
     protected function do_login($identity, $password){
          $query = $this->db->query(
                 "SELECT user_id, user_name FROM cms_user WHERE
@@ -236,11 +305,21 @@ class CMS_Controller extends CI_Controller{
         return false;
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : 
+     * @desc : logout
+     */
     protected function do_logout(){
         return $this->unset_userdata('cms_username');
         return $this->unset_userdata('cms_userid');
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : user_name, email, real_name, password
+     * @desc : register
+     */
     protected function do_register($user_name, $email, $real_name, $password){
         $data = array(
             "user_name" => $user_name,
@@ -252,6 +331,11 @@ class CMS_Controller extends CI_Controller{
         $this->db->insert('cms_user', $data); 
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : user_name, email, real_name, password
+     * @desc : change profile
+     */
     protected function do_change_profile($user_name, $email, $real_name, $password){
         $data = array(
             "user_name" => $user_name,
@@ -266,6 +350,11 @@ class CMS_Controller extends CI_Controller{
         $this->db->update('cms_user', $data, $where); 
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : view_url, data, navigation_name, privilege_required
+     * @desc : replace $this->load->view. This method will also load header, menu etc except there are cms_partial call
+     */
     protected function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL){  
                 
         //check allowance
@@ -330,6 +419,11 @@ class CMS_Controller extends CI_Controller{
         }   
     }
     
+    /** 
+     * @author : goFrendiAsgard
+     * @param : module_name
+     * @desc : checked if module installed
+     */
     protected function is_module_installed($module_name){
         $query = $this->db->query(
                 "SELECT count(*) as reccount FROM cms_module WHERE module_name = '".addslashes($module_name)."'");
@@ -343,6 +437,12 @@ class CMS_Controller extends CI_Controller{
         }
         return false;
     }
+    
+    /** 
+     * @author : goFrendiAsgard
+     * @param : 
+     * @desc : get module list
+     */
     protected function get_module_list(){
         $this->load->helper('directory');
         $directories = directory_map('modules',1);

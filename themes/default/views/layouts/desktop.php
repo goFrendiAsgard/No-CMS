@@ -108,7 +108,7 @@
         <div id="layout_center">
             <div id="layout_navigation"><?php echo $template['partials']['navigation'];?></div>
             <div id="layout_content">
-                <?php echo $navigation_path;?>
+                <div id="layout_nav_path">You are here : <?php echo $navigation_path;?></div>
                 <br />
                 <?php echo $template['body'];?>
             </div>
