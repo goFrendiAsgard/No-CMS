@@ -75,6 +75,7 @@ CREATE TABLE `cms_user` (
   `user_name` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
+  `activation_code` varchar(45) NULL,
   `real_name` varchar(45) DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`user_id`),
@@ -166,17 +167,18 @@ INSERT INTO `cms_user` (`user_id`, `user_name`, `email`, `password`, `real_name`
 
 
 INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `is_root`) VALUES
-(1, 'main_login', NULL, 'login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1),
-(2, 'main_logout', NULL, 'logout', '<p>Logout for deauthentication</p>', 'main/logout', 3, 1),
-(3, 'main_management', NULL, 'CMS Management', '<p>The main management of the CMS. Including User, Group, Privilege and Navigation Management</p>', 'main/management', 4, 1),
-(4, 'main_register', NULL, 'Register', '<p>New User Registration</p>', 'main/register', 2, 1),
-(5, 'main_change_profile', NULL, 'Change Profile', '<p>Change Current Profile</p>', 'main/change_profile', 3, 1),
-(6, 'main_group_management', 3, 'Group Management', '<p>Group Management</p>', 'main/group', 4, 0),
-(7, 'main_navigation_management', 3, 'Navigation Management', '<p>Navigation management</p>', 'main/navigation', 4, 0),
-(8, 'main_privilege_management', 3, 'Privilege Management', '<p>Privilege Management</p>', 'main/privilege', 4, 0),
-(9, 'main_user_management', 3, 'User Management', '<p>Manage User</p>', 'main/user', 4, 0),
-(10, 'main_module_management', 3, 'Module Management', '<p>Install Or Uninstall Thirdparty Module</p>', 'main/module_list', 4, 0),
-(11, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
+(1, 'main_login', NULL, 'Login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1),
+(2, 'main_forgot', NULL, 'Forgot password', '<p>Accidentally forgot password</p>', 'main/forgot', 2, 1),
+(3, 'main_logout', NULL, 'logout', '<p>Logout for deauthentication</p>', 'main/logout', 3, 1),
+(4, 'main_management', NULL, 'CMS Management', '<p>The main management of the CMS. Including User, Group, Privilege and Navigation Management</p>', 'main/management', 4, 1),
+(5, 'main_register', NULL, 'Register', '<p>New User Registration</p>', 'main/register', 2, 1),
+(6, 'main_change_profile', NULL, 'Change Profile', '<p>Change Current Profile</p>', 'main/change_profile', 3, 1),
+(7, 'main_group_management', 4, 'Group Management', '<p>Group Management</p>', 'main/group', 4, 0),
+(8, 'main_navigation_management', 4, 'Navigation Management', '<p>Navigation management</p>', 'main/navigation', 4, 0),
+(9, 'main_privilege_management', 4, 'Privilege Management', '<p>Privilege Management</p>', 'main/privilege', 4, 0),
+(10, 'main_user_management', 4, 'User Management', '<p>Manage User</p>', 'main/user', 4, 0),
+(11, 'main_module_management', 4, 'Module Management', '<p>Install Or Uninstall Thirdparty Module</p>', 'main/module_list', 4, 0),
+(12, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
 /*split*/
 
 INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES

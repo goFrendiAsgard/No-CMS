@@ -26,6 +26,44 @@ class Main extends CMS_Controller {
         }
     }
     
+    public function forgot($activation_code=NULL){
+        if(isset($activation_code)){
+            //get user input
+            $password = $this->input->post('password');
+            //set validation rule
+            $this->form_validation->set_rules('password', 'Password', 'required|xss_clean');
+            if($this->form_validation->run()){
+                if($this->valid_activation_code($activation_code)){
+                    $this->forgot_password($activation_code, $password);
+                    redirect('main/index');
+                }else{                
+                    redirect('main/forgot');
+                }
+            }else{
+                $data = array("activation_code"=>$activation_code);
+                $this->view('main/forgot_change_password', $data, 'main_forgot');
+            }
+        }else{
+        
+            //get user input
+            $identity = $this->input->post('identity');
+
+            //set validation rule
+            $this->form_validation->set_rules('identity', 'Identity', 'required|xss_clean');
+
+            if($this->form_validation->run()){
+                if($this->generate_activation_code($identity)) redirect('main/index');
+                else{ 
+                    $data = array("identity"=>$identity);
+                    $this->view('main/forgot_fill_identity',$data, 'main_forgot');
+                }
+            }else{
+                $data = array("identity"=>$identity);
+                $this->view('main/forgot_fill_identity',$data, 'main_forgot');
+            }
+        }
+    }
+    
     public function register(){
         //get user input
         $user_name = $this->input->post('user_name');

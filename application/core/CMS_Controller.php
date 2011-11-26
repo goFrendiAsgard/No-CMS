@@ -461,4 +461,91 @@ class CMS_Controller extends CI_Controller{
         }
         return $module;
     }
+    
+    /** 
+     * @author : goFrendiAsgard
+     * @param : identity 
+     * @desc : generate activation code, 
+     */
+    protected function generate_activation_code($identity){
+        $query = $this->db->query(
+                "SELECT user_name, real_name, user_id, email FROM cms_user WHERE
+                    (user_name = '".$identity."' OR email = '".$identity."') AND
+                    active = TRUE"
+                );
+        foreach($query->result() as $row){
+            $user_id = $row->user_id;
+            $email = $row->email;
+            $user_name = $row->user_name;
+            $real_name = $row->real_name;
+            $activation_code = random_string();
+            
+            //update, add activation_code
+            $data = array("activation_code"=>md5($activation_code));
+            $where = array("user_id"=>$user_id);
+            $this->db->update('cms_user',$data,$where);
+            $this->load->library('email');
+            
+            //send activation email to user
+            $this->config->load('cms', true);
+            $email_address = $this->config->config['cms']['cms_email_address'];
+            $email_name = $this->config->config['cms']['cms_email_name'];
+            $email_subject = $this->config->config['cms']['cms_email_forgot_subject'];
+            $email_message = $this->config->config['cms']['cms_email_forgot_message'];
+            $activation_link = base_url('index.php/main/forgot/'.$activation_code);
+            
+            $email_message = str_replace('@realname', $real_name, $email_message);
+            $email_message = str_replace('@activation_link', $activation_link, $email_message);
+            
+            //send email to user
+            $this->email->from($email_address, $email_name);
+            $this->email->to($email); 
+            $this->email->subject($email_subject);
+            $this->email->message($email_message);	
+
+            $this->email->send();
+
+            echo $this->email->print_debugger();
+            return true;
+        }
+        return false;
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
+     * @param : activation_code, new_password
+     * @desc : generate_activation_code
+     */
+    protected function forgot_password($activation_code, $new_password){
+        $query = $this->db->query(
+                "SELECT user_id FROM cms_user WHERE
+                    (activation_code = '".md5($activation_code)."') AND
+                    active = TRUE"
+                );
+        foreach($query->result() as $row){
+            $user_id = $row->user_id;
+            $data = array(
+                "password"=>md5($new_password),
+                "activation_code"=>NULL
+                );
+            $where = array("user_id"=>$user_id);
+            $this->db->update('cms_user',$data,$where);
+        }
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
+     * @param : activation_code 
+     * @desc : valid_activation_code
+     */
+    protected function valid_activation_code($activation_code){
+        $query = $this->db->query(
+                "SELECT activation_code FROM cms_user WHERE
+                    (activation_code = '".md5($activation_code)."') AND
+                    (activation_code IS NOT NULL) AND
+                    active = TRUE"
+                );
+        if($query->num_rows()>0) return true;
+        else return false;
+    }
 }

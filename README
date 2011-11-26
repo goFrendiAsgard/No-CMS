@@ -58,12 +58,12 @@ application/config/cms.php <-- promise me you won't break anything :D
 * Integrated groceryCRUD
 * Mobile and Desktop Layout
 * Friendly installation
+* Forgot password (You should edit application/config/cms.php and application/config/email.php)
 
 ## FUTURE FEATURES :
 * Widget and Widget Management
 * Readmore in blog module
 * Automatically read module name without define $module_name in module/module_name/install.php
-* Forgot password
 
 ## BUGS AND KNOWN ISSUES
 * core/CMS_Module_Installer.php line 112 undefined variable userid [Reported by: Wahyu Eka Putra, 2011-11-19, status: repaired, 2011-11-20]
