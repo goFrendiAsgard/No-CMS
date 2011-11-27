@@ -1,4 +1,6 @@
-## WHAT IS?
+###################
+WHAT IS?
+###################
 Neo-CMS = CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template + My Own Logics
 Neo-CMS already has perfect working user authorization and authentication.
 Thus, you can focus only on your logic
@@ -8,8 +10,9 @@ Neo-CMS is CodeIgniter. This means that since you didn't install it, Neo-CMS is 
 Once you've install Neo-CMS, you can still make any code just as in CodeIgniter.
 Any code worked in CodeIgniter will also worked in Neo-CMS
 
-
-## MODULES
+###################
+MODULES
+###################
 You can make your own modules in modules directory
 
 In CodeIgniter, your controller will extends CI_Controller:
@@ -34,14 +37,17 @@ another user will see 404 not found
 If you want to use grocery_crud feature, you can load view:
     $this->view('grocery_CRUD', $output);
 
-## LAYOUT
+###################
+LAYOUT
+###################
 You can make your own template in template directory (please refer to default theme)
 
 For your layout setting (header, slogan, etc) you can edit
 application/config/cms.php <-- promise me you won't break anything :D
 
-
-## CONTRIBUTORS :
+###################
+CONTRIBUTORS
+###################
 * goFrendiAsgard <-- The one who make Neo-CMS based on already exists plugins, that's me :D
 * EllisLab <-- A company who make codeIgniter and make it available for free. There is no Neo-CMS without codeIgniter
 * WanWizard <-- The one who make HMVC plugin. The plugin he made allowed me to make separation between modules
@@ -49,7 +55,9 @@ application/config/cms.php <-- promise me you won't break anything :D
 * John Skoumbourdis <-- The one who make groceryCRUD. It boost the development of Neo-CMS by provide very easy CRUD
 * Wahyu Eka Putra <-- The one who reports bug(s)
 
-## FEATURES LIST :
+###################
+FEATURES LIST
+###################
 * Group Management
 * User Management
 * Privilege Management
@@ -60,12 +68,16 @@ application/config/cms.php <-- promise me you won't break anything :D
 * Friendly installation
 * Forgot password (You should edit application/config/cms.php and application/config/email.php)
 
-## FUTURE FEATURES :
+###################
+FUTURE FEATURES
+###################
 * Widget and Widget Management
 * Readmore in blog module
 * Automatically read module name without define $module_name in module/module_name/install.php
 
-## BUGS AND KNOWN ISSUES
+#####################
+BUGS AND KNOWN ISSUES
+#####################
 * core/CMS_Module_Installer.php line 112 undefined variable userid [Reported by: Wahyu Eka Putra, 2011-11-19, status: repaired, 2011-11-20]
 * Recursive navigation menu can bring to a problem (not really, but yeah I fixed it) [Reported by: goFrendiAsgard, 2011-11-19, status: repaired, 2011-11-20]
 * Trigger not created [Reported by: goFrendiAsgard, 2011-11-20, status: repaired, 2011-11-20]
