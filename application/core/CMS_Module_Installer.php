@@ -6,8 +6,7 @@
  * @author gofrendi
  */
 class CMS_Module_Installer extends CMS_Controller {
-    //put your code here
-    protected $module_name='default'; //this should be overridden by module developer
+    
     public function index(){
         $this->install();
     }
@@ -108,14 +107,14 @@ class CMS_Module_Installer extends CMS_Controller {
     
     private function register_module(){
         $data = array(
-            'module_name'=>$this->module_name,
+            'module_name'=>$this->uri->segment(1),
             'user_id'=>$this->cms_userid()
         );
         $this->db->insert('cms_module',$data);
     }
     private function unregister_module(){
         $where = array(
-            'module_name'=>$this->module_name
+            'module_name'=>$this->uri->segment(1)
         );
         $this->db->delete('cms_module',$where);
     }

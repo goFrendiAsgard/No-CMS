@@ -12,7 +12,8 @@
  */
 class Blog extends CMS_Controller {
     //put your code here
-    public function index(){
+    public function index($article_id=NULL){
+        
         $category = $this->input->post('category');
         $search = $this->input->post('search');
         $words = $search? explode(' ', $search) : array();
@@ -47,22 +48,38 @@ class Blog extends CMS_Controller {
         }else{
             $where_search = "TRUE";
         }
-        $SQL = "SELECT article_title, content, 
+        
+        $where_article_id=isset($article_id)?"article_id=$article_id":"TRUE";
+        
+        $SQL = "SELECT article_id, article_title, content, date, 
                     real_name AS author
                 FROM blog_article
                 LEFT JOIN cms_user ON (cms_user.user_id = blog_article.author_user_id)
                 WHERE 
                     $where_category AND
-                    $where_search";
+                    $where_search AND $where_article_id";
         $query = $this->db->query($SQL);
         foreach($query->result() as $row){
+            
+            if(isset($article_id)){
+                $contents = explode('<!-- pagebreak -->',$row->content);
+                $content = implode('',$contents);
+            }else{
+                $contents = explode('<!-- pagebreak -->',$row->content);
+                $content = $contents[0];
+            }
+            
             $result = array(
                 "title" => $row->article_title,
-                "content" => $row->content,
-                "author" => $row->author
+                "content" => $content,
+                "author" => $row->author,
+                "date" => $row->date,
+                "id" => $row->article_id
             );
             $data['article'][] = $result;
         }
+        
+        $data['view_readmore'] = !isset($article_id);
         
         $this->view("blog_view", $data, 'blog');
     }
@@ -74,19 +91,34 @@ class Blog extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('blog_article');
-        $crud->columns('article_title','content');
-        $crud->edit_fields('article_title','content', 'Categories');
-        $crud->add_fields('article_title','content', 'Categories');
+        $crud->columns('article_title','content', 'Categories', 'author_user_id', 'date');
+        $crud->edit_fields('article_title','content', 'Categories', 'date', 'author_user_id');
+        $crud->add_fields('article_title','content', 'Categories', 'date', 'author_user_id');
         $crud->display_as('article_title','Title')
-                 ->display_as('content','Content');
+                 ->display_as('content','Content')
+                 ->display_as('date','Date Created')
+                 ->display_as('author_user_id','Author');
         $crud->set_subject('Article');
+        $crud->callback_before_insert(array($this,'before_insert_article'));
+        $crud->callback_before_update(array($this,'before_insert_article'));
         $crud->set_relation_n_n('Categories', 'blog_category_article', 'blog_category', 'article_id', 'category_id' , 'category_name');
-
+        $crud->set_relation('author_user_id', 'cms_user', 'real_name');
+        
+        $crud->change_field_type('author_user_id', 'hidden');
+        $crud->change_field_type('date', 'hidden');
+        
+        //$crud->set_theme('datatables');
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'blog_article');
-        
+        $this->view('grocery_CRUD', $output, 'blog_article');        
     }
+    
+    public function before_insert_article($post_array){
+        $post_array['author_user_id'] = $this->cms_userid();
+        $post_array['date'] = date('Y-m-d');
+        return $post_array;
+    }
+    
     public function category(){
         $crud = new grocery_CRUD();
 
@@ -99,6 +131,7 @@ class Blog extends CMS_Controller {
         $crud->set_subject('Category');
         $crud->set_relation_n_n('Articles', 'blog_category_article', 'blog_article', 'category_id', 'article_id' , 'article_title');
 
+        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'blog_category');

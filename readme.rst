@@ -67,13 +67,15 @@ FEATURES LIST
 * Mobile and Desktop Layout
 * Friendly installation
 * Forgot password (You should edit application/config/cms.php and application/config/email.php)
+* Readmore in blog module
 
 ###################
 FUTURE FEATURES
 ###################
 * Widget and Widget Management
-* Readmore in blog module
-* Automatically read module name without define $module_name in module/module_name/install.php
+* Photo album module
+* E commerce module
+
 
 #####################
 BUGS AND KNOWN ISSUES
@@ -83,6 +85,8 @@ BUGS AND KNOWN ISSUES
 * Trigger not created [Reported by: goFrendiAsgard, 2011-11-20, status: repaired, 2011-11-20]
 * The installation progress can be cheated by point to http://localhost/Neo-CMS/install.php directly [Reported by: goFrendiAsgard, 2011-11-19, status: repaired, 2011-11-20]
 * The configuration files should be writeable, but installation progress doesn't check this [Reported by: goFrendiAsgard, 2011-11-19, status : repaired, 2011-11-20]
+* Not Automatically read module name without define $module_name in module/module_name/install.php [Reported by: goFrendiAsgard, 2011-11-27, status: repaired, 2011-11-27]
+* Grocery-CRUD flexigrid theme have 960px by default, so it's not fit in a screen [Reported by: goFrendiAsgard, 2011-11-27, status: repaired, 2011-11-27]
 
 * Admin group can be deleted [Reported by: goFrendiAsgard, 2011-11-19, status : fixed, but need to change error messages]
 * The super user can also be deleted [Reported by: goFrendiAsgard, 2011-11-19, status : fixed, but need to change error messages]

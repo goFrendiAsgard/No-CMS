@@ -6,13 +6,13 @@
  * @author gofrendi
  */
 class Install extends CMS_Module_Installer {
-    protected $module_name='blog';
-    
+    //this should be what happen when user install this module
     protected function do_install(){
         $this->remove_all();
         $this->build_all();
         redirect('blog');
     }
+    //this should be what happen when user uninstall this module
     protected function do_uninstall(){
         $this->remove_all();
         redirect('main');
@@ -34,6 +34,7 @@ class Install extends CMS_Module_Installer {
             CREATE TABLE IF NOT EXISTS `blog_article` (
               `article_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
               `article_title` varchar(100) NOT NULL,
+              `date` DATE NOT NULL,
               `author_user_id` int(20) unsigned NOT NULL,
               `content` text,
               PRIMARY KEY (`article_id`)

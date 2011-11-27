@@ -31,7 +31,9 @@ class Main extends CMS_Controller {
             //get user input
             $password = $this->input->post('password');
             //set validation rule
-            $this->form_validation->set_rules('password', 'Password', 'required|xss_clean');
+            $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[confirm_password]');
+            $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
+            
             if($this->form_validation->run()){
                 if($this->valid_activation_code($activation_code)){
                     $this->forgot_password($activation_code, $password);
@@ -145,6 +147,7 @@ class Main extends CMS_Controller {
         $crud->unset_delete();
         $crud->unset_edit();
 
+        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output);
@@ -173,6 +176,7 @@ class Main extends CMS_Controller {
         $crud->callback_before_delete(array($this,'before_delete_user'));
         
         
+        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_user_management');
@@ -210,6 +214,7 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('privileges', 'cms_group_privilege', 'cms_privilege', 'group_id', 'privilege_id' , 'privilege_name');
         $crud->callback_before_delete(array($this,'before_delete_group'));
 
+        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_group_management');
@@ -247,6 +252,7 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id' , 'group_name');
         
 
+        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_navigation_management');
@@ -260,6 +266,7 @@ class Main extends CMS_Controller {
         
         $crud->set_relation_n_n('groups', 'cms_group_privilege', 'cms_group', 'privilege_id', 'group_id' , 'group_name');
 
+        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_privilege_management');

@@ -169,7 +169,7 @@ INSERT INTO `cms_user` (`user_id`, `user_name`, `email`, `password`, `real_name`
 INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `is_root`) VALUES
 (1, 'main_login', NULL, 'Login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1),
 (2, 'main_forgot', NULL, 'Forgot password', '<p>Accidentally forgot password</p>', 'main/forgot', 2, 1),
-(3, 'main_logout', NULL, 'logout', '<p>Logout for deauthentication</p>', 'main/logout', 3, 1),
+(3, 'main_logout', NULL, 'Logout', '<p>Logout for deauthentication</p>', 'main/logout', 3, 1),
 (4, 'main_management', NULL, 'CMS Management', '<p>The main management of the CMS. Including User, Group, Privilege and Navigation Management</p>', 'main/management', 4, 1),
 (5, 'main_register', NULL, 'Register', '<p>New User Registration</p>', 'main/register', 2, 1),
 (6, 'main_change_profile', NULL, 'Change Profile', '<p>Change Current Profile</p>', 'main/change_profile', 3, 1),
