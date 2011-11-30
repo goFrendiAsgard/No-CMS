@@ -94,9 +94,21 @@
 
                 //expand and collapse
                 $(".layout_nav li a.layout_expand").click(function(){
+                    //expand or collapse
                     $(this).parent(".layout_nav li").children(".layout_nav").toggle();
                     if($(this).html()=="[+]"){$(this).html("[-]");}
                     else{$(this).html("[+]");}
+                    
+                    //calibrate height
+                    var navigationHeight = $("#layout_navigation").css("height");
+                    var contentHeight = $("#layout_content").css("height");
+                    if(navigationHeight>contentHeight){
+                        $("#layout_center").css("height",navigationHeight);
+                    }else{
+                        $("#layout_center").css("height",contentHeight);
+                    }
+                    
+                    
                     return false;
                 });
 

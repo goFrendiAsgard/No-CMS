@@ -54,6 +54,7 @@ CONTRIBUTORS
 * Phil Sturgeon <-- The one who make Phil Sturgeon's template. The plugin he made allowed me to make separation between layouts
 * John Skoumbourdis <-- The one who make groceryCRUD. It boost the development of Neo-CMS by provide very easy CRUD
 * Wahyu Eka Putra <-- The one who reports bug(s)
+* Ari Mogi <-- The one who proposed to use javascript for div layout_center's height
 
 ###################
 FEATURES LIST
@@ -87,6 +88,7 @@ BUGS AND KNOWN ISSUES
 * The configuration files should be writeable, but installation progress doesn't check this [Reported by: goFrendiAsgard, 2011-11-19, status : repaired, 2011-11-20]
 * Not Automatically read module name without define $module_name in module/module_name/install.php [Reported by: goFrendiAsgard, 2011-11-27, status: repaired, 2011-11-27]
 * Grocery-CRUD flexigrid theme have 960px by default, so it's not fit in a screen [Reported by: goFrendiAsgard, 2011-11-27, status: repaired, 2011-11-27]
+* div layout_center's height fixed  [Reported by: goFrendiAsgard, 2011-11-30, fix Proposed by: Ari Mogi status: repaired, 2011-11-30]
 
 * Admin group can be deleted [Reported by: goFrendiAsgard, 2011-11-19, status : fixed, but need to change error messages]
 * The super user can also be deleted [Reported by: goFrendiAsgard, 2011-11-19, status : fixed, but need to change error messages]
