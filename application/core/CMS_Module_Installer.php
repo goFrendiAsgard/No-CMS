@@ -118,6 +118,34 @@ class CMS_Module_Installer extends CMS_Controller {
         );
         $this->db->delete('cms_module',$where);
     }
+    
+    protected function add_widget($widget_name, $title, $authorization_id=1, $url=NULL, $description=NULL){
+        $data = array(
+            "widget_name" => $widget_name,
+            "title" => $title,
+            "authorization_id" => $authorization_id,
+            "url" => $url,
+            "description" => $description
+        );
+        $this->db->insert('cms_navigation',$data);        
+    }
+    protected function remove_privilege($widget_name){
+        $SQL = "SELECT widget_id FROM cms_widget WHERE widget_name='".addslashes($widget_name)."'";
+        $query = $this->db->query($SQL);
+        
+        foreach($query->result() as $row){
+            $widget_id = $row->widget_id;
+        }
+        
+        if(isset($widget_id)){
+            //delete cms_group_privilege
+            $where = array("widget_id"=>$widget_id);
+            $this->db->delete("cms_group_widget",$where);
+            //delete cms_privilege
+            $where = array("widget_id"=>$widget_id);
+            $this->db->delete("cms_widget",$where);
+        }
+    }
 }
 
 ?>

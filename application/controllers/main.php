@@ -123,6 +123,24 @@ class Main extends CMS_Controller {
         redirect('main/index');
     }
     
+    public function widget_logout(){
+        $data = array(
+            "user_name" => $this->cms_username()
+        );
+        $this->view('main/widget_logout', $data);
+    }
+    
+    public function widget_login(){
+        $this->login();
+    }
+    
+    public function widget_facebook_like(){
+        $data = array(
+            "url" => base_url()
+        );
+        $this->view('main/widget_facebook_like', $data);
+    }
+    
     public function index(){
         $this->view('main/index', NULL, 'main_index');
     }
@@ -256,7 +274,7 @@ class Main extends CMS_Controller {
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_navigation_management');
-    }
+    }  
     
     public function privilege(){
         $crud = new grocery_CRUD();
@@ -270,6 +288,34 @@ class Main extends CMS_Controller {
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_privilege_management');
+    }
+    
+    public function widget(){
+        $crud = new grocery_CRUD();
+
+        $crud->set_table('cms_widget');
+        $crud->columns('widget_name', 'title', 'active', 'description', 'url', 'authorization_id', 'groups');
+        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'url', 'authorization_id', 'groups');
+        $crud->add_fields('widget_name', 'title', 'active', 'description', 'url', 'authorization_id', 'groups');
+        $crud->change_field_type('active', 'true_false');
+        
+        $crud->display_as('widget_name', 'Widget Code')
+                ->display_as('title', 'Title (What visitor see)')
+                ->display_as('active', 'Active')
+                ->display_as('description', 'Description')
+                ->display_as('url', 'URL (Where is it point to)')
+                ->display_as('authorization_id', 'Authorization')
+                ->display_as('groups', 'Groups');
+       
+        $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name');
+        
+        $crud->set_relation_n_n('groups', 'cms_group_widget', 'cms_group', 'widget_id', 'group_id' , 'group_name');
+        
+
+        //$crud->set_theme('datatables');
+        $output = $crud->render();
+
+        $this->view('grocery_CRUD', $output, 'main_navigation_management');
     }
     
     public function module_list(){

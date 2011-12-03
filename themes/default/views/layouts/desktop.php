@@ -7,7 +7,7 @@
             body{
                 padding : 5px;
             }
-            div#layout_navigation{
+            div#layout_navigation, div#layout_widget{
                 z-index : 100;
             }
             div#layout_header, div#layout_content, div#layout_footer{
@@ -19,15 +19,20 @@
                 padding : 20px;
                 font-size : small;
             }
-            div#layout_navigation{ 
-                position : absolute;
-                top : 180px;
-                width : 300px;
+            div#layout_navigation {
+                float:left;
+                width:300px;
+                padding : 10px;
             }
-            div#layout_content{
+            div#layout_widget {
+                float:right;
+                width:200px;
+                padding : 10px;
+            }
+            div#layout_content {
                 margin-left : 300px;
-                min-height : 300px;
-                padding : 20px;
+                margin-right:220px;
+                padding : 10px;
             }
             div#layout_footer{
                 text-align : center;
@@ -39,6 +44,10 @@
                 font-size : small;
                 background-color : #E0E0E0;
                 margin-top : 0px;
+                
+                padding : 5px;
+                position:relative;	/* This fixes the IE7 overflow hidden bug */
+                clear:both;
             }
             .invisible{
                 display : none;
@@ -99,32 +108,47 @@
                     if($(this).html()=="[+]"){$(this).html("[-]");}
                     else{$(this).html("[+]");}
                     
-                    //calibrate height
-                    var navigationHeight = $("#layout_navigation").css("height");
-                    var contentHeight = $("#layout_content").css("height");
-                    if(navigationHeight>contentHeight){
-                        $("#layout_center").css("height",navigationHeight);
-                    }else{
-                        $("#layout_center").css("height",contentHeight);
-                    }
-                    
+                    calibrateHeight();   
                     
                     return false;
                 });
+                
+                calibrateHeight();
 
             });
+            
+            $(document).ajaxComplete(function(){
+                calibrateHeight();
+            });
+            
+            function calibrateHeight(){
+                var navigationHeight = $("div#layout_navigation").height();
+                var contentHeight = $("div#layout_content").height();
+                var widgetHeight = $("div#layout_widget").height();
+                var centerHeight = 0;
+                if((navigationHeight>=contentHeight) && (navigationHeight>=widgetHeight)){
+                    centerHeight = navigationHeight;
+                }else if((widgetHeight>=contentHeight) && (widgetHeight>=navigationHeight)){
+                    centerHeight = widgetHeight;
+                }else{
+                    centerHeight = contentHeight;
+                }
+                
+                $("div#layout_center").height(centerHeight+20);
+            }
         </script>
     </head>
     <body>
         <div id="layout_header"><?php echo $template['partials']['header'];?></div>
         <div id="layout_center">
             <div id="layout_navigation"><?php echo $template['partials']['navigation'];?></div>
+            <div id="layout_widget">WIDGET<hr /><?php echo $template['partials']['widget'] ?></div>
             <div id="layout_content">
                 <div id="layout_nav_path">You are here : <?php echo $navigation_path;?></div>
                 <br />
                 <?php echo $template['body'];?>
             </div>
         </div>
-        <div id="layout_footer"><?php echo $template['partials']['footer'];?></div>
+        <div id="layout_footer"><?php echo $template['partials']['footer'];?></div>       
     </body>
 </html>

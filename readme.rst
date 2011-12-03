@@ -69,11 +69,12 @@ FEATURES LIST
 * Friendly installation
 * Forgot password (You should edit application/config/cms.php and application/config/email.php)
 * Readmore in blog module
+* Widget and Widget Management
 
 ###################
 FUTURE FEATURES
 ###################
-* Widget and Widget Management
+* Comment in blog module
 * Photo album module
 * E commerce module
 
@@ -98,6 +99,6 @@ BUGS AND KNOWN ISSUES
 
 
 
-goFrendiAsgard(c) 2011
-My Own logics are under GNU license
+goFrendiAsgard(c) 2011,
+My Own logics are under GNU license,
 CodeIgniter, HMVC, groceryCRUD, Phil Sturgeon's template are under their own licenses

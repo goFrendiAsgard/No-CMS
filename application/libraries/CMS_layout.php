@@ -50,7 +50,34 @@ class CMS_layout
             }
         }
         return $str;
-        //return '<div id="layout_nav_path">You are here : '.$str.'</div>';
+    }
+    
+    function build_widget($widget_array){
+        $str = '<div id="layout_widget_container"></div>';
+            foreach($widget_array as $widget){
+            $str .= '
+                <script type="text/javascript">
+                    $(document).ready(function(){                        
+                        $.ajax({
+                            url : "'.base_url().'index.php/main/cms_only_content/true",
+                            async : false,
+                            success : function(response){
+                                    $.ajax({
+                                        url : "'.base_url().'index.php/'.$widget['url'].'",
+                                        async : false,
+                                        success : function(response){
+                                          $("#layout_widget_container").append("<h4>'.$widget['title'].'</h4>");
+                                          $("#layout_widget_container").append(response);
+                                          $("#layout_widget_container").append("<br />");                                      
+                                        }
+                                    });
+                            }
+                        });
+
+                    });
+                </script>';
+        }
+        return $str;
     }
 }
 ?>

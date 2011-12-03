@@ -125,6 +125,53 @@ class CMS_Controller extends CI_Controller{
     
     /** 
      * @author : goFrendiAsgard
+     * @param : parent_id, max_menu_depth
+     * @desc : return navigation child if parent_id specified, else it will return root navigation
+     */
+    private function cms_widgets(){
+        $user_name = $this->cms_username();    
+        $user_id = $this->cms_userid(); 
+        $not_login = !$user_name?"TRUE":"FALSE";
+        $login = $user_name?"TRUE":"FALSE";
+        $super_user = $user_id==1?"TRUE":"FALSE";
+        
+        $query = $this->db->query(
+                "SELECT widget_id, widget_name, title, description, url 
+                FROM cms_widget AS w WHERE
+                    (                        
+                        (authorization_id = 1) OR
+                        (authorization_id = 2 AND $not_login) OR
+                        (authorization_id = 3 AND $login) OR
+                        (
+                            (authorization_id = 4 AND $login) AND 
+                            (
+                                (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='".addslashes($user_id)."')>0
+                                    OR $super_user OR
+                                (SELECT COUNT(*) FROM cms_group_widget AS gw
+                                    WHERE 
+                                        gw.widget_id=w.widget_id AND
+                                        gw.group_id IN 
+                                            (SELECT group_id FROM cms_group_user WHERE user_id = '".addslashes($user_id)."')
+                                )>0
+                            )
+                        )
+                    ) AND active=1"
+                );
+        $result = array();
+        foreach($query->result() as $row){
+            $result[] = array(
+                "widget_name" => $row->widget_name,
+                "title" => $row->title,
+                "description" => $row->description,
+                "url" => $row->url
+            );
+        }
+        return $result;
+        
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
      * @param : navigation_name
      * @desc : return parent of navigation_name's detail, only used for get_navigation_path
      */
@@ -244,7 +291,7 @@ class CMS_Controller extends CI_Controller{
      * @param : active
      * @desc : next call of $this->view will only load content. Will be used if you plan to use ajax
      */
-    public function cms_partial($active = NULL){
+    public function cms_only_content($active = NULL){
         return $this->set_userdata('cms_partial', $active);     
     }
     
@@ -376,8 +423,9 @@ class CMS_Controller extends CI_Controller{
         
         //if allowed then show, else don't
         if($allowed){
-            if($this->cms_partial()){
+            if($this->cms_only_content()){
                 $this->load->view($view_url, $data);
+                $this->cms_only_content(false);
             }else{
                 //get configuration
                 $this->config->load('cms', true);
@@ -397,17 +445,23 @@ class CMS_Controller extends CI_Controller{
                 //determine theme from configuration
                 $this->template->set_theme($data_partial['site_theme']); 
                 
+                //get widget
+                $widget = $this->cms_widgets();
+                $widget = $this->cms_layout->build_widget($widget);
+                
                 //set layout and partials
                 if($this->is_mobile){
                     $this->template->set_layout('mobile');
                     $this->template->set_partial('header', 'layouts/partials/mobile/header.php', $data_partial);
                     $this->template->set_partial('navigation', 'layouts/partials/mobile/navigation.php', $data_partial);
                     $this->template->set_partial('footer', 'layouts/partials/mobile/footer.php', $data_partial);
+                    $this->template->inject_partial('widget', $widget, $data_partial);
                 }else{
                     $this->template->set_layout('desktop');
                     $this->template->set_partial('header', 'layouts/partials/desktop/header.php', $data_partial);
                     $this->template->set_partial('navigation', 'layouts/partials/desktop/navigation.php', $data_partial);
                     $this->template->set_partial('footer', 'layouts/partials/desktop/footer.php', $data_partial);
+                    $this->template->inject_partial('widget', $widget, $data_partial);
                 }
                 
                 $this->template->build($view_url, $data);

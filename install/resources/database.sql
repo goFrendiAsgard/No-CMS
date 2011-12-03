@@ -8,11 +8,15 @@ DROP TABLE IF EXISTS `cms_group_privilege`;
 /*split*/
 DROP TABLE IF EXISTS `cms_group_navigation`;
 /*split*/
+DROP TABLE IF EXISTS `cms_group_widget`;
+/*split*/
 DROP TABLE IF EXISTS `cms_group_user`;
 /*split*/
 DROP TABLE IF EXISTS `cms_group`;
 /*split*/
 DROP TABLE IF EXISTS `cms_navigation`;
+/*split*/
+DROP TABLE IF EXISTS `cms_widget`;
 /*split*/
 DROP TABLE IF EXISTS `cms_privilege`;
 /*split*/
@@ -36,6 +40,21 @@ CREATE TABLE `cms_group` (
   `description` text,
   PRIMARY KEY (`group_id`),
   UNIQUE KEY `group_name` (`group_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*split*/
+
+CREATE TABLE `cms_widget` (
+  `widget_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
+  `widget_name` varchar(45) NOT NULL,
+  `title` varchar(45) NOT NULL,
+  `description` text,
+  `url` varchar(45) DEFAULT NULL,
+  `authorization_id` tinyint(4) unsigned NOT NULL DEFAULT '1',
+  `active` tinyint(3) unsigned DEFAULT '0',
+  PRIMARY KEY (`widget_id`),
+  UNIQUE KEY `widget_name` (`widget_name`),
+  KEY `authorization_id` (`authorization_id`),
+  CONSTRAINT `cms_widget_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
@@ -80,6 +99,17 @@ CREATE TABLE `cms_user` (
   `active` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_name` (`user_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*split*/
+
+CREATE TABLE `cms_group_widget` (
+  `group_id` int(20) unsigned NOT NULL,
+  `widget_id` int(20) unsigned NOT NULL,
+  PRIMARY KEY (`group_id`,`widget_id`),
+  KEY `widget_id` (`widget_id`),
+  KEY `group_id` (`group_id`),
+  CONSTRAINT `cms_group_widget_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `cms_group` (`group_id`),
+  CONSTRAINT `cms_group_widget_ibfk_2` FOREIGN KEY (`widget_id`) REFERENCES `cms_widget` (`widget_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
@@ -178,7 +208,14 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (9, 'main_privilege_management', 4, 'Privilege Management', '<p>Privilege Management</p>', 'main/privilege', 4, 0),
 (10, 'main_user_management', 4, 'User Management', '<p>Manage User</p>', 'main/user', 4, 0),
 (11, 'main_module_management', 4, 'Module Management', '<p>Install Or Uninstall Thirdparty Module</p>', 'main/module_list', 4, 0),
-(12, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
+(12, 'main_widget_management', 4, 'Widget Management', '<p>Manage Widgets</p>', 'main/widget', 4, 0),
+(13, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
+/*split*/
+
+INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`) VALUES
+(1, 'widget_main_login', 'Login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1),
+(2, 'widget_main_logout', 'User Info', '<p>Logout</p>', 'main/widget_logout', 3, 1),
+(3, 'widget_main_facebook_like', 'Like Us', '<p>Facebook Like Button</p>', 'main/widget_facebook_like', 1, 1);
 /*split*/
 
 INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES

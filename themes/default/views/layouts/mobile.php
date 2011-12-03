@@ -96,11 +96,21 @@
                 
                 $("#layout_button_menu").click(function(){
                     $("#layout_content").hide();
+                    $("#layout_widget").hide();
                     $("#layout_navigation").show();                    
                     return false;
                 });
+                
+                $("#layout_button_widget").click(function(){
+                    $("#layout_content").hide();
+                    $("#layout_navigation").hide();
+                    $("#layout_widget").show();                    
+                    return false;
+                });
+                
                 $(".layout_nav li a:not(.layout_expand)").click(function(){                    
                     $("#layout_navigation").hide();
+                    $("#layout_widget").hide();
                     $("#layout_content").show();
                 });
 
@@ -112,10 +122,15 @@
         <div id="layout_center">
             <div id="layout_navigation" class="invisible"><?php echo $template['partials']['navigation'];?></div>
             <div id="layout_content">                
-                <div id="layout_nav_path"><a id="layout_button_menu" href="#">Show Menu</a> || You are here : <?php echo $navigation_path;?></div>
+                <div id="layout_nav_path">
+                    <a id="layout_button_menu" href="#">Show Menu</a> ||
+                    <a id="layout_button_widget" href="#">Show Widget</a> || 
+                    You are here : <?php echo $navigation_path;?>
+                </div>
                 <br />
                 <?php echo $template['body'];?>
             </div>
+            <div id="layout_widget" class="invisible"><?php echo $template['partials']['widget'] ?></div>
         </div>
         <div id="layout_footer"><?php echo $template['partials']['footer'];?></div>
     </body>
