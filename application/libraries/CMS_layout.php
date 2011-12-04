@@ -66,16 +66,18 @@ class CMS_layout
                                         url : "'.base_url().'index.php/'.$widget['url'].'",
                                         async : false,
                                         success : function(response){
-                                          $("#layout_widget_container").append("<h4>'.$widget['title'].'</h4>");
-                                          $("#layout_widget_container").append(response);
-                                          $("#layout_widget_container").append("<br />");                                      
+                                          $("#layout_widget_container_'.$widget['widget_name'].'").append("<h4>'.$widget['title'].'</h4>");
+                                          $("#layout_widget_container_'.$widget['widget_name'].'").append(response);
+                                          $("#layout_widget_container_'.$widget['widget_name'].'").append("<br />");                                      
                                         }
                                     });
                             }
                         });
 
                     });
-                </script>';
+                </script>
+                <div id="layout_widget_container_'.$widget['widget_name'].'"></div>
+                ';
         }
         return $str;
     }

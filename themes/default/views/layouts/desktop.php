@@ -29,9 +29,8 @@
                 width:200px;
                 padding : 10px;
             }
-            div#layout_content {
-                margin-left : 300px;
-                margin-right:220px;
+            div#layout_content {                
+                margin : 0 200px 0 300px;
                 padding : 20px;
             }
             div#layout_footer{
@@ -43,11 +42,13 @@
             div#layout_center{
                 font-size : small;
                 background-color : #E0E0E0;
-                margin-top : 0px;
-                
+                margin-top : 0px;                
                 padding : 5px;
-                position:relative;	/* This fixes the IE7 overflow hidden bug */
-                clear:both;
+                min-height: 5px;
+            }
+            div.layout_clear
+            {
+                clear: both;
             }
             .invisible{
                 display : none;
@@ -106,36 +107,11 @@
                     //expand or collapse
                     $(this).parent(".layout_nav li").children(".layout_nav").toggle();
                     if($(this).html()=="[+]"){$(this).html("[-]");}
-                    else{$(this).html("[+]");}
-                    
-                    calibrateHeight();   
-                    
+                    else{$(this).html("[+]");}                    
                     return false;
                 });
-                
-                calibrateHeight();
 
             });
-            
-            $(document).ajaxComplete(function(){
-                calibrateHeight();
-            });
-            
-            function calibrateHeight(){
-                var navigationHeight = $("div#layout_navigation").height();
-                var contentHeight = $("div#layout_content").height();
-                var widgetHeight = $("div#layout_widget").height();
-                var centerHeight = 0;
-                if((navigationHeight>=contentHeight) && (navigationHeight>=widgetHeight)){
-                    centerHeight = navigationHeight;
-                }else if((widgetHeight>=contentHeight) && (widgetHeight>=navigationHeight)){
-                    centerHeight = widgetHeight;
-                }else{
-                    centerHeight = contentHeight;
-                }
-                
-                $("div#layout_center").height(centerHeight+20);
-            }
         </script>
     </head>
     <body>
@@ -148,6 +124,7 @@
                 <br />
                 <?php echo $template['body'];?>
             </div>
+            <div class="layout_clear"></div>
         </div>
         <div id="layout_footer"><?php echo $template['partials']['footer'];?></div>       
     </body>
