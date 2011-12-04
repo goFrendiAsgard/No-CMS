@@ -32,7 +32,7 @@
             div#layout_content {
                 margin-left : 300px;
                 margin-right:220px;
-                padding : 10px;
+                padding : 20px;
             }
             div#layout_footer{
                 text-align : center;

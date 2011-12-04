@@ -1,1 +1,0 @@
- <iframe src="//www.facebook.com/plugins/like.php?href=<?php echo $url; ?>&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=150" scrolling="yes" frameborder="0" style="border:none; overflow:hidden; width:100%; height:150px;" allowTransparency="true"></iframe>

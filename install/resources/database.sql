@@ -215,7 +215,8 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`) VALUES
 (1, 'widget_main_login', 'Login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1),
 (2, 'widget_main_logout', 'User Info', '<p>Logout</p>', 'main/widget_logout', 3, 1),
-(3, 'widget_main_facebook_like', 'Like Us', '<p>Facebook Like Button</p>', 'main/widget_facebook_like', 1, 1);
+(3, 'widget_main_social_plugin', 'Share This Page !!', '<p>Addthis</p>', 'main/widget_social_plugin', 1, 1),
+(4, 'widget_calendar', 'Calendar', 'Indonesian Calendar', 'main/widget_calendar', 1, 1);
 /*split*/
 
 INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES

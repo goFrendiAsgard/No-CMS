@@ -134,11 +134,12 @@ class Main extends CMS_Controller {
         $this->login();
     }
     
-    public function widget_facebook_like(){
-        $data = array(
-            "url" => base_url()
-        );
-        $this->view('main/widget_facebook_like', $data);
+    public function widget_social_plugin(){
+        $this->view('main/widget_social_plugin');
+    }
+    
+    public function widget_calendar(){
+        $this->view('main/widget_calendar');
     }
     
     public function index(){
