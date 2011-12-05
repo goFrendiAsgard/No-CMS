@@ -2,6 +2,8 @@ DROP TRIGGER IF EXISTS `trg_before_insert_cms_navigation`;
 /*split*/
 DROP TRIGGER IF EXISTS `trg_before_update_cms_navigation`;
 /*split*/
+DROP TABLE IF EXISTS `cms_config`;
+/*split*/
 DROP TABLE IF EXISTS `cms_module`;
 /*split*/
 DROP TABLE IF EXISTS `cms_group_privilege`;
@@ -157,7 +159,15 @@ CREATE TABLE `cms_module` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-
+CREATE TABLE `cms_config` (
+  `config_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
+  `config_name` varchar(50) NOT NULL,
+  `value` varchar(200) NULL,
+  `description` text,
+  PRIMARY KEY (`config_id`),
+  UNIQUE KEY `config_name` (`config_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*split*/
 
 DELIMITER ;;
 /*split*/
@@ -209,11 +219,12 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (10, 'main_user_management', 4, 'User Management', '<p>Manage User</p>', 'main/user', 4, 0),
 (11, 'main_module_management', 4, 'Module Management', '<p>Install Or Uninstall Thirdparty Module</p>', 'main/module_list', 4, 0),
 (12, 'main_widget_management', 4, 'Widget Management', '<p>Manage Widgets</p>', 'main/widget', 4, 0),
-(13, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
+(13, 'main_config_management', 4, 'Configuration Management', '<p>Manage Configuration Parameters</p>', 'main/config', 4, 0),
+(14, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
 /*split*/
 
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`) VALUES
-(1, 'widget_main_login', 'Login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1),
+(1, 'widget_main_login', 'Login', '<p>Visitor need to login for authentication</p>', 'main/widget_login', 2, 1),
 (2, 'widget_main_logout', 'User Info', '<p>Logout</p>', 'main/widget_logout', 3, 1),
 (3, 'widget_main_social_plugin', 'Share This Page !!', '<p>Addthis</p>', 'main/widget_social_plugin', 1, 1),
 (4, 'widget_calendar', 'Calendar', 'Indonesian Calendar', 'main/widget_calendar', 1, 1);
@@ -222,6 +233,18 @@ INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `u
 INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES
 (1, 'cms_install_module', 'Install Module', '<p>Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You''d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)</p>\n<p>&nbsp;</p>', 4),
 (2, 'cms_manage_access', 'Manage Access', '<p>Manage access</p>\n<p>&nbsp;</p>', 4);
+/*split*/
+
+INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VALUES
+(1, 'site_name', 'Neo-CMS', '<p>Site title</p>'),
+(2, 'site_slogan', 'Your web kickstart', '<p>Site slogan</p>'),
+(3, 'site_footer', 'goFrendiAsgard &copy; 2011', '<p>Site footer</p>'),
+(4, 'site_theme', 'default', '<p>Site theme</p>'),
+(5, 'max_menu_depth', '5', '<p>Depth of menu recursive</p>'),
+(6, 'cms_email_address', 'no-reply@Neo-CMS.com', '<p>Email address</p>'),
+(7, 'cms_email_name', 'admin of Neo-CMS', '<p>Email name</p>'),
+(8, 'cms_email_forgot_subject', 'Re-activate your account at Neo-CMS', '<p>Email subject</p>'),
+(9, 'cms_email_forgot_messasge', 'Dear, @realname<br />Click <a href="@activation_link">@activation_link</a> to reactivate your account', '<p>Email message</p>');
 /*split*/
 
 INSERT INTO `cms_group_user` (`group_id`, `user_id`) VALUES

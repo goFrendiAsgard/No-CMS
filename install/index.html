@@ -1,7 +1,8 @@
 <head>
-    <link rel="stylesheet" type="text/css" href="assets/style.css"></link>
+    <link rel="stylesheet" type="text/css" href="assets/style.css" />
     <script type="text/javascript" src="../assets/jquery.js"></script>
     <script type="text/javascript">
+        var error_message = "";
         $(document).ready(function(){
             check_all();
             $(".input").keyup(function(){
@@ -17,10 +18,17 @@
         })
         
         function check_all(){
-            writeable_checked = check_writeable();
-            connection_checked = check_connection(); 
-            password_checked = check_password();
-            return writeable_checked && connection_checked && password_checked;
+            error_message = "";
+            var writeable_checked = check_writeable();
+            var connection_checked = check_connection(); 
+            var password_checked = check_password();
+            var success = writeable_checked && connection_checked && password_checked;
+            if(!success){
+                $("#infoMessage").append('<ul>'+error_message+'</ul>');
+            }else{
+                $("#infoMessage").html('');
+            }
+            return success;
         }
         
         function check_connection(){
@@ -40,7 +48,7 @@
                 success : function(response){
                     result = response.success;
                     if(!result){
-                        $("#infoMessage").append(response.message);
+                        error_message += '<li>'+response.message+'</li>';
                     }
                     
                 }
@@ -58,7 +66,7 @@
                 success : function(response){
                     result = response.success;
                     if(!result){
-                        $("#infoMessage").append(response.message);
+                        error_message += '<li>'+response.message+'</li>';
                     }
                     
                 }
@@ -68,13 +76,13 @@
         
         function check_password(){
             if($("#adm_password").val() == ""){
-                $("#infoMessage").append('Administrator Password empty<br />');
+                error_message += '<li>Administrator Password empty</li>';
                 return false;
             }else if($("#adm_password").val() == $("#adm_confirmpassword").val()){
                 return true;
             }else{
-                $("#infoMessage").append('Administrator Password and '+
-                    'Administrator Password Confirmation doesn\'t match<br />');
+                error_message += '<li>Administrator Password and '+
+                    'Administrator Password Confirmation doesn\'t match</li>';
                 return false;
             }
         }

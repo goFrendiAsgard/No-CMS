@@ -319,6 +319,25 @@ class Main extends CMS_Controller {
         $this->view('grocery_CRUD', $output, 'main_navigation_management');
     }
     
+    public function config(){
+        $crud = new grocery_CRUD();
+
+        $crud->set_table('cms_config');
+        $crud->columns('config_name', 'value', 'description');
+        $crud->edit_fields('config_name', 'value', 'description');
+        $crud->add_fields('config_name', 'value', 'description');
+        
+        $crud->display_as('config_name', 'Configuration Key')
+                ->display_as('value', 'Configuration Value')
+                ->display_as('description', 'Description');
+        
+
+        //$crud->set_theme('datatables');
+        $output = $crud->render();
+
+        $this->view('grocery_CRUD', $output, 'main_config_management');
+    }
+    
     public function module_list(){
         $data['modules'] = $this->get_module_list();
         $this->view('main/module_list',$data,'main_module_management');

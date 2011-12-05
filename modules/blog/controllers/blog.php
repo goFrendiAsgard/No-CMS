@@ -107,7 +107,6 @@ class Blog extends CMS_Controller {
         $crud->change_field_type('author_user_id', 'hidden');
         $crud->change_field_type('date', 'hidden');
         
-        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'blog_article');        
@@ -131,7 +130,6 @@ class Blog extends CMS_Controller {
         $crud->set_subject('Category');
         $crud->set_relation_n_n('Articles', 'blog_category_article', 'blog_article', 'category_id', 'article_id' , 'article_title');
 
-        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'blog_category');

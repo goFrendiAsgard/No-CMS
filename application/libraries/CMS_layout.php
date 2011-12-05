@@ -53,24 +53,19 @@ class CMS_layout
     }
     
     function build_widget($widget_array){
-        $str = '<div id="layout_widget_container"></div>';
-            foreach($widget_array as $widget){
+        $str = '';
+        foreach($widget_array as $widget){
             $str .= '
                 <script type="text/javascript">
                     $(document).ready(function(){                        
                         $.ajax({
-                            url : "'.base_url().'index.php/main/cms_only_content/true",
-                            async : false,
+                            url : "'.base_url().'index.php/'.$widget['url'].'",
+                            type : "POST",
+                            data : {_as_widget : true},
                             success : function(response){
-                                    $.ajax({
-                                        url : "'.base_url().'index.php/'.$widget['url'].'",
-                                        async : false,
-                                        success : function(response){
-                                          $("#layout_widget_container_'.$widget['widget_name'].'").append("<h4>'.$widget['title'].'</h4>");
-                                          $("#layout_widget_container_'.$widget['widget_name'].'").append(response);
-                                          $("#layout_widget_container_'.$widget['widget_name'].'").append("<br />");                                      
-                                        }
-                                    });
+                              $("#layout_widget_container_'.$widget['widget_name'].'").append("<h4>'.$widget['title'].'</h4>");
+                              $("#layout_widget_container_'.$widget['widget_name'].'").append(response);
+                              $("#layout_widget_container_'.$widget['widget_name'].'").append("<br />");                                      
                             }
                         });
 

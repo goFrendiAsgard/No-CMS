@@ -129,7 +129,7 @@ class CMS_Module_Installer extends CMS_Controller {
         );
         $this->db->insert('cms_navigation',$data);        
     }
-    protected function remove_privilege($widget_name){
+    protected function remove_widget($widget_name){
         $SQL = "SELECT widget_id FROM cms_widget WHERE widget_name='".addslashes($widget_name)."'";
         $query = $this->db->query($SQL);
         

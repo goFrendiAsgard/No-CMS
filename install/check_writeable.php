@@ -6,7 +6,7 @@
     }
     if(!is_writable('../application/config/routes.php')){
         $return["success"] = FALSE;
-        $return["message"].= "application/config/database.php is not writeable<br />";
+        $return["message"].= "application/config/routes.php is not writeable<br />";
     }
     
     echo json_encode($return);

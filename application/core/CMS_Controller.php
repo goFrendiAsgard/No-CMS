@@ -77,8 +77,7 @@ class CMS_Controller extends CI_Controller{
         
         //get max_menu_depth from configuration
         if(!isset($parent_id)){
-            $this->config->load('cms', true);
-            $max_menu_depth = $this->config->config['cms']['max_menu_depth'];
+            $max_menu_depth = $this->get_config('max_menu_depth');
         }
         
         if($max_menu_depth>0){
@@ -400,10 +399,10 @@ class CMS_Controller extends CI_Controller{
     /** 
      * @author : goFrendiAsgard
      * @param : view_url, data, navigation_name, privilege_required
-     * @desc : replace $this->load->view. This method will also load header, menu etc except there are cms_partial call
+     * @desc : replace $this->load->view. This method will also load header, menu etc except there are cms_only_content call before
      */
     protected function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL){  
-                
+               
         //check allowance
         if(!isset($navigation_name) || $this->_allow_navigate($navigation_name)){
             if(!isset($privilege_required)){
@@ -423,16 +422,15 @@ class CMS_Controller extends CI_Controller{
         
         //if allowed then show, else don't
         if($allowed){
-            if($this->cms_only_content()){
+            if($this->cms_only_content() || (isset($_REQUEST['_as_widget']))){
                 $this->load->view($view_url, $data);
                 $this->cms_only_content(false);
             }else{
-                //get configuration
-                $this->config->load('cms', true);
-                $data_partial['site_title'] = $this->config->config['cms']['site_title'];
-                $data_partial['site_slogan'] = $this->config->config['cms']['site_slogan'];
-                $data_partial['site_footer'] = $this->config->config['cms']['site_footer'];
-                $data_partial['site_theme'] = $this->config->config['cms']['site_theme'];
+                //get configuration                
+                $data_partial['site_name'] = $this->get_config('site_name');
+                $data_partial['site_slogan'] = $this->get_config('site_slogan');
+                $data_partial['site_footer'] = $this->get_config('site_footer');
+                $data_partial['site_theme'] = $this->get_config('site_theme');
                 
                 //get navigations
                 $this->load->library('CMS_layout');
@@ -541,11 +539,10 @@ class CMS_Controller extends CI_Controller{
             $this->load->library('email');
             
             //send activation email to user
-            $this->config->load('cms', true);
-            $email_address = $this->config->config['cms']['cms_email_address'];
-            $email_name = $this->config->config['cms']['cms_email_name'];
-            $email_subject = $this->config->config['cms']['cms_email_forgot_subject'];
-            $email_message = $this->config->config['cms']['cms_email_forgot_message'];
+            $email_address = $this->get_config('cms_email_address');
+            $email_name = $this->get_config('cms_email_name');
+            $email_subject = $this->get_config('cms_email_forgot_subject');
+            $email_message = $this->get_config('cms_email_forgot_message');
             $activation_link = base_url('index.php/main/forgot/'.$activation_code);
             
             $email_message = str_replace('@realname', $real_name, $email_message);
@@ -601,5 +598,54 @@ class CMS_Controller extends CI_Controller{
                 );
         if($query->num_rows()>0) return true;
         else return false;
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
+     * @param : name, value
+     * @desc : set config
+     */
+    protected function set_config($name, $value){
+        $query = $this->db->query(
+                "SELECT config_id FROM cms_config WHERE
+                    config_name = '".  addslashes($name)."'"
+                );
+        if($query->num_rows()>0){
+            $data = array("value"=>$value);
+            $where = array("config_name"=>$name);
+            $this->db->update("cms_config",$data,$where);
+        }
+        else{
+            $data = array(
+                "value"=>$value,
+                "config_name"=>$name
+            );
+            $this->db->insert("cms_config",$data);
+        }
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
+     * @param : name
+     * @desc : unset config
+     */
+    protected function unset_config($name){
+        $where = array("config_name"=>$name);
+        $query = $this->db->delete("cms_config",$where);
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
+     * @param : name
+     * @desc : get config
+     */
+    protected function get_config($name){
+        $query = $this->db->query(
+                "SELECT `value` FROM cms_config WHERE
+                    config_name = '".  addslashes($name)."'"
+                );
+        foreach($query->result() as $row){
+            return $row->value;
+        }
     }
 }

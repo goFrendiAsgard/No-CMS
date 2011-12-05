@@ -42,8 +42,7 @@ LAYOUT
 ###################
 You can make your own template in template directory (please refer to default theme)
 
-For your layout setting (header, slogan, etc) you can edit
-application/config/cms.php <-- promise me you won't break anything :D
+For your layout setting (header, slogan, etc) you can use "Configuration Management"
 
 ###################
 CONTRIBUTORS
@@ -54,7 +53,7 @@ CONTRIBUTORS
 * Phil Sturgeon <-- The one who make Phil Sturgeon's template. The plugin he made allowed me to make separation between layouts
 * John Skoumbourdis <-- The one who make groceryCRUD. It boost the development of Neo-CMS by provide very easy CRUD
 * Wahyu Eka Putra <-- The one who reports bug(s)
-* Ari Mogi <-- The one who proposed to use javascript for div layout_center's height
+* I Komang Ari Mogi <-- The one who proposed to use javascript for div layout_center's height
 
 ###################
 FEATURES LIST
@@ -77,6 +76,12 @@ FUTURE FEATURES
 * Comment in blog module
 * Photo album module
 * E commerce module
+
+###################
+TODO
+###################
+* Documentation
+* Live Demo
 
 
 #####################
