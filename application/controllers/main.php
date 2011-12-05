@@ -316,7 +316,7 @@ class Main extends CMS_Controller {
         //$crud->set_theme('datatables');
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'main_navigation_management');
+        $this->view('grocery_CRUD', $output, 'main_widget_management');
     }
     
     public function config(){

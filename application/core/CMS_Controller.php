@@ -527,7 +527,7 @@ class CMS_Controller extends CI_Controller{
                 );
         foreach($query->result() as $row){
             $user_id = $row->user_id;
-            $email = $row->email;
+            $email_to_address = $row->email;
             $user_name = $row->user_name;
             $real_name = $row->real_name;
             $activation_code = random_string();
@@ -539,8 +539,8 @@ class CMS_Controller extends CI_Controller{
             $this->load->library('email');
             
             //send activation email to user
-            $email_address = $this->get_config('cms_email_address');
-            $email_name = $this->get_config('cms_email_name');
+            $email_from_address = $this->get_config('cms_email_address');
+            $email_from_name = $this->get_config('cms_email_name');
             $email_subject = $this->get_config('cms_email_forgot_subject');
             $email_message = $this->get_config('cms_email_forgot_message');
             $activation_link = base_url('index.php/main/forgot/'.$activation_code);
@@ -549,14 +549,7 @@ class CMS_Controller extends CI_Controller{
             $email_message = str_replace('@activation_link', $activation_link, $email_message);
             
             //send email to user
-            $this->email->from($email_address, $email_name);
-            $this->email->to($email); 
-            $this->email->subject($email_subject);
-            $this->email->message($email_message);	
-
-            $this->email->send();
-
-            echo $this->email->print_debugger();
+            $this->send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);
             return true;
         }
         return false;
@@ -586,6 +579,41 @@ class CMS_Controller extends CI_Controller{
     
     /** 
      * @author : goFrendiAsgard
+     * @param : from_address, from_name, to_address, subject, message
+     * @desc : generate activation code, 
+     */
+    protected function send_email($from_address, $from_name, $to_address, $subject, $message){                    
+        //send email to user
+        $config['cms_email_useragent'] = $this->get_config('cms_email_useragent');
+        $config['cms_email_protocol'] = $this->get_config('cms_email_protocol');
+        $config['cms_email_mailpath'] = $this->get_config('cms_email_mailpath');
+        $config['cms_email_smtp_host'] = $this->get_config('cms_email_smtp_host');
+        $config['cms_email_smtp_user'] = $this->get_config('cms_email_smtp_user');
+        $config['cms_email_smtp_pass'] = $this->get_config('cms_email_smtp_pass');
+        $config['cms_email_smtp_port'] = $this->get_config('cms_email_smtp_port');
+        $config['cms_email_smtp_timeout'] = $this->get_config('cms_email_smtp_timeout');
+        $config['cms_email_wordwrap'] = (boolean)$this->get_config('cms_email_wordwrap');
+        $config['cms_email_wrapchars'] = $this->get_config('cms_email_wrapchars');
+        $config['cms_email_mailtype'] = $this->get_config('cms_email_mailtype');
+        $config['cms_email_charset'] = $this->get_config('cms_email_charset');
+        $config['cms_email_validate'] = (boolean)$this->get_config('cms_email_validate');
+        $config['cms_email_priority'] = $this->get_config('cms_email_priority');
+        $config['cms_email_crlf'] = $this->get_config('cms_email_crlf');
+        $config['cms_email_newline'] = $this->get_config('cms_email_newline');
+        $config['cms_email_bcc_batch_mode'] = (boolean)$this->get_config('cms_email_bcc_batch_mode');
+        $config['cms_email_bcc_batch_size'] = $this->get_config('cms_email_bcc_batch_size');
+        
+        $this->email->initialize($config);
+        $this->email->from($from_address, $from_name);
+        $this->email->to($to_address); 
+        $this->email->subject($subject);
+        $this->email->message($message);	
+
+        $this->email->send();
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
      * @param : activation_code 
      * @desc : valid_activation_code
      */
@@ -602,16 +630,17 @@ class CMS_Controller extends CI_Controller{
     
     /** 
      * @author : goFrendiAsgard
-     * @param : name, value
+     * @param : name, value, description
      * @desc : set config
      */
-    protected function set_config($name, $value){
+    protected function set_config($name, $value, $description = NULL){
         $query = $this->db->query(
                 "SELECT config_id FROM cms_config WHERE
                     config_name = '".  addslashes($name)."'"
                 );
         if($query->num_rows()>0){
             $data = array("value"=>$value);
+            if(isset($description))$data['description'] = $description;
             $where = array("config_name"=>$name);
             $this->db->update("cms_config",$data,$where);
         }
@@ -620,6 +649,7 @@ class CMS_Controller extends CI_Controller{
                 "value"=>$value,
                 "config_name"=>$name
             );
+            if(isset($description))$data['description'] = $description;
             $this->db->insert("cms_config",$data);
         }
     }

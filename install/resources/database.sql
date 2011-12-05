@@ -244,7 +244,25 @@ INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VA
 (6, 'cms_email_address', 'no-reply@Neo-CMS.com', '<p>Email address</p>'),
 (7, 'cms_email_name', 'admin of Neo-CMS', '<p>Email name</p>'),
 (8, 'cms_email_forgot_subject', 'Re-activate your account at Neo-CMS', '<p>Email subject</p>'),
-(9, 'cms_email_forgot_messasge', 'Dear, @realname<br />Click <a href="@activation_link">@activation_link</a> to reactivate your account', '<p>Email message</p>');
+(9, 'cms_email_forgot_message', 'Dear, @realname<br />Click <a href="@activation_link">@activation_link</a> to reactivate your account', '<p>Email message</p>'),
+(10, 'cms_email_useragent', 'Codeigniter', '<p>Default : CodeIgniter</p>'),
+(11, 'cms_email_protocol', 'smtp', 'Default : smtp, Alternatives : mail, sendmail, smtp'),
+(12, 'cms_email_mailpath', '/usr/sbin/sendmail','Default : /usr/sbin/sendmail'),
+(13, 'cms_email_smtp_host', '','eg : ssl://smtp.googlemail.com'),
+(14, 'cms_email_smtp_user', '','eg : your_gmail_address@gmail.com'),
+(15, 'cms_email_smtp_pass', '','your password'),
+(16, 'cms_email_smtp_port', '465','smtp port, default : 465'),
+(17, 'cms_email_smtp_timeout', '30','default : 30'),
+(18, 'cms_email_wordwrap', 'TRUE', 'Enable word-wrap. Default : true, Alternatives : true, false'),
+(19, 'cms_email_wrapchars', '76	', 'Character count to wrap at.'),
+(20, 'cms_email_mailtype', 'html', 'Type of mail. If you send HTML email you must send it as a complete web page. Make sure you don\'t have any relative links or relative image paths otherwise they will not work. Default : html, Alternatives : html, text'),
+(21, 'cms_email_charset', 'utf-8', 'Character set (utf-8, iso-8859-1, etc.).'),
+(22, 'cms_email_validate', 'FALSE', 'Whether to validate the email address. Default: true, Alternatives : true, false'),
+(23, 'cms_email_priority', '3', '1, 2, 3, 4, 5	Email Priority. 1 = highest. 5 = lowest. 3 = normal.'),
+(24, 'cms_email_crlf', '\n', '"\r\n" or "\n" or "\r"	Newline character. (Use "\r\n" to comply with RFC 822).'),
+(25, 'cms_email_newline', '\n', '"\r\n" or "\n" or "\r"	Newline character. (Use "\r\n" to comply with RFC 822).'),
+(26, 'cms_email_bcc_batch_mode', 'FALSE', 'Enable BCC Batch Mode. Default: false, Alternatives: true'),
+(27, 'cms_email_bcc_batch_size', '200', 'Number of emails in each BCC batch.');
 /*split*/
 
 INSERT INTO `cms_group_user` (`group_id`, `user_id`) VALUES
