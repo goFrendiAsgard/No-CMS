@@ -12,7 +12,7 @@
             }
             div#layout_header{
                 background-color : #CFCFCF;
-                padding : 10px;
+                padding : 5px;
                 font-size : small;
             }
             div#layout_navigation{ 
@@ -20,7 +20,7 @@
             }
             div#layout_content{
                 min-height : 300px;
-                padding : 20px;
+                padding : 5px;
             }
             div#layout_footer{
                 text-align : center;
@@ -55,7 +55,7 @@
                 padding : 3px;
                 margin : 3px;
             }
-            .layout_nav a, #layout_button_menu{
+            #layout_header a, #layout_footer a, #layout_center a{
                 font-family : serif;
                 color : black;
             }
@@ -94,17 +94,24 @@
                     return false;
                 });
                 
-                $("#layout_button_menu").click(function(){
+                $(".layout_button_menu").click(function(){
                     $("#layout_content").hide();
                     $("#layout_widget").hide();
                     $("#layout_navigation").show();                    
                     return false;
                 });
                 
-                $("#layout_button_widget").click(function(){
+                $(".layout_button_widget").click(function(){
                     $("#layout_content").hide();
                     $("#layout_navigation").hide();
                     $("#layout_widget").show();                    
+                    return false;
+                });
+                
+                $(".layout_button_content").click(function(){
+                    $("#layout_navigation").hide();
+                    $("#layout_widget").hide();
+                    $("#layout_content").show();                    
                     return false;
                 });
                 
@@ -112,6 +119,7 @@
                     $("#layout_navigation").hide();
                     $("#layout_widget").hide();
                     $("#layout_content").show();
+                    return false;
                 });
 
             });
@@ -120,17 +128,29 @@
     <body>
         <div id="layout_header"><?php echo $template['partials']['header'];?></div>
         <div id="layout_center">
-            <div id="layout_navigation" class="invisible"><?php echo $template['partials']['navigation'];?></div>
+            <div id="layout_navigation" class="invisible">
+                <div>
+                    <a class="layout_button_widget" href="#">Show Widget</a> ||
+                    <a class="layout_button_content" href="#">Show Content</a>
+                </div>
+                <?php echo $template['partials']['navigation'];?>
+            </div>
             <div id="layout_content">                
                 <div id="layout_nav_path">
-                    <a id="layout_button_menu" href="#">Show Menu</a> ||
-                    <a id="layout_button_widget" href="#">Show Widget</a> || 
+                    <a class="layout_button_menu" href="#">Show Menu</a> ||
+                    <a class="layout_button_widget" href="#">Show Widget</a> || 
                     You are here : <?php echo $navigation_path;?>
                 </div>
                 <br />
                 <?php echo $template['body'];?>
             </div>
-            <div id="layout_widget" class="invisible"><?php echo $template['partials']['widget'] ?></div>
+            <div id="layout_widget" class="invisible">
+                <div>
+                    <a class="layout_button_menu" href="#">Show Menu</a> ||
+                    <a class="layout_button_content" href="#">Show Content</a>
+                </div>
+                <?php echo $template['partials']['widget'] ?>
+            </div>
         </div>
         <div id="layout_footer"><?php echo $template['partials']['footer'];?></div>
     </body>

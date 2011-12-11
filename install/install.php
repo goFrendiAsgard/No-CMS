@@ -80,7 +80,7 @@ But <i>(depend on your situation)</i> you still have some more things to do:
     <li>Change application/config/database.php into readOnly (chmod 755 /application/config/database.php)<br />
         Why? Because anyone with ftp access or whatever can change the content of the file manually
     </li>
-    <li>Click <a href="../">here</a><br />
+    <li>Click <a href="../"><b>here</b></a><br />
         Why? Because you have do everything needed, you want to get rid of this page, 
         and start your new adventure with Neo-CMS
     </li>

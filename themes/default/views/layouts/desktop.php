@@ -14,23 +14,22 @@
                 z-index : 0;
             }
             div#layout_header{
-                height : 125px;
                 background-color : #CFCFCF;
                 padding : 20px;
                 font-size : small;
             }
             div#layout_navigation {
                 float:left;
-                width:300px;
+                width:200px;
                 padding : 10px;
             }
             div#layout_widget {
                 float:right;
-                width:200px;
+                width:150px;
                 padding : 10px;
             }
             div#layout_content {                
-                margin : 0 200px 0 300px;
+                margin : 0 150px 0 200px;
                 padding : 20px;
             }
             div#layout_footer{
@@ -71,14 +70,10 @@
                 padding : 3px;
                 margin : 3px;
             }
-            .layout_nav a{
-                font-family : serif;
-                color : black;
-            }
             li.layout_nav_hot{
                 background-color : #AAAAAA;
             }
-            #layout_nav_path a{
+            #layout_header a, #layout_footer a, #layout_center a{
                 font-family : serif;
                 color : black;
             }
