@@ -1,4 +1,4 @@
-<?php echo $navigations; 
+<?php
     function build_menu($navigation_array, $path, $invisible = FALSE){
         if(count($navigation_array)==0) return '';//just exit and do nothing
         

@@ -25,11 +25,11 @@
             }
             div#layout_widget {
                 float:right;
-                width:150px;
+                width:160px;
                 padding : 10px;
             }
             div#layout_content {                
-                margin : 0 150px 0 200px;
+                margin : 0 160px 0 200px;
                 padding : 20px;
             }
             div#layout_footer{
