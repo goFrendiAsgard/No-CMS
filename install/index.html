@@ -22,7 +22,8 @@
             var writeable_checked = check_writeable();
             var connection_checked = check_connection(); 
             var password_checked = check_password();
-            var success = writeable_checked && connection_checked && password_checked;
+            var curl_checked = check_curl();
+            var success = writeable_checked && connection_checked && password_checked & curl_checked;
             if(!success){
                 $("#infoMessage").append('<ul>'+error_message+'</ul>');
             }else{
@@ -85,6 +86,24 @@
                     'Administrator Password Confirmation doesn\'t match</li>';
                 return false;
             }
+        }
+        
+        function check_curl(){
+            var result = false;
+            $.ajax({
+                type : "POST",
+                url : "check_curl.php",
+                dataType: "json",
+                async : false,
+                success : function(response){
+                    result = response.success;
+                    if(!result){
+                        error_message += '<li>'+response.message+'</li>';
+                    }
+                    
+                }
+            });
+            return result;
         }
         
         

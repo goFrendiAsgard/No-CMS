@@ -115,7 +115,7 @@
             <div id="layout_navigation"><?php echo $template['partials']['navigation'];?></div>
             <div id="layout_widget">WIDGET<hr /><?php echo $template['partials']['widget'] ?></div>
             <div id="layout_content">
-                <div id="layout_nav_path">You are here : <?php echo $navigation_path;?></div>
+                <div id="layout_nav_path">You are here : <?php echo $template['partials']['navigation_path']?></div>
                 <br />
                 <?php echo $template['body'];?>
             </div>

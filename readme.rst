@@ -66,7 +66,7 @@ FEATURES LIST
 * Integrated groceryCRUD
 * Mobile and Desktop Layout
 * Friendly installation
-* Forgot password (You should edit application/config/cms.php and application/config/email.php)
+* Forgot password
 * Readmore in blog module
 * Widget and Widget Management
 
@@ -74,15 +74,16 @@ FEATURES LIST
 FUTURE FEATURES
 ###################
 * Comment in blog module
-* Photo album module
+* Module Generator
+* Photo album module (included in blog module)
 * E commerce module
 
 ###################
 TODO
 ###################
+* Use cms prefix for every public function inside CMS_Controller & CMS_Model
 * Documentation
 * Live Demo
-
 
 #####################
 BUGS AND KNOWN ISSUES

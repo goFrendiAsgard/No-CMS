@@ -56,22 +56,22 @@ class CMS_layout
         $str = '';
         foreach($widget_array as $widget){
             $str .= '
+                <div id="layout_widget_container_'.$widget['widget_name'].'"></div>
                 <script type="text/javascript">
-                    $(document).ready(function(){                        
+                    $(document).ready(function(){                      
                         $.ajax({
                             url : "'.base_url().'index.php/'.$widget['url'].'",
                             type : "POST",
+                            dataType : "html",
                             data : {_as_widget : true},
                             success : function(response){
                               $("#layout_widget_container_'.$widget['widget_name'].'").append("<h4>'.$widget['title'].'</h4>");
                               $("#layout_widget_container_'.$widget['widget_name'].'").append(response);
-                              $("#layout_widget_container_'.$widget['widget_name'].'").append("<br />");                                      
+                              $("#layout_widget_container_'.$widget['widget_name'].'").append("<br />"); 
                             }
                         });
-
                     });
-                </script>
-                <div id="layout_widget_container_'.$widget['widget_name'].'"></div>
+                </script>                
                 ';
         }
         return $str;

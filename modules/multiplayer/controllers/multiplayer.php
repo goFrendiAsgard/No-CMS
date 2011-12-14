@@ -1,5 +1,5 @@
 <?php
-class Multiplayer extends CMS_Controller{
+class Multiplayer extends CMS_Controller{   
     
     //buat board yang ber canvas
     public function index(){
@@ -7,7 +7,8 @@ class Multiplayer extends CMS_Controller{
     }
     
     //kirim posisi ke client
-    public function get_position(){        
+    public function get_position(){  
+        $this->load->model('Multiplayer_Model');
         $SQL = "SELECT user_name, x,y,z,r,g,b FROM cms_user 
             LEFT JOIN multiplayer_position 
             ON cms_user.user_id = multiplayer_position.user_id";

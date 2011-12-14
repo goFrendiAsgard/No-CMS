@@ -204,8 +204,8 @@ class CMS_Controller extends CI_Controller{
                 $this->load->library('CMS_layout');
                 $navigations = $this->cms_navigations();
                 $navigation_path = $this->get_navigation_path($navigation_name);
-                $data_partial['navigations'] = $this->cms_layout->build_menu($navigations, $navigation_path);
-                $data_partial['navigation_path'] = $this->cms_layout->build_menu_path($navigation_path);
+                $data_partial['navigations'] = $navigations;//$this->cms_layout->build_menu($navigations, $navigation_path);
+                $data_partial['navigation_path'] = $navigation_path;//$this->cms_layout->build_menu_path($navigation_path);
                 $data_partial['user_name'] = $this->cms_username();
                 
                 //determine theme from configuration
@@ -213,7 +213,8 @@ class CMS_Controller extends CI_Controller{
                 
                 //get widget
                 $widget = $this->cms_widgets();
-                $widget = $this->cms_layout->build_widget($widget);
+                $data_partial['widget'] = $widget;
+                //$widget = $this->cms_layout->build_widget($widget);
                 
                 //set layout and partials
                 if($this->is_mobile){
@@ -221,13 +222,15 @@ class CMS_Controller extends CI_Controller{
                     $this->template->set_partial('header', 'layouts/partials/mobile/header.php', $data_partial);
                     $this->template->set_partial('navigation', 'layouts/partials/mobile/navigation.php', $data_partial);
                     $this->template->set_partial('footer', 'layouts/partials/mobile/footer.php', $data_partial);
-                    $this->template->inject_partial('widget', $widget, $data_partial);
+                    $this->template->set_partial('widget', 'layouts/partials/mobile/widget.php', $data_partial);
+                    $this->template->set_partial('navigation_path', 'layouts/partials/mobile/navigation_path.php', $data_partial);
                 }else{
                     $this->template->set_layout('desktop');
                     $this->template->set_partial('header', 'layouts/partials/desktop/header.php', $data_partial);
                     $this->template->set_partial('navigation', 'layouts/partials/desktop/navigation.php', $data_partial);
                     $this->template->set_partial('footer', 'layouts/partials/desktop/footer.php', $data_partial);
-                    $this->template->inject_partial('widget', $widget, $data_partial);
+                    $this->template->set_partial('widget', 'layouts/partials/desktop/widget.php', $data_partial);
+                    $this->template->set_partial('navigation_path', 'layouts/partials/desktop/navigation_path.php', $data_partial);
                 }
                 
                 $this->template->build($view_url, $data);

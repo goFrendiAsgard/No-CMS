@@ -139,7 +139,7 @@
                 <div id="layout_nav_path">
                     <a class="layout_button_menu" href="#">Show Menu</a> ||
                     <a class="layout_button_widget" href="#">Show Widget</a> || 
-                    You are here : <?php echo $navigation_path;?>
+                    You are here : <?php echo $template['partials']['navigation_path'];?>
                 </div>
                 <br />
                 <?php echo $template['body'];?>
