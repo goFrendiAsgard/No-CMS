@@ -30,7 +30,7 @@
             <h4>Make Your Custom Module</h4>
             <ul>
                 <li><a href="help/topic/module_directory_structure">Module's Directory Structure</a></li>
-                <li>Module's Models</li>
+                <li><a href="help/topic/module_model">Module's Models</a></li>
                 <li>Module's Views</li>
                 <li>Module's Controllers</li>
                 <li>Make Your Module Install-able

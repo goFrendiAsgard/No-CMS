@@ -45,6 +45,8 @@ $(function(){
 		createCookie('per_page_'+unique_hash,$('#per_page').val(),1);
 		createCookie('hidden_ordering_'+unique_hash,$('#hidden-ordering').val(),1);
 		createCookie('hidden_sorting_'+unique_hash,$('#hidden-sorting').val(),1);
+		createCookie('search_text_'+unique_hash,$('#search_text').val(),1);
+		createCookie('search_field_'+unique_hash,$('#search_field').val(),1);
 		
 		return false;
 	});
@@ -120,7 +122,7 @@ $(function(){
 	$('.delete-row').live('click', function(){
 		var delete_url = $(this).attr('href');
 		
-		if(confirm('Are you sure that you want to delete this '+subject+'?'))
+		if( confirm( message_alert_delete ) )
 		{
 			$.ajax({
 				url: delete_url,
@@ -152,13 +154,20 @@ $(function(){
 	var cookie_per_page  = readCookie('per_page_'+unique_hash);
 	var hidden_ordering  = readCookie('hidden_ordering_'+unique_hash);
 	var hidden_sorting  = readCookie('hidden_sorting_'+unique_hash);
+	var cookie_search_text  = readCookie('search_text_'+unique_hash);
+	var cookie_search_field  = readCookie('search_field_'+unique_hash);
 	
-	if(cookie_crud_page != null && cookie_per_page != null)
+	if(cookie_crud_page !== null && cookie_per_page !== null)
 	{		
 		$('#crud_page').val(cookie_crud_page);
 		$('#per_page').val(cookie_per_page);		
 		$('#hidden-ordering').val(hidden_ordering);
 		$('#hidden-sorting').val(hidden_sorting);
+		$('#search_text').val(cookie_search_text);
+		$('#search_field').val(cookie_search_field);
+		
+		if(cookie_search_text !== '')
+			$('#quickSearchButton').trigger('click');
 		
 		$('#filtering_form').trigger('submit');
 	}
@@ -166,6 +175,9 @@ $(function(){
 
 function displaying_and_pages()
 {
+	if($('#crud_page').val() == 0)
+		$('#crud_page').val('1');	
+	
 	var crud_page 		= parseInt( $('#crud_page').val()) ;
 	var per_page	 	= parseInt( $('#per_page').val() );
 	var total_items 	= parseInt( $('#total_items').html() );
@@ -181,8 +193,4 @@ function displaying_and_pages()
 		$('#page-ends-to').html( total_items );
 	else
 		$('#page-ends-to').html( crud_page*per_page );
-	
-	if(crud_page == 0)
-		$('#crud_page').val('1');
-	
 }

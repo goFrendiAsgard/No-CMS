@@ -12,13 +12,13 @@ class CMS_Module_Installer extends CMS_Controller {
     }
     
     public function install(){
-        if($this->have_privilege('cms_install_module')){
+        if($this->cms_have_privilege('cms_install_module')){
             $this->register_module();
             $this->do_install();            
         }        
     }
     public function uninstall(){
-        if($this->have_privilege('cms_install_module')){
+        if($this->cms_have_privilege('cms_install_module')){
             $this->unregister_module();
             $this->do_uninstall();
         }

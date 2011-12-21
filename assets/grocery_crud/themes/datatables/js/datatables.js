@@ -2,7 +2,23 @@ $(document).ready(function() {
 	oTable = $('#groceryCrudTable').dataTable({
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers",
-		"bStateSave": true
+		"bStateSave": true,
+		"oLanguage":{
+		    "sProcessing":   list_loading,
+		    "sLengthMenu":   show_entries_string,
+		    "sZeroRecords":  list_no_items,
+		    "sInfo":         displaying_paging_string,
+		    "sInfoEmpty":   list_zero_entries,
+		    "sInfoFiltered": filtered_from_string,
+		    "sSearch":       search_string+":",
+		    "oPaginate": {
+		        "sFirst":    paging_first,
+		        "sPrevious": paging_previous,
+		        "sNext":     paging_next,
+		        "sLast":     paging_last
+		    }		
+		}
+
 	});
 
 	$('a[role=button]').live("mouseover mouseout", function(event) {

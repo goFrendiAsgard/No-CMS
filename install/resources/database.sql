@@ -26,6 +26,8 @@ DROP TABLE IF EXISTS `cms_user`;
 /*split*/
 DROP TABLE IF EXISTS `cms_authorization`;
 /*split*/
+DROP TABLE IF EXISTS `ci_sessions`;
+/*split*/
 
 CREATE TABLE `cms_authorization` (
   `authorization_id` tinyint(4) unsigned NOT NULL AUTO_INCREMENT,
@@ -52,7 +54,10 @@ CREATE TABLE `cms_widget` (
   `description` text,
   `url` varchar(45) DEFAULT NULL,
   `authorization_id` tinyint(4) unsigned NOT NULL DEFAULT '1',
-  `active` tinyint(3) unsigned DEFAULT '0',
+  `active` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `index` int(20) NOT NULL DEFAULT '0',
+  `is_static` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `static_content` text,
   PRIMARY KEY (`widget_id`),
   UNIQUE KEY `widget_name` (`widget_name`),
   KEY `authorization_id` (`authorization_id`),
@@ -68,7 +73,10 @@ CREATE TABLE `cms_navigation` (
   `description` text,
   `url` varchar(45) DEFAULT NULL,
   `authorization_id` tinyint(4) unsigned NOT NULL DEFAULT '1',
-  `is_root` tinyint(3) unsigned DEFAULT '0',
+  `is_root` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `index` int(20) NOT NULL DEFAULT '0',
+  `is_static` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `static_content` text,
   PRIMARY KEY (`navigation_id`),
   UNIQUE KEY `navigation_name` (`navigation_name`),
   KEY `parent_id` (`parent_id`),
@@ -169,10 +177,21 @@ CREATE TABLE `cms_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
+CREATE TABLE IF NOT EXISTS  `ci_sessions` (
+    `session_id` varchar(40) DEFAULT '0' NOT NULL,
+    `ip_address` varchar(16) DEFAULT '0' NOT NULL,
+    `user_agent` varchar(120) NOT NULL,
+    `last_activity` int(10) unsigned DEFAULT 0 NOT NULL,
+    `user_data` text NOT NULL,
+    PRIMARY KEY (`session_id`),
+    KEY `last_activity_idx` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;;
+/*split*/
+
 DELIMITER ;;
 /*split*/
-CREATE TRIGGER `trg_before_insert_cms_navigation` BEFORE INSERT ON `cms_navigation` FOR EACH ROW IF NEW.is_root = 1 THEN
- SET NEW.parent_id = NULL; 
+CREATE TRIGGER `trg_before_insert_cms_navigation` BEFORE INSERT ON `cms_navigation` FOR EACH ROW 
+IF NEW.is_root = 1 THEN SET NEW.parent_id = NULL;
 END IF
 ;;
 /*split*/
@@ -181,19 +200,20 @@ DELIMITER ;
 
 DELIMITER ;;
 /*split*/
-CREATE TRIGGER `trg_before_update_cms_navigation` BEFORE UPDATE ON `cms_navigation` FOR EACH ROW IF NEW.is_root = 1 THEN
- SET NEW.parent_id = NULL; 
+CREATE TRIGGER `trg_before_update_cms_navigation` BEFORE UPDATE ON `cms_navigation` FOR EACH ROW 
+IF NEW.is_root = 1 THEN SET NEW.parent_id = NULL;
 END IF
 ;;
 /*split*/
 DELIMITER ;
 /*split*/
+
 
 INSERT INTO `cms_authorization` (`authorization_id`, `authorization_name`, `description`) VALUES
 (1, 'Everyone', 'All visitor of the web are permitted (e.g:view blog content)'),
 (2, 'Unauthenticated', 'Only non-member visitor, they who hasn''t log in yet (e.g:view member registration page)'),
-(3, 'Authenticated (Regardless of Authorization)', 'Only member (e.g:change password)'),
-(4, 'Authenticated And Authorized', 'Only member with certain privilege (depend on group)');
+(3, 'Authenticated', 'Only member (e.g:change password)'),
+(4, 'Authorized', 'Only member with certain privilege (depend on group)');
 /*split*/
 
 INSERT INTO `cms_group` (`group_id`, `group_name`, `description`) VALUES
@@ -205,29 +225,38 @@ INSERT INTO `cms_user` (`user_id`, `user_name`, `email`, `password`, `real_name`
 (1, '@adm_username', '@adm_email', '@adm_password', '@adm_realname', 1);
 /*split*/
 
-
-INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `is_root`) VALUES
-(1, 'main_login', NULL, 'Login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1),
-(2, 'main_forgot', NULL, 'Forgot password', '<p>Accidentally forgot password</p>', 'main/forgot', 2, 1),
-(3, 'main_logout', NULL, 'Logout', '<p>Logout for deauthentication</p>', 'main/logout', 3, 1),
-(4, 'main_management', NULL, 'CMS Management', '<p>The main management of the CMS. Including User, Group, Privilege and Navigation Management</p>', 'main/management', 4, 1),
-(5, 'main_register', NULL, 'Register', '<p>New User Registration</p>', 'main/register', 2, 1),
-(6, 'main_change_profile', NULL, 'Change Profile', '<p>Change Current Profile</p>', 'main/change_profile', 3, 1),
-(7, 'main_group_management', 4, 'Group Management', '<p>Group Management</p>', 'main/group', 4, 0),
-(8, 'main_navigation_management', 4, 'Navigation Management', '<p>Navigation management</p>', 'main/navigation', 4, 0),
-(9, 'main_privilege_management', 4, 'Privilege Management', '<p>Privilege Management</p>', 'main/privilege', 4, 0),
-(10, 'main_user_management', 4, 'User Management', '<p>Manage User</p>', 'main/user', 4, 0),
-(11, 'main_module_management', 4, 'Module Management', '<p>Install Or Uninstall Thirdparty Module</p>', 'main/module_list', 4, 0),
-(12, 'main_widget_management', 4, 'Widget Management', '<p>Manage Widgets</p>', 'main/widget', 4, 0),
-(13, 'main_config_management', 4, 'Configuration Management', '<p>Manage Configuration Parameters</p>', 'main/config', 4, 0),
-(14, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1);
+INSERT INTO `cms_module` (`module_id`, `module_name`, `user_id`) VALUES
+(1, 'help', 1);
 /*split*/
 
-INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`) VALUES
-(1, 'widget_main_login', 'Login', '<p>Visitor need to login for authentication</p>', 'main/widget_login', 2, 1),
-(2, 'widget_main_logout', 'User Info', '<p>Logout</p>', 'main/widget_logout', 3, 1),
-(3, 'widget_main_social_plugin', 'Share This Page !!', '<p>Addthis</p>', 'main/widget_social_plugin', 1, 1),
-(4, 'widget_calendar', 'Calendar', 'Indonesian Calendar', 'main/widget_calendar', 1, 1);
+
+INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `is_root`, `index`, `is_static`, `static_content`) VALUES
+(1, 'main_login', NULL, 'Login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1, 0, 0, NULL),
+(2, 'main_forgot', NULL, 'Forgot password', '<p>Accidentally forgot password</p>', 'main/forgot', 2, 1, 0, 0, NULL),
+(3, 'main_logout', NULL, 'Logout', '<p>Logout for deauthentication</p>', 'main/logout', 3, 1, 0, 0, NULL),
+(4, 'main_management', NULL, 'CMS Management', '<p>The main management of the CMS. Including User, Group, Privilege and Navigation Management</p>', 'main/management', 4, 1, 0, 0, NULL),
+(5, 'main_register', NULL, 'Register', '<p>New User Registration</p>', 'main/register', 2, 1, 0, 0, NULL),
+(6, 'main_change_profile', NULL, 'Change Profile', '<p>Change Current Profile</p>', 'main/change_profile', 3, 1, 0, 0, NULL),
+(7, 'main_group_management', 4, 'Group Management', '<p>Group Management</p>', 'main/group', 4, 0, 0, 0, NULL),
+(8, 'main_navigation_management', 4, 'Navigation Management', '<p>Navigation management</p>', 'main/navigation', 4, 0, 0, 0, NULL),
+(9, 'main_privilege_management', 4, 'Privilege Management', '<p>Privilege Management</p>', 'main/privilege', 4, 0, 0, 0, NULL),
+(10, 'main_user_management', 4, 'User Management', '<p>Manage User</p>', 'main/user', 4, 0, 0, 0, NULL),
+(11, 'main_module_management', 4, 'Module Management', '<p>Install Or Uninstall Thirdparty Module</p>', 'main/module_list', 4, 0, 0, 0, NULL),
+(12, 'main_widget_management', 4, 'Widget Management', '<p>Manage Widgets</p>', 'main/widget', 4, 0, 0, 0, NULL),
+(13, 'main_config_management', 4, 'Configuration Management', '<p>Manage Configuration Parameters</p>', 'main/config', 4, 0, 0, 0, NULL),
+(14, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1, 0, 0, NULL),
+(15, 'help', NULL, 'Neo-CMS User guide', NULL, 'help', 1, 1, 0, 0, NULL);
+/*split*/
+
+INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`) VALUES
+(1, 'login', 'Login', 'Visitor need to login for authentication', 'main/widget_login', 2, 1, 0, 0, NULL),
+(2, 'logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 0, 0, NULL),
+(3, 'social_plugin', 'Share This Page !!', '<p>Addthis</p>', 'main/widget_social_plugin', 1, 1, 0, 1, '<!-- AddThis Button BEGIN -->\n<div class="addthis_toolbox addthis_default_style "><a class="addthis_button_preferred_1"></a> <a class="addthis_button_preferred_2"></a> <a class="addthis_button_preferred_3"></a> <a class="addthis_button_preferred_4"></a> <a class="addthis_button_preferred_5"></a> <a class="addthis_button_preferred_6"></a> <a class="addthis_button_preferred_7"></a> <a class="addthis_button_preferred_8"></a> <a class="addthis_button_preferred_9"></a> <a class="addthis_button_preferred_10"></a> <a class="addthis_button_preferred_11"></a> <a class="addthis_button_preferred_12"></a> <a class="addthis_button_preferred_13"></a> <a class="addthis_button_preferred_14"></a> <a class="addthis_button_preferred_15"></a> <a class="addthis_button_preferred_16"></a> <a class="addthis_button_compact"></a> <a class="addthis_counter addthis_bubble_style"></a></div>\n<script src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4ee78d80347aa8df" type="text/javascript"></script>\n<!-- AddThis Button END -->'),
+(4, 'google_search', 'Search', '<p>Search from google</p>', '', 1, 0, 0, 1, '<!-- Google Custom Search Element -->\n<div id="cse" style="width: 100%;">Loading</div>\n<script src="http://www.google.com/jsapi" type="text/javascript"></script>\n<script type="text/javascript">// <![CDATA[\n    google.load(''search'', ''1'');\n    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(''cse'');}, true);\n// ]]></script>'),
+(5, 'google_translate', 'Translate to your language !!', '<p>The famous google translate</p>', '', 1, 1, 0, 1, '<!-- Google Translate Element -->\n<div id="google_translate_element" style="display:block"></div>\n<script>\nfunction googleTranslateElementInit() {\n  new google.translate.TranslateElement({pageLanguage: "af"}, "google_translate_element");\n};\n</script>\n<script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>\n'),
+(6, 'calendar', 'Calendar', 'Indonesian Calendar', '', 1, 0, 0, 1, '<!-------Do not change below this line------->\n<div align="center" height="200px">\n    <iframe align="center" src="http://www.calendarlabs.com/calendars/web-content/calendar.php?cid=1001&uid=162232623&c=22&l=en&cbg=C3D9FF&cfg=000000&hfg=000000&hfg1=000000&ct=1&cb=1&cbc=2275FF&cf=verdana&cp=bottom&sw=0&hp=t&ib=0&ibc=&i=" width="170" height="155" marginwidth=0 marginheight=0 frameborder=no scrolling=no allowtransparency=''true''>\n    Loading...\n    </iframe>\n    <div align="center" style="width:140px;font-size:10px;color:#666;">\n        Powered by <a  href="http://www.calendarlabs.com/" target="_blank" style="font-size:10px;text-decoration:none;color:#666;">Calendar</a> Labs\n    </div>\n</div>\n\n<!-------Do not change above this line------->'),
+(7, 'google_map', 'Map', '<p>google map</p>', '', 1, 0, 0, 1, '<!-- Google Maps Element Code -->\n<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:150px;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>');
+
 /*split*/
 
 INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES

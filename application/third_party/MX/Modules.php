@@ -82,13 +82,13 @@ class Modules
 		(is_array($module)) ? list($module, $params) = each($module) : $params = NULL;	
 		
 		/* get the requested controller class name */
-		$alias = strtolower(end($segments = explode('/', $module)));
+		$alias = strtolower(basename($module));
 
 		/* create or return an existing controller from the registry */
 		if ( ! isset(self::$registry[$alias])) {
 			
 			/* find the controller */
-			list($class) = CI::$APP->router->locate($segments);
+			list($class) = CI::$APP->router->locate(explode('/', $module));
 	
 			/* controller cannot be located */
 			if (empty($class)) return;
@@ -190,13 +190,6 @@ class Modules
 			}
 		}
 		
-		/* is the file in an application directory? */
-		if ($base == 'views/' OR $base == 'plugins/') {
-			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);	
-			show_error("Unable to locate the {$base} file: {$path}{$file_ext}");
-		}
-
-		log_message('debug', "Unable to locate the {$base} file: {$path}{$file_ext}");
 		return array(FALSE, $file);	
 	}
 	

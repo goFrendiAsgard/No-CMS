@@ -18,7 +18,11 @@
             
             echo '<div id="layout_widget_container_'.$widget['widget_name'].'">';
             echo '<h4>'.$widget['title'].'</h4>';
-            $path=base_url().'index.php/'.$widget['url'].'?_as_widget=true';
+            if($widget['is_static']){
+                $path=base_url().'index.php/main/show_static_widget/'.$widget['widget_id'].'?_only_content=true';
+            }else{
+                $path=base_url().'index.php/'.$widget['url'].'?_only_content=true';
+            }
             echo get_content($path);            
             echo '<br />';
             echo'</div>';

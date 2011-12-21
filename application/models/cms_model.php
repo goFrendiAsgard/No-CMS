@@ -25,11 +25,11 @@ class CMS_Model extends CI_Model {
      * @param : key,value   
      * @desc : if value specified, this will set CI session, else, it will return CI session  
      */
-    public function ci_session($key, $value = NULL){
+    public function cms_ci_session($key, $value = NULL){
         if (isset($value)){
             $this->session->set_userdata($key, $value);
         }
-        return $this->session->userdata($key);
+        return $this->session->userdata($key);        
     }
     
     /** 
@@ -37,7 +37,7 @@ class CMS_Model extends CI_Model {
      * @param : key   
      * @desc : delete a CI session 
      */
-    public function unset_ci_session($key){
+    public function cms_unset_ci_session($key){
         $this->session->unset_userdata($key);
     }
     
@@ -47,7 +47,7 @@ class CMS_Model extends CI_Model {
      * @desc : if username specified, this will set cms_username session, else, it will return cms_username  
      */
     public function cms_username($username = NULL){
-        return $this->ci_session('cms_username', $username);
+        return $this->cms_ci_session('cms_username', $username);
     }
     
     /** 
@@ -56,7 +56,7 @@ class CMS_Model extends CI_Model {
      * @desc : if userid specified, this will set cms_userid session, else, it will return cms_userid  
      */
     public function cms_userid($userid = NULL){
-        return $this->ci_session('cms_userid', $userid);
+        return $this->cms_ci_session('cms_userid', $userid);
     }
     
     /** 
@@ -73,7 +73,7 @@ class CMS_Model extends CI_Model {
         
         //get max_menu_depth from configuration
         if(!isset($parent_id)){
-            $max_menu_depth = $this->get_config('max_menu_depth');
+            $max_menu_depth = $this->cms_get_config('max_menu_depth');
         }
         
         if($max_menu_depth>0){
@@ -84,7 +84,7 @@ class CMS_Model extends CI_Model {
         
         $where_is_root = !isset($parent_id)?"is_root=1":"is_root=0 AND parent_id = '".addslashes($parent_id)."'";
         $query = $this->db->query(
-                "SELECT navigation_id, navigation_name, title, description, url 
+                "SELECT navigation_id, navigation_name, is_static, title, description, url 
                 FROM cms_navigation AS n WHERE
                     (
                         (authorization_id = 1) OR
@@ -108,10 +108,12 @@ class CMS_Model extends CI_Model {
         $result = array();
         foreach($query->result() as $row){
             $result[] = array(
+                "navigation_id"=>$row->navigation_id,
                 "navigation_name" => $row->navigation_name,
                 "title" => $row->title,
                 "description" => $row->description,
                 "url" => $row->url,
+                "is_static"=>$row->is_static,
                 "child" => $this->cms_navigations($row->navigation_id, $max_menu_depth)
             );
         }
@@ -131,7 +133,7 @@ class CMS_Model extends CI_Model {
         $super_user = $user_id==1?"TRUE":"FALSE";
         
         $query = $this->db->query(
-                "SELECT widget_id, widget_name, title, description, url 
+                "SELECT widget_id, widget_name, is_static, title, description, url 
                 FROM cms_widget AS w WHERE
                     (                        
                         (authorization_id = 1) OR
@@ -155,9 +157,11 @@ class CMS_Model extends CI_Model {
         $result = array();
         foreach($query->result() as $row){
             $result[] = array(
+                "widget_id"=>$row->widget_id,
                 "widget_name" => $row->widget_name,
                 "title" => $row->title,
                 "description" => $row->description,
+                "is_static"=>$row->is_static,
                 "url" => $row->url
             );
         }
@@ -223,7 +227,7 @@ class CMS_Model extends CI_Model {
      * @param : navigation_name
      * @desc : return navigation path, used for layout
      */    
-    public function get_navigation_path($navigation_name = NULL){
+    public function cms_get_navigation_path($navigation_name = NULL){
         if(!isset($navigation_name)) return array();
         $result = array($this->get_navigation($navigation_name));
         while($parent = $this->get_navigation_parent($navigation_name)){
@@ -283,15 +287,6 @@ class CMS_Model extends CI_Model {
     
     /** 
      * @author : goFrendiAsgard
-     * @param : active
-     * @desc : next call of $this->view will only load content. Will be used if you plan to use ajax
-     */
-    public function cms_only_content($active = NULL){
-        return $this->ci_session('cms_partial', $active);     
-    }
-    
-    /** 
-     * @author : goFrendiAsgard
      * @param : navigation, navigations
      * @desc : only used in allow_navigate
      */
@@ -310,7 +305,7 @@ class CMS_Model extends CI_Model {
      * @param : navigation
      * @desc : check if user authorized to navigate into a page specified in parameter
      */
-    public function allow_navigate($navigation){
+    public function cms_allow_navigate($navigation){
         return $this->_allow_navigate($navigation);
     }
     
@@ -319,7 +314,7 @@ class CMS_Model extends CI_Model {
      * @param : privilege
      * @desc : check if user have privilege specified in parameter
      */
-    public function have_privilege($privilege){
+    public function cms_have_privilege($privilege){
         $privileges = $this->cms_privileges();
         for($i=0; $i<count($privileges); $i++){
             if($privilege == $privileges[$i]["privilege_name"]) return true;
@@ -332,7 +327,7 @@ class CMS_Model extends CI_Model {
      * @param : identity, password
      * @desc : login
      */
-    public function do_login($identity, $password){
+    public function cms_do_login($identity, $password){
          $query = $this->db->query(
                 "SELECT user_id, user_name FROM cms_user WHERE
                     (user_name = '".$identity."' OR email = '".$identity."') AND
@@ -352,9 +347,9 @@ class CMS_Model extends CI_Model {
      * @param : 
      * @desc : logout
      */
-    public function do_logout(){
-        $this->unset_ci_session('cms_username');
-        $this->unset_ci_session('cms_userid');
+    public function cms_do_logout(){
+        $this->cms_unset_ci_session('cms_username');
+        $this->cms_unset_ci_session('cms_userid');
     }
     
     /** 
@@ -362,7 +357,7 @@ class CMS_Model extends CI_Model {
      * @param : user_name, email, real_name, password
      * @desc : register
      */
-    public function do_register($user_name, $email, $real_name, $password){
+    public function cms_do_register($user_name, $email, $real_name, $password){
         $data = array(
             "user_name" => $user_name,
             "email" => $email,
@@ -378,7 +373,7 @@ class CMS_Model extends CI_Model {
      * @param : user_name, email, real_name, password
      * @desc : change profile
      */
-    public function do_change_profile($user_name, $email, $real_name, $password){
+    public function cms_do_change_profile($user_name, $email, $real_name, $password){
         $data = array(
             "user_name" => $user_name,
             "email" => $email,
@@ -397,7 +392,7 @@ class CMS_Model extends CI_Model {
      * @param : module_name
      * @desc : checked if module installed
      */
-    public function is_module_installed($module_name){
+    public function cms_is_module_installed($module_name){
         $query = $this->db->query(
                 "SELECT count(*) as reccount FROM cms_module WHERE module_name = '".addslashes($module_name)."'");
         foreach($query->result() as $row){
@@ -416,7 +411,7 @@ class CMS_Model extends CI_Model {
      * @param : 
      * @desc : get module list
      */
-    public function get_module_list(){
+    public function cms_get_module_list(){
         $this->load->helper('directory');
         $directories = directory_map('modules',1);
         $module = array();
@@ -429,7 +424,7 @@ class CMS_Model extends CI_Model {
             
             $module[]=array(                    
                 "path"=>$directory,
-                "installed"=>$this->is_module_installed($module_name)
+                "installed"=>$this->cms_is_module_installed($module_name)
             );
         }
         return $module;
@@ -440,7 +435,7 @@ class CMS_Model extends CI_Model {
      * @param : identity 
      * @desc : generate activation code, 
      */
-    public function generate_activation_code($identity){
+    public function cms_generate_activation_code($identity){
         $query = $this->db->query(
                 "SELECT user_name, real_name, user_id, email FROM cms_user WHERE
                     (user_name = '".$identity."' OR email = '".$identity."') AND
@@ -460,17 +455,17 @@ class CMS_Model extends CI_Model {
             $this->load->library('email');
             
             //send activation email to user
-            $email_from_address = $this->get_config('cms_email_address');
-            $email_from_name = $this->get_config('cms_email_name');
-            $email_subject = $this->get_config('cms_email_forgot_subject');
-            $email_message = $this->get_config('cms_email_forgot_message');
+            $email_from_address = $this->cms_get_config('cms_email_address');
+            $email_from_name = $this->cms_get_config('cms_email_name');
+            $email_subject = $this->cms_get_config('cms_email_forgot_subject');
+            $email_message = $this->cms_get_config('cms_email_forgot_message');
             $activation_link = base_url('index.php/main/forgot/'.$activation_code);
             
             $email_message = str_replace('@realname', $real_name, $email_message);
             $email_message = str_replace('@activation_link', $activation_link, $email_message);
             
             //send email to user
-            $this->send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);
+            $this->cms_send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);
             return true;
         }
         return false;
@@ -481,7 +476,7 @@ class CMS_Model extends CI_Model {
      * @param : activation_code, new_password
      * @desc : generate_activation_code
      */
-    public function forgot_password($activation_code, $new_password){
+    public function cms_forgot_password($activation_code, $new_password){
         $query = $this->db->query(
                 "SELECT user_id FROM cms_user WHERE
                     (activation_code = '".md5($activation_code)."') AND
@@ -503,26 +498,26 @@ class CMS_Model extends CI_Model {
      * @param : from_address, from_name, to_address, subject, message
      * @desc : generate activation code, 
      */
-    public function send_email($from_address, $from_name, $to_address, $subject, $message){                    
+    public function cms_send_email($from_address, $from_name, $to_address, $subject, $message){                    
         //send email to user
-        $config['cms_email_useragent'] = $this->get_config('cms_email_useragent');
-        $config['cms_email_protocol'] = $this->get_config('cms_email_protocol');
-        $config['cms_email_mailpath'] = $this->get_config('cms_email_mailpath');
-        $config['cms_email_smtp_host'] = $this->get_config('cms_email_smtp_host');
-        $config['cms_email_smtp_user'] = $this->get_config('cms_email_smtp_user');
-        $config['cms_email_smtp_pass'] = $this->get_config('cms_email_smtp_pass');
-        $config['cms_email_smtp_port'] = $this->get_config('cms_email_smtp_port');
-        $config['cms_email_smtp_timeout'] = $this->get_config('cms_email_smtp_timeout');
-        $config['cms_email_wordwrap'] = (boolean)$this->get_config('cms_email_wordwrap');
-        $config['cms_email_wrapchars'] = $this->get_config('cms_email_wrapchars');
-        $config['cms_email_mailtype'] = $this->get_config('cms_email_mailtype');
-        $config['cms_email_charset'] = $this->get_config('cms_email_charset');
-        $config['cms_email_validate'] = (boolean)$this->get_config('cms_email_validate');
-        $config['cms_email_priority'] = $this->get_config('cms_email_priority');
-        $config['cms_email_crlf'] = $this->get_config('cms_email_crlf');
-        $config['cms_email_newline'] = $this->get_config('cms_email_newline');
-        $config['cms_email_bcc_batch_mode'] = (boolean)$this->get_config('cms_email_bcc_batch_mode');
-        $config['cms_email_bcc_batch_size'] = $this->get_config('cms_email_bcc_batch_size');
+        $config['cms_email_useragent'] = $this->cms_get_config('cms_email_useragent');
+        $config['cms_email_protocol'] = $this->cms_get_config('cms_email_protocol');
+        $config['cms_email_mailpath'] = $this->cms_get_config('cms_email_mailpath');
+        $config['cms_email_smtp_host'] = $this->cms_get_config('cms_email_smtp_host');
+        $config['cms_email_smtp_user'] = $this->cms_get_config('cms_email_smtp_user');
+        $config['cms_email_smtp_pass'] = $this->cms_get_config('cms_email_smtp_pass');
+        $config['cms_email_smtp_port'] = $this->cms_get_config('cms_email_smtp_port');
+        $config['cms_email_smtp_timeout'] = $this->cms_get_config('cms_email_smtp_timeout');
+        $config['cms_email_wordwrap'] = (boolean)$this->cms_get_config('cms_email_wordwrap');
+        $config['cms_email_wrapchars'] = $this->cms_get_config('cms_email_wrapchars');
+        $config['cms_email_mailtype'] = $this->cms_get_config('cms_email_mailtype');
+        $config['cms_email_charset'] = $this->cms_get_config('cms_email_charset');
+        $config['cms_email_validate'] = (boolean)$this->cms_get_config('cms_email_validate');
+        $config['cms_email_priority'] = $this->cms_get_config('cms_email_priority');
+        $config['cms_email_crlf'] = $this->cms_get_config('cms_email_crlf');
+        $config['cms_email_newline'] = $this->cms_get_config('cms_email_newline');
+        $config['cms_email_bcc_batch_mode'] = (boolean)$this->cms_get_config('cms_email_bcc_batch_mode');
+        $config['cms_email_bcc_batch_size'] = $this->cms_get_config('cms_email_bcc_batch_size');
         
         $this->email->initialize($config);
         $this->email->from($from_address, $from_name);
@@ -538,7 +533,7 @@ class CMS_Model extends CI_Model {
      * @param : activation_code 
      * @desc : valid_activation_code
      */
-    public function valid_activation_code($activation_code){
+    public function cms_valid_activation_code($activation_code){
         $query = $this->db->query(
                 "SELECT activation_code FROM cms_user WHERE
                     (activation_code = '".md5($activation_code)."') AND
@@ -554,7 +549,7 @@ class CMS_Model extends CI_Model {
      * @param : name, value, description
      * @desc : set config
      */
-    public function set_config($name, $value, $description = NULL){
+    public function cms_set_config($name, $value, $description = NULL){
         $query = $this->db->query(
                 "SELECT config_id FROM cms_config WHERE
                     config_name = '".  addslashes($name)."'"
@@ -580,7 +575,7 @@ class CMS_Model extends CI_Model {
      * @param : name
      * @desc : unset config
      */
-    public function unset_config($name){
+    public function cms_unset_config($name){
         $where = array("config_name"=>$name);
         $query = $this->db->delete("cms_config",$where);
     }
@@ -590,7 +585,7 @@ class CMS_Model extends CI_Model {
      * @param : name
      * @desc : get config
      */
-    public function get_config($name){
+    public function cms_get_config($name){
         $query = $this->db->query(
                 "SELECT `value` FROM cms_config WHERE
                     config_name = '".  addslashes($name)."'"

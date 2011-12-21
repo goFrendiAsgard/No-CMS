@@ -11,7 +11,7 @@ table th
 	font-size:11px;
 	position:relative;
 	border:0px solid #eee;
-	/*overflow:hidden;*/
+	overflow:hidden;
 	color:#000;
 }
 .flexigrid .field-sorting
@@ -44,6 +44,7 @@ table th
 }
 .flexigrid div.bDiv table {
 	margin-bottom:10px;
+	width: 100%;
 }
 .flexigrid div.bDiv table.autoht {
 	border-bottom:0px;

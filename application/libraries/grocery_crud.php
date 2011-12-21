@@ -334,6 +334,7 @@ class grocery_Field_Types
 				case '1':
 				case '3':
 				case 'int':
+				case 'tinyint':
 					if( $db_type->db_type == 'tinyint' && $db_type->db_max_length ==  1)
 						$type = 'true_false';
 					else
@@ -357,6 +358,7 @@ class grocery_Field_Types
 				break;
 				case '12':
 				case 'datetime':
+				case 'timestamp':
 					$type = 'datetime';
 				break;
 			}
@@ -385,7 +387,7 @@ class grocery_Field_Types
 /**
  * Grocery Model Driver
  *
- * Drives the model - Like car drive :-)
+ * Drives the model - I'ts so easy like you drive a bicycle :-)
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
@@ -470,19 +472,43 @@ class grocery_Model_Driver extends grocery_Field_Types
 		
 		if(!empty($state_info->search))
 		{
+			if(!empty($this->relation))
+				foreach($this->relation as $relation_name => $relation_values)
+					$temp_relation[$this->_unique_field_name($relation_name)] = $this->_get_field_names_to_search($relation_values);
+			
 			if($state_info->search->field != null)
 			{
-				$this->like($state_info->search->field , $state_info->search->text);
+				if(isset($temp_relation[$state_info->search->field]))
+					if(is_array($temp_relation[$state_info->search->field]))
+						foreach($temp_relation[$state_info->search->field] as $search_field)
+							$this->or_like($search_field , $state_info->search->text);
+					else
+						$this->like($temp_relation[$state_info->search->field] , $state_info->search->text);
+				else
+					$this->like($state_info->search->field , $state_info->search->text);
 			}
 			else 
 			{
 				$columns = $this->get_columns();
+				
+				#region temporary solution for the search with relation_n_n
+				if(!empty($this->relation_n_n))
+					foreach($columns as $num_row => $column)
+						if(isset($this->relation_n_n[$column->field_name]))
+							unset($columns[$num_row]);
+				#endregion
+				
 				$search_text = $state_info->search->text;
 				
 				foreach($columns as $column)
-				{
-					$this->or_like($column->field_name, $search_text);
-				}				
+					if(isset($temp_relation[$column->field_name]))
+						if(is_array($temp_relation[$column->field_name]))
+							foreach($temp_relation[$column->field_name] as $search_field)
+								$this->or_like($search_field, $search_text);				
+						else	
+							$this->or_like($temp_relation[$column->field_name], $search_text);					
+					else
+						$this->or_like($column->field_name, $search_text);
 			}
 		}
 	}
@@ -635,14 +661,9 @@ class grocery_Model_Driver extends grocery_Field_Types
 					$callback_return = call_user_func($this->callback_before_insert, $post_data);
 					
 					if(!empty($callback_return) && is_array($callback_return))
-					{
 						$post_data = $callback_return;
-					}
 					elseif($callback_return === false) 
-					{
 						return false;
-					}
-					
 				}
 				
 				$insert_data = array();
@@ -776,11 +797,34 @@ class grocery_Model_Driver extends grocery_Field_Types
 		}		
 	}	
 	
+	protected function _get_field_names_to_search(array $relation_values)
+	{		
+		if(!strstr($relation_values[2],'{'))
+			return $this->_unique_join_name($relation_values[0]).'.'.$relation_values[2];
+		else
+		{
+			$relation_values[2] = ' '.$relation_values[2].' ';
+			$temp1 = explode('{',$relation_values[2]);
+			unset($temp1[0]);
+			
+			$field_names_array = array();
+			foreach($temp1 as $field)
+				list($field_names_array[]) = explode('}',$field);
+			
+			return $field_names_array;
+		}
+	}
+	
     protected function _unique_join_name($field_name)
     {
-    	return 'j'.substr(md5($field_name),0,6); //This j is because is better for a string to begin with a letter and not a number
+    	return 'j'.substr(md5($field_name),0,8); //This j is because is better for a string to begin with a letter and not a number
     }	
-	
+
+    protected function _unique_field_name($field_name)
+    {
+    	return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not a number
+    }    
+    
 	protected function db_delete($state_info)
 	{
 		$primary_key 	= $state_info->primary_key;
@@ -876,7 +920,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 		{
 			if($this->limit == null)
 			{
-				$this->basic_model->limit(25);	
+				$this->basic_model->limit(10);	
 			}
 			else
 			{
@@ -1010,8 +1054,8 @@ class grocery_Layout extends grocery_Model_Driver
 	protected $theme 					= null;
 	protected $default_true_false_text 	= array('inactive' , 'active');
 	
-	protected static $css_files					= array();
-	protected static $js_files					= array();
+	protected $css_files				= array();
+	protected $js_files					= array();
 	
 	protected function set_basic_Layout()
 	{			
@@ -1037,6 +1081,7 @@ class grocery_Layout extends grocery_Model_Driver
 		$data->total_results = $this->get_total_results();
 		
 		$data->columns 				= $this->get_columns();
+		
 		$data->primary_key 			= $this->get_primary_key();
 		$data->add_url				= $this->getAddUrl();
 		$data->edit_url				= $this->getEditUrl();
@@ -1195,13 +1240,13 @@ class grocery_Layout extends grocery_Model_Driver
 	{
 		if($delete_result === false)
 		{
-			$error_message = '<p>Your data was not deleted successfully from the database.</p>';
+			$error_message = '<p>'.$this->l('delete_error_message').'</p>';
 			
 			echo json_encode(array('success' => $delete_result ,'error_message' => $error_message));	
 		}
 		else 
 		{
-			$success_message = '<p>Your data has been successfully deleted from the database.</p>';
+			$success_message = '<p>'.$this->l('delete_success_message').'</p>';
 			
 			echo json_encode(array('success' => true , 'success_message' => $success_message));
 		}
@@ -1212,16 +1257,16 @@ class grocery_Layout extends grocery_Model_Driver
 	{
 		if($insert_result === false)
 		{
-			echo json_encode(array('success' => $insert_result));	
+			echo json_encode(array('success' => false));	
 		}
 		else 
 		{
-			$success_message = '<p>Your data has been successfully stored into the database.';
+			$success_message = '<p>'.$this->l('insert_success_message');
 			if($insert_result !== true)
 			{
-				$success_message .= " <a href='".$this->getEditUrl($insert_result)."'>Edit {$this->subject}</a> or";
+				$success_message .= " <a href='".$this->getEditUrl($insert_result)."'>".$this->l('form_edit')." {$this->subject}</a> ".$this->l('form_or');
 			}
-			$success_message .= " <a href='".$this->getListUrl()."'>Go back to list</a>";
+			$success_message .= " <a href='".$this->getListUrl()."'>".$this->l('form_go_back_to_list')."</a>";
 			$success_message .= '</p>';
 			
 			echo "<textarea>".json_encode(array('success' => true , 'insert_primary_key' => $insert_result, 'success_message' => $success_message))."</textarea>";
@@ -1269,24 +1314,24 @@ class grocery_Layout extends grocery_Model_Driver
 		}
 	}	
 	
-	public static function set_css($css_file)
+	public function set_css($css_file)
 	{
-		grocery_CRUD::$css_files[sha1($css_file)] = base_url().$css_file;
+		$this->css_files[sha1($css_file)] = base_url().$css_file;
 	}
 
-	public static function set_js($js_file)
+	public function set_js($js_file)
 	{
-		grocery_CRUD::$js_files[sha1($js_file)] = base_url().$js_file;
+		$this->js_files[sha1($js_file)] = base_url().$js_file;
 	}
 
 	public function get_css_files()
 	{
-		return grocery_CRUD::$css_files;
+		return $this->css_files;
 	}
 
 	public function get_js_files()
 	{
-		return grocery_CRUD::$js_files;
+		return $this->js_files;
 	}	
 	
 	protected function get_layout()
@@ -1316,8 +1361,8 @@ class grocery_Layout extends grocery_Model_Driver
 		}
 		else 
 		{
-			$success_message = '<p>Your data has been successfully updated';
-			$success_message .= ". <a href='".$this->getListUrl()."'>Go back to list</a>";
+			$success_message = '<p>'.$this->l('update_success_message');
+			$success_message .= " <a href='".$this->getListUrl()."'>".$this->l('form_go_back_to_list')."</a>";
 			$success_message .= '</p>';
 			
 			/* The textarea is only because of a BUG of the jquery plugin jquery form */
@@ -1356,7 +1401,7 @@ class grocery_Layout extends grocery_Model_Driver
 		$extra_attributes = '';
 		if(!empty($field_info->db_max_length))
 			$extra_attributes .= "maxlength='{$field_info->db_max_length}'"; 
-		$input = "<input name='{$field_info->name}' type='text' value='$value' $extra_attributes />";
+		$input = "<input name='{$field_info->name}' type='text' value=\"$value\" $extra_attributes />";
 		return $input;
 	}
 
@@ -1383,7 +1428,7 @@ class grocery_Layout extends grocery_Model_Driver
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js');
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.datetime.config.js');
 		$input = "<input name='{$field_info->name}' type='text' value='$value' maxlength='19' class='datetime-input' /> 
-		<button class='datetime-input-clear'>Clear</button>
+		<button class='datetime-input-clear'>".$this->l('form_button_clear')."</button>
 		(yyyy-mm-dd) hh:mm:ss";
 		return $input;
 	}
@@ -1413,7 +1458,7 @@ class grocery_Layout extends grocery_Model_Driver
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery-ui-1.8.10.custom.min.js');
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.datepicker.config.js');
 		$input = "<input name='{$field_info->name}' type='text' value='$value' maxlength='10' class='datepicker-input' /> 
-		<button class='datepicker-input-clear'>Clear</button> (yyyy-mm-dd)";
+		<button class='datepicker-input-clear'>".$this->l('form_button_clear')."</button> (yyyy-mm-dd)";
 		return $input;
 	}	
 
@@ -2020,7 +2065,10 @@ class grocery_CRUD extends grocery_States
 	private $edit_fields_checked	= false;	
 	
 	protected $default_theme		= 'flexigrid';
-	protected $default_theme_path		= 'assets/grocery_crud/themes';
+	protected $default_theme_path	= 'assets/grocery_crud/themes';
+	protected $default_language_path= 'assets/grocery_crud/languages';
+	protected $language				= null;
+	protected $lang_strings			= array();
 	
 	protected $add_fields			= null;
 	protected $edit_fields			= null;
@@ -2043,8 +2091,8 @@ class grocery_CRUD extends grocery_States
 	protected $upload_fields		= array();
 	protected $actions				= array();
 	
-	protected $form_validation	= null;
-	protected $change_field_type		= null;
+	protected $form_validation		= null;
+	protected $change_field_type	= null;
 	
 	/* The unsetters */
 	protected $unset_texteditor	= array();
@@ -2335,6 +2383,70 @@ class grocery_CRUD extends grocery_States
 	
 	/**
 	 * 
+	 * Load the language strings array from the language file
+	 */
+	private function _load_language()
+	{
+		if($this->language === null)
+		{
+			$ci = &get_instance();
+			$ci->config->load('grocery_crud');
+			$this->language = $ci->config->item('grocery_crud_default_language');
+		}
+		include($this->default_language_path.'/'.$this->language.'.php');
+		
+		foreach($lang as $handle => $lang_string)
+			if(!isset($this->lang_strings[$handle]))
+				$this->lang_strings[$handle] = $lang_string;
+	}
+	
+	/**
+	 * 
+	 * Set a language string directly
+	 * @param string $handle
+	 * @param string $string
+	 */
+	public function set_lang_string($handle, $lang_string){
+		$this->lang_strings[$handle] = $lang_string;
+		
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * Just an alias to get_lang_string method 
+	 * @param string $handle
+	 */
+	public function l($handle)
+	{
+		return $this->get_lang_string($handle);
+	}
+	
+	/**
+	 * 
+	 * Get the language string of the inserted string handle
+	 * @param string $handle
+	 */
+	public function get_lang_string($handle)
+	{
+		return $this->lang_strings[$handle];
+	}
+	
+	/**
+	 * 
+	 * Simply set the language
+	 * @example english
+	 * @param string $language
+	 */
+	public function set_language($language)
+	{
+		$this->language = $language;
+		
+		return $this;
+	}
+	
+	/**
+	 * 
 	 * Enter description here ...
 	 */
 	protected function get_columns()
@@ -2354,9 +2466,11 @@ class grocery_CRUD extends grocery_States
 			
 			foreach($this->columns as $col_num => $column)
 			{				
+			
 				if(isset($this->relation[$column]))
 				{
-					$new_column = $this->_unique_join_name($this->relation[$column][0]).'.'.$this->relation[$column][2];
+					
+					$new_column = $this->_unique_field_name($this->relation[$column][0]);
 					$this->columns[$col_num] = $new_column;
 					
 					if(isset($this->display_as[$column]))
@@ -2371,7 +2485,7 @@ class grocery_CRUD extends grocery_States
 					}
 					
 					$column = $new_column;
-					
+					$this->columns[$col_num] = $new_column;
 				}
 				else
 				{	
@@ -2417,7 +2531,9 @@ class grocery_CRUD extends grocery_States
 			}			
 			
 			$this->columns_checked = true;
+			
 		}
+		
 		return $this->columns;
 	}
 	
@@ -2543,6 +2659,7 @@ class grocery_CRUD extends grocery_States
 	 */
 	public function render()
 	{
+		$this->_load_language();
 		$this->state_code = $this->getStateCode();
 		
 		if( $this->state_code != 0 )

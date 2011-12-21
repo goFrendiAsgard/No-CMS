@@ -128,7 +128,7 @@ class MX_Loader extends CI_Loader
 	}
 	
 	/** Load a module library **/
-	public function library($library, $params = NULL, $object_name = NULL) {
+	public function library($library = '', $params = NULL, $object_name = NULL) {
 		
 		if (is_array($library)) return $this->libraries($library);		
 		
@@ -238,7 +238,9 @@ class MX_Loader extends CI_Loader
 
 		list($path, $_plugin) = Modules::find($plugin.'_pi', $this->_module, 'plugins/');	
 		
-		if ($path === FALSE) return;
+		if ($path === FALSE AND ! is_file($_plugin = APPPATH.'plugins/'.$_plugin.EXT)) {	
+			show_error("Unable to locate the plugin file: {$_plugin}");
+		}
 
 		Modules::load_file($_plugin, $path);
 		$this->_ci_plugins[$plugin] = TRUE;
@@ -251,8 +253,13 @@ class MX_Loader extends CI_Loader
 
 	/** Load a module view **/
 	public function view($view, $vars = array(), $return = FALSE) {
-		list($path, $view) = Modules::find($view, $this->_module, 'views/');
-		$this->_ci_view_path = $path;
+		list($path, $_view) = Modules::find($view, $this->_module, 'views/');
+		
+		if ($path != FALSE) {
+			$this->_ci_view_paths = array($path => TRUE) + $this->_ci_view_paths;
+			$view = $_view;
+		}
+		
 		return $this->_ci_load(array('_ci_view' => $view, '_ci_vars' => $this->_ci_object_to_array($vars), '_ci_return' => $return));
 	}
 
@@ -268,22 +275,33 @@ class MX_Loader extends CI_Loader
 
 	public function _ci_load($_ci_data) {
 		
-		foreach (array('_ci_view', '_ci_vars', '_ci_path', '_ci_return') as $_ci_val) {
-			$$_ci_val = ( ! isset($_ci_data[$_ci_val])) ? FALSE : $_ci_data[$_ci_val];
-		}
-
-		if ($_ci_path == '') {
+		extract($_ci_data);
+		
+		if (isset($_ci_view)) {
+			
+			$_ci_path = '';
 			$_ci_file = strpos($_ci_view, '.') ? $_ci_view : $_ci_view.EXT;
-			$_ci_path = $this->_ci_view_path.$_ci_file;
-		} else {
+			
+			foreach ($this->_ci_view_paths as $path => $cascade) {				
+				if (file_exists($view = $path.$_ci_file)) {
+					$_ci_path = $view;
+					break;
+				}
+				
+				if ( ! $cascade) break;
+			}
+			
+		} elseif (isset($_ci_path)) {
+			
 			$_ci_file = basename($_ci_path);
+			if( ! file_exists($_ci_path)) $_ci_path = '';
 		}
 
-		if ( ! file_exists($_ci_path)) 
+		if (empty($_ci_path)) 
 			show_error('Unable to load the requested file: '.$_ci_file);
 
-		if (is_array($_ci_vars)) 
-			$this->_ci_cached_vars = array_merge($this->_ci_cached_vars, $_ci_vars);
+		if (isset($_ci_vars)) 
+			$this->_ci_cached_vars = array_merge($this->_ci_cached_vars, (array) $_ci_vars);
 		
 		extract($this->_ci_cached_vars);
 

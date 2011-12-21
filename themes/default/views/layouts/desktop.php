@@ -121,6 +121,6 @@
             </div>
             <div class="layout_clear"></div>
         </div>
-        <div id="layout_footer"><?php echo $template['partials']['footer'];?></div>       
+        <div id="layout_footer"><?php echo $template['partials']['footer'];?></div> 
     </body>
 </html>

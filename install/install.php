@@ -31,6 +31,9 @@
     //routes.php
     $str = file_get_contents('./resources/routes.php');
     file_put_contents('../application/config/routes.php',$str);
+    //routes.php
+    $str = file_get_contents('./resources/config.php');
+    file_put_contents('../application/config/config.php',$str);
     
     //connection
     $db_connection = @mysql_connect($db_server.':'.$db_port,$db_username,$db_password);

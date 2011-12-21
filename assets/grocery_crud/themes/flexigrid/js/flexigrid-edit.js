@@ -31,8 +31,11 @@ $(function(){
 							}
 							else
 							{
-								alert('An error occured on Saving');
+								alert( message_update_error );
 							}
+						},
+						error: function(){
+							alert( message_update_error );
 						}
 					});
 				}
@@ -59,7 +62,7 @@ $(function(){
 
 function goToList()
 {
-	if( confirm('The data you have entered may not be saved. Are you sure you want to go back to list?') )
+	if( confirm( message_alert_edit_form ) )
 	{
 		window.location = list_url;
 	}

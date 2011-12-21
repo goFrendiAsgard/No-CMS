@@ -49,7 +49,7 @@ CONTRIBUTORS
 ###################
 * goFrendiAsgard <-- The one who make Neo-CMS based on already exists plugins, that's me :D
 * EllisLab <-- A company who make codeIgniter and make it available for free. There is no Neo-CMS without codeIgniter
-* WanWizard <-- The one who make HMVC plugin. The plugin he made allowed me to make separation between modules
+* wiredesignz <-- The one who make HMVC plugin. The plugin he made allowed me to make separation between modules
 * Phil Sturgeon <-- The one who make Phil Sturgeon's template. The plugin he made allowed me to make separation between layouts
 * John Skoumbourdis <-- The one who make groceryCRUD. It boost the development of Neo-CMS by provide very easy CRUD
 * Wahyu Eka Putra <-- The one who reports bug(s)

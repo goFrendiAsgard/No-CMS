@@ -13,7 +13,7 @@
                 }
             }
         }
-        $last_path = count($path)>0?$path[count($path)-1]['navigation_name']:"";
+        $last_path = count($path)>0?$path[count($path)-1]['navigation_name']:"";        
         
         $str = '';
         
@@ -22,9 +22,28 @@
             $layout_nav_hot = ($last_path == $navigation['navigation_name'])?'layout_nav_hot':'';
             
             $str.= '<li class ="'.$layout_nav_hot.'">';
-            if(count($navigation['child'])>0) $str.= '<a href="#" class="layout_expand">[+]</a> ';
-            
-            $str.= anchor($navigation['url'], $navigation['title']);
+            if(count($navigation['child'])>0){
+                $in_path = false;
+                if($last_path != $navigation['navigation_name']){
+                    foreach($path as $current_path){
+                        if($current_path['navigation_name']==$navigation['navigation_name']){
+                            $in_path = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if($in_path){
+                    $str.= '<a href="#" class="layout_expand">[-]</a> ';
+                }else{
+                    $str.= '<a href="#" class="layout_expand">[+]</a> ';
+                }                
+            }
+            if($navigation['is_static']){
+                $str.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title']);
+            }else{
+                $str.= anchor($navigation['url'], $navigation['title']);
+            }
             if(isset($navigation['description'])){
                 $str.= '<div class="layout_nav_description invisible">Description : '.
                         $navigation['description'].'</div>';

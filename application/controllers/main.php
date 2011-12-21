@@ -15,7 +15,7 @@ class Main extends CMS_Controller {
         $this->form_validation->set_rules('password', 'Password', 'required|xss_clean');
         
         if($this->form_validation->run()){
-            if($this->do_login($identity, $password)) redirect('main/index');
+            if($this->cms_do_login($identity, $password)) redirect('main/index');
             else {
                 $data = array("identity"=>$identity);
                 $this->view('main/login',$data, 'main_login');
@@ -35,8 +35,8 @@ class Main extends CMS_Controller {
             $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
             
             if($this->form_validation->run()){
-                if($this->valid_activation_code($activation_code)){
-                    $this->forgot_password($activation_code, $password);
+                if($this->cms_valid_activation_code($activation_code)){
+                    $this->cms_forgot_password($activation_code, $password);
                     redirect('main/index');
                 }else{                
                     redirect('main/forgot');
@@ -54,7 +54,7 @@ class Main extends CMS_Controller {
             $this->form_validation->set_rules('identity', 'Identity', 'required|xss_clean');
 
             if($this->form_validation->run()){
-                if($this->generate_activation_code($identity)) redirect('main/index');
+                if($this->cms_generate_activation_code($identity)) redirect('main/index');
                 else{ 
                     $data = array("identity"=>$identity);
                     $this->view('main/forgot_fill_identity',$data, 'main_forgot');
@@ -82,7 +82,7 @@ class Main extends CMS_Controller {
         $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
         
         if($this->form_validation->run()){
-            $this->do_register($user_name, $email, $real_name, $password);
+            $this->cms_do_register($user_name, $email, $real_name, $password);
             redirect('main/index');
         }else{
             $data = array("user_name"=>$user_name,
@@ -108,7 +108,7 @@ class Main extends CMS_Controller {
         $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
         
         if($this->form_validation->run()){
-            $this->do_change_profile($user_name, $email, $real_name, $password);
+            $this->cms_do_change_profile($user_name, $email, $real_name, $password);
             redirect('main/index');
         }else{
             $data = array("user_name"=>$user_name,
@@ -119,11 +119,11 @@ class Main extends CMS_Controller {
     }
     
     public function logout(){
-        $this->do_logout();
+        $this->cms_do_logout();
         redirect('main/index');
     }
     
-    public function widget_logout(){
+    public function widget_logout(){        
         $data = array(
             "user_name" => $this->cms_username()
         );
@@ -132,14 +132,6 @@ class Main extends CMS_Controller {
     
     public function widget_login(){
         $this->login();
-    }
-    
-    public function widget_social_plugin(){
-        $this->view('main/widget_social_plugin');
-    }
-    
-    public function widget_calendar(){
-        $this->view('main/widget_calendar');
     }
     
     public function index(){
@@ -251,10 +243,11 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_navigation');
-        $crud->columns('navigation_name', 'is_root', 'parent_id', 'title', 'description', 'url', 'authorization_id', 'groups');
-        $crud->edit_fields('navigation_name', 'is_root', 'parent_id', 'title', 'description', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('navigation_name', 'is_root', 'parent_id', 'title', 'description', 'url', 'authorization_id', 'groups');
+        $crud->columns('navigation_name', 'parent_id', 'title', 'is_static', 'authorization_id', 'groups');
+        $crud->edit_fields('navigation_name', 'is_root', 'parent_id', 'title', 'description', 'index', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
+        $crud->add_fields('navigation_name', 'is_root', 'parent_id', 'title', 'description', 'index', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
         $crud->change_field_type('is_root', 'true_false');
+        $crud->change_field_type('is_static', 'true_false');
         
         $crud->display_as('navigation_name', 'Navigation Code')
                 ->display_as('is_root', 'Is Root')
@@ -262,6 +255,9 @@ class Main extends CMS_Controller {
                 ->display_as('title', 'Title (What visitor see)')
                 ->display_as('description', 'Description')
                 ->display_as('url', 'URL (Where is it point to)')
+                ->display_as('index', 'Order')
+                ->display_as('is_static', 'Static')
+                ->display_as('static_content', 'Static Content')
                 ->display_as('authorization_id', 'Authorization')
                 ->display_as('groups', 'Groups');
        
@@ -284,7 +280,9 @@ class Main extends CMS_Controller {
         $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name', 'groups');
         
         $crud->set_relation_n_n('groups', 'cms_group_privilege', 'cms_group', 'privilege_id', 'group_id' , 'group_name');
-
+        
+        $crud->display_as('authorization_id', 'Authorization');
+                
         //$crud->set_theme('datatables');
         $output = $crud->render();
 
@@ -295,18 +293,25 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_widget');
-        $crud->columns('widget_name', 'title', 'active', 'description', 'url', 'authorization_id', 'groups');
-        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('widget_name', 'title', 'active', 'description', 'url', 'authorization_id', 'groups');
+        $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'groups');
+        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
+        $crud->add_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
         $crud->change_field_type('active', 'true_false');
+        $crud->change_field_type('is_static', 'true_false');
         
         $crud->display_as('widget_name', 'Widget Code')
                 ->display_as('title', 'Title (What visitor see)')
                 ->display_as('active', 'Active')
                 ->display_as('description', 'Description')
                 ->display_as('url', 'URL (Where is it point to)')
+                ->display_as('index', 'Order')
+                ->display_as('is_static', 'Static')
+                ->display_as('static_content', 'Static Content')
                 ->display_as('authorization_id', 'Authorization')
                 ->display_as('groups', 'Groups');
+        
+        $crud->unset_texteditor('static_content');
+        $crud->unset_texteditor('description');
        
         $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name');
         
@@ -339,9 +344,39 @@ class Main extends CMS_Controller {
     }
     
     public function module_list(){
-        $data['modules'] = $this->get_module_list();
+        $data['modules'] = $this->cms_get_module_list();
         $this->view('main/module_list',$data,'main_module_management');
     }
+    
+    public function show_static_widget($id){
+        if(isset($id)){
+            $SQL = "SELECT static_content FROM cms_widget WHERE widget_id=".$id;
+            $query = $this->db->query($SQL);
+            foreach($query->result() as $row){
+                $data['content'] = $row->static_content;
+            }
+            $this->view('main/static_page', $data);
+        }else{
+            echo "invalid widget";
+        }
+    }
+    
+    public function show_static_page($id){
+        if(isset($id)){
+            $navigation_name = "";
+            $SQL = "SELECT navigation_name, static_content FROM cms_navigation WHERE navigation_id=".$id;
+            $query = $this->db->query($SQL);
+            foreach($query->result() as $row){
+                $data['content'] = $row->static_content;
+                $navigation_name = $row->navigation_name;
+            }
+            $this->view('main/static_page', $data, $navigation_name);
+        }else{
+            echo "invalid widget";
+        }
+    }
+    
+    
 }
 
 ?>
