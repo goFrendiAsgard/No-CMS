@@ -21,9 +21,9 @@ DOCUMENTATION
 You can read the full Neo-CMS documentation after install it.
 Here I will give you some overview: 
 
-******
 Module
-******
+======
+
 * Your module must be located at modules directory (your_neo_cms_installation_path/modules)
 * Your module must have an "installer controller" to make it install-able
 * Your module must be consist of at least 3 subdirectories (models, views, and controllers)
@@ -35,18 +35,14 @@ Controller
 * Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
 * Main controller must have the same name as your_module_name (your_module_name.php)
 * Every controller musth contains a class which extends CMS_Controller:
-*    class Your_Module_Name extends CMS_Controller{
-*        //Your logic goes here.....
-*    }
+    class Your_Module_Name extends CMS_Controller{Your logic goes here.....}
 
 Models
 ==========
 * Models deal with every data in your module
 * Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
 * Every model musth contains a class which extends CMS_Model:
-*    class Your_Model_Name extends CMS_Model{
-*        //Your logic goes here.....
-*    }
+    class Your_Model_Name extends CMS_Model{//Your logic goes here.....}
 
 Views
 ==========
@@ -54,13 +50,13 @@ Views
 * Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
 * Every view must be php file
 * To load a view by using controller, you can write:
-*    $this->view('view_name');
+    $this->view('view_name');
 * To load a view by using controller, and parse some data on it, you can write:
-*    $this->view('view_name', $data);
+    $this->view('view_name', $data);
 * To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
-*    $this->view('view_name', $data, 'navigation_code_required');
+    $this->view('view_name', $data, 'navigation_code_required');
 * To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
-*    $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
+    $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
 
 Installer Controller
 ====================
