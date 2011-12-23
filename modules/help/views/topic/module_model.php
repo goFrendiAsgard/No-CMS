@@ -1,6 +1,6 @@
 <h3>Module's Model</h3>
 <p>
-    To read this section you should be familiar with CodeIgniter MVC pattern.
+    To read this section you must be familiar with CodeIgniter MVC pattern.
     The models in Neo-CMS'module are pretty similar with models in CodeIgniter.
     Whenever you make a model in CodeIgniter, you usually write this:
 <code>
@@ -10,10 +10,9 @@
     }
 </pre>
 </code>
-    If you are familiar with CodeIgniter, you should have been familiar with code above.
-    To make a module in Neo-CMS (you should put the files in /modules/your_module_name/models),
-    you can make a simple CI Model (just as above). But for additional feature (such as get current user id etc)
-    your model should extends CMS_Model.
+    If you are familiar with CodeIgniter, you must be use to the code above.
+    Remember to always put the model files in /modules/your_module_name/models.
+    To gain advantages of using some additional features (such as get current user id, get current user name, etc).
 <code>
 <pre>
     class Damn_Simple_Module_Model extends CMS_Model{
@@ -24,9 +23,10 @@
     It is easy, right?
 </p>
 <p>
-    I just mention that there are additional feature when you use CMS_Model. Here they are:
+    I just mention that there are additional features when your model extends CMS_Model. Here they are:
     <ul>
-        <li>cms_user_id</li>
+        <li>cms_user_id()</li>
+        <li>cms_user_name()</li>
     </ul>
     (Sorry, I should go with my lecture,... I'll finish it later :D)
 </p>

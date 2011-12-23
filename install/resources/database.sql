@@ -231,50 +231,50 @@ INSERT INTO `cms_module` (`module_id`, `module_name`, `user_id`) VALUES
 
 
 INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `is_root`, `index`, `is_static`, `static_content`) VALUES
-(1, 'main_login', NULL, 'Login', '<p>Visitor need to login for authentication</p>', 'main/login', 2, 1, 0, 0, NULL),
-(2, 'main_forgot', NULL, 'Forgot password', '<p>Accidentally forgot password</p>', 'main/forgot', 2, 1, 0, 0, NULL),
-(3, 'main_logout', NULL, 'Logout', '<p>Logout for deauthentication</p>', 'main/logout', 3, 1, 0, 0, NULL),
-(4, 'main_management', NULL, 'CMS Management', '<p>The main management of the CMS. Including User, Group, Privilege and Navigation Management</p>', 'main/management', 4, 1, 0, 0, NULL),
-(5, 'main_register', NULL, 'Register', '<p>New User Registration</p>', 'main/register', 2, 1, 0, 0, NULL),
-(6, 'main_change_profile', NULL, 'Change Profile', '<p>Change Current Profile</p>', 'main/change_profile', 3, 1, 0, 0, NULL),
-(7, 'main_group_management', 4, 'Group Management', '<p>Group Management</p>', 'main/group', 4, 0, 0, 0, NULL),
-(8, 'main_navigation_management', 4, 'Navigation Management', '<p>Navigation management</p>', 'main/navigation', 4, 0, 0, 0, NULL),
-(9, 'main_privilege_management', 4, 'Privilege Management', '<p>Privilege Management</p>', 'main/privilege', 4, 0, 0, 0, NULL),
-(10, 'main_user_management', 4, 'User Management', '<p>Manage User</p>', 'main/user', 4, 0, 0, 0, NULL),
-(11, 'main_module_management', 4, 'Module Management', '<p>Install Or Uninstall Thirdparty Module</p>', 'main/module_list', 4, 0, 0, 0, NULL),
-(12, 'main_widget_management', 4, 'Widget Management', '<p>Manage Widgets</p>', 'main/widget', 4, 0, 0, 0, NULL),
-(13, 'main_config_management', 4, 'Configuration Management', '<p>Manage Configuration Parameters</p>', 'main/config', 4, 0, 0, 0, NULL),
-(14, 'main_index', NULL, 'Home', '<p>There is no place like home :D</p>', 'main/index', 1, 1, 0, 0, NULL),
+(1, 'main_login', NULL, 'Login', 'Visitor need to login for authentication', 'main/login', 2, 1, 0, 0, NULL),
+(2, 'main_forgot', NULL, 'Forgot password', 'Accidentally forgot password', 'main/forgot', 2, 1, 0, 0, NULL),
+(3, 'main_logout', NULL, 'Logout', 'Logout for deauthentication', 'main/logout', 3, 1, 0, 0, NULL),
+(4, 'main_management', NULL, 'CMS Management', 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 1, 0, 0, NULL),
+(5, 'main_register', NULL, 'Register', 'New User Registration', 'main/register', 2, 1, 0, 0, NULL),
+(6, 'main_change_profile', NULL, 'Change Profile', 'Change Current Profile', 'main/change_profile', 3, 1, 0, 0, NULL),
+(7, 'main_group_management', 4, 'Group Management', 'Group Management', 'main/group', 4, 0, 0, 0, NULL),
+(8, 'main_navigation_management', 4, 'Navigation Management', 'Navigation management', 'main/navigation', 4, 0, 0, 0, NULL),
+(9, 'main_privilege_management', 4, 'Privilege Management', 'Privilege Management', 'main/privilege', 4, 0, 0, 0, NULL),
+(10, 'main_user_management', 4, 'User Management', 'Manage User', 'main/user', 4, 0, 0, 0, NULL),
+(11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_list', 4, 0, 0, 0, NULL),
+(12, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 0, 0, 0, NULL),
+(13, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 0, 0, NULL),
+(14, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 1, 0, 0, NULL),
 (15, 'help', NULL, 'Neo-CMS User guide', NULL, 'help', 1, 1, 0, 0, NULL);
 /*split*/
 
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`) VALUES
 (1, 'login', 'Login', 'Visitor need to login for authentication', 'main/widget_login', 2, 1, 0, 0, NULL),
 (2, 'logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 0, 0, NULL),
-(3, 'social_plugin', 'Share This Page !!', '<p>Addthis</p>', 'main/widget_social_plugin', 1, 1, 0, 1, '<!-- AddThis Button BEGIN -->\n<div class="addthis_toolbox addthis_default_style "><a class="addthis_button_preferred_1"></a> <a class="addthis_button_preferred_2"></a> <a class="addthis_button_preferred_3"></a> <a class="addthis_button_preferred_4"></a> <a class="addthis_button_preferred_5"></a> <a class="addthis_button_preferred_6"></a> <a class="addthis_button_preferred_7"></a> <a class="addthis_button_preferred_8"></a> <a class="addthis_button_preferred_9"></a> <a class="addthis_button_preferred_10"></a> <a class="addthis_button_preferred_11"></a> <a class="addthis_button_preferred_12"></a> <a class="addthis_button_preferred_13"></a> <a class="addthis_button_preferred_14"></a> <a class="addthis_button_preferred_15"></a> <a class="addthis_button_preferred_16"></a> <a class="addthis_button_compact"></a> <a class="addthis_counter addthis_bubble_style"></a></div>\n<script src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xa-4ee78d80347aa8df" type="text/javascript"></script>\n<!-- AddThis Button END -->'),
-(4, 'google_search', 'Search', '<p>Search from google</p>', '', 1, 0, 0, 1, '<!-- Google Custom Search Element -->\n<div id="cse" style="width: 100%;">Loading</div>\n<script src="http://www.google.com/jsapi" type="text/javascript"></script>\n<script type="text/javascript">// <![CDATA[\n    google.load(''search'', ''1'');\n    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(''cse'');}, true);\n// ]]></script>'),
-(5, 'google_translate', 'Translate to your language !!', '<p>The famous google translate</p>', '', 1, 1, 0, 1, '<!-- Google Translate Element -->\n<div id="google_translate_element" style="display:block"></div>\n<script>\nfunction googleTranslateElementInit() {\n  new google.translate.TranslateElement({pageLanguage: "af"}, "google_translate_element");\n};\n</script>\n<script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>\n'),
+(3, 'social_plugin', 'Share This Page !!', 'Addthis', 'main/widget_social_plugin', 1, 1, 0, 1, '<!-- AddThis Button BEGIN -->\n<div class="addthis_toolbox addthis_default_style "><a class="addthis_button_preferred_1"></a> <a class="addthis_button_preferred_2"></a> <a class="addthis_button_preferred_3"></a> <a class="addthis_button_preferred_4"></a> <a class="addthis_button_preferred_5"></a> <a class="addthis_button_preferred_6"></a> <a class="addthis_button_preferred_7"></a> <a class="addthis_button_preferred_8"></a> <a class="addthis_button_preferred_9"></a> <a class="addthis_button_preferred_10"></a> <a class="addthis_button_preferred_11"></a> <a class="addthis_button_preferred_12"></a> <a class="addthis_button_preferred_13"></a> <a class="addthis_button_preferred_14"></a> <a class="addthis_button_preferred_15"></a> <a class="addthis_button_preferred_16"></a> <a class="addthis_button_compact"></a> <a class="addthis_counter addthis_bubble_style"></a></div>\n<script src="http://s7.addthis.com/js/250/addthis_widget.js?domready=1" type="text/javascript"></script>\n<!-- AddThis Button END -->'),
+(4, 'google_search', 'Search', 'Search from google', '', 1, 0, 0, 1, '<!-- Google Custom Search Element -->\n<div id="cse" style="width: 100%;">Loading</div>\n<script src="http://www.google.com/jsapi" type="text/javascript"></script>\n<script type="text/javascript">// <![CDATA[\n    google.load(''search'', ''1'');\n    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(''cse'');}, true);\n// ]]></script>'),
+(5, 'google_translate', 'Translate !!', '<p>The famous google translate</p>', '', 1, 1, 0, 1, '<!-- Google Translate Element -->\n<div id="google_translate_element" style="display:block"></div>\n<script>\nfunction googleTranslateElementInit() {\n  new google.translate.TranslateElement({pageLanguage: "af"}, "google_translate_element");\n};\n</script>\n<script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>\n'),
 (6, 'calendar', 'Calendar', 'Indonesian Calendar', '', 1, 0, 0, 1, '<!-------Do not change below this line------->\n<div align="center" height="200px">\n    <iframe align="center" src="http://www.calendarlabs.com/calendars/web-content/calendar.php?cid=1001&uid=162232623&c=22&l=en&cbg=C3D9FF&cfg=000000&hfg=000000&hfg1=000000&ct=1&cb=1&cbc=2275FF&cf=verdana&cp=bottom&sw=0&hp=t&ib=0&ibc=&i=" width="170" height="155" marginwidth=0 marginheight=0 frameborder=no scrolling=no allowtransparency=''true''>\n    Loading...\n    </iframe>\n    <div align="center" style="width:140px;font-size:10px;color:#666;">\n        Powered by <a  href="http://www.calendarlabs.com/" target="_blank" style="font-size:10px;text-decoration:none;color:#666;">Calendar</a> Labs\n    </div>\n</div>\n\n<!-------Do not change above this line------->'),
-(7, 'google_map', 'Map', '<p>google map</p>', '', 1, 0, 0, 1, '<!-- Google Maps Element Code -->\n<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:150px;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>');
+(7, 'google_map', 'Map', 'google map', '', 1, 0, 0, 1, '<!-- Google Maps Element Code -->\n<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:150px;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>');
 
 /*split*/
 
 INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES
-(1, 'cms_install_module', 'Install Module', '<p>Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You''d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)</p>\n<p>&nbsp;</p>', 4),
-(2, 'cms_manage_access', 'Manage Access', '<p>Manage access</p>\n<p>&nbsp;</p>', 4);
+(1, 'cms_install_module', 'Install Module', 'Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You''d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)\n&nbsp;', 4),
+(2, 'cms_manage_access', 'Manage Access', 'Manage access\n&nbsp;', 4);
 /*split*/
 
 INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VALUES
-(1, 'site_name', 'Neo-CMS', '<p>Site title</p>'),
-(2, 'site_slogan', 'Your web kickstart', '<p>Site slogan</p>'),
-(3, 'site_footer', 'goFrendiAsgard &copy; 2011', '<p>Site footer</p>'),
-(4, 'site_theme', 'default', '<p>Site theme</p>'),
-(5, 'max_menu_depth', '5', '<p>Depth of menu recursive</p>'),
-(6, 'cms_email_address', 'no-reply@Neo-CMS.com', '<p>Email address</p>'),
-(7, 'cms_email_name', 'admin of Neo-CMS', '<p>Email name</p>'),
-(8, 'cms_email_forgot_subject', 'Re-activate your account at Neo-CMS', '<p>Email subject</p>'),
-(9, 'cms_email_forgot_message', 'Dear, @realname<br />Click <a href="@activation_link">@activation_link</a> to reactivate your account', '<p>Email message</p>'),
-(10, 'cms_email_useragent', 'Codeigniter', '<p>Default : CodeIgniter</p>'),
+(1, 'site_name', 'Neo-CMS', 'Site title'),
+(2, 'site_slogan', 'Your web kickstart', 'Site slogan'),
+(3, 'site_footer', 'goFrendiAsgard &copy; 2011', 'Site footer'),
+(4, 'site_theme', 'default', 'Site theme'),
+(5, 'max_menu_depth', '5', 'Depth of menu recursive'),
+(6, 'cms_email_address', 'no-reply@Neo-CMS.com', 'Email address'),
+(7, 'cms_email_name', 'admin of Neo-CMS', 'Email name'),
+(8, 'cms_email_forgot_subject', 'Re-activate your account at Neo-CMS', 'Email subject'),
+(9, 'cms_email_forgot_message', 'Dear, @realname<br />Click <a href="@activation_link">@activation_link</a> to reactivate your account', 'Email message'),
+(10, 'cms_email_useragent', 'Codeigniter', 'Default : CodeIgniter'),
 (11, 'cms_email_protocol', 'smtp', 'Default : smtp, Alternatives : mail, sendmail, smtp'),
 (12, 'cms_email_mailpath', '/usr/sbin/sendmail','Default : /usr/sbin/sendmail'),
 (13, 'cms_email_smtp_host', '','eg : ssl://smtp.googlemail.com'),

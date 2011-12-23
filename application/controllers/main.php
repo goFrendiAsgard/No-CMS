@@ -152,6 +152,9 @@ class Main extends CMS_Controller {
         $crud->display_as('authorization_id','Code')
                  ->display_as('authorization_name','Name')
                  ->display_as('description','Description');
+        
+        $crud->unset_texteditor('description');
+        
         $crud->set_subject('Authorization List');
 
         $crud->unset_add();
@@ -224,6 +227,8 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('navigations', 'cms_group_navigation', 'cms_navigation', 'group_id', 'navigation_id' , 'navigation_name');
         $crud->set_relation_n_n('privileges', 'cms_group_privilege', 'cms_privilege', 'group_id', 'privilege_id' , 'privilege_name');
         $crud->callback_before_delete(array($this,'before_delete_group'));
+        
+        $crud->unset_texteditor('description');
 
         //$crud->set_theme('datatables');
         $output = $crud->render();
@@ -260,6 +265,8 @@ class Main extends CMS_Controller {
                 ->display_as('static_content', 'Static Content')
                 ->display_as('authorization_id', 'Authorization')
                 ->display_as('groups', 'Groups');
+        
+        $crud->unset_texteditor('description');
        
         $crud->set_relation('parent_id', 'cms_navigation', 'navigation_name');
         $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name');
@@ -282,6 +289,9 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('groups', 'cms_group_privilege', 'cms_group', 'privilege_id', 'group_id' , 'group_name');
         
         $crud->display_as('authorization_id', 'Authorization');
+        
+        $crud->unset_texteditor('description');
+        
                 
         //$crud->set_theme('datatables');
         $output = $crud->render();
@@ -335,6 +345,9 @@ class Main extends CMS_Controller {
         $crud->display_as('config_name', 'Configuration Key')
                 ->display_as('value', 'Configuration Value')
                 ->display_as('description', 'Description');
+        
+        $crud->unset_texteditor('description');
+        $crud->unset_texteditor('value');
         
 
         //$crud->set_theme('datatables');

@@ -1,48 +1,77 @@
 ###################
 WHAT IS?
 ###################
-Neo-CMS = CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template + My Own Logics
+Neo-CMS = CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template + My Own Logics.
 Neo-CMS already has perfect working user authorization and authentication.
-Thus, you can focus only on your logic
+Thus, you can just focus on your business process.
 
-Neo-CMS is CodeIgniter. This means that since you didn't install it, Neo-CMS is only CodeIgniter with some plugins added.
-
-Once you've install Neo-CMS, you can still make any code just as in CodeIgniter.
+Neo-CMS is CodeIgniter. 
+=======================
+This means that since you didn't install it, Neo-CMS is only CodeIgniter with some additional plugins.
 Any code worked in CodeIgniter will also worked in Neo-CMS
 
-###################
-MODULES
-###################
-You can make your own modules in modules directory
-
-In CodeIgniter, your controller will extends CI_Controller:
-    class MyController extends CI_Controller{}
-
-In Neo-CMS, you can still do the same, but it is recommended that your controller extends CMS_Controller:
-    class MyController extends CMS_Controller{}
-
-In CodeIgniter, you might load a view by using:
-    $this->load->view('some_view');
-
-In Neo-CMS, you can still do the same, but it is recommended to use this way:
-    $this->view('some_view');
-If you want to pass some data, you can use:
-    $this->view('some_view', $data);
-
-For Authorization sake, you can also add navigation and privilege parameter:
-    $this->view('some_view', $data, 'main_user', 'manage_cms');
-That would means: Only user who can see main_user page and have manage_cms privilege will see some_view,
-another user will see 404 not found
-
-If you want to use grocery_crud feature, you can load view:
-    $this->view('grocery_CRUD', $output);
+Neo-CMS is modular
+==================
+You can make your own module, your own widget, and you can extend Neo-CMS to be your own CMS.
+However your module should obey CodeIgniter CMS pattern
 
 ###################
-LAYOUT
+DOCUMENTATION
 ###################
-You can make your own template in template directory (please refer to default theme)
+You can read the full Neo-CMS documentation after install it.
+Here I will give you some overview: 
 
-For your layout setting (header, slogan, etc) you can use "Configuration Management"
+******
+Module
+******
+* Your module must be located at modules directory (your_neo_cms_installation_path/modules)
+* Your module must have an "installer controller" to make it install-able
+* Your module must be consist of at least 3 subdirectories (models, views, and controllers)
+* If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
+
+==========
+Controller
+==========
+* Controllers deal with every process in your module
+* Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
+* Main controller must have the same name as your_module_name (your_module_name.php)
+* Every controller musth contains a class which extends CMS_Controller:
+    class Your_Module_Name extends CMS_Controller{
+        //Your logic goes here.....
+    }
+
+==========
+Models
+==========
+* Models deal with every data in your module
+* Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
+* Every model musth contains a class which extends CMS_Model:
+    class Your_Model_Name extends CMS_Model{
+        //Your logic goes here.....
+    }
+
+==========
+Views
+==========
+* Views deal with every output in your module
+* Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
+* Every view must be php file
+* To load a view by using controller, you can write:
+    $this->view('view_name');
+* To load a view by using controller, and parse some data on it, you can write:
+    $this->view('view_name', $data);
+* To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
+    $this->view('view_name', $data, 'navigation_code_required');
+* To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
+    $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
+
+====================
+Installer Controller
+====================
+* Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
+* Installer controller must be named "Install.php"
+* Installer controller must extends "CMS_Module_Installer"
+* You should override do_install() and do_uninstall() to make it fully work
 
 ###################
 CONTRIBUTORS
@@ -54,6 +83,7 @@ CONTRIBUTORS
 * John Skoumbourdis <-- The one who make groceryCRUD. It boost the development of Neo-CMS by provide very easy CRUD
 * Wahyu Eka Putra <-- The one who reports bug(s)
 * I Komang Ari Mogi <-- The one who proposed to use javascript for div layout_center's height
+* Zusana Pudyastuti <-- The one who checked grammatical error in the documentation (not in this readme file)
 
 ###################
 FEATURES LIST

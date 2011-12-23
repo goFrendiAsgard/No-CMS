@@ -22,8 +22,7 @@
             var writeable_checked = check_writeable();
             var connection_checked = check_connection(); 
             var password_checked = check_password();
-            var curl_checked = check_curl();
-            var success = writeable_checked && connection_checked && password_checked & curl_checked;
+            var success = writeable_checked && connection_checked && password_checked;
             if(!success){
                 $("#infoMessage").append('<ul>'+error_message+'</ul>');
             }else{
