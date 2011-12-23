@@ -11,7 +11,7 @@ This means that since you didn't install it, Neo-CMS is only CodeIgniter with so
 Any code worked in CodeIgniter will also worked in Neo-CMS
 
 Neo-CMS is modular
-==================
+=======================
 You can make your own module, your own widget, and you can extend Neo-CMS to be your own CMS.
 However your module should obey CodeIgniter CMS pattern
 
@@ -29,7 +29,6 @@ Module
 * Your module must be consist of at least 3 subdirectories (models, views, and controllers)
 * If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
 
-==========
 Controller
 ==========
 * Controllers deal with every process in your module
@@ -40,7 +39,6 @@ Controller
         //Your logic goes here.....
     }
 
-==========
 Models
 ==========
 * Models deal with every data in your module
@@ -50,7 +48,6 @@ Models
         //Your logic goes here.....
     }
 
-==========
 Views
 ==========
 * Views deal with every output in your module
@@ -65,7 +62,6 @@ Views
 * To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
     $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
 
-====================
 Installer Controller
 ====================
 * Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
