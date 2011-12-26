@@ -76,6 +76,7 @@
             #layout_header a, #layout_footer a, #layout_center a{
                 font-family : serif;
                 color : black;
+                text-decoration : none;                
             }
         </style>
         <script type="text/javascript">

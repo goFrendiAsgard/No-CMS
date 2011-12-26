@@ -58,13 +58,10 @@
             #layout_header a, #layout_footer a, #layout_center a{
                 font-family : serif;
                 color : black;
+                text-decoration : none;                
             }
             li.layout_nav_hot{
                 background-color : #AAAAAA;
-            }
-            #layout_nav_path a{
-                font-family : serif;
-                color : black;
             }
         </style>
         <script type="text/javascript">
