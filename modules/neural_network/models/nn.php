@@ -7,18 +7,19 @@
  */
 class NN extends CMS_Model {
     //put your code here
-    private $identifier;
+    private $identifier="Default";
     
-    protected $weights;
-    protected $neuronCount;
-    protected $learningRate;
-    protected $maxMSE;
-    protected $maxLoop;
-    protected $loop;
-    protected $MSE;
+    protected $weights;         // float[]  , the weight between neurons (usually called as synapse or omega)
+    protected $neuronCount;     // int[]    , the count of neuron in each layer
+    protected $learningRate;    // float    , the learning rate of neural network
+    protected $maxMSE;          // float    , the maximum MSE to stop the iteration
+    protected $maxLoop;         // int      , the maximum loop when maximum MSE is not satisfied
+    protected $loop;            // int      , the current loop index
+    protected $MSE;             // float[]  , the MSE of each iteration
     
     public function initialize($identifier="Default"){
-        $this->identifier = $identifier;        
+        $this->identifier = $identifier; 
+        $this->getSession();
     }
     
     protected function identifier(){
@@ -86,13 +87,27 @@ class NN extends CMS_Model {
         }
     }
     
+    //if fromLayer = (-1) : from input to input layer
     protected function weight($fromLayer, $fromNeuron, $toNeuron, $value = NULL){
-        $startIndex = 0;
-        for($i=0; $i<$fromLayer; $i++){
-            $startIndex += (($this->neuronCount[$i]+1) * $this->neuronCount[$i+1]); 
-        }       
         
-        $index = $startIndex + ($fromNeuron * $this->neuronCount[$fromLayer+1]) +  $toNeuron; 
+        if($fromLayer==-1){ //from input to input layer
+            if($fromNeuron<$this->neuronCount[0]){
+                if($toNeuron<>$fromNeuron){//THIS IS IMPOSSIBLE, if happen then something wrong
+                    return NULL;
+                }
+                $index = $fromNeuron;
+            }else{ //bias
+                $startIndex = $this->neuronCount[0];
+                $index = $startIndex+$toNeuron;
+            }
+        }else{ //from input layer to hidden layer, from hidden layer to hidden layer, from hidden layer to output layer
+            $startIndex = 0;
+            $startIndex += 2 * $this->neuronCount[0]; //+1 for bias
+            for($i=0; $i<$fromLayer; $i++){
+                $startIndex += (($this->neuronCount[$i]+1) * $this->neuronCount[$i+1]); //+1 for bias
+            } 
+            $index = $startIndex + ($fromNeuron * $this->neuronCount[$fromLayer+1]) +  $toNeuron; 
+        }
         $index = (int) $index;
         if(isset($value)){
             $this->weights[(int)$index] = $value;
@@ -102,12 +117,16 @@ class NN extends CMS_Model {
     }
     
     protected function bias($fromLayer, $toNeuron, $value = NULL){
-        $fromNeuron = $this->neuronCount[$fromLayer];
+        if($fromLayer == -1){
+            $fromNeuron = $this->neuronCount[0]; //from input
+        }else{
+            $fromNeuron = $this->neuronCount[$fromLayer]; //from input layer
+        }
         return $this->weight($fromLayer, $fromNeuron, $toNeuron, $value);
     }
     
     
-    public function set($neuronCount = array(2,3,3,2), $learningRate = 0.00001, $maxMSE = 0.1, $maxLoop = 10, $name="Default"){
+    public function set($neuronCount = array(2,3,3,2), $learningRate = 0.00001, $maxMSE = 0.1, $maxLoop = 10){
         $this->neuronCount = $neuronCount;
         $this->learningRate = $learningRate;
         $this->maxMSE = $maxMSE;
@@ -116,12 +135,22 @@ class NN extends CMS_Model {
         $this->loop = 0;
         $this->MSE = array();
         
+        //from layer -1
+        for($i=0; $i<$neuronCount[0]; $i++){ //from input to input neuron
+            $this->weight(-1, $i, $i, (mt_rand(0, 100)/50)-1 );
+        };
+        for($i=0; $i<$neuronCount[0]; $i++){ //from bias to input neuron
+            $this->bias(-1, $i, mt_rand(0, 1000)/1000);
+        }
+        //from layer 0 until from layer n-1
         for($i=0; $i<count($neuronCount)-1; $i++){ //fromLayer
-            for($j=0; $j<$neuronCount[$i+1]; $j++){ //toNeuron
-                for($k=0; $k<$neuronCount[$i]; $k++){ //fromNeuron
-                    $this->weight($i, $k, $j, (mt_rand(0, 100)/50)-1 );
+            for($j=0; $j<$neuronCount[$i]; $j++){ //fromNeuron
+                for($k=0; $k<$neuronCount[$i+1]; $k++){ //toNeuron                
+                    $this->weight($i, $j, $k, (mt_rand(0, 100)/50)-1 );
                 }
-                $this->bias($i, $j, mt_rand(0, 1000)/1000);
+            }
+            for($j=0; $j<$neuronCount[$i+1]; $j++){ //toNeuron
+                $this->bias($i, $j, (mt_rand(0, 100)/50)-1);
             }
         }
         
@@ -134,9 +163,10 @@ class NN extends CMS_Model {
     }
     
     //OVERRIDE THIS !!!
-    protected function activationFunctionDerivative($input){
-        return $input;
-        //return $this->activationFunction($input)*$this->activationFunction(1-$input); //It's called bell function or what,.... I don't sure :P
+    protected function activationFunctionDerivative($input){       
+        //damn, the $input is already activated ( $input = faiz(sigma(omega*x)) )
+        //therfore, activation derivative should be $input*(1-$input)
+        return $input*(1-$input);
     } 
     
     protected function forward($input, &$allOut=NULL, &$out=NULL){
@@ -146,8 +176,11 @@ class NN extends CMS_Model {
         for($layer=0; $layer<count($this->neuronCount); $layer++){                
             if($layer==0){
                 $lastNeuron = array();
-                for($i=0; $i<$this->neuronCount[0]; $i++){
-                    $lastNeuron[$i] = $this->activationFunction($input[$i]);
+                for($i=0; $i<$this->neuronCount[0]; $i++){ //toNeuron
+                    $value = 0;
+                    $value += $this->weight(-1, $i, $i) * $input[$i];
+                    $value += $this->bias(-1, $i) * -1;
+                    $lastNeuron[$i] = $this->activationFunction($value);
                 }
             }else{
                 $nextNeuron = array();
@@ -179,66 +212,55 @@ class NN extends CMS_Model {
     protected function backward($input, $desiredOutput, $output, $allOutput){
         $this->getSession();
         
-        //get deltas
-        $deltas = array();
+        $errors = array();
+        
         for($layer=count($this->neuronCount)-1; $layer>=0; $layer--){
-            if($layer==count($this->neuronCount)-1){
-                for($i=0; $i<$this->neuronCount[$layer]; $i++){
-                    $deltas[$layer][$i] = ($desiredOutput[$i]-$output[$i]);
-                }
-                
-            }else{
-                for($i=0; $i<$this->neuronCount[$layer]; $i++){ //fromNeuron
-                    $deltas[$layer][$i] = 0;
-                    for($j=0; $j<$this->neuronCount[$layer+1]; $j++){ //toNeuron
-                        $deltas[$layer][$i] += $deltas[$layer+1][$j] * $this->weight($layer, $i, $j);
+            for($neuron=0; $neuron<$this->neuronCount[$layer]; $neuron++){
+                if($layer==count($this->neuronCount)-1){
+                    $delta = $desiredOutput[$neuron]-$allOutput[$layer][$neuron];
+                }else{
+                    $delta = 0;
+                    for($neuronTo=0; $neuronTo<$this->neuronCount[$layer+1]; $neuronTo++){
+                        $delta += $errors[$layer+1][$neuronTo] * $this->weight($layer,$neuron,$neuronTo);
                     }
                 }
-                
-                $biasIndex = $this->neuronCount[$layer];
-                $deltas[$layer][$biasIndex] = 0;
-                for($j=0; $j<$this->neuronCount[$layer+1]; $j++){ //toNeuron
-                    $deltas[$layer][$biasIndex] += $deltas[$layer+1][$j] * $this->bias($layer,$j);
-                }
-                
-            }                
-        }
-        
-        
-        //adjust weights
-        for($layer=0; $layer<count($this->neuronCount)-1; $layer++){ 
+                //E = faiz'(output) * target-output
+                $error = $this->activationFunctionDerivative($allOutput[$layer][$neuron]) * ($delta);
+                $errors[$layer][$neuron] = $error;
+            }
             
-            //adjust weights
-            for($i=0; $i<$this->neuronCount[$layer]; $i++){ //from neuron                
-                for($j=0; $j<$this->neuronCount[$layer+1]; $j++){  //to neuron
-                    
-                    $value = 
-                        $this->weight($layer, $i, $j) + 
-                        (
-                            $this->learningRate*
-                            $deltas[$layer+1][$j]*
-                            $this->activationFunctionDerivative($allOutput[$layer][$i])
-                        );
-                    
-                    $this->weight($layer, $i, $j, $value);
+            for($neuron=0; $neuron<$this->neuronCount[$layer]; $neuron++){ //alpha
+                
+                $layerFrom = $layer-1;
+                if($layerFrom>0){
+                    $maxNeuronFrom = $this->neuronCount[$layerFrom]; 
+                }else{
+                    $maxNeuronFrom = $this->neuronCount[0];
                 }
+                //adjust weights
+                for($neuronFrom = 0; $neuronFrom<$maxNeuronFrom; $neuronFrom++){ //a
+                    if($layerFrom>0){
+                        $value = $this->weight($layerFrom, $neuronFrom, $neuron)+
+                                $this->learningRate*$errors[$layer][$neuron]*$allOutput[$layerFrom][$neuronFrom];
+                    }else{
+                        $value = $this->weight($layerFrom, $neuronFrom, $neuron)+
+                                $this->learningRate*$errors[$layer][$neuron]*$input[$neuronFrom];
+                    }
+                    $this->weight($layerFrom, $neuronFrom, $neuron, $value);
+                }
+                //adjust biases
+                if($layerFrom>0){
+                    $value = $this->bias($layerFrom, $neuron)+
+                            $this->learningRate*$errors[$layer][$neuron]*-1;
+                }else{
+                    $value = $this->bias($layerFrom, $neuron)+
+                            $this->learningRate*$errors[$layer][$neuron]*-1;
+                }
+                $this->bias($layerFrom, $neuron, $value);
+                
             }
-            //adjust bias
-            $biasIndex = $this->neuronCount[$layer];
-            for($j=0; $j<$this->neuronCount[$layer+1]; $j++){  //to neuron
-
-                $value = 
-                    $this->bias($layer, $j) + 
-                    (
-                            $this->learningRate*
-                            $deltas[$layer+1][$j]*
-                            $this->activationFunctionDerivative(-1)
-                    );
-
-                $this->bias($layer, $j, $value);
-            }
+            
         }
-        
         
         $this->saveSession();
     }
@@ -275,7 +297,7 @@ class NN extends CMS_Model {
             $this->saveSession();
             
             //exit if there is stop signal or MSE lower than maxMSE
-            if(($this->MSE[$this->loop-1] <= $this->maxMSE) || $this->cms_ci_session("Neural_Network_Stop_".$this->identifier)){
+            if( $this->cms_ci_session("Neural_Network_Stop_".$this->identifier) || ($this->MSE[$this->loop-1] <= $this->maxMSE) ){
                 $this->cms_unset_ci_session("Neural_Network_Stop_".$this->identifier);
                 break;                
             } 
@@ -291,6 +313,13 @@ class NN extends CMS_Model {
     
     public function stop(){
         $this->cms_ci_session("Neural_Network_Stop_".$this->identifier, TRUE);        
+    }
+    
+    public function getWeight($fromLayer, $fromNeuron, $toNeuron){
+        return $this->weight($fromLayer, $fromNeuron, $toNeuron);
+    }
+    public function getBias($fromLayer, $toNeuron){
+        return $this->bias($fromLayer, $toNeuron);
     }
     
 }

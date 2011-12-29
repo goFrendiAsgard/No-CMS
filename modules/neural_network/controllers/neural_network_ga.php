@@ -4,14 +4,13 @@
  *
  * @author gofrendi
  */
-class neural_network extends CMS_Controller{ 
+class neural_network_ga extends CMS_Controller{ 
      
     public function __construct(){
          parent::__construct();
-         $this->load->model('nn');
+         $this->load->model('nnga', 'nn');
          $this->nn->initialize('Default');
          /*AND*/
-         /*
          $this->dataSet = array(
              array(
                  array(0,0),
@@ -30,8 +29,6 @@ class neural_network extends CMS_Controller{
                  array(1)
              )
          );
-          * 
-          */
          
          /*XOR*/
          /**
@@ -56,7 +53,8 @@ class neural_network extends CMS_Controller{
           * 
           */
          
-         /*Suyanto*/
+         /*Suyanto*/ 
+         /**
          $this->dataSet = array(
              array(
                  array(3,3,2),
@@ -103,11 +101,13 @@ class neural_network extends CMS_Controller{
                  array(1)
              ),
          );
+          * 
+          */
          
     }
     
     public function set(){
-        $hiddenNeuronCount = array(5);
+        $hiddenNeuronCount = array();
         $learningRate = 0.1;
         $maxLoop = 100;
         $maxMSE = 0.01;                
@@ -136,7 +136,7 @@ class neural_network extends CMS_Controller{
     }
      
     public function train(){
-        $this->nn->process($this->dataSet);
+        $this->nn->process($this->dataSet, TRUE);
     }
     
     public function output(){
