@@ -41,27 +41,39 @@ class AI_Core extends CMS_Model{
         }        
         
         //is current session exist on db, if it is then update, else then insert
-        $SQL = "SELECT identifier FROM ai_session WHERE identifier='".addslashes($this->core_identifier)."'";
+        $SQL = "
+            SELECT identifier 
+            FROM ai_session 
+            WHERE 
+                identifier='".addslashes($this->core_identifier)."' AND
+                user_id=".$this->cms_userid();
         $query = $this->db->query($SQL);
         if($query->num_rows()>0){
             $data = array(
                 "data" => json_encode($this->core_property)
             );
             $where = array(
-                "identifier" => $this->core_identifier
+                "identifier" => $this->core_identifier,
+                "user_id" => $this->cms_userid()
             );
             $this->db->update("ai_session", $data, $where);
         }else{
             $data = array(
                 "data" => json_encode($this->core_property),
-                "identifier" => $this->core_identifier
+                "identifier" => $this->core_identifier,
+                "user_id" => $this->cms_userid()
             );
             $this->db->insert("ai_session", $data);
         }
     }
     
     public function core_getProperty($key=NULL){
-        $SQL = "SELECT data FROM ai_session WHERE identifier='".  addslashes($this->core_identifier)."'";
+        $SQL = "
+            SELECT data 
+            FROM ai_session 
+            WHERE 
+                identifier='".addslashes($this->core_identifier)."' AND
+                user_id=".$this->cms_userid();
         $query = $this->db->query($SQL);
         if($query->num_rows()>0){
             $row = $query->row();

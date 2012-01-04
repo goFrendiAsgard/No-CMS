@@ -61,23 +61,63 @@ class nnga extends CMS_Controller {
             }
             $neuronCount[] = count($nn_dataset[0][1]);
 
-            $this->ai_nnga->set($neuronCount, $nn_learning_rate, $nn_max_mse, $nn_max_loop, 
+            $this->ai_nnga->set($nn_dataset, $neuronCount, $nn_learning_rate, $nn_max_mse, $nn_max_loop, 
                     $ga_individu_count, $ga_max_loop, 1/(0.00001+$nn_max_mse), $ga_mutation_rate, 
                     $ga_crossover_rate, $ga_reproduction_rate, $ga_elitism_rate); 
             redirect('artificial_intelligence/nnga/monitor');
             
         }else{
-            if(!$nn_hidden_neuron_count) $nn_hidden_neuron_count = '2';
-            if(!$nn_learning_rate) $nn_learning_rate = 0.1;
-            if(!$nn_max_loop) $nn_max_loop = 1000;
-            if(!$nn_max_mse) $nn_max_mse = 0.01;
-            if(!$nn_dataset) $nn_dataset = '[[0,0],[0]], [[0,1],[0]], [[1,0],[0]], [[1,1],[1]]';
-            if(!$ga_max_loop) $ga_max_loop = 50;
-            if(!$ga_individu_count) $ga_individu_count = 50;
-            if(!$ga_mutation_rate) $ga_mutation_rate = 0.3;
-            if(!$ga_crossover_rate) $ga_crossover_rate = 0.6;
-            if(!$ga_reproduction_rate) $ga_reproduction_rate = 0.1;
-            if(!$ga_elitism_rate) $ga_elitism_rate = 0.1;
+            $state = $this->ai_nnga->currentState();
+            $nnState = $state["nn"];
+            $gaState = $state["ga"];
+            if(!isset($nnState)){
+                if(!$nn_hidden_neuron_count) $nn_hidden_neuron_count = '2';
+                if(!$nn_learning_rate) $nn_learning_rate = 0.1;
+                if(!$nn_max_loop) $nn_max_loop = 1000;
+                if(!$nn_max_mse) $nn_max_mse = 0.01;
+                if(!$nn_dataset) $nn_dataset = '[[0,0],[0]], [[0,1],[0]], [[1,0],[0]], [[1,1],[1]]';
+            }else{
+                if(!$nn_hidden_neuron_count){
+                    $nn_hidden_neuron_count = '';
+                    for($i=1; $i<count($nnState["nn_neuronCount"])-1; $i++){
+                        $nn_hidden_neuron_count .= $nnState["nn_neuronCount"][$i];
+                        if($i<count($nnState["nn_neuronCount"])-2){
+                            $nn_hidden_neuron_count .= ', '; 
+                        }
+                    }
+                }
+                if(!$nn_learning_rate) $nn_learning_rate = $nnState["nn_learningRate"];
+                if(!$nn_max_loop) $nn_max_loop = $nnState["nn_maxLoop"];
+                if(!$nn_max_mse) $nn_max_mse = $nnState["nn_maxMSE"];
+                if(!$nn_dataset){
+                    $nn_dataset = "";
+                    for($i=0; $i<count($nnState["nn_dataset"]); $i++){
+                        $nn_dataset .= "[";
+                        $nn_dataset .= json_encode($nnState["nn_dataset"][$i]["input"]);
+                        $nn_dataset .= ", ";
+                        $nn_dataset .= json_encode($nnState["nn_dataset"][$i]["target"]);
+                        $nn_dataset .= "]";
+                        if($i<count($nnState["nn_dataset"])-1){
+                            $nn_dataset .= ", ";
+                        }
+                    }
+                }
+            }
+            if(!isset($gaState)){
+                if(!$ga_max_loop) $ga_max_loop = 50;
+                if(!$ga_individu_count) $ga_individu_count = 50;
+                if(!$ga_mutation_rate) $ga_mutation_rate = 0.3;
+                if(!$ga_crossover_rate) $ga_crossover_rate = 0.6;
+                if(!$ga_reproduction_rate) $ga_reproduction_rate = 0.1;
+                if(!$ga_elitism_rate) $ga_elitism_rate = 0.1;
+            }else{
+                if(!$ga_max_loop) $ga_max_loop = $gaState["ga_maxLoop"];
+                if(!$ga_individu_count) $ga_individu_count = $gaState["ga_individuCount"];
+                if(!$ga_mutation_rate) $ga_mutation_rate = $gaState["ga_mutationRate"];
+                if(!$ga_crossover_rate) $ga_crossover_rate = $gaState["ga_crossoverRate"];
+                if(!$ga_reproduction_rate) $ga_reproduction_rate = $gaState["ga_reproductionRate"];
+                if(!$ga_elitism_rate) $ga_elitism_rate = $gaState["ga_elitismRate"];
+            }
             $data = array(
                 "nn_hidden_neuron_count"=>$nn_hidden_neuron_count,
                 "nn_learning_rate"=>$nn_learning_rate,
@@ -110,33 +150,11 @@ class nnga extends CMS_Controller {
     
     public function currentState(){
         $result = $this->ai_nnga->currentState();
-        
-        $nn_dataset = $this->session->userdata('nn_dataset');
-        $nn_dataset = json_decode('['.$nn_dataset.']');
-        $result["dataset"] = array();
-        for($i=0; $i<count($nn_dataset); $i++){
-            $result["dataset"][$i] = array(
-                "input" => $nn_dataset[$i][0],
-                "target" => $nn_dataset[$i][1],
-                "output" => $this->ai_nnga->out($nn_dataset[$i][0])
-            );
-        }
         echo json_encode($result);
     }
     
     public function state(){
         $result = $this->ai_nnga->currentState();
-        
-        $nn_dataset = $this->session->userdata('nn_dataset');
-        $nn_dataset = json_decode('['.$nn_dataset.']');
-        $result["dataset"] = array();
-        for($i=0; $i<count($nn_dataset); $i++){
-            $result["dataset"][$i] = array(
-                "input" => $nn_dataset[$i][0],
-                "target" => $nn_dataset[$i][1],
-                "output" => $this->ai_nnga->out($nn_dataset[$i][0])
-            );
-        }
         
         echo '<pre>';
         echo var_dump($result);

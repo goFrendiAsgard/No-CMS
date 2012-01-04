@@ -9,6 +9,9 @@ require_once(APPPATH.'../modules/artificial_intelligence/models/ai_core.php');
 class AI_Genetics_Algorithm extends AI_Core{
     //put your code here
     protected $ga_population;           // genes: int[], fitness: float[], order : int[]
+    protected $ga_fitness;              // the copy of ga_population fitness, without same individu    
+    protected $ga_genes;                // the copy of ga_population genes, without same individu
+    
     protected $ga_individuCount;        // int
     protected $ga_chromosomeLength;     // int
     protected $ga_maxLoop;              // int
@@ -28,6 +31,9 @@ class AI_Genetics_Algorithm extends AI_Core{
     protected function begin(){
         $property = $this->core_getProperty();
         $this->ga_population            = $property["ga_population"];
+        $this->ga_genes                 = $property["ga_genes"];
+        $this->ga_fitness               = $property["ga_fitness"];
+        $this->ga_fitnessOrder          = $property["ga_fitnessOrder"];
         $this->ga_individuCount         = $property["ga_individuCount"];
         $this->ga_chromosomeLength      = $property["ga_chromosomeLength"];
         $this->ga_maxLoop               = $property["ga_maxLoop"];
@@ -38,13 +44,16 @@ class AI_Genetics_Algorithm extends AI_Core{
         $this->ga_crossoverRate         = $property["ga_crossoverRate"];
         $this->ga_reproductionRate      = $property["ga_reproductionRate"];
         $this->ga_time                  = $property["ga_time"];
-        $this->ga_bestFitness           = $property["ga_bestFitness"];
+        $this->ga_bestFitness           = $property["ga_bestFitness"];        
     }
     
     protected function end(){
         $this->core_saveProperty(
                 array(
                     "ga_population",
+                    "ga_genes",
+                    "ga_fitness",
+                    "ga_fitnessOrder",
                     "ga_individuCount",
                     "ga_chromosomeLength",
                     "ga_maxLoop",
@@ -59,6 +68,9 @@ class AI_Genetics_Algorithm extends AI_Core{
                 ), 
                 array(
                     $this->ga_population,
+                    $this->ga_genes,
+                    $this->ga_fitness,
+                    $this->ga_fitnessOrder,
                     $this->ga_individuCount,
                     $this->ga_chromosomeLength,
                     $this->ga_maxLoop,
@@ -88,6 +100,10 @@ class AI_Genetics_Algorithm extends AI_Core{
         $this->ga_loop = 0;
         $this->ga_time = 0;
         $this->ga_bestFitness = array();
+        $this->ga_population = array();
+        $this->ga_genes = array();
+        $this->ga_fitness = array();
+        $this->ga_fitnessOrder = array();
         
                 
         $this->end();        
@@ -95,24 +111,18 @@ class AI_Genetics_Algorithm extends AI_Core{
     
     public function process(){
         $this->begin();
-        if(!isset($this->ga_population["genes"])){
-            $this->ga_population = $this->newGeneration();
-            $this->end();
-        }
         for($i=0; $i<$this->ga_maxLoop; $i++){
             $this->begin();
             $startTime = microtime(true);
             
-            $this->ga_population = $this->newGeneration($this->ga_population);
+            $this->newGeneration();
             $this->ga_loop++;
-            $this->ga_bestFitness[] = $this->ga_population["fitness"][$this->ga_population["order"][0]];
             
             $endTime = microtime(true);
             $this->ga_time += $endTime-$startTime;
             $this->end();
             
-            $bestIndex = $this->ga_population["order"][0];
-            if($this->ga_population["fitness"][$bestIndex]>$this->ga_minFitness){
+            if($this->ga_bestFitness[count($this->ga_bestFitness)-1]>$this->ga_minFitness){
                 break;
             }
         } 
@@ -143,6 +153,9 @@ class AI_Genetics_Algorithm extends AI_Core{
         $gene2_1 = substr($gene2, 0, $crossPoint);
         $gene2_2 = substr($gene2, $crossPoint);
         
+        $gene1 = $gene1_1 . $gene2_2;
+        $gene2 = $gene2_1 . $gene1_2;
+        
         
         $genes=array(
             $gene1,
@@ -162,31 +175,31 @@ class AI_Genetics_Algorithm extends AI_Core{
         return $result;        
     }
     
-    private function getRandomGene($population){
+    private function getRandomGene(){
         //the bigger fitness value, the bigger chance
         $sum = 0;
-        for($i=0; $i<count($population["genes"]); $i++){
-            $sum += $population["fitness"][$i];
+        for($i=0; $i<count($this->ga_genes); $i++){
+            $sum += $this->ga_fitness[$i];
         }
         $dice = $sum * mt_rand(0,1000)/1000;
         
         $wheel = 0;
         $choosenIndex = 0;
-        for($i=0; $i<count($population["genes"]); $i++){
-            $wheel += $population["fitness"][$i];
+        for($i=0; $i<count($this->ga_genes); $i++){
+            $wheel += $this->ga_fitness[$i];
             if($dice<$wheel){
                 $choosenIndex = $i;
                 break;
             }
         }
         
-        return $this->copyGene($population["genes"][$choosenIndex]);
+        return $this->ga_genes[$choosenIndex];
         
     }
     
-    private function newGeneration($oldPopulation = NULL){
+    private function newGeneration(){
         $genes = array();
-        if(!isset($oldPopulation)){
+        if(count($this->ga_population)==0){
             for($i=0; $i<$this->ga_individuCount; $i++){
                 $genes[] = $this->newIndividu();
             }
@@ -194,19 +207,19 @@ class AI_Genetics_Algorithm extends AI_Core{
             //make a new generation from oldPopulation
             //elitism first            
             for($i=0; $i<round($this->ga_elitismRate*$this->ga_individuCount); $i++){
-                $genes[$i] = $this->copyGene($oldPopulation["genes"][$oldPopulation["order"][$i]]);
+                $genes[$i] = $this->copyGene($this->ga_genes[$this->ga_fitnessOrder[$i]]);
             }
             //next we deal with mutation, crossover or reproduction
             for($i=count($genes); $i<$this->ga_individuCount; $i++){
                 $dice = mt_rand(0, $this->ga_mutationRate + $this->ga_crossoverRate + $this->ga_reproductionRate);
                 if($dice<$this->ga_mutationRate){
                     //perform mutation here
-                    $gene = $this->getRandomGene($oldPopulation);
+                    $gene = $this->getRandomGene();
                     $genes[$i] = $this->mutation($gene);
                 }else if($dice<($this->ga_mutationRate+$this->ga_crossoverRate)){
                     //preform crossover here
-                    $gene1 = $this->getRandomGene($oldPopulation);
-                    $gene2 = $this->getRandomGene($oldPopulation);
+                    $gene1 = $this->getRandomGene();
+                    $gene2 = $this->getRandomGene();
                     $offspring = $this->crossover($gene1, $gene2);
                     $genes[$i] = $offspring[0];
                     if($i<$this->ga_individuCount-1){
@@ -215,35 +228,49 @@ class AI_Genetics_Algorithm extends AI_Core{
                     }
                 }else{
                     //perform reproduction here
-                    $genes[$i] = $this->getRandomGene($oldPopulation);
+                    $genes[$i] = $this->getRandomGene($this->ga_population);
                 }
             }
         }
         
-        $population["genes"] = $genes;
-        $poputation["fitness"] = array();
-        $population["order"] = array();
+        $this->ga_population["genes"] = $genes;
         
-        //get fitness, prepare order
+        
+        $this->ga_genes = array();
+        $this->ga_fitness = array();
+        $this->ga_fitnessOrder = array();
         for($i=0; $i<count($genes); $i++){
-            $population["fitness"][$i] = $this->calculateFitness($genes[$i]);
-            $population["order"][$i] = $i;            
+            $alreadyExist = FALSE;
+            for($j=0; $j<count($this->ga_genes); $j++){
+                if($genes[$i] == $this->ga_genes[$j]){
+                    $alreadyExist = TRUE;
+                    break;
+                }
+            }
+            if(!$alreadyExist){
+                $this->ga_genes[] = $genes[$i];
+                $this->ga_fitness[] = $this->calculateFitness($genes[$i]);
+                $this->ga_fitnessOrder[] = count($this->ga_fitnessOrder);
+            }
         }
+        
         //sort order
-        for($i=0; $i<count($population["genes"])-1; $i++){
+        for($i=0; $i<count($this->ga_genes)-1; $i++){
             $indexMax = $i;
-            for($j=$i+1; $j<count($population["genes"])-1; $j++){
-                if($population["fitness"][$j]>$population["fitness"][$indexMax]){
+            for($j=$i+1; $j<count($this->ga_genes)-1; $j++){
+                if($this->ga_fitness[$j]>$this->ga_fitness[$indexMax]){
                     $indexMax = $j;
                 }
             }
-            $tmp = $population["order"][$i];
-            $population["order"][$i] = $population["order"][$indexMax];
-            $population["order"][$indexMax] = $tmp;
+            $tmp = $this->ga_fitnessOrder[$i];
+            $this->ga_fitnessOrder[$i] = $this->ga_fitnessOrder[$indexMax];
+            $this->ga_fitnessOrder[$indexMax] = $tmp;
         }
         
+        $this->ga_bestFitness[] = $this->ga_fitness[$this->ga_fitnessOrder[0]];
         
-        return $population;
+        
+        
     }
     
     //absolutely need to override this

@@ -67,7 +67,7 @@
                     
                     var nn = response["nn"];
                     var ga = response["ga"];
-                    var ds = response["dataset"];
+                    var ds = nn.nn_dataset;
                     var neuronCount = nn.nn_neuronCount;
                     var layerCount = neuronCount.length;
                     var weights = nn.nn_weights;

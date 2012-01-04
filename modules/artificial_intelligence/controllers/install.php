@@ -20,17 +20,18 @@ class Install extends CMS_Module_Installer{
     
     private function remove_all(){
         $this->db->query("DROP TABLE IF EXISTS `ai_session`;");
-        
-        $this->remove_navigation("ai_artificial_intelligence_index");
-        $this->remove_navigation("ai_nnga_index"); 
+         
         $this->remove_navigation("ai_nnga_monitor"); 
-        $this->remove_navigation("ai_nnga_set"); 
+        $this->remove_navigation("ai_nnga_set");
+        $this->remove_navigation("ai_nnga_index");
+        $this->remove_navigation("ai_artificial_intelligence_index");
     }
     
     private function build_all(){
         $this->db->query("
             CREATE TABLE IF NOT EXISTS `ai_session` (
               `id` int(20) unsigned NOT NULL AUTO_INCREMENT,
+              `user_id` int(20) unsigned NOT NULL,
               `identifier` varchar(100) NOT NULL,
               `data` longtext,
               PRIMARY KEY (`id`),
@@ -38,10 +39,10 @@ class Install extends CMS_Module_Installer{
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
          ");
         
-        $this->add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", "artificial_intelligence");
-        $this->add_navigation("ai_nnga_index","NNGA", "artificial_intelligence/nnga/index", 1, "ai_artificial_intelligence_index");
-        $this->add_navigation("ai_nnga_monitor","Monitor", "artificial_intelligence/nnga/monitor", 1, "ai_nnga_index");
-        $this->add_navigation("ai_nnga_set","Set Parameters", "artificial_intelligence/nnga/set", 1, "ai_nnga_monitor");
+        $this->add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", "artificial_intelligence", 3);
+        $this->add_navigation("ai_nnga_index","NNGA", "artificial_intelligence/nnga/index", 3, "ai_artificial_intelligence_index");
+        $this->add_navigation("ai_nnga_monitor","Monitor", "artificial_intelligence/nnga/monitor", 3, "ai_nnga_index");
+        $this->add_navigation("ai_nnga_set","Set Parameters", "artificial_intelligence/nnga/set", 3, "ai_nnga_index");
     }
 }
 
