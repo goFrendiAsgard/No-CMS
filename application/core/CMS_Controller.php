@@ -250,6 +250,15 @@ class CMS_Controller extends CI_Controller{
     
     /** 
      * @author : goFrendiAsgard
+     * @param : 
+     * @desc : get module list
+     */
+    protected function cms_get_layout_list(){
+        return $this->CMS_Model->cms_get_layout_list();
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
      * @param : identity 
      * @desc : generate activation code, 
      */

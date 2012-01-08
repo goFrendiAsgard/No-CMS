@@ -1,0 +1,103 @@
+/* 
+    Document   : style
+    Created on : Jan 7, 2012, 12:57:07 PM
+    Author     : gofrendi
+    Description:
+        Purpose of the stylesheet follows.
+*/
+body{
+    padding : 5px;
+}
+div#layout_navigation, div#layout_widget{
+    z-index : 100;
+}
+div#layout_header, div#layout_content, div#layout_footer{
+    z-index : 0;
+}
+div#layout_header{
+    background-color : #CFCFCF;
+    padding : 20px;
+    font-size : small;
+}
+div#layout_navigation {
+    float:left;
+    width:200px;
+    padding : 10px;
+}
+div#layout_widget {
+    float:right;
+    width:160px;
+    padding : 10px;
+}
+div#layout_content {                
+    margin : 0 160px 0 200px;
+    padding : 20px;
+}
+div#layout_footer{
+    text-align : center;
+    font-size: x-small;
+    background-color : #CFCFCF;
+    padding : 10px;
+}
+div#layout_center{
+    font-size : small;
+    background-color : #E0E0E0;
+    margin-top : 0px;                
+    padding : 5px;
+    min-height: 5px;
+}
+div.layout_clear
+{
+    clear: both;
+}
+.invisible{
+    display : none;
+}
+.layout_nav_description{
+    position:absolute;
+    background-color:#AAAA88;
+    padding: 5px 5px 5px 5px;
+    margin : 10px;
+    font-size: small;
+    min-height : 25px;
+}
+.layout_nav{
+    list-style-type: none;
+    padding : 0px;
+}
+.layout_nav li{
+    background-color : #DFDFDF;
+    border : 1px solid white;
+    padding : 3px;
+    margin : 3px;
+}
+li.layout_nav_hot{
+    background-color : #AAAAAA;
+}
+
+#layout_header a, #layout_footer a, #layout_center a{  
+    font-family : serif;
+    color : black;                
+    font-weight : normal;
+    text-decoration : underline;
+}
+#layout_navigation a{
+    font-family : serif;
+    color : black;                
+    font-weight : bold;
+    text-decoration : none;
+}
+#layout_navigation a.layout_page_link{    
+    display:block;
+    float:left;
+}
+#layout_navigation a.layout_have_child{
+    width: 80%;
+    margin-left: 5%;
+}
+#layout_navigation a.layout_no_child{
+    width: 100%;
+}
+#layout_navigation a.layout_expand{
+    float: left;
+}

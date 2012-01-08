@@ -432,6 +432,28 @@ class CMS_Model extends CI_Model {
     
     /** 
      * @author : goFrendiAsgard
+     * @param : 
+     * @desc : get layout list
+     */
+    public function cms_get_layout_list(){
+        $this->load->helper('directory');
+        $directories = directory_map('themes',1);
+        $module = array();
+        foreach($directories as $directory){
+            if(!is_dir('themes/'.$directory)) continue;
+            
+            $layout_name=$directory;
+            
+            $module[]=array(                    
+                "path"=>$directory,
+                "used"=>$this->cms_get_config('site_theme')==$layout_name
+            );
+        }
+        return $module;
+    }
+    
+    /** 
+     * @author : goFrendiAsgard
      * @param : identity 
      * @desc : generate activation code, 
      */

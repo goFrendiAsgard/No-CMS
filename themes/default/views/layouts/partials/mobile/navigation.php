@@ -39,15 +39,24 @@
                     $str.= '<a href="#" class="layout_expand">[+]</a> ';
                 }                
             }
-            if($navigation['is_static']){
-                $str.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title']);
+            
+            $pageLinkClass = 'layout_page_link';
+            if(count($navigation['child'])>0){
+                $pageLinkClass .= ' layout_have_child';
             }else{
-                $str.= anchor($navigation['url'], $navigation['title']);
+                $pageLinkClass .= ' layout_no_child';
+            }            
+            if($navigation['is_static']){
+                $str.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>$pageLinkClass));
+            }else{
+                $str.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
             }
+            $str.= '<div class="layout_clear"></div>';
             if(isset($navigation['description'])){
                 $str.= '<div class="layout_nav_description invisible">Description : '.
                         $navigation['description'].'</div>';
             }
+            
             $str.= build_menu($navigation['child'], $path, TRUE);
             $str.= '</li>';
         }

@@ -4,6 +4,8 @@ DROP TRIGGER IF EXISTS `trg_before_update_cms_navigation`;
 /*split*/
 DROP TABLE IF EXISTS `cms_config`;
 /*split*/
+DROP TABLE IF EXISTS `cms_module_dependency`;
+/*split*/
 DROP TABLE IF EXISTS `cms_module`;
 /*split*/
 DROP TABLE IF EXISTS `cms_group_privilege`;
@@ -167,6 +169,19 @@ CREATE TABLE `cms_module` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
+CREATE TABLE `cms_module_dependency` (
+  `module_dependency_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` int(20) unsigned NOT NULL,
+  `child_id` int(20) unsigned NOT NULL,
+  PRIMARY KEY (`module_dependency_id`),
+  KEY `parent_id` (`parent_id`),
+  KEY `child_id` (`child_id`),
+  CONSTRAINT `cms_module_dependency_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `cms_module` (`module_id`),
+  CONSTRAINT `cms_module_dependency_ibfk_2` FOREIGN KEY (`child_id`) REFERENCES `cms_module` (`module_id`),
+  UNIQUE KEY `module_parent_child` (`parent_id`, `child_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*split*/
+
 CREATE TABLE `cms_config` (
   `config_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `config_name` varchar(50) NOT NULL,
@@ -241,11 +256,12 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (8, 'main_navigation_management', 4, 'Navigation Management', 'Navigation management', 'main/navigation', 4, 0, 0, 0, NULL),
 (9, 'main_privilege_management', 4, 'Privilege Management', 'Privilege Management', 'main/privilege', 4, 0, 0, 0, NULL),
 (10, 'main_user_management', 4, 'User Management', 'Manage User', 'main/user', 4, 0, 0, 0, NULL),
-(11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_list', 4, 0, 0, 0, NULL),
-(12, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 0, 0, 0, NULL),
-(13, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 0, 0, NULL),
-(14, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 1, 0, 0, NULL),
-(15, 'help', NULL, 'Neo-CMS User guide', NULL, 'help', 1, 1, 0, 0, NULL);
+(11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_management', 4, 0, 0, 0, NULL),
+(12, 'main_change_theme', 4, 'Change Theme', 'Change Theme', 'main/change_theme', 4, 0, 0, 0, NULL),
+(13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 0, 0, 0, NULL),
+(14, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 0, 0, NULL),
+(15, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 1, 0, 0, NULL),
+(16, 'help', NULL, 'Neo-CMS User guide', NULL, 'help', 1, 1, 0, 0, NULL);
 /*split*/
 
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`) VALUES

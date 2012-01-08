@@ -73,9 +73,11 @@ CONTRIBUTORS
 * wiredesignz <-- The one who make HMVC plugin. The plugin he made allowed me to make separation between modules
 * Phil Sturgeon <-- The one who make Phil Sturgeon's template. The plugin he made allowed me to make separation between layouts
 * John Skoumbourdis <-- The one who make groceryCRUD. It boost the development of Neo-CMS by provide very easy CRUD
-* Wahyu Eka Putra <-- The one who reports bug(s)
-* I Komang Ari Mogi <-- The one who proposed to use javascript for div layout_center's height
-* Zusana Pudyastuti <-- The one who checked grammatical error in the documentation (not in this readme file)
+* Wahyu Eka Putra <-- Reported bug(s)
+* I Komang Ari Mogi <-- Proposed some advice related to layout
+* Zusana Pudyastuti <-- Checked grammatical error in the documentation (not in this readme file)
+* Mukhlies Amien <-- Give moral supports :D
+* Gembong Edhi Setiawan <-- Give moral supports and some advice, Tester
 
 ###################
 FEATURES LIST
@@ -96,15 +98,15 @@ FEATURES LIST
 ###################
 FUTURE FEATURES
 ###################
-* Comment in blog module
 * Module Generator
-* Photo album module (included in blog module)
-* E commerce module
 
 ###################
 TODO
 ###################
-* Use cms prefix for every public function inside CMS_Controller & CMS_Model
+* Comment in blog module
+* Module Generator
+* Photo album module (included in blog module)
+* E commerce module
 * Documentation
 * Live Demo
 

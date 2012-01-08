@@ -356,9 +356,19 @@ class Main extends CMS_Controller {
         $this->view('grocery_CRUD', $output, 'main_config_management');
     }
     
-    public function module_list(){
+    public function module_management(){
         $data['modules'] = $this->cms_get_module_list();
-        $this->view('main/module_list',$data,'main_module_management');
+        $this->view('main/module_management',$data,'main_module_management');
+    }
+    
+    public function change_theme($theme = NULL){
+        if(isset($theme)){
+            $this->cms_set_config('site_theme', $theme);
+            redirect('main/change_theme');
+        }else{
+            $data['themes'] = $this->cms_get_layout_list();
+            $this->view('main/change_theme',$data,'main_change_theme');
+        }
     }
     
     public function show_static_widget($id){

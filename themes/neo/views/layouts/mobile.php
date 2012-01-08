@@ -3,8 +3,8 @@
     <head>
         <title><?php echo $template['title'];?></title>
         <script type="text/javascript" src ="<?php echo base_url().'assets/jquery.js';?>"></script>
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url().'themes/default/assets/mobile/style.css';?>"></link>
-        <script type="text/javascript" src="<?php echo base_url().'themes/default/assets/mobile/script.js';?>"></script>
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url().'themes/neo/assets/mobile/style.css';?>"></link>
+        <script type="text/javascript" src="<?php echo base_url().'themes/neo/assets/mobile/script.js';?>"></script>
     </head>
     <body>
         <div id="layout_header"><?php echo $template['partials']['header'];?></div>

@@ -1,0 +1,140 @@
+/* 
+    Document   : style
+    Created on : Jan 7, 2012, 12:57:07 PM
+    Author     : gofrendi
+    Description:
+        Purpose of the stylesheet follows.
+*/
+body{
+    padding : 5px;
+     /* IE10 */ 
+    background-image: -ms-linear-gradient(top left, orangered 0%, orange 100%);
+
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(top left, orangered 0%, orange 100%);
+
+    /* Opera */ 
+    background-image: -o-linear-gradient(top left, orangered 0%, orange 100%);
+
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, orangered), color-stop(1, orange));
+
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(top left, orangered 0%, orange 100%);
+
+    /* Proposed W3C Markup */ 
+    background-image: linear-gradient(top left, orangered 0%, orange 100%);
+}
+div#layout_header, div#layout_content, div#layout_footer{
+    margin : 0px;
+}
+div#layout_header{
+    /* IE10 */ 
+    background-image: -ms-linear-gradient(top left, orangered 0%, orange 100%);
+
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(top left, orangered 0%, orange 100%);
+
+    /* Opera */ 
+    background-image: -o-linear-gradient(top left, orangered 0%, orange 100%);
+
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, orangered), color-stop(1, orange));
+
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(top left, orangered 0%, orange 100%);
+
+    /* Proposed W3C Markup */ 
+    background-image: linear-gradient(top left, orangered 0%, orange 100%);
+    border-radius: 15px;
+    padding : 5px;
+    font-size : small;
+}
+div#layout_navigation{ 
+    min-height : 300px;
+    padding: 10px;
+}
+div#layout_content{
+    min-height : 300px;
+    padding : 5px;
+}
+div#layout_footer{
+    text-align : center;
+    font-size: x-small;
+    padding : 10px;
+}
+div#layout_center{
+    font-size : small;
+    margin-top : 0px;
+    min-height : 300px;
+    background-color : orange;
+    -moz-box-shadow:    3px 3px 5px 6px orangered;
+    -webkit-box-shadow: 3px 3px 5px 6px orangered;
+    box-shadow:         3px 3px 5px 6px orangered;
+    border-radius: 15px;
+    padding: 10px;
+}
+div.layout_clear
+{
+    clear: both;
+}
+.invisible{
+    display : none;
+}
+.layout_nav_description{
+    position:absolute;
+    background-color:gold;
+    padding: 5px 5px 5px 5px;
+    margin : 10px;
+    font-size: small;
+    min-height : 25px;
+}
+.layout_nav{
+    list-style-type: none;
+    padding : 0px;
+    margin : 0px;
+}
+.layout_nav li{
+    background-color : orange;
+    padding : 3px;
+    margin : 3px;
+}
+li.layout_nav_hot{
+    background-color : darkorange;
+}
+#layout_header a, #layout_footer a, #layout_center a{  
+    font-family : serif;
+    color : black;                
+    font-weight : normal;
+    text-decoration : underline;
+}
+#layout_navigation ul a{
+    font-family : serif;
+    color : black;                
+    font-weight : bold;
+    text-decoration : none;
+}
+#layout_navigation a.layout_page_link{
+    margin-left: 5%;
+    display:block;
+    float:left;
+}
+#layout_navigation a.layout_have_child{
+    width: 80%;
+}
+#layout_navigation a.layout_no_child{
+    width: 100%;
+}
+#layout_navigation a.layout_expand{
+    float: left;
+}
+#layout_navigation a.layout_have_child{
+    width: 80%;
+    margin-left: 5%;
+}
+#layout_navigation a.layout_no_child{
+    width: 100%;
+}
+#layout_navigation a.layout_expand{
+    float: left;
+}
