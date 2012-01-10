@@ -1,12 +1,12 @@
 <?php
-
 /**
  * Description of install
  *
- * @author gofrendi
+ * @author theModuleGenerator
  */
-class Install extends CMS_Module_Installer{ 
-    
+class Install extends CMS_Module_Installer {
+    protected $DEPENDENCIES = array();
+
     //this should be what happen when user install this module
     protected function do_install(){
         $this->remove_all();
@@ -18,11 +18,13 @@ class Install extends CMS_Module_Installer{
     }
     
     private function remove_all(){
-        $this->remove_navigation("module_generator_index");        
+@dropTable
+@removeNavigation
     }
     
-    private function build_all(){        
-        $this->add_navigation("module_generator_index","Module Generator", "module_generator/index", 3);
+    private function build_all(){
+@createTable
+@addNavigation
     }
 }
 

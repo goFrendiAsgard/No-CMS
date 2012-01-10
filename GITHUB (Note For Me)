@@ -32,3 +32,7 @@ FROM GITHUB.COM, HOW TO GIT :
       git commit -m 'the comment'
       git tag -a v1.4 -m 'version 1.4'
       git push -u origin master --tags   
+
+    Wrong tag
+      git tag -d 7.x-3.x-alpha3
+      git push origin :refs/tags/7.x-3.x-alpha3

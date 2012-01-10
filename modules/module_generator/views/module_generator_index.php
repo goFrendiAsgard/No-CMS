@@ -32,7 +32,7 @@
     echo form_label('Tables<br /><i>(press ctrl+click to select multiple tables)</i>');
     $options = $tables;
     $selected = array();
-    echo form_multiselect('tables', $options, $selected);
+    echo form_multiselect('tables[]', $options, $selected);
     echo form_submit('make', 'Make the module !!!');
     echo form_close();
     ?>
