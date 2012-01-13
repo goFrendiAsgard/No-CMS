@@ -2,13 +2,33 @@
 What is Neo-CMS
 ###################
 
-Neo-CMS = CodeIgniter + HMVC + Phil Sturgeon's Template + groceryCRUD + Some Modification
+Neo-CMS is a CMS-framework.
+
+Neo-CMS is a basic CMS with some default features such as user authorization, menu, module and theme management.
+It is fully customizable and extensible, you can make your own module and your own themes. 
+It provide freedom to make your very own CMS, which is not provided very well by any other CMS.
+
+***************
+Who is it for?
+***************
+
+Neo CMS will be good for you if you say yes for majority of these statement:
+
+* You are a web developer who use CodeIgniter framework.
+* You are tired of building the same things such an authorization-authentication for every project.
+* You find that some part of your old project can be used for your next project.
+* You are happy with CodeIgniter but you think some plug-ins and features should be provided by default.
+* You want a simple and easy to learn framework that has 100% compatibility with CodeIgniter.
+* You don't want to learn too many new terms.
+* You are familiar with HMVC plugins, and you think it is one of "should be exists" feature in CodeIgniter.
+* You are in tight deadline, at least you need to provide the prototype to your client.
 
 **************
 Neo-CMS as CMS
 **************
-Neo-CMS is a good enough CMS. Please don't compare it with Wordpress, Drupal or Joomla.
-Neo-CMS is built by developer for developer, although everyone else can still use it as well.
+Neo-CMS is a good enough CMS. It is different from Wordpress, Drupal or Joomla. Those CMS are built from developers for users. 
+Neo-CMS is built by developer for developers, although everyone else can still use it as well.
+The main purpose of this CMS is to provide a good start of web application project, especially for CodeIgniter developer.
 
 ********************************************
 Neo-CMS as Application development framework
@@ -30,11 +50,10 @@ Neo-CMS is also take advantages of several popular plugins such as
 
 Out of all, Neo-CMS also provide some common features:
 
-* Authentication & Authorization
-  By using group, privilege, and user management.
+* Authentication & Authorization by using group, privilege, and user management.
   Not like other CMS, there is no backend-frontend in Neo-CMS. 
   You have freedom to choose how different groups of users can access pages and modules differently.
-* Change Theme
+* Change Theme.
   You can change the theme easily.
 * Install/Un-install Module
   You can install/un-install module easily.
@@ -44,13 +63,13 @@ In short, if you are familiar with CodeIgniter, Neo-CMS is a good kickstart to m
 *******************
 Release Information
 *******************
-- Please look at `github commit log <https://github.com/goFrendiAsgard/Neo-CMS/tags>`
+- Please look at `github tag <https://github.com/goFrendiAsgard/Neo-CMS/tags>`_
 
 
 **************************
 Changelog and New Features
 **************************
-- Please look at `github commit log <https://github.com/goFrendiAsgard/Neo-CMS/commits>`
+- Please look at `github commit log <https://github.com/goFrendiAsgard/Neo-CMS/commits>`_
 
 
 *******************
@@ -114,7 +133,7 @@ Installer Controller
 * Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
 * Installer controller must be named "Install.php"
 * Installer controller must extends "CMS_Module_Installer"
-* You should override do_install() and do_uninstall() to make it fully work
+* You should provide do_install() and do_uninstall() method to make it fully work
 
 Models
 ==========
@@ -158,7 +177,7 @@ error in Neo-CMS then please check a few things first:
 Reporting issues is helpful but an even better approach is to send a Pull
 Request, which is done by "Forking" the main repository and committing to your
 own copy. This will require you to use the version control system called Git.
-To use github, you should first read `Github help <http://help.github.com/>`
+To use github, you should first read `Github help <http://help.github.com/>`_
 
 *******
 License
