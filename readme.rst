@@ -96,46 +96,46 @@ For CodeIgniter developer who want to use Neo-CMS for their project, developer g
 Module
 ======
 
-#. Your module must be located at modules directory (your_neo_cms_installation_path/modules)
-#. Your module must have an "installer controller" to make it install-able
-#. Your module must be consist of at least 3 subdirectories (models, views, and controllers)
-#. If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
+* Your module must be located at modules directory (your_neo_cms_installation_path/modules)
+* Your module must have an "installer controller" to make it install-able
+* Your module must be consist of at least 3 subdirectories (models, views, and controllers)
+* If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
 
 Controller
 ==========
-#. Controllers deal with every process in your module
-#. Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
-#. Main controller must have the same name as your_module_name (your_module_name.php)
-#. Every controller musth contains a class which extends CMS_Controller:
-*    class Your_Module_Name extends CMS_Controller{Your logic goes here.....}
+* Controllers deal with every process in your module
+* Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
+* Main controller must have the same name as your_module_name (your_module_name.php)
+* Every controller musth contains a class which extends CMS_Controller:
+    class Your_Module_Name extends CMS_Controller{Your logic goes here.....}
 
 Installer Controller
 ====================
-#. Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
-#. Installer controller must be named "Install.php"
-#. Installer controller must extends "CMS_Module_Installer"
-#. You should override do_install() and do_uninstall() to make it fully work
+* Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
+* Installer controller must be named "Install.php"
+* Installer controller must extends "CMS_Module_Installer"
+* You should override do_install() and do_uninstall() to make it fully work
 
 Models
 ==========
-#. Models deal with every data in your module
-#. Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
-#. Every model musth contains a class which extends CMS_Model:
-*    class Your_Model_Name extends CMS_Model{//Your logic goes here.....}
+* Models deal with every data in your module
+* Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
+* Every model musth contains a class which extends CMS_Model:
+    class Your_Model_Name extends CMS_Model{//Your logic goes here.....}
 
 Views
 ==========
-#. Views deal with every output in your module
-#. Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
-#. Every view must be php file
-#. To load a view by using controller, you can write:
-*    $this->view('view_name');
-#. To load a view by using controller, and parse some data on it, you can write:
-*    $this->view('view_name', $data);
-#. To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
-*    $this->view('view_name', $data, 'navigation_code_required');
-#. To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
-*    $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
+* Views deal with every output in your module
+* Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
+* Every view must be php file
+* To load a view by using controller, you can write:
+    $this->view('view_name');
+* To load a view by using controller, and parse some data on it, you can write:
+    $this->view('view_name', $data);
+* To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
+    $this->view('view_name', $data, 'navigation_code_required');
+* To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
+    $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
 
 
 ************
@@ -145,7 +145,7 @@ Contributing
 It is my honor to accepts contributions of code and documentation from you. 
 These contributions are made in the form
 of Issues or `Pull Requests <http://help.github.com/send-pull-requests/>`_ on
-the `Neo-CMS repository<https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub.
+the `Neo-CMS repository <https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub.
 
 Issues are a quick way to point out a bug. If you find a bug or documentation
 error in Neo-CMS then please check a few things first:
@@ -158,7 +158,7 @@ error in Neo-CMS then please check a few things first:
 Reporting issues is helpful but an even better approach is to send a Pull
 Request, which is done by "Forking" the main repository and committing to your
 own copy. This will require you to use the version control system called Git.
-To use github, you should first read `Github help<http://help.github.com/>`
+To use github, you should first read `Github help <http://help.github.com/>`
 
 *******
 License
