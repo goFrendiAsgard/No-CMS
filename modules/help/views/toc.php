@@ -4,7 +4,7 @@
             <h4>Basic Info</h4>
             <ul>
                 <li>Overview</li>
-                <li>Who is Neo-CMS For</li>
+                <li><a href="help/topic/who_is_neo_cms_for">Who is Neo-CMS For</a></li>
                 <li>Server Requirement</li>
                 <li>License Agreement</li>
                 <li>Credits</li>
