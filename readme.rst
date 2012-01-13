@@ -23,11 +23,13 @@ The main advantage of CodeIgniter is you can creatively focus on your project
 by minimizing the amount of code needed or a given task.
 
 Neo-CMS is also take advantages of several popular plugins such as
+
 * HMVC, to make fully modular separation
 * Phil Sturgeon's Template, to make customizable themes
 * groceryCRUD, to build CRUD application in a minute
 
 Out of all, Neo-CMS also provide some common features:
+
 * Authentication & Authorization
   By using group, privilege, and user management.
   Not like other CMS, there is no backend-frontend in Neo-CMS. 
