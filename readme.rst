@@ -1,136 +1,194 @@
 ###################
-WHAT IS?
+What is Neo-CMS
 ###################
-Neo-CMS = CodeIgniter + HMVC + groceryCRUD + Phil Sturgeon's Template + My Own Logics.
-Neo-CMS already has perfect working user authorization and authentication.
-Thus, you can just focus on your business process.
 
-Neo-CMS is CodeIgniter. 
-=======================
-This means that since you didn't install it, Neo-CMS is only CodeIgniter with some additional plugins.
-Any code worked in CodeIgniter will also worked in Neo-CMS
+Neo-CMS = CodeIgniter + HMVC + Phil Sturgeon's Template + groceryCRUD + Some Modification
 
-Neo-CMS is modular
-=======================
-You can make your own module, your own widget, and you can extend Neo-CMS to be your own CMS.
-However your module should obey CodeIgniter CMS pattern
+**************
+Neo-CMS as CMS
+**************
+Neo-CMS is a good enough CMS. Please don't compare it with Wordpress, Drupal or Joomla.
+Neo-CMS is built by developer for developer, although everyone else can still use it as well.
 
-###################
-DOCUMENTATION
-###################
-You can read the full Neo-CMS documentation after install it.
-Here I will give you some overview: 
+********************************************
+Neo-CMS as Application development framework
+********************************************
+Neo-CMS is not just another CMS. Neo-CMS allows you to make your own module and your own themes.
+This means that you (as developer) can make a module that can be used for several project.
+
+Neo-CMS takes advantages of CodeIgniter as its core. 
+It provides rich set of libraries for commonly needed task, 
+as well as a simple interface and logical structure to access these libraries.
+The main advantage of CodeIgniter is you can creatively focus on your project 
+by minimizing the amount of code needed or a given task.
+
+Neo-CMS is also take advantages of several popular plugins such as
+* HMVC, to make fully modular separation
+* Phil Sturgeon's Template, to make customizable themes
+* groceryCRUD, to build CRUD application in a minute
+
+Out of all, Neo-CMS also provide some common features:
+* Authentication & Authorization
+  By using group, privilege, and user management.
+  Not like other CMS, there is no backend-frontend in Neo-CMS. 
+  You have freedom to choose how different groups of users can access pages and modules differently.
+* Change Theme
+  You can change the theme easily.
+* Install/Un-install Module
+  You can install/un-install module easily.
+
+In short, if you are familiar with CodeIgniter, Neo-CMS is a good kickstart to make your web application
+
+*******************
+Release Information
+*******************
+- Please look at `github commit log <https://github.com/goFrendiAsgard/Neo-CMS/tags>`
+
+
+**************************
+Changelog and New Features
+**************************
+- Please look at `github commit log <https://github.com/goFrendiAsgard/Neo-CMS/commits>`
+
+
+*******************
+Server Requirements
+*******************
+
+-  PHP version 5.3.2 or newer.
+
+*************
+Documentation
+*************
+The full documentation and developer guide is still under progress and can be found once you have install Neo-CMS
+
+Installation
+============
+
+#. Download Neo-CMS from `Neo-CMS repository <https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub
+#. Copy and extract it on your web server directory (You might want to try it locally via xampp, in this case, your server directory is c:\xampp\htdocs)
+#. Access the url (If you use xampp in your local computer, the url should be http://localhost/Neo-CMS)
+#. Click "Install Now"
+#. Fill any information needed (including your administrator password)
+
+CMS Management
+==============
+
+* To manage your CMS you should first login.
+* Open CMS Management, there are a lot of things you can do
+* Navigation management can be used to manage menu
+* User, group, and privilege management are used to manage authorization
+* You can change the theme via Change Theme
+* You can install new module via Module Management
+* You can manage your widgets via Widget Management
+* The most important (and a bit dangerous) is Configuration Management. Here you can
+  change the site header, slogan, and copyright. Some configuration should be handled with care.
+  A mistake to configure this part can make your web-site inaccessible
+
+***************
+Developer Guide
+***************
+
+For CodeIgniter developer who want to use Neo-CMS for their project, developer guide is for you
 
 Module
 ======
 
-* Your module must be located at modules directory (your_neo_cms_installation_path/modules)
-* Your module must have an "installer controller" to make it install-able
-* Your module must be consist of at least 3 subdirectories (models, views, and controllers)
-* If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
+#. Your module must be located at modules directory (your_neo_cms_installation_path/modules)
+#. Your module must have an "installer controller" to make it install-able
+#. Your module must be consist of at least 3 subdirectories (models, views, and controllers)
+#. If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
 
 Controller
 ==========
-* Controllers deal with every process in your module
-* Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
-* Main controller must have the same name as your_module_name (your_module_name.php)
-* Every controller musth contains a class which extends CMS_Controller:
-    class Your_Module_Name extends CMS_Controller{Your logic goes here.....}
-
-Models
-==========
-* Models deal with every data in your module
-* Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
-* Every model musth contains a class which extends CMS_Model:
-    class Your_Model_Name extends CMS_Model{//Your logic goes here.....}
-
-Views
-==========
-* Views deal with every output in your module
-* Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
-* Every view must be php file
-* To load a view by using controller, you can write:
-    $this->view('view_name');
-* To load a view by using controller, and parse some data on it, you can write:
-    $this->view('view_name', $data);
-* To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
-    $this->view('view_name', $data, 'navigation_code_required');
-* To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
-    $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
+#. Controllers deal with every process in your module
+#. Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
+#. Main controller must have the same name as your_module_name (your_module_name.php)
+#. Every controller musth contains a class which extends CMS_Controller:
+*    class Your_Module_Name extends CMS_Controller{Your logic goes here.....}
 
 Installer Controller
 ====================
-* Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
-* Installer controller must be named "Install.php"
-* Installer controller must extends "CMS_Module_Installer"
-* You should override do_install() and do_uninstall() to make it fully work
+#. Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
+#. Installer controller must be named "Install.php"
+#. Installer controller must extends "CMS_Module_Installer"
+#. You should override do_install() and do_uninstall() to make it fully work
 
-###################
-CONTRIBUTORS
-###################
-* goFrendiAsgard <-- The one who make Neo-CMS based on already exists plugins, that's me :D
-* EllisLab <-- A company who make codeIgniter and make it available for free. There is no Neo-CMS without codeIgniter
-* wiredesignz <-- The one who make HMVC plugin. The plugin he made allowed me to make separation between modules
-* Phil Sturgeon <-- The one who make Phil Sturgeon's template. The plugin he made allowed me to make separation between layouts
-* John Skoumbourdis <-- The one who make groceryCRUD. It boost the development of Neo-CMS by provide very easy CRUD
-* Wahyu Eka Putra <-- Reported bug(s)
-* I Komang Ari Mogi <-- Proposed some advice related to layout
-* Zusana Pudyastuti <-- Checked grammatical error in the documentation (not in this readme file)
-* Mukhlies Amien <-- Give moral supports :D
-* Gembong Edhi Setiawan <-- Give moral supports and some advice, Tester
+Models
+==========
+#. Models deal with every data in your module
+#. Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
+#. Every model musth contains a class which extends CMS_Model:
+*    class Your_Model_Name extends CMS_Model{//Your logic goes here.....}
 
-###################
-FEATURES LIST
-###################
-* Group Management
-* User Management
-* Privilege Management
-* Navigation Management
-* Module Management
-* Integrated groceryCRUD
-* Mobile and Desktop Layout
-* Friendly installation
-* Forgot password
-* Readmore in blog module
-* Widget and Widget Management
-* Widget and module are the same.
-
-###################
-FUTURE FEATURES
-###################
-* Module Generator
-
-###################
-TODO
-###################
-* Comment in blog module
-* Module Generator
-* Photo album module (included in blog module)
-* E commerce module
-* Documentation
-* Live Demo
-
-#####################
-BUGS AND KNOWN ISSUES
-#####################
-* core/CMS_Module_Installer.php line 112 undefined variable userid [Reported by: Wahyu Eka Putra, 2011-11-19, status: repaired, 2011-11-20]
-* Recursive navigation menu can bring to a problem (not really, but yeah I fixed it) [Reported by: goFrendiAsgard, 2011-11-19, status: repaired, 2011-11-20]
-* Trigger not created [Reported by: goFrendiAsgard, 2011-11-20, status: repaired, 2011-11-20]
-* The installation progress can be cheated by point to http://localhost/Neo-CMS/install.php directly [Reported by: goFrendiAsgard, 2011-11-19, status: repaired, 2011-11-20]
-* The configuration files should be writeable, but installation progress doesn't check this [Reported by: goFrendiAsgard, 2011-11-19, status : repaired, 2011-11-20]
-* Not Automatically read module name without define $module_name in module/module_name/install.php [Reported by: goFrendiAsgard, 2011-11-27, status: repaired, 2011-11-27]
-* Grocery-CRUD flexigrid theme have 960px by default, so it's not fit in a screen [Reported by: goFrendiAsgard, 2011-11-27, status: repaired, 2011-11-27]
-* div layout_center's height fixed  [Reported by: goFrendiAsgard, 2011-11-30, fix Proposed by: Ari Mogi, status: repaired, 2011-11-30]
-* widget with HTML and javascript doesn't viewed properly [Reported by: goFrendiAsgard, 2011-12-14, status: repaired, 2011-12-14] <-- This need CURL to be installed
-
-* Admin group can be deleted [Reported by: goFrendiAsgard, 2011-11-19, status : fixed, but need to change error messages]
-* The super user can also be deleted [Reported by: goFrendiAsgard, 2011-11-19, status : fixed, but need to change error messages]
-
-* The super user can be deactivate [Reported by: goFrendiAsgard, 2011-11-20]
-* Need grammatical check since I'm not a native english speaker :D [Reported by: goFrendiAsgard, 2011-11-19]
+Views
+==========
+#. Views deal with every output in your module
+#. Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
+#. Every view must be php file
+#. To load a view by using controller, you can write:
+*    $this->view('view_name');
+#. To load a view by using controller, and parse some data on it, you can write:
+*    $this->view('view_name', $data);
+#. To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
+*    $this->view('view_name', $data, 'navigation_code_required');
+#. To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
+*    $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
 
 
+************
+Contributing
+************
 
-goFrendiAsgard(c) 2011,
-My Own logics are under GNU license,
-CodeIgniter, HMVC, groceryCRUD, Phil Sturgeon's template are under their own licenses
+It is my honor to accepts contributions of code and documentation from you. 
+These contributions are made in the form
+of Issues or `Pull Requests <http://help.github.com/send-pull-requests/>`_ on
+the `Neo-CMS repository<https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub.
+
+Issues are a quick way to point out a bug. If you find a bug or documentation
+error in Neo-CMS then please check a few things first:
+
+- There is not already an open Issue
+- The issue has already been fixed (check the develop branch, or look for
+  closed Issues)
+- Is it something really obvious that you fix it yourself?
+
+Reporting issues is helpful but an even better approach is to send a Pull
+Request, which is done by "Forking" the main repository and committing to your
+own copy. This will require you to use the version control system called Git.
+To use github, you should first read `Github help<http://help.github.com/>`
+
+*******
+License
+*******
+
+GPL & MIT License
+
+
+***************
+Acknowledgement
+***************
+
+I would like to thank all the contributors to the Neo-CMS project and you, the Neo-CMS user.
+Here are some names of considerable contributors:
+
+* goFrendiAsgard <-- It's me, I am the one who make Neo-CMS based on CodeIgniter and some existing plug-ins.
+* EllisLab <-- A company who make codeIgniter and make it available for free. 
+  There is no Neo-CMS without codeIgniter
+* wiredesignz <-- He is the one who make HMVC plugin. 
+  The plug-in he made is known widely among CodeIgniter developer. 
+  It allowed me to make separation between modules
+* Phil Sturgeon <-- He is the one who make CodeIgniter-template. 
+  The plugin he made allowed me to make separation between themes elements
+  He is a member of CodeIgniter Reactor Engineer. His pyro-CMS also inspire me a lot (although I take different approach)   
+* John Skoumbourdis <-- He is the one who make groceryCRUD. 
+  It boost the development of Neo-CMS by provide very easy CRUD. 
+  He also give me some moral support to continue the development of Neo-CMS.
+* Zusana Pudyastuti <-- She was my English Lecturer, A very good one who encourage me to speak English.
+  It is a miracle for me to write this section in English :D
+* Mukhlies Amien <-- He is one of my best friends. In this project, his role is advisor and tester.
+* Gembong Edhi Setiawan <-- He is also one of my best friends. He gives some support and feature requests.
+* Wahyu Eka Putra <-- He was my student. One of some best students in my class. 
+  He is the first one who discover a critical bug in the first stage of development.
+* I Komang Ari Mogi <-- He is my classmate in my graduate program. He has some experience in design. 
+  That's why he can propose some fix in the very early stage of development. 
