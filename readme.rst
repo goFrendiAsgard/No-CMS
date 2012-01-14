@@ -147,6 +147,16 @@ Models
    }
 ```
 
+```html
+    <div id="editor">some text</div>
+    <script src="src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+    window.onload = function() {
+        var editor = ace.edit("editor");
+    };
+    </script>
+```
+
 Views
 ==========
 * Views deal with every output in your module
