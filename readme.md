@@ -59,13 +59,13 @@ In short, if you are familiar with CodeIgniter, Neo-CMS is a good kickstart to m
 Release Information
 ===================
 
-- Please look at `github tag <https://github.com/goFrendiAsgard/Neo-CMS/tags>`_
+- Please look at [github tag](https://github.com/goFrendiAsgard/Neo-CMS/tags)
 
 
 Changelog and New Features
 ==========================
 
-- Please look at `github commit log <https://github.com/goFrendiAsgard/Neo-CMS/commits>`_
+- Please look at [github commit log](https://github.com/goFrendiAsgard/Neo-CMS/commits)
 
 
 Server Requirements
@@ -82,7 +82,7 @@ The full documentation and developer guide is still under progress and can be fo
 Installation
 ------------
 
-* Download Neo-CMS from `Neo-CMS repository <https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub
+* Download Neo-CMS from [Neo-CMS repository](https://github.com/goFrendiAsgard/Neo-CMS) on GitHub
 * Copy and extract it on your web server directory (You might want to try it locally via xampp, in this case, your server directory is c:\xampp\htdocs)
 * Access the url (If you use xampp in your local computer, the url should be http://localhost/Neo-CMS)
 * Click "Install Now"
