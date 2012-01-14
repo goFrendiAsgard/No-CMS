@@ -4,23 +4,19 @@
     To read this section you must be familiar with CodeIgniter MVC pattern.
     The models in Neo-CMS'module are pretty similar with models in CodeIgniter.
     Whenever you make a model in CodeIgniter, you usually write this:
-<code>
-<pre>
+<pre class="phpSnippet">
     class My_Model extends CI_Model{
         //Your logic goes here.....
     }
 </pre>
-</code>
     If you are familiar with CodeIgniter, you must be use to the code above.
     Remember to always put the model files in /modules/your_module_name/models.
     To gain advantages of using some additional features (such as get current user id, get current user name, etc).
-<code>
-<pre>
+<pre class="phpSnippet">
     class Damn_Simple_Module_Model extends CMS_Model{
         //Your logic goes here.....
     }
 </pre>
-</code>
     It is easy, right?
 </p>
 <p>

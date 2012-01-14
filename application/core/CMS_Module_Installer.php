@@ -63,7 +63,7 @@ class CMS_Module_Installer extends CMS_Controller {
             $this->db->query($query);
         }
     }
-    protected function add_navigation($navigation_name, $title, $url, $authorization_id=1, $parent_name=NULL, $description=NULL){
+    protected function add_navigation($navigation_name, $title, $url, $authorization_id=1, $parent_name=NULL, $index = 0, $description=NULL){
         //get parent's navigation_id
         $SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_name='".addslashes($parent_name)."'";
         $query = $this->db->query($SQL);
@@ -76,6 +76,7 @@ class CMS_Module_Installer extends CMS_Controller {
             "title" => $title,
             "url" => $url,
             "authorization_id" => $authorization_id,
+            "index" => $index,
             "description" => $description
         );
         if(isset($parent_id)){
@@ -201,10 +202,12 @@ class CMS_Module_Installer extends CMS_Controller {
         return $result;
     }
     
-    protected function add_widget($widget_name, $title, $authorization_id=1, $url=NULL, $description=NULL){
+    protected function add_widget($widget_name, $title, $authorization_id=1, $url=NULL, $slug=NULL, $index=0, $description=NULL){
         $data = array(
             "widget_name" => $widget_name,
             "title" => $title,
+            "slug" => $slug,
+            "index" => $index,
             "authorization_id" => $authorization_id,
             "url" => $url,
             "description" => $description

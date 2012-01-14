@@ -27,13 +27,13 @@
         <li><b>Main module controller file (in this case damn_simple_module.php)</b><br />
             This file contains a class which extends CMS_Controller. 
             It must also have the same name as your module directory<br />
-<code>
-<pre>
+
+<pre class="phpSnippet">
     class Damn_simple_module extends CMS_Controller{
         //Your logic goes here.....
     }
 </pre>
-</code>
+
             For more detail about this file, please read Module's Controller section
         </li>
         <li><b>Module installer file (in this case install.php)</b><br />

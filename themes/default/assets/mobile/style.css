@@ -18,10 +18,18 @@ div#layout_header{
 }
 div#layout_navigation{ 
     min-height : 300px;
+    width : 200px;
+    float : left;
+}
+div#layout_widget{ 
+    min-height : 300px;
+    width : 200px;
+    float : left;
 }
 div#layout_content{
     min-height : 300px;
     padding : 5px;
+    float : left;
 }
 div#layout_footer{
     text-align : center;
@@ -33,6 +41,7 @@ div#layout_center{
     font-size : small;
     background-color : #E0E0E0;
     margin-top : 0px;
+    min-height : 300px;
 }
 div.layout_clear
 {
@@ -75,13 +84,13 @@ li.layout_nav_hot{
     font-weight : bold;
     text-decoration : none;
 }
-#layout_navigation a.layout_page_link{
-    margin-left: 5%;
+#layout_navigation a.layout_page_link{    
     display:block;
     float:left;
 }
 #layout_navigation a.layout_have_child{
     width: 80%;
+    margin-left: 5px;
 }
 #layout_navigation a.layout_no_child{
     width: 100%;

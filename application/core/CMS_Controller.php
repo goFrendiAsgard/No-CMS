@@ -80,8 +80,8 @@ class CMS_Controller extends CI_Controller{
      * @param : parent_id, max_menu_depth
      * @desc : return navigation child if parent_id specified, else it will return root navigation
      */
-    private function cms_widgets(){
-        return $this->CMS_Model->cms_widgets();
+    private function cms_widgets($slug = NULL){
+        return $this->CMS_Model->cms_widgets($slug);
         
     }    
     /** 

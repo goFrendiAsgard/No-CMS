@@ -103,7 +103,7 @@ class CMS_Model extends CI_Model {
                                 )>0
                             )
                         )
-                    ) AND $where_is_root"
+                    ) AND $where_is_root ORDER BY n.index"
                 );
         $result = array();
         foreach($query->result() as $row){
@@ -125,15 +125,21 @@ class CMS_Model extends CI_Model {
      * @param : parent_id, max_menu_depth
      * @desc : return navigation child if parent_id specified, else it will return root navigation
      */
-    public function cms_widgets(){
+    public function cms_widgets($slug = NULL){
         $user_name = $this->cms_username();    
         $user_id = $this->cms_userid(); 
         $not_login = !$user_name?"TRUE":"FALSE";
         $login = $user_name?"TRUE":"FALSE";
         $super_user = $user_id==1?"TRUE":"FALSE";
         
+        if(isset($slug)){
+            $whereSlug = "slug = '".  addcslashes($slug)."'";
+        }else{
+            $whereSlug = "1=1";
+        }
+        
         $query = $this->db->query(
-                "SELECT widget_id, widget_name, is_static, title, description, url 
+                "SELECT widget_id, widget_name, is_static, title, description, url, slug 
                 FROM cms_widget AS w WHERE
                     (                        
                         (authorization_id = 1) OR
@@ -152,7 +158,7 @@ class CMS_Model extends CI_Model {
                                 )>0
                             )
                         )
-                    ) AND active=1"
+                    ) AND active=1 AND $whereSlug ORDER BY w.index"
                 );
         $result = array();
         foreach($query->result() as $row){
@@ -162,7 +168,8 @@ class CMS_Model extends CI_Model {
                 "title" => $row->title,
                 "description" => $row->description,
                 "is_static"=>$row->is_static,
-                "url" => $row->url
+                "url" => $row->url,
+                "slug" => $row->slug
             );
         }
         return $result;

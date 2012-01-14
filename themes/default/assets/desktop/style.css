@@ -93,7 +93,7 @@ li.layout_nav_hot{
 }
 #layout_navigation a.layout_have_child{
     width: 80%;
-    margin-left: 5%;
+    margin-left: 5px;
 }
 #layout_navigation a.layout_no_child{
     width: 100%;

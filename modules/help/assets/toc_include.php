@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/jquery_snippet/jquery.snippet.css';?>" />
 <style type="text/css">
     div#toc, div#toggle_toc{
         background-color :white;
@@ -5,6 +6,8 @@
         -moz-box-shadow:    inset 0 0 10px #000000;
         -webkit-box-shadow: inset 0 0 10px #000000;
         box-shadow:         inset 0 0 10px #000000;
+        margin-left : 5px;
+        margin-right : 5px;
     }
     div#toggle_toc{
         display:inline;
@@ -20,17 +23,26 @@
     }
 </style>
 <script type="text/javascript" src ="<?php echo base_url().'assets/jquery.js';?>"></script>
+<script type="text/javascript" src ="<?php echo base_url().'assets/jquery_snippet/jquery.snippet.js';?>"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         $("#toggle_toc").click(function(){
             $("#toc").toggle();
         });
+        
         $.ajax({
             url : '<?php echo base_url().'index.php/help?_only_content=true';?>',
             success : function(response){
                 $("#toc").html(response);
             }
         })
+        
+        $("pre.phpSnippet").snippet(
+            "php",{
+                style:"ide-eclipse",
+                clipboard:"<?php echo base_url().'assets/jquery_snippet/ZeroClipboard.swf';?>",
+                showNum:false}
+            );
     })
 </script>
 <div id="toc"></div>
