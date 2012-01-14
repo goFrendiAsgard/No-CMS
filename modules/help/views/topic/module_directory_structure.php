@@ -1,3 +1,4 @@
+<?php include 'modules/help/assets/toc_include.php' ?>
 <h3>Module Directory Structure</h3>
 <p>
     Making your own module is very easy if you are familiar with codeIgniter before.

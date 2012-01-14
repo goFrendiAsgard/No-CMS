@@ -1,3 +1,4 @@
+<?php include 'modules/help/assets/toc_include.php' ?>
 <h3>Who Is Neo CMS For?</h3>
 Neo CMS will be good for you if you say yes for majority of these statement:
 <ul>

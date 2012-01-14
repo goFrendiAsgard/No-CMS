@@ -1,3 +1,4 @@
+<base href="<?php echo base_url();?>index.php/" />
 <table>
     <tr>
         <td valign="top">

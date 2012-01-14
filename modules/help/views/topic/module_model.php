@@ -1,3 +1,4 @@
+<?php include 'modules/help/assets/toc_include.php' ?>
 <h3>Module's Model</h3>
 <p>
     To read this section you must be familiar with CodeIgniter MVC pattern.
