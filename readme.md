@@ -126,7 +126,12 @@ Controller
 * Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
 * Main controller must have the same name as your_module_name (your_module_name.php)
 * Every controller musth contains a class which extends CMS_Controller:
+
+```html
+   <?php
     class Your_Module_Name extends CMS_Controller{Your logic goes here.....}
+   ?>
+```
 
 Installer Controller
 ====================
@@ -141,20 +146,12 @@ Models
 * Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
 * Every model musth contains a class which extends CMS_Model:
 
-```php
+```html
+   <?php
    class Your_Model_Name extends CMS_Model{
      //Your logic goes here.....
    }
-```
-
-```html
-    <div id="editor">some text</div>
-    <script src="src/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script>
-    window.onload = function() {
-        var editor = ace.edit("editor");
-    };
-    </script>
+   ?>
 ```
 
 Views
@@ -163,13 +160,36 @@ Views
 * Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
 * Every view must be php file
 * To load a view by using controller, you can write:
-    $this->view('view_name');
+
+```html
+   <?php
+     $this->view('view_name');
+   ?>
+```
+
 * To load a view by using controller, and parse some data on it, you can write:
+
+```html
+   <?php
     $this->view('view_name', $data);
+   ?>
+```
+
 * To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
+
+```html
+   <?php
     $this->view('view_name', $data, 'navigation_code_required');
+   ?>
+```
+
 * To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
+
+```html
+   <?php
     $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
+   ?>
+```
 
 
 ************
