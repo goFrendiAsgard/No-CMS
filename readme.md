@@ -82,11 +82,11 @@ The full documentation and developer guide is still under progress and can be fo
 Installation
 ------------
 
-#. Download Neo-CMS from `Neo-CMS repository <https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub
-#. Copy and extract it on your web server directory (You might want to try it locally via xampp, in this case, your server directory is c:\xampp\htdocs)
-#. Access the url (If you use xampp in your local computer, the url should be http://localhost/Neo-CMS)
-#. Click "Install Now"
-#. Fill any information needed (including your administrator password)
+* Download Neo-CMS from `Neo-CMS repository <https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub
+* Copy and extract it on your web server directory (You might want to try it locally via xampp, in this case, your server directory is c:\xampp\htdocs)
+* Access the url (If you use xampp in your local computer, the url should be http://localhost/Neo-CMS)
+* Click "Install Now"
+* Fill any information needed (including your administrator password)
 
 CMS Management
 --------------
@@ -185,10 +185,8 @@ Views
    ?>
 ```
 
-
-************
 Contributing
-************
+============
 
 It is my honor to accepts contributions of code and documentation from you. 
 These contributions are made in the form
@@ -208,16 +206,14 @@ Request, which is done by "Forking" the main repository and committing to your
 own copy. This will require you to use the version control system called Git.
 To use github, you should first read `Github help <http://help.github.com/>`_
 
-*******
 License
-*******
+=======
 
 GPL & MIT License
 
 
-***************
 Acknowledgement
-***************
+===============
 
 I would like to thank all the contributors to the Neo-CMS project and you, the Neo-CMS user.
 Here are some names of considerable contributors:
