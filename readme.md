@@ -190,8 +190,8 @@ Contributing
 
 It is my honor to accepts contributions of code and documentation from you. 
 These contributions are made in the form
-of Issues or `Pull Requests <http://help.github.com/send-pull-requests/>`_ on
-the `Neo-CMS repository <https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub.
+of Issues or [Pull Requests](http://help.github.com/send-pull-requests/) on
+the [Neo-CMS repository](https://github.com/goFrendiAsgard/Neo-CMS/) on GitHub.
 
 Issues are a quick way to point out a bug. If you find a bug or documentation
 error in Neo-CMS then please check a few things first:
@@ -204,7 +204,7 @@ error in Neo-CMS then please check a few things first:
 Reporting issues is helpful but an even better approach is to send a Pull
 Request, which is done by "Forking" the main repository and committing to your
 own copy. This will require you to use the version control system called Git.
-To use github, you should first read `Github help <http://help.github.com/>`_
+To use github, you should first read [Github help](http://help.github.com/)
 
 License
 =======
