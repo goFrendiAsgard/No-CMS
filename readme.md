@@ -1,6 +1,5 @@
-###################
 What is Neo-CMS?
-###################
+================
 
 Neo-CMS is a CMS-framework.
 
@@ -8,10 +7,8 @@ Neo-CMS is a basic CMS with some default features such as user authorization, me
 It is fully customizable and extensible, you can make your own module and your own themes. 
 It provide freedom to make your very own CMS, which is not provided very well by any other CMS.
 
-***************
 Who is it for?
-***************
-
+--------------
 Neo CMS will be good for you if you say yes for majority of these statement:
 
 * You are a web developer who use CodeIgniter framework.
@@ -23,16 +20,14 @@ Neo CMS will be good for you if you say yes for majority of these statement:
 * You are familiar with HMVC plugins, and you think it is one of "should be exists" feature in CodeIgniter.
 * You are in tight deadline, at least you need to provide the prototype to your client.
 
-**************
 Neo-CMS as CMS
-**************
+--------------
 Neo-CMS is a good enough CMS. It is different from Wordpress, Drupal or Joomla. Those CMS are built from developers for users. 
 Neo-CMS is built by developer for developers, although everyone else can still use it as well.
 The main purpose of this CMS is to provide a good start of web application project, especially for CodeIgniter developer.
 
-********************************************
 Neo-CMS as Application development framework
-********************************************
+--------------------------------------------
 Neo-CMS is not just another CMS. Neo-CMS allows you to make your own module and your own themes.
 This means that you (as developer) can make a module that can be used for several project.
 
@@ -60,31 +55,32 @@ Out of all, Neo-CMS also provide some common features:
 
 In short, if you are familiar with CodeIgniter, Neo-CMS is a good kickstart to make your web application
 
-*******************
+
 Release Information
-*******************
+===================
+
 - Please look at `github tag <https://github.com/goFrendiAsgard/Neo-CMS/tags>`_
 
 
-**************************
 Changelog and New Features
-**************************
+==========================
+
 - Please look at `github commit log <https://github.com/goFrendiAsgard/Neo-CMS/commits>`_
 
 
-*******************
 Server Requirements
-*******************
+===================
 
 -  PHP version 5.3.2 or newer.
 
-*************
+
 Documentation
-*************
+=============
+
 The full documentation and developer guide is still under progress and can be found once you have install Neo-CMS
 
 Installation
-============
+------------
 
 #. Download Neo-CMS from `Neo-CMS repository <https://github.com/goFrendiAsgard/Neo-CMS>`_ on GitHub
 #. Copy and extract it on your web server directory (You might want to try it locally via xampp, in this case, your server directory is c:\xampp\htdocs)
@@ -93,7 +89,7 @@ Installation
 #. Fill any information needed (including your administrator password)
 
 CMS Management
-==============
+--------------
 
 * To manage your CMS you should first login.
 * Open CMS Management, there are a lot of things you can do
@@ -106,22 +102,20 @@ CMS Management
   change the site header, slogan, and copyright. Some configuration should be handled with care.
   A mistake to configure this part can make your web-site inaccessible
 
-***************
 Developer Guide
-***************
+===============
 
 For CodeIgniter developer who want to use Neo-CMS for their project, developer guide is for you
 
 Module
-======
-
+------
 * Your module must be located at modules directory (your_neo_cms_installation_path/modules)
 * Your module must have an "installer controller" to make it install-able
 * Your module must be consist of at least 3 subdirectories (models, views, and controllers)
 * If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
 
 Controller
-==========
+----------
 * Controllers deal with every process in your module
 * Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
 * Main controller must have the same name as your_module_name (your_module_name.php)
@@ -134,14 +128,14 @@ Controller
 ```
 
 Installer Controller
-====================
+--------------------
 * Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
 * Installer controller must be named "Install.php"
 * Installer controller must extends "CMS_Module_Installer"
 * You should provide do_install() and do_uninstall() method to make it fully work
 
-Models
-==========
+Model
+-----
 * Models deal with every data in your module
 * Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
 * Every model musth contains a class which extends CMS_Model:
@@ -155,7 +149,7 @@ Models
 ```
 
 Views
-==========
+-----
 * Views deal with every output in your module
 * Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
 * Every view must be php file
