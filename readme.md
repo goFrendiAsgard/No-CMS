@@ -140,13 +140,9 @@ Models
 * Models deal with every data in your module
 * Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
 * Every model musth contains a class which extends CMS_Model:
-```html
-   <?php
    class Your_Model_Name extends CMS_Model{
      //Your logic goes here.....
    }
-   ?>
-```
 
 Views
 ==========
