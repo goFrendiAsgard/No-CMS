@@ -1,5 +1,5 @@
 <?php include 'modules/help/assets/toc_include.php' ?>
-<h3>Who Is Neo CMS For?</h3>
+<h3>Who Is No CMS For?</h3>
 Neo CMS will be good for you if you say yes for majority of these statement:
 <ul>
     <li> You are a web developer who use CodeIgniter framework.</li>

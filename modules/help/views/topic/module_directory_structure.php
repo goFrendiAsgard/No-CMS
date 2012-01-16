@@ -2,9 +2,9 @@
 <h3>Module Directory Structure</h3>
 <p>
     Making your own module is very easy if you are familiar with codeIgniter before.
-    What you need to do is to make a directory inside modules directory of your Neo-CMS.
-    So when you install Neo-CMS in <b>/var/www/Neo-CMS</b>, 
-    the modules directory will be <b>/var/www/Neo-CMS/modules</b> 
+    What you need to do is to make a directory inside modules directory of your No-CMS.
+    So when you install No-CMS in <b>/var/www/No-CMS</b>, 
+    the modules directory will be <b>/var/www/No-CMS/modules</b> 
     Every modules should contains at least 3 subdirectories. Those are
     <ul>
         <li><b>models</b><br />

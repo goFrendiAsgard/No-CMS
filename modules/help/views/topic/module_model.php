@@ -2,7 +2,7 @@
 <h3>Module's Model</h3>
 <p>
     To read this section you must be familiar with CodeIgniter MVC pattern.
-    The models in Neo-CMS'module are pretty similar with models in CodeIgniter.
+    The models in No-CMS'module are pretty similar with models in CodeIgniter.
     Whenever you make a model in CodeIgniter, you usually write this:
 <pre class="phpSnippet">
     class My_Model extends CI_Model{

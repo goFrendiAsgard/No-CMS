@@ -5,14 +5,14 @@
             <h4>Basic Info</h4>
             <ul>
                 <li>Overview</li>
-                <li><a href="help/topic/who_is_neo_cms_for">Who is Neo-CMS For</a></li>
+                <li><a href="help/topic/who_is_no_cms_for">Who is No-CMS For</a></li>
                 <li>Server Requirement</li>
                 <li>License Agreement</li>
                 <li>Credits</li>
             </ul>
             <h4>Installation</h4>
             <ul>
-                <li>Download Neo-CMS</li>
+                <li>Download No-CMS</li>
                 <li>Guided Installation</li>
                 <li>Manual Installation</li>
             </ul>
@@ -45,7 +45,7 @@
             <ul>
                 <li>Layout Overview</li>
             </ul>
-            <h4>Neo-CMS hard-core</h4>
+            <h4>No-CMS hard-core</h4>
             <ul></ul>
             <h4>FAQ</h4>
             <ul></ul>
