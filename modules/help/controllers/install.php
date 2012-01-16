@@ -13,7 +13,7 @@
 class Install extends CMS_Module_Installer{
     //put your code here
     public function do_install(){
-        $this->add_navigation('help', 'Neo-CMS User guide', 'help', 1);
+        $this->add_navigation('help', 'No-CMS User guide', 'help', 1);
         redirect('help');
     }
     

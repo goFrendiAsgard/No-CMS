@@ -1,15 +1,15 @@
-What is Neo-CMS?
+What is No-CMS?
 ================
 
-Neo-CMS is a CMS-framework.
+No-CMS is a CMS-framework.
 
-Neo-CMS is a basic CMS with some default features such as user authorization, menu, module and theme management.
+No-CMS is a basic CMS with some default features such as user authorization, menu, module and theme management.
 It is fully customizable and extensible, you can make your own module and your own themes. 
 It provide freedom to make your very own CMS, which is not provided very well by any other CMS.
 
 Who is it for?
 --------------
-Neo CMS will be good for you if you say yes for majority of these statement:
+No-CMS will be good for you if you say yes for majority of these statement:
 
 * You are a web developer who use CodeIgniter framework.
 * You are tired of building the same things such an authorization-authentication for every project.
@@ -20,52 +20,52 @@ Neo CMS will be good for you if you say yes for majority of these statement:
 * You are familiar with HMVC plugins, and you think it is one of "should be exists" feature in CodeIgniter.
 * You are in tight deadline, at least you need to provide the prototype to your client.
 
-Neo-CMS as CMS
+No-CMS as CMS
 --------------
-Neo-CMS is a good enough CMS. It is different from Wordpress, Drupal or Joomla. Those CMS are built from developers for users. 
-Neo-CMS is built by developer for developers, although everyone else can still use it as well.
+No-CMS is a good enough CMS. It is different from Wordpress, Drupal or Joomla. Those CMS are built from developers for users. 
+No-CMS is built by developer for developers, although everyone else can still use it as well.
 The main purpose of this CMS is to provide a good start of web application project, especially for CodeIgniter developer.
 
-Neo-CMS as Application development framework
+No-CMS as Application development framework
 --------------------------------------------
-Neo-CMS is not just another CMS. Neo-CMS allows you to make your own module and your own themes.
+No-CMS is not just another CMS. No-CMS allows you to make your own module and your own themes.
 This means that you (as developer) can make a module that can be used for several project.
 
-Neo-CMS takes advantages of CodeIgniter as its core. 
+No-CMS takes advantages of CodeIgniter as its core. 
 It provides rich set of libraries for commonly needed task, 
 as well as a simple interface and logical structure to access these libraries.
 The main advantage of CodeIgniter is you can creatively focus on your project 
 by minimizing the amount of code needed or a given task.
 
-Neo-CMS is also take advantages of several popular plugins such as
+No-CMS is also take advantages of several popular plugins such as
 
 * HMVC, to make fully modular separation
 * Phil Sturgeon's Template, to make customizable themes
 * groceryCRUD, to build CRUD application in a minute
 
-Out of all, Neo-CMS also provide some common features:
+Out of all, No-CMS also provide some common features:
 
 * Authentication & Authorization by using group, privilege, and user management.
-  Not like other CMS, there is no backend-frontend in Neo-CMS. 
+  Not like other CMS, there is no backend-frontend in No-CMS. 
   You have freedom to choose how different groups of users can access pages and modules differently.
 * Change Theme.
   You can change the theme easily.
 * Install/Un-install Module
   You can install/un-install module easily.
 
-In short, if you are familiar with CodeIgniter, Neo-CMS is a good kickstart to make your web application
+In short, if you are familiar with CodeIgniter, No-CMS is a good kickstart to make your web application
 
 
 Release Information
 ===================
 
-- Please look at [github tag](https://github.com/goFrendiAsgard/Neo-CMS/tags)
+- Please look at [github tag](https://github.com/goFrendiAsgard/No-CMS/tags)
 
 
 Changelog and New Features
 ==========================
 
-- Please look at [github commit log](https://github.com/goFrendiAsgard/Neo-CMS/commits)
+- Please look at [github commit log](https://github.com/goFrendiAsgard/No-CMS/commits)
 
 
 Server Requirements
@@ -77,14 +77,14 @@ Server Requirements
 Documentation
 =============
 
-The full documentation and developer guide is still under progress and can be found once you have install Neo-CMS
+The full documentation and developer guide is still under progress and can be found once you have install No-CMS
 
 Installation
 ------------
 
-* Download Neo-CMS from [Neo-CMS repository](https://github.com/goFrendiAsgard/Neo-CMS) on GitHub
+* Download No-CMS from [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS) on GitHub
 * Copy and extract it on your web server directory (You might want to try it locally via xampp, in this case, your server directory is c:\xampp\htdocs)
-* Access the url (If you use xampp in your local computer, the url should be http://localhost/Neo-CMS)
+* Access the url (If you use xampp in your local computer, the url should be http://localhost/No-CMS)
 * Click "Install Now"
 * Fill any information needed (including your administrator password)
 
@@ -105,7 +105,7 @@ CMS Management
 Developer Guide
 ===============
 
-For CodeIgniter developer who want to use Neo-CMS for their project, developer guide is for you
+For CodeIgniter developer who want to use No-CMS for their project, developer guide is for you
 
 Module
 ------
@@ -191,10 +191,10 @@ Contributing
 It is my honor to accepts contributions of code and documentation from you. 
 These contributions are made in the form
 of Issues or [Pull Requests](http://help.github.com/send-pull-requests/) on
-the [Neo-CMS repository](https://github.com/goFrendiAsgard/Neo-CMS/) on GitHub.
+the [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS/) on GitHub.
 
 Issues are a quick way to point out a bug. If you find a bug or documentation
-error in Neo-CMS then please check a few things first:
+error in No-CMS then please check a few things first:
 
 - There is not already an open Issue
 - The issue has already been fixed (check the develop branch, or look for
@@ -215,12 +215,12 @@ GPL & MIT License
 Acknowledgement
 ===============
 
-I would like to thank all the contributors to the Neo-CMS project and you, the Neo-CMS user.
+I would like to thank all the contributors to the No-CMS project and you, the No-CMS user.
 Here are some names of considerable contributors:
 
-* goFrendiAsgard <-- It's me, I am the one who make Neo-CMS based on CodeIgniter and some existing plug-ins.
+* goFrendiAsgard <-- It's me, I am the one who make No-CMS based on CodeIgniter and some existing plug-ins.
 * EllisLab <-- A company who make codeIgniter and make it available for free. 
-  There is no Neo-CMS without codeIgniter
+  There is no No-CMS without codeIgniter
 * wiredesignz <-- He is the one who make HMVC plugin. 
   The plug-in he made is known widely among CodeIgniter developer. 
   It allowed me to make separation between modules
@@ -228,8 +228,8 @@ Here are some names of considerable contributors:
   The plugin he made allowed me to make separation between themes elements
   He is a member of CodeIgniter Reactor Engineer. His pyro-CMS also inspire me a lot (although I take different approach)   
 * John Skoumbourdis <-- He is the one who make groceryCRUD. 
-  It boost the development of Neo-CMS by provide very easy CRUD. 
-  He also give me some moral support to continue the development of Neo-CMS.
+  It boost the development of No-CMS by provide very easy CRUD. 
+  He also give me some moral support to continue the development of No-CMS.
 * Zusana Pudyastuti <-- She was my English Lecturer, A very good one who encourage me to speak English.
   It is a miracle for me to write this section in English :D
 * Mukhlies Amien <-- He is one of my best friends. In this project, his role is advisor and tester.

@@ -262,7 +262,7 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 0, 0, 0, NULL),
 (14, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 0, 0, NULL),
 (15, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 1, 0, 0, NULL),
-(16, 'help', NULL, 'Neo-CMS User guide', NULL, 'help', 1, 1, 0, 0, NULL);
+(16, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 1, 0, 0, NULL);
 /*split*/
 
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`, `slug`) VALUES
@@ -282,14 +282,14 @@ INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `descrip
 /*split*/
 
 INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VALUES
-(1, 'site_name', 'Neo-CMS', 'Site title'),
+(1, 'site_name', 'No-CMS', 'Site title'),
 (2, 'site_slogan', 'Your web kickstart', 'Site slogan'),
 (3, 'site_footer', 'goFrendiAsgard &copy; 2011', 'Site footer'),
 (4, 'site_theme', 'default', 'Site theme'),
 (5, 'max_menu_depth', '5', 'Depth of menu recursive'),
-(6, 'cms_email_address', 'no-reply@Neo-CMS.com', 'Email address'),
-(7, 'cms_email_name', 'admin of Neo-CMS', 'Email name'),
-(8, 'cms_email_forgot_subject', 'Re-activate your account at Neo-CMS', 'Email subject'),
+(6, 'cms_email_address', 'no-reply@No-CMS.com', 'Email address'),
+(7, 'cms_email_name', 'admin of No-CMS', 'Email name'),
+(8, 'cms_email_forgot_subject', 'Re-activate your account at No-CMS', 'Email subject'),
 (9, 'cms_email_forgot_message', 'Dear, @realname<br />Click <a href="@activation_link">@activation_link</a> to reactivate your account', 'Email message'),
 (10, 'cms_email_useragent', 'Codeigniter', 'Default : CodeIgniter'),
 (11, 'cms_email_protocol', 'smtp', 'Default : smtp, Alternatives : mail, sendmail, smtp'),
