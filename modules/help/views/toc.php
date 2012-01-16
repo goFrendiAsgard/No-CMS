@@ -8,9 +8,9 @@
                 <li><a href="help/topic/who_is_no_cms_for">Who is No-CMS For</a></li>
                 <li><a href="help/topic/no_cms_as_cms">No-CMS as CMS</a></li>
                 <li><a href="help/topic/no_cms_as_framework">No-CMS as Application Development Framework</a></li>
-                <li>Server Requirement</li>
-                <li>License Agreement</li>
-                <li>Credits</li>
+                <li><a href="help/topic/server_requirement">Server Requirement</a></li>
+                <li><a href="help/topic/license">License Agreement</a></li>
+                <li><a href="help/topic/credits">Credits</a></li>
             </ul>
             <h4>Installation</h4>
             <ul>
