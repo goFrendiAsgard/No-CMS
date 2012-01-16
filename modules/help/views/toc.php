@@ -4,8 +4,10 @@
         <td valign="top">
             <h4>Basic Info</h4>
             <ul>
-                <li>Overview</li>
+                <li><a href="help/topic/overview">Overview</a></li>
                 <li><a href="help/topic/who_is_no_cms_for">Who is No-CMS For</a></li>
+                <li><a href="help/topic/no_cms_as_cms">No-CMS as CMS</a></li>
+                <li><a href="help/topic/no_cms_as_framework">No-CMS as Application Development Framework</a></li>
                 <li>Server Requirement</li>
                 <li>License Agreement</li>
                 <li>Credits</li>
