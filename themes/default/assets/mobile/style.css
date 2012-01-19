@@ -6,7 +6,8 @@
         Purpose of the stylesheet follows.
 */
 body{
-    padding : 5px;
+	width : 100%;
+	margin : 0px;
 }
 div#layout_header, div#layout_content, div#layout_footer{
     margin : 0px;
@@ -18,13 +19,17 @@ div#layout_header{
 }
 div#layout_navigation{ 
     min-height : 300px;
-    width : 200px;
+    width : 260px;
     float : left;
+    padding : 5px;
+    background-color : #CFCFCF;
 }
 div#layout_widget{ 
     min-height : 300px;
-    width : 200px;
+    width : 260px;
     float : left;
+    padding : 5px;
+    background-color : #CFCFCF;
 }
 div#layout_content{
     min-height : 300px;
@@ -97,4 +102,10 @@ li.layout_nav_hot{
 }
 #layout_navigation a.layout_expand{
     float: left;
+}
+.layout_button{
+    display:inline;
+    border-radius : 10px;
+    background-color : white;
+    padding : 5px;
 }

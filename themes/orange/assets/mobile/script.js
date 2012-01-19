@@ -55,11 +55,11 @@ $(document).ready(function(){
 
 function small_content(){
     var containerWidth = $("#layout_center").width();
-    $("#layout_content").width(containerWidth-200-20);
+    $("#layout_content").width(containerWidth-260-20);
 }
 
 function full_content(){
     var containerWidth = $("#layout_center").width();
-    $("#layout_content").width(containerWidth);
+    $("#layout_content").width(containerWidth-5);
 }
 

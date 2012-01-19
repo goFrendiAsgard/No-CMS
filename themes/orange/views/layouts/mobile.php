@@ -3,6 +3,8 @@
 <html>
     <head>
         <title><?php echo $template['title'];?></title>
+        <meta name="HandheldFriendly" content="true" />
+        <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />
         <script type="text/javascript" src ="<?php echo base_url().'assets/jquery.js';?>"></script>
         <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/$site_theme/assets/mobile/style.css";?>"></link>
         <script type="text/javascript" src="<?php echo base_url()."themes/$site_theme/assets/mobile/script.js";?>"></script>
@@ -11,9 +13,9 @@
         <div id="layout_header">
             <?php echo $template['partials']['header'];?>
             <div>
-                <a class="layout_button_menu" href="#">Show Menu</a> ||
-                <a class="layout_button_widget" href="#">Show Widget</a> || 
-                <a class="layout_button_content" href="#">Only Content</a>
+                <a class="layout_button_menu layout_button" href="#">Menu</a>
+                <a class="layout_button_widget layout_button" href="#">Widget</a> 
+                <a class="layout_button_content layout_button" href="#">Content</a>
             </div>
         </div>
         <div id="layout_center">             

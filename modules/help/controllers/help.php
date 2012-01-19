@@ -1,10 +1,5 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of help
  *
@@ -17,7 +12,7 @@ class Help extends CMS_Controller{
     }
     public function topic($topic_name){
         $this->view('help/topic/'.$topic_name, NULL, 'help');
-    }
+    }    
 }
 
 ?>

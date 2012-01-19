@@ -6,7 +6,7 @@
         Purpose of the stylesheet follows.
 */
 body{
-    padding : 5px;
+    
      /* IE10 */ 
     background-image: -ms-linear-gradient(top left, orangered 0%, orange 100%);
 
@@ -54,11 +54,15 @@ div#layout_navigation{
     min-height : 300px;
     width : 200px;
     float : left;
+    padding : 1px;
+    background-color : darkorange;
 }
 div#layout_widget{ 
     min-height : 300px;
     width : 200px;
     float : left;
+    padding : 5px;
+    background-color : darkorange;
 }
 div#layout_content{
     min-height : 300px;
@@ -139,4 +143,10 @@ li.layout_nav_hot{
 }
 #layout_navigation a.layout_expand{
     float: left;
+}
+.layout_button{
+    display:inline;
+    border-radius : 10px;
+    background-color : orange;
+    padding : 5px;
 }
