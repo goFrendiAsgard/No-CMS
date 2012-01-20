@@ -78,8 +78,8 @@
 		<p>The corresponding controller for this page is found at:</p>
 		<code>application/controllers/welcome.php</code>
 
-		<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="user_guide/">User Guide</a>.</p>
-                <p>If you you don't care about any technical stuff and you only want to install Neo-CMS, you can <a href="install/"><b>install it now</b></a>.</p>
+		<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="user_guide/">CodeIgniter User Guide</a>.</p>
+                <p>If you you don't care about any technical stuff and you only want to install No-CMS, you can <a href="install/"><b>install it now</b></a>.</p>
 	</div>
 
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>

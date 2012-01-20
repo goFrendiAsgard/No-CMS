@@ -58,10 +58,21 @@
 ?>
 <link rel="stylesheet" type="text/css" href="assets/style.css"></link>
 <h1>Installation finished</h1>
-<p>If there is no error message, then you have install Neo-CMS successfully.
+<p>If there is no error message, then you have install No-CMS successfully.
 But <i>(depend on your situation)</i> you still have some more things to do:
-<ul>
-    <li>Do Installation manually<br />        
+<ul>    
+    <li><strong>Delete your installation folder</strong><br />
+        Why? Because anyone can change database setting and admin user easily.
+        Quiet easy, just as easy as what you have done
+    </li>
+    <li><strong>Change application/config/database.php into readOnly (chmod 755 /application/config/database.php)</strong><br />
+        Why? Because anyone with ftp access or whatever can change the content of the file manually
+    </li>
+    <li><strong>In case of no error appeared : Click</strong> <a href="../"><strong>here</strong></a><br />
+        If there is no error appeared, and you have do the above steps, then there is nothing more you should do.
+        Start your new adventure with No-CMS
+    </li>
+    <li><strong>In case of failure Installation : Do Installation manually</strong><br />        
         Why? Because you look some error appeared. Here is the manual installation detail:
         <ol>
             <li>Open application/config/database.php</li>
@@ -75,17 +86,6 @@ But <i>(depend on your situation)</i> you still have some more things to do:
             </li>
             <li>Import database from install/resources/database.sql</li>
         </ol>
-    </li>
-    <li>Delete your installation folder<br />
-        Why? Because anyone can change database setting and admin user easily.
-        Quiet easy, just as easy as what you have done
-    </li>
-    <li>Change application/config/database.php into readOnly (chmod 755 /application/config/database.php)<br />
-        Why? Because anyone with ftp access or whatever can change the content of the file manually
-    </li>
-    <li>Click <a href="../"><b>here</b></a><br />
-        Why? Because you have do everything needed, you want to get rid of this page, 
-        and start your new adventure with Neo-CMS
     </li>
 </ul>
 </p>
