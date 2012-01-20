@@ -1,0 +1,21 @@
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+
+# CodeIgniter cache #
+#####################
+*/config/development
+*/logs/log-*.php
+*/logs/!index.html
+*/cache/*
+*/cache/!index.html
+
+# Eclipse editor #
+##################
+.settings
+.buildpath
+.project
