@@ -199,12 +199,12 @@ class CMS_Controller extends CI_Controller{
                 
                 //determine theme from configuration  
                 $theme = $data_partial['site_theme'];
-                if(!is_file('themes/'.$theme.'view/layouts/desktop.php') ||
-                !is_file('themes/'.$theme.'view/layouts/partials/desktop/footer.php') ||
-                !is_file('themes/'.$theme.'view/layouts/partials/desktop/header.php') ||
-                !is_file('themes/'.$theme.'view/layouts/partials/desktop/navigation_path.php') ||
-                !is_file('themes/'.$theme.'view/layouts/partials/desktop/navigation.php') ||
-                !is_file('themes/'.$theme.'view/layouts/partials/desktop/widget.php')
+                if(!is_file('themes/'.$theme.'/views/layouts/desktop.php') ||
+                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/footer.php') ||
+                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/header.php') ||
+                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/navigation_path.php') ||
+                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/navigation.php') ||
+                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/widget.php')
                 ){
                 	$theme = 'default';
                 }
@@ -216,12 +216,12 @@ class CMS_Controller extends CI_Controller{
                 
                 //set layout                
                 if($this->is_mobile && 
-                is_file('themes/'.$theme.'view/layouts/mobile.php') &&
-                is_file('themes/'.$theme.'view/layouts/partials/mobile/footer.php') &&
-                is_file('themes/'.$theme.'view/layouts/partials/mobile/header.php') &&
-                is_file('themes/'.$theme.'view/layouts/partials/mobile/navigation_path.php') &&
-                is_file('themes/'.$theme.'view/layouts/partials/mobile/navigation.php') &&
-                is_file('themes/'.$theme.'view/layouts/partials/mobile/widget.php')
+                is_file('themes/'.$theme.'/views/layouts/mobile.php') &&
+                is_file('themes/'.$theme.'/views/layouts/partials/mobile/footer.php') &&
+                is_file('themes/'.$theme.'/views/layouts/partials/mobile/header.php') &&
+                is_file('themes/'.$theme.'/views/layouts/partials/mobile/navigation_path.php') &&
+                is_file('themes/'.$theme.'/views/layouts/partials/mobile/navigation.php') &&
+                is_file('themes/'.$theme.'/views/layouts/partials/mobile/widget.php')
                 ){
                 	$layout = 'mobile';
                 }else{
