@@ -247,22 +247,22 @@ INSERT INTO `cms_module` (`module_id`, `module_name`, `user_id`) VALUES
 
 
 INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `is_root`, `index`, `is_static`, `static_content`) VALUES
-(1, 'main_login', NULL, 'Login', 'Visitor need to login for authentication', 'main/login', 2, 1, 0, 0, NULL),
-(2, 'main_forgot', NULL, 'Forgot password', 'Accidentally forgot password', 'main/forgot', 2, 1, 0, 0, NULL),
-(3, 'main_logout', NULL, 'Logout', 'Logout for deauthentication', 'main/logout', 3, 1, 0, 0, NULL),
-(4, 'main_management', NULL, 'CMS Management', 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 1, 0, 0, NULL),
-(5, 'main_register', NULL, 'Register', 'New User Registration', 'main/register', 2, 1, 0, 0, NULL),
-(6, 'main_change_profile', NULL, 'Change Profile', 'Change Current Profile', 'main/change_profile', 3, 1, 0, 0, NULL),
+(1, 'main_login', NULL, 'Login', 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL),
+(2, 'main_forgot', NULL, 'Forgot password', 'Accidentally forgot password', 'main/forgot', 2, 1, 2, 0, NULL),
+(3, 'main_logout', NULL, 'Logout', 'Logout for deauthentication', 'main/logout', 3, 1, 1, 0, NULL),
+(4, 'main_management', NULL, 'CMS Management', 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 1, 5, 0, ''),
+(5, 'main_register', NULL, 'Register', 'New User Registration', 'main/register', 2, 1, 3, 0, NULL),
+(6, 'main_change_profile', NULL, 'Change Profile', 'Change Current Profile', 'main/change_profile', 3, 1, 4, 0, NULL),
 (7, 'main_group_management', 4, 'Group Management', 'Group Management', 'main/group', 4, 0, 0, 0, NULL),
-(8, 'main_navigation_management', 4, 'Navigation Management', 'Navigation management', 'main/navigation', 4, 0, 0, 0, NULL),
-(9, 'main_privilege_management', 4, 'Privilege Management', 'Privilege Management', 'main/privilege', 4, 0, 0, 0, NULL),
-(10, 'main_user_management', 4, 'User Management', 'Manage User', 'main/user', 4, 0, 0, 0, NULL),
-(11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_management', 4, 0, 0, 0, NULL),
-(12, 'main_change_theme', 4, 'Change Theme', 'Change Theme', 'main/change_theme', 4, 0, 0, 0, NULL),
-(13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 0, 0, 0, NULL),
-(14, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 0, 0, NULL),
+(8, 'main_navigation_management', 4, 'Navigation Management', 'Navigation management', 'main/navigation', 4, 0, 3, 0, ''),
+(9, 'main_privilege_management', 4, 'Privilege Management', 'Privilege Management', 'main/privilege', 4, 0, 2, 0, NULL),
+(10, 'main_user_management', 4, 'User Management', 'Manage User', 'main/user', 4, 0, 1, 0, NULL),
+(11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_management', 4, 0, 5, 0, NULL),
+(12, 'main_change_theme', 4, 'Change Theme', 'Change Theme', 'main/change_theme', 4, 0, 6, 0, NULL),
+(13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 0, 4, 0, NULL),
+(14, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 7, 0, NULL),
 (15, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 1, 0, 0, NULL),
-(16, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 1, 0, 0, NULL);
+(16, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 1, 6, 0, NULL);
 /*split*/
 
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`, `slug`) VALUES
