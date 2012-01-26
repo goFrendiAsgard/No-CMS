@@ -18,7 +18,7 @@
         margin:2px 0 20px 10px;
     }
 </style>
-<script type="text/javascript" src ="<?php echo base_url().'assets/jquery.js';?>"></script>
+<script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
 <script type="text/javascript">
     $(document).ready(function(){
     });

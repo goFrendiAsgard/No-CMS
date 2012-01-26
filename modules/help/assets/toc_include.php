@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/jquery_snippet/jquery.snippet.css';?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.css';?>" />
 <style type="text/css">
     div#toc, div#toggle_toc{
         background-color :white;
@@ -22,8 +22,8 @@
         border-top-right-radius : 10px;
     }
 </style>
-<script type="text/javascript" src ="<?php echo base_url().'assets/jquery.js';?>"></script>
-<script type="text/javascript" src ="<?php echo base_url().'assets/jquery_snippet/jquery.snippet.js';?>"></script>
+<script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
+<script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.js';?>"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         $("#toggle_toc").click(function(){
