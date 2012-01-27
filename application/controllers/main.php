@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of Main
+ * The Main Controller of No-CMS
  *
  * @author gofrendi
  */
@@ -265,6 +265,8 @@ class Main extends CMS_Controller {
                 ->display_as('static_content', 'Static Content')
                 ->display_as('authorization_id', 'Authorization')
                 ->display_as('groups', 'Groups');
+        
+        $crud->order_by('parent_id, index', 'asc');
         
         $crud->unset_texteditor('description');
        

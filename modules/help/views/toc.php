@@ -14,9 +14,8 @@
             </ul>
             <h4>Installation</h4>
             <ul>
-                <li>Download No-CMS</li>
-                <li>Guided Installation</li>
-                <li>Manual Installation</li>
+                <li><a href="help/topic/download_no_cms">Download No-CMS</a></li>
+                <li><a href="help/topic/install_no_cms">Install No-CMS</a></li>
             </ul>
             <h4>Getting Started</h4>
             <ul>
