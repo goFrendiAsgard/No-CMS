@@ -10,19 +10,19 @@ class Install extends CMS_Module_Installer {
     protected function do_install(){
         $this->remove_all();
         $this->build_all();
-        redirect('blog');
     }
     //this should be what happen when user uninstall this module
     protected function do_uninstall(){
         $this->remove_all();
-        redirect('main');
     }
     
     private function remove_all(){
+    	$this->db->query("DROP TABLE IF EXISTS `blog_comment`;");
         $this->db->query("DROP TABLE IF EXISTS `blog_category_article`;");
         $this->db->query("DROP TABLE IF EXISTS `blog_article`;");
         $this->db->query("DROP TABLE IF EXISTS `blog_category`;");
         
+        $this->remove_navigation("blog_comment");
         $this->remove_navigation("blog_article");
         $this->remove_navigation("blog_category");
         $this->remove_navigation("blog_management");
@@ -37,7 +37,21 @@ class Install extends CMS_Module_Installer {
               `date` DATE NOT NULL,
               `author_user_id` int(20) unsigned NOT NULL,
               `content` text,
+              `allow_comment` tinyint(3) unsigned NOT NULL DEFAULT '0',
               PRIMARY KEY (`article_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+         ");
+        $this->db->query("
+            CREATE TABLE IF NOT EXISTS `blog_comment` (
+              `comment_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
+              `article_id` int(20) unsigned NOT NULL,
+              `date` DATE NOT NULL,
+              `author_user_id` int(20) unsigned NULL,
+              `name` varchar(50),
+              `email` varchar(50),
+              `website` varchar(50), 
+              `content` text,
+              PRIMARY KEY (`comment_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
          ");
         $this->db->query("
@@ -63,6 +77,7 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation("blog_management", "Manage Blog", "blog/manage", 4);
         $this->add_navigation("blog_category", "Manage Category", "blog/category", 4, "blog_management");
         $this->add_navigation("blog_article", "Manage Article", "blog/article", 4, "blog_management");
+        $this->add_navigation("blog_comment", "Manage Comment", "blog/comment", 4, "blog_management");
     }
 }
 

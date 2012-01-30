@@ -69,7 +69,8 @@ class CMS_Module_Installer extends CMS_Controller {
         $SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_name='".addslashes($parent_name)."'";
         $query = $this->db->query($SQL);
         $row = $query->row();
-        $parent_id = $row->navigation_id;
+        
+        $parent_id = isset($row->navigation_id)? $row->navigation_id: NULL;
         
         //if it is null, index = max index+1
         if(!isset($index)){
@@ -82,6 +83,7 @@ class CMS_Module_Installer extends CMS_Controller {
         	$query = $this->db->query($SQL);
         	$row = $query->row();
         	$index = $row->newIndex;
+        	if(!isset($index)) $index = 0;
         }
             
         //insert it :D
@@ -106,7 +108,7 @@ class CMS_Module_Installer extends CMS_Controller {
         $SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_name='".addslashes($navigation_name)."'";
         $query = $this->db->query($SQL);
         $row = $query->row();
-        $navigation_id = $row->navigation_id;
+        $navigation_id = isset($row->navigation_id)? $row->navigation_id: NULL;
         
         if(isset($navigation_id)){
             //delete cms_group_navigation
@@ -228,6 +230,8 @@ class CMS_Module_Installer extends CMS_Controller {
     		$query = $this->db->query($SQL);
     		$row = $query->row();
     		$index = $row->newIndex;
+    		
+    		if(!isset($index)) $index = 0;
     	}
     	
     	$data = array(
