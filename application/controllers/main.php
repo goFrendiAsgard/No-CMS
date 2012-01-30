@@ -161,7 +161,6 @@ class Main extends CMS_Controller {
         $crud->unset_delete();
         $crud->unset_edit();
 
-        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output);
@@ -190,7 +189,6 @@ class Main extends CMS_Controller {
         $crud->callback_before_delete(array($this,'before_delete_user'));
         
         
-        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_user_management');
@@ -230,7 +228,6 @@ class Main extends CMS_Controller {
         
         $crud->unset_texteditor('description');
 
-        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_group_management');
@@ -253,6 +250,7 @@ class Main extends CMS_Controller {
         $crud->add_fields('navigation_name', 'is_root', 'parent_id', 'title', 'description', 'index', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
         $crud->change_field_type('is_root', 'true_false');
         $crud->change_field_type('is_static', 'true_false');
+        $crud->change_field_type('index', 'integer');
         
         $crud->display_as('navigation_name', 'Navigation Code')
                 ->display_as('is_root', 'Is Root')
@@ -276,11 +274,32 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id' , 'group_name');
         
 
-        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_navigation_management');
-    }  
+    } 
+
+    public function quicklink(){
+    	$crud = new grocery_CRUD();
+    	
+    	$crud->set_table('cms_quicklink');
+    	$crud->columns('navigation_id');
+    	$crud->edit_fields('navigation_id', 'index');
+    	$crud->add_fields('navigation_id', 'index');
+    	$crud->change_field_type('index', 'integer');
+    	
+    	$crud->display_as('navigation_id', 'Navigation Name')
+    		->display_as('index', 'Order');
+    	
+    	$crud->order_by('index', 'asc');
+    	 
+    	$crud->set_relation('navigation_id', 'cms_navigation', 'navigation_name');
+    	
+    	
+    	$output = $crud->render();
+    	
+    	$this->view('grocery_CRUD', $output, 'main_quicklink_management');
+    }
     
     public function privilege(){
         $crud = new grocery_CRUD();
@@ -294,8 +313,6 @@ class Main extends CMS_Controller {
         
         $crud->unset_texteditor('description');
         
-                
-        //$crud->set_theme('datatables');
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_privilege_management');
@@ -310,6 +327,7 @@ class Main extends CMS_Controller {
         $crud->add_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
         $crud->change_field_type('active', 'true_false');
         $crud->change_field_type('is_static', 'true_false');
+        $crud->change_field_type('index', 'integer');
         
         $crud->display_as('widget_name', 'Widget Code')
                 ->display_as('title', 'Title (What visitor see)')
@@ -329,9 +347,7 @@ class Main extends CMS_Controller {
         
         $crud->set_relation_n_n('groups', 'cms_group_widget', 'cms_group', 'widget_id', 'group_id' , 'group_name');
         
-
-        //$crud->set_theme('datatables');
-        $output = $crud->render();
+		$output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_widget_management');
     }
@@ -351,9 +367,7 @@ class Main extends CMS_Controller {
         $crud->unset_texteditor('description');
         $crud->unset_texteditor('value');
         
-
-        //$crud->set_theme('datatables');
-        $output = $crud->render();
+		$output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_config_management');
     }
@@ -399,8 +413,7 @@ class Main extends CMS_Controller {
         }else{
             echo "invalid widget";
         }
-    }
-    
+    } 
     
 }
 

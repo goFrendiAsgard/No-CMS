@@ -18,6 +18,8 @@ DROP TABLE IF EXISTS `cms_group_user`;
 /*split*/
 DROP TABLE IF EXISTS `cms_group`;
 /*split*/
+DROP TABLE IF EXISTS `cms_quicklink`;
+/*split*/
 DROP TABLE IF EXISTS `cms_navigation`;
 /*split*/
 DROP TABLE IF EXISTS `cms_widget`;
@@ -86,6 +88,16 @@ CREATE TABLE `cms_navigation` (
   KEY `authorization_id` (`authorization_id`),
   CONSTRAINT `cms_navigation_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `cms_navigation` (`navigation_id`),
   CONSTRAINT `cms_navigation_ibfk_2` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*split*/
+
+CREATE TABLE `cms_quicklink` (
+  `quicklink_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
+  `navigation_id` int(20) unsigned NOT NULL,
+  `index` int(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`quicklink_id`),
+  UNIQUE KEY `navigation_id` (`navigation_id`),
+  CONSTRAINT `cms_quicklink_ibfk_1` FOREIGN KEY (`navigation_id`) REFERENCES `cms_navigation` (`navigation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
@@ -260,19 +272,20 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_management', 4, 0, 5, 0, NULL),
 (12, 'main_change_theme', 4, 'Change Theme', 'Change Theme', 'main/change_theme', 4, 0, 6, 0, NULL),
 (13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 0, 4, 0, NULL),
-(14, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 7, 0, NULL),
-(15, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 1, 0, 0, NULL),
-(16, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 1, 6, 0, NULL);
+(14, 'main_quicklink_management', 4, 'Quick Link Management', 'Manage Quick Link', 'main/quicklink', 4, 0, 7, 0, NULL),
+(15, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 8, 0, NULL),
+(16, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 1, 0, 0, NULL),
+(17, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 1, 6, 0, NULL);
 /*split*/
 
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`, `slug`) VALUES
 (1, 'login', 'Login', 'Visitor need to login for authentication', 'main/widget_login', 2, 1, 0, 0, NULL, 'normal'),
-(2, 'logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 0, 0, NULL, 'normal'),
-(3, 'social_plugin', 'Share This Page !!', 'Addthis', 'main/widget_social_plugin', 1, 1, 0, 1, '<!-- AddThis Button BEGIN -->\n<div class="addthis_toolbox addthis_default_style "><a class="addthis_button_preferred_1"></a> <a class="addthis_button_preferred_2"></a> <a class="addthis_button_preferred_3"></a> <a class="addthis_button_preferred_4"></a> <a class="addthis_button_preferred_5"></a> <a class="addthis_button_preferred_6"></a> <a class="addthis_button_preferred_7"></a> <a class="addthis_button_preferred_8"></a> <a class="addthis_button_preferred_9"></a> <a class="addthis_button_preferred_10"></a> <a class="addthis_button_preferred_11"></a> <a class="addthis_button_preferred_12"></a> <a class="addthis_button_preferred_13"></a> <a class="addthis_button_preferred_14"></a> <a class="addthis_button_preferred_15"></a> <a class="addthis_button_preferred_16"></a> <a class="addthis_button_compact"></a> <a class="addthis_counter addthis_bubble_style"></a></div>\n<script src="http://s7.addthis.com/js/250/addthis_widget.js?domready=1" type="text/javascript"></script>\n<!-- AddThis Button END -->', 'normal'),
-(4, 'google_search', 'Search', 'Search from google', '', 1, 0, 0, 1, '<!-- Google Custom Search Element -->\n<div id="cse" style="width: 100%;">Loading</div>\n<script src="http://www.google.com/jsapi" type="text/javascript"></script>\n<script type="text/javascript">// <![CDATA[\n    google.load(''search'', ''1'');\n    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(''cse'');}, true);\n// ]]></script>', 'normal'),
-(5, 'google_translate', 'Translate !!', '<p>The famous google translate</p>', '', 1, 0, 0, 1, '<!-- Google Translate Element -->\n<div id="google_translate_element" style="display:block"></div>\n<script>\nfunction googleTranslateElementInit() {\n  new google.translate.TranslateElement({pageLanguage: "af"}, "google_translate_element");\n};\n</script>\n<script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>\n', 'normal'),
-(6, 'calendar', 'Calendar', 'Indonesian Calendar', '', 1, 0, 0, 1, '<!-------Do not change below this line------->\n<div align="center" height="200px">\n    <iframe align="center" src="http://www.calendarlabs.com/calendars/web-content/calendar.php?cid=1001&uid=162232623&c=22&l=en&cbg=C3D9FF&cfg=000000&hfg=000000&hfg1=000000&ct=1&cb=1&cbc=2275FF&cf=verdana&cp=bottom&sw=0&hp=t&ib=0&ibc=&i=" width="170" height="155" marginwidth=0 marginheight=0 frameborder=no scrolling=no allowtransparency=''true''>\n    Loading...\n    </iframe>\n    <div align="center" style="width:140px;font-size:10px;color:#666;">\n        Powered by <a  href="http://www.calendarlabs.com/" target="_blank" style="font-size:10px;text-decoration:none;color:#666;">Calendar</a> Labs\n    </div>\n</div>\n\n<!-------Do not change above this line------->', 'normal'),
-(7, 'google_map', 'Map', 'google map', '', 1, 0, 0, 1, '<!-- Google Maps Element Code -->\n<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:150px;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>', 'normal');
+(2, 'logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 1, 0, NULL, 'normal'),
+(3, 'social_plugin', 'Share This Page !!', 'Addthis', 'main/widget_social_plugin', 1, 1, 2, 1, '<!-- AddThis Button BEGIN -->\n<div class="addthis_toolbox addthis_default_style "><a class="addthis_button_preferred_1"></a> <a class="addthis_button_preferred_2"></a> <a class="addthis_button_preferred_3"></a> <a class="addthis_button_preferred_4"></a> <a class="addthis_button_preferred_5"></a> <a class="addthis_button_preferred_6"></a> <a class="addthis_button_preferred_7"></a> <a class="addthis_button_preferred_8"></a> <a class="addthis_button_preferred_9"></a> <a class="addthis_button_preferred_10"></a> <a class="addthis_button_preferred_11"></a> <a class="addthis_button_preferred_12"></a> <a class="addthis_button_preferred_13"></a> <a class="addthis_button_preferred_14"></a> <a class="addthis_button_preferred_15"></a> <a class="addthis_button_preferred_16"></a> <a class="addthis_button_compact"></a> <a class="addthis_counter addthis_bubble_style"></a></div>\n<script src="http://s7.addthis.com/js/250/addthis_widget.js?domready=1" type="text/javascript"></script>\n<!-- AddThis Button END -->', 'normal'),
+(4, 'google_search', 'Search', 'Search from google', '', 1, 0, 3, 1, '<!-- Google Custom Search Element -->\n<div id="cse" style="width: 100%;">Loading</div>\n<script src="http://www.google.com/jsapi" type="text/javascript"></script>\n<script type="text/javascript">// <![CDATA[\n    google.load(''search'', ''1'');\n    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(''cse'');}, true);\n// ]]></script>', 'normal'),
+(5, 'google_translate', 'Translate !!', '<p>The famous google translate</p>', '', 1, 0, 4, 1, '<!-- Google Translate Element -->\n<div id="google_translate_element" style="display:block"></div>\n<script>\nfunction googleTranslateElementInit() {\n  new google.translate.TranslateElement({pageLanguage: "af"}, "google_translate_element");\n};\n</script>\n<script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>\n', 'normal'),
+(6, 'calendar', 'Calendar', 'Indonesian Calendar', '', 1, 0, 5, 1, '<!-------Do not change below this line------->\n<div align="center" height="200px">\n    <iframe align="center" src="http://www.calendarlabs.com/calendars/web-content/calendar.php?cid=1001&uid=162232623&c=22&l=en&cbg=C3D9FF&cfg=000000&hfg=000000&hfg1=000000&ct=1&cb=1&cbc=2275FF&cf=verdana&cp=bottom&sw=0&hp=t&ib=0&ibc=&i=" width="170" height="155" marginwidth=0 marginheight=0 frameborder=no scrolling=no allowtransparency=''true''>\n    Loading...\n    </iframe>\n    <div align="center" style="width:140px;font-size:10px;color:#666;">\n        Powered by <a  href="http://www.calendarlabs.com/" target="_blank" style="font-size:10px;text-decoration:none;color:#666;">Calendar</a> Labs\n    </div>\n</div>\n\n<!-------Do not change above this line------->', 'normal'),
+(7, 'google_map', 'Map', 'google map', '', 1, 0, 6, 1, '<!-- Google Maps Element Code -->\n<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:150px;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>', 'normal');
 
 /*split*/
 

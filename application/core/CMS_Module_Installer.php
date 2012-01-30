@@ -63,12 +63,26 @@ class CMS_Module_Installer extends CMS_Controller {
             $this->db->query($query);
         }
     }
-    protected function add_navigation($navigation_name, $title, $url, $authorization_id=1, $parent_name=NULL, $index = 0, $description=NULL){
-        //get parent's navigation_id
+    protected function add_navigation($navigation_name, $title, $url, $authorization_id=1, $parent_name=NULL, $index = NULL, $description=NULL){
+            	
+    	//get parent's navigation_id
         $SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_name='".addslashes($parent_name)."'";
         $query = $this->db->query($SQL);
         $row = $query->row();
         $parent_id = $row->navigation_id;
+        
+        //if it is null, index = max index+1
+        if(!isset($index)){
+        	if(isset($parent_id)){
+        		$whereParentId = "(parent_id = $parent_id)";
+        	}else{
+        		$whereParentId = "(parent_id IS NULL)";
+        	}
+        	$SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_navigation` WHERE $whereParentId";
+        	$query = $this->db->query($SQL);
+        	$row = $query->row();
+        	$index = $row->newIndex;
+        }
             
         //insert it :D
         $data = array(
@@ -202,8 +216,21 @@ class CMS_Module_Installer extends CMS_Controller {
         return $result;
     }
     
-    protected function add_widget($widget_name, $title, $authorization_id=1, $url=NULL, $slug=NULL, $index=0, $description=NULL){
-        $data = array(
+    protected function add_widget($widget_name, $title, $authorization_id=1, $url=NULL, $slug=NULL, $index=NULL, $description=NULL){
+    	//if it is null, index = max index+1
+    	if(!isset($index)){
+    		if(isset($slug)){
+    			$whereSlug = "(slug = '$slug')";
+    		}else{
+    			$whereSlug = "(slug IS NULL)";
+    		}
+    		$SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_widget` WHERE $whereSlug";
+    		$query = $this->db->query($SQL);
+    		$row = $query->row();
+    		$index = $row->newIndex;
+    	}
+    	
+    	$data = array(
             "widget_name" => $widget_name,
             "title" => $title,
             "slug" => $slug,
@@ -212,7 +239,7 @@ class CMS_Module_Installer extends CMS_Controller {
             "url" => $url,
             "description" => $description
         );
-        $this->db->insert('cms_navigation',$data);        
+        $this->db->insert('cms_widget',$data);        
     }
     protected function remove_widget($widget_name){
         $SQL = "SELECT widget_id FROM cms_widget WHERE widget_name='".addslashes($widget_name)."'";
