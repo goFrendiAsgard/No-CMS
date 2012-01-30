@@ -120,6 +120,60 @@ class CMS_Model extends CI_Model {
         return $result;
     }
     
+    /**
+    * @author goFrendiAsgard
+    * @desc return quick links
+    */
+    public function cms_quicklinks(){
+    	$user_name = $this->cms_username();    
+        $user_id = $this->cms_userid(); 
+        $not_login = !$user_name?"TRUE":"FALSE";
+        $login = $user_name?"TRUE":"FALSE";
+        $super_user = $user_id==1?"TRUE":"FALSE";
+        
+        $query = $this->db->query(
+                        "SELECT q.navigation_id, navigation_name, is_static, title, description, url 
+                        FROM 
+                        	cms_navigation AS n,
+                        	cms_quicklink AS q 
+                        WHERE
+                        	(
+                        		q.navigation_id = n.navigation_id
+                        	) 
+                        	AND
+                            (
+                                (authorization_id = 1) OR
+                                (authorization_id = 2 AND $not_login) OR
+                                (authorization_id = 3 AND $login) OR
+                                (
+                                    (authorization_id = 4 AND $login) AND 
+                                    (
+                                        (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='".addslashes($user_id)."')>0
+                                            OR $super_user OR
+                                        (SELECT COUNT(*) FROM cms_group_navigation AS gn
+                                            WHERE 
+                                                gn.navigation_id=n.navigation_id AND
+                                                gn.group_id IN 
+                                                    (SELECT group_id FROM cms_group_user WHERE user_id = '".addslashes($user_id)."')
+                                        )>0
+                                    )
+                                )
+                            ) ORDER BY q.index"
+        );
+        $result = array();
+        foreach($query->result() as $row){
+        	$result[] = array(
+                        "navigation_id"=>$row->navigation_id,
+                        "navigation_name" => $row->navigation_name,
+                        "title" => $row->title,
+                        "description" => $row->description,
+                        "url" => $row->url,
+                        "is_static"=>$row->is_static
+        	);
+        }
+        return $result;
+    }
+    
     /** 
      * @author  goFrendiAsgard
      * @param  parent_id, max_menu_depth

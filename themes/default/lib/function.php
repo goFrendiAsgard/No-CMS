@@ -105,6 +105,22 @@
         return $str;
     }
     
+    function build_quicklink($navigations){
+    	if(count($navigations)==0) return '';//just exit and do nothing
+    	
+    	$str = '';
+    	foreach($navigations as $navigation){
+    		if($navigation['is_static']){
+    			$str.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>'layout_quicklink'));
+    		}else{
+    			$str.= anchor($navigation['url'], $navigation['title'], array('class'=>'layout_quicklink layout_button'));
+    		}
+    		$str .='&nbsp;';
+    	}    	
+    	return $str;
+    	
+    }
+    
     
     
     function build_menu_path($path){

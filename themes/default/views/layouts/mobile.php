@@ -16,6 +16,7 @@
                 <a class="layout_button_menu layout_button" href="#">Menu</a>
                 <a class="layout_button_widget layout_button" href="#">Widget</a> 
                 <a class="layout_button_content layout_button" href="#">Content</a>
+                <?php echo build_quicklink($quicklinks);?>
             </div>
         </div>
         <div id="layout_center">             

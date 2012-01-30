@@ -75,6 +75,14 @@ class CMS_Controller extends CI_Controller{
         return $this->CMS_Model->cms_navigations($parent_id, $max_menu_depth);
     }
     
+    /**
+     * @author goFrendiAsgard
+     * @desc return quick links
+     */
+    private function cms_quicklinks(){
+    	return $this->CMS_Model->cms_quicklinks();
+    }
+    
     /** 
      * @author  goFrendiAsgard
      * @param  parent_id, max_menu_depth
@@ -195,7 +203,12 @@ class CMS_Controller extends CI_Controller{
                 $navigation_path = $this->cms_get_navigation_path($navigation_name);
                 $data_partial['navigations'] = $navigations;
                 $data_partial['navigation_path'] = $navigation_path;
+                
+                //get user name
                 $data_partial['user_name'] = $this->cms_username();
+                
+                //get quicklinks
+                $data_partial['quicklinks'] = $this->cms_quicklinks();
                 
                 //determine theme from configuration  
                 $theme = $data_partial['site_theme'];

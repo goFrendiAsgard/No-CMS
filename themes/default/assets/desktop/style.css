@@ -101,3 +101,9 @@ li.layout_nav_hot{
 #layout_navigation a.layout_expand{
     float: left;
 }
+.layout_button{
+    display:inline;
+    border-radius : 10px;
+    background-color : white;
+    padding : 5px;
+}

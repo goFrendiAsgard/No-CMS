@@ -8,7 +8,10 @@
         <script type="text/javascript" src="<?php echo base_url()."themes/$site_theme/assets/desktop/script.js";?>"></script>
     </head>
     <body>       
-        <div id="layout_header"><?php echo $template['partials']['header'];?></div>
+        <div id="layout_header">
+        	<?php echo $template['partials']['header'];?>
+        	<?php echo build_quicklink($quicklinks);?>
+        </div>
         <div id="layout_center">
             <div id="layout_navigation"><?php echo $template['partials']['navigation'];?></div>
             <div id="layout_widget">WIDGET<hr /><?php echo $template['partials']['widget'] ?></div>
