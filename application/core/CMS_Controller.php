@@ -204,6 +204,10 @@ class CMS_Controller extends CI_Controller{
                 $data_partial['navigations'] = $navigations;
                 $data_partial['navigation_path'] = $navigation_path;
                 
+                //get widget
+                $widget = $this->cms_widgets();
+                $data_partial['widget'] = $widget;
+                
                 //get user name
                 $data_partial['user_name'] = $this->cms_username();
                 
@@ -212,51 +216,42 @@ class CMS_Controller extends CI_Controller{
                 
                 //determine theme from configuration  
                 $theme = $data_partial['site_theme'];
-                if(!is_file('themes/'.$theme.'/views/layouts/desktop.php') ||
-                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/footer.php') ||
-                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/header.php') ||
-                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/navigation_path.php') ||
-                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/navigation.php') ||
-                !is_file('themes/'.$theme.'/views/layouts/partials/desktop/widget.php')
-                ){
-                	$theme = 'default';
-                }
-                 
+                $layout= $this->is_mobile ? 'mobile' : 'default';
                 
-                //get widget
-                $widget = $this->cms_widgets();
-                $data_partial['widget'] = $widget;
-                
-                //set layout                
-                if($this->is_mobile && 
-                is_file('themes/'.$theme.'/views/layouts/mobile.php') &&
-                is_file('themes/'.$theme.'/views/layouts/partials/mobile/footer.php') &&
-                is_file('themes/'.$theme.'/views/layouts/partials/mobile/header.php') &&
-                is_file('themes/'.$theme.'/views/layouts/partials/mobile/navigation_path.php') &&
-                is_file('themes/'.$theme.'/views/layouts/partials/mobile/navigation.php') &&
-                is_file('themes/'.$theme.'/views/layouts/partials/mobile/widget.php')
-                ){
-                	$layout = 'mobile';
-                }else{
-                	$layout = 'desktop';
+                if(!$this->cms_themes_okay($theme, $layout)){
+                	if($layout=='mobile' && $this->cms_themes_okay($theme, 'default')){
+                		$layout = 'default';                		
+                	}else{
+                		$data_partial['site_theme'] = 'neutral';
+                		$theme = $data_partial['site_theme'];
+                	}                	
                 }
                 
                 //set layout and partials
                 $this->template->set_theme($theme);
                 $this->template->set_layout($layout);
-                $this->template->set_partial('header', 'layouts/partials/'.$layout.'/header.php', $data_partial);
-                $this->template->set_partial('navigation', 'layouts/partials/'.$layout.'/navigation.php', $data_partial);
-                $this->template->set_partial('footer', 'layouts/partials/'.$layout.'/footer.php', $data_partial);
-                $this->template->set_partial('widget', 'layouts/partials/'.$layout.'/widget.php', $data_partial);
-                $this->template->set_partial('navigation_path', 'layouts/partials/'.$layout.'/navigation_path.php', $data_partial);
+                $this->template->set_partial('header', 'partials/'.$layout.'/header.php', $data_partial);
+                $this->template->set_partial('left', 'partials/'.$layout.'/left.php', $data_partial);
+                $this->template->set_partial('footer', 'partials/'.$layout.'/footer.php', $data_partial);
+                $this->template->set_partial('right', 'partials/'.$layout.'/right.php', $data_partial);
+                $this->template->set_partial('navigation_path', 'partials/'.$layout.'/navigation_path.php', $data_partial);
                 
                 $this->template->build($view_url, $data);
             }     
         }else{
             //if user not authorized, show baseurl
-            //show_404();
             redirect(base_url());
         }   
+    }
+    
+    private function cms_themes_okay($theme, $layout){
+    	return 
+    	    is_file('themes/'.$theme.'/views/layouts/'.$layout.'.php') &&
+        	is_file('themes/'.$theme.'/views/partials/'.$layout.'/footer.php') &&
+            is_file('themes/'.$theme.'/views/partials/'.$layout.'/header.php') &&
+            is_file('themes/'.$theme.'/views/partials/'.$layout.'/navigation_path.php') &&
+            is_file('themes/'.$theme.'/views/partials/'.$layout.'/left.php') &&
+            is_file('themes/'.$theme.'/views/partials/'.$layout.'/right.php');	
     }
     
     /** 

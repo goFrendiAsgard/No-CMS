@@ -25,7 +25,7 @@ body{
     /* Proposed W3C Markup */ 
     background-image: linear-gradient(top left, orangered 0%, orange 100%);
 }
-div#layout_navigation, div#layout_widget{
+div#layout_left, div#layout_right{
     z-index : 100;
 }
 div#layout_header, div#layout_content, div#layout_footer{
@@ -56,7 +56,7 @@ div#layout_header{
     padding : 20px;
     font-size : small;
 }
-div#layout_navigation {
+div#layout_left {
     background-color : orange;
     -moz-box-shadow:    3px 3px 5px 6px orangered;
     -webkit-box-shadow: 3px 3px 5px 6px orangered;
@@ -67,7 +67,7 @@ div#layout_navigation {
     width:200px;
     padding : 10px;
 }
-div#layout_widget {
+div#layout_right {
     float:right;
     width:160px;
     padding : 10px;
@@ -121,24 +121,24 @@ li.layout_nav_hot{
     font-weight : normal;
     text-decoration : underline;
 }
-#layout_navigation a{
+#layout_left a{
     font-family : serif;
     color : black;                
     font-weight : bold;
     text-decoration : none;
 }
-#layout_navigation a.layout_page_link{    
+#layout_left a.layout_page_link{    
     display:block;
     float:left;
 }
-#layout_navigation a.layout_have_child{
+#layout_left a.layout_have_child{
     width: 80%;
     margin-left: 5px;
 }
-#layout_navigation a.layout_no_child{
+#layout_left a.layout_no_child{
     width: 100%;
 }
-#layout_navigation a.layout_expand{
+#layout_left a.layout_expand{
     float: left;
 }
 .layout_button{

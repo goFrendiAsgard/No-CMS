@@ -17,14 +17,14 @@ div#layout_header{
     padding : 5px;
     font-size : small;
 }
-div#layout_navigation{ 
+div#layout_left{ 
     min-height : 300px;
     width : 260px;
     float : left;
     padding : 5px;
     background-color : #CFCFCF;
 }
-div#layout_widget{ 
+div#layout_right{ 
     min-height : 300px;
     width : 260px;
     float : left;
@@ -83,24 +83,24 @@ li.layout_nav_hot{
     font-weight : normal;
     text-decoration : underline;
 }
-#layout_navigation ul a{
+#layout_left ul a{
     font-family : serif;
     color : black;                
     font-weight : bold;
     text-decoration : none;
 }
-#layout_navigation a.layout_page_link{    
+#layout_left a.layout_page_link{    
     display:block;
     float:left;
 }
-#layout_navigation a.layout_have_child{
+#layout_left a.layout_have_child{
     width: 80%;
     margin-left: 5px;
 }
-#layout_navigation a.layout_no_child{
+#layout_left a.layout_no_child{
     width: 100%;
 }
-#layout_navigation a.layout_expand{
+#layout_left a.layout_expand{
     float: left;
 }
 .layout_button{

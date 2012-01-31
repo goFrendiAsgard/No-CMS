@@ -25,28 +25,28 @@ $(document).ready(function(){
     });
 
     $(".layout_button_menu").click(function(){
-        $("#layout_widget").hide();
-        $("#layout_navigation").show(); 
+        $("#layout_right").hide();
+        $("#layout_left").show(); 
         small_content();
         return false;
     });
 
     $(".layout_button_widget").click(function(){
-        $("#layout_navigation").hide();
-        $("#layout_widget").show();  
+        $("#layout_left").hide();
+        $("#layout_right").show();  
         small_content();
         return false;
     });
     $(".layout_button_content").click(function(){
-        $("#layout_navigation").hide();
-        $("#layout_widget").hide(); 
+        $("#layout_left").hide();
+        $("#layout_right").hide(); 
         full_content();
         return false;
     });
 
     $(".layout_nav li a:not(.layout_expand)").click(function(){                    
-        $("#layout_navigation").hide();
-        $("#layout_widget").hide();
+        $("#layout_left").hide();
+        $("#layout_right").hide();
     });
     
     full_content();
