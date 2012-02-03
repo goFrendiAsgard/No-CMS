@@ -20,12 +20,6 @@ class Blog extends CMS_Controller {
         $SQL = "SELECT category_name FROM blog_category";
         $query = $this->db->query($SQL);
         foreach($query->result() as $row){
-        	/**
-            $result = array(
-                $row->category_name => $row->category_name
-            );
-            $data['available_category'][] = $result;
-            */
         	$data['available_category'][$row->category_name] = $row->category_name;
         }
         
@@ -76,7 +70,8 @@ class Blog extends CMS_Controller {
                 "date" => $row->date,
                 "id" => $row->article_id,
                 "allow_comment" => isset($article_id) && $row->allow_comment,
-                "comments" => $this->get_comments($row->article_id)
+                "comments" => $this->get_comments($row->article_id),
+                "photos" => $this->get_photos($row->article_id)
             );
             $data['article'][] = $result;
         }
@@ -110,6 +105,20 @@ class Blog extends CMS_Controller {
     		$this->db->insert('blog_comment', $data);
     	}
     	redirect('blog/index/'.$article_id);
+    }
+    
+    private function get_photos($article_id){
+    	$SQL = "SELECT url FROM blog_photo WHERE article_id = '".$article_id."'";
+    	$query = $this->db->query($SQL);
+    	
+    	$data = array();
+    	foreach($query->result() as $row){
+    		$result = array(
+    			"url" => $row->url
+    		);
+    		$data[] = $result;
+    	}    	
+    	return $data;
     }
     
     private function get_comments($article_id){
@@ -166,16 +175,38 @@ class Blog extends CMS_Controller {
         $crud->change_field_type('date', 'hidden');
         $crud->change_field_type('allow_comment', 'true_false');
         
+        $crud->add_action('Photos', base_url().'modules/blog/assets/images/photo.png', 'blog/photo');
+        $crud->add_action('Comments', base_url().'modules/blog/assets/images/comment.png', 'blog/comment');
+        
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'blog_article');        
     }
     
-    public function comment(){
+    public function photo($article_id=NULL){
+    	$crud = new grocery_CRUD();
+    	
+    	$crud->set_table('blog_photo');
+    	if(isset($article_id)){
+    		$crud->where('blog_photo.article_id', $article_id);
+    	}
+    	$crud->set_field_upload('url','assets/uploads/files');
+    	$crud->set_relation('article_id', 'blog_article', 'article_title');
+    	
+    	$output = $crud->render();
+    	
+    	$this->view('grocery_CRUD', $output, 'blog_photo');
+    	
+    }
+    
+    public function comment($article_id=NULL){
     	$crud = new grocery_CRUD();
     	
     	$crud->set_table('blog_comment');
-    	$crud->columns('article_id', 'comment');
+    	if(isset($article_id)){
+    		$crud->where('blog_comment.article_id', $article_id);
+    	}
+    	$crud->columns('article_id', 'content');
     	$crud->unset_add();
     	$crud->unset_edit();
     	

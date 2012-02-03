@@ -179,10 +179,10 @@ class Main extends CMS_Controller {
         $crud->change_field_type('active', 'true_false');
         
         $crud->display_as('user_name','User Name')
-                 ->display_as('email','E mail')
-                 ->display_as('real_name','Real Name')
-                 ->display_as('active','Active')
-                 ->display_as('groups','Groups');
+        ->display_as('email','E mail')
+        ->display_as('real_name','Real Name')
+        ->display_as('active','Active')
+        ->display_as('groups','Groups');
         
         $crud->set_relation_n_n('groups', 'cms_group_user', 'cms_group', 'user_id', 'group_id' , 'group_name');
         $crud->callback_before_insert(array($this,'before_insert_user'));
@@ -216,10 +216,11 @@ class Main extends CMS_Controller {
         $crud->edit_fields('group_name','description','users','navigations', 'privileges');
         $crud->add_fields('group_name','description','users','navigations', 'privileges');
         $crud->display_as('group_name','Group')
-                 ->display_as('description','Description')
-                 ->display_as('users','Users')
-                 ->display_as('navigations','Navigations')
-                 ->display_as('privileges','Privileges');
+        ->display_as('description','Description')
+        ->display_as('users','Users')
+        ->display_as('navigations','Navigations')
+        ->display_as('privileges','Privileges');
+        
         $crud->set_subject('User List');
         $crud->set_relation_n_n('users', 'cms_group_user', 'cms_user', 'group_id', 'user_id' , 'user_name');
         $crud->set_relation_n_n('navigations', 'cms_group_navigation', 'cms_navigation', 'group_id', 'navigation_id' , 'navigation_name');
@@ -253,16 +254,16 @@ class Main extends CMS_Controller {
         $crud->change_field_type('index', 'integer');
         
         $crud->display_as('navigation_name', 'Navigation Code')
-                ->display_as('is_root', 'Is Root')
-                ->display_as('parent_id', 'Parent')
-                ->display_as('title', 'Title (What visitor see)')
-                ->display_as('description', 'Description')
-                ->display_as('url', 'URL (Where is it point to)')
-                ->display_as('index', 'Order')
-                ->display_as('is_static', 'Static')
-                ->display_as('static_content', 'Static Content')
-                ->display_as('authorization_id', 'Authorization')
-                ->display_as('groups', 'Groups');
+        ->display_as('is_root', 'Is Root')
+        ->display_as('parent_id', 'Parent')
+        ->display_as('title', 'Title (What visitor see)')
+        ->display_as('description', 'Description')
+        ->display_as('url', 'URL (Where is it point to)')
+        ->display_as('index', 'Order')
+        ->display_as('is_static', 'Static')
+        ->display_as('static_content', 'Static Content')
+        ->display_as('authorization_id', 'Authorization')
+        ->display_as('groups', 'Groups');
         
         $crud->order_by('parent_id, index', 'asc');
         
@@ -273,6 +274,7 @@ class Main extends CMS_Controller {
         
         $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id' , 'group_name');
         
+        $crud->callback_before_insert(array($this,'before_insert_navigation'));
 
         $output = $crud->render();
 
@@ -295,6 +297,7 @@ class Main extends CMS_Controller {
     	 
     	$crud->set_relation('navigation_id', 'cms_navigation', 'navigation_name');
     	
+    	$crud->callback_before_insert(array($this,'before_insert_quicklink'));
     	
     	$output = $crud->render();
     	
@@ -347,9 +350,67 @@ class Main extends CMS_Controller {
         
         $crud->set_relation_n_n('groups', 'cms_group_widget', 'cms_group', 'widget_id', 'group_id' , 'group_name');
         
+        $crud->callback_before_insert(array($this,'before_insert_widget'));
+        
 		$output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_widget_management');
+    }
+    
+    public function before_insert_widget($post_array){
+    	if(isset($slug)){
+    		$whereSlug = "(slug = '".$post_array['slug']."')";
+    	}else{
+    		$whereSlug = "(slug IS NULL)";
+    	}
+    	$SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_widget` WHERE $whereSlug";
+    	$query = $this->db->query($SQL);
+    	$row = $query->row();
+    	$index = $row->newIndex;
+    	
+    	if(!isset($index)) $index = 0;
+    	
+    	$post_array['index'] = $index;
+    	
+    	return $post_array;
+    }
+    
+    public function before_insert_quicklink($post_array){
+    	$SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_quicklink`";
+    	$query = $this->db->query($SQL);
+    	$row = $query->row();
+    	$index = $row->newIndex;
+    	
+    	if(!isset($index)) $index = 0;
+    	
+    	$post_array['index'] = $index;
+    	
+    	return $post_array;
+    }
+    
+    public function before_insert_navigation($post_array){
+    	//get parent's navigation_id
+    	$SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_id='".$post_array['parent_id']."'";
+    	$query = $this->db->query($SQL);
+    	$row = $query->row();
+    	
+    	$parent_id = isset($row->navigation_id)? $row->navigation_id: NULL;
+    	
+    	//index = max index+1
+    	if(isset($parent_id)){
+    		$whereParentId = "(parent_id = $parent_id)";
+    	}else{
+    		$whereParentId = "(parent_id IS NULL)";
+    	}
+    	$SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_navigation` WHERE $whereParentId";
+    	$query = $this->db->query($SQL);
+    	$row = $query->row();
+    	$index = $row->newIndex;
+    	if(!isset($index)) $index = 0;
+    	
+    	$post_array['index'] = $index;
+    		
+    	return $post_array;
     }
     
     public function config(){

@@ -10,6 +10,12 @@ foreach($article as $single_article){
     echo '<h2>'.$single_article['title'].'</h2>'.br();
     echo '('.$single_article['author'].', '.$single_article['date'].')';
     echo '<p>'.$single_article['content'].'</p>';
+    
+    foreach($single_article['photos'] as $photo){
+    	echo '<img src="'.base_url().'assets/uploads/files/'.$photo['url'].'" />';
+    }
+    echo '<br />';
+    
     if($view_readmore){
         echo anchor('blog/index/'.$single_article['id'],'read more');
     }

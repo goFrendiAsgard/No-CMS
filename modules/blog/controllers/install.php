@@ -17,12 +17,15 @@ class Install extends CMS_Module_Installer {
     }
     
     private function remove_all(){
-    	$this->db->query("DROP TABLE IF EXISTS `blog_comment`;");
+    	$this->db->query("DROP TABLE IF EXISTS `blog_comment`;");        
+        $this->db->query("DROP TABLE IF EXISTS `blog_photo`;");
         $this->db->query("DROP TABLE IF EXISTS `blog_category_article`;");
         $this->db->query("DROP TABLE IF EXISTS `blog_article`;");
         $this->db->query("DROP TABLE IF EXISTS `blog_category`;");
         
+        
         $this->remove_navigation("blog_comment");
+        $this->remove_navigation("blog_photo");
         $this->remove_navigation("blog_article");
         $this->remove_navigation("blog_category");
         $this->remove_navigation("blog_management");
@@ -55,6 +58,14 @@ class Install extends CMS_Module_Installer {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
          ");
         $this->db->query("
+            CREATE TABLE IF NOT EXISTS `blog_photo` (
+              `photo_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
+              `article_id` int(20) unsigned NOT NULL,
+              `url` varchar(50),
+              PRIMARY KEY (`photo_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+         ");
+        $this->db->query("
             CREATE TABLE IF NOT EXISTS `blog_category` (
               `category_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
               `category_name` varchar(100) NOT NULL,
@@ -77,6 +88,7 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation("blog_management", "Manage Blog", "blog/manage", 4);
         $this->add_navigation("blog_category", "Manage Category", "blog/category", 4, "blog_management");
         $this->add_navigation("blog_article", "Manage Article", "blog/article", 4, "blog_management");
+        $this->add_navigation("blog_article", "Manage Photo", "blog/photo", 4, "blog_management");
         $this->add_navigation("blog_comment", "Manage Comment", "blog/comment", 4, "blog_management");
     }
 }
