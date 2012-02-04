@@ -34,7 +34,7 @@ class data extends CMS_Model{
                   );
             $result .= '        ';
             $result .= '$this->db->query(\''.PHP_EOL;
-            $result .= $this->dbutil->backup($prefs).PHP_EOL;
+            $result .= addslashes($this->dbutil->backup($prefs)).PHP_EOL;
             $result .= '        ';
             $result .= '\');'.PHP_EOL;
         }

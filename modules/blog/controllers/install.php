@@ -88,7 +88,7 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation("blog_management", "Manage Blog", "blog/manage", 4);
         $this->add_navigation("blog_category", "Manage Category", "blog/category", 4, "blog_management");
         $this->add_navigation("blog_article", "Manage Article", "blog/article", 4, "blog_management");
-        $this->add_navigation("blog_article", "Manage Photo", "blog/photo", 4, "blog_management");
+        $this->add_navigation("blog_photo", "Manage Photo", "blog/photo", 4, "blog_management");
         $this->add_navigation("blog_comment", "Manage Comment", "blog/comment", 4, "blog_management");
     }
 }

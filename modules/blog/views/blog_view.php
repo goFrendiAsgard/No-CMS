@@ -1,3 +1,9 @@
+<style type="text/css">
+img{
+ width: auto;
+ height: 75px;
+}
+</style>
 <?php
 echo form_open('blog');
 echo form_dropdown('category', $available_category, $category);
