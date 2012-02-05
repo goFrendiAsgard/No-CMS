@@ -238,3 +238,5 @@ Here are some names of considerable contributors:
   He is the first one who discover a critical bug in the first stage of development.
 * I Komang Ari Mogi <-- He is my classmate in my graduate program. He has some experience in design. 
   That's why he can propose some fix in the very early stage of development. 
+* Ibnoe <-- The one who gives some suggestions and bug report. I don't know much about him
+* Panega <-- The one who also report a crucial bug. I don't know much about him

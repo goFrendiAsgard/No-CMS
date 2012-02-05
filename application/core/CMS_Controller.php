@@ -227,6 +227,14 @@ class CMS_Controller extends CI_Controller{
                 	}                	
                 }
                 
+                //backend template
+                $cms_userid = $this->cms_userid();
+                if(isset($cms_userid) && $cms_userid){
+                	if($this->cms_themes_okay($theme, $layout.'_backend')){
+                		$layout = $layout.'_backend';
+                	}
+                }
+                
                 //set layout and partials
                 $this->template->set_theme($theme);
                 $this->template->set_layout($layout);

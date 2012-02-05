@@ -202,7 +202,9 @@ class Main extends CMS_Controller {
     
     public function before_delete_user($post_array)
     {
-        if($post_array['user_id']==1){
+        //The super admin user cannot be deleted
+        //A user cannot 
+    	if(($post_array['user_id']==1) || ($post_array['user_id'] == $this->cms_userid())){
             return false;
         }
         return $post_array;

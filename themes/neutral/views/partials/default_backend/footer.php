@@ -1,0 +1,1 @@
+<?php echo $site_footer;?>
