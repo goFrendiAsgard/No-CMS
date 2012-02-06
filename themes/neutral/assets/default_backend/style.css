@@ -19,20 +19,18 @@ div#layout_header{
     padding : 20px;
     font-size : small;
 }
-/*
 div#layout_left {
     float:left;
     width:200px;
     padding : 10px;
 }
-*/
 div#layout_right {
     float:right;
     width:160px;
     padding : 10px;
 }
 div#layout_content {                
-    margin : 0 160px 0 0;
+    margin : 0 160px 0 200px;
     padding : 20px;
 }
 div#layout_footer{

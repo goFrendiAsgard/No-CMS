@@ -3,8 +3,8 @@
     <head>
         <title><?php echo $template['title'];?></title>
         <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/$site_theme/assets/default/style.css";?>"></link>
-        <script type="text/javascript" src="<?php echo base_url()."themes/$site_theme/assets/default/script.js";?>"></script>
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/$site_theme/assets/default_backend/style.css";?>"></link>
+        <script type="text/javascript" src="<?php echo base_url()."themes/$site_theme/assets/default_backend/script.js";?>"></script>
     </head>
     <body>       
         

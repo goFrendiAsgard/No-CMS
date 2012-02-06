@@ -278,6 +278,13 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (17, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 1, 6, 0, NULL);
 /*split*/
 
+INSERT INTO `cms_quicklink` (`quicklink_id`, `navigation_id`, `index`) VALUES
+(1, 16, 0),
+(2, 5, 1),
+(3, 2, 2),
+(4, 17, 3);
+/*split*/
+
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`, `slug`) VALUES
 (1, 'login', 'Login', 'Visitor need to login for authentication', 'main/widget_login', 2, 1, 0, 0, NULL, 'normal'),
 (2, 'logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 1, 0, NULL, 'normal'),

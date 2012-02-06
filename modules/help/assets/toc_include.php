@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.css';?>" />
 <style type="text/css">
-    div#toc, div#toggle_toc{
+    div#toc, div.toggle_toc{
         background-color :white;
         padding : 5px;  
         -moz-box-shadow:    inset 0 0 10px #000000;
@@ -9,7 +9,7 @@
         margin-left : 5px;
         margin-right : 5px;
     }
-    div#toggle_toc{
+    div.toggle_toc{
         display:inline;
         float : right;
         border-bottom-left-radius : 10px;
@@ -26,8 +26,9 @@
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.js';?>"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        $("#toggle_toc").click(function(){
+        $(".toggle_toc").click(function(){
             $("#toc").toggle();
+            return false;
         });
         
         $.ajax({
@@ -46,4 +47,4 @@
     })
 </script>
 <div id="toc"></div>
-<div id="toggle_toc">Table of Contents</div>
+<div class="toggle_toc"><a class="toggle_toc" href="#toc">Table of Contents</a></div>
