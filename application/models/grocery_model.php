@@ -30,7 +30,7 @@ class grocery_Model  extends CI_Model  {
     			$unique_field_name = $this->_unique_field_name($field_name);
     			
 				if(strstr($related_field_title,'{'))
-    				$select .= ", CONCAT('".str_replace(array('{','}'),array("',",",'"),mysql_escape_string($related_field_title))."') as $unique_field_name";
+    				$select .= ", CONCAT('".str_replace(array('{','}'),array("',COALESCE({$unique_join_name}.",", ''),'"),str_replace("'","\\'",$related_field_title))."') as $unique_field_name";
     			else    			
     				$select .= ", $unique_join_name.$related_field_title as $unique_field_name";
     			
@@ -121,25 +121,25 @@ class grocery_Model  extends CI_Model  {
     
     protected function _unique_join_name($field_name)
     {
-    	return 'j'.substr(md5($field_name),0,8); //This j is because is better for a string to begin with a letter and not a number
+    	return 'j'.substr(md5($field_name),0,8); //This j is because is better for a string to begin with a letter and not with a number
     }
 
     protected function _unique_field_name($field_name)
     {
-    	return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not a number
+    	return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
     }    
     
     function get_relation_array($field_name , $related_table , $related_field_title)
     {
     	$relation_array = array();
-    	$field_name_hash = $this->_unique_field_name($field_name); //Just to make sure that the string begins with a character and not with a number
+    	$field_name_hash = $this->_unique_field_name($field_name);
     	
     	$related_primary_key = $this->get_primary_key($related_table);
     	
     	$select = "$related_table.$related_primary_key, ";
     	
     	if(strstr($related_field_title,'{'))
-    		$select .= "CONCAT('".str_replace(array('{','}'),array("',",",'"),mysql_escape_string($related_field_title))."') as $field_name_hash";
+    		$select .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'",$related_field_title))."') as $field_name_hash";
     	else
 	    	$select .= "$related_table.$related_field_title as $field_name_hash";
     	
@@ -261,6 +261,7 @@ class grocery_Model  extends CI_Model  {
     		}
     		$db_field_types[$db_field_type->Field]['db_max_length'] = $length;
     		$db_field_types[$db_field_type->Field]['db_type'] = $db_type;
+    		$db_field_types[$db_field_type->Field]['db_null'] = $db_field_type->Null == 'YES' ? true : false;
     		$db_field_types[$db_field_type->Field]['db_extra'] = $db_field_type->Extra;
     	}
     	

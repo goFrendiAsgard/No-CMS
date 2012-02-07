@@ -188,6 +188,8 @@ class Main extends CMS_Controller {
         $crud->callback_before_insert(array($this,'before_insert_user'));
         $crud->callback_before_delete(array($this,'before_delete_user'));
         
+        $crud->set_lang_string('delete_error_message', 
+        	'You cannot delete super admin user or your own account');        
         
         $output = $crud->render();
 
@@ -202,10 +204,9 @@ class Main extends CMS_Controller {
     
     public function before_delete_user($post_array)
     {
-        //The super admin user cannot be deleted
-        //A user cannot 
-    	if(($post_array['user_id']==1) || ($post_array['user_id'] == $this->cms_userid())){
-            return false;
+        //The super admin user cannot be deleted, a user cannot delete his/her own account
+    	if(($post_array['user_id']==1) || ($post_array['user_id'] == $this->cms_userid())){      		
+    		return false;
         }
         return $post_array;
     } 
@@ -230,6 +231,11 @@ class Main extends CMS_Controller {
         $crud->callback_before_delete(array($this,'before_delete_group'));
         
         $crud->unset_texteditor('description');
+        
+        
+        $crud->set_lang_string('delete_error_message', 
+        	'You cannot delete Admin group or group which is not empty, please empty the group first');
+                	
 
         $output = $crud->render();
 
@@ -238,7 +244,12 @@ class Main extends CMS_Controller {
     
     public function before_delete_group($post_array)
     {
-        if($post_array['group_id']==1){
+    	$SQL = "SELECT user_id FROM cms_group_user WHERE group_id =".$post_array['group_id'].";";
+    	$query = $this->db->query($SQL);
+    	$count = $query->num_rows();
+    	
+    	/*Can only delete group with no user. Admin group cannot be deleted*/
+        if($post_array['group_id']==1 || $count>0){        	        	
             return false;
         }
         return $post_array;
@@ -327,9 +338,9 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_widget');
-        $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'groups');
-        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
+        $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'slug', 'groups');
+        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
+        $crud->add_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->change_field_type('active', 'true_false');
         $crud->change_field_type('is_static', 'true_false');
         $crud->change_field_type('index', 'integer');
@@ -342,6 +353,7 @@ class Main extends CMS_Controller {
                 ->display_as('index', 'Order')
                 ->display_as('is_static', 'Static')
                 ->display_as('static_content', 'Static Content')
+        		->display_as('slug', 'Slug')
                 ->display_as('authorization_id', 'Authorization')
                 ->display_as('groups', 'Groups');
         
@@ -360,7 +372,7 @@ class Main extends CMS_Controller {
     }
     
     public function before_insert_widget($post_array){
-    	if(isset($slug)){
+    	if(isset($post_array['slug'])){
     		$whereSlug = "(slug = '".$post_array['slug']."')";
     	}else{
     		$whereSlug = "(slug IS NULL)";

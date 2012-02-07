@@ -2,14 +2,21 @@
 /**
  * PHP grocery CRUD
  *
+ * A Codeigniter library that creates a CRUD automatically with just few lines of code.
+ *
+ * Copyright (C) 2010 - 2012  John Skoumbourdis. 
+ *
  * LICENSE
  *
- * This source file is subject to the GPL license that is bundled
- * with this package in the file licence.txt.
+ * Grocery CRUD is released with dual licensing, using the GPL v3 (license-gpl3.txt) and the MIT license (license-mit.txt).
+ * You don't have to do anything special to choose one license or the other and you don't have to notify anyone which license you are using.
+ * Please see the corresponding license file for details of these licenses.
+ * You are free to use, modify and distribute this software, but all copyright information must remain.
  *
  * @package    	grocery CRUD
- * @copyright  	Copyright (c) 2010 through 2011, John Skoumbourdis
- * @license    	http://www.gnu.org/licenses/gpl.html GNU GPL v3
+ * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
+ * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
+ * @version    	1.1.8
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -22,8 +29,7 @@
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @license     http://www.gnu.org/licenses   GNU License 
- * @version    	1.1.3   
+ * @license     https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt  
  * @link		http://www.grocerycrud.com/crud/view/documentation
  */
 class grocery_Field_Types
@@ -34,6 +40,9 @@ class grocery_Field_Types
 	 */
 	public function get_field_types()
 	{
+		if($this->field_types !== null)
+			return $this->field_types;
+		
 		$types	= array();
 		foreach($this->basic_model->get_field_types_basic_table() as $field_info)
 		{
@@ -154,7 +163,9 @@ class grocery_Field_Types
 				}
 			}		
 		
-		return $types;
+		$this->field_types = $types;
+			
+		return $this->field_types;
 	}
 	
 	public function get_primary_key()
@@ -342,6 +353,7 @@ class grocery_Field_Types
 				break;
 				case '254':
 				case 'string':
+				case 'enum':					
 					if($db_type->db_type != 'enum')
 						$type = 'string';
 					else
@@ -367,21 +379,6 @@ class grocery_Field_Types
 	}
 }
 
-
-/**
- * PHP grocery CRUD
- *
- * LICENSE
- *
- * This source file is subject to the GPL license that is bundled
- * with this package in the file licence.txt.
- *
- * @package    	grocery CRUD
- * @copyright  	Copyright (c) 2010 through 2011, John Skoumbourdis
- * @license    	http://www.gnu.org/licenses/gpl.html GNU GPL v3
- * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- */
-
 // ------------------------------------------------------------------------
 
 /**
@@ -391,7 +388,7 @@ class grocery_Field_Types
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.1.3  
+ * @version    	1.1.8  
  * @link		http://www.grocerycrud.com/crud/view/documentation
  */
 class grocery_Model_Driver extends grocery_Field_Types
@@ -586,7 +583,12 @@ class grocery_Model_Driver extends grocery_Field_Types
 	protected function form_validation()
 	{
 		if($this->form_validation === null)
+		{
 			$this->form_validation = new grocery_Form_validation();
+			$ci = &get_instance();
+			$ci->load->library('form_validation');
+			$ci->form_validation = $this->form_validation;
+		}
 		return $this->form_validation;
 	}
 	
@@ -667,14 +669,24 @@ class grocery_Model_Driver extends grocery_Field_Types
 				}
 				
 				$insert_data = array();
+				$types = $this->get_field_types();
 				foreach($add_fields as $num_row => $field)
 				{
 					if(isset($post_data[$field->field_name]) && !isset($this->relation_n_n[$field->field_name]))
-						$insert_data[$field->field_name] = $post_data[$field->field_name];
+					{
+						if(isset($types[$field->field_name]->db_null) && $types[$field->field_name]->db_null && $post_data[$field->field_name] === '')
+						{
+							$insert_data[$field->field_name] = null;
+						}
+						else
+						{
+							$insert_data[$field->field_name] = $post_data[$field->field_name];	
+						}						
+					}
 				}
-				
+	
 				$insert_result =  $this->basic_model->db_insert($insert_data);
-				
+					
 				if($insert_result !== false)
 				{
 					$insert_primary_key = $insert_result;
@@ -752,10 +764,20 @@ class grocery_Model_Driver extends grocery_Field_Types
 				}
 				
 				$update_data = array();
+				$types = $this->get_field_types();
 				foreach($edit_fields as $num_row => $field)
 				{
 					if(isset($post_data[$field->field_name]) && !isset($this->relation_n_n[$field->field_name]))
-						$update_data[$field->field_name] = $post_data[$field->field_name];
+					{
+						if(isset($types[$field->field_name]->db_null) && $types[$field->field_name]->db_null && $post_data[$field->field_name] === '')
+						{
+							$update_data[$field->field_name] = null;
+						}
+						else
+						{
+							$update_data[$field->field_name] = $post_data[$field->field_name];
+						}
+					}
 				}				
 				$this->basic_model->db_update($update_data, $primary_key);
 				
@@ -1030,8 +1052,8 @@ class grocery_Model_Driver extends grocery_Field_Types
  * with this package in the file licence.txt.
  *
  * @package    	grocery CRUD
- * @copyright  	Copyright (c) 2010 through 2011, John Skoumbourdis
- * @license    	http://www.gnu.org/licenses/gpl.html GNU GPL v3
+ * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
+ * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -1044,7 +1066,7 @@ class grocery_Model_Driver extends grocery_Field_Types
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.1.3
+ * @version    	1.1.8
  */
 class grocery_Layout extends grocery_Model_Driver
 {
@@ -1196,7 +1218,7 @@ class grocery_Layout extends grocery_Model_Driver
 	
 	protected function showAddForm()
 	{
-		$this->set_js('assets/grocery_crud/themes/datatables/js/jquery-1.6.2.min.js');
+		$this->set_js('assets/grocery_crud/js/jquery-1.7.1.min.js');
 		
 		$data 				= $this->get_common_data();
 		$data->types 		= $this->get_field_types();
@@ -1214,7 +1236,7 @@ class grocery_Layout extends grocery_Model_Driver
 	
 	protected function showEditForm($state_info)
 	{
-		$this->set_js('assets/grocery_crud/themes/datatables/js/jquery-1.6.2.min.js');
+		$this->set_js('assets/grocery_crud/js/jquery-1.7.1.min.js');
 		
 		$data 				= $this->get_common_data();
 		$data->types 		= $this->get_field_types();
@@ -1231,7 +1253,7 @@ class grocery_Layout extends grocery_Model_Driver
 		$data->fields 		= $this->get_edit_fields();
 		$data->hidden_fields	= $this->get_edit_hidden_fields();
 		
-		$data->validation_url	= $this->getValidationUpdateUrl(); 
+		$data->validation_url	= $this->getValidationUpdateUrl($state_info->primary_key); 
 		
 		$this->_theme_view('edit.php',$data);
 	}
@@ -1465,7 +1487,7 @@ class grocery_Layout extends grocery_Model_Driver
 	protected function get_enum_input($field_info,$value)
 	{		
 		$input = "<select name='{$field_info->name}'>";
-		
+			
 		$options_array = explode("','",substr($field_info->db_max_length,1,-1));
 		foreach($options_array as $option)
 		{
@@ -1479,8 +1501,13 @@ class grocery_Layout extends grocery_Model_Driver
 	
 	protected function get_relation_input($field_info,$value)
 	{
-		$input = "<select name='{$field_info->name}'>";
-		
+		$this->set_css('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css');
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js');
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js');
+
+//@todo have to do the Select {display_as} as a lang string		
+		$input = "<select name='{$field_info->name}' class='chosen-select' data-placeholder='Select {$field_info->display_as}'>";
+		$input .= "<option value=''></option>";
 		$options_array = $this->get_relation_array($field_info->extras);
 		foreach($options_array as $option_value => $option)
 		{
@@ -1494,13 +1521,23 @@ class grocery_Layout extends grocery_Model_Driver
 	
 	protected function get_relation_n_n_input($field_info_type, $selected_values)
 	{	
-		$this->set_css('assets/grocery_crud/css/ui/simple/jquery-ui-1.8.10.custom.css');		
-		$this->set_css('assets/grocery_crud/css/jquery_plugins/ui.multiselect.css');
-		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery-ui-1.8.10.custom.min.js');	
-		$this->set_js('assets/grocery_crud/js/jquery_plugins/ui.multiselect.js');
-		$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.multiselect.js');
+		$has_priority_field = !empty($field_info_type->extras->priority_field_relation_table) ? true : false;
 		
-		$field_info 		= $this->relation_n_n[$field_info_type->name]; //As its inside here the relation_n_n exists
+		if($has_priority_field)
+		{
+			$this->set_css('assets/grocery_crud/css/ui/simple/jquery-ui-1.8.10.custom.css');	
+			$this->set_css('assets/grocery_crud/css/jquery_plugins/ui.multiselect.css');
+			$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery-ui-1.8.10.custom.min.js');	
+			$this->set_js('assets/grocery_crud/js/jquery_plugins/ui.multiselect.js');
+			$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.multiselect.js');
+		}
+		else 
+		{
+			$this->set_css('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css');
+			$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js');
+			$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js');
+		}
+		$field_info 		= $this->relation_n_n[$field_info_type->name]; //As we use this function the relation_n_n exists, so don't need to check
 		$unselected_values 	= $this->get_relation_n_n_unselected_array($field_info, $selected_values);
 		
 		if(empty($unselected_values) && empty($selected_values))
@@ -1509,8 +1546,9 @@ class grocery_Layout extends grocery_Model_Driver
 		}
 		else
 		{
-		
-			$input = "<select name='{$field_info_type->name}[]' multiple='multiple' size='8' class='multiselect'>";
+			$css_class = $has_priority_field ? 'multiselect': 'chosen-multiple-select';
+//@todo have to do the Select {display_as} as a lang string			
+			$input = "<select name='{$field_info_type->name}[]' multiple='multiple' size='8' class='$css_class' data-placeholder='Select {$field_info_type->display_as}'>";
 			
 			if(!empty($unselected_values))
 				foreach($unselected_values as $id => $name)
@@ -1544,7 +1582,7 @@ class grocery_Layout extends grocery_Model_Driver
 		$input 	= "<div id='uploader_$unique' rel='$unique' class='grocery-crud-uploader' style='$uploader_display_none'></div>";
 		$input .= "<div id='success_$unique' style='$file_display_none'>";
 		$input .= "<a href='".base_url().$field_info->extras->upload_path.'/'.$value."' class='open-file' target='_blank' id='file_$unique'>$value</a> ";
-		$input .= "<a href='javascript:void(0)' id='delete_$unique' class='delete-anchor'>delete</a> ";
+		$input .= "<a href='javascript:void(0)' id='delete_$unique' class='delete-anchor'>".$this->l('form_upload_delete')."</a> ";
 		$input .= "<input type='hidden' name='{$field_info->name}' value='$value' id='hidden_$unique'/>";
 		$input .= "</div><div style='clear:both'></div>";
 		$input .= "<div style='display:none'><a href='".$this->getUploadUrl($field_info->name)."' id='url_$unique'></a></div>";
@@ -1725,8 +1763,8 @@ class grocery_Layout extends grocery_Model_Driver
  * with this package in the file licence.txt.
  *
  * @package    	grocery CRUD
- * @copyright  	Copyright (c) 2010 through 2011, John Skoumbourdis
- * @license    	http://www.gnu.org/licenses/gpl.html GNU GPL v3
+ * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
+ * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -1739,7 +1777,7 @@ class grocery_Layout extends grocery_Model_Driver
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.1.3
+ * @version    	1.1.8
  */
 class grocery_States extends grocery_Layout
 {
@@ -1825,7 +1863,7 @@ class grocery_States extends grocery_Layout
 	
 	protected function get_method_hash()
 	{
-		return md5($this->get_method_name());
+		return md5($this->get_controller_name().$this->get_method_name());
 	}
 	
 	protected function get_method_name()
@@ -1833,6 +1871,12 @@ class grocery_States extends grocery_Layout
 		$ci = &get_instance();		
 		return $ci->router->method;
 	}
+	
+	protected function get_controller_name()
+	{
+		$ci = &get_instance();		
+		return $ci->router->class;
+	}	
 	
 	public function getState()
 	{
@@ -1869,9 +1913,12 @@ class grocery_States extends grocery_Layout
 		return $this->state_url('insert_validation');
 	}
 	
-	protected function getValidationUpdateUrl()
+	protected function getValidationUpdateUrl($primary_key = null)
 	{
-		return $this->state_url('update_validation');
+		if($primary_key === null)
+			return $this->state_url('update_validation');
+		else
+			return $this->state_url('update_validation/'.$primary_key);
 	}	
 
 	protected function getEditUrl($primary_key = null)
@@ -2036,8 +2083,8 @@ class grocery_States extends grocery_Layout
  * with this package in the file licence.txt.
  *
  * @package    	grocery CRUD
- * @copyright  	Copyright (c) 2010 through 2011, John Skoumbourdis
- * @license    	http://www.gnu.org/licenses/gpl.html GNU GPL v3
+ * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
+ * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -2050,8 +2097,7 @@ class grocery_States extends grocery_Layout
  *
  * @package    	grocery CRUD 
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.1.3  
- * @license     http://www.gnu.org/licenses/   GNU License
+ * @license     https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
  * @link		http://www.grocerycrud.com/crud/view/documentation
  */
 class grocery_CRUD extends grocery_States
@@ -2074,6 +2120,7 @@ class grocery_CRUD extends grocery_States
 	protected $edit_fields			= null;
 	protected $add_hidden_fields 	= array();
 	protected $edit_hidden_fields 	= array();
+	protected $field_types 			= null;	
 	protected $basic_db_table 		= null;
 	protected $config 				= array();
 	protected $subject 				= 'Record';
@@ -3074,53 +3121,10 @@ class grocery_CRUD extends grocery_States
 	 * @param bool $has_plural
 	 * @return grocery_CRUD
 	 */
-	public function set_subject( $subject , $has_plural = true)
-	{
-
-		if(!is_bool($has_plural))
-		{
-			$has_plural = true;
-			throw new Exception('This variable must be boolean.', 5);
-		}
-			
-		$subject = strip_tags(trim($subject));
-		$subject_plural = $subject;
-		
-		if($has_plural)
-		{		
-			$end = substr($subject_plural, -1);
-	
-			if ($end == 'y')
-			{
-				$vowels = array('a', 'e', 'i', 'o', 'u');
-				$subject_plural = in_array(substr($subject_plural, -2, 1), $vowels) ? $subject_plural.'s' : substr($subject_plural, 0, -1).'ies';
-			}
-			elseif ($end == 'h')
-			{
-				if (substr($subject_plural, -2) == 'ch' OR substr($subject_plural, -2) == 'sh')
-				{
-					$subject_plural .= 'es';
-				}
-				else
-				{
-					$subject_plural .= 's';
-				}
-			}
-			elseif ($end == 's')
-			{
-				if ($has_plural)
-				{
-					$subject_plural .= 'es';
-				}
-			}
-			else
-			{
-				$subject_plural .= 's';
-			}	
-		}
-		
+	public function set_subject( $subject )
+	{		
 		$this->subject 			= $subject;
-		$this->subject_plural 	= $subject_plural;
+		$this->subject_plural 	= $subject;
 			
 		return $this;
 	}
@@ -3220,7 +3224,7 @@ class grocery_Form_validation {
 	protected $CI;
 	public $_field_data			= array();
 	public $_config_rules		= array();
-	public 	  $_error_array		= array();
+	public $_error_array		= array();
 	public $_error_messages		= array();
 	public $_error_prefix		= '<p>';
 	public $_error_suffix		= '</p>';
