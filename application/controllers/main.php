@@ -192,7 +192,7 @@ class Main extends CMS_Controller {
         	'You cannot delete super admin user or your own account');        
         
         $output = $crud->render();
-
+        
         $this->view('grocery_CRUD', $output, 'main_user_management');
     }
     
@@ -288,6 +288,9 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id' , 'group_name');
         
         $crud->callback_before_insert(array($this,'before_insert_navigation'));
+        
+        $crud->callback_after_insert(array($this, 'after_insert_navigation'));
+        $crud->callback_after_update(array($this, 'after_update_navigation'));
 
         $output = $crud->render();
 
@@ -427,6 +430,44 @@ class Main extends CMS_Controller {
     	return $post_array;
     }
     
+    public function after_insert_navigation($post_array){
+    	foreach($post_array['groups'] as $group_id){
+    		$this->also_add_group_navigation($group_id, $post_array['parent_id']);
+    	}
+    }
+    
+    public function after_update_navigation($post_array){
+    	foreach($post_array['groups'] as $group_id){
+    		$this->also_add_group_navigation($group_id, $post_array['parent_id']);
+    	}
+    }
+    
+    private function also_add_group_navigation($group_id, $navigation_id){
+    	//automatically also authorize parent
+    	$SQL = "SELECT group_id, cms_navigation.navigation_id 
+    		FROM cms_group_navigation, cms_navigation 
+    		WHERE cms_navigation.navigation_id = cms_group_navigation.navigation_id AND
+    		authorization_id = 4 AND
+    		cms_group_navigation.group_id = $group_id AND 
+    		cms_group_navigation.navigation_id = $navigation_id";
+    	$query = $this->db->query($SQL);
+    	if($query->num_rows()==0){    	
+	    	$data = array(
+	    		'group_id' => $group_id,
+	    		'navigation_id' => $navigation_id
+	    	);
+	    	$this->db->insert('cms_group_navigation', $data);
+	    	
+	    	$SQL = "SELECT parent_id FROM cms_navigation WHERE navigation_id =".$navigation_id;
+	    	$query = $this->db->query($SQL);
+	    	$row = $query->row();
+	    	$parent_id = $row->parent_id;
+	    	if(isset($parent_id)){
+	    		also_add_group_navigation($group_id, $parent_id);
+	    	}
+    	}
+    }
+    
     public function config(){
         $crud = new grocery_CRUD();
 
@@ -466,9 +507,9 @@ class Main extends CMS_Controller {
         if(isset($id)){
             $SQL = "SELECT static_content FROM cms_widget WHERE widget_id=".$id;
             $query = $this->db->query($SQL);
-            foreach($query->result() as $row){
-                $data['content'] = $row->static_content;
-            }
+            $row = $query->row();
+            $data['content'] = $row->static_content;
+            
             $this->view('main/static_page', $data);
         }else{
             echo "invalid widget";
@@ -480,10 +521,9 @@ class Main extends CMS_Controller {
             $navigation_name = "";
             $SQL = "SELECT navigation_name, static_content FROM cms_navigation WHERE navigation_id=".$id;
             $query = $this->db->query($SQL);
-            foreach($query->result() as $row){
-                $data['content'] = $row->static_content;
-                $navigation_name = $row->navigation_name;
-            }
+            $row = $query->row();
+            $data['content'] = $row->static_content;
+            $navigation_name = $row->navigation_name;
             $this->view('main/static_page', $data, $navigation_name);
         }else{
             echo "invalid widget";

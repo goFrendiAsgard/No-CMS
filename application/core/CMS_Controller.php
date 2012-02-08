@@ -165,11 +165,33 @@ class CMS_Controller extends CI_Controller{
     
     /** 
      * @author  goFrendiAsgard
-     * @param  view_url, data, navigation_name, privilege_required
+     * @param  view_url, data, navigation_name, privilege_required, returnAsString
      * @desc  replace $this->load->view. This method will also load header, menu etc except there are cms_only_content call before
      */
-    protected function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL){
-        $this->load->helper('url');       
+    protected function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL, $returnAsString = FALSE){
+        $this->load->helper('url');
+        
+        //it can be called as $this->view('view_path', $data, true);
+        //or $this->view('view_path', $data, $navigation_name, true);
+        if(is_bool($navigation_name) && !isset($privilege_required)){
+        	$returnAsString = $navigation_name;
+        }else if(is_bool($privilege_required)){
+        	$returnAsString = $privilege_required;
+        }
+        
+		if(!isset($navigation_name)){
+			
+			$uriString = $this->uri->uri_string();
+			
+			$SQL = "SELECT navigation_name FROM cms_navigation WHERE url = '".addslashes($uriString)."'";			
+			$query = $this->db->query($SQL);
+			if($query->num_rows()>0){
+				$row = $query->row();
+				$navigation_name = $row->navigation_name;	
+			}
+			
+		}
+        
         //check allowance
         if(!isset($navigation_name) || $this->cms_allow_navigate($navigation_name)){
             if(!isset($privilege_required)){
@@ -190,7 +212,7 @@ class CMS_Controller extends CI_Controller{
         //if allowed then show, else don't
         if($allowed){
             if((isset($_REQUEST['_only_content']))){  
-                $this->load->view($view_url, $data);
+                $this->load->view($view_url, $data, $returnAsString);
             }else{
                 //get configuration                
                 $data_partial['site_name'] = $this->cms_get_config('site_name');

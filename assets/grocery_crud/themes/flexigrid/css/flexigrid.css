@@ -322,7 +322,8 @@ div.form-div input.datetime-input
 .form-field-box
 {
 	padding: 5px 10px;
-	margin: 5px 0px;	
+	margin: 5px 0px;
+	overflow : hidden;	
 }
 .form-field-box.odd
 {
