@@ -57,7 +57,9 @@ class nnga extends CMS_Controller {
             $neuronCount = array();
             $neuronCount[] = count($nn_dataset[0][0]);
             for($i=0; $i<count($nn_hidden_neuron_count); $i++){
-                $neuronCount[] = $nn_hidden_neuron_count[$i];
+            	if($nn_hidden_neuron_count[$i]>0){
+                	$neuronCount[] = $nn_hidden_neuron_count[$i];
+            	}
             }
             $neuronCount[] = count($nn_dataset[0][1]);
 

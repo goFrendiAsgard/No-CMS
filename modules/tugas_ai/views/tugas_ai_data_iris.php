@@ -229,7 +229,7 @@ Summary Statistics:
     I'll make the output numerical, here is my encoding:
     <ul>
         <li>0 for Iris-setosa</li>
-        <li>1 for Iris-versicolor</li>
-        <li>2 for Iris-virginica</li>
+        <li>0.5 for Iris-versicolor</li>
+        <li>1 for Iris-virginica</li>
     </ul>
 </p>

@@ -14,13 +14,39 @@ class Main extends CMS_Controller {
         $this->form_validation->set_rules('identity', 'Identity', 'required|xss_clean');
         $this->form_validation->set_rules('password', 'Password', 'required|xss_clean');
         
+        //retrieve old_url from flashdata if exists
+        $this->load->library('session');
+        $old_url = $this->session->flashdata('old_url');
+        
         if($this->form_validation->run()){
-            if($this->cms_do_login($identity, $password)) redirect('main/index');
+            if($this->cms_do_login($identity, $password)){
+            	//if old_url exist, redirect to old_url, else redirect to main/index
+            	if(!is_bool($old_url)){
+            		redirect($old_url);
+            	}else{
+            		redirect('main/index');
+            	}
+            }
             else {
+            	//the login process failed
+            	
+            	//save the old_url again
+            	if(!is_bool($old_url)){
+            		$this->session->keep_flashdata('old_url');
+            	}
+            	
+            	//view login again
                 $data = array("identity"=>$identity);
                 $this->view('main/login',$data, 'main_login');
             }
         }else{
+        	
+        	//save the old_url again
+        	if(!is_bool($old_url)){
+        		$this->session->keep_flashdata('old_url');
+        	}
+        	
+        	//view login again
             $data = array("identity"=>$identity);
             $this->view('main/login',$data, 'main_login');
         }
