@@ -1,7 +1,10 @@
+<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/nocms/js/colorbox/colorbox.css';?>"></link>
+<script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 <style type="text/css">
-img{
+img.photo_thumbnail{
  width: auto;
  height: 75px;
+ margin: 5px;
 }
 </style>
 <?php
@@ -18,8 +21,13 @@ foreach($article as $single_article){
     echo '<p>'.$single_article['content'].'</p>';
     
     foreach($single_article['photos'] as $photo){
-    	echo '<img src="'.base_url().'assets/uploads/files/'.$photo['url'].'" />';
+    	echo '<a class="photo_'.$single_article['id'].'" href="'.base_url().'assets/uploads/files/'.$photo['url'].'">';
+    	echo '<img class="photo_thumbnail" src="'.base_url().'assets/uploads/files/'.$photo['url'].'" />';
+    	echo '</a>';
     }
+    echo '<script type="text/javascript">
+    	$(".photo_'.$single_article['id'].'").colorbox({rel:"photo_'.$single_article['id'].'", transition:"none", width:"75%", height:"75%", slideshow:true});
+    	</script>';
     echo '<br />';
     
     if($view_readmore){

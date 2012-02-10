@@ -24,7 +24,21 @@ $(document).ready(function(){
         else{$(this).html("[+]");}                    
         return false;
     });
+    
+    $(window).resize(function() {
+    	adjust_content_width();
+	});
+    
+    adjust_content_width();
 
 });
 
+function adjust_content_width(){
+	$('#layout_content').width(
+			$('#layout_center').width() -
+			$('#layout_right').width() -
+			$('#layout_left').width() -
+			100
+	);
+}
 

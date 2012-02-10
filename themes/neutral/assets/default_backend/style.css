@@ -30,8 +30,9 @@ div#layout_right {
     padding : 10px;
 }
 div#layout_content {                
-    margin : 0 160px 0 200px;
+    /*margin : 0 160px 0 200px;*/
     padding : 20px;
+    float : left;
 }
 div#layout_footer{
     text-align : center;

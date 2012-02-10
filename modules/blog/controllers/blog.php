@@ -193,6 +193,8 @@ class Blog extends CMS_Controller {
     	$crud->set_field_upload('url','assets/uploads/files');
     	$crud->set_relation('article_id', 'blog_article', 'article_title');
     	
+    	$crud->callback_before_insert(array($this,'before_insert_photo'));
+    	
     	$output = $crud->render();
     	
     	$this->view('grocery_CRUD', $output, 'blog_photo');
@@ -214,9 +216,22 @@ class Blog extends CMS_Controller {
     	
     	$crud->set_relation('article_id', 'blog_article', 'article_title');
     	
+    	$crud->callback_before_insert(array($this,'before_insert_comment'));
+    	
     	$output = $crud->render();
     	
     	$this->view('grocery_CRUD', $output, 'blog_comment');
+    }
+    
+    public function before_insert_comment($post_array){
+    	$post_array['article_id'] = $this->uri->segment(3);
+    	return $post_array;
+    }
+    
+    public function before_insert_photo($post_array){
+    	var_dump($this->uri->segment(3));
+    	$post_array['article_id'] = $this->uri->segment(3);
+    	return $post_array;
     }
     
     public function before_insert_article($post_array){

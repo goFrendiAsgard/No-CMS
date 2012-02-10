@@ -72,8 +72,8 @@ div#layout_right {
     width:160px;
     padding : 10px;
 }
-div#layout_content {                
-    margin : 0 160px 0 220px;
+div#layout_content { 
+	float:left;
     padding : 20px;
 }
 div#layout_footer{
