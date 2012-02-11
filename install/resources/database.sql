@@ -304,7 +304,7 @@ INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `descrip
 
 INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VALUES
 (1, 'site_name', 'No-CMS', 'Site title'),
-(2, 'site_slogan', 'Your web kickstart', 'Site slogan'),
+(2, 'site_slogan', 'A Free CodeIgniter Based CMS Framework', 'Site slogan'),
 (3, 'site_footer', 'goFrendiAsgard &copy; 2011', 'Site footer'),
 (4, 'site_theme', 'neutral', 'Site theme'),
 (5, 'max_menu_depth', '5', 'Depth of menu recursive'),

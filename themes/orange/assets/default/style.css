@@ -74,7 +74,7 @@ div#layout_right {
 }
 div#layout_content { 
 	float:left;
-    padding : 20px;
+    padding : 10px;
 }
 div#layout_footer{
     text-align : center;

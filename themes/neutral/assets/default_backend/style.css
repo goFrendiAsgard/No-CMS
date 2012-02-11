@@ -108,3 +108,9 @@ li.layout_nav_hot{
     background-color : #DFDFDF;
     padding : 5px;
 }
+.layout_float_left{
+	float : left;
+}
+.layout_large_padding{
+	padding : 20px;
+}
