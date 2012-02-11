@@ -138,12 +138,12 @@ class Blog extends CMS_Controller {
     		}else{
     			$name = $row->name;
     		}
-    		
+    		$this->load->helper('url');
     		$result = array(
     	                "date" => date('Y-m-d'),
     	                "content" => $row->content,
     	                "name" => $name,
-    	                "website" => $row->website
+    	                "website" => prep_url($row->website)
     		);
     		$data[] = $result;
     	}
@@ -189,6 +189,7 @@ class Blog extends CMS_Controller {
     	$crud->set_table('blog_photo');
     	if(isset($article_id)){
     		$crud->where('blog_photo.article_id', $article_id);
+    		$crud->change_field_type('article_id', 'hidden');
     	}
     	$crud->set_field_upload('url','assets/uploads/files');
     	$crud->set_relation('article_id', 'blog_article', 'article_title');
@@ -207,6 +208,7 @@ class Blog extends CMS_Controller {
     	$crud->set_table('blog_comment');
     	if(isset($article_id)){
     		$crud->where('blog_comment.article_id', $article_id);
+    		$crud->change_field_type('article_id', 'hidden');
     	}
     	$crud->columns('article_id', 'content');
     	$crud->unset_add();

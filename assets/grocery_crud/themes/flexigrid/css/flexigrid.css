@@ -13,6 +13,7 @@ table th
 	border:0px solid #eee;
 	overflow:hidden;
 	color:#000;
+	background-color:white;
 }
 .flexigrid.crud-form
 {
