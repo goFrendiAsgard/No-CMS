@@ -110,7 +110,7 @@ class CMS_Model extends CI_Model {
             $result[] = array(
                 "navigation_id"=>$row->navigation_id,
                 "navigation_name" => $row->navigation_name,
-                "title" => $row->title,
+                "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "url" => $row->url,
                 "is_static"=>$row->is_static,
@@ -165,7 +165,7 @@ class CMS_Model extends CI_Model {
         	$result[] = array(
                         "navigation_id"=>$row->navigation_id,
                         "navigation_name" => $row->navigation_name,
-                        "title" => $row->title,
+                        "title" => $this->cms_lang($row->title),
                         "description" => $row->description,
                         "url" => $row->url,
                         "is_static"=>$row->is_static
@@ -219,7 +219,7 @@ class CMS_Model extends CI_Model {
             $result[] = array(
                 "widget_id"=>$row->widget_id,
                 "widget_name" => $row->widget_name,
-                "title" => $row->title,
+                "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "is_static"=>$row->is_static,
                 "url" => $row->url,
@@ -250,7 +250,7 @@ class CMS_Model extends CI_Model {
             foreach($query->result() as $row){
                 return array(
                     "navigation_name" => $row->navigation_name,
-                    "title" => $row->title,
+                    "title" => $this->cms_lang($row->title),
                     "description" => $row->description,
                     "url" => $row->url
                 );
@@ -275,7 +275,7 @@ class CMS_Model extends CI_Model {
             foreach($query->result() as $row){
                 return array(
                     "navigation_name" => $row->navigation_name,
-                    "title" => $row->title,
+                    "title" => $this->cms_lang($row->title),
                     "description" => $row->description,
                     "url" => $row->url
                 );
@@ -675,6 +675,29 @@ class CMS_Model extends CI_Model {
         foreach($query->result() as $row){
             return $row->value;
         }
+    }
+    
+    /**
+     * @author goFrendiAsgard
+     * @param key
+     * @desc get language
+     */
+    public function cms_lang($key){
+    	$language = $this->cms_get_config('site_language');
+    	$language_file = "assets/nocms/languages/$language.php";
+    	
+    	if(file_exists($language_file)){
+    		include($language_file);
+    		
+    		if(isset($lang[$key])){
+    			return $lang[$key];
+    		}else{
+    			return $key;
+    		}
+    	}else{
+    		return $key;
+    	}
+    	
     }
 }
 

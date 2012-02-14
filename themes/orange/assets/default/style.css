@@ -112,7 +112,8 @@ div.layout_clear
     margin : 3px;
 }
 li.layout_nav_hot{
-    background-color : darkorange;
+    background-color : orangered;
+    border-radius : 5px;
 }
 
 #layout_header a, #layout_footer a, #layout_center a{  

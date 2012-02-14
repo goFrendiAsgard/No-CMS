@@ -230,6 +230,8 @@ class CMS_Controller extends CI_Controller{
 				$data_partial['site_slogan'] = $this->cms_get_config('site_slogan');
 				$data_partial['site_footer'] = $this->cms_get_config('site_footer');
 				$data_partial['site_theme'] = $this->cms_get_config('site_theme');
+				$data_partial['site_logo'] = str_replace('@base_url', base_url(), $this->cms_get_config('site_logo') );
+				$data_partial['site_favicon'] = str_replace('@base_url', base_url(), $this->cms_get_config('site_favicon') );
 
 				//get navigations
 				$navigations = $this->cms_navigations();
@@ -404,5 +406,14 @@ class CMS_Controller extends CI_Controller{
 	 */
 	protected function cms_get_config($name){
 		return $this->CMS_Model->cms_get_config($name);
+	}
+	
+	/**
+	* @author goFrendiAsgard
+	* @param key
+	* @desc get language
+	*/
+	protected function cms_lang($key){
+		return $this->CMS_Model->cms_lang($key);
 	}
 }
