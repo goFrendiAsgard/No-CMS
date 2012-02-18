@@ -1,40 +1,42 @@
 <?php
     //include the widget
     function build_widget($widgets, $slug = NULL){
-        $str = '';
+        $html = '';
+        $js = '';
+        
         foreach($widgets as $widget){
             if((isset($slug) && ($widget["slug"]==$slug)) || !isset($slug)){
-                $str.= '<div id="layout_widget_container_'.$widget['widget_name'].'">';
-                $str.= '<h4>'.$widget['title'].'</h4>';
-                $str.= '<div class="widget_content"></div>';
+                $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'">';
+                $html.= '<h4>'.$widget['title'].'</h4>';
+                $html.= '<div class="widget_content"></div>';
                 if($widget['is_static']){
                     $path=base_url().'index.php/main/show_static_widget/'.$widget['widget_id'].'?_only_content=true';
                 }else{
                     $path=base_url().'index.php/'.$widget['url'].'?_only_content=true';
                 }
-                $str.= '
-                    <script type="text/javascript">
-                        $(document).ready(function(){
+                $js.= '
+                        $.ajax({
+                            url : "'.$path.'",
+                            type: "POST",
+                            data: {_only_content:true},
+                            success : function(response){
+                                $("#layout_widget_container_'.$widget['widget_name'].' .widget_content").replaceWith(response);
 
-                            $.ajax({
-                                url : "'.$path.'",
-                                type: "POST",
-                                data: {_only_content:true},
-                                success : function(response){
-                                    $("#layout_widget_container_'.$widget['widget_name'].' .widget_content").replaceWith(response);
-
-                                }
-                            });  
-
-                        });
-
-                    </script>
+                            }
+                        }); 
                 ';
-                $str.= '<br />';
-                $str.= '</div>';
+                $html.= '<br />';
+                $html.= '</div>';
             }
         }
-        return $str;
+        $js = '
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    '.$js.'
+                });
+            </script>
+        ';
+        return $js.br().$html;
     }
     
     
@@ -55,13 +57,13 @@
         }
         $last_path = count($path)>0?$path[count($path)-1]['navigation_name']:"";        
         
-        $str = '';
+        $html = '';
         
-        $str.= '<ul class="layout_nav '.$class_invisible.'">';
+        $html.= '<ul class="layout_nav '.$class_invisible.'">';
         foreach($navigations as $navigation){
             $layout_nav_hot = ($last_path == $navigation['navigation_name'])?'layout_nav_hot':'';
             
-            $str.= '<li class ="'.$layout_nav_hot.'">';
+            $html.= '<li class ="'.$layout_nav_hot.'">';
             if(count($navigation['child'])>0){
                 $in_path = false;
                 if($last_path != $navigation['navigation_name']){
@@ -74,9 +76,9 @@
                 }
                 
                 if($in_path){
-                    $str.= '<a href="#" class="layout_expand">[-]</a> ';
+                    $html.= '<a href="#" class="layout_expand">[-]</a> ';
                 }else{
-                    $str.= '<a href="#" class="layout_expand">[+]</a> ';
+                    $html.= '<a href="#" class="layout_expand">[+]</a> ';
                 }                
             }
             
@@ -87,51 +89,51 @@
                 $pageLinkClass .= ' layout_no_child';
             }            
             if($navigation['is_static']){
-                $str.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>$pageLinkClass));
+                $html.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>$pageLinkClass));
             }else{
-                $str.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
+                $html.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
             }
-            $str.= '<div class="layout_clear"></div>';
+            $html.= '<div class="layout_clear"></div>';
             if(isset($navigation['description'])){
-                $str.= '<div class="layout_nav_description invisible">Description : '.
+                $html.= '<div class="layout_nav_description invisible">Description : '.
                         $navigation['description'].'</div>';
             }
             
-            $str.= build_menu($navigation['child'], $path, TRUE);
-            $str.= '</li>';
+            $html.= build_menu($navigation['child'], $path, TRUE);
+            $html.= '</li>';
         }
-        $str.= '</ul>';
+        $html.= '</ul>';
         
-        return $str;
+        return $html;
     }
     
     function build_quicklink($navigations){
     	if(count($navigations)==0) return '';//just exit and do nothing
     	
-    	$str = '';
+    	$html = '';
     	foreach($navigations as $navigation){
     		if($navigation['is_static']){
-    			$str.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>'layout_quicklink'));
+    			$html.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>'layout_quicklink'));
     		}else{
-    			$str.= anchor($navigation['url'], $navigation['title'], array('class'=>'layout_quicklink layout_button'));
+    			$html.= anchor($navigation['url'], $navigation['title'], array('class'=>'layout_quicklink layout_button'));
     		}
-    		$str .='&nbsp;';
+    		$html .='&nbsp;';
     	}    	
-    	return $str;
+    	return $html;
     	
     }
     
     
     
     function build_menu_path($path){
-        $str = "";
+        $html = "";
         for($i=0; $i<count($path); $i++){
             $current_path = $path[$i];
-            $str .= anchor($current_path['url'], $current_path['title']);
+            $html .= anchor($current_path['url'], $current_path['title']);
             if($i<count($path)-1){
-                $str .= " >> ";
+                $html .= " >> ";
             }
         }
-        return $str;
+        return $html;
     }
 ?>

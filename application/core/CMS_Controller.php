@@ -171,8 +171,11 @@ class CMS_Controller extends CI_Controller {
      * @desc  replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
      */
     protected function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL, $custom_theme = NULL, $custom_layout = NULL, $return_as_string = FALSE) {
-        
+        /**
         $this->output->cache(1);
+        $this->template->set_cache(1); 
+         * 
+         */       
         
         $result = NULL;
 
@@ -289,8 +292,7 @@ class CMS_Controller extends CI_Controller {
                     }
                 }
 
-                //set layout and partials
-                //$this->template->set_cache(1);
+                //set layout and partials                
                 $this->template->set_theme($theme);
                 $this->template->set_layout($layout);
                 $this->template->set_partial('header', 'partials/' . $layout . '/header.php', $data_partial);
