@@ -78,7 +78,7 @@ class Blog extends CMS_Controller {
         
         $data['view_readmore'] = !isset($article_id);
         
-        $this->view("blog_view", $data, 'blog');
+        $this->view("blog_view", $data, 'blog_index');
     }
     
     public function add_comment($article_id){

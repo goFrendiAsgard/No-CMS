@@ -105,6 +105,6 @@ li.layout_nav_hot{
 .layout_float_left{
 	float : left;
 }
-.layout_large_padding{
-	padding : 20px;
+.layout_large_left_padding{
+	padding-left : 20px;
 }

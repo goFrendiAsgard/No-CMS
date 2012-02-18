@@ -29,7 +29,7 @@ class Install extends CMS_Module_Installer {
         $this->remove_navigation("blog_article");
         $this->remove_navigation("blog_category");
         $this->remove_navigation("blog_management");
-        $this->remove_navigation("blog");         
+        $this->remove_navigation("blog_index");         
     }
     
     private function build_all(){
@@ -84,7 +84,7 @@ class Install extends CMS_Module_Installer {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
          ");
         
-        $this->add_navigation("blog","Blog", "blog");
+        $this->add_navigation("blog_index","Blog", "blog");
         $this->add_navigation("blog_management", "Manage Blog", "blog/manage", 4);
         $this->add_navigation("blog_category", "Manage Category", "blog/category", 4, "blog_management");
         $this->add_navigation("blog_article", "Manage Article", "blog/article", 4, "blog_management");

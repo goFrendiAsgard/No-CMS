@@ -2,11 +2,11 @@
     <link rel="stylesheet" type="text/css" href="assets/style.css" />
     <script type="text/javascript" src="../assets/nocms/js/jquery.js"></script>
     <script type="text/javascript">
+    	var old_error_message = "";
         var error_message = "";
         $(document).ready(function(){
             check_all();
             $(".input").keyup(function(){
-                $("#infoMessage").html("");
                 if(check_all()){
                     $("#button_install").show();
                     $('#button_install').removeAttr('disabled');                    
@@ -21,12 +21,17 @@
             error_message = "";
             var writeable_checked = check_writeable();
             var connection_checked = check_connection(); 
-            var password_checked = check_password();
+            var password_checked = check_password();  
+            
             var success = writeable_checked && connection_checked && password_checked;
-            if(!success){
-                $("#infoMessage").append('<ul>'+error_message+'</ul>');
-            }else{
-                $("#infoMessage").html('');
+            //only change the DOM if should
+            if(old_error_message != error_message){
+            	if(!success){
+                    $("#infoMessage").html('<ul>'+error_message+'</ul>');
+                }else{
+                    $("#infoMessage").html('');
+                }	
+            	old_error_message = error_message;
             }
             return success;
         }

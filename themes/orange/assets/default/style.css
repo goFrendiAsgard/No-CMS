@@ -49,8 +49,8 @@ div#layout_header{
 
     /* Proposed W3C Markup */ 
     background-image: linear-gradient(top left, orangered 0%, orange 100%);
-    
-    
+
+
     color : black;
     border-radius: 15px;
     padding : 20px;
@@ -73,7 +73,7 @@ div#layout_right {
     padding : 10px;
 }
 div#layout_content { 
-	float:left;
+    float:left;
     padding : 10px;
 }
 div#layout_footer{
@@ -112,7 +112,7 @@ div.layout_clear
     margin : 3px;
 }
 li.layout_nav_hot{
-    background-color : orangered;
+    background-color : #ff6600;
     border-radius : 5px;
 }
 
@@ -147,4 +147,13 @@ li.layout_nav_hot{
     border-radius : 10px;
     background-color : orange;
     padding : 5px;
+}
+.layout_float_left{
+    float : left;
+}
+.layout_large_padding{
+    padding : 20px;
+}
+.layout_margin_5{
+    margin : 5px;
 }
