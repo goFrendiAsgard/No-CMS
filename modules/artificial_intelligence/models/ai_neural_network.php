@@ -259,16 +259,25 @@ class AI_Neural_Network extends AI_Core {
     }
     
     public function train($dataSet=NULL){
+        
+        set_time_limit(0);                   // ignore php timeout
+        ignore_user_abort(true);             // keep on going even if user pulls the plug*
+        while (ob_get_level())
+            ob_end_clean();                  // remove output buffers
+        ob_implicit_flush(true);             // output stuff directly
+        
         $this->begin();
         if(!isset($dataSet)){
             $dataSet = $this->nn_dataset;
         }
+        
         for($loop=0; $loop<$this->nn_maxLoop; $loop++){
             
             
             $this->begin();  
             
-            $startTime = microtime(true); 
+            $startTime = microtime(true);
+            
         
             $output = array(); //output of the last neuron
             $desiredOutput = array(); //desired output, target
@@ -311,6 +320,8 @@ class AI_Neural_Network extends AI_Core {
             } 
             
         }
+        
+        $this->commit();
     }
     
     public function out($input, $customWeights = NULL){
@@ -329,6 +340,8 @@ class AI_Neural_Network extends AI_Core {
     }
     
     public function currentState(){
+        
+        
         $this->begin();
         
         $property = $this->core_getProperty();

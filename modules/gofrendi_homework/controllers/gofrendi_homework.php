@@ -5,22 +5,22 @@
  *
  * @author gofrendi
  */
-class tugas_ai extends CMS_Controller{
+class gofrendi_homework extends CMS_Controller{
     public function __construct(){
         parent::__construct();
         $this->load->model('artificial_intelligence/ai_nnga');
         $this->ai_nnga->core_initialize('Default'); 
     }
     public function index(){
-        $this->view('tugas_ai_index', NULL, 'tugas_ai_index');
+        $this->view('homework_index', NULL, 'gofrendi_homework_index');
     }
     public function data_iris(){
-        $this->view('tugas_ai_data_iris', NULL, 'tugas_ai_data_iris');
+        $this->view('homework_iris_data', NULL, 'gofrendi_homework_iris_data');
     }
     public function train_iris(){
-        $this->load->model('tugas_ai/iris_data');
+        $this->load->model('gofrendi_homework/iris_data');
         $dataset = $this->iris_data->get();
-        $this->ai_nnga->set($dataset,array(count($dataset[0][0]),3,count($dataset[0][1])), 0.1, 0.01, 1000);
+        $this->ai_nnga->set($dataset,array(count($dataset[0][0]),3,count($dataset[0][1])), 0.1, 0.01, 1000, 200);
         redirect('artificial_intelligence/nnga/set');
     }
     public function train_and(){

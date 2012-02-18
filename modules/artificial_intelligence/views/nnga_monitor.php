@@ -177,7 +177,8 @@
                         drawLabel(CANVAS_WIDTH-175,top+10, "Min Fitness = "+minFitness);
                         drawLabel(CANVAS_WIDTH-175,top+20, "Current Fitness = "+fitness[fitnessCount-1]);
                         drawLabel(CANVAS_WIDTH-175,top+30, "Current Loop = "+ga.ga_loop);
-                        drawLabel(CANVAS_WIDTH-175,top+40, "Time = "+ga.ga_time);
+                        drawLabel(CANVAS_WIDTH-175,top+40, "Gene Variation = "+ga.ga_genes.length);
+                        drawLabel(CANVAS_WIDTH-175,top+50, "Time = "+ga.ga_time);
                     }
                     
                     

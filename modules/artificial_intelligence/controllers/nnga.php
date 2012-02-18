@@ -21,7 +21,9 @@ class nnga extends CMS_Controller {
         $this->view('artificial_intelligence/nnga_monitor', NULL, 'ai_nnga_monitor');
     }
     
-    public function set(){
+    public function set(){       
+        
+        
         $nn_hidden_neuron_count = $this->input->post('nn_hidden_neuron_count');
         $nn_learning_rate = $this->input->post('nn_learning_rate');
         $nn_max_loop = $this->input->post('nn_max_loop');

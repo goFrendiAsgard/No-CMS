@@ -18,9 +18,7 @@ class Install extends CMS_Module_Installer{
         redirect('main');
     }
     
-    private function remove_all(){
-        $this->db->query("DROP TABLE IF EXISTS `ai_session`;");
-         
+    private function remove_all(){         
         $this->remove_navigation("ai_nnga_monitor"); 
         $this->remove_navigation("ai_nnga_set");
         $this->remove_navigation("ai_nnga_index");
@@ -28,16 +26,6 @@ class Install extends CMS_Module_Installer{
     }
     
     private function build_all(){
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS `ai_session` (
-              `id` int(20) unsigned NOT NULL AUTO_INCREMENT,
-              `user_id` int(20) unsigned NOT NULL,
-              `identifier` varchar(100) NOT NULL,
-              `data` longtext,
-              PRIMARY KEY (`id`),
-              UNIQUE KEY `identifier` (`identifier`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-         ");
         
         $this->add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", "artificial_intelligence", 3);
         $this->add_navigation("ai_nnga_index","NNGA", "artificial_intelligence/nnga/index", 3, "ai_artificial_intelligence_index");

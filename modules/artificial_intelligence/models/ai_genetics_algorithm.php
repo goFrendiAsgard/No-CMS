@@ -30,7 +30,7 @@ class AI_Genetics_Algorithm extends AI_Core{
     
     protected function begin(){
         $property = $this->core_getProperty();
-        $this->ga_population            = $property["ga_population"];
+        //$this->ga_population            = $property["ga_population"];
         $this->ga_genes                 = $property["ga_genes"];
         $this->ga_fitness               = $property["ga_fitness"];
         $this->ga_fitnessOrder          = $property["ga_fitnessOrder"];
@@ -50,7 +50,7 @@ class AI_Genetics_Algorithm extends AI_Core{
     protected function end(){
         $this->core_saveProperty(
                 array(
-                    "ga_population",
+                    //"ga_population",
                     "ga_genes",
                     "ga_fitness",
                     "ga_fitnessOrder",
@@ -67,7 +67,7 @@ class AI_Genetics_Algorithm extends AI_Core{
                     "ga_bestFitness"
                 ), 
                 array(
-                    $this->ga_population,
+                    //$this->ga_population,
                     $this->ga_genes,
                     $this->ga_fitness,
                     $this->ga_fitnessOrder,
@@ -100,7 +100,7 @@ class AI_Genetics_Algorithm extends AI_Core{
         $this->ga_loop = 0;
         $this->ga_time = 0;
         $this->ga_bestFitness = array();
-        $this->ga_population = array();
+        //$this->ga_population = array();
         $this->ga_genes = array();
         $this->ga_fitness = array();
         $this->ga_fitnessOrder = array();
@@ -110,6 +110,11 @@ class AI_Genetics_Algorithm extends AI_Core{
     }
     
     public function process(){
+        set_time_limit(0);                   // ignore php timeout
+        ignore_user_abort(true);             // keep on going even if user pulls the plug*
+        while (ob_get_level())
+            ob_end_clean();                  // remove output buffers
+        ob_implicit_flush(true);             // output stuff directly
         $this->begin();
         for($i=0; $i<$this->ga_maxLoop; $i++){
             $this->begin();
@@ -135,7 +140,9 @@ class AI_Genetics_Algorithm extends AI_Core{
     
     protected function mutation($gene){
         //random count of mutation point, random mutation point
+        //mt_srand(5);
         for($i=0; $i<mt_rand(0, strlen($gene)-1); $i++){
+            //mt_srand(6);
             $mutationPoint = mt_rand(0, strlen($gene)-1);
             $gene[$mutationPoint] = $gene[$mutationPoint]==0 ? 1 : 0;
         }
@@ -145,6 +152,7 @@ class AI_Genetics_Algorithm extends AI_Core{
     
     protected function crossover($gene1, $gene2){
         
+        //mt_srand(4);
         $crossPoint = mt_rand(0, strlen($gene1)-1);
         
         $gene1_1 = substr($gene1, 0, $crossPoint);
@@ -169,6 +177,7 @@ class AI_Genetics_Algorithm extends AI_Core{
         
         $result = "";
         for($i=0; $i<$this->ga_chromosomeLength; $i++){
+            //mt_srand(3);
             $result.= mt_rand(0, 1);
         }
         
@@ -181,7 +190,9 @@ class AI_Genetics_Algorithm extends AI_Core{
         for($i=0; $i<count($this->ga_genes); $i++){
             $sum += $this->ga_fitness[$i];
         }
+        //mt_srand(2);
         $dice = $sum * mt_rand(0,1000)/1000;
+        //$dice = mt_rand(0, $sum);
         
         $wheel = 0;
         $choosenIndex = 0;
@@ -199,7 +210,7 @@ class AI_Genetics_Algorithm extends AI_Core{
     
     private function newGeneration(){
         $genes = array();
-        if(count($this->ga_population)==0){
+        if(count($this->ga_genes)==0){
             for($i=0; $i<$this->ga_individuCount; $i++){
                 $genes[] = $this->newIndividu();
             }
@@ -228,12 +239,12 @@ class AI_Genetics_Algorithm extends AI_Core{
                     }
                 }else{
                     //perform reproduction here
-                    $genes[$i] = $this->getRandomGene($this->ga_population);
+                    $genes[$i] = $this->getRandomGene();
                 }
             }
         }
         
-        $this->ga_population["genes"] = $genes;
+        //$this->ga_population["genes"] = $genes;
         
         
         $this->ga_genes = array();
