@@ -25,7 +25,6 @@
                             }
                         }); 
                 ';
-                $html.= '<br />';
                 $html.= '</div>';
             }
         }
@@ -36,7 +35,7 @@
                 });
             </script>
         ';
-        return $js.br().$html;
+        return $js.$html;
     }
     
     
@@ -62,45 +61,46 @@
         $html.= '<ul class="layout_nav '.$class_invisible.'">';
         foreach($navigations as $navigation){
             $layout_nav_hot = ($last_path == $navigation['navigation_name'])?'layout_nav_hot':'';
-            
-            $html.= '<li class ="'.$layout_nav_hot.'">';
-            if(count($navigation['child'])>0){
-                $in_path = false;
-                if($last_path != $navigation['navigation_name']){
-                    foreach($path as $current_path){
-                        if($current_path['navigation_name']==$navigation['navigation_name']){
-                            $in_path = true;
-                            break;
+            if($navigation['active']==1){
+                $html.= '<li class ="'.$layout_nav_hot.'">';
+                if(count($navigation['child'])>0){
+                    $in_path = false;
+                    if($last_path != $navigation['navigation_name']){
+                        foreach($path as $current_path){
+                            if($current_path['navigation_name']==$navigation['navigation_name']){
+                                $in_path = true;
+                                break;
+                            }
                         }
                     }
+
+                    if($in_path){
+                        $html.= '<a href="#" class="layout_expand">[-]</a> ';
+                    }else{
+                        $html.= '<a href="#" class="layout_expand">[+]</a> ';
+                    }                
                 }
-                
-                if($in_path){
-                    $html.= '<a href="#" class="layout_expand">[-]</a> ';
+
+                $pageLinkClass = 'layout_page_link';
+                if(count($navigation['child'])>0){
+                    $pageLinkClass .= ' layout_have_child';
                 }else{
-                    $html.= '<a href="#" class="layout_expand">[+]</a> ';
-                }                
+                    $pageLinkClass .= ' layout_no_child';
+                }            
+                if($navigation['is_static']){
+                    $html.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>$pageLinkClass));
+                }else{
+                    $html.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
+                }
+                $html.= '<div class="layout_clear"></div>';
+                if(isset($navigation['description'])){
+                    $html.= '<div class="layout_nav_description invisible">Description : '.
+                            $navigation['description'].'</div>';
+                }
+
+                $html.= build_menu($navigation['child'], $path, TRUE);
+                $html.= '</li>';
             }
-            
-            $pageLinkClass = 'layout_page_link';
-            if(count($navigation['child'])>0){
-                $pageLinkClass .= ' layout_have_child';
-            }else{
-                $pageLinkClass .= ' layout_no_child';
-            }            
-            if($navigation['is_static']){
-                $html.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>$pageLinkClass));
-            }else{
-                $html.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
-            }
-            $html.= '<div class="layout_clear"></div>';
-            if(isset($navigation['description'])){
-                $html.= '<div class="layout_nav_description invisible">Description : '.
-                        $navigation['description'].'</div>';
-            }
-            
-            $html.= build_menu($navigation['child'], $path, TRUE);
-            $html.= '</li>';
         }
         $html.= '</ul>';
         

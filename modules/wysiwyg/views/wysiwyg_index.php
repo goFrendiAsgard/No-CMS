@@ -17,7 +17,7 @@
         float : right;
         display : block;
     }
-    div#wysiwyg div.clear{
+    div#wysiwyg div.clear, div#wysiwyg_setting div.clear{
         clear : both;
     }
     div#wysiwyg div.min-height-100{
@@ -36,7 +36,7 @@
         padding-bottom : 10px;
     }
     div#wysiwyg div#left{
-        width : 200px;
+        width : 270px;
         border-right : 1px solid gray;
     }
     div#wysiwyg div#right{
@@ -62,6 +62,31 @@
     div#wysiwyg .hidden{
         display : none
     }
+    div#wysiwyg ul{
+        list-style-type: none;
+        -webkit-padding-start: 15px;
+    }
+    div#wysiwyg div#quicklink{
+        padding : 1px;
+    }
+    div#wysiwyg div#quicklink span.quicklink{
+        border : 1px solid lightgray;
+        margin-right : 5px;
+        font-size : small;
+        padding : 2px;
+    }
+    div#wysiwyg_setting{
+        margin-top : 10px;
+        margin-bottom : 10px;
+    }
+    div#wysiwyg_setting div.form_label{
+        width : 200px;
+        display: block;
+        float:left;
+    }
+    div#wysiwyg_setting div.form_input{
+        float:left;
+    }
 </style>
 <script type="text/javascript">
     function adjust_width(){
@@ -75,16 +100,107 @@
         $("div#content").width(center_width-left_width-right_width-6-60);
 		
     }
+    
+    function parse_navigation(objs){
+        var html="";
+        if(objs.length>0){
+            html +="<ul>";
+            for(var i=0; i<objs.length; i++){
+                obj = objs[i];
+                html += '<li>';
+                html += obj.title;
+                html += '<input type="hidden" class="navigation_id" value="'+obj.id+'" />';
+                if(!obj.is_root){
+                    html += ' <a href="#" class="promote_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/left.png'); ?>" /></a>';
+                }
+                if(i>0){
+                    html += ' <a href="#" class="demote_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/right.png'); ?>" /></a>';
+                    html += ' <a href="#" class="up_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/up.png'); ?>" /></a>';
+                }  
+                if(i<(objs.length-1)){
+                    html += ' <a href="#" class="down_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/down.png'); ?>" /></a>';
+                }                
+                if(obj.active){
+                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/eye-open.png'); ?>" /></a>';
+                }else{
+                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/eye-close.png'); ?>" /></a>';
+                }
+                html += parse_navigation(obj.children);
+                html += '</li>';
+            }
+            html += "</ul>";
+        }
+        return html;
+    }
+    
+    function get_navigation(){
+        $.ajax({
+            "url" : "wysiwyg/get_navigation",
+            "dataType" : "json",
+            "type" : "POST",
+            "success" : function(response){
+                var str = parse_navigation(response);
+                $("div#wysiwyg #left").html(str);
+            }
+        })
+    }
+    
+    function parse_quicklink(objs){
+        var html = "";
+        if(objs.length>0){
+            for(var i=0; i<objs.length; i++){
+                obj = objs[i];
+                html+='<span class="quicklink">';
+                html += obj.title;
+                html += '<input type="hidden" class="quicklink_id" value="'+obj.id+'" />';
+                if(i>0){
+                    html += ' <a href="#" class="left_quicklink"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/left.png'); ?>" /></a>';
+                }  
+                if(i<(objs.length-1)){
+                    html += ' <a href="#" class="right_quicklink"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/right.png'); ?>" /></a>';
+                }
+                html += ' <a href="#" class="remove_quicklink"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/delete.png'); ?>" /></a>';
+                html+="</span>";
+            }
+        }
+        return html;
+    }
+    
+    function get_quicklink(){
+        $.ajax({
+            "url" : "wysiwyg/get_quicklink",
+            "dataType" : "json",
+            "type" : "POST",
+            "success" : function(response){
+                var str = parse_quicklink(response);
+                $("div#wysiwyg #quicklink").html(str);
+            }
+        })
+    }
+    
+    function reload_all(){
+        adjust_width();
+        get_navigation();
+        get_quicklink();
+    }
+    
+    
 	
     $(document).ready(function(){
-        adjust_width();
+        reload_all();
         
         //change the name
         $("div#wysiwyg div#name").click(function(){
+            $("div#wysiwyg .hidden").hide();
             $("div#wysiwyg input#change_name").toggle();
-             $("div#wysiwyg input#change_name").val($("div#wysiwyg div#name").html());
+            $("div#wysiwyg input#change_name").val($("div#wysiwyg div#name").html());
+            $("div#wysiwyg input#change_name").select(); 
         });
-        $("div#wysiwyg input#change_name").keyup(function(){
+        $("div#wysiwyg input#change_name").keyup(function(event){
+            if(event.keyCode==13){
+                $(this).hide();
+                return true;
+            }
             var value = $(this).val();
             $.ajax({
                 "url" : "wysiwyg/change_name/",
@@ -98,10 +214,16 @@
         
         //change the slogan
         $("div#wysiwyg div#slogan").click(function(){
+            $("div#wysiwyg .hidden").hide();
             $("div#wysiwyg input#change_slogan").toggle();
-             $("div#wysiwyg input#change_slogan").val($("div#wysiwyg div#slogan").html());
+            $("div#wysiwyg input#change_slogan").val($("div#wysiwyg div#slogan").html());
+            $("div#wysiwyg input#change_slogan").select(); 
         });
-        $("div#wysiwyg input#change_slogan").keyup(function(){
+        $("div#wysiwyg input#change_slogan").keyup(function(event){
+            if(event.keyCode==13){
+                $(this).hide();
+                return true;
+            }
             var value = $(this).val();
             $.ajax({
                 "url" : "wysiwyg/change_slogan/",
@@ -115,10 +237,16 @@
         
         //change the footer
         $("div#wysiwyg div#footer").click(function(){
+            $("div#wysiwyg .hidden").hide();
             $("div#wysiwyg input#change_footer").toggle();
-             $("div#wysiwyg input#change_footer").val($("div#wysiwyg div#footer").html());
+            $("div#wysiwyg input#change_footer").val($("div#wysiwyg div#footer").html());
+            $("div#wysiwyg input#change_footer").select(); 
         });
-        $("div#wysiwyg input#change_footer").keyup(function(){
+        $("div#wysiwyg input#change_footer").keyup(function(event){
+            if(event.keyCode==13){
+                $(this).hide();
+                return true;
+            }
             var value = $(this).val();
             $.ajax({
                 "url" : "wysiwyg/change_footer/",
@@ -130,6 +258,154 @@
             });
         });
         
+        //toggle_navigation
+        $(".toggle_navigation").live('click', function(){
+            var parent = $(this).parent("li");
+            var navigation_id = parent.children("input.navigation_id").val();
+            $.ajax({
+                "url" : "wysiwyg/toggle_navigation",
+                "type" : "POST",
+                "data" : {"id" : navigation_id},
+                "success" : function(){
+                    get_navigation();
+                }
+            });
+            return false;
+        });
+        
+        //promote_navigation
+        $(".promote_navigation").live('click', function(){
+            var parent = $(this).parent("li");
+            var navigation_id = parent.children("input.navigation_id").val();
+            $.ajax({
+                "url" : "wysiwyg/promote_navigation",
+                "type" : "POST",
+                "data" : {"id" : navigation_id},
+                "success" : function(){
+                    get_navigation();
+                }
+            });
+            return false;
+        });
+        
+        //demote_navigation
+        $(".demote_navigation").live('click', function(){
+            var parent = $(this).parent("li");
+            var navigation_id = parent.children("input.navigation_id").val();
+            $.ajax({
+                "url" : "wysiwyg/demote_navigation",
+                "type" : "POST",
+                "data" : {"id" : navigation_id},
+                "success" : function(){
+                    get_navigation();
+                }
+            });
+            return false;
+        });
+        
+        //up_navigation
+        $(".up_navigation").live('click', function(){
+            var parent = $(this).parent("li");
+            var navigation_id = parent.children("input.navigation_id").val();
+            $.ajax({
+                "url" : "wysiwyg/up_navigation",
+                "type" : "POST",
+                "data" : {"id" : navigation_id},
+                "success" : function(){
+                    get_navigation();
+                }
+            });
+            return false;
+        });
+        
+        //dow_navigation
+        $(".down_navigation").live('click', function(){
+            var parent = $(this).parent("li");
+            var navigation_id = parent.children("input.navigation_id").val();
+            $.ajax({
+                "url" : "wysiwyg/down_navigation",
+                "type" : "POST",
+                "data" : {"id" : navigation_id},
+                "success" : function(){
+                    get_navigation();
+                }
+            });
+            return false;
+        });
+        
+        //left_quicklink
+        $(".left_quicklink").live('click', function(){
+            var parent = $(this).parent("span");
+            var quicklink_id = parent.children("input.quicklink_id").val();
+            $.ajax({
+                "url" : "wysiwyg/left_quicklink",
+                "type" : "POST",
+                "data" : {"id" : quicklink_id},
+                "success" : function(){
+                    get_quicklink();
+                }
+            });
+            return false;
+        });
+        
+        //right_quicklink
+        $(".right_quicklink").live('click', function(){
+            var parent = $(this).parent("span");
+            var quicklink_id = parent.children("input.quicklink_id").val();
+            $.ajax({
+                "url" : "wysiwyg/right_quicklink",
+                "type" : "POST",
+                "data" : {"id" : quicklink_id},
+                "success" : function(){
+                    get_quicklink();
+                }
+            });
+            return false;
+        });
+        
+        //remove_quicklink
+        $(".remove_quicklink").live('click', function(){
+            var parent = $(this).parent("span");
+            var quicklink_id = parent.children("input.quicklink_id").val();
+            $.ajax({
+                "url" : "wysiwyg/remove_quicklink",
+                "type" : "POST",
+                "data" : {"id" : quicklink_id},
+                "success" : function(){
+                    get_quicklink();
+                }
+            });
+            return false;
+        });
+        
+        //add_quicklink
+        $("#add_quicklink").click(function(){
+            var navigation_id = $("#navigation_list option:selected").val();
+            $.ajax({
+                "url" : "wysiwyg/add_quicklink",
+                "type" : "POST",
+                "data" : {"id" : navigation_id},
+                "success" : function(){
+                    get_quicklink();
+                }
+            });
+            return false;
+        });
+        
+        //change language
+        $("#language_list").click(function(){
+            var language = $("#language_list option:selected").val();
+            $.ajax({
+                "url" : "wysiwyg/change_language",
+                "type" : "POST",
+                "data" : {"value" : language},
+                "success" : function(response){
+                    reload_all();
+                }
+            })
+        })
+        
+        
     });
     
     $(document).resize(function(){
@@ -138,27 +414,44 @@
     
     
 </script>
-<div id="wysiwyg">
+<div id="wysiwyg">   
     <div id="favicon"><img src="<?php echo $site_favicon; ?>" /></div>
     <div id="header" class="padding-10">
         <div id="logo" class="float-left"><img src="<?php echo $site_logo; ?>" /></div>
-        <form id="change_logo">
-        </form>    
-        <div class="float-left">
-        <div id="name" class="font-size-xx-large"><?php echo $site_name ?></div>
-        <input id="change_name" class="hidden" />
-        <div id="slogan" class="font-size-x-large"><?php echo $site_slogan ?></div>
-        <input id="change_slogan" class="hidden" />
-        <div id="quicklink" class="font-size-large">Quick Link</div>
+            <form id="change_logo">
+            </form>    
+            <div class="float-left">
+            <div id="name" class="font-size-xx-large"><?php echo $site_name ?></div>
+            <input id="change_name" class="hidden" />
+            <div id="slogan" class="font-size-x-large"><?php echo $site_slogan ?></div>
+            <input id="change_slogan" class="hidden" />
+            <div id="quicklink" class="font-size-large">Quick Link</div>        
         </div>
         <div class="clear"></div>
     </div>
     <div id="center">
-        <div id="left" class="float-left min-height-100 padding-10">Left Panel</div>
+        <div id="left" class="float-left min-height-100">Left Panel</div>
         <div id="right" class="float-right min-height-100 padding-10">Right Panel</div>
         <div id="content" class="float-left min-height-100 padding-10">This is the content</div>
     </div>
     <div id="footer" class="padding-10"><?php echo $site_footer?></div>  
     <input id="change_footer" class="hidden" />
+</div>
+<div id="wysiwyg_setting">
+    <div id="quicklink_config">
+        <div class="form_label">Add Quick Link : </div> 
+        <div class="form_input">
+            <?php echo form_dropdown('navigation', $navigation_list, NULL,'id="navigation_list"'); ?>&nbsp;
+            <a href="#" id="add_quicklink"><img width="20px" src="<?php echo base_url('modules/wysiwyg/assets/images/add.png'); ?>" /></a>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div id="language_config">
+        <div class="form_label">Change Language : </div> 
+        <div class="form_input">
+            <?php echo form_dropdown('navigation', $language_list, $language,'id="language_list"'); ?>
+        </div>
+        <div class="clear"></div>
+    </div>
 </div>
 *) You need to refresh the page (F5) to see the real changes

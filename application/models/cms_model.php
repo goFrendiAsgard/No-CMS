@@ -90,7 +90,7 @@ class CMS_Model extends CI_Model {
 
         $where_is_root = !isset($parent_id) ? "is_root=1" : "is_root=0 AND parent_id = '" . addslashes($parent_id) . "'";
         $query = $this->db->query(
-                "SELECT navigation_id, navigation_name, is_static, title, description, url 
+                "SELECT navigation_id, navigation_name, is_static, title, description, url, active 
                 FROM cms_navigation AS n WHERE
                     (
                         (authorization_id = 1) OR
@@ -109,7 +109,7 @@ class CMS_Model extends CI_Model {
                                 )>0
                             )
                         )
-                    ) AND active=1 AND $where_is_root ORDER BY n.index"
+                    ) AND $where_is_root ORDER BY n.index"
         );
         $result = array();
         foreach ($query->result() as $row) {
@@ -120,6 +120,7 @@ class CMS_Model extends CI_Model {
                 "description" => $row->description,
                 "url" => $row->url,
                 "is_static" => $row->is_static,
+                "active"=> $row->active,
                 "child" => $this->cms_navigations($row->navigation_id, $max_menu_depth)
             );
         }

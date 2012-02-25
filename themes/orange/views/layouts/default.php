@@ -13,7 +13,7 @@
         </div>
         <div id="layout_center">
             <div id="layout_left"><?php echo $template['partials']['left'];?></div>
-            <div id="layout_right">WIDGET<hr /><?php echo $template['partials']['right'] ?></div>
+            <div id="layout_right"><?php echo $template['partials']['right'] ?></div>
             <div id="layout_content">
                 <div id="layout_nav_path">You are here : <?php echo $template['partials']['navigation_path']?></div>
                 <br />
