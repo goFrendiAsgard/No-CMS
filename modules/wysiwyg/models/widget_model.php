@@ -7,13 +7,16 @@
 class Widget_Model extends CMS_Model {
     public function get_widget($slug){
         $result = array();
-        $SQL = "SELECT widget_id, title, `index` FROM cms_widget WHERE slug='".  addslashes($slug)."'";
+        $SQL = "SELECT widget_id, title, `index`, slug, active FROM cms_widget 
+            WHERE slug='".  addslashes($slug)."' ORDER BY `index`";
         $query = $this->db->query($SQL);
         foreach($query->result() as $row){
             $result[] = array(
                 "id" => $row->widget_id,
                 "title" => $this->cms_lang($row->title),
-                "index"=> $this->index
+                "index"=> $row->index,
+                "slug" => $row->slug,
+                "active" => $row->active==1
             );
         }
         return $result;
@@ -31,15 +34,15 @@ class Widget_Model extends CMS_Model {
         //bro
         $SQL = "SELECT widget_id, `index` FROM cms_widget WHERE 
             `index` = (SELECT MAX(`index`) FROM cms_widget WHERE `index`<$my_index AND slug='$my_slug') AND
-            slug = $my_slug";
+            slug = '$my_slug'";
         $query = $this->db->query($SQL);
         $row = $query->row();
         $bro_widget_id = $row->widget_id;
         $bro_index = $row->index;
         
         if(isset($bro_widget_id)){
-            $this->db->update('cms_widget', array("index"=>$my_index), array("widget_id"=>$bro_index));
-            $this->db->update('cms_widget', array("index"=>$bro_index), array("widget_id"=>$my_index));
+            $this->db->update('cms_widget', array("index"=>$my_index), array("widget_id"=>$bro_widget_id));
+            $this->db->update('cms_widget', array("index"=>$bro_index), array("widget_id"=>$my_widget_id));
         }
         
     }
@@ -56,15 +59,15 @@ class Widget_Model extends CMS_Model {
         //bro
         $SQL = "SELECT widget_id, `index` FROM cms_widget WHERE 
             `index` = (SELECT MIN(`index`) FROM cms_widget WHERE `index`>$my_index AND slug='$my_slug') AND
-            slug = $my_slug";
+            slug = '$my_slug'";
         $query = $this->db->query($SQL);
         $row = $query->row();
         $bro_widget_id = $row->widget_id;
         $bro_index = $row->index;
         
         if(isset($bro_widget_id)){
-            $this->db->update('cms_widget', array("index"=>$my_index), array("widget_id"=>$bro_index));
-            $this->db->update('cms_widget', array("index"=>$bro_index), array("widget_id"=>$my_index));
+            $this->db->update('cms_widget', array("index"=>$my_index), array("widget_id"=>$bro_widget_id));
+            $this->db->update('cms_widget', array("index"=>$bro_index), array("widget_id"=>$my_widget_id));
         }
     }
     

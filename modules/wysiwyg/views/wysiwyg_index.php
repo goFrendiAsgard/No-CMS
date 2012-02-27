@@ -178,10 +178,61 @@
         })
     }
     
+    function parse_widget(objs){
+        var html = "";
+        if(objs.length>0){
+            for(var i=0; i<objs.length; i++){
+                obj = objs[i];
+                html+='<div class="widget">';
+                html += obj.title;
+                html += '<input type="hidden" class="widget_id" value="'+obj.id+'" />';
+                html += '<input type="hidden" class="widget_slug" value="'+obj.slug+'" />';
+                if(i>0){
+                    html += ' <a href="#" class="up_widget"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/up.png'); ?>" /></a>';
+                }  
+                if(i<(objs.length-1)){
+                    html += ' <a href="#" class="down_widget"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/down.png'); ?>" /></a>';
+                }
+                if(obj.active){
+                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/eye-open.png'); ?>" /></a>';
+                }else{
+                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/eye-close.png'); ?>" /></a>';
+                }
+                html+="</div>";
+                
+            }
+        }
+        return html;
+    }
+    
+    function get_widget(){
+        $.ajax({
+            "url" : "wysiwyg/get_widget/sidebar",
+            "dataType" : "json",
+            "type" : "POST",
+            "success": function(response){
+                var str = parse_widget(response);
+                $("div#wysiwyg #sidebar").html(str);
+            }
+        });       
+        
+        //load the advertisement
+        $.ajax({
+            "url" : "wysiwyg/get_widget/advertisement",
+            "dataType" : "json",
+            "type" : "POST",
+            "success": function(response){
+                var str = parse_widget(response);
+                $("div#wysiwyg #advertisement").html(str);
+            }
+        }); 
+    }
+    
     function reload_all(){
         adjust_width();
         get_navigation();
         get_quicklink();
+        get_widget();
     }
     
     
@@ -403,7 +454,52 @@
                     reload_all();
                 }
             })
-        })
+        });
+        
+        //toggle_navigation
+        $(".toggle_widget").live('click', function(){
+            var parent = $(this).parent("div");
+            var widget_id = parent.children("input.widget_id").val();
+            $.ajax({
+                "url" : "wysiwyg/toggle_widget",
+                "type" : "POST",
+                "data" : {"id" : widget_id},
+                "success" : function(){
+                    get_widget();
+                }
+            });
+            return false;
+        });
+        
+        //up_widget
+        $(".up_widget").live('click', function(){
+            var parent = $(this).parent("div");
+            var widget_id = parent.children("input.widget_id").val();
+            $.ajax({
+                "url" : "wysiwyg/up_widget",
+                "type" : "POST",
+                "data" : {"id" : widget_id},
+                "success" : function(){
+                    get_widget();
+                }
+            });
+            return false;
+        });
+        
+        //down_widget
+        $(".down_widget").live('click', function(){
+            var parent = $(this).parent("div");
+            var widget_id = parent.children("input.widget_id").val();
+            $.ajax({
+                "url" : "wysiwyg/down_widget",
+                "type" : "POST",
+                "data" : {"id" : widget_id},
+                "success" : function(){
+                    get_widget();
+                }
+            });
+            return false;
+        });
         
         
     });
@@ -431,7 +527,12 @@
     </div>
     <div id="center">
         <div id="left" class="float-left min-height-100">Left Panel</div>
-        <div id="right" class="float-right min-height-100 padding-10">Right Panel</div>
+        <div id="right" class="float-right min-height-100 padding-10">
+            <div><b>Side-bar</b></div>
+            <div id="sidebar"></div>
+            <div><b>Advertisement</b></div>
+            <div id="advertisement"></div>
+        </div>
         <div id="content" class="float-left min-height-100 padding-10">This is the content</div>
     </div>
     <div id="footer" class="padding-10"><?php echo $site_footer?></div>  

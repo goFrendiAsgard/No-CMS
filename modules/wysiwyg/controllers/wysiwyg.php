@@ -134,20 +134,29 @@ class Wysiwyg extends CMS_Controller {
         $this->quicklink_model->remove_quicklink($id);
     }
     
-    public function get_widget(){
-        
+    public function get_widget($slug){
+        $slug = isset($slug)? $slug : $this->input->post('slug');
+        $this->load->model('wysiwyg/widget_model');
+        $result = $this->widget_model->get_widget($slug);
+        echo json_encode($result);
     }
     
     public function up_widget(){
-        
+        $id = $this->input->post('id');
+        $this->load->model('wysiwyg/widget_model');
+        $this->widget_model->up_widget($id);
     }
     
     public function down_widget(){
-        
+        $id = $this->input->post('id');
+        $this->load->model('wysiwyg/widget_model');
+        $this->widget_model->down_widget($id);
     }
     
     public function toggle_widget(){
-        
+        $id = $this->input->post('id');
+        $this->load->model('wysiwyg/widget_model');
+        $this->widget_model->toggle_widget($id);
     }
     
     
