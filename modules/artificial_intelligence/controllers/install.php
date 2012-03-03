@@ -10,12 +10,10 @@ class Install extends CMS_Module_Installer{
     protected function do_install(){
         $this->remove_all();
         $this->build_all();
-        redirect('artificial_intelligence/index');
     }
     //this should be what happen when user uninstall this module
     protected function do_uninstall(){
         $this->remove_all();
-        redirect('main');
     }
     
     private function remove_all(){         

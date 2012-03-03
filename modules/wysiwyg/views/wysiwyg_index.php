@@ -88,6 +88,8 @@
         float:left;
     }
 </style>
+<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.css" />
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.js"></script>
 <script type="text/javascript">
     function adjust_width(){
         var wysiwyg_width = $("div#wysiwyg").width();
@@ -502,21 +504,69 @@
         });
         
         
+        
+        
     });
     
     $(document).resize(function(){
         adjust_width();
     });	
     
+    jQuery(function(){
+        new qq.FileUploader({
+            element: $("div#wysiwyg_setting #upload-favicon")[0],
+            action: '<?php echo site_url('/wysiwyg/upload_favicon'); ?>',
+            allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'ico'],        
+            // each file size limit in bytes
+            // this option isn't supported in all browsers
+            sizeLimit: 3072000, // max size   
+            minSizeLimit: 0, // min size
+            onComplete: function(id, fileName, responseJSON){
+                if(responseJSON["success"]){
+                    $.ajax({
+                        url:'wysiwyg/get_favicon',
+                        dataType:'json',
+                        success : function(response){
+                            $('.image-favicon').attr('src',response['value']);
+                        }
+                    })
+                }
+            }
+        });
+        
+        new qq.FileUploader({
+            element: $("div#wysiwyg_setting #upload-logo")[0],
+            action: '<?php echo site_url('/wysiwyg/upload_logo'); ?>',
+            allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'ico'],
+            // each file size limit in bytes
+            // this option isn't supported in all browsers
+            sizeLimit: 10240000, // max size   
+            minSizeLimit: 0, // min size
+            onComplete: function(id, fileName, responseJSON){
+                if(responseJSON["success"]){
+                    $.ajax({
+                        url:'wysiwyg/get_logo',
+                        dataType:'json',
+                        success : function(response){
+                            $('.image-logo').attr('src',response['value']);
+                        }
+                    })
+                }
+            }
+        });
+
+    })
+    
     
 </script>
+
 <div id="wysiwyg">   
-    <div id="favicon"><img src="<?php echo $site_favicon; ?>" /></div>
+    <div id="favicon">
+        <img class="image-favicon" src="<?php echo $site_favicon; ?>" style="float:left;" />             
+    </div>
     <div id="header" class="padding-10">
-        <div id="logo" class="float-left"><img src="<?php echo $site_logo; ?>" /></div>
-            <form id="change_logo">
-            </form>    
-            <div class="float-left">
+        <div id="logo" class="float-left"><img class="image-logo" src="<?php echo $site_logo; ?>" /></div>
+        <div class="float-left">
             <div id="name" class="font-size-xx-large"><?php echo $site_name ?></div>
             <input id="change_name" class="hidden" />
             <div id="slogan" class="font-size-x-large"><?php echo $site_slogan ?></div>
@@ -554,5 +604,31 @@
         </div>
         <div class="clear"></div>
     </div>
+    <div id="favicon_change">
+        <div class="form_label">Change Favicon : </div> 
+        <div class="form_input">
+            <div id="upload-favicon" style="float:left;">       
+                <noscript>          
+                    <p>Please enable JavaScript to use file uploader.</p>
+                </noscript>         
+            </div>  
+            <img class="image-favicon" src="<?php echo $site_favicon; ?>" style="float:left; margin:5px;" height="20px" /> 
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div id="logo_change">
+        <div class="form_label">Change Logo : </div> 
+        <div class="form_input">
+            <div id="upload-logo" style="float:left;">       
+                <noscript>          
+                    <p>Please enable JavaScript to use file uploader.</p>
+                </noscript>         
+            </div>  
+            <img class="image-logo" src="<?php echo $site_logo; ?>" style="float:left; margin:5px;" height="50px" /> 
+        </div>
+        <div class="clear"></div>
+    </div>
 </div>
 *) You need to refresh the page (F5) to see the real changes
+
+

@@ -64,6 +64,7 @@
             success:function(response){
                 if (JSON.stringify(RESPONSE) != JSON.stringify(response)){
                     RESPONSE = response;
+                    //$("input[type=button]").attr("disabled", "true");
                     
                     var nn = response["nn"];
                     var ga = response["ga"];

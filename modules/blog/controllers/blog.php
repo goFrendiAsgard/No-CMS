@@ -187,7 +187,8 @@ class Blog extends CMS_Controller {
     	$crud = new grocery_CRUD();
     	
     	$crud->set_table('blog_photo');
-    	if(isset($article_id)){
+        echo var_dump($article_id);
+    	if(isset($article_id) && intval($article_id)>0){
     		$crud->where('blog_photo.article_id', $article_id);
     		$crud->change_field_type('article_id', 'hidden');
     	}
@@ -206,7 +207,7 @@ class Blog extends CMS_Controller {
     	$crud = new grocery_CRUD();
     	
     	$crud->set_table('blog_comment');
-    	if(isset($article_id)){
+    	if(isset($article_id) && intval($article_id)>0){
     		$crud->where('blog_comment.article_id', $article_id);
     		$crud->change_field_type('article_id', 'hidden');
     	}

@@ -8,6 +8,10 @@
 class Main extends CMS_Controller {
 
     public function login() {
+        //retrieve old_url from flashdata if exists
+        $this->load->library('session');
+        $old_url = $this->session->flashdata('old_url');
+        
         //get user input
         $identity = $this->input->post('identity');
         $password = $this->input->post('password');
@@ -15,10 +19,6 @@ class Main extends CMS_Controller {
         //set validation rule
         $this->form_validation->set_rules('identity', 'Identity', 'required|xss_clean');
         $this->form_validation->set_rules('password', 'Password', 'required|xss_clean');
-
-        //retrieve old_url from flashdata if exists
-        $this->load->library('session');
-        $old_url = $this->session->flashdata('old_url');
 
         if ($this->form_validation->run()) {
             if ($this->cms_do_login($identity, $password)) {
@@ -43,7 +43,7 @@ class Main extends CMS_Controller {
 
             //save the old_url again
             if (!is_bool($old_url)) {
-                $this->session->keep_flashdata('old_url');
+                $this->session->keep_flashdata('old_url');                
             }
 
             //view login again

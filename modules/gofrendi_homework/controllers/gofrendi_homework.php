@@ -15,7 +15,7 @@ class gofrendi_homework extends CMS_Controller{
         $this->view('homework_index', NULL, 'gofrendi_homework_index');
     }
     public function data_iris(){
-        $this->view('homework_iris_data', NULL, 'gofrendi_homework_iris_data');
+        $this->view('homework_iris_data', NULL, 'gofrendi_homework_data_iris');
     }
     public function train_iris(){
         $this->load->model('gofrendi_homework/iris_data');

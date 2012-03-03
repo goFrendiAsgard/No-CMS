@@ -15,7 +15,7 @@ class AI_GA_For_NN extends AI_Genetics_Algorithm{
     protected $NN;
     private $dataSet;
     private $bitLength=32;
-    private $floatingPoint=0.0000001;
+    private $floatingPoint=0.00000001;
     private $decodedGene;
     
     public function __construct(){

@@ -226,6 +226,7 @@ class CMS_Controller extends CI_Controller {
         } else {
             $allowed = false;
         }
+        
 
         //if allowed then show, else don't
         if ($allowed) {
@@ -305,12 +306,24 @@ class CMS_Controller extends CI_Controller {
             }
         } else {
             //if user not authorized, show login, save current url
-            $this->load->library('session');
             $uriString = $this->uri->uri_string();
-
-            $this->session->set_flashdata('old_url', $uriString);
-
-            redirect('main/login');
+            $this->load->library('session');            
+            $old_url = $this->session->flashdata('old_url');            
+            if (is_bool($old_url)) {                
+                $this->session->set_flashdata('old_url', $uriString);                
+            }
+            
+            if(!$this->cms_allow_navigate('main_login')){
+                if(!$this->cms_allow_navigate('main_index')){
+                    show_404();
+                }else{
+                    redirect('main/index');
+                }
+            }else{
+                redirect('main/login');
+            }
+            
+            
         }
         return $result;
     }
