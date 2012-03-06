@@ -596,25 +596,26 @@ class CMS_Model extends CI_Model {
      * @desc  send email 
      */
     public function cms_send_email($from_address, $from_name, $to_address, $subject, $message) {
+        $this->load->library('email');
         //send email to user
-        $config['cms_email_useragent'] = $this->cms_get_config('cms_email_useragent');
-        $config['cms_email_protocol'] = $this->cms_get_config('cms_email_protocol');
-        $config['cms_email_mailpath'] = $this->cms_get_config('cms_email_mailpath');
-        $config['cms_email_smtp_host'] = $this->cms_get_config('cms_email_smtp_host');
-        $config['cms_email_smtp_user'] = $this->cms_get_config('cms_email_smtp_user');
-        $config['cms_email_smtp_pass'] = $this->cms_get_config('cms_email_smtp_pass');
-        $config['cms_email_smtp_port'] = $this->cms_get_config('cms_email_smtp_port');
-        $config['cms_email_smtp_timeout'] = $this->cms_get_config('cms_email_smtp_timeout');
-        $config['cms_email_wordwrap'] = (boolean) $this->cms_get_config('cms_email_wordwrap');
-        $config['cms_email_wrapchars'] = $this->cms_get_config('cms_email_wrapchars');
-        $config['cms_email_mailtype'] = $this->cms_get_config('cms_email_mailtype');
-        $config['cms_email_charset'] = $this->cms_get_config('cms_email_charset');
-        $config['cms_email_validate'] = (boolean) $this->cms_get_config('cms_email_validate');
-        $config['cms_email_priority'] = $this->cms_get_config('cms_email_priority');
-        $config['cms_email_crlf'] = $this->cms_get_config('cms_email_crlf');
-        $config['cms_email_newline'] = $this->cms_get_config('cms_email_newline');
-        $config['cms_email_bcc_batch_mode'] = (boolean) $this->cms_get_config('cms_email_bcc_batch_mode');
-        $config['cms_email_bcc_batch_size'] = $this->cms_get_config('cms_email_bcc_batch_size');
+        $config['useragent'] = $this->cms_get_config('cms_email_useragent');
+        $config['protocol'] = $this->cms_get_config('cms_email_protocol');
+        $config['mailpath'] = $this->cms_get_config('cms_email_mailpath');
+        $config['smtp_host'] = $this->cms_get_config('cms_email_smtp_host');
+        $config['smtp_user'] = $this->cms_get_config('cms_email_smtp_user');
+        $config['smtp_pass'] = $this->cms_get_config('cms_email_smtp_pass');
+        $config['smtp_port'] = $this->cms_get_config('cms_email_smtp_port');
+        $config['smtp_timeout'] = $this->cms_get_config('cms_email_smtp_timeout');
+        $config['wordwrap'] = (boolean) $this->cms_get_config('cms_email_wordwrap');
+        $config['wrapchars'] = $this->cms_get_config('cms_email_wrapchars');
+        $config['mailtype'] = $this->cms_get_config('cms_email_mailtype');
+        $config['charset'] = $this->cms_get_config('cms_email_charset');
+        $config['validate'] = (boolean) $this->cms_get_config('cms_email_validate');
+        $config['priority'] = $this->cms_get_config('cms_email_priority');
+        $config['crlf'] = $this->cms_get_config('cms_email_crlf');
+        $config['newline'] = $this->cms_get_config('cms_email_newline');
+        $config['bcc_batch_mode'] = (boolean) $this->cms_get_config('cms_email_bcc_batch_mode');
+        $config['bcc_batch_size'] = $this->cms_get_config('cms_email_bcc_batch_size');
 
         $this->email->initialize($config);
         $this->email->from($from_address, $from_name);
@@ -623,6 +624,7 @@ class CMS_Model extends CI_Model {
         $this->email->message($message);
 
         $this->email->send();
+        //echo $this->email->print_debugger();
     }
 
     /**
