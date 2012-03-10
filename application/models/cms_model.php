@@ -88,7 +88,7 @@ class CMS_Model extends CI_Model {
             return array();
         }
 
-        $where_is_root = !isset($parent_id) ? "is_root=1" : "is_root=0 AND parent_id = '" . addslashes($parent_id) . "'";
+        $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
         $query = $this->db->query(
                 "SELECT navigation_id, navigation_name, is_static, title, description, url, active 
                 FROM cms_navigation AS n WHERE

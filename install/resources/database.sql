@@ -1,7 +1,3 @@
-DROP TRIGGER IF EXISTS `trg_before_insert_cms_navigation`;
-/*split*/
-DROP TRIGGER IF EXISTS `trg_before_update_cms_navigation`;
-/*split*/
 DROP TABLE IF EXISTS `cms_config`;
 /*split*/
 DROP TABLE IF EXISTS `cms_module_dependency`;
@@ -70,7 +66,7 @@ CREATE TABLE `cms_widget` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_navigation` (
+CREATE TABLE IF NOT EXISTS `cms_navigation` (
   `navigation_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `navigation_name` varchar(45) NOT NULL,
   `parent_id` int(20) unsigned DEFAULT NULL,
@@ -78,7 +74,6 @@ CREATE TABLE `cms_navigation` (
   `description` text,
   `url` varchar(45) DEFAULT NULL,
   `authorization_id` tinyint(4) unsigned NOT NULL DEFAULT '1',
-  `is_root` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `index` int(20) NOT NULL DEFAULT '0',
   `active` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `is_static` tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -86,10 +81,8 @@ CREATE TABLE `cms_navigation` (
   PRIMARY KEY (`navigation_id`),
   UNIQUE KEY `navigation_name` (`navigation_name`),
   KEY `parent_id` (`parent_id`),
-  KEY `authorization_id` (`authorization_id`),
-  CONSTRAINT `cms_navigation_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `cms_navigation` (`navigation_id`),
-  CONSTRAINT `cms_navigation_ibfk_2` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `authorization_id` (`authorization_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 /*split*/
 
 CREATE TABLE `cms_quicklink` (
@@ -217,26 +210,6 @@ CREATE TABLE IF NOT EXISTS  `ci_sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;;
 /*split*/
 
-DELIMITER ;;
-/*split*/
-CREATE TRIGGER `trg_before_insert_cms_navigation` BEFORE INSERT ON `cms_navigation` FOR EACH ROW 
-IF NEW.is_root = 1 THEN SET NEW.parent_id = NULL;
-END IF
-;;
-/*split*/
-DELIMITER ;
-/*split*/
-
-DELIMITER ;;
-/*split*/
-CREATE TRIGGER `trg_before_update_cms_navigation` BEFORE UPDATE ON `cms_navigation` FOR EACH ROW 
-IF NEW.is_root = 1 THEN SET NEW.parent_id = NULL;
-END IF
-;;
-/*split*/
-DELIMITER ;
-/*split*/
-
 
 INSERT INTO `cms_authorization` (`authorization_id`, `authorization_name`, `description`) VALUES
 (1, 'Everyone', 'All visitor of the web are permitted (e.g:view blog content)'),
@@ -260,25 +233,25 @@ INSERT INTO `cms_module` (`module_id`, `module_name`, `user_id`) VALUES
 /*split*/
 
 
-INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `is_root`, `index`, `active`, `is_static`, `static_content`) VALUES
-(1, 'main_login', NULL, 'Login', 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 1, 0, NULL),
-(2, 'main_forgot', NULL, 'Forgot password', 'Accidentally forgot password', 'main/forgot', 2, 1, 3, 1, 0, NULL),
-(3, 'main_logout', NULL, 'Logout', 'Logout for deauthentication', 'main/logout', 3, 1, 2, 1, 0, NULL),
-(4, 'main_management', NULL, 'CMS Management', 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 1, 6, 1, 0, NULL),
-(5, 'main_register', NULL, 'Register', 'New User Registration', 'main/register', 2, 1, 4, 1, 0, NULL),
-(6, 'main_change_profile', NULL, 'Change Profile', 'Change Current Profile', 'main/change_profile', 3, 1, 5, 1, 0, NULL),
-(7, 'main_group_management', 4, 'Group Management', 'Group Management', 'main/group', 4, 0, 0, 1, 0, NULL),
-(8, 'main_navigation_management', 4, 'Navigation Management', 'Navigation management', 'main/navigation', 4, 0, 3, 1, 0, NULL),
-(9, 'main_privilege_management', 4, 'Privilege Management', 'Privilege Management', 'main/privilege', 4, 0, 2, 1, 0, NULL),
-(10, 'main_user_management', 4, 'User Management', 'Manage User', 'main/user', 4, 0, 1, 1, 0, NULL),
-(11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_management', 4, 0, 5, 1, 0, NULL),
-(12, 'main_change_theme', 4, 'Change Theme', 'Change Theme', 'main/change_theme', 4, 0, 6, 1, 0, NULL),
-(13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 0, 4, 1, 0, NULL),
-(14, 'main_quicklink_management', 4, 'Quick Link Management', 'Manage Quick Link', 'main/quicklink', 4, 0, 7, 1, 0, NULL),
-(15, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 0, 8, 1, 0, NULL),
-(16, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 1, 0, 1, 0, NULL),
-(17, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 1, 7, 1, 0, NULL),
-(18, 'wysiwyg_index', 4, 'WYSIWYG', NULL, 'wysiwyg', 4, 0, 9, 1, 0, NULL);
+INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `index`, `active`, `is_static`, `static_content`) VALUES
+(1, 'main_login', NULL, 'Login', 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL),
+(2, 'main_forgot', NULL, 'Forgot password', 'Accidentally forgot password', 'main/forgot', 2, 3, 1, 0, NULL),
+(3, 'main_logout', NULL, 'Logout', 'Logout for deauthentication', 'main/logout', 3, 2, 1, 0, NULL),
+(4, 'main_management', NULL, 'CMS Management', 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 6, 1, 0, NULL),
+(5, 'main_register', NULL, 'Register', 'New User Registration', 'main/register', 2, 4, 1, 0, NULL),
+(6, 'main_change_profile', NULL, 'Change Profile', 'Change Current Profile', 'main/change_profile', 3, 5, 1, 0, NULL),
+(7, 'main_group_management', 4, 'Group Management', 'Group Management', 'main/group', 4, 0, 1, 0, NULL),
+(8, 'main_navigation_management', 4, 'Navigation Management', 'Navigation management', 'main/navigation', 4, 3, 1, 0, NULL),
+(9, 'main_privilege_management', 4, 'Privilege Management', 'Privilege Management', 'main/privilege', 4, 2, 1, 0, NULL),
+(10, 'main_user_management', 4, 'User Management', 'Manage User', 'main/user', 4, 1, 1, 0, NULL),
+(11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_management', 4, 5, 1, 0, NULL),
+(12, 'main_change_theme', 4, 'Change Theme', 'Change Theme', 'main/change_theme', 4, 6, 1, 0, NULL),
+(13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 4, 1, 0, NULL),
+(14, 'main_quicklink_management', 4, 'Quick Link Management', 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL),
+(15, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL),
+(16, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 0, 1, 0, NULL),
+(17, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 7, 1, 0, NULL),
+(18, 'wysiwyg_index', 4, 'WYSIWYG', NULL, 'wysiwyg', 4, 9, 1, 0, NULL);
 /*split*/
 
 INSERT INTO `cms_quicklink` (`quicklink_id`, `navigation_id`, `index`) VALUES

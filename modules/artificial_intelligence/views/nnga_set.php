@@ -1,12 +1,12 @@
 <style type="text/css"> 
     div.form{
-        width:400px;
+        width:390px;
         float:left;
     }
     div.form label{
         display:block;
         text-align:right;
-        width:140px;
+        width:150px;
         float:left;
     }
     div.form input, div.form textarea, div.form checkbox{

@@ -20,7 +20,7 @@ class gofrendi_homework extends CMS_Controller{
     public function train_iris(){
         $this->load->model('gofrendi_homework/iris_data');
         $dataset = $this->iris_data->get();
-        $this->ai_nnga->set($dataset,array(count($dataset[0][0]),3,count($dataset[0][1])), 0.1, 0.01, 1000, 200);
+        $this->ai_nnga->set($dataset,array(count($dataset[0][0]),4,count($dataset[0][1])), 0.1, 0.01, 1000, 100);
         redirect('artificial_intelligence/nnga/set');
     }
     public function train_and(){

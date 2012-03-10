@@ -284,9 +284,9 @@ class Main extends CMS_Controller {
 
         $crud->set_table('cms_navigation');
         $crud->columns('navigation_name', 'parent_id', 'title', 'active', 'is_static', 'authorization_id', 'groups');
-        $crud->edit_fields('navigation_name', 'is_root', 'parent_id', 'title', 'description', 'index', 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('navigation_name', 'is_root', 'parent_id', 'title', 'description', 'index', 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
-        $crud->change_field_type('is_root', 'true_false');
+        $crud->edit_fields('navigation_name', /*'is_root',*/ 'parent_id', 'title', 'description', 'index', 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
+        $crud->add_fields('navigation_name', /*'is_root',*/ 'parent_id', 'title', 'description', 'index', 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
+        //$crud->change_field_type('is_root', 'true_false');
         $crud->change_field_type('active', 'true_false');
         $crud->change_field_type('is_static', 'true_false');
         $crud->change_field_type('index', 'integer');
@@ -313,10 +313,10 @@ class Main extends CMS_Controller {
 
         $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id', 'group_name');
 
-        $crud->callback_before_insert(array($this, 'before_insert_navigation'));
-
+        
         $crud->callback_after_insert(array($this, 'after_insert_navigation'));
         $crud->callback_after_update(array($this, 'after_update_navigation'));
+        $crud->callback_before_insert(array($this, 'before_insert_navigation'));
 
         $output = $crud->render();
 
@@ -531,31 +531,24 @@ class Main extends CMS_Controller {
             $this->view('main/change_theme', $data, 'main_change_theme');
         }
     }
-
-    public function show_static_widget($id) {
+    
+    public function show_widget($id){
         if (isset($id)) {
-            $SQL = "SELECT static_content FROM cms_widget WHERE widget_id=" . $id;
+            $SQL = "SELECT url, is_static, static_content FROM cms_widget WHERE widget_id=" . $id;
             $query = $this->db->query($SQL);
             $row = $query->row();
-            $data['content'] = $this->cms_parse_keyword($row->static_content);
-
-            $this->view('main/static_page', $data);
+            $is_static = $row->is_static==1;
+            $url = $row->url;
+            $static_content = $this->cms_parse_keyword($row->static_content);
+            
+            if($is_static){
+                $data['_content'] = $static_content;
+                $this->view('main/static_page', $data);
+            }else{
+                redirect($url.'?_only_content=1');
+            }
         } else {
-            echo "invalid widget";
-        }
-    }
-
-    public function show_static_page($id) {
-        if (isset($id)) {
-            $navigation_name = "";
-            $SQL = "SELECT navigation_name, static_content FROM cms_navigation WHERE navigation_id=" . $id;
-            $query = $this->db->query($SQL);
-            $row = $query->row();
-            $data['content'] = $this->cms_parse_keyword($row->static_content);
-            $navigation_name = $row->navigation_name;
-            $this->view('main/static_page', $data, $navigation_name);
-        } else {
-            echo "invalid page";
+            echo "widget doesn't exist";
         }
     }
 

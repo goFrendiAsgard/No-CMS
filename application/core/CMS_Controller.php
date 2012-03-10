@@ -171,11 +171,7 @@ class CMS_Controller extends CI_Controller {
      * @desc  replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
      */
     protected function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL, $custom_theme = NULL, $custom_layout = NULL, $return_as_string = FALSE) {
-        /**
-        $this->output->cache(1);
-        $this->template->set_cache(1); 
-         * 
-         */       
+           
         
         $result = NULL;
 
@@ -225,6 +221,19 @@ class CMS_Controller extends CI_Controller {
             }
         } else {
             $allowed = false;
+        }
+        
+        //check if static page        
+        $data = (array) $data;
+        if(isset($navigation_name) && !isset($data['_content'])){
+            $SQL = "SELECT static_content FROM cms_navigation WHERE is_static=1 AND navigation_name='$navigation_name'";
+            $query = $this->db->query($SQL);
+            if ($query->num_rows() > 0) {
+                $row = $query->row();
+                $static_content = $row->static_content;
+                $data["_content"] = $static_content;  
+                return $this->view('main/static_page', $data, $navigation_name, $privilege_required, $custom_theme, $custom_layout, $return_as_string);
+            }            
         }
         
 

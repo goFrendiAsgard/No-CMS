@@ -20,10 +20,10 @@ class Navigation_Model extends CMS_Model{
         $SQL = "";
         $result = array();
         if(!isset($parent_id)){
-            $SQL = "SELECT navigation_id, title, `index`, active, is_root 
-                FROM cms_navigation WHERE is_root = 1 ORDER BY `index`";
+            $SQL = "SELECT navigation_id, title, `index`, active, (parent_id IS NULL) AS is_root
+                FROM cms_navigation WHERE parent_id IS NULL ORDER BY `index`";
         }else{
-            $SQL = "SELECT navigation_id, title, `index`, active, is_root 
+            $SQL = "SELECT navigation_id, title, `index`, active, (parent_id IS NULL) AS is_root 
                 FROM cms_navigation WHERE parent_id = $parent_id ORDER BY `index`";
         }
         $query = $this->db->query($SQL);
@@ -53,7 +53,7 @@ class Navigation_Model extends CMS_Model{
     
     public function promote_navigation($id){
         //me
-        $SQL = "SELECT navigation_id, parent_id, is_root, `index` FROM cms_navigation WHERE navigation_id=$id";
+        $SQL = "SELECT navigation_id, parent_id, (parent_id IS NULL) AS is_root, `index` FROM cms_navigation WHERE navigation_id=$id";
         $query = $this->db->query($SQL);
         $row = $query->row();
         $my_parent_id = $row->parent_id;
@@ -61,9 +61,9 @@ class Navigation_Model extends CMS_Model{
         $my_navigation_id = $row->navigation_id;
         $my_is_root = $row->is_root;
         
-        if($my_is_root !=1){
+        if($my_is_root==0){
             //dad
-            $SQL = "SELECT navigation_id, parent_id, is_root, `index` FROM cms_navigation 
+            $SQL = "SELECT navigation_id, parent_id, (parent_id IS NULL) AS is_root, `index` FROM cms_navigation 
                 WHERE navigation_id= $my_parent_id";
             $query = $this->db->query($SQL);
             $row = $query->row();
@@ -78,12 +78,12 @@ class Navigation_Model extends CMS_Model{
             $this->db->set("`index`", "`index`+1", FALSE);
             $this->db->where("`index` > $dad_index AND $dadSibling");
             $this->db->update('cms_navigation'); 
+            
 
             //I become dad's younger_bro
             $data = array(
                 "parent_id"=>$dad_parent_id, 
-                "index"=>$dad_index+1,
-                "is_root"=>$dad_is_root
+                "index"=>$dad_index+1
             );
             $where = array("navigation_id"=>$my_navigation_id);
             $this->db->update('cms_navigation', $data, $where);
@@ -125,8 +125,7 @@ class Navigation_Model extends CMS_Model{
             //I become big bro youngest son
             $data = array(
                 "parent_id"=>$bro_navigation_id, 
-                "index"=>$bro_last_child_index+1,
-                "is_root"=>0
+                "index"=>$bro_last_child_index+1
             );
             $where = array("navigation_id"=>$my_navigation_id);
             $this->db->update('cms_navigation', $data, $where);

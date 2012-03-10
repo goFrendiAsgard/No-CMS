@@ -9,11 +9,7 @@
                 $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'">';
                 $html.= '<h4>'.$widget['title'].'</h4>';
                 $html.= '<div class="widget_content"></div>';
-                if($widget['is_static']){
-                    $path=base_url().'index.php/main/show_static_widget/'.$widget['widget_id'].'?_only_content=true';
-                }else{
-                    $path=base_url().'index.php/'.$widget['url'].'?_only_content=true';
-                }
+                $path=base_url().'index.php/main/show_widget/'.$widget['widget_id'].'?_only_content=true';
                 $js.= '
                         $.ajax({
                             url : "'.$path.'",
@@ -86,12 +82,8 @@
                     $pageLinkClass .= ' layout_have_child';
                 }else{
                     $pageLinkClass .= ' layout_no_child';
-                }            
-                if($navigation['is_static']){
-                    $html.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>$pageLinkClass));
-                }else{
-                    $html.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
                 }
+                $html.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
                 $html.= '<div class="layout_clear"></div>';
                 if(isset($navigation['description'])){
                     $html.= '<div class="layout_nav_description invisible">Description : '.
@@ -112,18 +104,12 @@
     	
     	$html = '';
     	foreach($navigations as $navigation){
-    		if($navigation['is_static']){
-    			$html.= anchor(base_url().'index.php/main/show_static_page/'.$navigation['navigation_id'], $navigation['title'], array('class'=>'layout_quicklink'));
-    		}else{
-    			$html.= anchor($navigation['url'], $navigation['title'], array('class'=>'layout_quicklink layout_button'));
-    		}
+    		$html.= anchor($navigation['url'], $navigation['title'], array('class'=>'layout_quicklink layout_button'));
     		$html .='&nbsp;';
     	}    	
     	return $html;
     	
     }
-    
-    
     
     function build_menu_path($path){
         $html = "";

@@ -97,10 +97,7 @@ class CMS_Module_Installer extends CMS_Controller {
         );
         if(isset($parent_id)){
             $data['parent_id'] = $parent_id;
-            $data['is_root'] = 0;
-        }else{
-            $data['is_root'] = 1;
-        }        
+        }      
         $this->db->insert('cms_navigation',$data);
     }
     protected function remove_navigation($navigation_name){

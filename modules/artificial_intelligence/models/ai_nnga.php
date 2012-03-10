@@ -14,8 +14,8 @@ class AI_GA_For_NN extends AI_Genetics_Algorithm{
     //I have made nn->out(input, customWeight) to help you
     protected $NN;
     private $dataSet;
-    private $bitLength=32;
-    private $floatingPoint=0.00000001;
+    private $bitLength=29;
+    private $SHR = 26;
     private $decodedGene;
     
     public function __construct(){
@@ -46,9 +46,9 @@ class AI_GA_For_NN extends AI_Genetics_Algorithm{
         
         $result = array();
         for($i=0; $i<strlen($gene); $i+=($this->bitLength+1)){
-            $num = bindec(substr($gene, $i+1, $this->bitLength));
+            $num = bindec(substr($gene, $i+1, $this->bitLength));             
+            $num = $num >> $this->SHR;
             if($gene[$i]==0) $num *= -1;
-            $num *= $this->floatingPoint;
             $result[] = $num;
         }
         $this->decodedGene[$gene] = $result;
