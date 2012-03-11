@@ -314,8 +314,6 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id', 'group_name');
 
         
-        $crud->callback_after_insert(array($this, 'after_insert_navigation'));
-        $crud->callback_after_update(array($this, 'after_update_navigation'));
         $crud->callback_before_insert(array($this, 'before_insert_navigation'));
 
         $output = $crud->render();
@@ -457,45 +455,7 @@ class Main extends CMS_Controller {
         $post_array['index'] = $index;
 
         return $post_array;
-    }
-
-    public function after_insert_navigation($post_array) {
-        foreach ($post_array['groups'] as $group_id) {
-            $this->also_add_group_navigation($group_id, $post_array['parent_id']);
-        }
-    }
-
-    public function after_update_navigation($post_array) {
-        foreach ($post_array['groups'] as $group_id) {
-            $this->also_add_group_navigation($group_id, $post_array['parent_id']);
-        }
-    }
-
-    private function also_add_group_navigation($group_id, $navigation_id) {
-        //automatically also authorize parent
-        $SQL = "SELECT group_id, cms_navigation.navigation_id 
-    		FROM cms_group_navigation, cms_navigation 
-    		WHERE cms_navigation.navigation_id = cms_group_navigation.navigation_id AND
-    		authorization_id = 4 AND
-    		cms_group_navigation.group_id = $group_id AND 
-    		cms_group_navigation.navigation_id = $navigation_id";
-        $query = $this->db->query($SQL);
-        if ($query->num_rows() == 0) {
-            $data = array(
-                'group_id' => $group_id,
-                'navigation_id' => $navigation_id
-            );
-            $this->db->insert('cms_group_navigation', $data);
-
-            $SQL = "SELECT parent_id FROM cms_navigation WHERE navigation_id =" . $navigation_id;
-            $query = $this->db->query($SQL);
-            $row = $query->row();
-            $parent_id = $row->parent_id;
-            if (isset($parent_id)) {
-                also_add_group_navigation($group_id, $parent_id);
-            }
-        }
-    }
+    }    
 
     public function config() {
         $crud = new grocery_CRUD();

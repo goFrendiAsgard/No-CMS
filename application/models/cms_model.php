@@ -90,8 +90,7 @@ class CMS_Model extends CI_Model {
 
         $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
         $query = $this->db->query(
-                "SELECT navigation_id, navigation_name, is_static, title, description, url, active 
-                FROM cms_navigation AS n WHERE
+                "SELECT navigation_id, navigation_name, is_static, title, description, url, active,
                     (
                         (authorization_id = 1) OR
                         (authorization_id = 2 AND $not_login) OR
@@ -109,10 +108,20 @@ class CMS_Model extends CI_Model {
                                 )>0
                             )
                         )
-                    ) AND $where_is_root ORDER BY n.index"
+                    ) AS allowed
+                FROM cms_navigation AS n WHERE
+                    $where_is_root ORDER BY n.index"
         );
         $result = array();
         foreach ($query->result() as $row) {
+            $children = $this->cms_navigations($row->navigation_id, $max_menu_depth);
+            $have_allowed_children = false;
+            foreach($children as $child){
+                if($child["allowed"]){
+                    $have_allowed_children = true;
+                    break;
+                }
+            }
             $result[] = array(
                 "navigation_id" => $row->navigation_id,
                 "navigation_name" => $row->navigation_name,
@@ -121,7 +130,9 @@ class CMS_Model extends CI_Model {
                 "url" => $row->url,
                 "is_static" => $row->is_static,
                 "active"=> $row->active,
-                "child" => $this->cms_navigations($row->navigation_id, $max_menu_depth)
+                "child" => $children,
+                "allowed" => $row->allowed,
+                "have_allowed_children" => $have_allowed_children
             );
         }
         return $result;

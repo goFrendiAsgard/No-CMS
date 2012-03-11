@@ -56,42 +56,48 @@
         
         $html.= '<ul class="layout_nav '.$class_invisible.'">';
         foreach($navigations as $navigation){
-            $layout_nav_hot = ($last_path == $navigation['navigation_name'])?'layout_nav_hot':'';
-            if($navigation['active']==1){
-                $html.= '<li class ="'.$layout_nav_hot.'">';
-                if(count($navigation['child'])>0){
-                    $in_path = false;
-                    if($last_path != $navigation['navigation_name']){
-                        foreach($path as $current_path){
-                            if($current_path['navigation_name']==$navigation['navigation_name']){
-                                $in_path = true;
-                                break;
+            if($navigation['allowed'] || $navigation['have_allowed_children']){
+                $layout_nav_hot = ($last_path == $navigation['navigation_name'])?'layout_nav_hot':'';
+                if($navigation['active']==1){
+                    $html.= '<li class ="'.$layout_nav_hot.'">';
+                    if(count($navigation['child'])>0){
+                        $in_path = false;
+                        if($last_path != $navigation['navigation_name']){
+                            foreach($path as $current_path){
+                                if($current_path['navigation_name']==$navigation['navigation_name']){
+                                    $in_path = true;
+                                    break;
+                                }
                             }
                         }
+
+                        if($in_path){
+                            $html.= '<a href="#" class="layout_expand">[-]</a> ';
+                        }else{
+                            $html.= '<a href="#" class="layout_expand">[+]</a> ';
+                        }                
                     }
 
-                    if($in_path){
-                        $html.= '<a href="#" class="layout_expand">[-]</a> ';
+                    $pageLinkClass = 'layout_page_link';
+                    if(count($navigation['child'])>0){
+                        $pageLinkClass .= ' layout_have_child';
                     }else{
-                        $html.= '<a href="#" class="layout_expand">[+]</a> ';
-                    }                
-                }
+                        $pageLinkClass .= ' layout_no_child';
+                    }
+                    if($navigation['allowed']){
+                        $html.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
+                    }else{
+                        $html.= $navigation['title'];
+                    }
+                    $html.= '<div class="layout_clear"></div>';
+                    if(isset($navigation['description'])){
+                        $html.= '<div class="layout_nav_description invisible">Description : '.
+                                $navigation['description'].'</div>';
+                    }
 
-                $pageLinkClass = 'layout_page_link';
-                if(count($navigation['child'])>0){
-                    $pageLinkClass .= ' layout_have_child';
-                }else{
-                    $pageLinkClass .= ' layout_no_child';
+                    $html.= build_menu($navigation['child'], $path, TRUE);
+                    $html.= '</li>';
                 }
-                $html.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
-                $html.= '<div class="layout_clear"></div>';
-                if(isset($navigation['description'])){
-                    $html.= '<div class="layout_nav_description invisible">Description : '.
-                            $navigation['description'].'</div>';
-                }
-
-                $html.= build_menu($navigation['child'], $path, TRUE);
-                $html.= '</li>';
             }
         }
         $html.= '</ul>';
