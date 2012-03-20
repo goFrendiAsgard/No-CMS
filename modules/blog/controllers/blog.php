@@ -187,11 +187,11 @@ class Blog extends CMS_Controller {
     	$crud = new grocery_CRUD();
     	
     	$crud->set_table('blog_photo');
-        echo var_dump($article_id);
     	if(isset($article_id) && intval($article_id)>0){
     		$crud->where('blog_photo.article_id', $article_id);
     		$crud->change_field_type('article_id', 'hidden');
     	}
+        $crud->display_as('article_id','Article\'s title');
     	$crud->set_field_upload('url','assets/uploads/files');
     	$crud->set_relation('article_id', 'blog_article', 'article_title');
     	
@@ -232,7 +232,6 @@ class Blog extends CMS_Controller {
     }
     
     public function before_insert_photo($post_array){
-    	var_dump($this->uri->segment(3));
     	$post_array['article_id'] = $this->uri->segment(3);
     	return $post_array;
     }
