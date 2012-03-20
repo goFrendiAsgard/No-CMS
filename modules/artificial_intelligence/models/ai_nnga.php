@@ -9,9 +9,6 @@ require_once(APPPATH.'../modules/artificial_intelligence/models/ai_genetics_algo
  * @author gofrendi
  */
 class AI_GA_For_NN extends AI_Genetics_Algorithm{
-    //dear, future me, you have save everything in database right?
-    //just pull NN's property to have a fitness function
-    //I have made nn->out(input, customWeight) to help you
     protected $NN;
     private $dataSet;
     private $bitLength=29;
@@ -75,19 +72,23 @@ class AI_GA_For_NN extends AI_Genetics_Algorithm{
     }
     
     protected function calculateFitness($gene){
-        $weights = $this->decodeGene($gene);
-        $dataSet = $this->dataSet;
-        $MSE = 0;
-        for($i=0; $i<count($dataSet); $i++){
-            $output = $this->NN->out($dataSet[$i][0], $weights);
-            $desiredOutput = $dataSet[$i][1];
-            for($j=0; $j<count($output); $j++){
-                $MSE += pow($desiredOutput[$j]-$output[$j],2);
+        if(isset($this->ga_alreadyCalculatedGenes[$gene])){
+            return $this->ga_alreadyCalculatedGenes[$gene];
+        }else{
+            $weights = $this->decodeGene($gene);
+            $dataSet = $this->dataSet;
+            $MSE = 0;
+            for($i=0; $i<count($dataSet); $i++){
+                $output = $this->NN->out($dataSet[$i][0], $weights);
+                $desiredOutput = $dataSet[$i][1];
+                for($j=0; $j<count($output); $j++){
+                    $MSE += pow($desiredOutput[$j]-$output[$j],2);
+                }
             }
+
+            $this->ga_alreadyCalculatedGenes[$gene] = 1/($MSE+0.000001); //since MSE is 0 or positive, I do this to avoid division by zero
+            return $this->ga_alreadyCalculatedGenes[$gene];
         }
-        //$MSE /= count($dataSet[0][1]) * count($dataSet);
-        
-        return 1/($MSE+0.000001); //since MSE is 0 or positive, I do this to avoid division by zero
     }
     
     public function bestWeight(){

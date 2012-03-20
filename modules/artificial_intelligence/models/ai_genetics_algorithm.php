@@ -23,6 +23,7 @@ class AI_Genetics_Algorithm extends AI_Core{
     protected $ga_reproductionRate;     // float
     protected $ga_time;                 // float
     protected $ga_bestFitness;          // float[]
+    protected $ga_alreadyCalculatedGenes;// pair {genes : float}
     
     public function __construct(){
         parent::__construct();
@@ -30,7 +31,6 @@ class AI_Genetics_Algorithm extends AI_Core{
     
     protected function begin(){
         $property = $this->core_getProperty();
-        //$this->ga_population            = $property["ga_population"];
         $this->ga_genes                 = $property["ga_genes"];
         $this->ga_fitness               = $property["ga_fitness"];
         $this->ga_fitnessOrder          = $property["ga_fitnessOrder"];
@@ -44,7 +44,8 @@ class AI_Genetics_Algorithm extends AI_Core{
         $this->ga_crossoverRate         = $property["ga_crossoverRate"];
         $this->ga_reproductionRate      = $property["ga_reproductionRate"];
         $this->ga_time                  = $property["ga_time"];
-        $this->ga_bestFitness           = $property["ga_bestFitness"];        
+        $this->ga_bestFitness           = $property["ga_bestFitness"]; 
+        $this->ga_alreadyCalculatedGenes= $property["ga_alreadyCalculatedGenes"];
     }
     
     protected function end(){
@@ -64,7 +65,8 @@ class AI_Genetics_Algorithm extends AI_Core{
                     "ga_crossoverRate",
                     "ga_reproductionRate",
                     "ga_time",
-                    "ga_bestFitness"
+                    "ga_bestFitness",
+                    "ga_alreadyCalculatedGenes"
                 ), 
                 array(
                     //$this->ga_population,
@@ -81,7 +83,8 @@ class AI_Genetics_Algorithm extends AI_Core{
                     $this->ga_crossoverRate,
                     $this->ga_reproductionRate,
                     $this->ga_time,
-                    $this->ga_bestFitness
+                    $this->ga_bestFitness,
+                    $this->ga_alreadyCalculatedGenes,
                 )
               );
     }
@@ -186,19 +189,19 @@ class AI_Genetics_Algorithm extends AI_Core{
     
     private function getRandomGene(){
         //the bigger fitness value, the bigger chance
+        $cdf = array();
         $sum = 0;
         for($i=0; $i<count($this->ga_genes); $i++){
             $sum += $this->ga_fitness[$i];
+            $cdf[$i]=$sum;
         }
         //mt_srand(2);
-        $dice = $sum * mt_rand(0,1000)/1000;
+        $dice = $sum * mt_rand(0,100)/100;
         //$dice = mt_rand(0, $sum);
         
-        $wheel = 0;
         $choosenIndex = 0;
         for($i=0; $i<count($this->ga_genes); $i++){
-            $wheel += $this->ga_fitness[$i];
-            if($dice<$wheel){
+            if($dice<=$cdf[$i]){
                 $choosenIndex = $i;
                 break;
             }
@@ -244,21 +247,22 @@ class AI_Genetics_Algorithm extends AI_Core{
             }
         }
         
-        //$this->ga_population["genes"] = $genes;
         
+        //in NNGA should introduce new variable to remember every calculated genes
+        //this is a specific condition, it is better to just call $this->calculateFitness($genes[$i]);
         
         $this->ga_genes = array();
         $this->ga_fitness = array();
         $this->ga_fitnessOrder = array();
         for($i=0; $i<count($genes); $i++){
-            $alreadyExist = FALSE;
-            for($j=0; $j<count($this->ga_genes); $j++){
-                if($genes[$i] == $this->ga_genes[$j]){
-                    $alreadyExist = TRUE;
+            $alreadyExists = FALSE;
+            for($j=0; $j<$i; $j++){
+                if($genes[$i]==$genes[$j]){
+                    $alreadyExists = TRUE;
                     break;
                 }
             }
-            if(!$alreadyExist){
+            if(!$alreadyExists){
                 $this->ga_genes[] = $genes[$i];
                 $this->ga_fitness[] = $this->calculateFitness($genes[$i]);
                 $this->ga_fitnessOrder[] = count($this->ga_fitnessOrder);
@@ -280,8 +284,6 @@ class AI_Genetics_Algorithm extends AI_Core{
         
         $this->ga_bestFitness[] = $this->ga_fitness[$this->ga_fitnessOrder[0]];
         
-        
-        
     }
     
     //absolutely need to override this
@@ -290,7 +292,9 @@ class AI_Genetics_Algorithm extends AI_Core{
     }
     
     public function currentState(){
-        return $this->core_getProperty();
+        $state = $this->core_getProperty();
+        unset($state['ga_alreadyCalculatedGenes']);
+        return $state;
     }
 }
 

@@ -70,51 +70,6 @@ class AI_Core extends CMS_Model{
         
     }
     
-    /**
-    public function core_saveProperty($key=NULL, $value=NULL){       
-               
-        $this->core_property = $this->core_getProperty();
-        if(isset($key)){
-            if(count($key)>0){
-                for($i=0; $i<count($key); $i++){
-                    $this->core_property[$key[$i]] = $value[$i];
-                }
-            }else{
-                $this->core_property[$key] = $value;
-            }
-            
-        }
-        
-        if(!isset($_SESSION)){
-            session_start();
-        }
-        
-        $_SESSION[$this->core_identifier] = $this->core_property;
-        
-    }
-    
-    public function core_getProperty($key=NULL){
-        
-        if(!isset($_SESSION)){
-            session_start();
-        }
-        
-        if(isset($_SESSION[$this->core_identifier])){
-            if(isset($key)){
-                $result = $_SESSION[$this->core_identifier][$key];
-            }else{
-                $result = $_SESSION[$this->core_identifier];
-            }
-        }else{
-            $result = NULL;
-        }
-        
-        return $result;
-        
-    }
-     * 
-     */
-    
 }
 
 ?>

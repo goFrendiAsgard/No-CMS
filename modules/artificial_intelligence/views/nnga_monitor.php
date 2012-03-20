@@ -285,7 +285,7 @@
         
         
         
-        setInterval(updateInfo,200);
+        setInterval(updateInfo,1000);
     });
 </script>
 <div id="control">

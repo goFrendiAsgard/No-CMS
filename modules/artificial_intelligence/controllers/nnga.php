@@ -6,23 +6,31 @@
  * @author gofrendi
  */
 class nnga extends CMS_Controller {
+    
     //put your code here
-    public function __construct(){
-        parent::__construct();
-         $this->load->model('artificial_intelligence/ai_nnga');
-         $this->ai_nnga->core_initialize('Default');
+    public function __construct($identifier=NULL){
+        parent::__construct();         
+        $this->initialize($identifier);
     }
     
-    public function index(){
+    private function initialize($identifier=NULL){
+        $this->load->model('artificial_intelligence/ai_nnga');
+        $identifier = isset($identifier)?$identifier:'Default';
+        $this->ai_nnga->core_initialize($identifier);
+    }
+    
+    public function index($identifier=NULL){
+        $this->initialize($identifier);
         $this->view('artificial_intelligence/nnga_index', NULL, 'ai_nnga_index');
     }
     
-    public function monitor(){
+    public function monitor($identifier=NULL){
+        $this->initialize($identifier);
         $this->view('artificial_intelligence/nnga_monitor', NULL, 'ai_nnga_monitor');
     }
     
-    public function set(){       
-        
+    public function set($identifier=NULL){       
+        $this->initialize($identifier);
         
         $nn_hidden_neuron_count = $this->input->post('nn_hidden_neuron_count');
         $nn_learning_rate = $this->input->post('nn_learning_rate');
@@ -140,26 +148,33 @@ class nnga extends CMS_Controller {
         
     }
     
-    public function trainNN(){
+    public function trainNN($identifier=NULL){
+        $this->initialize($identifier);
+        
         $nn_dataset = $this->session->userdata('nn_dataset');
         $nn_dataset = json_decode('['.$nn_dataset.']');
         $this->ai_nnga->train($nn_dataset, FALSE);
     }
     
-    public function trainNNGA(){
+    public function trainNNGA($identifier=NULL){
+        $this->initialize($identifier);
+        
         $nn_dataset = $this->session->userdata('nn_dataset');
         $nn_dataset = json_decode('['.$nn_dataset.']');
         $this->ai_nnga->train($nn_dataset, TRUE);
     }
     
-    public function currentState(){
+    public function currentState($identifier=NULL){
+        $this->initialize($identifier);
+        
         $result = $this->ai_nnga->currentState();
         echo json_encode($result);
     }
     
-    public function state(){
-        $result = $this->ai_nnga->currentState();
+    public function state($identifier=NULL){
+        $this->initialize($identifier);
         
+        $result = $this->ai_nnga->currentState();        
         echo '<pre>';
         echo var_dump($result);
         echo '</pre>';
