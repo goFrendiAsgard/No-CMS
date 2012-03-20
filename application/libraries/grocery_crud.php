@@ -16,7 +16,7 @@
  * @package    	grocery CRUD
  * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
  * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
- * @version    	1.1.8
+ * @version    	1.2
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -30,9 +30,9 @@
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  * @license     https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt  
- * @link		http://www.grocerycrud.com/crud/view/documentation
+ * @link		http://www.grocerycrud.com/documentation
  */
-class grocery_Field_Types
+class grocery_CRUD_Field_Types
 {	
 	/**	 
 	 * Gets the field types of the main table.
@@ -236,13 +236,13 @@ class grocery_Field_Types
 				$value = $this->default_true_false_text[$value];
 			break;
 			case 'string':
-				$value = $this->character_limiter($value,30," [...]");
+				$value = $this->character_limiter($value,30,"...");
 			break;
 			case 'text':
-				$value = $this->character_limiter(strip_tags($value),30," [...]");
+				$value = $this->character_limiter(strip_tags($value),30,"...");
 			break;
 			case 'date':
-				if(!empty($value) && $value != '0000-00-00')
+				if(!empty($value) && $value != '0000-00-00' && $value != '1970-01-01')
 				{
 					list($year,$month,$day) = explode("-",$value);
 					$value = date ("d M Y",mktime (0,0,0,(int)$month , (int)$day , (int)$year));
@@ -265,11 +265,11 @@ class grocery_Field_Types
 				}
 			break;
 			case 'enum':
-				$value = $this->character_limiter($value,20," [...]");
+				$value = $this->character_limiter($value,20,"...");
 			break;	
 			case 'relation_n_n':
 				$value = implode(', ' ,$this->get_relation_n_n_selection_array( $value, $this->relation_n_n[$field_info->name] ));
-				$value = $this->character_limiter($value,30," [...]");
+				$value = $this->character_limiter($value,30,"...");
 			break;						
 			
 			case 'password':
@@ -279,13 +279,13 @@ class grocery_Field_Types
 			case 'upload_file':
 				$value = !empty($value) ? 
 							"<a href='".base_url().$field_info->extras->upload_path."/$value' target='_blank'>".
-								$this->character_limiter($value,20," [...]",true).
+								$this->character_limiter($value,20,"...",true).
 							"</a>":
 							"";
 			break;
 			
 			default:
-				$value = $this->character_limiter($value,30," [...]");
+				$value = $this->character_limiter($value,30,"...");
 			break;
 		}
 		
@@ -388,22 +388,22 @@ class grocery_Field_Types
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.1.8  
- * @link		http://www.grocerycrud.com/crud/view/documentation
+ * @version    	1.2  
+ * @link		http://www.grocerycrud.com/documentation
  */
-class grocery_Model_Driver extends grocery_Field_Types
+class grocery_CRUD_Model_Driver extends grocery_CRUD_Field_Types
 {
 	/**
-	 * @var grocery_Model
+	 * @var grocery_CRUD_Model
 	 */
 	public $basic_model = null;
 	
 	protected function set_default_Model()
 	{
 		$ci = &get_instance();
-		$ci->load->model('grocery_Model');
+		$ci->load->model('grocery_CRUD_Model');
 		
-		$this->basic_model = $ci->grocery_Model;
+		$this->basic_model = $ci->grocery_CRUD_Model;
 	}
 	
 	protected function get_total_results()
@@ -434,7 +434,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 	public function set_model($model_name)
 	{
 		$ci = &get_instance();
-		$ci->load->model('grocery_Model');	
+		$ci->load->model('grocery_CRUD_Model');	
 		
 		$ci->load->model($model_name);
 		
@@ -476,13 +476,17 @@ class grocery_Model_Driver extends grocery_Field_Types
 			if($state_info->search->field != null)
 			{
 				if(isset($temp_relation[$state_info->search->field]))
+				{
 					if(is_array($temp_relation[$state_info->search->field]))
 						foreach($temp_relation[$state_info->search->field] as $search_field)
 							$this->or_like($search_field , $state_info->search->text);
 					else
 						$this->like($temp_relation[$state_info->search->field] , $state_info->search->text);
-				else
+				}
+				else 
+				{
 					$this->like($state_info->search->field , $state_info->search->text);
+				}
 			}
 			else 
 			{
@@ -517,14 +521,31 @@ class grocery_Model_Driver extends grocery_Field_Types
 		return false;
 	}	
 	
-	protected function get_relation_array($relation_info)
+	protected function get_relation_array($relation_info, $primary_key_value = null, $limit = null)
 	{
-		list($field_name , $related_table , $related_field_title)  = $relation_info;
+		list($field_name , $related_table , $related_field_title, $where_clause, $order_by)  = $relation_info;
 
-		$relation_array = $this->basic_model->get_relation_array($field_name , $related_table , $related_field_title);
+		if($primary_key_value !== null)
+		{
+			$primary_key = $this->basic_model->get_primary_key($related_table);
+			
+			//A where clause with the primary key is enough to take the selected key row
+			$where_clause = array($primary_key => $primary_key_value);		
+		}
+		
+		$relation_array = $this->basic_model->get_relation_array($field_name , $related_table , $related_field_title, $where_clause, $order_by, $limit);
 		
 		return $relation_array;
 	}
+	
+	protected function get_relation_total_rows($relation_info)
+	{
+		list($field_name , $related_table , $related_field_title, $where_clause)  = $relation_info;
+	
+		$relation_array = $this->basic_model->get_relation_total_rows($field_name , $related_table , $related_field_title, $where_clause);
+	
+		return $relation_array;
+	}	
 	
 	protected function db_insert_validation()
 	{
@@ -584,7 +605,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 	{
 		if($this->form_validation === null)
 		{
-			$this->form_validation = new grocery_Form_validation();
+			$this->form_validation = new grocery_CRUD_Form_validation();
 			$ci = &get_instance();
 			$ci->load->library('form_validation');
 			$ci->form_validation = $this->form_validation;
@@ -656,7 +677,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 			
 			$add_fields = $this->get_add_fields();
 
-			if($this->callback_escape_insert == null)
+			if($this->callback_insert == null)
 			{
 				if($this->callback_before_insert != null)
 				{
@@ -677,6 +698,14 @@ class grocery_Model_Driver extends grocery_Field_Types
 						if(isset($types[$field->field_name]->db_null) && $types[$field->field_name]->db_null && $post_data[$field->field_name] === '')
 						{
 							$insert_data[$field->field_name] = null;
+						}
+						elseif(isset($types[$field->field_name]->crud_type) && $types[$field->field_name]->crud_type == 'date')
+						{
+							$insert_data[$field->field_name] = $this->_convert_date_to_sql_date($post_data[$field->field_name]);
+						}
+						elseif(isset($types[$field->field_name]->crud_type) && $types[$field->field_name]->crud_type == 'datetime'){
+							$insert_data[$field->field_name] = $this->_convert_date_to_sql_date(substr($post_data[$field->field_name],0,10)).
+																		substr($post_data[$field->field_name],10);
 						}
 						else
 						{
@@ -717,7 +746,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 				}
 			}else
 			{
-					$callback_return = call_user_func($this->callback_escape_insert, $post_data);
+					$callback_return = call_user_func($this->callback_insert, $post_data);
 					
 					if($callback_return === false) 
 					{
@@ -746,7 +775,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 			$post_data 		= $state_info->unwrapped_data;
 			$primary_key 	= $state_info->primary_key;
 			
-			if($this->callback_escape_update == null)
+			if($this->callback_update == null)
 			{
 				if($this->callback_before_update != null)
 				{
@@ -773,6 +802,14 @@ class grocery_Model_Driver extends grocery_Field_Types
 						{
 							$update_data[$field->field_name] = null;
 						}
+						elseif(isset($types[$field->field_name]->crud_type) && $types[$field->field_name]->crud_type == 'date')
+						{
+							$update_data[$field->field_name] = $this->_convert_date_to_sql_date($post_data[$field->field_name]);
+						}
+						elseif(isset($types[$field->field_name]->crud_type) && $types[$field->field_name]->crud_type == 'datetime'){
+							$update_data[$field->field_name] = $this->_convert_date_to_sql_date(substr($post_data[$field->field_name],0,10)).
+																		substr($post_data[$field->field_name],10);
+						}						
 						else
 						{
 							$update_data[$field->field_name] = $post_data[$field->field_name];
@@ -803,7 +840,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 			}
 			else
 			{
-				$callback_return = call_user_func($this->callback_escape_update, $post_data, $primary_key);
+				$callback_return = call_user_func($this->callback_update, $post_data, $primary_key);
 					
 				if($callback_return === false) 
 				{
@@ -818,6 +855,35 @@ class grocery_Model_Driver extends grocery_Field_Types
 			return false;	
 		}		
 	}	
+	
+	protected function _convert_date_to_sql_date($date)
+	{
+		$date = substr($date,0,10);
+		if(preg_match('/\d{4}-\d{2}-\d{2}/',$date))
+		{
+			//If it's already a sql-date don't convert it!
+			return $date;
+		}elseif(empty($date))
+		{
+			return '';
+		}
+		
+		$date_array = preg_split( '/[-\.\/ ]/', $date);
+		if($this->php_date_format == 'd/m/Y')
+		{
+			$sql_date = date('Y-m-d',mktime(0,0,0,$date_array[1],$date_array[0],$date_array[2]));
+		}
+		elseif($this->php_date_format == 'm/d/Y')
+		{
+			$sql_date = date('Y-m-d',mktime(0,0,0,$date_array[0],$date_array[1],$date_array[2]));
+		}
+		else
+		{
+			$sql_date = $date;
+		}
+		
+		return $sql_date;
+	}
 	
 	protected function _get_field_names_to_search(array $relation_values)
 	{		
@@ -851,7 +917,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 	{
 		$primary_key 	= $state_info->primary_key;
 		
-		if($this->callback_escape_delete == null)
+		if($this->callback_delete == null)
 		{
 			if($this->callback_before_delete != null)
 			{
@@ -892,7 +958,7 @@ class grocery_Model_Driver extends grocery_Field_Types
 		}
 		else
 		{
-			$callback_return = call_user_func($this->callback_escape_delete, $primary_key);
+			$callback_return = call_user_func($this->callback_delete, $primary_key);
 				
 			if($callback_return === false) 
 			{
@@ -987,21 +1053,85 @@ class grocery_Model_Driver extends grocery_Field_Types
 	
 	protected function upload_file($state_info)
 	{
-		if(isset($state_info->field_name) && isset($this->upload_fields[$state_info->field_name]))
+		if(isset($this->upload_fields[$state_info->field_name]) )
 		{
-			$upload_info = $this->upload_fields[$state_info->field_name];
+			if($this->callback_upload === null)
+			{
+				if($this->callback_before_upload !== null)
+				{
+					$callback_before_upload_response = call_user_func($this->callback_before_upload, $_FILES,  $this->upload_fields[$state_info->field_name]);
+					
+					if($callback_before_upload_response === false)
+						return false;
+					elseif(is_string($callback_before_upload_response))
+						return $callback_before_upload_response;
+				}
+				
+				$upload_info = $this->upload_fields[$state_info->field_name];
+				
+				header('Pragma: no-cache');
+				header('Cache-Control: private, no-cache');
+				header('Content-Disposition: inline; filename="files.json"');
+				header('X-Content-Type-Options: nosniff');
+				header('Access-Control-Allow-Origin: *');
+				header('Access-Control-Allow-Methods: OPTIONS, HEAD, GET, POST, PUT, DELETE');
+				header('Access-Control-Allow-Headers: X-File-Name, X-File-Type, X-File-Size');
+				
+				$ci = &get_instance();
+				$ci->config->load('grocery_crud');		
+				
+				$allowed_files = $ci->config->item('grocery_crud_file_upload_allow_file_types');
+				$reg_exp = '/(\\.|\\/)('.$allowed_files.')$/i';		
+
+				$max_file_size_ui = $ci->config->item('grocery_crud_file_upload_max_file_size');
+				$max_file_size_bytes = $this->_convert_bytes_ui_to_bytes($max_file_size_ui);
 			
-			$input = fopen("php://input", "r");
-	        $temp = tmpfile();
-	        $realSize = stream_copy_to_stream($input, $temp);
-	        fclose($input);
-	        
-	        $target = fopen("{$upload_info->upload_path}/{$state_info->file_name}", "w");
-	        fseek($temp, 0, SEEK_SET);
-	        stream_copy_to_stream($temp, $target);
-	        fclose($target);
-	        
-	        return (object)array('file_name' => $state_info->file_name);
+				$options = array(
+					'upload_dir' 		=> $upload_info->upload_path.'/',
+					'param_name'		=> $this->_unique_field_name($state_info->field_name),
+					'upload_url'		=> base_url().$upload_info->upload_path.'/',
+					'accept_file_types' => $reg_exp,
+					'max_file_size'		=> $max_file_size_bytes
+				);
+				$upload_handler = new UploadHandler($options);
+				$uploader_response = $upload_handler->post();
+				
+				if(is_array($uploader_response))
+				{
+					foreach($uploader_response as &$response)
+					{
+						unset($response->delete_url);
+						unset($response->delete_type);
+					}
+				}
+				
+				if($this->callback_after_upload !== null)
+				{
+					$callback_after_upload_response = call_user_func($this->callback_after_upload, $uploader_response ,  $this->upload_fields[$state_info->field_name] , $_FILES );
+					
+					if($callback_after_upload_response === false)
+						return false;
+					elseif(is_string($callback_after_upload_response))
+						return $callback_after_upload_response;
+					elseif(is_array($callback_after_upload_response))
+						$uploader_response = $callback_after_upload_response;
+				}				
+				
+				return $uploader_response;
+			}
+			else 
+			{
+				$upload_response = call_user_func($this->callback_upload, $_FILES, $this->upload_fields[$state_info->field_name] );
+
+				if($upload_response === false)
+				{
+					return false;
+				}
+				else 
+				{
+					return $upload_response;
+				}
+			}
 		}
 		else
 		{
@@ -1039,7 +1169,17 @@ class grocery_Model_Driver extends grocery_Field_Types
 		{
 			return false;
 		} 	
-	}	
+	}
+
+	protected function ajax_relation($state_info)
+	{
+		if(!isset($this->relation[$state_info->field_name]))
+			return false;
+		
+		list($field_name, $related_table, $related_field_title, $where_clause, $order_by)  = $this->relation[$state_info->field_name];
+		
+		return $this->basic_model->get_ajax_relation_array($state_info->search, $field_name, $related_table, $related_field_title, $where_clause, $order_by);
+	}
 }
 
 
@@ -1048,8 +1188,10 @@ class grocery_Model_Driver extends grocery_Field_Types
  *
  * LICENSE
  *
- * This source file is subject to the GPL license that is bundled
- * with this package in the file licence.txt.
+ * Grocery CRUD is released with dual licensing, using the GPL v3 (license-gpl3.txt) and the MIT license (license-mit.txt).
+ * You don't have to do anything special to choose one license or the other and you don't have to notify anyone which license you are using.
+ * Please see the corresponding license file for details of these licenses.
+ * You are free to use, modify and distribute this software, but all copyright information must remain.
  *
  * @package    	grocery CRUD
  * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
@@ -1066,9 +1208,9 @@ class grocery_Model_Driver extends grocery_Field_Types
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.1.8
+ * @version    	1.2
  */
-class grocery_Layout extends grocery_Model_Driver
+class grocery_CRUD_Layout extends grocery_CRUD_Model_Driver
 {
 	private $theme_path 				= null;
 	private $views_as_string			= '';
@@ -1206,7 +1348,6 @@ class grocery_Layout extends grocery_Model_Driver
 				elseif(isset($types[$field_name]) && $types[$field_name]->crud_type != 'relation_n_n')
 					$list[$num_row]->$field_name = $this->change_list_value($types[$field_name] , $field_value);
 				elseif(isset($types[$field_name]) && $types[$field_name]->crud_type == 'relation_n_n')
-				
 					$list[$num_row]->$field_name = $this->change_list_value($types[$field_name] , $row->$primary_key);				
 				else
 					$list[$num_row]->$field_name = $field_value;
@@ -1232,6 +1373,7 @@ class grocery_Layout extends grocery_Model_Driver
 		$data->hidden_fields	= $this->get_add_hidden_fields();
 		
 		$this->_theme_view('add.php',$data);
+		$this->_inline_js("var js_date_format = '".$this->js_date_format."';");
 	}
 	
 	protected function showEditForm($state_info)
@@ -1256,6 +1398,7 @@ class grocery_Layout extends grocery_Model_Driver
 		$data->validation_url	= $this->getValidationUpdateUrl($state_info->primary_key); 
 		
 		$this->_theme_view('edit.php',$data);
+		$this->_inline_js("var js_date_format = '".$this->js_date_format."';");
 	}
 	
 	protected function delete_layout($delete_result = true)
@@ -1304,22 +1447,26 @@ class grocery_Layout extends grocery_Model_Driver
 
 	protected function upload_layout($upload_result, $field_name)
 	{
-		if($upload_result !== false)
+		if($upload_result !== false && !is_string($upload_result) && empty($upload_result[0]->error))
 		{
 			echo json_encode(
-				(object)array(
-					'success' => true, 
-					'file_name' => $upload_result->file_name,
-					'full_url' => base_url().$this->upload_fields[$field_name]->upload_path.'/'.$upload_result->file_name
-				)
-			);
-			$this->set_echo_and_die();	
+					(object)array(
+							'success' => true,
+							'files'	=> $upload_result
+					));
 		}
 		else
 		{
-			echo json_encode((object)array('success' => false));
-			$this->set_echo_and_die();	
+			$result = (object)array('success' => false);
+			if(is_string($upload_result))
+				$result->message = $upload_result;
+			if(!empty($upload_result[0]->error))
+				$result->message = $upload_result[0]->error;
+				
+			echo json_encode($result);	
 		}
+		
+		$this->set_echo_and_die();
 	}	
 	
 	protected function delete_file_layout($upload_result)
@@ -1327,13 +1474,13 @@ class grocery_Layout extends grocery_Model_Driver
 		if($upload_result !== false)
 		{
 			echo json_encode( (object)array( 'success' => true ) );
-			$this->set_echo_and_die();	
 		}
 		else
 		{
-			echo json_encode((object)array('success' => false));
-			$this->set_echo_and_die();	
+			echo json_encode((object)array('success' => false));	
 		}
+		
+		$this->set_echo_and_die();
 	}	
 	
 	public function set_css($css_file)
@@ -1360,9 +1507,9 @@ class grocery_Layout extends grocery_Model_Driver
 	{		
 		$js_files = $this->get_js_files();
 		$css_files =  $this->get_css_files();
-		
+
 		if($this->unset_jquery)
-			unset($js_files['763b4d272e158bdb8ed5a12a1824c94f494954bd']);
+			unset($js_files[sha1('assets/grocery_crud/js/jquery-1.7.1.min.js')]);
 		
 		if($this->echo_and_die === false)
 		{
@@ -1418,7 +1565,7 @@ class grocery_Layout extends grocery_Model_Driver
 	
 	protected function get_string_input($field_info,$value)
 	{
-		$value = !is_string($value) ? '' : $value; 
+		$value = !is_string($value) ? '' : str_replace('"',"&quot;",$value); 
 		
 		$extra_attributes = '';
 		if(!empty($field_info->db_max_length))
@@ -1449,9 +1596,19 @@ class grocery_Layout extends grocery_Model_Driver
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery-ui-1.8.10.custom.min.js');
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js');
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.datetime.config.js');
-		$input = "<input name='{$field_info->name}' type='text' value='$value' maxlength='19' class='datetime-input' /> 
+		
+		if(!empty($value) && $value != '0000-00-00 00:00:00' && $value != '1970-01-01 00:00:00'){
+			list($year,$month,$day) = explode('-',substr($value,0,10));
+			$date = date($this->php_date_format, mktime(0,0,0,$month,$day,$year));
+			$datetime = $date.substr($value,10);	
+		}
+		else 
+		{
+			$datetime = '';
+		}
+		$input = "<input name='{$field_info->name}' type='text' value='$datetime' maxlength='19' class='datetime-input' /> 
 		<button class='datetime-input-clear'>".$this->l('form_button_clear')."</button>
-		(yyyy-mm-dd) hh:mm:ss";
+		({$this->ui_date_format}) hh:mm:ss";
 		return $input;
 	}
 	
@@ -1475,12 +1632,23 @@ class grocery_Layout extends grocery_Model_Driver
 	}
 	
 	protected function get_date_input($field_info,$value)
-	{
+	{	
 		$this->set_css('assets/grocery_crud/css/ui/simple/jquery-ui-1.8.10.custom.css');
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery-ui-1.8.10.custom.min.js');
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.datepicker.config.js');
-		$input = "<input name='{$field_info->name}' type='text' value='$value' maxlength='10' class='datepicker-input' /> 
-		<button class='datepicker-input-clear'>".$this->l('form_button_clear')."</button> (yyyy-mm-dd)";
+		
+		if(!empty($value) && $value != '0000-00-00' && $value != '1970-01-01')
+		{
+			list($year,$month,$day) = explode('-',substr($value,0,10));
+			$date = date($this->php_date_format, mktime(0,0,0,$month,$day,$year));
+		}
+		else
+		{
+			$date = '';
+		}
+		
+		$input = "<input name='{$field_info->name}' type='text' value='$date' maxlength='10' class='datepicker-input' /> 
+		<button class='datepicker-input-clear'>".$this->l('form_button_clear')."</button> (".$this->ui_date_format.")";
 		return $input;
 	}	
 
@@ -1503,16 +1671,47 @@ class grocery_Layout extends grocery_Model_Driver
 	{
 		$this->set_css('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css');
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js');
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/ajax-chosen.js');
 		$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js');
 
+		$ci = &get_instance();
+		$ci->load->config('grocery_crud');
+		
+		$ajax_limitation = $ci->config->item('grocery_crud_set_relation_max_data_without_ajax');
+		$total_rows = $this->get_relation_total_rows($field_info->extras);
+
+		
+		//Check if we will use ajax for our queries or just clien-side javascript
+		$using_ajax = $total_rows > $ajax_limitation ? true : false;		
+		
+		//We will not use it for now. It is not ready yet. Probably we will have this functionality at version 1.2.2
+		$using_ajax = false;
+		
+		//If total rows are more than the limitation, use the ajax plugin
+		$ajax_or_not_class = $using_ajax ? 'chosen-select' : 'chosen-select';
+		
+		$this->_inline_js("var ajax_relation_url = '".$this->getAjaxRelationUrl()."';\n");
+		
 //@todo have to do the Select {display_as} as a lang string		
-		$input = "<select name='{$field_info->name}' class='chosen-select' data-placeholder='Select {$field_info->display_as}'>";
+		$input = "<select name='{$field_info->name}' id='' class='$ajax_or_not_class' data-placeholder='Select {$field_info->display_as}' style='width:300px'>";
 		$input .= "<option value=''></option>";
-		$options_array = $this->get_relation_array($field_info->extras);
-		foreach($options_array as $option_value => $option)
+		
+		if(!$using_ajax)
 		{
-			$selected = !empty($value) && $value == $option_value ? "selected='selected'" : ''; 
-			$input .= "<option value='$option_value' $selected >$option</option>";	
+			$options_array = $this->get_relation_array($field_info->extras);
+			foreach($options_array as $option_value => $option)
+			{
+				$selected = !empty($value) && $value == $option_value ? "selected='selected'" : ''; 
+				$input .= "<option value='$option_value' $selected >$option</option>";	
+			}
+		}
+		elseif(!empty($value) || (is_numeric($value) && $value == '0') ) //If it's ajax then we only need the selected items and not all the items  
+		{ 
+			$selected_options_array = $this->get_relation_array($field_info->extras, $value);
+			foreach($selected_options_array as $option_value => $option)
+			{
+				$input .= "<option value='$option_value'selected='selected' >$option</option>";	
+			}
 		}
 		
 		$input .= "</select>";
@@ -1535,8 +1734,12 @@ class grocery_Layout extends grocery_Model_Driver
 		{
 			$this->set_css('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css');
 			$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js');
+			$this->set_js('assets/grocery_crud/js/jquery_plugins/ajax-chosen.js');
 			$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js');
 		}
+		
+		$this->_inline_js("var ajax_relation_url = '".$this->getAjaxRelationUrl()."';\n");
+		
 		$field_info 		= $this->relation_n_n[$field_info_type->name]; //As we use this function the relation_n_n exists, so don't need to check
 		$unselected_values 	= $this->get_relation_n_n_unselected_array($field_info, $selected_values);
 		
@@ -1547,8 +1750,9 @@ class grocery_Layout extends grocery_Model_Driver
 		else
 		{
 			$css_class = $has_priority_field ? 'multiselect': 'chosen-multiple-select';
+			$width_style = $has_priority_field ? '' : 'width:510px;';
 //@todo have to do the Select {display_as} as a lang string			
-			$input = "<select name='{$field_info_type->name}[]' multiple='multiple' size='8' class='$css_class' data-placeholder='Select {$field_info_type->display_as}'>";
+			$input = "<select name='{$field_info_type->name}[]' multiple='multiple' size='8' class='$css_class' data-placeholder='Select {$field_info_type->display_as}' style='$width_style' >";
 			
 			if(!empty($unselected_values))
 				foreach($unselected_values as $id => $name)
@@ -1568,23 +1772,73 @@ class grocery_Layout extends grocery_Model_Driver
 		return $input;
 	}
 
+	protected function _convert_bytes_ui_to_bytes($bytes_ui)
+	{
+		$bytes_ui = str_replace(' ','',$bytes_ui);
+		if(strstr($bytes_ui,'MB'))
+			$bytes = (int)(str_replace('MB','',$bytes_ui))*1024*1024;
+		elseif(strstr($bytes_ui,'KB'))
+			$bytes = (int)(str_replace('KB','',$bytes_ui))*1024;
+		elseif(strstr($bytes_ui,'B'))
+			$bytes = (int)(str_replace('B','',$bytes_ui));
+		else 
+			$bytes = (int)($bytes_ui);
+			
+		return $bytes;
+	}
+	
 	protected function get_upload_file_input($field_info, $value)
 	{
-		$this->set_css('assets/grocery_crud/css/other/fileuploader/fileuploader.css');
-		$this->set_js('assets/grocery_crud/js/other/fileuploader.js');
-		$this->set_js('assets/grocery_crud/js/other/fileuploader.config.js');
+		$this->set_css('assets/grocery_crud/css/ui/simple/jquery-ui-1.8.10.custom.css');
+		$this->set_css('assets/grocery_crud/css/jquery_plugins/file_upload/file-uploader.css');
+		$this->set_css('assets/grocery_crud/css/jquery_plugins/file_upload/jquery.fileupload-ui.css');
+
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery-ui-1.8.10.custom.min.js');
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/tmpl.min.js');
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/load-image.min.js');
+
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery.iframe-transport.js');
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery.fileupload.js');
+		$this->set_js('assets/grocery_crud/js/jquery_plugins/config/jquery.fileupload.config.js');
 		
 		$unique = uniqid();
+		
+		$ci = &get_instance();
+		$ci->config->load('grocery_crud');		
+		
+		$allowed_files = $ci->config->item('grocery_crud_file_upload_allow_file_types');
+		$allowed_files_ui = '.'.str_replace('|',',.',$allowed_files);
+		$max_file_size_ui = $ci->config->item('grocery_crud_file_upload_max_file_size');
+		$max_file_size_bytes = $this->_convert_bytes_ui_to_bytes($max_file_size_ui);
+		
+		$this->_inline_js('
+			var upload_info_'.$unique.' = { 
+				accepted_file_types: /(\\.|\\/)('.$allowed_files.')$/i, 
+				accepted_file_types_ui : "'.$allowed_files_ui.'", 
+				max_file_size: '.$max_file_size_bytes.', 
+				max_file_size_ui: "'.$max_file_size_ui.'" 
+			};
+		');		
+		
+		
 		
 		$uploader_display_none 	= empty($value) ? "" : "display:none;";
 		$file_display_none  	= empty($value) ?  "display:none;" : "";
 		
-		$input 	= "<div id='uploader_$unique' rel='$unique' class='grocery-crud-uploader' style='$uploader_display_none'></div>";
-		$input .= "<div id='success_$unique' style='$file_display_none'>";
-		$input .= "<a href='".base_url().$field_info->extras->upload_path.'/'.$value."' class='open-file' target='_blank' id='file_$unique'>$value</a> ";
-		$input .= "<a href='javascript:void(0)' id='delete_$unique' class='delete-anchor'>".$this->l('form_upload_delete')."</a> ";
-		$input .= "<input type='hidden' name='{$field_info->name}' value='$value' id='hidden_$unique'/>";
+		$input = '<span class="fileinput-button qq-upload-button" id="upload-button-'.$unique.'" style="'.$uploader_display_none.'">
+			<span>'.$this->l('form_upload_a_file').'</span>
+			<input type="file" name="'.$this->_unique_field_name($field_info->name).'" class="gc-file-upload" rel="'.$this->getUploadUrl($field_info->name).'" id="'.$unique.'">
+			<input class="hidden-upload-input" type="hidden" name="'.$field_info->name.'" value="'.$value.'" rel="'.$this->_unique_field_name($field_info->name).'" />
+		</span>';
+		
+		$this->set_css('assets/grocery_crud/css/jquery_plugins/file_upload/fileuploader.css');
+		
+		$input .= "<div id='uploader_$unique' rel='$unique' class='grocery-crud-uploader' style='$uploader_display_none'></div>";
+		$input .= "<div id='success_$unique' class='upload-success-url' style='$file_display_none padding-top:7px;'>";
+		$input .= "		<a href='".base_url().$field_info->extras->upload_path.'/'.$value."' class='open-file' target='_blank' id='file_$unique'>$value</a> ";
+		$input .= "		<a href='javascript:void(0)' id='delete_$unique' class='delete-anchor'>".$this->l('form_upload_delete')."</a> ";
 		$input .= "</div><div style='clear:both'></div>";
+		$input .= "<div id='loading-$unique' style='display:none'><span id='upload-state-message-$unique'></span> <span class='qq-upload-spinner'></span> <span id='progress-$unique'></span></div>";
 		$input .= "<div style='display:none'><a href='".$this->getUploadUrl($field_info->name)."' id='url_$unique'></a></div>";
 		$input .= "<div style='display:none'><a href='".$this->getFileDeleteUrl($field_info->name)."' id='delete_url_$unique' rel='$value' ></a></div>";
 		
@@ -1621,7 +1875,7 @@ class grocery_Layout extends grocery_Model_Driver
 			else
 			{
 				$field_input = $field_info;
-				$field_input->input = call_user_func($this->callback_add_field[$field->field_name]);
+				$field_input->input = call_user_func($this->callback_add_field[$field->field_name], $field_value, null, $field_info);
 			}
 			
 			switch ($field_info->crud_type) {
@@ -1664,7 +1918,7 @@ class grocery_Layout extends grocery_Model_Driver
 			{
 				$primary_key = $this->getStateInfo()->primary_key;
 				$field_input = $field_info;
-				$field_input->input = call_user_func($this->callback_edit_field[$field->field_name], $field_value, $primary_key);
+				$field_input->input = call_user_func($this->callback_edit_field[$field->field_name], $field_value, $primary_key, $field_info);
 			}
 			
 			switch ($field_info->crud_type) {
@@ -1744,6 +1998,11 @@ class grocery_Layout extends grocery_Model_Driver
 		$this->views_as_string .= $buffer;
 	}
 	
+	protected function _inline_js($inline_js = '')
+	{
+		$this->views_as_string .= "<script type=\"text/javascript\">\n{$inline_js}\n</script>\n";
+	}
+	
 	protected function get_views_as_string()
 	{
 		if(!empty($this->views_as_string))
@@ -1759,8 +2018,10 @@ class grocery_Layout extends grocery_Model_Driver
  *
  * LICENSE
  *
- * This source file is subject to the GPL license that is bundled
- * with this package in the file licence.txt.
+ * Grocery CRUD is released with dual licensing, using the GPL v3 (license-gpl3.txt) and the MIT license (license-mit.txt).
+ * You don't have to do anything special to choose one license or the other and you don't have to notify anyone which license you are using.
+ * Please see the corresponding license file for details of these licenses.
+ * You are free to use, modify and distribute this software, but all copyright information must remain.
  *
  * @package    	grocery CRUD
  * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
@@ -1777,24 +2038,26 @@ class grocery_Layout extends grocery_Model_Driver
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.1.8
+ * @version    	1.2
  */
-class grocery_States extends grocery_Layout
+class grocery_CRUD_States extends grocery_CRUD_Layout
 {
 	private $states = array(
-		0	=>	'unknown',
-		1	=>	'list',
-		2	=>	'add',
-		3	=>	'edit',
-		4	=>	'delete',
-		5	=>	'insert',
-		6	=>	'update',
-		7	=>  'ajax_list',
-		8   =>  'ajax_list_info',
-		9	=>  'insert_validation',
-		10	=>	'update_validation',
-		11	=>	'upload_file',
-		12	=>	'delete_file'
+		0	=> 'unknown',
+		1	=> 'list',
+		2	=> 'add',
+		3	=> 'edit',
+		4	=> 'delete',
+		5	=> 'insert',
+		6	=> 'update',
+		7	=> 'ajax_list',
+		8   => 'ajax_list_info',
+		9	=> 'insert_validation',
+		10	=> 'update_validation',
+		11	=> 'upload_file',
+		12	=> 'delete_file',
+		13	=> 'ajax_relation',
+		14	=> 'ajax_relation_n_n'
 	);
 	
 	protected function getStateCode()
@@ -1951,6 +2214,16 @@ class grocery_States extends grocery_Layout
 	{
 		return $this->state_url('delete_file/'.$field_name);
 	}	
+
+	protected function getAjaxRelationUrl()
+	{
+		return $this->state_url('ajax_relation');
+	}
+	
+	protected function getAjaxRelationManytoManyUrl()
+	{
+		return $this->state_url('ajax_relation_n_n');
+	}	
 	
 	public function getStateInfo()
 	{
@@ -2060,13 +2333,22 @@ class grocery_States extends grocery_Layout
 
 			case 11:
 				$state_info->field_name = $first_parameter;
-				$state_info->file_name = substr(uniqid(),-5).'-'.preg_replace('/[^A-Za-z0-9_\.]+/', '-', trim(urldecode($second_parameter)));
 			break;
 
 			case 12:
 				$state_info->field_name = $first_parameter;
 				$state_info->file_name = $second_parameter;
-			break;				
+			break;
+
+			case 13:
+				$state_info->field_name = $_POST['field_name'];
+				$state_info->search 	= $_POST['term'];
+			break;
+
+			case 14:
+				$state_info->field_name = $_POST['field_name'];
+				$state_info->search 	= $_POST['term'];
+			break;			
 		}
 		
 		return $state_info;
@@ -2079,13 +2361,16 @@ class grocery_States extends grocery_Layout
  *
  * LICENSE
  *
- * This source file is subject to the GPL license that is bundled
- * with this package in the file licence.txt.
+ * Grocery CRUD is released with dual licensing, using the GPL v3 (license-gpl3.txt) and the MIT license (license-mit.txt).
+ * You don't have to do anything special to choose one license or the other and you don't have to notify anyone which license you are using.
+ * Please see the corresponding license file for details of these licenses.
+ * You are free to use, modify and distribute this software, but all copyright information must remain.
  *
  * @package    	grocery CRUD
  * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
  * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
- * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
+ * @version    	1.2
+ * @author     	John Skoumbourdis <scoumbourdisj@gmail.com> 
  */
 
 // ------------------------------------------------------------------------
@@ -2098,9 +2383,9 @@ class grocery_States extends grocery_Layout
  * @package    	grocery CRUD 
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  * @license     https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
- * @link		http://www.grocerycrud.com/crud/view/documentation
+ * @link		http://www.grocerycrud.com/documentation
  */
-class grocery_CRUD extends grocery_States
+class grocery_CRUD extends grocery_CRUD_States
 {
 	private $state_code 			= null;
 	private $state_info 			= null;
@@ -2115,6 +2400,9 @@ class grocery_CRUD extends grocery_States
 	protected $default_language_path= 'assets/grocery_crud/languages';
 	protected $language				= null;
 	protected $lang_strings			= array();
+	protected $php_date_format		= null;
+	protected $js_date_format		= null;
+	protected $ui_date_format		= null;
 	
 	protected $add_fields			= null;
 	protected $edit_fields			= null;
@@ -2151,16 +2439,19 @@ class grocery_CRUD extends grocery_States
 	/* Callbacks */
 	protected $callback_before_insert 	= null;
 	protected $callback_after_insert 	= null;
-	protected $callback_escape_insert 	= null;
+	protected $callback_insert 	= null;
 	protected $callback_before_update 	= null;
 	protected $callback_after_update 	= null;
-	protected $callback_escape_update 	= null;	
+	protected $callback_update 	= null;	
 	protected $callback_before_delete 	= null;
 	protected $callback_after_delete 	= null;
-	protected $callback_escape_delete 	= null;		
+	protected $callback_delete 	= null;		
 	protected $callback_column			= array();
 	protected $callback_add_field		= array();
 	protected $callback_edit_field		= array();
+	protected $callback_upload			= null;
+	protected $callback_before_upload	= null;
+	protected $callback_after_upload	= null;
 	
 	/**
 	 * 
@@ -2434,17 +2725,49 @@ class grocery_CRUD extends grocery_States
 	 */
 	private function _load_language()
 	{
+		$ci = &get_instance();
+		$ci->config->load('grocery_crud');
 		if($this->language === null)
 		{
-			$ci = &get_instance();
-			$ci->config->load('grocery_crud');
-			$this->language = $ci->config->item('grocery_crud_default_language');
+			$this->language = strtolower($ci->config->item('grocery_crud_default_language'));
 		}
 		include($this->default_language_path.'/'.$this->language.'.php');
 		
 		foreach($lang as $handle => $lang_string)
 			if(!isset($this->lang_strings[$handle]))
 				$this->lang_strings[$handle] = $lang_string;
+	}
+
+	private function _load_date_format()
+	{
+		$ci = &get_instance();
+		
+		list($php_day, $php_month, $php_year) = array('d','m','Y');
+		list($js_day, $js_month, $js_year) = array('dd','mm','yy');
+		list($ui_day, $ui_month, $ui_year) = array('dd','mm','yyyy');
+//@todo ui_day, ui_month, ui_year has to be lang strings
+		
+		$date_format = $ci->config->item('grocery_crud_date_format');
+		switch ($date_format) {
+			case 'uk-date':
+				$this->php_date_format 		= "$php_day/$php_month/$php_year";
+				$this->js_date_format		= "$js_day/$js_month/$js_year";
+				$this->ui_date_format		= "$ui_day/$ui_month/$ui_year";
+			break;
+			
+			case 'us-date':
+				$this->php_date_format 		= "$php_month/$php_day/$php_year";
+				$this->js_date_format		= "$js_month/$js_day/$js_year";
+				$this->ui_date_format		= "$ui_month/$ui_day/$ui_year";
+			break;
+			
+			case 'sql-date':
+			default:
+				$this->php_date_format 		= "$php_year-$php_month-$php_day";
+				$this->js_date_format		= "$js_year-$js_month-$js_day";
+				$this->ui_date_format		= "$ui_year-$ui_month-$ui_day";
+			break;
+		}
 	}
 	
 	/**
@@ -2722,10 +3045,10 @@ class grocery_CRUD extends grocery_States
 		if($this->basic_model === null)
 			$this->set_default_Model();
 		
+		$this->set_basic_db_table($this->get_table());		
+		
 		switch ($this->state_code) {			
 			case 1://list
-				$this->set_basic_db_table($this->get_table());
-				
 				if($this->theme === null)
 					$this->set_theme($this->default_theme);				
 				$this->setThemeBasics();
@@ -2743,7 +3066,8 @@ class grocery_CRUD extends grocery_States
 					die();
 				}
 				
-				$this->set_basic_db_table($this->get_table());
+				$this->_load_date_format();
+				
 				if($this->theme === null)
 					$this->set_theme($this->default_theme);				
 				$this->setThemeBasics();
@@ -2761,7 +3085,8 @@ class grocery_CRUD extends grocery_States
 					die();
 				}
 				
-				$this->set_basic_db_table($this->get_table());
+				$this->_load_date_format();
+				
 				if($this->theme === null)
 					$this->set_theme($this->default_theme);				
 				$this->setThemeBasics();
@@ -2780,8 +3105,6 @@ class grocery_CRUD extends grocery_States
 					throw new Exception('This user is not allowed to do this operation', 14);
 					die();
 				}
-					
-				$this->set_basic_db_table($this->get_table());
 				
 				$state_info = $this->getStateInfo();
 				$delete_result = $this->db_delete($state_info);
@@ -2795,7 +3118,7 @@ class grocery_CRUD extends grocery_States
 					throw new Exception('This user is not allowed to do this operation', 14);
 					die();
 				}
-				$this->set_basic_db_table($this->get_table());
+				$this->_load_date_format();
 				
 				$state_info = $this->getStateInfo();
 				$insert_result = $this->db_insert($state_info);
@@ -2810,7 +3133,7 @@ class grocery_CRUD extends grocery_States
 					die();
 				}
 				
-				$this->set_basic_db_table($this->get_table());
+				$this->_load_date_format();
 				
 				$state_info = $this->getStateInfo();
 				$update_result = $this->db_update($state_info);
@@ -2819,7 +3142,6 @@ class grocery_CRUD extends grocery_States
 			break;	
 
 			case 7://ajax_list
-				$this->set_basic_db_table($this->get_table());
 				
 				if($this->theme === null)
 					$this->set_theme($this->default_theme);				
@@ -2835,8 +3157,7 @@ class grocery_CRUD extends grocery_States
 			break;
 
 			case 8://ajax_list_info
-				$this->set_basic_db_table($this->get_table());
-				
+
 				if($this->theme === null)
 					$this->set_theme($this->default_theme);				
 				$this->setThemeBasics();
@@ -2850,7 +3171,6 @@ class grocery_CRUD extends grocery_States
 			break;
 			
 			case 9://insert_validation
-				$this->set_basic_db_table($this->get_table());
 				
 				$validation_result = $this->db_insert_validation();
 				
@@ -2858,7 +3178,6 @@ class grocery_CRUD extends grocery_States
 			break;
 			
 			case 10://update_validation
-				$this->set_basic_db_table($this->get_table());
 				
 				$validation_result = $this->db_update_validation();
 				
@@ -2866,7 +3185,7 @@ class grocery_CRUD extends grocery_States
 			break;
 
 			case 11://upload_file
-				$this->set_basic_db_table($this->get_table());
+				
 				$state_info = $this->getStateInfo();
 				
 				$upload_result = $this->upload_file($state_info);
@@ -2875,13 +3194,28 @@ class grocery_CRUD extends grocery_States
 			break;
 
 			case 12://delete_file
-				$this->set_basic_db_table($this->get_table());
 				$state_info = $this->getStateInfo();
 				
 				$delete_file_result = $this->delete_file($state_info);
 				
 				$this->delete_file_layout($delete_file_result);
 			break;
+			
+			case 13: //ajax_relation
+				$state_info = $this->getStateInfo();
+				
+				$ajax_relation_result = $this->ajax_relation($state_info);
+				
+				$ajax_relation_result[""] = "";
+				
+				echo json_encode($ajax_relation_result);
+				die();				
+			break;
+			
+			case 14: //ajax_relation_n_n
+				echo json_encode(array("34" => 'Johnny' , "78" => "Test"));
+				die();
+			break;			
 			
 		}
 		
@@ -2920,9 +3254,9 @@ class grocery_CRUD extends grocery_States
 	 * 
 	 * Enter description here ...
 	 */
-	public function callback_escape_insert($callback = null)
+	public function callback_insert($callback = null)
 	{
-		$this->callback_escape_insert = $callback;
+		$this->callback_insert = $callback;
 	}
 
 	
@@ -2944,13 +3278,15 @@ class grocery_CRUD extends grocery_States
 		$this->callback_after_update = $callback;
 	}
 
+
 	/**
 	 * 
 	 * Enter description here ...
+	 * @param mixed $callback
 	 */
-	public function callback_escape_update($callback = null)
+	public function callback_update($callback = null)
 	{
-		$this->callback_escape_update = $callback;
+		$this->callback_update = $callback;
 	}	
 	
 	/**
@@ -2975,9 +3311,9 @@ class grocery_CRUD extends grocery_States
 	 * 
 	 * Enter description here ...
 	 */
-	public function callback_escape_delete($callback = null)
+	public function callback_delete($callback = null)
 	{
-		$this->callback_escape_delete = $callback;
+		$this->callback_delete = $callback;
 	}		
 	
 	/**
@@ -3031,6 +3367,47 @@ class grocery_CRUD extends grocery_States
 		$this->callback_edit_field[$field] = $callback;
 		
 		return $this;
+	}
+		
+	/**
+	 * 
+	 * Callback that replace the default auto uploader
+	 * 
+	 * @param mixed $callback
+	 * @return grocery_CRUD
+	 */
+	public function callback_upload($callback = null)
+	{
+		$this->callback_upload = $callback;
+		
+		return $this;
+	}
+	
+	/**
+	 * 
+	 * A callback that triggered before the upload functionality. This callback is suggested for validation checks
+	 * @param mixed $callback
+	 * @return grocery_CRUD
+	 */
+	public function callback_before_upload($callback = null)
+	{
+		$this->callback_before_upload = $callback;
+		
+		return $this;
+	}	
+
+	/**
+	 * 
+	 * A callback that triggered after the upload functionality
+	 * @param mixed $callback
+	 * @return grocery_CRUD
+	 */
+	public function callback_after_upload($callback = null)
+	{
+		$this->callback_after_upload = $callback;
+		
+		return $this;		
+		
 	}		
 	
 	/**
@@ -3156,14 +3533,16 @@ class grocery_CRUD extends grocery_States
 	
 	/**
 	 * 
-	 * Enter description here ...
+	 * Set a simple 1-n foreign key relation 
 	 * @param string $field_name
 	 * @param string $related_table
 	 * @param string $related_title_field
+	 * @param mixed $where_clause
+	 * @param string $order_by
 	 */
-	public function set_relation($field_name , $related_table, $related_title_field)
+	public function set_relation($field_name , $related_table, $related_title_field, $where_clause = null, $order_by = null)
 	{
-		$this->relation[$field_name] = array($field_name, $related_table,$related_title_field);
+		$this->relation[$field_name] = array($field_name, $related_table,$related_title_field, $where_clause, $order_by);
 		return $this;
 	}
 	
@@ -3196,32 +3575,24 @@ class grocery_CRUD extends grocery_States
 	
 	/**
 	 * 
-	 * Enter description here ...
+	 * Transform a field to an upload field
+	 * 
 	 * @param string $field_name
 	 * @param string $upload_path
 	 */
-	public function set_field_upload($field_name, $upload_path)
+	public function set_field_upload($field_name, $upload_dir = null)
 	{
-		$upload_path = substr($upload_path,-1,1) == '/' ? substr($upload_path,0,-1) : $upload_path;
-		$this->upload_fields[$field_name] = (object)array( 'field_name' => $field_name , 'upload_path' => $upload_path);		
+		$upload_dir = substr($upload_dir,-1,1) == '/' ? substr($upload_dir,0,-1) : $upload_dir;
+		$this->upload_fields[$field_name] = (object)array( 'field_name' => $field_name , 'upload_path' => $upload_dir, 'encrypted_field_name' =>  $this->_unique_field_name($field_name));		
 	}
 }
 
-/**
- * Form Validation Class - Copied and changed from the Codeigniter Form Validation library
- *		The main reason the library is copied is that codeigniter don't still have a stability of how the libraries structure will be.
- *		This is a good and stable way to have the form validation of codeigniter in our grocery CRUD library ignoring the changes 
- *		of this library.
- *
- * @package		CodeIgniter
- * @subpackage	Libraries
- * @category	Validation
- * @author		ExpressionEngine Dev Team
- * @link		http://codeigniter.com/user_guide/libraries/form_validation.html
- */
-class grocery_Form_validation {
+$ci = &get_instance();
+$ci->load->library('Form_validation');
 
-	protected $CI;
+class grocery_CRUD_Form_validation extends CI_Form_validation{
+
+	public $CI;
 	public $_field_data			= array();
 	public $_config_rules		= array();
 	public $_error_array		= array();
@@ -3230,1344 +3601,366 @@ class grocery_Form_validation {
 	public $_error_suffix		= '</p>';
 	public $error_string		= '';
 	public $_safe_form_data		= FALSE;
-
-	/**
-	 * Constructor
-	 */
-	public function __construct($rules = array())
-	{
-		$this->CI =& get_instance();
-
-		// Validation rules can be stored in a config file.
-		$this->_config_rules = $rules;
-
-		// Automatically load the form helper
-		$this->CI->load->helper('form');
-
-		// Set the character encoding in MB.
-		if (function_exists('mb_internal_encoding'))
-		{
-			mb_internal_encoding($this->CI->config->item('charset'));
-		}
-
-		log_message('debug', "Form Validation Class Initialized");
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set Rules
-	 *
-	 * This function takes an array of field names and validation
-	 * rules as input, validates the info, and stores it
-	 *
-	 * @access	public
-	 * @param	mixed
-	 * @param	string
-	 * @return	void
-	 */
-	public function set_rules($field, $label = '', $rules = '')
-	{
-		// No reason to set rules if we have no POST data
-		if (count($_POST) == 0)
-		{
-			return $this;
-		}
-
-		// If an array was passed via the first parameter instead of indidual string
-		// values we cycle through it and recursively call this function.
-		if (is_array($field))
-		{
-			foreach ($field as $row)
-			{
-				// Houston, we have a problem...
-				if ( ! isset($row['field']) OR ! isset($row['rules']))
-				{
-					continue;
-				}
-
-				// If the field label wasn't passed we use the field name
-				$label = ( ! isset($row['label'])) ? $row['field'] : $row['label'];
-
-				// Here we go!
-				$this->set_rules($row['field'], $label, $row['rules']);
-			}
-			return $this;
-		}
-
-		// No fields? Nothing to do...
-		if ( ! is_string($field) OR  ! is_string($rules) OR $field == '')
-		{
-			return $this;
-		}
-
-		// If the field label wasn't passed we use the field name
-		$label = ($label == '') ? $field : $label;
-
-		// Is the field name an array?  We test for the existence of a bracket "[" in
-		// the field name to determine this.  If it is an array, we break it apart
-		// into its components so that we can fetch the corresponding POST data later
-		if (strpos($field, '[') !== FALSE AND preg_match_all('/\[(.*?)\]/', $field, $matches))
-		{
-			// Note: Due to a bug in current() that affects some versions
-			// of PHP we can not pass function call directly into it
-			$x = explode('[', $field);
-			$indexes[] = current($x);
-
-			for ($i = 0; $i < count($matches['0']); $i++)
-			{
-				if ($matches['1'][$i] != '')
-				{
-					$indexes[] = $matches['1'][$i];
-				}
-			}
-
-			$is_array = TRUE;
-		}
-		else
-		{
-			$indexes	= array();
-			$is_array	= FALSE;
-		}
-
-		// Build our master array
-		$this->_field_data[$field] = array(
-			'field'				=> $field,
-			'label'				=> $label,
-			'rules'				=> $rules,
-			'is_array'			=> $is_array,
-			'keys'				=> $indexes,
-			'postdata'			=> NULL,
-			'error'				=> ''
-		);
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set Error Message
-	 *
-	 * Lets users set their own error messages on the fly.  Note:  The key
-	 * name has to match the  function name that it corresponds to.
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @return	string
-	 */
-	public function set_message($lang, $val = '')
-	{
-		if ( ! is_array($lang))
-		{
-			$lang = array($lang => $val);
-		}
-
-		$this->_error_messages = array_merge($this->_error_messages, $lang);
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set The Error Delimiter
-	 *
-	 * Permits a prefix/suffix to be added to each error message
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @return	void
-	 */
-	public function set_error_delimiters($prefix = '<p>', $suffix = '</p>')
-	{
-		$this->_error_prefix = $prefix;
-		$this->_error_suffix = $suffix;
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Get Error Message
-	 *
-	 * Gets the error message associated with a particular field
-	 *
-	 * @access	public
-	 * @param	string	the field name
-	 * @return	void
-	 */
-	public function error($field = '', $prefix = '', $suffix = '')
-	{
-		if ( ! isset($this->_field_data[$field]['error']) OR $this->_field_data[$field]['error'] == '')
-		{
-			return '';
-		}
-
-		if ($prefix == '')
-		{
-			$prefix = $this->_error_prefix;
-		}
-
-		if ($suffix == '')
-		{
-			$suffix = $this->_error_suffix;
-		}
-
-		return $prefix.$this->_field_data[$field]['error'].$suffix;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Error String
-	 *
-	 * Returns the error messages as a string, wrapped in the error delimiters
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @return	str
-	 */
-	public function error_string($prefix = '', $suffix = '')
-	{
-		// No errrors, validation passes!
-		if (count($this->_error_array) === 0)
-		{
-			return '';
-		}
-
-		if ($prefix == '')
-		{
-			$prefix = $this->_error_prefix;
-		}
-
-		if ($suffix == '')
-		{
-			$suffix = $this->_error_suffix;
-		}
-
-		// Generate the error string
-		$str = '';
-		foreach ($this->_error_array as $val)
-		{
-			if ($val != '')
-			{
-				$str .= $prefix.$val.$suffix."\n";
-			}
-		}
-
-		return $str;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Run the Validator
-	 *
-	 * This function does all the work.
-	 *
-	 * @access	public
-	 * @return	bool
-	 */
-	public function run($group = '')
-	{
-		// Do we even have any data to process?  Mm?
-		if (count($_POST) == 0)
-		{
-			return FALSE;
-		}
-
-		// Does the _field_data array containing the validation rules exist?
-		// If not, we look to see if they were assigned via a config file
-		if (count($this->_field_data) == 0)
-		{
-			// No validation rules?  We're done...
-			if (count($this->_config_rules) == 0)
-			{
-				return FALSE;
-			}
-
-			// Is there a validation rule for the particular URI being accessed?
-			$uri = ($group == '') ? trim($this->CI->uri->ruri_string(), '/') : $group;
-
-			if ($uri != '' AND isset($this->_config_rules[$uri]))
-			{
-				$this->set_rules($this->_config_rules[$uri]);
-			}
-			else
-			{
-				$this->set_rules($this->_config_rules);
-			}
-
-			// We're we able to set the rules correctly?
-			if (count($this->_field_data) == 0)
-			{
-				log_message('debug', "Unable to find validation rules");
-				return FALSE;
-			}
-		}
-
-		// Load the language file containing error messages
-		$this->CI->lang->load('form_validation');
-
-		// Cycle through the rules for each field, match the
-		// corresponding $_POST item and test for errors
-		foreach ($this->_field_data as $field => $row)
-		{
-			// Fetch the data from the corresponding $_POST array and cache it in the _field_data array.
-			// Depending on whether the field name is an array or a string will determine where we get it from.
-
-			if ($row['is_array'] == TRUE)
-			{
-				$this->_field_data[$field]['postdata'] = $this->_reduce_array($_POST, $row['keys']);
-			}
-			else
-			{
-				if (isset($_POST[$field]) AND $_POST[$field] != "")
-				{
-					$this->_field_data[$field]['postdata'] = $_POST[$field];
-				}
-			}
-
-			$this->_execute($row, explode('|', $row['rules']), $this->_field_data[$field]['postdata']);
-		}
-
-		// Did we end up with any errors?
-		$total_errors = count($this->_error_array);
-
-		if ($total_errors > 0)
-		{
-			$this->_safe_form_data = TRUE;
-		}
-
-		// Now we need to re-set the POST data with the new, processed data
-		$this->_reset_post_array();
-
-		// No errors, validation passes!
-		if ($total_errors == 0)
-		{
-			return TRUE;
-		}
-
-		// Validation fails
-		return FALSE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Traverse a multidimensional $_POST array index until the data is found
-	 *
-	 * @access	private
-	 * @param	array
-	 * @param	array
-	 * @param	integer
-	 * @return	mixed
-	 */
-	protected function _reduce_array($array, $keys, $i = 0)
-	{
-		if (is_array($array))
-		{
-			if (isset($keys[$i]))
-			{
-				if (isset($array[$keys[$i]]))
-				{
-					$array = $this->_reduce_array($array[$keys[$i]], $keys, ($i+1));
-				}
-				else
-				{
-					return NULL;
-				}
-			}
-			else
-			{
-				return $array;
-			}
-		}
-
-		return $array;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Re-populate the _POST array with our finalized and processed data
-	 *
-	 * @access	private
-	 * @return	null
-	 */
-	protected function _reset_post_array()
-	{
-		foreach ($this->_field_data as $field => $row)
-		{
-			if ( ! is_null($row['postdata']))
-			{
-				if ($row['is_array'] == FALSE)
-				{
-					if (isset($_POST[$row['field']]))
-					{
-						$_POST[$row['field']] = $this->prep_for_form($row['postdata']);
-					}
-				}
-				else
-				{
-					// start with a reference
-					$post_ref =& $_POST;
-
-					// before we assign values, make a reference to the right POST key
-					if (count($row['keys']) == 1)
-					{
-						$post_ref =& $post_ref[current($row['keys'])];
-					}
-					else
-					{
-						foreach ($row['keys'] as $val)
-						{
-							$post_ref =& $post_ref[$val];
-						}
-					}
-
-					if (is_array($row['postdata']))
-					{
-						$array = array();
-						foreach ($row['postdata'] as $k => $v)
-						{
-							$array[$k] = $this->prep_for_form($v);
-						}
-
-						$post_ref = $array;
-					}
-					else
-					{
-						$post_ref = $this->prep_for_form($row['postdata']);
-					}
-				}
-			}
-		}
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Executes the Validation routines
-	 *
-	 * @access	private
-	 * @param	array
-	 * @param	array
-	 * @param	mixed
-	 * @param	integer
-	 * @return	mixed
-	 */
-	protected function _execute($row, $rules, $postdata = NULL, $cycles = 0)
-	{
-		// If the $_POST data is an array we will run a recursive call
-		if (is_array($postdata))
-		{
-			foreach ($postdata as $key => $val)
-			{
-				$this->_execute($row, $rules, $val, $cycles);
-				$cycles++;
-			}
-
-			return;
-		}
-
-		// --------------------------------------------------------------------
-
-		// If the field is blank, but NOT required, no further tests are necessary
-		$callback = FALSE;
-		if ( ! in_array('required', $rules) AND is_null($postdata))
-		{
-			// Before we bail out, does the rule contain a callback?
-			if (preg_match("/(callback_\w+(\[.*?\])?)/", implode(' ', $rules), $match))
-			{
-				$callback = TRUE;
-				$rules = (array('1' => $match[1]));
-			}
-			else
-			{
-				return;
-			}
-		}
-
-		// --------------------------------------------------------------------
-
-		// Isset Test. Typically this rule will only apply to checkboxes.
-		if (is_null($postdata) AND $callback == FALSE)
-		{
-			if (in_array('isset', $rules, TRUE) OR in_array('required', $rules))
-			{
-				// Set the message type
-				$type = (in_array('required', $rules)) ? 'required' : 'isset';
-
-				if ( ! isset($this->_error_messages[$type]))
-				{
-					if (FALSE === ($line = $this->CI->lang->line($type)))
-					{
-						$line = 'The field was not set';
-					}
-				}
-				else
-				{
-					$line = $this->_error_messages[$type];
-				}
-
-				// Build the error message
-				$message = sprintf($line, $this->_translate_fieldname($row['label']));
-
-				// Save the error message
-				$this->_field_data[$row['field']]['error'] = $message;
-
-				if ( ! isset($this->_error_array[$row['field']]))
-				{
-					$this->_error_array[$row['field']] = $message;
-				}
-			}
-
-			return;
-		}
-
-		// --------------------------------------------------------------------
-
-		// Cycle through each rule and run it
-		foreach ($rules As $rule)
-		{
-			$_in_array = FALSE;
-
-			// We set the $postdata variable with the current data in our master array so that
-			// each cycle of the loop is dealing with the processed data from the last cycle
-			if ($row['is_array'] == TRUE AND is_array($this->_field_data[$row['field']]['postdata']))
-			{
-				// We shouldn't need this safety, but just in case there isn't an array index
-				// associated with this cycle we'll bail out
-				if ( ! isset($this->_field_data[$row['field']]['postdata'][$cycles]))
-				{
-					continue;
-				}
-
-				$postdata = $this->_field_data[$row['field']]['postdata'][$cycles];
-				$_in_array = TRUE;
-			}
-			else
-			{
-				$postdata = $this->_field_data[$row['field']]['postdata'];
-			}
-
-			// --------------------------------------------------------------------
-
-			// Is the rule a callback?
-			$callback = FALSE;
-			if (substr($rule, 0, 9) == 'callback_')
-			{
-				$rule = substr($rule, 9);
-				$callback = TRUE;
-			}
-
-			// Strip the parameter (if exists) from the rule
-			// Rules can contain a parameter: max_length[5]
-			$param = FALSE;
-			if (preg_match("/(.*?)\[(.*)\]/", $rule, $match))
-			{
-				$rule	= $match[1];
-				$param	= $match[2];
-			}
-
-			// Call the function that corresponds to the rule
-			if ($callback === TRUE)
-			{
-				if ( ! method_exists($this->CI, $rule))
-				{
-					continue;
-				}
-
-				// Run the function and grab the result
-				$result = $this->CI->$rule($postdata, $param);
-
-				// Re-assign the result to the master data array
-				if ($_in_array == TRUE)
-				{
-					$this->_field_data[$row['field']]['postdata'][$cycles] = (is_bool($result)) ? $postdata : $result;
-				}
-				else
-				{
-					$this->_field_data[$row['field']]['postdata'] = (is_bool($result)) ? $postdata : $result;
-				}
-
-				// If the field isn't required and we just processed a callback we'll move on...
-				if ( ! in_array('required', $rules, TRUE) AND $result !== FALSE)
-				{
-					continue;
-				}
-			}
-			else
-			{
-				if ( ! method_exists($this, $rule))
-				{
-					// If our own wrapper function doesn't exist we see if a native PHP function does.
-					// Users can use any native PHP function call that has one param.
-					if (function_exists($rule))
-					{
-						$result = $rule($postdata);
-
-						if ($_in_array == TRUE)
-						{
-							$this->_field_data[$row['field']]['postdata'][$cycles] = (is_bool($result)) ? $postdata : $result;
-						}
-						else
-						{
-							$this->_field_data[$row['field']]['postdata'] = (is_bool($result)) ? $postdata : $result;
-						}
-					}
-					else
-					{
-						log_message('debug', "Unable to find validation rule: ".$rule);
-					}
-
-					continue;
-				}
-
-				$result = $this->$rule($postdata, $param);
-
-				if ($_in_array == TRUE)
-				{
-					$this->_field_data[$row['field']]['postdata'][$cycles] = (is_bool($result)) ? $postdata : $result;
-				}
-				else
-				{
-					$this->_field_data[$row['field']]['postdata'] = (is_bool($result)) ? $postdata : $result;
-				}
-			}
-
-			// Did the rule test negatively?  If so, grab the error.
-			if ($result === FALSE)
-			{
-				if ( ! isset($this->_error_messages[$rule]))
-				{
-					if (FALSE === ($line = $this->CI->lang->line($rule)))
-					{
-						$line = 'Unable to access an error message corresponding to your field name.';
-					}
-				}
-				else
-				{
-					$line = $this->_error_messages[$rule];
-				}
-
-				// Is the parameter we are inserting into the error message the name
-				// of another field?  If so we need to grab its "field label"
-				if (isset($this->_field_data[$param]) AND isset($this->_field_data[$param]['label']))
-				{
-					$param = $this->_translate_fieldname($this->_field_data[$param]['label']);
-				}
-
-				// Build the error message
-				$message = sprintf($line, $this->_translate_fieldname($row['label']), $param);
-
-				// Save the error message
-				$this->_field_data[$row['field']]['error'] = $message;
-
-				if ( ! isset($this->_error_array[$row['field']]))
-				{
-					$this->_error_array[$row['field']] = $message;
-				}
-
-				return;
-			}
-		}
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Translate a field name
-	 *
-	 * @access	private
-	 * @param	string	the field name
-	 * @return	string
-	 */
-	protected function _translate_fieldname($fieldname)
-	{
-		// Do we need to translate the field name?
-		// We look for the prefix lang: to determine this
-		if (substr($fieldname, 0, 5) == 'lang:')
-		{
-			// Grab the variable
-			$line = substr($fieldname, 5);
-
-			// Were we able to translate the field name?  If not we use $line
-			if (FALSE === ($fieldname = $this->CI->lang->line($line)))
-			{
-				return $line;
-			}
-		}
-
-		return $fieldname;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Get the value from a form
-	 *
-	 * Permits you to repopulate a form field with the value it was submitted
-	 * with, or, if that value doesn't exist, with the default
-	 *
-	 * @access	public
-	 * @param	string	the field name
-	 * @param	string
-	 * @return	void
-	 */
-	public function set_value($field = '', $default = '')
-	{
-		if ( ! isset($this->_field_data[$field]))
-		{
-			return $default;
-		}
-
-		// If the data is an array output them one at a time.
-		//     E.g: form_input('name[]', set_value('name[]');
-		if (is_array($this->_field_data[$field]['postdata']))
-		{
-			return array_shift($this->_field_data[$field]['postdata']);
-		}
-
-		return $this->_field_data[$field]['postdata'];
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set Select
-	 *
-	 * Enables pull-down lists to be set to the value the user
-	 * selected in the event of an error
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @return	string
-	 */
-	public function set_select($field = '', $value = '', $default = FALSE)
-	{
-		if ( ! isset($this->_field_data[$field]) OR ! isset($this->_field_data[$field]['postdata']))
-		{
-			if ($default === TRUE AND count($this->_field_data) === 0)
-			{
-				return ' selected="selected"';
-			}
-			return '';
-		}
-
-		$field = $this->_field_data[$field]['postdata'];
-
-		if (is_array($field))
-		{
-			if ( ! in_array($value, $field))
-			{
-				return '';
-			}
-		}
-		else
-		{
-			if (($field == '' OR $value == '') OR ($field != $value))
-			{
-				return '';
-			}
-		}
-
-		return ' selected="selected"';
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set Radio
-	 *
-	 * Enables radio buttons to be set to the value the user
-	 * selected in the event of an error
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @return	string
-	 */
-	public function set_radio($field = '', $value = '', $default = FALSE)
-	{
-		if ( ! isset($this->_field_data[$field]) OR ! isset($this->_field_data[$field]['postdata']))
-		{
-			if ($default === TRUE AND count($this->_field_data) === 0)
-			{
-				return ' checked="checked"';
-			}
-			return '';
-		}
-
-		$field = $this->_field_data[$field]['postdata'];
-
-		if (is_array($field))
-		{
-			if ( ! in_array($value, $field))
-			{
-				return '';
-			}
-		}
-		else
-		{
-			if (($field == '' OR $value == '') OR ($field != $value))
-			{
-				return '';
-			}
-		}
-
-		return ' checked="checked"';
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Set Checkbox
-	 *
-	 * Enables checkboxes to be set to the value the user
-	 * selected in the event of an error
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @return	string
-	 */
-	public function set_checkbox($field = '', $value = '', $default = FALSE)
-	{
-		if ( ! isset($this->_field_data[$field]) OR ! isset($this->_field_data[$field]['postdata']))
-		{
-			if ($default === TRUE AND count($this->_field_data) === 0)
-			{
-				return ' checked="checked"';
-			}
-			return '';
-		}
-
-		$field = $this->_field_data[$field]['postdata'];
-
-		if (is_array($field))
-		{
-			if ( ! in_array($value, $field))
-			{
-				return '';
-			}
-		}
-		else
-		{
-			if (($field == '' OR $value == '') OR ($field != $value))
-			{
-				return '';
-			}
-		}
-
-		return ' checked="checked"';
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Required
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function required($str)
-	{
-		if ( ! is_array($str))
-		{
-			return (trim($str) == '') ? FALSE : TRUE;
-		}
-		else
-		{
-			return ( ! empty($str));
-		}
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Performs a Regular Expression match test.
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	regex
-	 * @return	bool
-	 */
-	public function regex_match($str, $regex)
-	{
-		if ( ! preg_match($regex, $str))
-		{
-			return FALSE;
-		}
-
-		return  TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Match one field to another
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	field
-	 * @return	bool
-	 */
-	public function matches($str, $field)
-	{
-		if ( ! isset($_POST[$field]))
-		{
-			return FALSE;
-		}
-
-		$field = $_POST[$field];
-
-		return ($str !== $field) ? FALSE : TRUE;
-	}
-	
-	// --------------------------------------------------------------------
-
-	/**
-	 * Match one field to another
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	field
-	 * @return	bool
-	 */
-	public function is_unique($str, $field)
-	{
-		list($table, $field)=explode('.', $field);
-		$query = $this->CI->db->limit(1)->get_where($table, array($field => $str));
-		
-		return $query->num_rows() === 0;
+}
+
+/*
+ * jQuery File Upload Plugin PHP Example 5.5
+ * https://github.com/blueimp/jQuery-File-Upload
+ *
+ * Copyright 2010, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+
+class UploadHandler
+{
+    private $options;
+    
+    function __construct($options=null) {
+        $this->options = array(
+            'script_url' => $this->getFullUrl().'/'.basename(__FILE__),
+            'upload_dir' => dirname(__FILE__).'/files/',
+            'upload_url' => $this->getFullUrl().'/files/',
+            'param_name' => 'files',
+            // The php.ini settings upload_max_filesize and post_max_size
+            // take precedence over the following max_file_size setting:
+            'max_file_size' => null,
+            'min_file_size' => 1,
+            'accept_file_types' => '/.+$/i',
+            'max_number_of_files' => null,
+            // Set the following option to false to enable non-multipart uploads:
+            'discard_aborted_uploads' => true,
+            // Set to true to rotate images based on EXIF meta data, if available:
+            'orient_image' => false,
+            'image_versions' => array(
+                // Uncomment the following version to restrict the size of
+                // uploaded images. You can also add additional versions with
+                // their own upload directories:
+                /*
+                'large' => array(
+                    'upload_dir' => dirname(__FILE__).'/files/',
+                    'upload_url' => dirname($_SERVER['PHP_SELF']).'/files/',
+                    'max_width' => 1920,
+                    'max_height' => 1200
+                ),
+                
+                'thumbnail' => array(
+                    'upload_dir' => dirname(__FILE__).'/thumbnails/',
+                    'upload_url' => $this->getFullUrl().'/thumbnails/',
+                    'max_width' => 80,
+                    'max_height' => 80
+                )
+                */
+            )
+        );
+        if ($options) {
+            // Or else for PHP >= 5.3.0 use: $this->options = array_replace_recursive($this->options, $options);
+            foreach($options as $option_name => $option)
+            {
+            	$this->options[$option_name] = $option;
+            }
+        }
     }
 
-	// --------------------------------------------------------------------
+    function getFullUrl() {
+      	return
+        		(isset($_SERVER['HTTPS']) ? 'https://' : 'http://').
+        		(isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'].'@' : '').
+        		(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ($_SERVER['SERVER_NAME'].
+        		(isset($_SERVER['HTTPS']) && $_SERVER['SERVER_PORT'] === 443 ||
+        		$_SERVER['SERVER_PORT'] === 80 ? '' : ':'.$_SERVER['SERVER_PORT']))).
+        		substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
+    }
+    
+    private function get_file_object($file_name) {
+        $file_path = $this->options['upload_dir'].$file_name;
+        if (is_file($file_path) && $file_name[0] !== '.') {
+            $file = new stdClass();
+            $file->name = $file_name;
+            $file->size = filesize($file_path);
+            $file->url = $this->options['upload_url'].rawurlencode($file->name);
+            foreach($this->options['image_versions'] as $version => $options) {
+                if (is_file($options['upload_dir'].$file_name)) {
+                    $file->{$version.'_url'} = $options['upload_url']
+                        .rawurlencode($file->name);
+                }
+            }
+            $file->delete_url = $this->options['script_url']
+                .'?file='.rawurlencode($file->name);
+            $file->delete_type = 'DELETE';
+            return $file;
+        }
+        return null;
+    }
+    
+    private function get_file_objects() {
+        return array_values(array_filter(array_map(
+            array($this, 'get_file_object'),
+            scandir($this->options['upload_dir'])
+        )));
+    }
 
-	/**
-	 * Minimum Length
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	value
-	 * @return	bool
-	 */
-	public function min_length($str, $val)
-	{
-		if (preg_match("/[^0-9]/", $val))
-		{
-			return FALSE;
-		}
+    private function create_scaled_image($file_name, $options) {
+        $file_path = $this->options['upload_dir'].$file_name;
+        $new_file_path = $options['upload_dir'].$file_name;
+        list($img_width, $img_height) = @getimagesize($file_path);
+        if (!$img_width || !$img_height) {
+            return false;
+        }
+        $scale = min(
+            $options['max_width'] / $img_width,
+            $options['max_height'] / $img_height
+        );
+        if ($scale > 1) {
+            $scale = 1;
+        }
+        $new_width = $img_width * $scale;
+        $new_height = $img_height * $scale;
+        $new_img = @imagecreatetruecolor($new_width, $new_height);
+        switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
+            case 'jpg':
+            case 'jpeg':
+                $src_img = @imagecreatefromjpeg($file_path);
+                $write_image = 'imagejpeg';
+                break;
+            case 'gif':
+                @imagecolortransparent($new_img, @imagecolorallocate($new_img, 0, 0, 0));
+                $src_img = @imagecreatefromgif($file_path);
+                $write_image = 'imagegif';
+                break;
+            case 'png':
+                @imagecolortransparent($new_img, @imagecolorallocate($new_img, 0, 0, 0));
+                @imagealphablending($new_img, false);
+                @imagesavealpha($new_img, true);
+                $src_img = @imagecreatefrompng($file_path);
+                $write_image = 'imagepng';
+                break;
+            default:
+                $src_img = $image_method = null;
+        }
+        $success = $src_img && @imagecopyresampled(
+            $new_img,
+            $src_img,
+            0, 0, 0, 0,
+            $new_width,
+            $new_height,
+            $img_width,
+            $img_height
+        ) && $write_image($new_img, $new_file_path);
+        // Free up memory (imagedestroy does not delete files):
+        @imagedestroy($src_img);
+        @imagedestroy($new_img);
+        return $success;
+    }
+    
+    private function has_error($uploaded_file, $file, $error) {
+        if ($error) {
+            return $error;
+        }
+        if (!preg_match($this->options['accept_file_types'], $file->name)) {
+            return 'acceptFileTypes';
+        }
+        if ($uploaded_file && is_uploaded_file($uploaded_file)) {
+            $file_size = filesize($uploaded_file);
+        } else {
+            $file_size = $_SERVER['CONTENT_LENGTH'];
+        }
+         
+        if ($this->options['max_file_size'] && (
+                $file_size > $this->options['max_file_size'] ||
+                $file->size > $this->options['max_file_size'])
+            ) {
+            return 'maxFileSize';
+        }
+        if ($this->options['min_file_size'] &&
+            $file_size < $this->options['min_file_size']) {
+            return 'minFileSize';
+        }
+        if (is_int($this->options['max_number_of_files']) && (
+                count($this->get_file_objects()) >= $this->options['max_number_of_files'])
+            ) {
+            return 'maxNumberOfFiles';
+        }
+        return $error;
+    }
+    
+    private function trim_file_name($name, $type) {
+        // Remove path information and dots around the filename, to prevent uploading
+        // into different directories or replacing hidden system files.
+        // Also remove control characters and spaces (\x00..\x20) around the filename:
+        $file_name = trim(basename(stripslashes($name)), ".\x00..\x20");
+        // Add missing file extension for known image types:
+        if (strpos($file_name, '.') === false &&
+            preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
+            $file_name .= '.'.$matches[1];
+        }
 
-		if (function_exists('mb_strlen'))
-		{
-			return (mb_strlen($str) < $val) ? FALSE : TRUE;
-		}
+        //Ensure that we don't have disallowed characters and add a unique id just to ensure that the file name will be unique
+        $file_name = substr(uniqid(),-5).'-'.preg_replace("/([^a-zA-Z0-9\.\-\_]+?){1}/i", '-', $file_name);
 
-		return (strlen($str) < $val) ? FALSE : TRUE;
-	}
+        return $file_name;
+    }
 
-	// --------------------------------------------------------------------
-
-	/**
-	 * Max Length
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	value
-	 * @return	bool
-	 */
-	public function max_length($str, $val)
-	{
-		if (preg_match("/[^0-9]/", $val))
-		{
-			return FALSE;
-		}
-
-		if (function_exists('mb_strlen'))
-		{
-			return (mb_strlen($str) > $val) ? FALSE : TRUE;
-		}
-
-		return (strlen($str) > $val) ? FALSE : TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Exact Length
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	value
-	 * @return	bool
-	 */
-	public function exact_length($str, $val)
-	{
-		if (preg_match("/[^0-9]/", $val))
-		{
-			return FALSE;
-		}
-
-		if (function_exists('mb_strlen'))
-		{
-			return (mb_strlen($str) != $val) ? FALSE : TRUE;
-		}
-
-		return (strlen($str) != $val) ? FALSE : TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Valid Email
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function valid_email($str)
-	{
-		return ( ! preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $str)) ? FALSE : TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Valid Emails
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function valid_emails($str)
-	{
-		if (strpos($str, ',') === FALSE)
-		{
-			return $this->valid_email(trim($str));
-		}
-
-		foreach (explode(',', $str) as $email)
-		{
-			if (trim($email) != '' && $this->valid_email(trim($email)) === FALSE)
-			{
-				return FALSE;
-			}
-		}
-
-		return TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Validate IP Address
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	string
-	 */
-	public function valid_ip($ip)
-	{
-		return $this->CI->input->valid_ip($ip);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Alpha
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function alpha($str)
-	{
-		return ( ! preg_match("/^([a-z])+$/i", $str)) ? FALSE : TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Alpha-numeric
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function alpha_numeric($str)
-	{
-		return ( ! preg_match("/^([a-z0-9])+$/i", $str)) ? FALSE : TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Alpha-numeric with underscores and dashes
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function alpha_dash($str)
-	{
-		return ( ! preg_match("/^([-a-z0-9_-])+$/i", $str)) ? FALSE : TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Numeric
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function numeric($str)
-	{
-		return (bool)preg_match( '/^[\-+]?[0-9]*\.?[0-9]+$/', $str);
-
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Is Numeric
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function is_numeric($str)
-	{
-		return ( ! is_numeric($str)) ? FALSE : TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Integer
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function integer($str)
-	{
-		return (bool) preg_match('/^[\-+]?[0-9]+$/', $str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Decimal number
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function decimal($str)
-	{
-		return (bool) preg_match('/^[\-+]?[0-9]+\.[0-9]+$/', $str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Greather than
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function greater_than($str, $min)
-	{
-		if ( ! is_numeric($str))
-		{
-			return FALSE;
-		}
-		return $str > $min;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Less than
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function less_than($str, $max)
-	{
-		if ( ! is_numeric($str))
-		{
-			return FALSE;
-		}
-		return $str < $max;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Is a Natural number  (0,1,2,3, etc.)
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function is_natural($str)
-	{
-		return (bool) preg_match( '/^[0-9]+$/', $str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Is a Natural number, but not a zero  (1,2,3, etc.)
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function is_natural_no_zero($str)
-	{
-		if ( ! preg_match( '/^[0-9]+$/', $str))
-		{
-			return FALSE;
-		}
-
-		if ($str == 0)
-		{
-			return FALSE;
-		}
-
-		return TRUE;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Valid Base64
-	 *
-	 * Tests a string for characters outside of the Base64 alphabet
-	 * as defined by RFC 2045 http://www.faqs.org/rfcs/rfc2045
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */
-	public function valid_base64($str)
-	{
-		return (bool) ! preg_match('/[^a-zA-Z0-9\/\+=]/', $str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Prep data for form
-	 *
-	 * This function allows HTML to be safely shown in a form.
-	 * Special characters are converted.
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	string
-	 */
-	public function prep_for_form($data = '')
-	{
-		if (is_array($data))
-		{
-			foreach ($data as $key => $val)
-			{
-				$data[$key] = $this->prep_for_form($val);
-			}
-
-			return $data;
-		}
-
-		if ($this->_safe_form_data == FALSE OR $data === '')
-		{
-			return $data;
-		}
-
-		return str_replace(array("'", '"', '<', '>'), array("&#39;", "&quot;", '&lt;', '&gt;'), stripslashes($data));
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Prep URL
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	string
-	 */
-	public function prep_url($str = '')
-	{
-		if ($str == 'http://' OR $str == '')
-		{
-			return '';
-		}
-
-		if (substr($str, 0, 7) != 'http://' && substr($str, 0, 8) != 'https://')
-		{
-			$str = 'http://'.$str;
-		}
-
-		return $str;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Strip Image Tags
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	string
-	 */
-	public function strip_image_tags($str)
-	{
-		return $this->CI->input->strip_image_tags($str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * XSS Clean
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	string
-	 */
-	public function xss_clean($str)
-	{
-		return $this->CI->security->xss_clean($str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Convert PHP tags to entities
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	string
-	 */
-	public function encode_php_tags($str)
-	{
-		return str_replace(array('<?php', '<?PHP', '<?', '?>'),  array('&lt;?php', '&lt;?PHP', '&lt;?', '?&gt;'), $str);
-	}
+    private function orient_image($file_path) {
+      	$exif = exif_read_data($file_path);
+      	$orientation = intval(@$exif['Orientation']);
+      	if (!in_array($orientation, array(3, 6, 8))) { 
+      	    return false;
+      	}
+      	$image = @imagecreatefromjpeg($file_path);
+      	switch ($orientation) {
+        	  case 3:
+          	    $image = @imagerotate($image, 180, 0);
+          	    break;
+        	  case 6:
+          	    $image = @imagerotate($image, 270, 0);
+          	    break;
+        	  case 8:
+          	    $image = @imagerotate($image, 90, 0);
+          	    break;
+          	default:
+          	    return false;
+      	}
+      	$success = imagejpeg($image, $file_path);
+      	// Free up memory (imagedestroy does not delete files):
+      	@imagedestroy($image);
+      	return $success;
+    }
+    
+    private function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
+        $file = new stdClass();
+        $file->name = $this->trim_file_name($name, $type);
+        $file->size = intval($size);
+        $file->type = $type;
+        $error = $this->has_error($uploaded_file, $file, $error);
+        if (!$error && $file->name) {
+            $file_path = $this->options['upload_dir'].$file->name;
+            $append_file = !$this->options['discard_aborted_uploads'] &&
+                is_file($file_path) && $file->size > filesize($file_path);
+            clearstatcache();
+            if ($uploaded_file && is_uploaded_file($uploaded_file)) {
+                // multipart/formdata uploads (POST method uploads)
+                if ($append_file) {
+                    file_put_contents(
+                        $file_path,
+                        fopen($uploaded_file, 'r'),
+                        FILE_APPEND
+                    );
+                } else {
+                    move_uploaded_file($uploaded_file, $file_path);
+                }
+            } else {
+                // Non-multipart uploads (PUT method support)
+                file_put_contents(
+                    $file_path,
+                    fopen('php://input', 'r'),
+                    $append_file ? FILE_APPEND : 0
+                );
+            }
+            $file_size = filesize($file_path);
+            if ($file_size === $file->size) {
+            		if ($this->options['orient_image']) {
+            		    $this->orient_image($file_path);
+            		}
+                $file->url = $this->options['upload_url'].rawurlencode($file->name);
+                foreach($this->options['image_versions'] as $version => $options) {
+                    if ($this->create_scaled_image($file->name, $options)) {
+                        $file->{$version.'_url'} = $options['upload_url']
+                            .rawurlencode($file->name);
+                    }
+                }
+            } else if ($this->options['discard_aborted_uploads']) {
+                unlink($file_path);
+                $file->error = 'abort';
+            }
+            $file->size = $file_size;
+            $file->delete_url = $this->options['script_url']
+                .'?file='.rawurlencode($file->name);
+            $file->delete_type = 'DELETE';
+        } else {
+            $file->error = $error;
+        }
+        return $file;
+    }
+    
+    public function get() {
+        $file_name = isset($_REQUEST['file']) ?
+            basename(stripslashes($_REQUEST['file'])) : null;
+        if ($file_name) {
+            $info = $this->get_file_object($file_name);
+        } else {
+            $info = $this->get_file_objects();
+        }
+        header('Content-type: application/json');
+        echo json_encode($info);
+    }
+    
+    public function post() {
+        if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
+            return $this->delete();
+        }
+        $upload = isset($_FILES[$this->options['param_name']]) ?
+            $_FILES[$this->options['param_name']] : null;
+        $info = array();
+        if ($upload && is_array($upload['tmp_name'])) {
+            foreach ($upload['tmp_name'] as $index => $value) {
+                $info[] = $this->handle_file_upload(
+                    $upload['tmp_name'][$index],
+                    isset($_SERVER['HTTP_X_FILE_NAME']) ?
+                        $_SERVER['HTTP_X_FILE_NAME'] : $upload['name'][$index],
+                    isset($_SERVER['HTTP_X_FILE_SIZE']) ?
+                        $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'][$index],
+                    isset($_SERVER['HTTP_X_FILE_TYPE']) ?
+                        $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'][$index],
+                    $upload['error'][$index]
+                );
+            }
+        } elseif ($upload || isset($_SERVER['HTTP_X_FILE_NAME'])) {
+            $info[] = $this->handle_file_upload(
+                isset($upload['tmp_name']) ? $upload['tmp_name'] : null,
+                isset($_SERVER['HTTP_X_FILE_NAME']) ?
+                    $_SERVER['HTTP_X_FILE_NAME'] : $upload['name'],
+                isset($_SERVER['HTTP_X_FILE_SIZE']) ?
+                    $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'],
+                isset($_SERVER['HTTP_X_FILE_TYPE']) ?
+                    $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'],
+                isset($upload['error']) ? $upload['error'] : null
+            );
+        }
+        header('Vary: Accept');
+        
+        $redirect = isset($_REQUEST['redirect']) ?
+            stripslashes($_REQUEST['redirect']) : null;
+        if ($redirect) {
+            header('Location: '.sprintf($redirect, rawurlencode($json)));
+            return;
+        }
+        if (isset($_SERVER['HTTP_ACCEPT']) &&
+            (strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)) {
+            header('Content-type: application/json');
+        } else {
+            header('Content-type: text/plain');
+        }
+        return $info;
+    }
+    
+    public function delete() {
+        $file_name = isset($_REQUEST['file']) ?
+            basename(stripslashes($_REQUEST['file'])) : null;
+        $file_path = $this->options['upload_dir'].$file_name;
+        $success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
+        if ($success) {
+            foreach($this->options['image_versions'] as $version => $options) {
+                $file = $options['upload_dir'].$file_name;
+                if (is_file($file)) {
+                    unlink($file);
+                }
+            }
+        }
+        header('Content-type: application/json');
+        echo json_encode($success);
+    }
 
 }
-// END Form Validation Class

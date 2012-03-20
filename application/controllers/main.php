@@ -348,7 +348,7 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_privilege');
-        $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name', 'groups');
+        $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name'); //, 'groups');
 
         $crud->set_relation_n_n('groups', 'cms_group_privilege', 'cms_group', 'privilege_id', 'group_id', 'group_name');
 
