@@ -8,9 +8,8 @@
 class nnga extends CMS_Controller {
     
     //put your code here
-    public function __construct($identifier=NULL){
-        parent::__construct();         
-        $this->initialize($identifier);
+    public function __construct(){
+        parent::__construct();
     }
     
     private function initialize($identifier=NULL){
@@ -26,7 +25,12 @@ class nnga extends CMS_Controller {
     
     public function monitor($identifier=NULL){
         $this->initialize($identifier);
-        $this->view('artificial_intelligence/nnga_monitor', NULL, 'ai_nnga_monitor');
+        if(!$this->ai_nnga->core_exists()){
+            redirect('artificial_intelligence/nnga/set'.$identifier);
+        }else{
+            $data = array("identifier"=>$identifier);
+            $this->view('artificial_intelligence/nnga_monitor', $data, 'ai_nnga_monitor');
+        }
     }
     
     public function set($identifier=NULL){       
@@ -45,7 +49,7 @@ class nnga extends CMS_Controller {
         $ga_elitism_rate = $this->input->post('ga_elitism_rate');
         
         //set validation rule
-        $this->form_validation->set_rules('nn_hidden_neuron_count', 'Hidden Neuron Count', 'required|xss_clean');
+        $this->form_validation->set_rules('nn_hidden_neuron_count', 'Hidden Neuron Count', 'xss_clean');
         $this->form_validation->set_rules('nn_learning_rate', 'Learning Rate', 'required|xss_clean');
         $this->form_validation->set_rules('nn_max_loop', 'NN Max Loop', 'required|xss_clean');
         $this->form_validation->set_rules('nn_max_mse', 'Max MSE', 'required|xss_clean');
@@ -74,9 +78,9 @@ class nnga extends CMS_Controller {
             $neuronCount[] = count($nn_dataset[0][1]);
 
             $this->ai_nnga->set($nn_dataset, $neuronCount, $nn_learning_rate, $nn_max_mse, $nn_max_loop, 
-                    $ga_individu_count, $ga_max_loop, 1/(0.00001+$nn_max_mse), $ga_mutation_rate, 
+                    $ga_individu_count, $ga_max_loop, 1/(0.000001+$nn_max_mse), $ga_mutation_rate, 
                     $ga_crossover_rate, $ga_reproduction_rate, $ga_elitism_rate); 
-            redirect('artificial_intelligence/nnga/monitor');
+            redirect('artificial_intelligence/nnga/monitor/'.$identifier);
             
         }else{
             $state = $this->ai_nnga->currentState();
@@ -141,7 +145,8 @@ class nnga extends CMS_Controller {
                 "ga_mutation_rate"=>$ga_mutation_rate,
                 "ga_crossover_rate"=>$ga_crossover_rate,
                 "ga_reproduction_rate"=>$ga_reproduction_rate,
-                "ga_elitism_rate"=>$ga_elitism_rate
+                "ga_elitism_rate"=>$ga_elitism_rate,
+                "identifier"=>$identifier
                 );
             $this->view('artificial_intelligence/nnga_set',$data, 'ai_nnga_set');
         }
@@ -165,9 +170,11 @@ class nnga extends CMS_Controller {
     }
     
     public function currentState($identifier=NULL){
-        $this->initialize($identifier);
+        $this->initialize($identifier);        
         
         $result = $this->ai_nnga->currentState();
+        $result['loop'] = $this->input->post('loop');
+        unset($result['ga_alreadyCalculatedGenes']);
         echo json_encode($result);
     }
     

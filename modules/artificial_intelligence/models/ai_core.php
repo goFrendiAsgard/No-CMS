@@ -19,7 +19,7 @@ class AI_Core extends CMS_Model{
         $this->core_property = $this->core_getProperty();
     }
     
-    protected function core_identifier($identifier=NULL){
+    public function core_identifier($identifier=NULL){
         if(isset($identifier)){
             $this->core_identifier = $identifier;
         }else{
@@ -42,18 +42,18 @@ class AI_Core extends CMS_Model{
         }
         
         
-        file_put_contents('modules/artificial_intelligence/assets/data/'.$this->core_identifier, 
+        file_put_contents($this->core_config_filename(), 
                 json_encode($this->core_property));
         
     }
     
     public function core_getProperty($key=NULL){
         
-        if(!file_exists('modules/artificial_intelligence/assets/data/'.$this->core_identifier)){
-            file_put_contents('modules/artificial_intelligence/assets/data/'.$this->core_identifier, '');
+        if(!$this->core_exists()){
+            file_put_contents($this->core_config_filename(), '');
         }
         
-        $content = file_get_contents('modules/artificial_intelligence/assets/data/'.$this->core_identifier);
+        $content = file_get_contents($this->core_config_filename());
         $content = json_decode($content, true);
         
         if($content){
@@ -68,6 +68,14 @@ class AI_Core extends CMS_Model{
         
         return $result;
         
+    }
+    
+    public function core_exists(){
+        return file_exists($this->core_config_filename());
+    }
+    
+    private function core_config_filename(){
+        return 'modules/artificial_intelligence/assets/data/'.$this->cms_userid().'_'.$this->core_identifier;
     }
     
 }

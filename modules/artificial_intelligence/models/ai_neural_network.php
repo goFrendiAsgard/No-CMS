@@ -298,7 +298,7 @@ class AI_Neural_Network extends AI_Core {
                     $MSE += pow($delta, 2);
                 }
             }
-            $MSE /= $dataSetCount * $outputCount;
+            $MSE /= ($dataSetCount * $outputCount);
             $this->nn_MSE[] = (float)$MSE;
             
             $this->nn_loop++;

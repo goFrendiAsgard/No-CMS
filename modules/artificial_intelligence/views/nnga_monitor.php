@@ -10,6 +10,7 @@
     var CONTEXT;
     var RESPONSE = "";
     var WATCH = true;
+    var CURRENT_LOOP = 0;
     
     function getNodeX(layer, totalLayer){
         return 10+(layer+1) * (CANVAS_WIDTH-20)/(totalLayer+2);
@@ -55,14 +56,17 @@
         $("#canvas").height(CANVAS_HEIGHT);
     }
     
-    function updateInfo(){
+    function updateInfo(){        
         if(!WATCH) return 0;
+        CURRENT_LOOP++;
         $.ajax({
-            url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/currentState',
+            url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/currentState/<?php echo $identifier; ?>',
             dataType:'json',
+            data : {loop:CURRENT_LOOP},
+            type : 'POST',
             async: false,
             success:function(response){
-                if (JSON.stringify(RESPONSE) != JSON.stringify(response)){
+                if ((JSON.stringify(RESPONSE) != JSON.stringify(response)) && (response["loop"]==CURRENT_LOOP)){
                     RESPONSE = response;
                     //$("input[type=button]").attr("disabled", "true");
                     
@@ -78,8 +82,8 @@
                     adjustCanvasSize();
                     CANVAS = document.getElementById('canvas');
                     CONTEXT = CANVAS.getContext('2d');
-                    CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-                    CONTEXT.save();
+                    CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);                    
+                    //CONTEXT.save();
                     
                     //input to input neuron
                     for(var i=0; i<neuronCount[0]; i++){
@@ -146,111 +150,112 @@
                             getNodeX(toLayer, layerCount),getNodeY(toNeuron, toLayerNeuronCount), Math.round(value*10000)/10000);
                     }
                     
-                    //draw best fitness
-                    var step = 1;
-                    var fitnessCount = fitness.length;
-                    var maxFitness = 0;
-                    var minFitness = 0;
-                    var top = NN_HEIGHT + 20;
-                    var bottom = top + FITNESS_GRAPH_HEIGHT;
-                    //determine step
-                    if(fitnessCount>CANVAS_WIDTH){
-                        step = Math.ceil(fitnessCount/CANVAS_WIDTH);
-                    }
-                    //determine min and max fitness
-                    for(var i=0; i<fitnessCount; i++){
-                        if(i==0){
-                            minFitness = fitness[i];
-                            maxFitness = fitness[i];
+                    if(response["loop"]==CURRENT_LOOP){
+                        //draw best fitness
+                        var step = 1;
+                        var fitnessCount = fitness.length;
+                        var maxFitness = 0;
+                        var minFitness = 0;
+                        var top = NN_HEIGHT + 20;
+                        var bottom = top + FITNESS_GRAPH_HEIGHT;
+                        //determine step
+                        if(fitnessCount>CANVAS_WIDTH){
+                            step = Math.ceil(fitnessCount/CANVAS_WIDTH);
                         }
-                        if(fitness[i]>maxFitness) maxFitness = fitness[i];
-                        if(fitness[i]<minFitness) minFitness = fitness[i];
-                    }                    
-                    //draw axis
-                    drawLine(1,top, 1,bottom);
-                    drawLine(1,bottom, CANVAS_WIDTH,bottom);
-                    for(var i=0; i<fitnessCount-step; i+=step){
-                        drawLine(CANVAS_WIDTH * i/fitnessCount, bottom-(fitness[i]*FITNESS_GRAPH_HEIGHT/maxFitness), 
-                            CANVAS_WIDTH * (i+step)/fitnessCount, bottom-(fitness[i+step]*FITNESS_GRAPH_HEIGHT/maxFitness));
-                    }
-                    if(fitnessCount>0){
-                        drawLabel(CANVAS_WIDTH-175,top, "Max Fitness = "+maxFitness);
-                        drawLabel(CANVAS_WIDTH-175,top+10, "Min Fitness = "+minFitness);
-                        drawLabel(CANVAS_WIDTH-175,top+20, "Current Fitness = "+fitness[fitnessCount-1]);
-                        drawLabel(CANVAS_WIDTH-175,top+30, "Current Loop = "+ga.ga_loop);
-                        drawLabel(CANVAS_WIDTH-175,top+40, "Gene Variation = "+ga.ga_genes.length);
-                        drawLabel(CANVAS_WIDTH-175,top+50, "Time = "+ga.ga_time);
-                    }
-                    
-                    
-                    
-                    //draw MSE
-                    step = 1;
-                    var MSECount = MSE.length;
-                    var maxMSE = 0;
-                    var minMSE = 0;
-                    var top = NN_HEIGHT+FITNESS_GRAPH_HEIGHT+ 40;
-                    var bottom = top + MSE_GRAPH_HEIGHT;
-                    //determine step
-                    if(MSECount>CANVAS_WIDTH){
-                        step = Math.ceil(MSECount/CANVAS_WIDTH);
-                    }
-                    //determine min and max fitness
-                    for(var i=0; i<MSECount; i++){
-                        if(i==0){
-                            minMSE = MSE[i];
-                            maxMSE = MSE[i];
+                        //determine min and max fitness
+                        for(var i=0; i<fitnessCount; i++){
+                            if(i==0){
+                                minFitness = fitness[i];
+                                maxFitness = fitness[i];
+                            }
+                            if(fitness[i]>maxFitness) maxFitness = fitness[i];
+                            if(fitness[i]<minFitness) minFitness = fitness[i];
+                        }                    
+                        //draw axis
+                        drawLine(1,top, 1,bottom);
+                        drawLine(1,bottom, CANVAS_WIDTH,bottom);
+                        for(var i=0; i<fitnessCount-step; i+=step){
+                            drawLine(CANVAS_WIDTH * i/fitnessCount, bottom-(fitness[i]*FITNESS_GRAPH_HEIGHT/maxFitness), 
+                                CANVAS_WIDTH * (i+step)/fitnessCount, bottom-(fitness[i+step]*FITNESS_GRAPH_HEIGHT/maxFitness));
                         }
-                        if(MSE[i]>maxMSE) maxMSE = MSE[i];
-                        if(MSE[i]<minMSE) minMSE = MSE[i];
-                    }                    
-                    //draw axis
-                    drawLine(1,top, 1,bottom);
-                    drawLine(1,bottom, CANVAS_WIDTH,bottom);
-                    for(var i=0; i<MSECount-step; i+=step){
-                        drawLine(CANVAS_WIDTH * i/MSECount, bottom-(MSE[i]*MSE_GRAPH_HEIGHT/maxMSE), 
-                            CANVAS_WIDTH * (i+step)/MSECount, bottom-(MSE[i+step]*MSE_GRAPH_HEIGHT/maxMSE));
-                    }
-                    if(MSECount>0){
-                        drawLabel(CANVAS_WIDTH-175,top, "Max MSE = "+maxMSE);
-                        drawLabel(CANVAS_WIDTH-175,top+10, "Min MSE = "+minMSE);
-                        drawLabel(CANVAS_WIDTH-175,top+20, "Current MSE = "+MSE[MSECount-1]);
-                        drawLabel(CANVAS_WIDTH-175,top+30, "Current Loop = "+nn.nn_loop);
-                        drawLabel(CANVAS_WIDTH-175,top+40, "Time = "+nn.nn_time);
-                    }
-                    
-                    
-                    if(ds.length>0){
-                        var str = "";
-                        var inputCount = ds[0].input.length;
-                        var targetCount = ds[0].target.length;
-                        var outputCount = targetCount;
-                        str+= '<table>';
-                        str+= '<tr><td colspan="'+inputCount+'">Input</td><td colspan="'+targetCount+'">Target</td><td colspan="'+outputCount+'">Output</td></tr>';
-                        for(var i=0; i<ds.length; i++){
-                            str+= '<tr>';
-                            for(var j=0; j<inputCount; j++){
-                                str+= '<td>'+ds[i].input[j]+'</td>';
+                        if(fitnessCount>0){
+                            drawLabel(CANVAS_WIDTH-175,top, "Max Fitness = "+maxFitness);
+                            drawLabel(CANVAS_WIDTH-175,top+10, "Min Fitness = "+minFitness);
+                            drawLabel(CANVAS_WIDTH-175,top+20, "Current Fitness = "+fitness[fitnessCount-1]);
+                            drawLabel(CANVAS_WIDTH-175,top+30, "Current Loop = "+ga.ga_loop);
+                            drawLabel(CANVAS_WIDTH-175,top+40, "Gene Variation = "+ga.ga_genes.length);
+                            drawLabel(CANVAS_WIDTH-175,top+50, "Time = "+ga.ga_time);
+                        }
+
+
+
+                        //draw MSE
+                        step = 1;
+                        var MSECount = MSE.length;
+                        var maxMSE = 0;
+                        var minMSE = 0;
+                        var top = NN_HEIGHT+FITNESS_GRAPH_HEIGHT+ 40;
+                        var bottom = top + MSE_GRAPH_HEIGHT;
+                        //determine step
+                        if(MSECount>CANVAS_WIDTH){
+                            step = Math.ceil(MSECount/CANVAS_WIDTH);
+                        }
+                        //determine min and max fitness
+                        for(var i=0; i<MSECount; i++){
+                            if(i==0){
+                                minMSE = MSE[i];
+                                maxMSE = MSE[i];
                             }
-                            for(var j=0; j<targetCount; j++){
-                                str+= '<td>'+ds[i].target[j]+'</td>';
-                            }
-                            for(var j=0; j<outputCount; j++){
-                                str+= '<td>'+ds[i].output[j]+'</td>';
-                            }
-                            str+= '</tr>';
-                        } 
-                        str+= '</table>';
-                        $("div#output").html(str);
-                    }
-                              
-                    
-                    
+                            if(MSE[i]>maxMSE) maxMSE = MSE[i];
+                            if(MSE[i]<minMSE) minMSE = MSE[i];
+                        }                    
+                        //draw axis
+                        drawLine(1,top, 1,bottom);
+                        drawLine(1,bottom, CANVAS_WIDTH,bottom);
+                        for(var i=0; i<MSECount-step; i+=step){
+                            drawLine(CANVAS_WIDTH * i/MSECount, bottom-(MSE[i]*MSE_GRAPH_HEIGHT/maxMSE), 
+                                CANVAS_WIDTH * (i+step)/MSECount, bottom-(MSE[i+step]*MSE_GRAPH_HEIGHT/maxMSE));
+                        }
+                        if(MSECount>0){
+                            drawLabel(CANVAS_WIDTH-175,top, "Max MSE = "+maxMSE);
+                            drawLabel(CANVAS_WIDTH-175,top+10, "Min MSE = "+minMSE);
+                            drawLabel(CANVAS_WIDTH-175,top+20, "Current MSE = "+MSE[MSECount-1]);
+                            drawLabel(CANVAS_WIDTH-175,top+30, "Current Loop = "+nn.nn_loop);
+                            drawLabel(CANVAS_WIDTH-175,top+40, "Time = "+nn.nn_time);
+                        }
+
+
+                        if(ds.length>0){
+                            var str = "";
+                            var inputCount = ds[0].input.length;
+                            var targetCount = ds[0].target.length;
+                            var outputCount = targetCount;
+                            str+= '<table>';
+                            str+= '<tr><td colspan="'+inputCount+'">Input</td><td colspan="'+targetCount+'">Target</td><td colspan="'+outputCount+'">Output</td></tr>';
+                            for(var i=0; i<ds.length; i++){
+                                str+= '<tr>';
+                                for(var j=0; j<inputCount; j++){
+                                    str+= '<td>'+ds[i].input[j]+'</td>';
+                                }
+                                for(var j=0; j<targetCount; j++){
+                                    str+= '<td>'+ds[i].target[j]+'</td>';
+                                }
+                                for(var j=0; j<outputCount; j++){
+                                    str+= '<td>'+ds[i].output[j]+'</td>';
+                                }
+                                str+= '</tr>';
+                            } 
+                            str+= '</table>';
+                            $("div#output").html(str);
+                        }
+                        
+                        
+                    }//end of if CURRENT_LOOP<>response.loop
                     
                     
                 }
             }
-        });
+        });        
     }
     
     $(document).ready(function(){
@@ -258,7 +263,7 @@
         $("#btn_train_nn").click(function(){
             $("input[type=button]").attr("disabled", "disabled");
             $.ajax({
-                url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/trainNN',
+                url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/trainNN/<?php echo $identifier; ?>',
                 success : function(response){
                     $("input[type=button]").removeAttr("disabled");
                 }
@@ -268,7 +273,7 @@
         $("#btn_train_nnga").click(function(){
             $("input[type=button]").attr("disabled", "disabled");
             $.ajax({
-                url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/trainNNGA',
+                url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/trainNNGA/<?php echo $identifier; ?>',
                 success : function(response){
                     $("input[type=button]").removeAttr("disabled");
                 }

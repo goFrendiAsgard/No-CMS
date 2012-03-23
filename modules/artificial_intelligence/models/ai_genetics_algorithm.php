@@ -293,7 +293,6 @@ class AI_Genetics_Algorithm extends AI_Core{
     
     public function currentState(){
         $state = $this->core_getProperty();
-        unset($state['ga_alreadyCalculatedGenes']);
         return $state;
     }
 }

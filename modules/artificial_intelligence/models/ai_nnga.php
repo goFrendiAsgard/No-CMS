@@ -78,13 +78,16 @@ class AI_GA_For_NN extends AI_Genetics_Algorithm{
             $weights = $this->decodeGene($gene);
             $dataSet = $this->dataSet;
             $MSE = 0;
-            for($i=0; $i<count($dataSet); $i++){
+            $dataSetCount = count($dataSet);
+            $outputCount = count($dataSet[0][1]);
+            for($i=0; $i<$dataSetCount; $i++){
                 $output = $this->NN->out($dataSet[$i][0], $weights);
                 $desiredOutput = $dataSet[$i][1];
-                for($j=0; $j<count($output); $j++){
+                for($j=0; $j<$outputCount; $j++){
                     $MSE += pow($desiredOutput[$j]-$output[$j],2);
                 }
             }
+            $MSE /= $dataSetCount * $outputCount;
 
             $this->ga_alreadyCalculatedGenes[$gene] = 1/($MSE+0.000001); //since MSE is 0 or positive, I do this to avoid division by zero
             return $this->ga_alreadyCalculatedGenes[$gene];
