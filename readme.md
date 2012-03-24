@@ -240,3 +240,4 @@ Here are some names of considerable contributors:
   That's why he can propose some fix in the very early stage of development. 
 * Ibnoe <-- The one who gives some suggestions and bug report. I don't know much about him
 * Panega <-- The one who also report a crucial bug. I don't know much about him
+* Alexandre Mota <-- The one who report a bug related to page authorization
