@@ -19,12 +19,32 @@ class ahge extends CMS_Controller{
     
     public function index($identifier=NULL){
         $this->initialize($identifier);
-        $this->ai_ahge->set();
+        $this->ai_ahge->set();        
         
-        $dummy_gene='101010101010101010111111101010111110100010101010101010101011001011010001011111111111111001010101010001001101000100110010001000111111000000000111111111101010101010101010101010101010101010101111111111100000000000101010101010';
-        echo '<pre>';
-        echo var_dump($this->ai_ahge->makePhenotype($dummy_gene));
-        echo '</pre>';
+        $dummy_gene = array(
+            '10111110100010101011111110101011111010001010101111111010',
+            '11101010101010111011111110101011111010001010101111011010',
+            '10001101010101110111101011010101011111010001010101111011',
+            '11011001110110111001111010101011101111101000101010111011',
+            '10111111010101111110101011011101110111110100010101011111',
+            '10100011110111110101110101011110111110100010101011111010',
+        );
+        
+        for($i=0; $i<count($dummy_gene); $i++){
+            $phenotype = $this->ai_ahge->makePhenotype($dummy_gene[$i]);
+            
+            echo 'Individu #'.$i.' is : <br>';
+            $str = '$output = ';
+            for($j=0; $j<count($phenotype['feature']); $j++){
+                $str .= $phenotype['constant'][$j].' * ('.$phenotype['feature'][$j].') + ';
+            }
+            $str .= $phenotype['constant'][count($phenotype['feature'])].';';
+            echo $str;
+            
+            echo '<pre>';
+            echo var_dump($phenotype);
+            echo '</pre>';
+        }
     }
 }
 

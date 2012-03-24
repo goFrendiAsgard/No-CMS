@@ -245,12 +245,9 @@ class AI_Genetics_Algorithm extends AI_Core{
                     $genes[$i] = $this->getRandomGene();
                 }
             }
-        }
+        }        
         
-        
-        //in NNGA should introduce new variable to remember every calculated genes
-        //this is a specific condition, it is better to just call $this->calculateFitness($genes[$i]);
-        
+                
         $this->ga_genes = array();
         $this->ga_fitness = array();
         $this->ga_fitnessOrder = array();
