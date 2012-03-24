@@ -373,12 +373,15 @@ class CMS_Model extends CI_Model {
      * @param  navigation, navigations
      * @desc  only used in allow_navigate
      */
-    private function _allow_navigate($navigation, $navigations = NULL) {
+    private function _allow_navigate($navigation, $navigations = NULL) {        
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
-        for ($i = 0; $i < count($navigations); $i++) {
-            if ($navigation == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"])
+        for ($i=0; $i<count($navigations); $i++) {
+            if ($navigation == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"]==1){
+                return true;            
+            }else if ($this->_allow_navigate($navigation, $navigations[$i]["child"])){  
                 return true;
+            }
         }
         return false;
     }

@@ -14,7 +14,7 @@ class nnga extends CMS_Controller {
     
     private function initialize($identifier=NULL){
         $this->load->model('artificial_intelligence/ai_nnga');
-        $identifier = isset($identifier)?$identifier:'Default';
+        $identifier = isset($identifier)?$identifier:'NNGA_Default';
         $this->ai_nnga->core_initialize($identifier);
     }
     

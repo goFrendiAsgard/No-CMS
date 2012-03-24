@@ -21,6 +21,7 @@ class Install extends CMS_Module_Installer{
         $this->remove_navigation("ai_nnga_set");
         $this->remove_navigation("ai_nnga_index");
         $this->remove_navigation("ai_artificial_intelligence_index");
+        $this->remove_navigation("ai_ahge_index");
     }
     
     private function build_all(){
@@ -29,6 +30,7 @@ class Install extends CMS_Module_Installer{
         $this->add_navigation("ai_nnga_index","NNGA", "artificial_intelligence/nnga/index", 3, "ai_artificial_intelligence_index");
         $this->add_navigation("ai_nnga_monitor","Monitor", "artificial_intelligence/nnga/monitor", 3, "ai_nnga_index");
         $this->add_navigation("ai_nnga_set","Set Parameters", "artificial_intelligence/nnga/set", 3, "ai_nnga_index");
+        $this->add_navigation("ai_ahge_index","Advance Heuristic Grammatical Evolution", "artificial_intelligence/ahge/index", 3, "ai_artificial_intelligence_index");
     }
 }
 
