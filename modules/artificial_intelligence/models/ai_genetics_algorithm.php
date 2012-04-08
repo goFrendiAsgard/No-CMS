@@ -51,7 +51,6 @@ class AI_Genetics_Algorithm extends AI_Core{
     protected function end(){
         $this->core_saveProperty(
                 array(
-                    //"ga_population",
                     "ga_genes",
                     "ga_fitness",
                     "ga_fitnessOrder",
@@ -69,7 +68,6 @@ class AI_Genetics_Algorithm extends AI_Core{
                     "ga_alreadyCalculatedGenes"
                 ), 
                 array(
-                    //$this->ga_population,
                     $this->ga_genes,
                     $this->ga_fitness,
                     $this->ga_fitnessOrder,
