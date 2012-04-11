@@ -127,7 +127,7 @@ class CMS_Model extends CI_Model {
                 "navigation_name" => $row->navigation_name,
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
-                "url" => $row->url,
+                "url" => isset($row->url)?$row->url:'main/static_page/'.$row->navigation_name,
                 "is_static" => $row->is_static,
                 "active"=> $row->active,
                 "child" => $children,

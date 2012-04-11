@@ -231,7 +231,7 @@ class CMS_Controller extends CI_Controller {
             if ($query->num_rows() > 0) {
                 $row = $query->row();
                 $static_content = $row->static_content;
-                $data["_content"] = $static_content;  
+                $data["_content"] = $static_content;
                 return $this->view('main/static_page', $data, $navigation_name, $privilege_required, $custom_theme, $custom_layout, $return_as_string);
             }            
         }

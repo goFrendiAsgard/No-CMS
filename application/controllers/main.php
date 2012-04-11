@@ -511,6 +511,12 @@ class Main extends CMS_Controller {
             echo "widget doesn't exist";
         }
     }
+    
+    //this is used for the real static page which doesn't has any URL in navigation management
+    public function static_page($navigation_name){
+        //this actually has nothing todo, only trigger static_page event on CMS_Controller.view()
+        $this->view('main/static_page',NULL,$navigation_name);
+    }
 
 }
 

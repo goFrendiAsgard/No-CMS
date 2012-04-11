@@ -241,3 +241,4 @@ Here are some names of considerable contributors:
 * Ibnoe <-- The one who gives some suggestions and bug report. I don't know much about him
 * Panega <-- The one who also report a crucial bug. I don't know much about him
 * Alexandre Mota <-- The one who report a bug related to page authorization
+* Gusro <-- Find out bug related to static page. Since his report, static page has 2 versions. A dynamic page which is overwritten by static content, or pure static page without any View URL needed
