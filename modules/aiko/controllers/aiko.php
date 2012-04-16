@@ -19,13 +19,15 @@ class Aiko extends CMS_Controller{
         $matrix_test = array("determinant"=>$this->matrix->determinant());
         
         //test core/random
-        //$this->load->library('aiko/core/random','rnd');
+        $this->load->library('aiko/core/random','rnd');
+        $random_test = array("get"=>array($this->random->get(), $this->random->get()));
         
         
         $data = array();
         $data['data'] = array(
             "property_test" => $property_test,
-            "matrix_test" => $matrix_test
+            "matrix_test" => $matrix_test,
+            "random_test" => $random_test
         );
         $data['data'] = json_encode($data);
     	$this->view('aiko_index', $data);
