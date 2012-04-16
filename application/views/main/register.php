@@ -1,3 +1,31 @@
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
+<script type="text/javascript">
+    function check_user_exists(){
+        var user_name =  $('input[name="user_name"]').val();
+        $.ajax({
+            "url" : "check_user_exists",
+            "type" : "POST",
+            "data" : {"user_name":user_name},
+            "dataType" : "json",
+            "success" : function(data){
+                if(!data.exists && user_name!=''){
+                    $('input[name="register"]').show();
+                    $('input[name="register"]').removeAttr('disabled');                    
+                }else{
+                    $('input[name="register"]').hide();
+                    $('input[name="register"]').attr('disabled', 'disabled');
+                }
+            }
+        });
+    }
+    
+    $(document).ready(function(){
+        check_user_exists();
+        $('input[name="user_name"]').keyup(function(){
+            check_user_exists();
+        });
+    })
+</script>    
 <?php
     echo form_open('main/register');
     echo form_label('User Name').br();

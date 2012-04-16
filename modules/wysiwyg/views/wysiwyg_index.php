@@ -90,6 +90,7 @@
 </style>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.css" />
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
 <script type="text/javascript">
     function adjust_width(){
         var wysiwyg_width = $("div#wysiwyg").width();

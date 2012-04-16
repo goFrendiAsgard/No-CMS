@@ -756,6 +756,16 @@ class CMS_Model extends CI_Model {
         $value = str_replace('@base_url', base_url(), $value);
         return $value;
     }
+    
+    /**
+     * 
+     */
+    public function cms_is_user_exists($username){
+        $SQL = "SELECT user_name FROM cms_user WHERE user_name='".  addslashes($username)."'";
+        $query = $this->db->query($SQL);
+        $num_rows = $query->num_rows();
+        return $num_rows>0;        
+    }
 
 }
 

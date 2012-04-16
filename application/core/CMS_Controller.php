@@ -461,5 +461,9 @@ class CMS_Controller extends CI_Controller {
     public function cms_parse_keyword($value) {
         return $this->CMS_Model->cms_parse_keyword($value);
     }
+    
+    public function cms_is_user_exists($username){
+       return $this->CMS_Model->cms_is_user_exists($username);       
+    }
 
 }
