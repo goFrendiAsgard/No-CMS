@@ -119,9 +119,19 @@ class Main extends CMS_Controller {
         }
     }
     
-    public function check_user_exists(){
+    public function check_registration(){
         $user_name = $this->input->post('user_name');
-        $data = array("exists"=>$this->cms_is_user_exists($user_name));
+        $exists = $this->cms_is_user_exists($user_name);
+        $message = "";
+        if($user_name==""){
+            $message = "Username is empty";
+        }else if($exists){
+            $message = "Username already exists";
+        }
+        $data = array(
+            "exists"=>$exists,
+            "message"=>$message
+        );
         echo json_encode($data);
         
     }

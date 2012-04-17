@@ -23,3 +23,6 @@ $lang['Share This Page !!'] = 'Share This Page !!';
 $lang['Donate No-CMS'] = 'Donate No-CMS';
 
 $lang['Welcome'] = 'Welcome';
+
+$lang['Username already exists'] = 'Username already exists';
+$lang['Username is empty'] = 'Username is empty';

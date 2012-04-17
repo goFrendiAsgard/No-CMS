@@ -23,3 +23,6 @@ $lang['Share This Page !!'] = 'Bagikan Halaman Ini !!';
 $lang['Donate No-CMS'] = 'Donasi No-CMS';
 
 $lang['Welcome'] = 'Selamat Datang';
+
+$lang['Username already exists'] = 'Username sudah ada';
+$lang['Username is empty'] = 'Username kosong';
