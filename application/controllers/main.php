@@ -124,9 +124,9 @@ class Main extends CMS_Controller {
         $exists = $this->cms_is_user_exists($user_name);
         $message = "";
         if($user_name==""){
-            $message = "Username is empty";
+            $message = $this->cms_lang("Username is empty");
         }else if($exists){
-            $message = "Username already exists";
+            $message = $this->cms_lang("Username already exists");
         }
         $data = array(
             "exists"=>$exists,
