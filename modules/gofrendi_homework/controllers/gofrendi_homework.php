@@ -21,7 +21,7 @@ class gofrendi_homework extends CMS_Controller{
         $this->load->model('gofrendi_homework/iris_data');
         
         $dataset = $this->iris_data->get(); 
-        $neuronCount = array(count($dataset[0][0]), 2, count($dataSet[0][1]));
+        $neuronCount = array(count($dataset[0][0]), 2, count($dataset[0][1]));
         $nn_learning_rate = 0.1;
         $nn_max_mse = 0.01;
         $nn_max_loop = 1000;
@@ -68,7 +68,7 @@ class gofrendi_homework extends CMS_Controller{
                  array(1)
              ),
         );
-        $neuronCount = array(count($dataset[0][0]), 0, count($dataSet[0][1]));
+        $neuronCount = array(count($dataset[0][0]), 0, count($dataset[0][1]));
         $nn_learning_rate = 0.1;
         $nn_max_mse = 0.01;
         $nn_max_loop = 1000;
@@ -115,7 +115,7 @@ class gofrendi_homework extends CMS_Controller{
                  array(1)
              ),
         );
-        $neuronCount = array(count($dataset[0][0]), 0, count($dataSet[0][1]));
+        $neuronCount = array(count($dataset[0][0]), 0, count($dataset[0][1]));
         $nn_learning_rate = 0.1;
         $nn_max_mse = 0.01;
         $nn_max_loop = 1000;
@@ -162,7 +162,7 @@ class gofrendi_homework extends CMS_Controller{
                  array(0)
              ),
         );
-        $neuronCount = array(count($dataset[0][0]), 2, count($dataSet[0][1]));
+        $neuronCount = array(count($dataset[0][0]), 2, count($dataset[0][1]));
         $nn_learning_rate = 0.1;
         $nn_max_mse = 0.01;
         $nn_max_loop = 1000;

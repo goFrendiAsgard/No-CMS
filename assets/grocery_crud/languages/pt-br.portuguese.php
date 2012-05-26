@@ -48,3 +48,25 @@
 	
 	$lang['insert_error']			= 'Ocorreu um erro ao tentar gravar o registro.';
 	$lang['update_error']			= 'Ocorreu um erro ao atualizar o registro.';
+	
+	/* Added in version 1.2.1 */
+	$lang['set_relation_title']		= 'Selecione {field_display_as}';
+	
+	$lang['list_record']			= 'Registro';
+	$lang['form_inactive']			= 'inativo';
+	$lang['form_active']			= 'ativo';
+	
+	/* Added in version 1.2.2 */
+	$lang['form_save_and_go_back']	= 'Salvar e voltar para a listagem';
+	$lang['form_update_and_go_back']= 'Aplicar alterações e voltar para a listagem';
+
+	/* Upload functionality */
+	$lang['string_delete_file'] 	= "Deleting file";
+	$lang['string_progress'] 		= "Progress: ";
+	$lang['error_on_uploading'] 	= "An error has occurred on uploading.";
+	$lang['message_promt_delete_file'] 	= "Are you sure that you want to delete this file?";
+	
+	$lang['error_max_number_of_files'] 	= "You can only upload one file each time.";
+	$lang['error_accept_file_types'] 	= "You are not allow to upload this kind of extension.";
+	$lang['error_max_file_size'] 		= "The uploaded file exceeds the {max_file_size} directive that was specified.";
+	$lang['error_min_file_size'] 		= "Your cannot upload an empty file.";

@@ -1,12 +1,12 @@
 <?php  
 	if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-	$this->set_css('assets/grocery_crud/themes/flexigrid/css/flexigrid.css');
-	$this->set_js('assets/grocery_crud/js/jquery-1.7.1.min.js');
-	$this->set_js('assets/grocery_crud/themes/flexigrid/js/cookies.js');
-	$this->set_js('assets/grocery_crud/themes/flexigrid/js/flexigrid.js');
-	$this->set_js('assets/grocery_crud/themes/flexigrid/js/jquery.form.js');
-	$this->set_js('assets/grocery_crud/themes/flexigrid/js/jquery.numeric.js');
+	$this->set_css($this->default_theme_path.'/flexigrid/css/flexigrid.css');
+	$this->set_js($this->default_javascript_path.'/jquery-1.7.1.min.js');
+	$this->set_js($this->default_theme_path.'/flexigrid/js/cookies.js');
+	$this->set_js($this->default_theme_path.'/flexigrid/js/flexigrid.js');
+	$this->set_js($this->default_theme_path.'/flexigrid/js/jquery.form.js');
+	$this->set_js($this->default_theme_path.'/flexigrid/js/jquery.numeric.js');
 	
 ?>
 <script type='text/javascript'>
@@ -17,9 +17,14 @@
 	var unique_hash = '<?php echo $unique_hash; ?>';
 
 	var message_alert_delete = "<?php echo $this->l('alert_delete'); ?>";
+
 </script>
 <div id='report-error' class='report-div error'></div>
-<div id='report-success' class='report-div success'></div>	
+<div id='report-success' class='report-div success report-list' <?php if($success_message !== null){?>style="display:block"<?php }?>>
+<?php if($success_message !== null){?>
+	<p><?php echo $success_message; ?></p>
+<?php }?>
+</div>	
 <div class="flexigrid" style='width: 100%;'>
 	<div class="mDiv">
 		<div class="ftitle">
@@ -76,11 +81,9 @@
 			</div>
 			<div class="pGroup">
 				<select name="per_page" id='per_page'>
-					<option selected="selected" value="10">10&nbsp;&nbsp;</option>
-					<option value="25">25&nbsp;&nbsp;</option>
-					<option value="50">50&nbsp;&nbsp;</option>
-					<option value="75">75&nbsp;&nbsp;</option>
-					<option value="100">100&nbsp;&nbsp;</option>
+					<?php foreach($paging_options as $option){?>
+						<option value="<?php echo $option; ?>" <?php if($option == $default_per_page){?>selected="selected"<?php }?>><?php echo $option; ?>&nbsp;&nbsp;</option>
+					<?php }?>
 				</select>
 				<input type='hidden' name='order_by[0]' id='hidden-sorting' value='<?php if(!empty($order_by[0])){?><?php echo $order_by[0]?><?php }?>' />
 				<input type='hidden' name='order_by[1]' id='hidden-ordering'  value='<?php if(!empty($order_by[1])){?><?php echo $order_by[1]?><?php }?>'/>
@@ -100,7 +103,7 @@
 			<div class="pGroup">
 				<span class="pcontrol"><?php echo $this->l('list_page'); ?> <input name='page' type="text" value="1" size="4" id='crud_page'> 
 				<?php echo $this->l('list_paging_of'); ?> 
-				<span id='last-page-number'><?php echo ceil($total_results / 25)?></span></span>
+				<span id='last-page-number'><?php echo ceil($total_results / $default_per_page)?></span></span>
 			</div>
 			<div class="btnseparator">
 			</div>
@@ -124,7 +127,7 @@
 			<div class="pGroup">
 				<span class="pPageStat">
 					<?php $paging_starts_from = "<span id='page-starts-from'>1</span>"; ?>
-					<?php $paging_ends_to = "<span id='page-ends-to'>". ($total_results < 10 ? $total_results : 10) ."</span>"; ?>
+					<?php $paging_ends_to = "<span id='page-ends-to'>". ($total_results < $default_per_page ? $total_results : $default_per_page) ."</span>"; ?>
 					<?php $paging_total_results = "<span id='total_items'>$total_results</span>"?>
 					<?php echo str_replace( array('{start}','{end}','{results}'),
 											array($paging_starts_from, $paging_ends_to, $paging_total_results),

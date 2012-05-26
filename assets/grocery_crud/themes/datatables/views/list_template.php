@@ -1,13 +1,13 @@
 <?php  
 	if (!defined('BASEPATH')) exit('No direct script access allowed');
 	
-	$this->set_css('assets/grocery_crud/themes/datatables/css/demo_table_jui.css');
-	$this->set_css('assets/grocery_crud/themes/datatables/css/ui/simple/jquery-ui-1.8.10.custom.css');
-	$this->set_css('assets/grocery_crud/themes/datatables/css/datatables.css');	
-	$this->set_js('assets/grocery_crud/js/jquery-1.7.1.min.js');
-	$this->set_js('assets/grocery_crud/themes/datatables/js/jquery-ui-1.8.10.custom.min.js');
-	$this->set_js('assets/grocery_crud/themes/datatables/js/jquery.dataTables.min.js');
-	$this->set_js('assets/grocery_crud/themes/datatables/js/datatables.js');
+	$this->set_css($this->default_theme_path.'/datatables/css/demo_table_jui.css');
+	$this->set_css($this->default_theme_path.'/datatables/css/ui/simple/jquery-ui-1.8.10.custom.css');
+	$this->set_css($this->default_theme_path.'/datatables/css/datatables.css');	
+	$this->set_js($this->default_javascript_path.'/jquery-1.7.1.min.js');
+	$this->set_js($this->default_theme_path.'/datatables/js/jquery-ui-1.8.10.custom.min.js');
+	$this->set_js($this->default_theme_path.'/datatables/js/jquery.dataTables.min.js');
+	$this->set_js($this->default_theme_path.'/datatables/js/datatables.js');
 ?>
 <script type='text/javascript'>
 	var base_url = '<?php echo base_url();?>';
@@ -31,7 +31,9 @@
 	var paging_last 	= "<?php echo $this->l('list_paging_last'); ?>";
 
 	var message_alert_delete = "<?php echo $this->l('alert_delete'); ?>";
-	
+
+	var default_per_page = '<?php echo $default_per_page;?>';
+
 </script>
 <?php 
 	if(!empty($actions)){
@@ -49,7 +51,11 @@
 	}
 ?>
 <div id='report-error' class='report-div error report-list'></div>
-<div id='report-success' class='report-div success report-list'></div>	
+<div id='report-success' class='report-div success report-list' <?php if($success_message !== null){?>style="display:block"<?php }?>>
+<?php if($success_message !== null){?>
+	<p><?php echo $success_message; ?></p>
+<?php }?>
+</div>	
 <?php if(!$unset_add){?>
 <a role="button" class="edit_button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="<?php echo $add_url?>">
 	<span class="ui-button-icon-primary ui-icon ui-icon-circle-plus"></span>

@@ -1,11 +1,11 @@
 <?php  
 	if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-	$this->set_css('assets/grocery_crud/themes/datatables/css/datatables.css');
-	$this->set_js('assets/grocery_crud/themes/flexigrid/js/jquery.form.js');	
-	$this->set_js('assets/grocery_crud/themes/datatables/js/datatables-add.js');
-	$this->set_css('assets/grocery_crud/css/ui/simple/jquery-ui-1.8.10.custom.css');
-	$this->set_js('assets/grocery_crud/js/jquery_plugins/jquery-ui-1.8.10.custom.min.js');	
+	$this->set_css($this->default_theme_path.'/datatables/css/datatables.css');
+	$this->set_js($this->default_theme_path.'/flexigrid/js/jquery.form.js');	
+	$this->set_js($this->default_theme_path.'/datatables/js/datatables-add.js');
+	$this->set_css($this->default_css_path.'/ui/simple/jquery-ui-1.8.10.custom.css');
+	$this->set_js($this->default_javascript_path.'/jquery_plugins/jquery-ui-1.8.10.custom.min.js');	
 ?>
 <script type='text/javascript'>
 	var base_url = '<?php echo base_url();?>';
@@ -16,12 +16,14 @@
 	<h3 class="ui-accordion-header ui-helper-reset ui-state-default form-title">
 		<div class='floatL form-title-left'>
 			<a href="#"><?php echo $this->l('form_add'); ?> <?php echo $subject?></a>
-		</div> 
+		</div>
+<?php 	if(!$this->unset_back_to_list) { ?>			
 		<div class='floatR'>
 			<a href='<?php echo $list_url?>' onclick='javascript: return goToList()' class='gotoListButton' >
 				<?php echo $this->l('form_back_to_list'); ?>
 			</a>
 		</div>
+<?php  } ?>		
 		<div class='clear'></div>
 	</h3>
 <div class='form-content form-div'>
@@ -58,10 +60,15 @@
 		<div class='buttons-box'>
 			<div class='form-button-box'>
 				<input type='submit' value='<?php echo $this->l('form_save'); ?>' class='ui-input-button'/>
-			</div>			
+			</div>
+<?php 	if(!$this->unset_back_to_list) { ?>				
+			<div class='form-button-box'>
+				<input type='button' value='<?php echo $this->l('form_save_and_go_back'); ?>' class='ui-input-button' id="save-and-go-back-button"/>
+			</div>								
 			<div class='form-button-box'>
 				<input type='button' value='<?php echo $this->l('form_cancel'); ?>' onclick="javascript: goToList()" class='ui-input-button' />
 			</div>
+<?php   } ?>			
 			<div class='form-button-box loading-box'>
 				<div class='small-loading' id='FormLoading'><?php echo $this->l('form_insert_loading'); ?></div>
 			</div>

@@ -47,3 +47,24 @@
 	
 	$lang['insert_error']			= 'Παρουσιάστηκε κάποιο σφάλμα κατά την διάρκεια εισαγωγής στοιχείων.';
 	$lang['update_error']			= 'Παρουσιάστηκε κάποιο σφάλμα κατά την διάρκεια της αποθήκευσης των αλλαγών.';	
+	
+	/* Added in version 1.2.1 */
+	$lang['set_relation_title']		= 'Επιλογή {field_display_as}';	
+	$lang['list_record']			= 'Εγγραφής';
+	$lang['form_inactive']			= 'ανενεργό';
+	$lang['form_active']			= 'ενεργό';
+	
+	/* Added in version 1.2.2 */
+	$lang['form_save_and_go_back']	= 'Αποθήκευση &amp; επιστροφή στην λίστα';
+	$lang['form_update_and_go_back']= 'Αποθήκευση αλλαγών &amp; επιστροφή στην λίστα';
+	
+	/* Upload functionality */
+	$lang['string_delete_file'] 	= "Διαγραφή αρχείου";
+	$lang['string_progress'] 		= "Πρόοδος: ";
+	$lang['error_on_uploading'] 	= "Ένα σφάλμα δημιουργήθηκε κατά το ανέβασμα του αρχείου.";
+	$lang['message_promt_delete_file'] 	= "Είστε σίγουροι ότι θέλετε να διαγραφτεί αυτό το αρχείο?";
+	
+	$lang['error_max_number_of_files'] 	= "Δεν έχετε την δυνατότητα να ανεβάσετε πάνω απο ένα αρχείο την φορά.";
+	$lang['error_accept_file_types'] 	= "Δέν έχετε το δικαίωμα να ανεβάσετε αυτόν το τύπο αρχείου.";
+	$lang['error_max_file_size'] 		= "The uploaded file exceeds the {max_file_size} directive that was specified.";
+	$lang['error_min_file_size'] 		= "Δεν μπορείτε να ανεβάσετε ένα άδειο αρχείο.";

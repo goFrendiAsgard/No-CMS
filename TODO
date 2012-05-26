@@ -2,4 +2,6 @@
 * [done, tested] user management bug as reported by panega at https://github.com/goFrendiAsgard/No-CMS/issues/6?_nid=28877585
 * [done, tested] Site Logo
 * [done, tested] Language
-WYSIWIG (navigation language quicklink, widget)
+* [done, tested] WYSIWIG (navigation language quicklink, widget)
+* [proposed] Using ORM, so that we can support more than just MySQL (inspired by django)
+* [proposed] Make a more clear and simple syntax
