@@ -2,6 +2,7 @@
 <html>
     <head>
         <title><?php echo $template['title'];?></title>
+        <link rel="icon" href="<?php echo $site_favicon;?>">
         <meta name="HandheldFriendly" content="true" />
         <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />
         <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>

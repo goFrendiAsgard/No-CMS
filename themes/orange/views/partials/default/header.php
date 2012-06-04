@@ -1,6 +1,4 @@
 <?php require_once BASEPATH . "../themes/$site_theme/lib/function.php"; ?>
-<head><link rel="icon" href="<?php echo $site_favicon; ?>"></head>
-<body>
     <img class="layout_float_left layout_margin_5" src ="<?php echo $site_logo; ?>" />
     
     <div class="layout_float_left">
@@ -9,4 +7,3 @@
     </div>
     <div class="layout_clear"></div>
     <?php echo build_quicklink($quicklinks); ?>
-</body>
