@@ -12,6 +12,8 @@
     $adm_password = get_secure_input("adm_password");
     $adm_confirmpassword = get_secure_input("adm_confirmpassword");
     
+    $hide_index = get_secure_input("hide_index");
+    
     $check_db = check_db($db_server, $db_port, $db_username, $db_password);
     if(($adm_password == '') || ($adm_password!=$adm_confirmpassword) || 
        (!$check_db["success"]) || !is_writable('../application/config/database.php') || 
@@ -53,6 +55,40 @@
     foreach($queries as $query){
         mysql_query($query, $db_connection);
     }  
+    
+    if($hide_index != ""){
+    	//config.php
+    	$str = file_get_contents('./resources/config.php');
+    	$str = replace($str,
+    			array('@index_page'),
+    			array('')
+    		   );
+    	file_put_contents('../application/config/config.php', $str);
+    	
+    	//.htaccess
+    	$pieces = explode('/', $_SERVER["REQUEST_URI"]);
+    	for ($i=0; $i<2; $i++){
+    		unset($pieces[count($pieces)-1]);
+    	}
+    	$path = '/' . implode('/',$pieces) . '/';
+    	$str = file_get_contents('./resources/htaccess');
+    	$str = replace($str,
+    			array('@rewrite_base'),
+    			array($path)
+    	);
+    	file_put_contents('../.htaccess', $str);
+    }else{
+    	//config.php
+    	$str = file_get_contents('./resources/config.php');
+    	$str = replace($str,
+    			array('@index_page'),
+    			array('index.php')
+    	);
+    	file_put_contents('../application/config/config.php', $str);
+    	
+    	//.htaccess
+    	file_put_contents('../.htaccess', '');
+    }
     
     
 ?>
