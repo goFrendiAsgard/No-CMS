@@ -247,6 +247,7 @@
         $("div#wysiwyg div#name").click(function(){
             $("div#wysiwyg .hidden").hide();
             $("div#wysiwyg input#change_name").toggle();
+            $("div#wysiwyg input#change_name").css('visibility', 'visible');
             $("div#wysiwyg input#change_name").val($("div#wysiwyg div#name").html());
             $("div#wysiwyg input#change_name").select(); 
         });
@@ -270,8 +271,9 @@
         $("div#wysiwyg div#slogan").click(function(){
             $("div#wysiwyg .hidden").hide();
             $("div#wysiwyg input#change_slogan").toggle();
+            $("div#wysiwyg input#change_slogan").css('visibility', 'visible');
             $("div#wysiwyg input#change_slogan").val($("div#wysiwyg div#slogan").html());
-            $("div#wysiwyg input#change_slogan").select(); 
+            $("div#wysiwyg input#change_slogan").select();             
         });
         $("div#wysiwyg input#change_slogan").keyup(function(event){
             if(event.keyCode==13){
