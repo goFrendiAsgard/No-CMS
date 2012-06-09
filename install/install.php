@@ -82,7 +82,6 @@
     			array('index.php')
     	);
     	file_put_contents('../application/config/config.php', $str);
-    	chmod('../application/config/config.php',0444);
     	
     	//.htaccess
     	file_put_contents('../.htaccess', '');
