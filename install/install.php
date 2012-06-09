@@ -33,9 +33,6 @@
     //routes.php
     $str = file_get_contents('./resources/routes.php');
     file_put_contents('../application/config/routes.php',$str);
-    //routes.php
-    $str = file_get_contents('./resources/config.php');
-    file_put_contents('../application/config/config.php',$str);
     
     //connection
     $db_connection = @mysql_connect($db_server.':'.$db_port,$db_username,$db_password);
@@ -85,6 +82,7 @@
     			array('index.php')
     	);
     	file_put_contents('../application/config/config.php', $str);
+    	chmod('../application/config/config.php',0444);
     	
     	//.htaccess
     	file_put_contents('../.htaccess', '');
@@ -94,34 +92,39 @@
 ?>
 <link rel="stylesheet" type="text/css" href="assets/style.css"></link>
 <h1>Installation finished</h1>
-<p>If there is no error message, then you have install No-CMS successfully.
-But <i>(depend on your situation)</i> you still have some more things to do:
-<ul>    
-    <li><strong>Delete your installation folder</strong><br />
+<p><strong>If there is no error message</strong>, then you have install No-CMS successfully.
+But you still have some little things to do:
+</p>
+<ol>    
+    <li><strong>Delete your installation folder or make it inaccessible</strong><br />
         Why? Because anyone can change database setting and admin user easily.
         Quiet easy, just as easy as what you have done
     </li>
-    <li><strong>Change application/config/database.php into readOnly (chmod 755 /application/config/database.php)</strong><br />
+    <li><strong>Change configuration files into readOnly (chmod 755 /application/config/database.php)</strong><br />
         Why? Because anyone with ftp access or whatever can change the content of the file manually
+        <code>
+        	chmod 755 -R ./application/config/<br />
+        	chmod 755 ./.htaccess<br />
+        </code>
     </li>
-    <li><strong>In case of no error appeared : Click</strong> <a href="../"><strong>here</strong></a><br />
-        If there is no error appeared, and you have do the above steps, then there is nothing more you should do.
-        Start your new adventure with No-CMS
+    <li><strong>Click</strong> <a href="../"><strong>here</strong></a><br />
+    	CodeIgniter forum member can visit  No-CMS thread here:  <a href="http://codeigniter.com/forums/viewthread/209171/">http://codeigniter.com/forums/viewthread/209171/</a><br />
+        Github user can visit No-CMS repo:  <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />
+        While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />
+        That's all. Start your new adventure with No-CMS !!!
     </li>
-    <li><strong>In case of failure Installation : Do Installation manually</strong><br />        
-        Why? Because you look some error appeared. Here is the manual installation detail:
-        <ol>
-            <li>Open application/config/database.php</li>
-            <li>Edit these lines as your database connection configuration:
-            <code>
-                $db['default']['hostname'] = 'your_server:your_port';<br />
-                $db['default']['username'] = 'username';<br />
-                $db['default']['password'] = 'password';<br />
-                $db['default']['database'] = 'schema';
-            </code>
-            </li>
-            <li>Import database from install/resources/database.sql</li>
-        </ol>
-    </li>
-</ul>
+</ol>
+<p><strong>If there are some error messages</strong>, then try to do a manual installation:
 </p>
+<ol>
+	<li>Open application/config/database.php</li>
+	<li>Edit these lines as your database connection configuration:
+	<code>
+		$db['default']['hostname'] = 'your_server:your_port';<br />
+        $db['default']['username'] = 'username';<br />
+        $db['default']['password'] = 'password';<br />
+        $db['default']['database'] = 'schema';
+	</code>
+	</li>
+	<li>Import database from install/resources/database.sql</li>
+</ol>
