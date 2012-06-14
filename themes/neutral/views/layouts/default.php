@@ -2,10 +2,10 @@
 <html>
     <head>
         <title><?php echo $template['title'];?></title>
-        <link rel="icon" href="<?php echo $site_favicon;?>">
+        <link rel="icon" href="<?php echo $cms['site_favicon'];?>">
         <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/$site_theme/assets/default/style.css";?>"></link>
-        <script type="text/javascript" src="<?php echo base_url()."themes/$site_theme/assets/default/script.js";?>"></script>
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/style.css";?>"></link>
+        <script type="text/javascript" src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/script.js";?>"></script>
     </head>
     <body>       
         

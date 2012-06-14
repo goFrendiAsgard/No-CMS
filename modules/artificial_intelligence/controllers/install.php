@@ -25,10 +25,10 @@ class Install extends CMS_Module_Installer{
     
     private function build_all(){
         
-        $this->add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", "artificial_intelligence", 3);
-        $this->add_navigation("ai_nnga_index","NNGA", "artificial_intelligence/nnga/index", 3, "ai_artificial_intelligence_index");
-        $this->add_navigation("ai_nnga_monitor","Monitor", "artificial_intelligence/nnga/monitor", 3, "ai_nnga_index");
-        $this->add_navigation("ai_nnga_set","Set Parameters", "artificial_intelligence/nnga/set", 3, "ai_nnga_index");
+        $this->add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", $this->cms_module_name(), 3);
+        $this->add_navigation("ai_nnga_index","NNGA", $this->cms_module_name()."/nnga/index", 3, "ai_artificial_intelligence_index");
+        $this->add_navigation("ai_nnga_monitor","Monitor", $this->cms_module_name()."/nnga/monitor", 3, "ai_nnga_index");
+        $this->add_navigation("ai_nnga_set","Set Parameters", $this->cms_module_name()."/nnga/set", 3, "ai_nnga_index");
     }
 }
 

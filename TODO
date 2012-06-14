@@ -3,5 +3,9 @@
 * [done, tested] Site Logo
 * [done, tested] Language
 * [done, tested] WYSIWIG (navigation language quicklink, widget)
-* [proposed] Using ORM, so that we can support more than just MySQL (inspired by django)
+* [in progress] documentation
+* [proposed] Fully using AR, so that we can support more than just MySQL (inspired by django)
 * [proposed] Make a more clear and simple syntax
+* [done, tested] Add "module_name" function in CMS_Module_Installer
+* [proposed] Change all hardcoded URL in modules & installation by using module_name, so that the modules will be more portable
+* [proposed] Change "install" into a module, and use db_forge instead of hardcode-sql

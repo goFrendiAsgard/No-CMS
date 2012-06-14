@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<?php require_once BASEPATH."../themes/$site_theme/lib/function.php";?>
+<?php require_once BASEPATH."../themes/".$cms['site_theme']."/lib/function.php";?>
 <html>
     <head>
         <title><?php echo $template['title'];?></title>
         <meta name="HandheldFriendly" content="true" />
         <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />
         <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/$site_theme/assets/mobile/style.css";?>"></link>
-        <script type="text/javascript" src="<?php echo base_url()."themes/$site_theme/assets/mobile/script.js";?>"></script>
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/mobile/style.css";?>"></link>
+        <script type="text/javascript" src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/mobile/script.js";?>"></script>
     </head>
     <body>
         <div id="layout_header"><?php echo $template['partials']['header'];?></div>

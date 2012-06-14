@@ -12,7 +12,7 @@ class ahge extends CMS_Controller{
     }
     
     private function initialize($identifier=NULL){
-        $this->load->model('artificial_intelligence/ai_ahge');
+        $this->load->model($this->cms_module_name().'/ai_ahge');
         $identifier = isset($identifier)?$identifier:'ahge_default';
         $this->ai_ahge->core_initialize($identifier);
     }
