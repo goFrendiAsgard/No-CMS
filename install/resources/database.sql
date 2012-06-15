@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `cms_navigation` (
   `parent_id` int(20) unsigned DEFAULT NULL,
   `title` varchar(45) NOT NULL,
   `description` text,
-  `url` varchar(45) DEFAULT NULL,
+  `url` varchar(100) DEFAULT NULL,
   `authorization_id` tinyint(4) unsigned NOT NULL DEFAULT '1',
   `index` int(20) NOT NULL DEFAULT '0',
   `active` tinyint(3) unsigned NOT NULL DEFAULT '1',

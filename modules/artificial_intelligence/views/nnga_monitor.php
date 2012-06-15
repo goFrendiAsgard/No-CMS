@@ -60,7 +60,7 @@
         if(!WATCH) return 0;
         CURRENT_LOOP++;
         $.ajax({
-            url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/currentState/<?php echo $identifier; ?>',
+            url:'<?php echo site_url($cms['module_name'].'/nnga/currentState/'.$identifier)?>',
             dataType:'json',
             data : {loop:CURRENT_LOOP},
             type : 'POST',
@@ -68,7 +68,6 @@
             success:function(response){
                 if ((JSON.stringify(RESPONSE) != JSON.stringify(response)) && (response["loop"]==CURRENT_LOOP)){
                     RESPONSE = response;
-                    //$("input[type=button]").attr("disabled", "true");
                     
                     var nn = response["nn"];
                     var ga = response["ga"];
@@ -263,7 +262,7 @@
         $("#btn_train_nn").click(function(){
             $("input[type=button]").attr("disabled", "disabled");
             $.ajax({
-                url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/trainNN/<?php echo $identifier; ?>',
+                url:'<?php echo site_url($cms['module_name'].'/nnga/trainNN/'.$identifier); ?>',
                 success : function(response){
                     $("input[type=button]").removeAttr("disabled");
                 }
@@ -273,7 +272,7 @@
         $("#btn_train_nnga").click(function(){
             $("input[type=button]").attr("disabled", "disabled");
             $.ajax({
-                url:'<?php echo base_url()?>index.php/artificial_intelligence/nnga/trainNNGA/<?php echo $identifier; ?>',
+                url:'<?php echo site_url($cms['module_name'].'/nnga/trainNNGA/'.$identifier); ?>',
                 success : function(response){
                     $("input[type=button]").removeAttr("disabled");
                 }

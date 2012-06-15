@@ -19,7 +19,7 @@
     }
 </style>
 
-<?php echo form_open('artificial_intelligence/nnga/set/'.$identifier);?>
+<?php echo form_open($cms['module_name'].'/nnga/set/'.$identifier);?>
 <div class="form">
 <?php
     echo form_label('Learning Rate');

@@ -9,21 +9,20 @@
         //Your logic goes here.....
     }
 </pre>
-If you are familiar with CodeIgniter, you must be use to the code above.
-Remember to always put the model files in
-/modules/your_module_name/models. To gain advantages of using some
-additional features (such as get current user id, get current user name,
-etc).
+<p>
+If you are familiar with CodeIgniter, you must be familiear to the code above.
+</p>
+<p>
+To make a module's model is quiet easy. Just as easy as make regular CodeIgniter Model.
+Remember to always put your module's models in <b>/modules/your_module_name/models</b>. 
+You can gain some advantages by extend your model from CMS_Model instead of CI_Model.
+Some additional features such as get user name, user id, etc are already embedded in CMS_Model.
+To extend your model from CMS_Model, you can simply write:
+</p>
 <pre class="phpSnippet">
     class Damn_Simple_Module_Model extends CMS_Model{
         //Your logic goes here.....
     }
 </pre>
 <p>It is easy, right?</p>
-<p>I just mention that there are additional features when your model
-	extends CMS_Model. Here they are:</p>
-<ul>
-	<li>cms_user_id()</li>
-	<li>cms_user_name()</li>
-</ul>
-<p>(Sorry, I should go with my lecture,... I'll finish it later :D)</p>
+<p>TODO: write about some additional functions</p>

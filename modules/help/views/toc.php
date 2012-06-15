@@ -55,9 +55,10 @@
 					</ul>
 				</li>
 			</ul>
-			<h4>Make Your Custom Layout</h4>
+			<h4>Make Your Custom Theme</h4>
 			<ul>
-				<li><a href="help/topic/layout_overview">Layout Overview</a></li>
+				<li><a href="help/topic/theme_directory_structure">Theme's Directory Structure</a></li>
+				<li><a href="help/topic/theme_layout">Theme's Layout</a></li>
 			</ul>
 			<h4>No-CMS hard-core</h4>
 			<ul></ul>

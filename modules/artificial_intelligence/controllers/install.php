@@ -23,9 +23,8 @@ class Install extends CMS_Module_Installer{
         $this->remove_navigation("ai_artificial_intelligence_index");
     }
     
-    private function build_all(){
-        
-        $this->add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", $this->cms_module_name(), 3);
+    private function build_all(){        
+        $this->add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", $this->cms_module_name()."/artificial_intelligence", 3);
         $this->add_navigation("ai_nnga_index","NNGA", $this->cms_module_name()."/nnga/index", 3, "ai_artificial_intelligence_index");
         $this->add_navigation("ai_nnga_monitor","Monitor", $this->cms_module_name()."/nnga/monitor", 3, "ai_nnga_index");
         $this->add_navigation("ai_nnga_set","Set Parameters", $this->cms_module_name()."/nnga/set", 3, "ai_nnga_index");

@@ -43,6 +43,13 @@
                 style:"ide-eclipse",
                 clipboard:"<?php echo base_url().'assets/jquery_snippet/ZeroClipboard.swf';?>",
                 showNum:false}
+        );
+
+        $("pre.htmlSnippet").snippet(
+                "html",{
+                    style:"ide-eclipse",
+                    clipboard:"<?php echo base_url().'assets/jquery_snippet/ZeroClipboard.swf';?>",
+                    showNum:false}
             );
     })
 </script>
