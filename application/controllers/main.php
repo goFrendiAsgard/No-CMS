@@ -9,8 +9,8 @@ class Main extends CMS_Controller {
 
     public function login() {
         //retrieve old_url from flashdata if exists
-        $this->load->library('session');
-        $old_url = $this->session->flashdata('old_url');
+        $this->load->library('session');        
+        $old_url = $this->session->flashdata('cms_old_url');
         
         //get user input
         $identity = $this->input->post('identity');
@@ -32,7 +32,7 @@ class Main extends CMS_Controller {
                 //the login process failed
                 //save the old_url again
                 if (!is_bool($old_url)) {
-                    $this->session->keep_flashdata('old_url');
+                    $this->session->keep_flashdata('cms_old_url');
                 }
 
                 //view login again
@@ -43,7 +43,7 @@ class Main extends CMS_Controller {
 
             //save the old_url again
             if (!is_bool($old_url)) {
-                $this->session->keep_flashdata('old_url');                
+                $this->session->keep_flashdata('cms_old_url'); 
             }
 
             //view login again

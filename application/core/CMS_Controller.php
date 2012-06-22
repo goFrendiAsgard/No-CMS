@@ -174,6 +174,13 @@ class CMS_Controller extends CI_Controller {
            
         
         $result = NULL;
+        
+        // if there is old_url, than save it
+        $this->load->library('session');
+        $old_url = $this->session->flashdata('cms_old_url');
+        if (!is_bool($old_url)) {
+        	$this->session->keep_flashdata('cms_old_url');
+        }
 
         $this->load->helper('url');
 
@@ -321,11 +328,10 @@ class CMS_Controller extends CI_Controller {
             }
         } else {
             //if user not authorized, show login, save current url
-            $uriString = $this->uri->uri_string();
-            $this->load->library('session');            
+            $uriString = $this->uri->uri_string();                        
             $old_url = $this->session->flashdata('old_url');            
             if (is_bool($old_url)) {                
-                $this->session->set_flashdata('old_url', $uriString);                
+                $this->session->set_flashdata('cms_old_url', $uriString);                
             }
             
             if(!$this->cms_allow_navigate('main_login')){
