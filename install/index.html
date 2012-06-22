@@ -2,45 +2,29 @@
     <link rel="stylesheet" type="text/css" href="assets/style.css" />
     <script type="text/javascript" src="../assets/nocms/js/jquery.js"></script>
     <script type="text/javascript">
-    	var old_error_message = "";
-        var error_message = "";
         $(document).ready(function(){
-            check_all();
-            $(".input").keyup(function(){
-                if(check_all()){
-                    $("#button_install").show();
-                    $('#button_install').removeAttr('disabled');                    
-                }else{
-                    $("#button_install").hide();
-                    $('#button_install').attr('disabled', 'disabled');
+            check_all();  
+            $(".input").keyup(function(event){
+                if(event.which == 13){
+                    check_all();    
+                } 
+                adm_password = $("#adm_password").val();
+                adm_confirmpassword = $("#adm_confirmpassword").val();
+                if(adm_password != '' && adm_password == adm_confirmpassword){
+                	check_all();
                 }
-            })
+                
+            });
+            $(".input").change(function(event){
+                check_all();
+            });
         })
         
         function check_all(){
-            error_message = "";
-            var writeable_checked = check_writeable();
-            var connection_checked = check_connection(); 
-            var password_checked = check_password();  
-            
-            var success = writeable_checked && connection_checked && password_checked;
-            //only change the DOM if should
-            if(old_error_message != error_message){
-            	if(!success){
-                    $("#infoMessage").html('<ul>'+error_message+'</ul>');
-                }else{
-                    $("#infoMessage").html('');
-                }	
-            	old_error_message = error_message;
-            }
-            return success;
-        }
-        
-        function check_connection(){
-            var result = false;
-            $.ajax({
+        	$('#button_install').attr('disabled', 'disabled');
+        	$.ajax({
                 type : "POST",
-                url : "check_db.php",
+                url : "check_all.php",
                 dataType: "json",
                 async : false,
                 data : {
@@ -48,68 +32,51 @@
                     db_port : $("#db_port").val(),
                     db_username : $("#db_username").val(),
                     db_password : $("#db_password").val(),
-                    db_schema : $("#db_schema").val()
+                    db_schema : $("#db_schema").val(),
+                    adm_password : $("#adm_password").val(),
+                    adm_confirmpassword : $("#adm_confirmpassword").val(),
+                    hide_index : $("#hide_index").attr('checked')? $("#hide_index").val(): '',
                 },
                 success : function(response){
-                    result = response.success;
-                    if(!result){
-                        error_message += '<li>'+response.message+'</li>';
+                    var success = response.success;
+                    var warnings = response.warnings;
+                    var errors = response.errors;
+                    
+                    var message = ''
+                    if(errors.length>0){
+                    	message += '<b>WARNING</b> (You should fix these in order to install No-CMS) : ';
+                    	message += '<ul>';
+                    	for(i=0; i<errors.length; i++){
+                    		message += '<li>'+errors[i]+'</li>';
+                    	}
+                    	message += '</ul>';
+                    }
+                    if(warnings.length>0){
+                    	message += '<b>NOTIFICATION</b> (No-CMS will still run perfectly, but some modules might not work as expected) : ';
+                        message += '<ul>';
+                        for(i=0; i<warnings.length; i++){
+                            message += '<li>'+warnings[i]+'</li>';
+                        }
+                        message += '</ul>';
+                    }
+                    $("#infoMessage").html(message);
+                    if(message != ''){
+                    	$('#infoMessage').show();
+                    }else{
+                    	$('#infoMessage').hide();
+                    }
+                    
+                    if(success){
+                        $("#button_install").show();
+                        $('#button_install').removeAttr('disabled');    
+                    }else{
+                        $("#button_install").hide();
+                        $('#button_install').attr('disabled', 'disabled');
                     }
                     
                 }
             });
-            return result;
         }
-        
-        function check_writeable(){
-            var result = false;
-            $.ajax({
-                type : "POST",
-                url : "check_writeable.php",
-                dataType: "json",
-                async : false,
-                success : function(response){
-                    result = response.success;
-                    if(!result){
-                        error_message += '<li>'+response.message+'</li>';
-                    }
-                    
-                }
-            });
-            return result;
-        }
-        
-        function check_password(){
-            if($("#adm_password").val() == ""){
-                error_message += '<li>Administrator Password empty</li>';
-                return false;
-            }else if($("#adm_password").val() == $("#adm_confirmpassword").val()){
-                return true;
-            }else{
-                error_message += '<li>Administrator Password and '+
-                    'Administrator Password Confirmation doesn\'t match</li>';
-                return false;
-            }
-        }
-        
-        function check_curl(){
-            var result = false;
-            $.ajax({
-                type : "POST",
-                url : "check_curl.php",
-                dataType: "json",
-                async : false,
-                success : function(response){
-                    result = response.success;
-                    if(!result){
-                        error_message += '<li>'+response.message+'</li>';
-                    }
-                    
-                }
-            });
-            return result;
-        }
-        
         
     </script>
     
@@ -143,4 +110,5 @@
 <input type="submit" id="button_install" name="Install" value="INSTALL NOW"  />
 </form>
 </div>
+<div id="debug"></div>
 </body>
