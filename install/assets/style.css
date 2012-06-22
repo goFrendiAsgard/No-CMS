@@ -59,22 +59,13 @@ p.footer{
 form{
     width : 500px;
 }
-.message:not(:empty){
+.message{
     background-color: #FFFFA0;
     border-radius: 15px;
     border : 1px solid black;
     color : black;
     padding : 5px; 
     display: block;    
-}
-.warning_display{
-    position : absolute;
-    left : 600px;
-    width : 400px;    
-}
-
-.message:empty{
-	display: none;
 }
 
 .input{

@@ -15,6 +15,7 @@
 				$('div#if_error').show();
 				$('div#if_no_error').hide();
 			}else{
+				$('div#php_error').hide();
 				$('div#if_error').hide();
 				$('div#if_no_error').show();
 			}
