@@ -1,0 +1,110 @@
+/* 
+    Document   : style
+    Created on : Jan 7, 2012, 12:57:07 PM
+    Author     : gofrendi
+    Description:
+        Purpose of the stylesheet follows.
+*/
+body{
+    padding : 5px;
+}
+div#layout_left, div#layout_right{
+    z-index : 100;
+}
+div#layout_header, div#layout_content, div#layout_footer{
+    z-index : 0;
+}
+div#layout_header{
+    padding : 20px;
+    font-size : small;
+}
+div#layout_left {
+    float:left;
+    width:200px;
+    padding : 10px;
+}
+div#layout_right {
+    float:right;
+    width:160px;
+    padding : 10px;
+}
+div#layout_content { 
+    padding : 20px;
+    float : left;
+}
+div#layout_footer{
+    text-align : center;
+    font-size: x-small;
+    padding : 10px;
+}
+div#layout_center{
+    font-size : small;
+    margin-top : 0px;                
+    padding : 5px;
+    min-height: 5px;
+}
+div.layout_clear
+{
+    clear: both;
+}
+.invisible{
+    display : none;
+}
+.layout_nav_description{
+    position:absolute;
+    background-color:#AAAA88;
+    padding: 5px 5px 5px 5px;
+    margin : 10px;
+    font-size: small;
+    min-height : 25px;
+}
+.layout_nav{
+    list-style-type: none;
+    padding : 0px;
+}
+.layout_nav li{
+    border : 1px solid white;
+    padding : 3px;
+    margin : 3px;
+}
+li.layout_nav_hot{
+}
+
+#layout_header a, #layout_footer a, #layout_center a{  
+    font-family : serif;
+    color : black;                
+    font-weight : normal;
+    text-decoration : underline;
+}
+#layout_left a{
+    font-family : serif;
+    color : black;                
+    font-weight : bold;
+    text-decoration : none;
+}
+#layout_left a.layout_page_link{    
+    display:block;
+    float:left;
+}
+#layout_left a.layout_have_child{
+    width: 80%;
+    margin-left: 5px;
+}
+#layout_left a.layout_no_child{
+    width: 100%;
+}
+#layout_left a.layout_expand{
+    float: left;
+}
+.layout_button{
+    display:inline;
+    border : 1px solid white;
+    /*background-color : #DFDFDF;*/
+    padding : 5px;
+}
+.layout_float_left{
+	float : left;
+}
+.layout_large_left_padding{
+	padding-left : 20px;
+}
