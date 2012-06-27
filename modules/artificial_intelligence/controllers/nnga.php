@@ -13,23 +13,23 @@ class nnga extends CMS_Controller {
     }
     
     private function initialize($identifier=NULL){
-        $this->load->model($this->cms_module_name().'/ai_nnga');
+        $this->load->model($this->cms_module_path().'/ai_nnga');
         $identifier = isset($identifier)?$identifier:'NNGA_Default';
         $this->ai_nnga->core_initialize($identifier);
     }
     
     public function index($identifier=NULL){
         $this->initialize($identifier);
-        $this->view($this->cms_module_name().'/nnga_index', NULL, 'ai_nnga_index');
+        $this->view($this->cms_module_path().'/nnga_index', NULL, 'ai_nnga_index');
     }
     
     public function monitor($identifier=NULL){
         $this->initialize($identifier);
         if(!$this->ai_nnga->core_exists()){
-            redirect($this->cms_module_name().'/nnga/set'.$identifier);
+            redirect($this->cms_module_path().'/nnga/set'.$identifier);
         }else{
             $data = array("identifier"=>$identifier);
-            $this->view($this->cms_module_name().'/nnga_monitor', $data, 'ai_nnga_monitor');
+            $this->view($this->cms_module_path().'/nnga_monitor', $data, 'ai_nnga_monitor');
         }
     }
     
@@ -80,7 +80,7 @@ class nnga extends CMS_Controller {
             $this->ai_nnga->set($nn_dataset, $neuronCount, $nn_learning_rate, $nn_max_mse, $nn_max_loop, 
                     $ga_individu_count, $ga_max_loop, 1/(0.000001+$nn_max_mse), $ga_mutation_rate, 
                     $ga_crossover_rate, $ga_reproduction_rate, $ga_elitism_rate); 
-            redirect($this->cms_module_name().'/nnga/monitor/'.$identifier);
+            redirect($this->cms_module_path().'/nnga/monitor/'.$identifier);
             
         }else{
             $state = $this->ai_nnga->currentState();
@@ -148,7 +148,7 @@ class nnga extends CMS_Controller {
                 "ga_elitism_rate"=>$ga_elitism_rate,
                 "identifier"=>$identifier
                 );
-            $this->view($this->cms_module_name().'/nnga_set',$data, 'ai_nnga_set');
+            $this->view($this->cms_module_path().'/nnga_set',$data, 'ai_nnga_set');
         }
         
     }

@@ -3,11 +3,11 @@
 <?php
     foreach($modules as $module){
         $str_status = $module['installed']?'installed':'not installed';
-        $anchor = !$module['installed']?anchor($module['path'].'/install','Install'):
-            anchor($module['path'].'/install/uninstall','Uninstall');
-        //echo 'Module <i>'.$module['path'].'</i> '.$str_status.' '.$anchor.br(); 
+        $anchor = !$module['installed']?anchor($module['module_path'].'/install','Install'):
+            anchor($module['module_path'].'/install/uninstall','Uninstall');
+         
         echo '<tr>';
-        echo '<td>'.'<b><i>'.$module['path'].'</i></b>'.'</td>';
+        echo '<td>'.'<b><i>'.$module['module_path'].'</i></b>'.'</td>';
         echo '<td>'.'is '.$str_status.'</td>';
         echo '<td>'.$anchor.'</td>';
         echo '</tr>';

@@ -1,5 +1,7 @@
 <?php
-require_once(APPPATH.'../modules/artificial_intelligence/models/ai_core.php');
+$ci =& get_instance();
+$cms_module_path = $ci->cms_module_path();
+require_once(APPPATH.'../modules/'.$cms_module_path.'/models/ai_core.php');
 
 /**
  * Description of nn

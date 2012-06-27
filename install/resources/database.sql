@@ -168,10 +168,12 @@ CREATE TABLE `cms_group_user` (
 CREATE TABLE `cms_module` (
   `module_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `module_name` varchar(50) NOT NULL,
+  `module_path` varchar(50) NOT NULL,
   `user_id` int(20) unsigned NOT NULL,
   PRIMARY KEY (`module_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `cms_module_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `cms_user` (`user_id`),
+  UNIQUE KEY `module_path` (`module_path`),
   UNIQUE KEY `module_name` (`module_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
@@ -227,9 +229,9 @@ INSERT INTO `cms_user` (`user_id`, `user_name`, `email`, `password`, `real_name`
 (1, '@adm_username', '@adm_email', '@adm_password', '@adm_realname', 1);
 /*split*/
 
-INSERT INTO `cms_module` (`module_id`, `module_name`, `user_id`) VALUES
-(1, 'help', 1),
-(2, 'wysiwyg', 1);
+INSERT INTO `cms_module` (`module_id`, `module_name`, `module_path`, `user_id`) VALUES
+(1, 'gofrendi.noCMS.help', 'help', 1),
+(2, 'gofrendi.noCMS.wysiwyg', 'wysiwyg', 1);
 /*split*/
 
 
@@ -301,7 +303,7 @@ INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VA
 (20, 'cms_email_smtp_timeout', '30','default : 30'),
 (21, 'cms_email_wordwrap', 'TRUE', 'Enable word-wrap. Default : true, Alternatives : true, false'),
 (22, 'cms_email_wrapchars', '76	', 'Character count to wrap at.'),
-(23, 'cms_email_mailtype', 'html', 'Type of mail. If you send HTML email you must send it as a complete web page. Make sure you don\'t have any relative links or relative image paths otherwise they will not work. Default : html, Alternatives : html, text'),
+(23, 'cms_email_mailtype', 'html', 'Type of mail. If you send HTML email you must send it as a complete web page. Make sure you do not have any relative links or relative image paths otherwise they will not work. Default : html, Alternatives : html, text'),
 (24, 'cms_email_charset', 'utf-8', 'Character set (utf-8, iso-8859-1, etc.).'),
 (25, 'cms_email_validate', 'FALSE', 'Whether to validate the email address. Default: true, Alternatives : true, false'),
 (26, 'cms_email_priority', '3', '1, 2, 3, 4, 5	Email Priority. 1 = highest. 5 = lowest. 3 = normal.'),

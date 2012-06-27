@@ -481,13 +481,11 @@ class CMS_Model extends CI_Model {
      */
     public function cms_is_module_installed($module_name) {
         $query = $this->db->query(
-                "SELECT count(*) as reccount FROM cms_module WHERE module_name = '" . addslashes($module_name) . "'");
-        foreach ($query->result() as $row) {
-            if ($row->reccount > 0) {
-                return true;
-            } else {
-                return false;
-            }
+                "SELECT module_id FROM cms_module WHERE module_name = '" . addslashes($module_name) . "'");
+        if ($query->num_rows()>0){
+        	return true;
+        }else{
+        	return false;
         }
         return false;
     }
@@ -506,14 +504,48 @@ class CMS_Model extends CI_Model {
                 continue;
 
             //temporary module_name = directory_name
-            $module_name = $directory;
+            $module_name = $this->cms_module_name($directory);
 
             $module[] = array(
-                "path" => $directory,
-                "installed" => $this->cms_is_module_installed($module_name)
+            	"module_name" => $module_name,
+                "module_path" => $directory,
+                "installed" => $module_name!=""
             );
         }
         return $module;
+    }
+    
+    public function cms_module_path($name=NULL){
+    	if(!isset($name)){
+    		$uriString = $this->uri->uri_string();
+    		$uriArray = explode('/', $uriString);
+    		if(count($uriArray)>0){
+    			return $uriArray[0];
+    		}else{
+    			return '';
+    		}
+    	}else{
+    		$SQL = "SELECT module_path FROM cms_module WHERE module_name='".addslashes($name)."'";
+    		$query = $this->db->query($SQL);
+    		if($query->num_rows()>0){
+    			$row = $query->row();
+    			return $row->module_path;
+    		}else{
+    			return '';
+    		}
+    	}
+    }
+    
+    public function cms_module_name($path){
+    	$SQL = "SELECT module_name FROM cms_module WHERE module_path='".addslashes($path)."'";
+    	$query = $this->db->query($SQL);
+    	if($query->num_rows()>0){
+    		$row = $query->row();
+    		return $row->module_name;
+    	}else{
+    		return '';
+    	}
+    	 
     }
 
     /**
@@ -724,12 +756,15 @@ class CMS_Model extends CI_Model {
      * @return string
      * @desc get language
      */
-    public function cms_lang($key, $module = NULL) {
+    public function cms_lang($key) {
         $language = $this->cms_get_config('site_language');
-        if (!isset($module)) {
-            $language_file = "assets/nocms/languages/$language.php";
-        } else {
-            $language_file = "modules/$module/assets/languages/$language.php";
+        
+        $module_path = $this->cms_module_path();
+        $local_language_file = "modules/$module_path/assets/languages/$language.php";
+        if(file_exists($local_language_file)){
+        	$language_file = $local_language_file;
+        }else{
+        	$language_file = "assets/nocms/languages/$language.php";
         }
 
         if (file_exists($language_file)) {
@@ -766,7 +801,6 @@ class CMS_Model extends CI_Model {
         $num_rows = $query->num_rows();
         return $num_rows>0;        
     }
-
 }
 
 ?>

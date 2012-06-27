@@ -75,7 +75,7 @@ class AI_Core extends CMS_Model{
     }
     
     private function core_config_filename(){
-        return 'modules/artificial_intelligence/assets/data/'.$this->cms_userid().'_'.$this->core_identifier;
+        return 'modules/'.$this->cms_module_path().'/assets/data/'.$this->cms_userid().'_'.$this->core_identifier;
     }
     
 }

@@ -7,6 +7,7 @@
  */
 class CMS_Module_Installer extends CMS_Controller {
     protected $DEPENDENCIES = array();
+    protected $NAME = '';
     
     public function index(){
         $this->install();
@@ -27,7 +28,8 @@ class CMS_Module_Installer extends CMS_Controller {
                 redirect('main/module_management');
             }else{
                 $data=array(
-                    'module_name'=>$this->uri->segment(1),
+                	'module_name'=>$this->NAME,
+                    'module_path'=>$this->uri->segment(1),
                     'dependencies'=>$this->DEPENDENCIES
                 );
                 $this->view('main/module_management_fail_install',$data,'main_module_management');
@@ -43,7 +45,8 @@ class CMS_Module_Installer extends CMS_Controller {
                 redirect('main/module_management');
             }else{
                 $data=array(
-                    'module_name'=>$this->uri->segment(1),
+                    'module_name'=>$this->NAME,
+                    'module_path'=>$this->uri->segment(1),
                     'dependencies'=>$child
                 );
                 $this->view('main/module_management_fail_uninstall',$data,'main_module_management');
@@ -146,13 +149,14 @@ class CMS_Module_Installer extends CMS_Controller {
     private function register_module(){
         //insert to cms_module
         $data = array(
-            'module_name'=>$this->uri->segment(1),
+        	'module_name'=>$this->NAME,
+            'module_path'=>$this->uri->segment(1),
             'user_id'=>$this->cms_userid()
         );
         $this->db->insert('cms_module',$data);
         
         //get current cms_module_id as child_id
-        $SQL = "SELECT module_id FROM cms_module WHERE module_name='".  addslashes($this->uri->segment(1))."'";
+        $SQL = "SELECT module_id FROM cms_module WHERE module_name='".  addslashes($this->NAME)."'";
         $query = $this->db->query($SQL);
         $row = $query->row();
         $child_id = $row->module_id;
@@ -176,7 +180,7 @@ class CMS_Module_Installer extends CMS_Controller {
     }
     private function unregister_module(){
         //get current cms_module_id as child_id
-        $SQL = "SELECT module_id FROM cms_module WHERE module_name='".  addslashes($this->uri->segment(1))."'";
+        $SQL = "SELECT module_id FROM cms_module WHERE module_path='".  addslashes($this->uri->segment(1))."'";
         $query = $this->db->query($SQL);
         $row = $query->row();
         $child_id = $row->module_id;
@@ -187,20 +191,20 @@ class CMS_Module_Installer extends CMS_Controller {
         $this->db->delete('cms_module_dependency',$where);
         
         $where = array(
-            'module_name'=>$this->uri->segment(1)
+            'module_path'=>$this->uri->segment(1)
         );
         $this->db->delete('cms_module',$where);
     }
     
     private function child(){
-        $SQL = "SELECT module_id FROM cms_module WHERE module_name='".  addslashes($this->uri->segment(1))."'";
+        $SQL = "SELECT module_id FROM cms_module WHERE module_path='".  addslashes($this->uri->segment(1))."'";
         $query = $this->db->query($SQL);
         $query = $this->db->query($SQL);
         $row = $query->row();
         $parent_id = $row->module_id;
         
         $SQL = "
-            SELECT module_name 
+            SELECT module_name, module_path 
             FROM 
                 cms_module_dependency,
                 cms_module
@@ -210,7 +214,10 @@ class CMS_Module_Installer extends CMS_Controller {
         $query = $this->db->query($SQL);
         $result = array();
         foreach($query->result() as $row){
-            $result[] = $row->module_name;
+            $result[] = array(
+            		"module_name"=>$row->module_name,
+            		"module_path"=>$row->module_name
+            	);
         }
         return $result;
     }

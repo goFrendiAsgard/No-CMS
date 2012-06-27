@@ -250,38 +250,35 @@ class CMS_Controller extends CI_Controller {
                 $result = $this->load->view($view_url, $data, $return_as_string);
             } else {
                 //get configuration
-                $data_partial['site_name'] = $this->cms_get_config('site_name');
-                $data_partial['site_slogan'] = $this->cms_get_config('site_slogan');
-                $data_partial['site_footer'] = $this->cms_get_config('site_footer');
-                $data_partial['site_theme'] = $this->cms_get_config('site_theme');
-                $data_partial['site_logo'] = $this->cms_get_config('site_logo');
-                $data_partial['site_favicon'] = $this->cms_get_config('site_favicon');
+                $cms['site_name'] = $this->cms_get_config('site_name');
+                $cms['site_slogan'] = $this->cms_get_config('site_slogan');
+                $cms['site_footer'] = $this->cms_get_config('site_footer');
+                $cms['site_theme'] = $this->cms_get_config('site_theme');
+                $cms['site_logo'] = $this->cms_get_config('site_logo');
+                $cms['site_favicon'] = $this->cms_get_config('site_favicon');
 
                 //get navigations
                 $navigations = $this->cms_navigations();
                 $navigation_path = $this->cms_get_navigation_path($navigation_name);
-                $data_partial['navigations'] = $navigations;
-                $data_partial['navigation_path'] = $navigation_path;
+                $cms['navigations'] = $navigations;
+                $cms['navigation_path'] = $navigation_path;
 
                 //get widget
                 $widget = $this->cms_widgets();
-                $data_partial['widget'] = $widget;
+                $cms['widget'] = $widget;
 
-                //get user name
-                $data_partial['user_name'] = $this->cms_username();
-
-                //get quicklinks
-                $data_partial['quicklinks'] = $this->cms_quicklinks();
-                
-                //get modulename
-                $data_partial['module_name'] = $this->cms_module_name();
+                //get user name, quicklinks, module_name & module_path
+                $cms['user_name'] = $this->cms_username();
+                $cms['quicklinks'] = $this->cms_quicklinks();                
+                $cms['module_path'] = $this->cms_module_path();
+                $cms['module_name'] = $this->cms_module_name($cms['module_path']);
 
                 //if $custom_theme defined, use it as theme
                 //else use site_theme configuration
                 if (isset($custom_theme)) {
                     $theme = $custom_theme;
                 } else {
-                    $theme = $data_partial['site_theme'];
+                    $theme = $cms['site_theme'];
                 }
 
                 //if $custom_layout defined, use it as layout
@@ -301,8 +298,8 @@ class CMS_Controller extends CI_Controller {
                     }
                 }
 
-                //re-adjust $data_partial['site_theme']
-                $data_partial['site_theme'] = $theme;
+                //re-adjust $cms['site_theme']
+                $cms['site_theme'] = $theme;
 
                 //backend template
                 $cms_userid = $this->cms_userid();
@@ -316,7 +313,7 @@ class CMS_Controller extends CI_Controller {
                 $this->template->set_theme($theme);
                 $this->template->set_layout($layout);
                 // include data_partial into data
-                $data['cms'] = $data_partial;
+                $data['cms'] = $cms;
                 $this->template->set_partial('header', 'partials/' . $layout . '/header.php', $data);
                 $this->template->set_partial('left', 'partials/' . $layout . '/left.php', $data);
                 $this->template->set_partial('footer', 'partials/' . $layout . '/footer.php', $data);
@@ -375,6 +372,14 @@ class CMS_Controller extends CI_Controller {
      */
     protected function cms_get_module_list() {
         return $this->CMS_Model->cms_get_module_list();
+    }
+    
+    public function cms_module_path($name=NULL){
+    	return $this->CMS_Model->cms_module_path($name);
+    }
+    
+    public function cms_module_name($path){
+    	return $this->CMS_Model->cms_module_name($path);
     }
 
     /**
@@ -476,16 +481,6 @@ class CMS_Controller extends CI_Controller {
     
     public function cms_is_user_exists($username){
        return $this->CMS_Model->cms_is_user_exists($username);       
-    }
-    
-    public function cms_module_name(){
-    	$uriString = $this->uri->uri_string();
-    	$uriArray = explode('/', $uriString);
-    	if(count($uriArray)>0){
-    		return $uriArray[0];
-    	}else{
-    		return '';
-    	}
     }
 
 }
