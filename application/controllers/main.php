@@ -304,35 +304,33 @@ class Main extends CMS_Controller {
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'description', /*'index',*/ 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
         $crud->add_fields('navigation_name', 'parent_id', 'title', 'description', /*'index',*/ 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
         $crud->change_field_type('active', 'true_false');
-        $crud->change_field_type('is_static', 'true_false');
-        //$crud->change_field_type('index', 'integer');
-
+        $crud->change_field_type('is_static', 'true_false');		
         $crud->display_as('navigation_name', 'Navigation Code')
                 ->display_as('is_root', 'Is Root')
                 ->display_as('parent_id', 'Parent')
                 ->display_as('title', 'Title (What visitor see)')
                 ->display_as('description', 'Description')
                 ->display_as('url', 'URL (Where is it point to)')
-                //->display_as('index', 'Order')
                 ->display_as('active', 'Active')
                 ->display_as('is_static', 'Static')
                 ->display_as('static_content', 'Static Content')
                 ->display_as('authorization_id', 'Authorization')
-                ->display_as('groups', 'Groups');
-
+                ->display_as('groups', 'Groups');        
+		
         $crud->order_by('parent_id, index', 'asc');
 
         $crud->unset_texteditor('description');
 
-        $crud->set_relation('parent_id', 'cms_navigation', 'navigation_name');
+        $crud->set_relation('parent_id', '`cms_navigation`', '`navigation_name`');
         $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name');
 
         $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id', 'group_name');
-
-        
+		        
         $crud->callback_before_insert(array($this, 'before_insert_navigation'));
 
         $output = $crud->render();
+        
+        $str = 'coba';
 
         $this->view('grocery_CRUD', $output, 'main_navigation_management');
     }

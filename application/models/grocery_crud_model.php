@@ -33,6 +33,7 @@ class grocery_CRUD_Model  extends CI_Model  {
 	protected $table_name = null;
 	protected $relation = array();
 	protected $relation_n_n = array();
+	protected $primary_keys = array();
 	
 	function __construct()
     {
@@ -49,7 +50,7 @@ class grocery_CRUD_Model  extends CI_Model  {
     	if($this->table_name === null)
     		return false;
     	
-    	$select = "{$this->table_name}.*";
+    	$select = "`{$this->table_name}`.*";
     	
     	//set_relation special queries 
     	if(!empty($this->relation))
@@ -61,12 +62,17 @@ class grocery_CRUD_Model  extends CI_Model  {
     			$unique_field_name = $this->_unique_field_name($field_name);
     			
 				if(strstr($related_field_title,'{'))
+				{
+					$related_field_title = str_replace(" ","&nbsp;",$related_field_title);
     				$select .= ", CONCAT('".str_replace(array('{','}'),array("',COALESCE({$unique_join_name}.",", ''),'"),str_replace("'","\\'",$related_field_title))."') as $unique_field_name";
-    			else    			
+				}
+    			else
+    			{    			
     				$select .= ", $unique_join_name.$related_field_title AS $unique_field_name";
+    			}
     			
     			if($this->field_exists($related_field_title))
-    				$select .= ", {$this->table_name}.$related_field_title AS '{$this->table_name}.$related_field_title'";
+    				$select .= ", `{$this->table_name}`.$related_field_title AS '`{$this->table_name}`.$related_field_title'";
     		}
     	}
     	
@@ -76,14 +82,66 @@ class grocery_CRUD_Model  extends CI_Model  {
 			$select = $this->relation_n_n_queries($select);
     	}
     		
-    	$this->db->select($select, false);
-
-    	$results = $this->db->get($this->table_name)->result();
+    	$this->db->select($select, false);    	
+    	
+    	if(CI_VERSION == '2.1.0' || CI_VERSION == '2.1.1')//This hack is only for the release 2.1.1 that it seems that it has lot of bugs. They didn't even change the CI_VERSION to 2.1.1!
+    	{
+    		$results = $this->_hack_for_CI_2_1_1()->data;
+    	}
+    	else 
+    	{
+    		$results = $this->db->get($this->table_name)->result();
+    	}
     	
     	return $results;
     }
     
-    private function relation_n_n_queries($select)
+    public function set_primary_key($field_name, $table_name = null)
+    {
+    	$table_name = $table_name === null ? $this->table_name : $table_name;
+    	
+    	$this->primary_keys[$table_name] = $field_name;
+    }
+    
+    protected function _hack_for_CI_2_1_1()
+    {
+    	//Quietly check if the query will be executed or not
+    	$temp_debug_value = $this->db->db_debug;
+    	$this->db->db_debug = false;
+    	
+    	$db_result = $this->db->get($this->table_name);
+    	
+    	//back to normal
+    	$this->db->db_debug = $temp_debug_value;
+    	
+    	/* Don't worry ONLY if the query doesn't execute correctly we will try for a second chance. */
+    	if($db_result === false)
+    	{
+    		/* I got you! Now we will try to execute the query with the normal way and without the bug of the CI */
+    		$query = str_replace("`","",$this->db->last_query());
+    		
+    		$results = array();
+    		/** 
+    		 * Second chance let's execute again the query with the old way as codeigniter add always AUTOMATICALLY grave_accent.  There is not another way to deal with this. I know this is an ugly solution but
+    		 * I couldn't figure out another solution without changing the core of CI. If anyone has another idea about this it will be appreciated.
+    		 */
+    		$db_query = mysql_query($query) or show_error("<b>Query failed:</b> ".mysql_error()."<br/><b>Actual query:</b> ".$query);
+    		
+    		while($result = mysql_fetch_object($db_query) ) {
+    			$results[] = $result;
+    		}
+    		
+    		$results = (object)array('data' => $results, 'num_rows' => mysql_num_rows($db_query));
+    		
+    		return $results;
+    	}
+    	else
+    	{
+    		return (object)array('data' => $db_result->result(), 'num_rows' => $db_result->num_rows());
+    	}
+    }
+    
+    protected function relation_n_n_queries($select)
     {
     	$this_table_primary_key = $this->get_primary_key();
     	foreach($this->relation_n_n as $relation_n_n)
@@ -96,7 +154,7 @@ class grocery_CRUD_Model  extends CI_Model  {
     		//Sorry Codeigniter but you cannot help me with the subquery!
     		$select .= ", (SELECT GROUP_CONCAT(DISTINCT $selection_table.$title_field_selection_table) FROM $selection_table "
     			."LEFT JOIN $relation_table ON $relation_table.$primary_key_alias_to_selection_table = $selection_table.$primary_key_selection_table "
-    			."WHERE $relation_table.$primary_key_alias_to_this_table = {$this->table_name}.$this_table_primary_key GROUP BY $relation_table.$primary_key_alias_to_this_table) AS $field_name";
+    			."WHERE $relation_table.$primary_key_alias_to_this_table = `{$this->table_name}`.$this_table_primary_key GROUP BY $relation_table.$primary_key_alias_to_this_table) AS $field_name";
     	}
 
     	return $select;
@@ -120,6 +178,11 @@ class grocery_CRUD_Model  extends CI_Model  {
     function having($key, $value = NULL, $escape = TRUE)
     {
     	$this->db->having( $key, $value, $escape);
+    }    
+
+    function or_having($key, $value = NULL, $escape = TRUE)
+    {
+    	$this->db->or_having( $key, $value, $escape);
     }    
     
     function like($field, $match = '', $side = 'both')
@@ -146,12 +209,26 @@ class grocery_CRUD_Model  extends CI_Model  {
     		$select = $this->relation_n_n_queries($select);
     		
     		$this->db->select($select,false);
-    		return $this->db->get($this->table_name)->num_rows();
+    		
+    		if(CI_VERSION == '2.1.0' || CI_VERSION == '2.1.1')//This hack is only for the release 2.1.1 that it seems that it has lot of bugs. They didn't even change the CI_VERSION to 2.1.1!
+    		{
+    			return $this->_hack_for_CI_2_1_1()->num_rows;
+    		}
+    		else
+    		{
+    			return $this->db->get($this->table_name)->num_rows();
+    		}    		
     	}
     	else 
     	{    	
-    		$this->db->from($this->table_name);
-			return $this->db->get()->num_rows();
+    		if(CI_VERSION == '2.1.0' || CI_VERSION == '2.1.1')//This hack is only for the release 2.1.1 that it seems that it has lot of bugs. They didn't even change the CI_VERSION to 2.1.1!
+    		{
+    			return $this->_hack_for_CI_2_1_1()->num_rows;
+    		}
+    		else
+    		{
+    			return $this->db->get($this->table_name)->num_rows();
+    		}
     	}
     }
     
@@ -215,9 +292,14 @@ class grocery_CRUD_Model  extends CI_Model  {
     	$select = "$related_table.$related_primary_key, ";
     	
     	if(strstr($related_field_title,'{'))
+    	{
+    		$related_field_title = str_replace(" ", "&nbsp;", $related_field_title);
     		$select .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'",$related_field_title))."') as $field_name_hash";
+    	}
     	else
+    	{
 	    	$select .= "$related_table.$related_field_title as $field_name_hash";
+    	}
     	
     	$this->db->select($select,false);
     	if($where_clause !== null)
@@ -350,7 +432,7 @@ class grocery_CRUD_Model  extends CI_Model  {
     function get_field_types_basic_table()
     {
     	$db_field_types = array();
-    	foreach($this->db->query("SHOW COLUMNS FROM {$this->table_name}")->result() as $db_field_type)
+    	foreach($this->db->query("SHOW COLUMNS FROM `{$this->table_name}`")->result() as $db_field_type)
     	{
     		$type = explode("(",$db_field_type->Type);
     		$db_type = $type[0];
@@ -442,6 +524,11 @@ class grocery_CRUD_Model  extends CI_Model  {
     {
     	if($table_name == null)
     	{
+    		if(isset($this->primary_keys[$this->table_name]))
+    		{
+    			return $this->primary_keys[$this->table_name];
+    		}
+    		
 	    	if(empty($this->primary_key))
 	    	{
 		    	$fields = $this->get_field_types_basic_table();
@@ -463,6 +550,11 @@ class grocery_CRUD_Model  extends CI_Model  {
     	}
     	else
     	{
+    		if(isset($this->primary_keys[$table_name]))
+    		{
+    			return $this->primary_keys[$table_name];
+    		}
+    		
 	    	$fields = $this->get_field_types($table_name);
 	    	
 	    	foreach($fields as $field)
