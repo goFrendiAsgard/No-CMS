@@ -315,4 +315,3 @@ INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VA
 
 INSERT INTO `cms_group_user` (`group_id`, `user_id`) VALUES
 (1, 1);
-/*split*/

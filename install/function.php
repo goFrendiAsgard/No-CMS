@@ -40,6 +40,19 @@
 		return $return;
 	}
 	
+	function show_mysql_error($query){
+		$search = array("<", ">");
+		$replace = array("&lt;", "&gt;");
+		echo "<p><b>A Fatal MySQL error occured</b>.\n<br />
+			<b>Query:</b> <pre>".replace($query, $search, $replace)."</pre><br />\n
+			<b>Error:</b> (" . mysql_errno() . ") " .mysql_error()."</p>";
+		return true;
+	}
+	
+	function exec_sql($query, $db_connection){
+		mysql_query($query, $db_connection) or show_mysql_error($query);
+	}
+	
 	function check_all($install=NULL){
 		$db_server = get_input("db_server");
 		$db_port = get_input("db_port");
@@ -128,7 +141,8 @@
 				$db_connection = mysql_connect($db_server.':'.$db_port,$db_username,$db_password);
 				$db_exists = mysql_select_db($db_schema, $db_connection);
 				if(!$db_exists){
-					mysql_query('CREATE DATABASE '.$db_schema, $db_connection);
+					$query = 'CREATE DATABASE '.$db_schema;
+					exec_sql($query, $db_connection);
 					mysql_select_db($db_schema, $db_connection);
 				}
 				
@@ -140,7 +154,7 @@
 				);
 				$queries = explode('/*split*/', $sql);
 				foreach($queries as $query){
-					mysql_query($query, $db_connection);
+					exec_sql($query, $db_connection);
 				}
 				
 				if($hide_index != ""){

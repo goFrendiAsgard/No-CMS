@@ -137,12 +137,20 @@ class Main extends CMS_Controller {
     }
 
     public function change_profile() {
+    	$SQL = "SELECT user_name, email, real_name FROM cms_user WHERE user_id = ".$this->cms_userid();
+    	$query = $this->db->query($SQL);
+    	$row = $query->row();
+    	
         //get user input
         $user_name = $this->input->post('user_name');
         $email = $this->input->post('email');
         $real_name = $this->input->post('real_name');
         $password = $this->input->post('password');
         $confirm_password = $this->input->post('confirm_password');
+        
+        if(!$user_name) $user_name = $row->user_name;
+        if(!$email) $email = $row->email;
+        if(!$real_name) $real_name = $row->real_name;
 
         //set validation rule
         $this->form_validation->set_rules('user_name', 'User Name', 'required|xss_clean');

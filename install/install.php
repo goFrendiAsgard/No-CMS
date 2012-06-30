@@ -60,19 +60,29 @@
 				<li>Delete everything, start the installation from the beginning. This time ensure you have enter valid parameters</li>
 				<li>Do manual installation:
 					<ol>
-						<li>Open application/config/database.php</li>
-						<li>Edit these lines as your database connection configuration:
-						<code>
-							$db['default']['hostname'] = 'your_server:your_port';<br />
-					        $db['default']['username'] = 'username';<br />
-					        $db['default']['password'] = 'password';<br />
-					        $db['default']['database'] = 'schema';
-						</code>
+						<li>Open <b>application/config/database.php</b>, Edit these lines as your database connection configuration:
+							<code>
+								$db['default']['hostname'] = 'your_server:your_port';<br />
+						        $db['default']['username'] = 'username';<br />
+						        $db['default']['password'] = 'password';<br />
+						        $db['default']['database'] = 'schema';
+							</code>
 						</li>
-						<li>Import database from install/resources/database.sql</li>
+						<li>Import database from <b>install/resources/database.sql</b></li>
+						<li>Execute this query:
+							<code>
+								UPDATE cms_user SET `user_name` = 'admin', `password` = '21232f297a57a5a743894a0e4a801fc3', `email` = 'admin@admin.com' WHERE `user_id` = 1
+							</code>
+						</li>
+						<li>By performing query above, your user name and password is:
+							<ul>
+								<li><b>Username : </b>admin</li>
+								<li><b>Password : </b>admin</li>
+							</ul>										
+						</li>
 					</ol>
 				</li>
-				<li>Ask in forum, open an issue in github, or put comment in No-CMS blog</li>
+				<li>If manual installation doesn't work, you can ask in forum, open an issue in github, or put comment in No-CMS blog</li>
 			</ol>
 		</div>
 		
