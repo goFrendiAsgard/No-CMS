@@ -34,7 +34,6 @@
  */
 class grocery_CRUD_Field_Types
 {	
-	
 	/**	 
 	 * Gets the field types of the main table.
 	 * @return array
@@ -2719,24 +2718,6 @@ class grocery_CRUD extends grocery_CRUD_States
 		return $this;
 	}
 	
-	/**
-	 * Add the apostrophe if it is not exists yet
-	 * 
-	 * @access	private
-	 * @param	string
-	 * @return	string
-	 */
-	private function add_apostrophe($string){
-		if($string[0] != '`'){
-			$string = '`'.$string;
-		}
-		if($string[strlen($string)-1] != '`'){
-			$string = $string.'`';
-		}
-		return $string;
-		
-	}
-	
 	
 	/**
 	 * Set Validation Rules
@@ -2748,7 +2729,7 @@ class grocery_CRUD extends grocery_CRUD_States
 	 * @param	string
 	 * @return	void
 	 */
-	public function set_rules($field, $label = '', $rules = '')
+	function set_rules($field, $label = '', $rules = '')
 	{
 		if(is_string($field))
 		{
@@ -3959,9 +3940,6 @@ class grocery_CRUD extends grocery_CRUD_States
 	 */
 	public function set_relation($field_name , $related_table, $related_title_field, $where_clause = null, $order_by = null)
 	{
-		$related_table = $this->add_apostrophe($related_table);
-		$related_title_field = $this->add_apostrophe($related_title_field);
-		
 		$this->relation[$field_name] = array($field_name, $related_table,$related_title_field, $where_clause, $order_by);
 		return $this;
 	}
@@ -3978,7 +3956,7 @@ class grocery_CRUD extends grocery_CRUD_States
 	 * @param string $priority_field_relation_table
 	 */
 	public function set_relation_n_n($field_name, $relation_table, $selection_table, $primary_key_alias_to_this_table, $primary_key_alias_to_selection_table , $title_field_selection_table , $priority_field_relation_table = null)
-	{		
+	{
 		$this->relation_n_n[$field_name] = 
 			(object)array( 
 				'field_name' => $field_name, 
