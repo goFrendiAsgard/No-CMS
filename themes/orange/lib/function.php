@@ -71,15 +71,17 @@
                             }
                         }
 
-                        if($in_path){
-                            $html.= '<a href="#" class="layout_expand">[-]</a> ';
-                        }else{
-                            $html.= '<a href="#" class="layout_expand">[+]</a> ';
-                        }                
+                        if($navigation['have_allowed_children']){
+                            if($in_path){
+                                $html.= '<a href="#" class="layout_expand">[-]</a> ';
+                            }else{
+                                $html.= '<a href="#" class="layout_expand">[+]</a> ';
+                            } 
+                        }              
                     }
 
                     $pageLinkClass = 'layout_page_link';
-                    if(count($navigation['child'])>0){
+                    if($navigation['have_allowed_children']){
                         $pageLinkClass .= ' layout_have_child';
                     }else{
                         $pageLinkClass .= ' layout_no_child';

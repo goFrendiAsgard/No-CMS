@@ -50,21 +50,17 @@
 
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span3 visible-desktop">
+        <div class="span2 visible-desktop">
           <div class="well sidebar-nav">
           	<?php echo $template['partials']['left'];?>            
           </div><!--/.well -->
         </div><!--/span-->
-        <div class="span9">
-          <div class="row-fluid">
-            <div class="span9">
-              <?php echo $template['body'];?>
-            </div><!--/span-->
-            <div class="span3 hidden-phone">
-              <?php echo $template['partials']['right'] ?>
-            </div><!--/span-->            
-          </div><!--/row-->
+        <div class="span7">
+            <?php echo $template['body'];?>
         </div><!--/span-->
+        <div class="span3 hidden-phone">
+            <?php echo $template['partials']['right'] ?>
+        </div><!--/span--> 
       </div><!--/row-->
 
       <hr>
@@ -90,12 +86,7 @@
     <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-collapse.js"></script>
     <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-carousel.js"></script>
     <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-typeahead.js"></script>    
-	<script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script.js"></script>
-	<style type="text/css">
-		a{
-			color: #08C;
-		}
-	</style>
+	<script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script.js"></script>	
   </body>
 </html>
 

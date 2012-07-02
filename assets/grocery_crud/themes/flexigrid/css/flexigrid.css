@@ -663,11 +663,11 @@ div.pGroup {
 {
 	text-align: right;	
 }
-.add-anchor
+.flexigrid a.add-anchor
 {
 	color: #000;	
 }
-.delete-anchor
+.flexigrid a.delete-anchor
 {
 	color: #000;	
 }
@@ -756,12 +756,12 @@ input.field_error
 {
 	text-decoration: underline;	
 }
-a
+.flexigrid a
 {
 	color: blue;
 	text-decoration: none;	
 }
-a:hover
+.flexigrid a:hover
 {
 	text-decoration: underline;	
 }
