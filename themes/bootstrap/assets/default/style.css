@@ -20,3 +20,7 @@ a.layout_expand{
     float: left;
     margin-right: 1px !important;
 }
+
+.layout_widget_container input, .layout_widget_container textarea {
+    max-width: 100%;
+}

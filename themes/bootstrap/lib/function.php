@@ -6,7 +6,7 @@
         
         foreach($widgets as $widget){
             if((isset($slug) && ($widget["slug"]==$slug)) || !isset($slug)){
-                $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'">';
+                $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'" class="layout_widget_container">';
                 $html.= '<h5>'.$widget['title'].'</h5>';
                 $html.= '<div class="widget_content"></div>';
                 $html.= '<br />';

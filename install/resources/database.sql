@@ -286,7 +286,7 @@ INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VA
 (3, 'site_logo', '@base_url/assets/nocms/images/No-CMS-logo.png', 'Site logo'),
 (4, 'site_favicon', '@base_url/assets/nocms/images/No-CMS-favicon.png', 'Site favicon'),
 (5, 'site_footer', 'goFrendiAsgard &copy; 2011', 'Site footer'),
-(6, 'site_theme', 'neutral', 'Site theme'),
+(6, 'site_theme', 'bootstrap', 'Site theme'),
 (7, 'site_language', 'english', 'Site language'),
 (8, 'max_menu_depth', '5', 'Depth of menu recursive'),
 (9, 'cms_email_address', 'no-reply@No-CMS.com', 'Email address'),

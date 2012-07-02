@@ -50,7 +50,7 @@
 
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span2 visible-desktop">
+        <div class="span3 visible-desktop">
           <div class="well sidebar-nav">
           	<?php echo $template['partials']['left'];?>            
           </div><!--/.well -->
@@ -58,7 +58,7 @@
         <div class="span7">
             <?php echo $template['body'];?>
         </div><!--/span-->
-        <div class="span3 hidden-phone">
+        <div class="span2 hidden-phone">
             <?php echo $template['partials']['right'] ?>
         </div><!--/span--> 
       </div><!--/row-->
