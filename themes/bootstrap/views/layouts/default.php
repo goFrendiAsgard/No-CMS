@@ -38,6 +38,7 @@
     
     <!--  Jquery should be loaded first, because No-CMS widget need it -->
     <script src="<?php echo base_url();?>assets/bootstrap/js/jquery.js"></script>
+    <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script.js"></script>
   </head>
 
   <body>
@@ -86,7 +87,7 @@
     <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-collapse.js"></script>
     <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-carousel.js"></script>
     <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-typeahead.js"></script>    
-	<script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script.js"></script>	
+		
   </body>
 </html>
 
