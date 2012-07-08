@@ -805,3 +805,9 @@ ul.chzn-choices li.search-field input
 {
     width: 59px;
 }
+.form-input-box input{
+	max-width: 400px;
+}
+.form-input-box textarea{
+    max-width: 400px;
+}
