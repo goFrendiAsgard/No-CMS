@@ -246,61 +246,65 @@ class CMS_Controller extends CI_Controller {
 
         //if allowed then show, else don't
         if ($allowed) {
+        	//get configuration
+        	$cms['site_name'] = $this->cms_get_config('site_name');
+        	$cms['site_slogan'] = $this->cms_get_config('site_slogan');
+        	$cms['site_footer'] = $this->cms_get_config('site_footer');
+        	$cms['site_theme'] = $this->cms_get_config('site_theme');
+        	$cms['site_logo'] = $this->cms_get_config('site_logo');
+        	$cms['site_favicon'] = $this->cms_get_config('site_favicon');
+        	
+        	//get navigations
+        	$navigations = $this->cms_navigations();
+        	$navigation_path = $this->cms_get_navigation_path($navigation_name);
+        	$cms['navigations'] = $navigations;
+        	$cms['navigation_path'] = $navigation_path;
+        	
+        	//get widget
+        	$widget = $this->cms_widgets();
+        	$cms['widget'] = $widget;
+        	
+        	//get user name, quicklinks, module_name & module_path
+        	$cms['user_name'] = $this->cms_username();
+        	$cms['quicklinks'] = $this->cms_quicklinks();
+        	$cms['module_path'] = $this->cms_module_path();
+        	$cms['module_name'] = $this->cms_module_name($cms['module_path']);
+        	
+        	//if $custom_theme defined, use it as theme
+        	//else use site_theme configuration
+        	if (isset($custom_theme)) {
+        		$theme = $custom_theme;
+        	} else {
+        		$theme = $cms['site_theme'];
+        	}
+        	
+        	//if $custom_layout defined, use it as layout
+        	//else look at user agent
+        	if (isset($custom_layout)) {
+        		$layout = $custom_layout;
+        	} else {
+        		$layout = $this->is_mobile ? 'mobile' : 'default';
+        	}
+        	
+        	//let's decide the real theme and layout used by their availability
+        	if (!$this->cms_themes_okay($theme, $layout)) {
+        		if ($layout == 'mobile' && $this->cms_themes_okay($theme, 'default')) {
+        			$layout = 'default';
+        		} else {
+        			$theme = 'neutral';
+        		}
+        	}
+        	
+        	//re-adjust $cms['site_theme']
+        	$cms['site_theme'] = $theme;
+        	
+        	// include data_partial into data
+        	$data['cms'] = $cms;
+        	
+        	// if only content
             if ((isset($_REQUEST['_only_content']))) {
                 $result = $this->load->view($view_url, $data, $return_as_string);
             } else {
-                //get configuration
-                $cms['site_name'] = $this->cms_get_config('site_name');
-                $cms['site_slogan'] = $this->cms_get_config('site_slogan');
-                $cms['site_footer'] = $this->cms_get_config('site_footer');
-                $cms['site_theme'] = $this->cms_get_config('site_theme');
-                $cms['site_logo'] = $this->cms_get_config('site_logo');
-                $cms['site_favicon'] = $this->cms_get_config('site_favicon');
-
-                //get navigations
-                $navigations = $this->cms_navigations();
-                $navigation_path = $this->cms_get_navigation_path($navigation_name);
-                $cms['navigations'] = $navigations;
-                $cms['navigation_path'] = $navigation_path;
-
-                //get widget
-                $widget = $this->cms_widgets();
-                $cms['widget'] = $widget;
-
-                //get user name, quicklinks, module_name & module_path
-                $cms['user_name'] = $this->cms_username();
-                $cms['quicklinks'] = $this->cms_quicklinks();                
-                $cms['module_path'] = $this->cms_module_path();
-                $cms['module_name'] = $this->cms_module_name($cms['module_path']);
-
-                //if $custom_theme defined, use it as theme
-                //else use site_theme configuration
-                if (isset($custom_theme)) {
-                    $theme = $custom_theme;
-                } else {
-                    $theme = $cms['site_theme'];
-                }
-
-                //if $custom_layout defined, use it as layout
-                //else look at user agent
-                if (isset($custom_layout)) {
-                    $layout = $custom_layout;
-                } else {
-                    $layout = $this->is_mobile ? 'mobile' : 'default';
-                }
-
-                //let's decide the real theme and layout used by their availability
-                if (!$this->cms_themes_okay($theme, $layout)) {
-                    if ($layout == 'mobile' && $this->cms_themes_okay($theme, 'default')) {
-                        $layout = 'default';
-                    } else {
-                        $theme = 'neutral';
-                    }
-                }
-
-                //re-adjust $cms['site_theme']
-                $cms['site_theme'] = $theme;
-
                 //backend template
                 $cms_userid = $this->cms_userid();
                 if (isset($cms_userid) && $cms_userid) {
@@ -312,15 +316,13 @@ class CMS_Controller extends CI_Controller {
                 // set layout and partials                
                 $this->template->set_theme($theme);
                 $this->template->set_layout($layout);
-                // include data_partial into data
-                $data['cms'] = $cms;
+                
                 $this->template->set_partial('header', 'partials/' . $layout . '/header.php', $data);
                 $this->template->set_partial('left', 'partials/' . $layout . '/left.php', $data);
                 $this->template->set_partial('footer', 'partials/' . $layout . '/footer.php', $data);
                 $this->template->set_partial('right', 'partials/' . $layout . '/right.php', $data);
                 $this->template->set_partial('navigation_path', 'partials/' . $layout . '/navigation_path.php', $data);
                 
-
                 $result = $this->template->build($view_url, $data, $return_as_string);
             }
         } else {
