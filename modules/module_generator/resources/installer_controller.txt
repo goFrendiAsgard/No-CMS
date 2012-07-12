@@ -19,13 +19,13 @@ class Install extends CMS_Module_Installer {
     }
     
     private function remove_all(){
-@dropTable
 @removeNavigation
+@dropTable
     }
     
     private function build_all(){
-@createTable
 @addNavigation
+@createTable
     }
 }
 

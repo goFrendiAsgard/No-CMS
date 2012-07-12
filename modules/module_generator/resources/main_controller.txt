@@ -6,7 +6,7 @@
  * @author theModuleGenerator
  */
 class @moduleName extends CMS_Controller {
-    public function index($article_id=NULL){
+    public function index(){
         $this->view('@moduleName/@moduleName_index', NULL, '@moduleName_index');
     } 
 

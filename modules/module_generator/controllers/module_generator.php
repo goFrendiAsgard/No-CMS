@@ -21,6 +21,9 @@ class module_generator extends CMS_Controller{
     public function make(){
         
         $moduleName = $this->input->post('module_name');
+        $moduleName = $this->replace($moduleName,
+        		array(' '),
+        		array('_'));
         $tables = $this->input->post('tables');
         if(!$moduleName || !$tables){
             redirect('module_generator/index');
@@ -43,10 +46,6 @@ class module_generator extends CMS_Controller{
         $this->make_folder($moduleName.'/models');
         $this->make_folder($moduleName.'/views');
         $this->make_folder($moduleName.'/controllers');
-        
-        echo '<pre>';
-        echo var_dump($tables);
-        echo '</pre>';
         
         $str = file_get_contents(BASEPATH.'../modules/module_generator/resources/installer_controller.txt');
         $str = $this->replace($str,
