@@ -15,41 +15,58 @@ class CMS_Module_Installer extends CMS_Controller {
     
     public function install(){
         if($this->cms_have_privilege('cms_install_module')){
-            $dependenciesOK = TRUE;
+            $dependencies_error = FALSE;
             foreach($this->DEPENDENCIES as $dependency){
                 if(!$this->cms_is_module_installed($dependency)){
-                    $dependenciesOK = FALSE;
+                    $dependencies_error = TRUE;
                     break;
                 }
             }
-            if($dependenciesOK){
-                $this->register_module();
-                $this->do_install();
-                redirect('main/module_management');
+            
+            $alreadyInstalled_error = $this->cms_is_module_installed($this->NAME);
+            $undefinedName_error = $this->NAME == '';
+            
+            $error = $dependencies_error || $alreadyInstalled_error || $undefinedName_error;
+            if($error){
+            	$data=array(
+            			'module_name'=>$this->NAME,
+            			'module_path'=>$this->uri->segment(1),
+            			'dependencies'=>$this->DEPENDENCIES,
+            			'dependencies_error'=>$dependencies_error,
+            			'alreadyInstalled_error'=>$alreadyInstalled_error,
+            			'undefinedName_error'=>$undefinedName_error,
+            	);
+            	$this->view('main/module_management_fail_install',$data,'main_module_management');
             }else{
-                $data=array(
-                	'module_name'=>$this->NAME,
-                    'module_path'=>$this->uri->segment(1),
-                    'dependencies'=>$this->DEPENDENCIES
-                );
-                $this->view('main/module_management_fail_install',$data,'main_module_management');
+            	$this->register_module();
+            	$this->do_install();
+            	redirect('main/module_management');            	
             }
         }        
     }
     public function uninstall(){
         if($this->cms_have_privilege('cms_install_module')){
-            $child = $this->child();
-            if(count($child)==0){
-                $this->unregister_module();
-                $this->do_uninstall();
-                redirect('main/module_management');
+        	$children = $this->child();
+        	$dependencies_error = count($children) != 0;
+        	$alreadyUninstalled_error = !$this->cms_is_module_installed($this->NAME); 
+        	$undefinedName_error = $this->NAME == '';
+        	
+        	$error = $dependencies_error || $alreadyUninstalled_error || $undefinedName_error;
+        	
+            if($error){
+            	$data=array(
+            			'module_name'=>$this->NAME,
+            			'module_path'=>$this->uri->segment(1),
+            			'dependencies'=>$children,
+            			'dependencies_error'=>$dependencies_error,
+            			'alreadyUninstalled_error'=>$alreadyUninstalled_error,
+            			'undefinedName_error'=>$undefinedName_error,
+            	);
+            	$this->view('main/module_management_fail_uninstall',$data,'main_module_management');                
             }else{
-                $data=array(
-                    'module_name'=>$this->NAME,
-                    'module_path'=>$this->uri->segment(1),
-                    'dependencies'=>$child
-                );
-                $this->view('main/module_management_fail_uninstall',$data,'main_module_management');
+            	$this->unregister_module();
+            	$this->do_uninstall();
+            	redirect('main/module_management');
             }
         }
     }
