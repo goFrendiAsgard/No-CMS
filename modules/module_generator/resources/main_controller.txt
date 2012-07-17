@@ -7,7 +7,7 @@
  */
 class @moduleName extends CMS_Controller {
     public function index(){
-        $this->view('@moduleName/@moduleName_index', NULL, '@moduleName_index');
+        $this->view($this->cms_module_path().'/@moduleName_index', NULL, '@moduleName_index');
     } 
 
 @functions

@@ -8,7 +8,7 @@ img.photo_thumbnail{
 }
 </style>
 <?php
-echo form_open('blog');
+echo form_open($cms['module_path']);
 echo form_dropdown('category', $available_category, $category);
 echo form_input('search', $search);
 echo form_submit('submit', 'Search');
@@ -31,7 +31,7 @@ foreach($article as $single_article){
     echo '<br />';
     
     if($view_readmore){
-        echo anchor('blog/index/'.$single_article['id'],'read more');
+        echo anchor($cms['module_path'].'/index/'.$single_article['id'],'read more');
     }
     if($single_article['allow_comment']){
     	echo '<hr />';
@@ -45,7 +45,7 @@ foreach($article as $single_article){
     	}
     	
     	echo '<b>Add Comments </b>'.br().br();
-    	echo form_open('blog/add_comment/'.$single_article['id']);
+    	echo form_open($cms['module_path'].'/add_comment/'.$single_article['id']);
     	echo form_label('Name :').br();
     	echo form_input('name').br();
     	echo form_label('Email :').br();

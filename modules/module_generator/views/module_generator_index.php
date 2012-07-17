@@ -29,7 +29,7 @@
 
 <div class="form">     
     <?php    
-    echo form_open('module_generator/make', array('id'=>'form'));
+    echo form_open($cms['module_path'].'/make', array('id'=>'form'));
     echo form_label('New Module Name');
     echo form_input('module_name');
     echo form_label('Tables<br /><i>(press ctrl+click to select multiple tables)</i>');

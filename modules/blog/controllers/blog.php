@@ -104,7 +104,7 @@ class Blog extends CMS_Controller {
     		}
     		$this->db->insert('blog_comment', $data);
     	}
-    	redirect('blog/index/'.$article_id);
+    	redirect($this->cms_module_path('gofrendi.blog').'/index/'.$article_id);
     }
     
     private function get_photos($article_id){

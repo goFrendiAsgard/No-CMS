@@ -32,7 +32,7 @@
         });
         
         $.ajax({
-            url : '<?php echo base_url().'index.php/help?_only_content=true';?>',
+            url : '<?php echo site_url($cms['module_path']).'?_only_content=true';?>',
             success : function(response){
                 $("#toc").html(response);
             }

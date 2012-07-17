@@ -8,10 +8,10 @@
 class Help extends CMS_Controller{
     //put your code here
     public function index(){
-        $this->view('help/toc', NULL, 'help');
+        $this->view($this->cms_module_path('gofrendi.noCMS.help').'/toc', NULL, 'help');
     }
     public function topic($topic_name){
-        $this->view('help/topic/'.$topic_name, NULL, 'help');
+        $this->view($this->cms_module_path('gofrendi.noCMS.help').'/topic/'.$topic_name, NULL, 'help');
     }    
 }
 

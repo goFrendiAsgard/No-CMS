@@ -8,14 +8,14 @@
 class module_generator extends CMS_Controller{
     //put your code here
     public function index(){
-        $this->load->model('module_generator/data');
+        $this->load->model($this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/data');
         $tables = $this->data->get_tables();
         
         $data = array(); 
         foreach($tables as $table){
             $data['tables'][$table] = $table; 
         }
-        $this->view('module_generator/module_generator_index', $data, 'module_generator_index');
+        $this->view($this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/module_generator_index', $data, 'module_generator_index');
     }
     
     public function make(){
@@ -26,20 +26,20 @@ class module_generator extends CMS_Controller{
         		array('_'));
         $tables = $this->input->post('tables');
         if(!$moduleName || !$tables){
-            redirect('module_generator/index');
+            redirect($this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/index');
         }
         $existingModules = $this->cms_get_module_list();
         foreach($existingModules as $existingModule){
             $existingModuleName = $existingModule['path'];
             if($moduleName == $existingModuleName){
-                redirect('module_generator/index');
+                redirect($this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/index');
                 break;
             }
         }
         
         //It's okay now to make the new module
         
-        $this->load->model('module_generator/data');
+        $this->load->model($this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/data');
         
         //make the directories
         $this->make_folder($moduleName);
@@ -47,7 +47,7 @@ class module_generator extends CMS_Controller{
         $this->make_folder($moduleName.'/views');
         $this->make_folder($moduleName.'/controllers');
         
-        $str = file_get_contents(BASEPATH.'../modules/module_generator/resources/installer_controller.txt');
+        $str = file_get_contents(BASEPATH.'../modules/'.$this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/resources/installer_controller.txt');
         $str = $this->replace($str,
                     array(
                         '@moduleName',
@@ -66,7 +66,7 @@ class module_generator extends CMS_Controller{
                 );
         $this->make_file($moduleName.'/controllers/install.php', $str);
         
-        $str = file_get_contents(BASEPATH.'../modules/module_generator/resources/main_controller.txt');
+        $str = file_get_contents(BASEPATH.'../modules/'.$this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/resources/main_controller.txt');
         $str = $this->replace($str,
                     array(
                         '@moduleName',
@@ -79,7 +79,7 @@ class module_generator extends CMS_Controller{
                 );
         $this->make_file($moduleName.'/controllers/'.$moduleName.'.php',$str);
         
-        $str = file_get_contents(BASEPATH.'../modules/module_generator/resources/view_index.txt');
+        $str = file_get_contents(BASEPATH.'../modules/'.$this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/resources/view_index.txt');
         $str = $this->replace($str,
                     array(
                         '@moduleName'
