@@ -1,3 +1,48 @@
+<style type="text/css">
+    #message:not(:empty){
+        background-color: #FFFFA0;
+        border-radius: 15px;
+        border : 1px solid black;
+        color : black;
+        padding : 5px;        
+        width : 400px;
+    }
+</style>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
+<script type="text/javascript">
+    function check_user_exists(){
+        var user_name =  $('input[name="user_name"]').val();
+        var password = $('input[name="password"]').val();
+        var confirm_password = $('input[name="confirm_password"]').val();
+        $.ajax({
+            "url" : "check_change_profile",
+            "type" : "POST",
+            "data" : {"user_name":user_name},
+            "dataType" : "json",
+            "success" : function(data){
+                if(!data.exists && user_name!='' && password!='' && password==confirm_password){
+                    $('input[name="change_profile"]').show();
+                    $('input[name="change_profile"]').removeAttr('disabled');                    
+                }else{
+                    $('input[name="change_profile"]').hide();
+                    $('input[name="change_profile"]').attr('disabled', 'disabled');
+                }
+                
+                if(data.message != $('#message').html()){
+                    $('#message').html(data.message);
+                }
+            }
+        });
+    }
+    
+    $(document).ready(function(){
+        check_user_exists();
+        $('input').keyup(function(){
+            check_user_exists();
+        });
+    })
+</script> 
+
 <?php
     echo form_open('main/change_profile');
     echo form_label('User Name').br();
@@ -13,3 +58,4 @@
     echo form_submit('change_profile', 'Change Profile');
     echo form_close();
 ?>
+<span id="message"></span>

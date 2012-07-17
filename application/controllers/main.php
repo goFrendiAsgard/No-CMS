@@ -132,8 +132,23 @@ class Main extends CMS_Controller {
             "exists"=>$exists,
             "message"=>$message
         );
-        echo json_encode($data);
-        
+        echo json_encode($data);        
+    }
+    
+    public function check_change_profile(){
+    	$user_name = $this->input->post('user_name');
+    	$exists = $this->cms_is_user_exists($user_name) && $user_name!=$this->cms_username();
+    	$message = "";
+    	if($user_name==""){
+    		$message = $this->cms_lang("Username is empty");
+    	}else if($exists){
+    		$message = $this->cms_lang("Username already exists");
+    	}
+    	$data = array(
+    			"exists"=>$exists,
+    			"message"=>$message
+    	);
+    	echo json_encode($data);
     }
 
     public function change_profile() {

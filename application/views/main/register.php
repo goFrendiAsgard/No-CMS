@@ -12,13 +12,15 @@
 <script type="text/javascript">
     function check_user_exists(){
         var user_name =  $('input[name="user_name"]').val();
+        var password = $('input[name="password"]').val();
+        var confirm_password = $('input[name="confirm_password"]').val();
         $.ajax({
             "url" : "check_registration",
             "type" : "POST",
             "data" : {"user_name":user_name},
             "dataType" : "json",
             "success" : function(data){
-                if(!data.exists && user_name!=''){
+            	if(!data.exists && user_name!='' && password!='' && password==confirm_password){
                     $('input[name="register"]').show();
                     $('input[name="register"]').removeAttr('disabled');                    
                 }else{
@@ -35,7 +37,7 @@
     
     $(document).ready(function(){
         check_user_exists();
-        $('input[name="user_name"]').keyup(function(){
+        $('input').keyup(function(){
             check_user_exists();
         });
     })
@@ -47,12 +49,12 @@
     echo form_input('user_name', $user_name).br();
     echo form_label('E mail').br();
     echo form_input('email', $email).br();
+    echo form_label('Real Name').br();
+    echo form_input('real_name', $real_name).br();
     echo form_label('Password').br();
     echo form_password('password').br();
     echo form_label('Confirm Password').br();
-    echo form_password('confirm_password').br();
-    echo form_label('Real Name').br();
-    echo form_input('real_name', $real_name).br();
+    echo form_password('confirm_password').br();    
     echo form_submit('register', 'Register');
     echo form_close();
     echo br();
