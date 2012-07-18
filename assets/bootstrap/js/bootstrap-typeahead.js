@@ -27,16 +27,16 @@
   * ================================= */
 
   var Typeahead = function (element, options) {
-    this.$element = $(element)
-    this.options = $.extend({}, $.fn.typeahead.defaults, options)
-    this.matcher = this.options.matcher || this.matcher
-    this.sorter = this.options.sorter || this.sorter
-    this.highlighter = this.options.highlighter || this.highlighter
-    this.updater = this.options.updater || this.updater
-    this.$menu = $(this.options.menu).appendTo('body')
-    this.source = this.options.source
-    this.shown = false
-    this.listen()
+    this.$element = $(element);
+    this.options = $.extend({}, $.fn.typeahead.defaults, options);
+    this.matcher = this.options.matcher || this.matcher;
+    this.sorter = this.options.sorter || this.sorter;
+    this.highlighter = this.options.highlighter || this.highlighter;
+    this.updater = this.options.updater || this.updater;
+    this.$menu = $(this.options.menu).appendTo('body');
+    this.source = this.options.source;
+    this.shown = false;
+    this.listen();
   }
 
   Typeahead.prototype = {
@@ -209,23 +209,23 @@
         case 9: // tab
         case 13: // enter
         case 27: // escape
-          e.preventDefault()
-          break
+          e.preventDefault();
+          break;
 
         case 38: // up arrow
-          if (e.type != 'keydown') break
-          e.preventDefault()
-          this.prev()
-          break
+          if (e.type != 'keydown') break;
+          e.preventDefault();
+          this.prev();
+          break;
 
         case 40: // down arrow
-          if (e.type != 'keydown') break
-          e.preventDefault()
-          this.next()
-          break
+          if (e.type != 'keydown') break;
+          e.preventDefault();
+          this.next();
+          break;
       }
 
-      e.stopPropagation()
+      e.stopPropagation();
     }
 
   , blur: function (e) {

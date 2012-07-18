@@ -31,7 +31,7 @@ class Wysiwyg extends CMS_Controller {
         $data['site_favicon'] = $this->cms_get_config('site_favicon');
         
         $data['navigation_list'] =array();
-        $this->load->model('wysiwyg/navigation_model');
+        $this->load->model($this->cms_module_path().'/navigation_model');
         $navigation_list = $this->navigation_model->get_all_navigation();
         foreach($navigation_list as $navigation){
             $data['navigation_list'][$navigation["id"]] = 
@@ -39,7 +39,7 @@ class Wysiwyg extends CMS_Controller {
         }
         
         $data['language_list'] =array();
-        $this->load->model('wysiwyg/language_model');
+        $this->load->model($this->cms_module_path().'/language_model');
         $language_list = $this->language_model->get_language();
         foreach($language_list as $language){
             $data['language_list'][$language] = $language;
@@ -73,7 +73,7 @@ class Wysiwyg extends CMS_Controller {
     
     public function get_navigation(){
         $this->check_allow();
-        $this->load->model('wysiwyg/navigation_model');
+        $this->load->model($this->cms_module_path().'/navigation_model');
         $result = $this->navigation_model->get_navigation();
         echo json_encode($result);
     }
@@ -81,41 +81,41 @@ class Wysiwyg extends CMS_Controller {
     public function toggle_navigation(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/navigation_model');
+        $this->load->model($this->cms_module_path().'/navigation_model');
         $this->navigation_model->toggle_navigation($id);
     }
     
     public function up_navigation(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/navigation_model');
+        $this->load->model($this->cms_module_path().'/navigation_model');
         $this->navigation_model->up_navigation($id);
     }
     
     public function down_navigation(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/navigation_model');
+        $this->load->model($this->cms_module_path().'/navigation_model');
         $this->navigation_model->down_navigation($id);
     }
     
     public function promote_navigation(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/navigation_model');
+        $this->load->model($this->cms_module_path().'/navigation_model');
         $this->navigation_model->promote_navigation($id);
     }
     
     public function demote_navigation(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/navigation_model');
+        $this->load->model($this->cms_module_path().'/navigation_model');
         $this->navigation_model->demote_navigation($id);
     }
     
     public function get_quicklink(){
         $this->check_allow();
-        $this->load->model('wysiwyg/quicklink_model');
+        $this->load->model($this->cms_module_path().'/quicklink_model');
         $result = $this->quicklink_model->get_quicklink();
         echo json_encode($result);
     }
@@ -123,35 +123,35 @@ class Wysiwyg extends CMS_Controller {
     public function left_quicklink(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/quicklink_model');
+        $this->load->model($this->cms_module_path().'/quicklink_model');
         $this->quicklink_model->left_quicklink($id);
     }
     
     public function right_quicklink(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/quicklink_model');
+        $this->load->model($this->cms_module_path().'/quicklink_model');
         $this->quicklink_model->right_quicklink($id);
     }
     
     public function add_quicklink(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/quicklink_model');
+        $this->load->model($this->cms_module_path().'/quicklink_model');
         $this->quicklink_model->add_quicklink($id);
     }
     
     public function remove_quicklink(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/quicklink_model');
+        $this->load->model($this->cms_module_path().'/quicklink_model');
         $this->quicklink_model->remove_quicklink($id);
     }
     
     public function get_widget($slug){
         $this->check_allow();
         $slug = isset($slug)? $slug : $this->input->post('slug');
-        $this->load->model('wysiwyg/widget_model');
+        $this->load->model($this->cms_module_path().'/widget_model');
         $result = $this->widget_model->get_widget($slug);
         echo json_encode($result);
     }
@@ -159,28 +159,28 @@ class Wysiwyg extends CMS_Controller {
     public function up_widget(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/widget_model');
+        $this->load->model($this->cms_module_path().'/widget_model');
         $this->widget_model->up_widget($id);
     }
     
     public function down_widget(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/widget_model');
+        $this->load->model($this->cms_module_path().'/widget_model');
         $this->widget_model->down_widget($id);
     }
     
     public function toggle_widget(){
         $this->check_allow();
         $id = $this->input->post('id');
-        $this->load->model('wysiwyg/widget_model');
+        $this->load->model($this->cms_module_path().'/widget_model');
         $this->widget_model->toggle_widget($id);
     }
     
     public function upload_favicon(){
         $this->check_allow();
         
-        include(APPPATH.'../modules/wysiwyg/fileuploader_library/php.php');
+        include(APPPATH.'../modules/'.$this->cms_module_path().'/fileuploader_library/php.php');
         
         // list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $allowedExtensions = array('jpeg', 'jpg', 'gif', 'png', 'ico');
@@ -197,7 +197,7 @@ class Wysiwyg extends CMS_Controller {
     public function upload_logo(){
         $this->check_allow();
         
-        include(APPPATH.'../modules/wysiwyg/fileuploader_library/php.php');
+        include(APPPATH.'../modules/'.$this->cms_module_path().'/fileuploader_library/php.php');
         
         // list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $allowedExtensions = array('jpeg', 'jpg', 'gif', 'png', 'ico');

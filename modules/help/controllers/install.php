@@ -15,7 +15,7 @@ class Install extends CMS_Module_Installer{
 	protected $NAME = 'gofrendi.noCMS.help';
     //put your code here
     public function do_install(){
-        $this->add_navigation('help', 'No-CMS User guide', 'help', 1);
+        $this->add_navigation('help', 'No-CMS User guide', $this->cms_module_path(), 1);
         redirect('help');
     }
     

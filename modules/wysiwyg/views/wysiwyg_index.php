@@ -114,19 +114,19 @@
                 html += obj.title;
                 html += '<input type="hidden" class="navigation_id" value="'+obj.id+'" />';
                 if(!obj.is_root){
-                    html += ' <a href="#" class="promote_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/left.png'); ?>" /></a>';
+                    html += ' <a href="#" class="promote_navigation"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/left.png'); ?>" /></a>';
                 }
                 if(i>0){
-                    html += ' <a href="#" class="demote_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/right.png'); ?>" /></a>';
-                    html += ' <a href="#" class="up_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/up.png'); ?>" /></a>';
+                    html += ' <a href="#" class="demote_navigation"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/right.png'); ?>" /></a>';
+                    html += ' <a href="#" class="up_navigation"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/up.png'); ?>" /></a>';
                 }  
                 if(i<(objs.length-1)){
-                    html += ' <a href="#" class="down_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/down.png'); ?>" /></a>';
+                    html += ' <a href="#" class="down_navigation"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/down.png'); ?>" /></a>';
                 }                
                 if(obj.active){
-                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/eye-open.png'); ?>" /></a>';
+                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/eye-open.png'); ?>" /></a>';
                 }else{
-                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/eye-close.png'); ?>" /></a>';
+                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/eye-close.png'); ?>" /></a>';
                 }
                 html += parse_navigation(obj.children);
                 html += '</li>';
@@ -138,7 +138,7 @@
     
     function get_navigation(){
         $.ajax({
-            "url" : "wysiwyg/get_navigation",
+            "url" : "<?php echo $this->cms_module_path();?>/get_navigation",
             "dataType" : "json",
             "type" : "POST",
             "success" : function(response){
@@ -157,12 +157,12 @@
                 html += obj.title;
                 html += '<input type="hidden" class="quicklink_id" value="'+obj.id+'" />';
                 if(i>0){
-                    html += ' <a href="#" class="left_quicklink"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/left.png'); ?>" /></a>';
+                    html += ' <a href="#" class="left_quicklink"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/left.png'); ?>" /></a>';
                 }  
                 if(i<(objs.length-1)){
-                    html += ' <a href="#" class="right_quicklink"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/right.png'); ?>" /></a>';
+                    html += ' <a href="#" class="right_quicklink"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/right.png'); ?>" /></a>';
                 }
-                html += ' <a href="#" class="remove_quicklink"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/delete.png'); ?>" /></a>';
+                html += ' <a href="#" class="remove_quicklink"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/delete.png'); ?>" /></a>';
                 html+="</span>";
             }
         }
@@ -171,7 +171,7 @@
     
     function get_quicklink(){
         $.ajax({
-            "url" : "wysiwyg/get_quicklink",
+            "url" :  "<?php echo $this->cms_module_path();?>/get_quicklink",
             "dataType" : "json",
             "type" : "POST",
             "success" : function(response){
@@ -191,15 +191,15 @@
                 html += '<input type="hidden" class="widget_id" value="'+obj.id+'" />';
                 html += '<input type="hidden" class="widget_slug" value="'+obj.slug+'" />';
                 if(i>0){
-                    html += ' <a href="#" class="up_widget"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/up.png'); ?>" /></a>';
+                    html += ' <a href="#" class="up_widget"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/up.png'); ?>" /></a>';
                 }  
                 if(i<(objs.length-1)){
-                    html += ' <a href="#" class="down_widget"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/down.png'); ?>" /></a>';
+                    html += ' <a href="#" class="down_widget"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/down.png'); ?>" /></a>';
                 }
                 if(obj.active){
-                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/eye-open.png'); ?>" /></a>';
+                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/eye-open.png'); ?>" /></a>';
                 }else{
-                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="<?php echo base_url('modules/wysiwyg/assets/images/eye-close.png'); ?>" /></a>';
+                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/eye-close.png'); ?>" /></a>';
                 }
                 html+="</div>";
                 
@@ -210,7 +210,7 @@
     
     function get_widget(){
         $.ajax({
-            "url" : "wysiwyg/get_widget/sidebar",
+            "url" : "<?php echo $this->cms_module_path();?>get_widget/sidebar",
             "dataType" : "json",
             "type" : "POST",
             "success": function(response){
@@ -221,7 +221,7 @@
         
         //load the advertisement
         $.ajax({
-            "url" : "wysiwyg/get_widget/advertisement",
+            "url" :  "<?php echo $this->cms_module_path();?>/get_widget/advertisement",
             "dataType" : "json",
             "type" : "POST",
             "success": function(response){
@@ -258,7 +258,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" : "wysiwyg/change_name/",
+                "url" :  "<?php echo $this->cms_module_path();?>/change_name/",
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -282,7 +282,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" : "wysiwyg/change_slogan/",
+                "url" :  "<?php echo $this->cms_module_path();?>/change_slogan/",
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -305,7 +305,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" : "wysiwyg/change_footer/",
+                "url" :  "<?php echo $this->cms_module_path();?>/change_footer/",
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -319,7 +319,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" : "wysiwyg/toggle_navigation",
+                "url" :  "<?php echo $this->cms_module_path();?>/toggle_navigation",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -334,7 +334,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" : "wysiwyg/promote_navigation",
+                "url" :  "<?php echo $this->cms_module_path();?>/promote_navigation",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -349,7 +349,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" : "wysiwyg/demote_navigation",
+                "url" :  "<?php echo $this->cms_module_path();?>/demote_navigation",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -364,7 +364,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" : "wysiwyg/up_navigation",
+                "url" :  "<?php echo $this->cms_module_path();?>/up_navigation",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -379,7 +379,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" : "wysiwyg/down_navigation",
+                "url" :  "<?php echo $this->cms_module_path();?>/down_navigation",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -394,7 +394,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" : "wysiwyg/left_quicklink",
+                "url" :  "<?php echo $this->cms_module_path();?>/left_quicklink",
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -409,7 +409,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" : "wysiwyg/right_quicklink",
+                "url" :  "<?php echo $this->cms_module_path();?>/right_quicklink",
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -424,7 +424,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" : "wysiwyg/remove_quicklink",
+                "url" :  "<?php echo $this->cms_module_path();?>/remove_quicklink",
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -438,7 +438,7 @@
         $("#add_quicklink").click(function(){
             var navigation_id = $("#navigation_list option:selected").val();
             $.ajax({
-                "url" : "wysiwyg/add_quicklink",
+                "url" :  "<?php echo $this->cms_module_path();?>/add_quicklink",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -452,7 +452,7 @@
         $("#language_list").click(function(){
             var language = $("#language_list option:selected").val();
             $.ajax({
-                "url" : "wysiwyg/change_language",
+                "url" :  "<?php echo $this->cms_module_path();?>/change_language",
                 "type" : "POST",
                 "data" : {"value" : language},
                 "success" : function(response){
@@ -466,7 +466,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" : "wysiwyg/toggle_widget",
+                "url" :  "<?php echo $this->cms_module_path();?>/toggle_widget",
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -481,7 +481,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" : "wysiwyg/up_widget",
+                "url" :  "<?php echo $this->cms_module_path();?>/up_widget",
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -496,7 +496,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" : "wysiwyg/down_widget",
+                "url" :  "<?php echo $this->cms_module_path();?>/down_widget",
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -518,7 +518,7 @@
     jQuery(function(){
         new qq.FileUploader({
             element: $("div#wysiwyg_setting #upload-favicon")[0],
-            action: '<?php echo site_url('/wysiwyg/upload_favicon'); ?>',
+            action: '<?php echo site_url('/'.$this->cms_module_path().'/upload_favicon'); ?>',
             allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'ico'],        
             // each file size limit in bytes
             // this option isn't supported in all browsers
@@ -527,7 +527,7 @@
             onComplete: function(id, fileName, responseJSON){
                 if(responseJSON["success"]){
                     $.ajax({
-                        url:'wysiwyg/get_favicon',
+                        url: '<?php echo $this->cms_module_path();?>/get_favicon',
                         dataType:'json',
                         success : function(response){
                             $('.image-favicon').attr('src',response['value']);
@@ -539,7 +539,7 @@
         
         new qq.FileUploader({
             element: $("div#wysiwyg_setting #upload-logo")[0],
-            action: '<?php echo site_url('/wysiwyg/upload_logo'); ?>',
+            action: '<?php echo site_url('/'.$this->cms_module_path().'/upload_logo'); ?>',
             allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'ico'],
             // each file size limit in bytes
             // this option isn't supported in all browsers
@@ -548,7 +548,7 @@
             onComplete: function(id, fileName, responseJSON){
                 if(responseJSON["success"]){
                     $.ajax({
-                        url:'wysiwyg/get_logo',
+                        url: '<?php echo $this->cms_module_path();?>/get_logo',
                         dataType:'json',
                         success : function(response){
                             $('.image-logo').attr('src',response['value']);
@@ -596,7 +596,7 @@
         <div class="form_label">Add Quick Link : </div> 
         <div class="form_input">
             <?php echo form_dropdown('navigation', $navigation_list, NULL,'id="navigation_list"'); ?>&nbsp;
-            <a href="#" id="add_quicklink"><img width="20px" src="<?php echo base_url('modules/wysiwyg/assets/images/add.png'); ?>" /></a>
+            <a href="#" id="add_quicklink"><img width="20px" src="<?php echo base_url('modules/'.$this->cms_module_path().'/assets/images/add.png'); ?>" /></a>
         </div>
         <div class="clear"></div>
     </div>
