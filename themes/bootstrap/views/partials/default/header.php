@@ -6,9 +6,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <!--   <img src ="<?php echo $cms['site_logo'];?>" style="height:100%" /> -->
           <a class="brand" href="#">
-          	<?php echo $cms['site_name'] . ' - ' .  $cms['site_slogan'];?>
+          	<img src ="<?php echo $cms['site_logo'];?>" style="max-height:30px; max-width:30px;" />
+          	<span class="hidden-phone">
+          		<?php echo $cms['site_name'] . ' - ' .  $cms['site_slogan'];?>
+          	</span>
           </a>          
           <div class="nav-collapse">
             <?php echo build_quicklink($cms['quicklinks']);?>
