@@ -46,7 +46,8 @@ class Wysiwyg extends CMS_Controller {
         }
         $data['language'] = $this->cms_get_config('site_language');
         
-        $this->view('wysiwyg_index', $data, 'wysiwyg_index');
+        $this->view($this->cms_module_path().'/wysiwyg_index', $data, 'wysiwyg_index');
+        //echo 'coba';
     }
     
     public function change_name(){
