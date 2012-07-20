@@ -1,3 +1,4 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <style type="text/css">
     #message:not(:empty){
         background-color: #FFFFA0;
@@ -5,7 +6,7 @@
         border : 1px solid black;
         color : black;
         padding : 5px;        
-        width : 400px;
+        max-width : 400px;
     }
 </style>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
@@ -28,8 +29,20 @@
                     $('input[name="register"]').attr('disabled', 'disabled');
                 }
                 
-                if(data.message != $('#message').html()){
-                    $('#message').html(data.message);
+            	// get message from server + local check
+                var message = '';
+                if(data.message!=''){
+                    message += data.message+'<br />';
+                }
+                if(password == ''){
+                    message += 'Password is empty<br />';
+                }
+                if(password != confirm_password){
+                    message += 'Confirm password doesn\'t match';
+                }
+                
+                if(message != $('#message').html()){
+                    $('#message').html(message);                    
                 }
             }
         });
@@ -59,4 +72,4 @@
     echo form_close();
     echo br();
 ?>
-<span id="message"></span>
+<div id="message"></div>

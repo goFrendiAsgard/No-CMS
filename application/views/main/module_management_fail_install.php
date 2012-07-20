@@ -1,3 +1,4 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <h4>Installation Failed</h4>
 <?php
 	echo 'Cannot install "<em>'.$module_name.'</em>" on "'.$module_path.'" ';

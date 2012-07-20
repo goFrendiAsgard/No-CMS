@@ -1,3 +1,4 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <?php
     echo form_open('main/forgot/'.$activation_code);
     echo form_label('New Password').br();
