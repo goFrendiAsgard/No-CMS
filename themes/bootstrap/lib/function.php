@@ -73,7 +73,7 @@
                             }
                         }
                         if($navigation['have_allowed_children']){
-                            if($in_path){
+                            if($in_path || $last_path == $navigation['navigation_name'] ){
                                 $html.= '<a href="#" class="layout_expand">[-]</a> ';
                             }else{
                                 $html.= '<a href="#" class="layout_expand">[+]</a> ';
@@ -96,8 +96,10 @@
                         $html.= '<div class="layout_nav_description not_shown">Description : '.
                                 $navigation['description'].'</div>';
                     }
-
-                    $html.= build_menu($navigation['child'], $path, TRUE);
+                    
+                    $invisible = TRUE;
+                    if($last_path == $navigation['navigation_name']) $invisible = FALSE;
+                    $html.= build_menu($navigation['child'], $path, $invisible);
                     $html.= '</li>';
                 }
             }
