@@ -39,7 +39,10 @@
 		}
 		
 		if($return["success"]){
-			$return["warning_message"] = 'An error might be occured if you don\'t have privilege to create database';
+			$db_exists = mysql_select_db($schema, $connection);
+			if(!$db_exists){
+				$return["warning_message"] = 'An error might be occured if you don\'t have privilege to create database';
+			}			
 		}
 		 
 		return $return;
