@@ -30,3 +30,11 @@ a.layout_expand{
 .layout_widget_container input, .layout_widget_container textarea {
     max-width: 100%;
 }
+
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+.sidebar-nav {
+  padding: 9px 0;
+}

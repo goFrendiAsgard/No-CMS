@@ -22,17 +22,14 @@
     	foreach($widgets as $widget){
     		if((isset($slug) && ($widget["slug"]==$slug)) || !isset($slug)){
     			$path=base_url().'index.php/main/show_widget/'.$widget['widget_id'].'?_only_content=true';
-    			$js.= '
-	    			$.ajax({
-		    			url : "'.$path.'",
-		    			type: "POST",
-		    			data: {_only_content:true},
-		    			success : function(response){
-		    				$("#layout_widget_container_'.$widget['widget_name'].' .widget_content").replaceWith(response);
-		    
-		    			}
-	    			});
-	    		';
+    			$js.= '$.ajax({';
+		    	$js.= 'url : "'.$path.'",';
+		    	$js.= 'type: "POST",';
+		    	$js.= 'data: {_only_content:true},';
+		    	$js.= 'success : function(response){';
+		    	$js.= '$("#layout_widget_container_'.$widget['widget_name'].' .widget_content").replaceWith(response);';
+		    	$js.= '}';
+	    		$js.= '});';
     		}
     	}
     	$js = '

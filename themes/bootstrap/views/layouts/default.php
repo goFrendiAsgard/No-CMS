@@ -10,19 +10,7 @@
     <link rel="icon" href="<?php echo $cms['site_favicon'];?>">
 
     <!-- Le styles -->
-    <link href="<?php echo base_url();?>assets/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-      ​
-    </style>
-    <link href="<?php echo base_url();?>assets/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/style.css";?>"></link>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/style-all.min.css";?>"></link>
 	
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -36,13 +24,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-57-precomposed.png">
     
-    <!--  Jquery should be loaded first, because No-CMS widgets need it -->
-    <script src="<?php echo base_url();?>assets/bootstrap/js/jquery.js"></script>
-    <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script.js"></script>
-    <?php
-    	echo build_widget_js($cms['widget'], 'sidebar');
-    	echo build_widget_js($cms['widget'], 'advertisement');
-    ?>
+    
   </head>
 
   <body>
@@ -78,20 +60,13 @@
 
     <!-- Le javascript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->    
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-transition.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-alert.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-modal.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-dropdown.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-scrollspy.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-tab.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-tooltip.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-popover.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-button.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-collapse.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-carousel.js"></script>
-    <script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-typeahead.js"></script>    
-		
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="<?php echo base_url();?>assets/bootstrap/js/jquery.js"></script>
+    <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script-all.min.js"></script>
+    <?php
+    	echo build_widget_js($cms['widget'], 'sidebar');
+    	echo build_widget_js($cms['widget'], 'advertisement');
+    ?>
   </body>
 </html>
 
