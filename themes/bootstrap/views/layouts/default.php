@@ -36,9 +36,13 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-57-precomposed.png">
     
-    <!--  Jquery should be loaded first, because No-CMS widget need it -->
+    <!--  Jquery should be loaded first, because No-CMS widgets need it -->
     <script src="<?php echo base_url();?>assets/bootstrap/js/jquery.js"></script>
     <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script.js"></script>
+    <?php
+    	echo build_widget_js($cms['widget'], 'sidebar');
+    	echo build_widget_js($cms['widget'], 'advertisement');
+    ?>
   </head>
 
   <body>

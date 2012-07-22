@@ -243,3 +243,18 @@ Here are some names of considerable contributors:
 * Alexandre Mota <-- The one who report a bug related to page authorization
 * Gusro <-- Find out bug related to static page. Since his report, static page has 2 versions. A dynamic page which is overwritten by static content, or pure static page without any View URL needed
 * Gangsar Swapurba <-- Discover some missleading-behavior. He made a lot of modification and found trivial but disgusting bugs of No-CMS. One of his report make me consider to provide an option to hide index.php
+
+Roadmap
+===============
+
+* (done, tested) add backend template as suggested by mbuurman at http://codeigniter.com/forums/viewthread/209171/P10/
+* (done, tested) fix user management bug as reported by panega at https://github.com/goFrendiAsgard/No-CMS/issues/6?_nid=28877585
+* (done, tested) costumizable Site Logo
+* (done, tested) costumizable Language
+* (done, tested) finishing WYSIWIG (navigation language quicklink, widget)
+* (in progress) documentation
+* (cancelled) Fully using AR, so that we can support more than just MySQL (inspired by django)
+* (done, tested) Add "module_name" function in CMS_Module_Installer
+* (done, tested) Change all hardcoded URL in modules & installation by using module_name, so that the modules will be more portable
+* (cancelled) Change "install" into a module, and use db_forge instead of hardcode-sql
+* (done, tested) bootstrap integration and new responsive theme

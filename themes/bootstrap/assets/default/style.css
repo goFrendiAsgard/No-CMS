@@ -10,11 +10,17 @@
 }
 .layout_nav_description{
     position:absolute;
-    background-color:#AAAA88;
+    background-color:#FFFFFF;
     padding: 5px 5px 5px 5px;
     margin : 10px;
     font-size: small;
     min-height : 25px;
+    border-radius:5px;
+    -moz-border-radius:5px;
+    -moz-box-shadow:    1px 1px 5px 6px #ccc;
+    -webkit-box-shadow: 1px 1px 5px 6px #ccc;
+    box-shadow:         1px 1px 5px 6px #ccc;
+    z-index: 5000;
 }
 a.layout_expand{
     float: left;

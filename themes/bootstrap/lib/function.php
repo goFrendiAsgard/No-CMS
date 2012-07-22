@@ -1,8 +1,7 @@
 <?php
     //include the widget
-    function build_widget($widgets, $slug = NULL){
+    function build_widget_html($widgets, $slug = NULL){
         $html = '';
-        $js = '';
         
         foreach($widgets as $widget){
             if((isset($slug) && ($widget["slug"]==$slug)) || !isset($slug)){
@@ -11,29 +10,39 @@
                 $html.= '<div class="widget_content"></div>';
                 $html.= '<br />';
                 $html.= '<br />';
-                $path=base_url().'index.php/main/show_widget/'.$widget['widget_id'].'?_only_content=true';
-                $js.= '
-                        $.ajax({
-                            url : "'.$path.'",
-                            type: "POST",
-                            data: {_only_content:true},
-                            success : function(response){
-                                $("#layout_widget_container_'.$widget['widget_name'].' .widget_content").replaceWith(response);
-
-                            }
-                        }); 
-                ';
                 $html.= '</div>';
             }
         }
-        $js = '
-            <script type="text/javascript">
-                $(document).ready(function(){
-                    '.$js.'
-                });
-            </script>
-        ';
-        return $js.$html;
+        return $html;
+    }
+    
+    function build_widget_js($widgets, $slug = NULL){
+    	$js = '';
+    
+    	foreach($widgets as $widget){
+    		if((isset($slug) && ($widget["slug"]==$slug)) || !isset($slug)){
+    			$path=base_url().'index.php/main/show_widget/'.$widget['widget_id'].'?_only_content=true';
+    			$js.= '
+	    			$.ajax({
+		    			url : "'.$path.'",
+		    			type: "POST",
+		    			data: {_only_content:true},
+		    			success : function(response){
+		    				$("#layout_widget_container_'.$widget['widget_name'].' .widget_content").replaceWith(response);
+		    
+		    			}
+	    			});
+	    		';
+    		}
+    	}
+    	$js = '
+	    	<script type="text/javascript">
+	    		$(document).ready(function(){
+	    			'.$js.'
+	    		});
+	    	</script>
+	    ';
+    	return $js;
     }
     
     
@@ -93,7 +102,7 @@
                         $html.= $navigation['title'];
                     }
                     if(isset($navigation['description'])){ 
-                        $html.= '<div class="layout_nav_description not_shown">Description : '.
+                        $html.= '<div class="layout_nav_description not_shown">'.
                                 $navigation['description'].'</div>';
                     }
                     
