@@ -12,15 +12,7 @@
         $(document).ready(function(){
             check_all();  
             $(".input").keyup(function(event){
-                if(event.which == 13){
-                    check_all();    
-                } 
-                adm_password = $("#adm_password").val();
-                adm_confirmpassword = $("#adm_confirmpassword").val();
-                if(adm_password != '' && adm_password == adm_confirmpassword){
-                	check_all();
-                }
-                
+                check_all();
             });
             $(".input").change(function(event){
                 check_all();
@@ -51,7 +43,7 @@
                     
                     var message = ''
                     if(errors.length>0){
-                    	message += '<b>WARNING</b> (You should fix these in order to install No-CMS) : ';
+                    	message += '<b>ERRORS</b> (You should fix these in order to install No-CMS) : ';
                     	message += '<ul>';
                     	for(i=0; i<errors.length; i++){
                     		message += '<li>'+errors[i]+'</li>';
@@ -59,7 +51,7 @@
                     	message += '</ul>';
                     }
                     if(warnings.length>0){
-                    	message += '<b>NOTIFICATION</b> (No-CMS will still run perfectly, but some modules might not work as expected) : ';
+                    	message += '<b>WARNINGS</b> (There might be errors after installation) : ';
                         message += '<ul>';
                         for(i=0; i<warnings.length; i++){
                             message += '<li>'+warnings[i]+'</li>';

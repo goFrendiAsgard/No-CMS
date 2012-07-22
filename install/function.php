@@ -17,24 +17,29 @@
 		return $str;
 	}
 	
-	function check_db($server, $port, $username, $password){
+	function check_db($server, $port, $username, $password, $schema){
 		$return = array(
 				"success"=>true,
-				"message"=>""
+				"error_message"=>"",
+				"warning_message"=>"",
 		);
 		 
 		$connection = @mysql_connect($server.':'.$port,$username,$password);
 		if(!$connection){
 			$return["success"] = false;
-			$return["message"] .= "Cannot connect to database";
+			$return["error_message"] .= "Cannot connect to database";
 		}else{
 			$result = @mysql_query('SHOW VARIABLES LIKE \'have_innodb\';', $connection);
 			$row = mysql_fetch_array($result);
 			$innodb = $row['Value'];
 			if(!$innodb){
 				$return["success"] = false;
-				$return["message"] .= "Your database doesn't support Innodb";
+				$return["error_message"] .= "Your database doesn't support Innodb";
 			}
+		}
+		
+		if($return["success"]){
+			$return["warning_message"] = 'An error might be occured if you don\'t have privilege to create database';
 		}
 		 
 		return $return;
@@ -78,10 +83,15 @@
 			$warnings[] = 'CURL is not enabled. Some modules might require it';
 		}
 		// database
-		$result = check_db($db_server, $db_port, $db_username, $db_password);
+		$result = check_db($db_server, $db_port, $db_username, $db_password, $db_schema);
 		if(!$result['success']){
 			$success = FALSE;
-			$errors[] = $result['message'];
+		}
+		if($result['error_message']!=''){
+			$errors[] = $result['error_message'];
+		}
+		if($result['warning_message']!=''){
+			$warnings[] = $result['warning_message'];
 		}
 		// writable
 		if(!is_writable('../application/config/database.php')){
@@ -125,18 +135,6 @@
 				header('location:index.html');
 			}else{ // perform installation
 				
-				// database.php
-				$str = file_get_contents('./resources/database.php');
-				$str = replace($str,
-						array('@db_server','@db_port','@db_username','@db_password','@db_schema'),
-						array($db_server,$db_port,$db_username,$db_password,$db_schema)
-				);
-				file_put_contents('../application/config/database.php',$str);
-				
-				// routes.php
-				$str = file_get_contents('./resources/routes.php');
-				file_put_contents('../application/config/routes.php',$str);
-				
 				// connection
 				$db_connection = mysql_connect($db_server.':'.$db_port,$db_username,$db_password);
 				$db_exists = mysql_select_db($db_schema, $db_connection);
@@ -156,6 +154,18 @@
 				foreach($queries as $query){
 					exec_sql($query, $db_connection);
 				}
+				
+				// database.php
+				$str = file_get_contents('./resources/database.php');
+				$str = replace($str,
+						array('@db_server','@db_port','@db_username','@db_password','@db_schema'),
+						array($db_server,$db_port,$db_username,$db_password,$db_schema)
+				);
+				file_put_contents('../application/config/database.php',$str);
+				
+				// routes.php
+				$str = file_get_contents('./resources/routes.php');
+				file_put_contents('../application/config/routes.php',$str);
 				
 				if($hide_index != ""){
 					// config.php
