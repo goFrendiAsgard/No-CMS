@@ -41,7 +41,29 @@
 		if($return["success"]){
 			$db_exists = mysql_select_db($schema, $connection);
 			if(!$db_exists){
-				$return["warning_message"] = 'An error might be occured if you don\'t have privilege to create database';
+				$SQL = "show grants for `$username`@`$server`;";
+				$result = mysql_query($SQL, $connection);
+				if($result === false){
+					$return["error_message"] = 'Cannot check database privilege';
+					$return["success"] = false;
+				}else{
+					$privilege_exists = false;
+					while($row = mysql_fetch_row($result)){
+						if(strpos($row[0],'ALL PRIVILEGES')>=0){
+							$privilege_exists = true;
+							break;
+						}
+						if(strpos($row[0],'CREATE,')>=0){
+							$privilege_exists = true;
+							break;
+						}
+					}
+					if(!$privilege_exists){
+						$return["error_message"] = 'No create database privilege, please select the alredy exists one';
+						$return["success"] = false;
+					}
+				}
+				
 			}			
 		}
 		 
