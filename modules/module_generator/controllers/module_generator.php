@@ -37,11 +37,10 @@ class module_generator extends CMS_Controller{
             }
         }
         
-        //It's okay now to make the new module
-        
+        // It's okay now to make the new module        
         $this->load->model($this->cms_module_path('gofrendi.noCMS.moduleGenerator').'/data');
         
-        //make the directories
+        // make the directories
         $this->make_folder($moduleName);
         $this->make_folder($moduleName.'/models');
         $this->make_folder($moduleName.'/views');
@@ -89,6 +88,11 @@ class module_generator extends CMS_Controller{
                     )
                 );
         $this->make_file($moduleName.'/views/'.$moduleName.'_index.php',$str);
+        
+        $str = 'Deny from all';
+        $this->make_file($moduleName.'/models/.htaccess',$str);
+        $this->make_file($moduleName.'/views/.htaccess',$str);
+        $this->make_file($moduleName.'/controllers/.htaccess',$str);
         
         redirect('main/module_management');
         

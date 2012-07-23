@@ -23,8 +23,11 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-57-precomposed.png">
-    
-    
+    <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
+    <?php
+    	echo build_widget_js($cms['widget'], 'sidebar');
+    	echo build_widget_js($cms['widget'], 'advertisement');
+    ?>
   </head>
 
   <body>
@@ -61,12 +64,8 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="<?php echo base_url();?>assets/bootstrap/js/jquery.js"></script>
     <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script-all.min.js"></script>
-    <?php
-    	echo build_widget_js($cms['widget'], 'sidebar');
-    	echo build_widget_js($cms['widget'], 'advertisement');
-    ?>
+    
   </body>
 </html>
 

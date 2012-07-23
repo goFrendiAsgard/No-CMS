@@ -206,7 +206,7 @@
 					for ($i=0; $i<2; $i++){
 						unset($pieces[count($pieces)-1]);
 					}
-					$path = '/' . implode('/',$pieces) . '/';
+					$path = implode('/',$pieces) . '/';
 					$str = file_get_contents('./resources/htaccess');
 					$str = replace($str,
 							array('@rewrite_base'),
