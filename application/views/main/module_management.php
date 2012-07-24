@@ -52,7 +52,7 @@
         if(@file_get_contents($image_path,0,NULL,0,1)){
         	echo '<img class="logo" src="'.$image_path.'" />';
         }else{
-        	echo '<img class="logo" src="'.base_url('assets/nocms/images/icons/module.png').'" />';
+        	echo '<img class="logo" src="'.base_url('assets/nocms/images/icons/package.png').'" />';
         }
         echo '</a>';
         echo '</div>';
