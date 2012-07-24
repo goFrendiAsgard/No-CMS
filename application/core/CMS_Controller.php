@@ -348,7 +348,7 @@ class CMS_Controller extends CI_Controller {
 
     private function cms_themes_okay($theme, $layout) {
         return
-                is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php') &&
+              is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php') &&
                 is_file('themes/' . $theme . '/views/partials/' . $layout . '/footer.php') &&
                 is_file('themes/' . $theme . '/views/partials/' . $layout . '/header.php') &&
                 is_file('themes/' . $theme . '/views/partials/' . $layout . '/navigation_path.php') &&

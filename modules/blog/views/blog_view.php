@@ -9,12 +9,13 @@ img.photo_thumbnail{
 }
 </style>
 <?php
+echo '<div>';
 echo form_open($cms['module_path']);
 echo form_dropdown('category', $available_category, $category);
 echo form_input('search', $search);
 echo form_submit('submit', 'Search');
 echo form_close();
-echo br();
+echo '</div>';
 
 foreach($article as $single_article){
     echo '<h2>'.$single_article['title'].'</h2>'.br();

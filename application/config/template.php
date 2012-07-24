@@ -13,7 +13,7 @@
 |
 */
 
-$config['parser_enabled'] = TRUE;
+$config['parser_enabled'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +84,7 @@ $config['theme'] = '';
 |
 */
 
-$config['theme_locations'] = array(
-	APPPATH.'themes/'
+$config['theme_locations'] = array(	
+	APPPATH.'../themes/',
+	APPPATH.'themes/',
 );

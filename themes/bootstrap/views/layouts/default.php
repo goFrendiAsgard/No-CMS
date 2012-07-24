@@ -37,7 +37,6 @@
       	<?php echo $template['partials']['header'];?>        
       </div>
     </div>
-
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span3 visible-desktop">
@@ -61,11 +60,10 @@
 
     </div><!--/.fluid-container-->
 
-    <!-- Le javascript
-    ================================================== -->
+    
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script-all.min.js"></script>
-    
+    <!-- Let it be peace between bootstrap and flexigrid -->
   </body>
 </html>
 

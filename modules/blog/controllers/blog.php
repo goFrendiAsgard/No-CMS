@@ -54,12 +54,13 @@ class Blog extends CMS_Controller {
         
         $query = $this->db->query($SQL);
         foreach($query->result() as $row){
-            
+            $separator = '<div style="page-break-after: always;">
+	<span style="display: none;">&nbsp;</span></div>';
             if(isset($article_id)){
-                $contents = explode('<!-- pagebreak -->',$row->content);
+                $contents = explode($separator, $row->content);
                 $content = implode('',$contents);
             }else{
-                $contents = explode('<!-- pagebreak -->',$row->content);
+                $contents = explode($separator, $row->content);
                 $content = $contents[0];
             }
             
