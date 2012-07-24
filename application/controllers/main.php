@@ -208,7 +208,12 @@ class Main extends CMS_Controller {
     }
 
     public function management() {
-        $this->view('main/management', NULL, 'main_management');
+    	$data = array(
+    		"show_help" => $this->cms_is_module_installed('gofrendi.noCMS.help') && $this->cms_allow_navigate('help'),
+    		"show_wysiwyg" => $this->cms_is_module_installed('gofrendi.noCMS.wysiwyg') && $this->cms_allow_navigate('wysiwyg_index'),
+    		"show_module_generator" => $this->cms_is_module_installed('gofrendi.noCMS.moduleGenerator') && $this->cms_allow_navigate('module_generator_index'),
+    	);    	
+        $this->view('main/management', $data, 'main_management');
     }
 
     public function authorization() {
@@ -363,12 +368,10 @@ class Main extends CMS_Controller {
 
         $crud->set_table('cms_quicklink');
         $crud->columns('navigation_id');
-        $crud->edit_fields('navigation_id'/*, 'index'*/);
-        $crud->add_fields('navigation_id'/*, 'index'*/);
-        //$crud->change_field_type('index', 'integer');
+        $crud->edit_fields('navigation_id');
+        $crud->add_fields('navigation_id');
 
         $crud->display_as('navigation_id', 'Navigation Name');
-                //->display_as('index', 'Order');
 
         $crud->order_by('index', 'asc');
 

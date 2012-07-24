@@ -231,7 +231,8 @@ INSERT INTO `cms_user` (`user_id`, `user_name`, `email`, `password`, `real_name`
 
 INSERT INTO `cms_module` (`module_id`, `module_name`, `module_path`, `user_id`) VALUES
 (1, 'gofrendi.noCMS.help', 'help', 1),
-(2, 'gofrendi.noCMS.wysiwyg', 'wysiwyg', 1);
+(2, 'gofrendi.noCMS.wysiwyg', 'wysiwyg', 1),
+(3, 'gofrendi.noCMS.moduleGenerator', 'module_generator', 1);
 /*split*/
 
 
@@ -253,7 +254,8 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (15, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL),
 (16, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 0, 1, 0, NULL),
 (17, 'help', NULL, 'No-CMS User guide', NULL, 'help', 1, 7, 1, 0, NULL),
-(18, 'wysiwyg_index', 4, 'WYSIWYG', NULL, 'wysiwyg', 4, 9, 1, 0, NULL);
+(18, 'wysiwyg_index', 4, 'WYSIWYG', NULL, 'wysiwyg', 4, 9, 1, 0, NULL),
+(19, 'module_generator_index', 4, 'Module Generator', NULL, 'module_generator/index', 3, 10, 1, 0, NULL);;
 /*split*/
 
 INSERT INTO `cms_quicklink` (`quicklink_id`, `navigation_id`, `index`) VALUES
