@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Template Library &#8250; Layouts</title>
+
+<style type='text/css' media='all'>@import url('./userguide.css');</style>
+<link rel='stylesheet' type='text/css' media='all' href='../userguide.css' />
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/nav.js"></script>
+
+<meta http-equiv='expires' content='-1' />
+<meta http-equiv= 'pragma' content='no-cache' />
+<meta name='robots' content='all' />
+
+</head>
+<body>
+
+<!-- START NAVIGATION -->
+<div id="nav"><div id="nav_inner"><script type="text/javascript">create_menu('null');</script></div></div>
+<div id="nav2"><a name="top">&nbsp;</a><a href="#" id="toggle_toc"><img src="images/nav_toggle_darker.jpg" width="154" height="43" border="0" title="Toggle Table of Contents" alt="Toggle Table of Contents" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><h1>Documentation</h1></td>
+<td id="breadcrumb_right">Author:<a href="http://philsturgeon.co.uk/">Phil Sturgeon</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+
+
+<!-- START BREADCRUMB -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="http://philsturgeon.co.uk/code/codeigniter-template">Template</a> &nbsp;&#8250;&nbsp;
+<a href="index.html">Documentation</a> &nbsp;&#8250;&nbsp;
+Layouts
+</td>
+</tr>
+</table>
+<!-- END BREADCRUMB -->
+
+<br clear="all" />
+
+
+<!-- START CONTENT -->
+<div id="content">
+	<h1>Template</h1>
+
+	<h2>Layouts</h2>
+
+	<p>
+		Layouts in this library are very similar to layouts in Ruby on Rails and other frameworks. The basic idea is that most of your pages will share the same
+		header, footer, wrapping navigation, etc and only the actual body of the page will change. Using this logic you can avoid repeating yourself and having lots of similar HTML.
+	</p>
+
+	<p>
+		All layouts exist in <dfn>application/views/layouts/</dfn> and the default Layout file funnily enough will be <dfn>application/views/layouts/default.php</dfn>.
+	</p>
+	
+	<p>
+		Of course for many websites and applications you won't want <em>every</em> page to look the same, so for that we have the <kbd><a href="library.html#set_layout">set_layout()</a></kbd> method.
+		You simply provide the name of the layout in the layouts folder and your page will be wrapped with that layout instead.
+	</p>
+
+	<h3>Example (PHP)</h3>
+
+	<p>The easiest layout in the world is this:</p>
+
+	<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;title&gt;&lt;?php echo $template['title']; ?&gt;&lt;/title&gt;
+		&lt;?php echo $template['metadata']; ?&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;h1&gt;&lt;?php echo $template['title']; ?&gt;&lt;/h1&gt;
+		&lt;?php echo $template['body']; ?&gt;
+	&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+	<h3>Example (Parser)</h3>
+
+	<p>Using the parser syntax you can do this instead:</p>
+
+	<pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+	&lt;head&gt;
+		&lt;title&gt;{$template.title}&lt;/title&gt;
+		{$template.metadata}
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;h1&gt;{$template.title}&lt;/h1&gt;
+		{$template.body}
+	&lt;/body&gt;
+
+&lt;/html&gt;</pre>
+
+	<p class="important"><strong>NOTE:</strong> You can only use the Parser if you have also installed a Parser extensions like <a href="http://philsturgeon.co.uk/code/codeigniter-dwoo" target="_blank">codeigniter-dwoo</a>. This is because CI_Parser does not play nicely with arrays.</p>
+
+
+</div>
+<!-- END CONTENT -->
+
+
+<div id="footer">
+	<p><a href="#top">Top of Page</a></p>
+	<p><a href="http://codeigniter.com">CodeIgniter</a> &nbsp;&middot;&nbsp; Copyright &#169; 2010 Phil Sturgeon &nbsp;&middot;&nbsp; <a href="http://ellislab.com/">Ellislab, Inc.</a></p>
+</div>
+
+</body>
+</html>

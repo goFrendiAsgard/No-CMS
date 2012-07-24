@@ -170,7 +170,7 @@ class Modules
 		$segments = explode('/', $file);
 
 		$file = array_pop($segments);
-		$file_ext = strpos($file, '.') ? $file : $file.EXT;
+		$file_ext = (pathinfo($file, PATHINFO_EXTENSION)) ? $file : $file.EXT;
 		
 		$path = ltrim(implode('/', $segments).'/', '/');	
 		$module ? $modules[$module] = $path : $modules = array();

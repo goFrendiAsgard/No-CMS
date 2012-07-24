@@ -4,10 +4,14 @@
 	$this->set_css($this->default_theme_path.'/datatables/css/demo_table_jui.css');
 	$this->set_css($this->default_theme_path.'/datatables/css/ui/simple/jquery-ui-1.8.10.custom.css');
 	$this->set_css($this->default_theme_path.'/datatables/css/datatables.css');	
+	$this->set_css($this->default_theme_path.'/datatables/css/jquery.dataTables.css');
+	$this->set_css($this->default_theme_path.'/datatables/extras/TableTools/media/css/TableTools.css');
 	$this->set_js($this->default_javascript_path.'/jquery-1.7.1.min.js');
 	$this->set_js($this->default_theme_path.'/datatables/js/jquery-ui-1.8.10.custom.min.js');
 	$this->set_js($this->default_theme_path.'/datatables/js/jquery.dataTables.min.js');
 	$this->set_js($this->default_theme_path.'/datatables/js/datatables.js');
+	$this->set_js($this->default_theme_path.'/datatables/extras/TableTools/media/js/ZeroClipboard.js');
+	$this->set_js($this->default_theme_path.'/datatables/extras/TableTools/media/js/TableTools.min.js');
 ?>
 <script type='text/javascript'>
 	var base_url = '<?php echo base_url();?>';
@@ -32,7 +36,7 @@
 
 	var message_alert_delete = "<?php echo $this->l('alert_delete'); ?>";
 
-	var default_per_page = '<?php echo $default_per_page;?>';
+	var default_per_page = <?php echo $default_per_page;?>;
 
 </script>
 <?php 
@@ -57,10 +61,12 @@
 <?php }?>
 </div>	
 <?php if(!$unset_add){?>
+<div class="datatables-add-button">
 <a role="button" class="edit_button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="<?php echo $add_url?>">
 	<span class="ui-button-icon-primary ui-icon ui-icon-circle-plus"></span>
 	<span class="ui-button-text"><?php echo $this->l('list_add'); ?> <?php echo $subject?></span>
 </a>
+</div>
 <?php }?>
 <div style='height:10px;'></div>
 <?php echo $list_view?>

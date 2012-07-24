@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Template Library</title>
+
+<style type='text/css' media='all'>@import url('./userguide.css');</style>
+<link rel='stylesheet' type='text/css' media='all' href='../userguide.css' />
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/functions.js"></script>
+<script type="text/javascript" src="js/nav.js"></script>
+
+<meta http-equiv='expires' content='-1' />
+<meta http-equiv= 'pragma' content='no-cache' />
+<meta name='robots' content='all' />
+
+</head>
+<body>
+
+<!-- START NAVIGATION -->
+<div id="nav"><div id="nav_inner"><script type="text/javascript">create_menu('null');</script></div></div>
+<div id="nav2"><a name="top">&nbsp;</a><a href="#" id="toggle_toc"><img src="images/nav_toggle_darker.jpg" width="154" height="43" border="0" title="Toggle Table of Contents" alt="Toggle Table of Contents" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><h1>Documentation</h1></td>
+<td id="breadcrumb_right">Author:<a href="http://philsturgeon.co.uk">Phil Sturgeon</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+
+
+<!-- START BREADCRUMB -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="http://philsturgeon.co.uk/code/codeigniter-template">Template</a> &nbsp;&#8250;&nbsp;
+Documentation
+</td>
+</tr>
+</table>
+<!-- END BREADCRUMB -->
+
+<br clear="all" />
+
+
+<!-- START CONTENT -->
+<div id="content">
+	<h1>Template</h1>
+
+	<p>The Template library helps your build complex views with CodeIgniter. It has logic to work with themes & modules and helps add your title, meta-data, breadcrumbs and partial views.</p>
+
+	<a name="license"></a>
+	<h2>License</h2>
+
+	<p>Template is released under the "Don't Be a Dick Public License", which you can read in all its glory here: <a href="http://philsturgeon.co.uk/code/dbad-license" target="_blank">http://philsturgeon.co.uk/code/dbad-license</a></p>
+
+	<a name="install"></a>
+	<h2>Installation</h2>
+
+	<ol>
+		<li>Download the latest version: <a href="http://github.com/philsturgeon/codeigniter-template/zipball/master">http://github.com/philsturgeon/codeigniter-template/zipball/master</a></li>
+		<li>Copy the files from this package to the correspoding folder in your application folder. For example, copy Template/config/template.php to application/config/template.php.</li>
+	</ol>
+
+	<a name="loading"></a>
+	<h2>Loading Template</h2>
+
+	<p>You load Template just link any other library:</p>
+	<pre>$this->load->library('template');</pre>
+
+	<p>You can also autoload the library.</p>
+
+	<a name="config"></a>
+	<h2>Configuration Options</h2>
+
+	<p>To change configuration options simply edit the application/config/template.php file.</p>
+
+	<h3>Config</h3>
+
+	<p>Edit the template $config array as needed:</p>
+	<ul>
+		<li><var>$config['parser_enabled']</var> - When set to <kbd>TRUE</kbd> this will use the Parser library.</li>
+		<li><var>$config['parser_body_enabled']</var> - The parser can be enabled for the layouts but disabled for the body view files by setting this to <kbd>FALSE</kbd>.</li>
+		<li><var>$config['title_separator']</var> - What string should be used to separate title segments sent via <kbd>$this->template->title('Foo', 'Bar');</kbd>.</li>
+		<li><var>$config['theme']</var> - Which theme should be used by default, empty for none.</li>
+		<li><var>$config['theme_locations']</var> - Store your themes in many places, similar to the way "Application Packages" are used.</li>
+	</ul>
+
+	<p class="important"><strong>NOTE:</strong> You can only use the Parser if you have also installed a Parser extensions like <a href="http://philsturgeon.co.uk/code/codeigniter-dwoo" target="_blank">codeigniter-dwoo</a>. This is because CI_Parser does not play nicely with arrays.</p>
+
+</div>
+<!-- END CONTENT -->
+
+
+<div id="footer">
+	<p><a href="#top">Top of Page</a></p>
+	<p><a href="http://codeigniter.com">CodeIgniter</a> &nbsp;&middot;&nbsp; Copyright &#169; 2010 Phil Sturgeon &nbsp;&middot;&nbsp; <a href="http://ellislab.com/">Ellislab, Inc.</a></p>
+</div>
+
+</body>
+</html>
