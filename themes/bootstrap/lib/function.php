@@ -48,6 +48,7 @@
     	
     	$div_collapse = '<div class="layout_collapse_icon layout_expand"></div>';
     	$div_expand = '<div class="layout_expand_icon layout_expand"></div>';
+    	$div_nothing = '<div class="layout_nothing_icon"></div>';
     	
         if(count($navigations)==0) return '';//just exit and do nothing
         
@@ -90,7 +91,11 @@
                     		}else{
                     			$expand.= $div_expand;
                     		}
+                    	}else{
+                    		$expand.= $div_nothing;
                     	}
+                    }else{
+                    	$expand.= $div_nothing;
                     }
                     
                     $pageLinkClass = 'layout_page_link';
@@ -101,7 +106,7 @@
                     }
                     if($navigation['allowed']){
                     	$html.= anchor($navigation['url'], 
-                    				$navigation['title'].' '.$expand, 
+                    				$expand.$navigation['title'], 
                     				array('class'=>$pageLinkClass));
                     }else{
                     	$html.= $navigation['title'];
