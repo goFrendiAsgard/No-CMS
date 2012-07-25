@@ -16,12 +16,10 @@ class Install extends CMS_Module_Installer{
     //put your code here
     public function do_install(){
         $this->add_navigation('help', 'No-CMS User guide', $this->cms_module_path(), 1);
-        redirect('help');
     }
     
     public function do_uninstall(){
         $this->remove_navigation('help');
-        redirect('main');
     }
 }
 

@@ -18,8 +18,12 @@ class Wysiwyg extends CMS_Controller {
         }
         return $result;
     }
+    
+    public function index(){
+    	$this->view($this->cms_module_path().'/wysiwyg_index', NULL, 'wysiwyg_index');
+    }
 
-    public function index() {
+    public function main() {
         $data = NULL;
         $data['site_favicon'] = $this->cms_get_config('site_favicon');
         $data['site_logo'] = $this->cms_get_config('site_logo');
@@ -46,7 +50,7 @@ class Wysiwyg extends CMS_Controller {
         }
         $data['language'] = $this->cms_get_config('site_language');
         
-        $this->view($this->cms_module_path().'/wysiwyg_index', $data, 'wysiwyg_index');
+        $this->view($this->cms_module_path().'/wysiwyg_main', $data, 'wysiwyg_index');
         //echo 'coba';
     }
     
