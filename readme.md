@@ -258,3 +258,4 @@ Roadmap
 * (done, tested) Change all hardcoded URL in modules & installation by using module_name, so that the modules will be more portable
 * (cancelled) Change "install" into a module, and use db_forge instead of hardcode-sql
 * (done, tested) bootstrap integration and new responsive theme
+* (done, tested) use CI 2.1.2, HMVC 5.4, Phil Sturgeon template 1.9, groceryCRUD 1.2.3

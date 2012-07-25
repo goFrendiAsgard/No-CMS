@@ -45,6 +45,10 @@
     
     
     function build_menu($navigations, $path, $invisible = FALSE){
+    	
+    	$div_collapse = '<div class="layout_collapse_icon layout_expand"></div>';
+    	$div_expand = '<div class="layout_expand_icon layout_expand"></div>';
+    	
         if(count($navigations)==0) return '';//just exit and do nothing
         
         //check if there is navigation_array that match with array
@@ -68,36 +72,41 @@
                 $layout_nav_hot = ($last_path == $navigation['navigation_name'])?'active':'';
                 if($navigation['active']==1){
                     $html.= '<li class ="'.$layout_nav_hot.'">';
+                    
+                    $expand = '';
                     if(count($navigation['child'])>0){
-                        $in_path = false;
-                        if($last_path != $navigation['navigation_name']){
-                            foreach($path as $current_path){
-                                if($current_path['navigation_name']==$navigation['navigation_name']){
-                                    $in_path = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if($navigation['have_allowed_children']){
-                            if($in_path || $last_path == $navigation['navigation_name'] ){
-                                $html.= '<a href="#" class="layout_expand">[-]</a> ';
-                            }else{
-                                $html.= '<a href="#" class="layout_expand">[+]</a> ';
-                            } 
-                        }               
+                    	$in_path = false;
+                    	if($last_path != $navigation['navigation_name']){
+                    		foreach($path as $current_path){
+                    			if($current_path['navigation_name']==$navigation['navigation_name']){
+                    				$in_path = true;
+                    				break;
+                    			}
+                    		}
+                    	}
+                    	if($navigation['have_allowed_children']){
+                    		if($in_path || $last_path == $navigation['navigation_name'] ){
+                    			$expand.= $div_collapse;
+                    		}else{
+                    			$expand.= $div_expand;
+                    		}
+                    	}
                     }
-
+                    
                     $pageLinkClass = 'layout_page_link';
                     if($navigation['have_allowed_children']){
-                        $pageLinkClass .= ' layout_have_child';
+                    	$pageLinkClass .= ' layout_have_child';
                     }else{
-                        $pageLinkClass .= ' layout_no_child';
+                    	$pageLinkClass .= ' layout_no_child';
                     }
                     if($navigation['allowed']){
-                        $html.= anchor($navigation['url'], $navigation['title'], array('class'=>$pageLinkClass));
+                    	$html.= anchor($navigation['url'], 
+                    				$navigation['title'].' '.$expand, 
+                    				array('class'=>$pageLinkClass));
                     }else{
-                        $html.= $navigation['title'];
+                    	$html.= $navigation['title'];
                     }
+                    
                     if(isset($navigation['description'])){ 
                         $html.= '<div class="layout_nav_description not_shown">'.
                                 $navigation['description'].'</div>';

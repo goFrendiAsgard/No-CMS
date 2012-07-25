@@ -10,7 +10,8 @@
     <link rel="icon" href="<?php echo $cms['site_favicon'];?>">
 
     <!-- Le styles -->
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/style-all.min.css";?>"></link>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/bootstrap.min.css";?>"></link>
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/style.css";?>"></link>
 	
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -62,8 +63,8 @@
 
     
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script-all.min.js"></script>
-    <!-- Let it be peace between bootstrap and flexigrid -->
+    <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>bootstrap.min.js"></script>
+    <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script.js"></script>
   </body>
 </html>
 

@@ -23,7 +23,7 @@
     z-index: 5000;
 }
 a.layout_expand{
-    float: left;
+    float: right;
     margin-right: 1px !important;
 }
 
@@ -37,4 +37,20 @@ body {
 }
 .sidebar-nav {
   padding: 9px 0;
+}
+
+div.layout_expand{
+	width: 30px;
+	height: 22px;
+	background-repeat: no-repeat;
+	display: block;
+	float: right;
+	background-position: right;
+}
+
+div.layout_expand_icon{
+	background-image: url('images/expand.png');
+}
+div.layout_collapse_icon{
+	background-image: url('images/collapse.png');
 }

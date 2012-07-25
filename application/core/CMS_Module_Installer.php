@@ -128,6 +128,9 @@ class CMS_Module_Installer extends CMS_Controller {
         $navigation_id = isset($row->navigation_id)? $row->navigation_id: NULL;
         
         if(isset($navigation_id)){
+        	//delete quicklink
+        	$where = array("navigation_id"=>$navigation_id);
+        	$this->db->delete('cms_quicklink', $where);
             //delete cms_group_navigation
             $where = array("navigation_id" => $navigation_id);
             $this->db->delete('cms_group_navigation', $where);

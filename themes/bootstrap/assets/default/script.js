@@ -17,11 +17,15 @@ $(document).ready(function(){
     });
 
     //expand and collapse
-    $(".layout_nav li a.layout_expand").click(function(){
-        //expand or collapse
-        $(this).parent(".layout_nav li").children(".layout_nav").toggle();
-        if($(this).html()=="[+]"){$(this).html("[-]");}
-        else{$(this).html("[+]");}                    
+    $(".layout_nav li .layout_expand").click(function(){
+    	//var div_collapse = '<div class="layout_collapse_icon layout_expand"></div>';
+    	//var div_expand = '<div class="layout_expand_icon layout_expand"></div>';
+        // expand or collapse
+        $(this).parent('a').parent(".layout_nav li").children(".layout_nav").toggle();
+        $(this).toggleClass('layout_collapse_icon');
+        $(this).toggleClass('layout_expand_icon');
+        //if($(this).html()==div_collapse){$(this).html(div_expand);}
+        //else{$(this).html(div_collapse);}                    
         return false;
     });
     
