@@ -233,7 +233,11 @@
             for(var i=0; i<objs.length; i++){
                 obj = objs[i];
                 html+='<div class="widget">';
-                html += '<span class="text_content">'+obj.title+'</span>';
+                if(obj.active){
+                	html += '<span class="text_content">'+obj.title+'</span>';
+                }else{
+                	html += '<span class="text_content">{Unused} '+obj.title+'</span>';
+                }
                 html += '<input type="hidden" class="widget_id" value="'+obj.id+'" />';
                 html += '<input type="hidden" class="widget_slug" value="'+obj.slug+'" />';
                 if(i>0){
