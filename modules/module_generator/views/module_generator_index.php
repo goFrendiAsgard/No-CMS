@@ -26,7 +26,7 @@
     $(document).ready(function(){
     });
 </script>
-
+<h3>Module Generator</h3>
 <div class="form">     
     <?php    
     echo form_open($cms['module_path'].'/make', array('id'=>'form'));

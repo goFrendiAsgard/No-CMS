@@ -9,6 +9,10 @@
         min-height : 20px;
         overflow : auto;		
     }
+    div#wysiwyg div.clear{		
+        min-width : 0px;
+        min-height : 0px;	
+    }
     div#wysiwyg div.float-left{
         float : left;
         display : block;
@@ -36,11 +40,11 @@
         padding-bottom : 10px;
     }
     div#wysiwyg div#left{
-        width : 270px;
+        width : 250px;
         border-right : 1px solid gray;
     }
     div#wysiwyg div#right{
-        width : 200px;
+        width : 150px;
         border-left : 1px solid gray;
     }
     div#wysiwyg div#favicon{
@@ -108,6 +112,27 @@
     div#wysiwyg div#left ul{
         margin: 0 0 0 0;
     }
+    
+    div#wysiwyg a.down_widget,
+    div#wysiwyg a.toggle_widget,
+    div#wysiwyg a.up_widget,
+    div#wysiwyg a.demote_navigation,
+    div#wysiwyg a.promote_navigation,
+    div#wysiwyg a.up_navigation,
+    div#wysiwyg a.down_navigation,
+    div#wysiwyg a.toggle_navigation,
+    div#wysiwyg a.left_quicklink,
+    div#wysiwyg a.right_quicklink,
+    div#wysiwyg a.remove_quicklink
+    {
+    	display: none;
+    }
+    
+    img.image-logo, img.image-favicon,
+    span.text_content, div#name, div#slogan, div#footer
+	{
+		cursor:pointer;
+	}
 </style>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.css" />
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.js"></script>
@@ -132,7 +157,7 @@
             for(var i=0; i<objs.length; i++){
                 obj = objs[i];
                 html += '<li>';
-                html += obj.title;
+                html += '<span class="text_content">'+obj.title+'</span>';
                 html += '<input type="hidden" class="navigation_id" value="'+obj.id+'" />';
                 if(!obj.is_root){
                     html += ' <a href="#" class="promote_navigation"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/left.png'); ?>" /></a>';
@@ -175,7 +200,7 @@
             for(var i=0; i<objs.length; i++){
                 obj = objs[i];
                 html+='<span class="quicklink">';
-                html += obj.title;
+                html += '<span class="text_content">'+obj.title+'</span>';
                 html += '<input type="hidden" class="quicklink_id" value="'+obj.id+'" />';
                 if(i>0){
                     html += ' <a href="#" class="left_quicklink"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/left.png'); ?>" /></a>';
@@ -208,7 +233,7 @@
             for(var i=0; i<objs.length; i++){
                 obj = objs[i];
                 html+='<div class="widget">';
-                html += obj.title;
+                html += '<span class="text_content">'+obj.title+'</span>';
                 html += '<input type="hidden" class="widget_id" value="'+obj.id+'" />';
                 html += '<input type="hidden" class="widget_slug" value="'+obj.slug+'" />';
                 if(i>0){
@@ -342,6 +367,10 @@
      	// upload favicon
         $("div#wysiwyg img.image-favicon").click(function(){
         	$("div#wysiwyg div#upload-favicon").toggle();
+        });
+        // every icon
+        $("div#wysiwyg span.text_content").live('click', function(){
+            $(this).parent().children('a').toggle();
         });
         
         //toggle_navigation
@@ -648,7 +677,7 @@
 				        </div>				        
 				    </div>
 				</div>
-				<a href=".">See the changes</a>
+				<a href="<?php echo site_url($cms["module_path"]);?>">See the changes</a>
 	        </div>
 	        <div class="clear"></div>
 	    </div>
