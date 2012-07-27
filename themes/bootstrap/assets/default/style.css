@@ -110,6 +110,9 @@ div.layout_collapse_icon{
     } 
     #layout-banner{
         padding:20px;
+    }
+    #layout-content-widget{
+        margin-left: 0px;
     }   
 }
 
@@ -126,6 +129,9 @@ div.layout_collapse_icon{
     #layout-banner{
         padding:30px;
     }
+    #layout-content-widget{
+        margin-left: 0px;
+    }
 }
 
 /* Large desktop */
@@ -137,5 +143,8 @@ div.layout_collapse_icon{
     #layout-banner-content-widget{
         float:right;
         min-height: 100%;
+    }
+    #layout-content-widget{
+        margin-left: 0px;
     }
 }

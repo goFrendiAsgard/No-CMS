@@ -45,7 +45,7 @@
 	        	<div class="span2">
 	        		<img src ="<?php echo $cms['site_logo'];?>"" /> 
 	        	</div>        	
-	            <div class="span8">
+	            <div class="span10">
 		            <h1><?php echo $cms['site_name'];?></h1>
 		            <p><?php echo $cms['site_slogan'];?></p>
 	            </div>
