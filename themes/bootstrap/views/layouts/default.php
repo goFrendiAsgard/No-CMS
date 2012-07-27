@@ -39,19 +39,36 @@
     </div>
     <div class="container-fluid">
       <div class="row-fluid">
+              
+        <div id="layout-banner-content-widget" class="span9">
+        	<div id="layout-banner" class="hero-unit row-fluid hidden-phone span12">
+	        	<div class="span2">
+	        		<img src ="<?php echo $cms['site_logo'];?>"" /> 
+	        	</div>        	
+	            <div class="span8">
+		            <h1><?php echo $cms['site_name'];?></h1>
+		            <p><?php echo $cms['site_slogan'];?></p>
+	            </div>
+	            <div class="clear"></div>            
+	        </div><!-- /.layout-banner -->
+        	<div id="layout-content-widget" class="span12">
+	        	<div id="layout-content" class="span9">
+		            <?php echo $template['body'];?>
+		            <div class="clear"></div>
+		        </div><!--/span-->       
+		        <div id="layout-widget" class="span3">
+		            <?php echo $template['partials']['right'] ?>	            
+		        </div><!--/span-->
+	        </div>
+        </div><!--/content-->  
+        
         <div id="layout-sidebar" class="span3">
           <div class="well sidebar-nav">
+          	<a name="layout-menu"></a>
           	<?php echo $template['partials']['left'];?>     
           </div><!--/.well -->
-        </div><!--/sidebar-->
-        <div id="layout-content-widget" class="span9">
-        	<div class="span9">
-	            <?php echo $template['body'];?>
-	        </div><!--/span-->       
-	        <div class="span3">
-	            <?php echo $template['partials']['right'] ?>
-	        </div><!--/span-->
-        </div><!--/content-->        
+        </div><!--/#layout-sidebar-->
+              
       </div><!--/row-->
       <hr>
       <footer>

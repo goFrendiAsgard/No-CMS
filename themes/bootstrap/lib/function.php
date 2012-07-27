@@ -132,12 +132,15 @@
     function build_quicklink($navigations){
     	if(count($navigations)==0) return '';//just exit and do nothing
     	
-    	$html = '<ul class="nav">';
+    	$html = '<ul class="nav">';    	
     	foreach($navigations as $navigation){
     		$html.= '<li>';
-    		$html.= anchor($navigation['url'], $navigation['title'], array('class'=>'layout_quicklink layout_button'));
+    		$html.= anchor($navigation['url'], $navigation['title']);
     		$html.= '</li>';
-    	}    
+    	}
+    	$html.= '<li>';
+    	$html.= anchor("#layout-menu", "More...", array('class'=>'hidden-desktop'));
+    	$html.= '</li>';
     	$html .= '</ul>';	
     	return $html;
     	

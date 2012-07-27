@@ -8,6 +8,11 @@
 .not_shown{
 	display: none;
 }
+
+.clear{
+	clear: both;
+}
+
 .layout_nav_description{
     position:absolute;
     background-color:#FFFFFF;
@@ -54,32 +59,83 @@ div.layout_collapse_icon{
 /* Landscape phones and down */
 @media (max-width: 480px) {
 	#layout-sidebar{
-       display:none;
+        width: 100%;
+        min-height: 768px;
     }
     #layout-content-widget{
-        width:100%;
+        overflow: auto;
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    #layout-content{
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    #layout-widget{
+        width: 100%;
+        float: right;
     }
 }
 
 /* Landscape phone to portrait tablet */
 @media (max-width: 767px) {
     #layout-sidebar{
-       display:none;
+        width: 100%;
+        min-height: 768px;
     }
-    #layout-content-widget{
-        width:100%;
+    #layout-banner-content-widget{
+        overflow: auto;
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    #layout-content{
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    #layout-widget{
+        width: 100%;
+        float: right;
     }
 }
 
 /* Portrait tablet to landscape and desktop */
 @media (min-width: 768px) and (max-width: 979px) {
 	#layout-sidebar{
-	   display:none;
+		margin-left:0px;
+		width: 100%;
 	}
-    #layout-content-widget{
+    #layout-banner-content-widget{
         width:100%;
+        margin-bottom: 30px;
+    } 
+    #layout-banner{
+        padding:20px;
+    }   
+}
+
+/* normal desktop */
+@media (min-width: 979px) {
+    #layout-sidebar{
+		float:left;
+		margin-left:0px;
+    }
+    #layout-banner-content-widget{
+        float:right;
+        min-height: 100%;
+    }
+    #layout-banner{
+        padding:30px;
     }
 }
 
 /* Large desktop */
-@media (min-width: 1200px) {}
+@media (min-width: 1200px) {
+	#layout-sidebar{
+		float:left;
+		margin-left:0px;
+    }
+    #layout-banner-content-widget{
+        float:right;
+        min-height: 100%;
+    }
+}

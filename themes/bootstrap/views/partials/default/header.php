@@ -7,10 +7,7 @@
             <span class="icon-bar"></span>
           </a>
           <a class="brand" href="#">
-          	<img src ="<?php echo $cms['site_logo'];?>" style="max-height:30px; max-width:30px;" />
-          	<span class="hidden-phone">
-          		<?php echo $cms['site_name'] . ' - ' .  $cms['site_slogan'];?>
-          	</span>
+          	<img src ="<?php echo $cms['site_logo'];?>" style="max-height:30px; max-width:30px;" />          	
           </a>          
           <div class="nav-collapse">
             <?php echo build_quicklink($cms['quicklinks']);?>
