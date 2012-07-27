@@ -22,10 +22,6 @@
     box-shadow:         1px 1px 5px 6px #ccc;
     z-index: 5000;
 }
-a.layout_expand{
-    float: right;
-    margin-right: 1px !important;
-}
 
 .layout_widget_container input, .layout_widget_container textarea {
     max-width: 100%;
@@ -36,7 +32,7 @@ body {
   padding-bottom: 40px;
 }
 .sidebar-nav {
-  padding: 9px 0;
+  /*padding: 9px 0;*/
 }
 
 div.layout_expand, div.layout_nothing_icon{
@@ -54,3 +50,36 @@ div.layout_expand_icon{
 div.layout_collapse_icon{
 	background-image: url('images/collapse.png');
 }
+
+/* Landscape phones and down */
+@media (max-width: 480px) {
+	#layout-sidebar{
+       display:none;
+    }
+    #layout-content-widget{
+        width:100%;
+    }
+}
+
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) {
+    #layout-sidebar{
+       display:none;
+    }
+    #layout-content-widget{
+        width:100%;
+    }
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) {
+	#layout-sidebar{
+	   display:none;
+	}
+    #layout-content-widget{
+        width:100%;
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {}

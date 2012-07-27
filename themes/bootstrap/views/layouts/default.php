@@ -10,8 +10,9 @@
     <link rel="icon" href="<?php echo $cms['site_favicon'];?>">
 
     <!-- Le styles -->
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/bootstrap.min.css";?>"></link>
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/style.css";?>"></link>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/style.css";?>"></link>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url()."assets/bootstrap/css/bootstrap-all.min.css";?>"></link>
+	
 	
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -30,9 +31,7 @@
     	echo build_widget_js($cms['widget'], 'advertisement');
     ?>
   </head>
-
   <body>
-
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
       	<?php echo $template['partials']['header'];?>        
@@ -40,30 +39,29 @@
     </div>
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span3 visible-desktop">
+        <div id="layout-sidebar" class="span3">
           <div class="well sidebar-nav">
-          	<?php echo $template['partials']['left'];?>            
+          	<?php echo $template['partials']['left'];?>     
           </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span7">
-            <?php echo $template['body'];?>
-        </div><!--/span-->
-        <div class="span2 hidden-phone">
-            <?php echo $template['partials']['right'] ?>
-        </div><!--/span--> 
+        </div><!--/sidebar-->
+        <div id="layout-content-widget" class="span9">
+        	<div class="span9">
+	            <?php echo $template['body'];?>
+	        </div><!--/span-->       
+	        <div class="span3">
+	            <?php echo $template['partials']['right'] ?>
+	        </div><!--/span-->
+        </div><!--/content-->        
       </div><!--/row-->
-
       <hr>
-
       <footer>
         <?php echo $template['partials']['footer'];?>
       </footer>
-
     </div><!--/.fluid-container-->
 
     
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>bootstrap.min.js"></script>
+    <script src="<?php echo base_url()."assets/bootstrap/js/bootstrap-all.min.js";?>"></script>
     <script src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>script.js"></script>
   </body>
 </html>
