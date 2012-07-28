@@ -1,11 +1,9 @@
 <style type="text/css"> 
     div.form{
-        width:400px;
         float:left;
     }
     div.form label{
         display:block;
-        text-align:right;
         width:140px;
         float:left;
     }
@@ -20,6 +18,25 @@
     div.form select{
     	height:300px;
     }
+    /* small */
+    @media (max-width: 479px){
+    	div.form{
+	        width:200px;
+	    }
+	    div.form label{
+	        text-align:left;
+	    }
+    }
+    /* large */
+    @media (min-width: 480px){
+    	div.form{
+	        width:400px;
+	    }
+	    div.form label{
+	        text-align:right;
+	    }
+    }
+    
 </style>
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
 <script type="text/javascript">

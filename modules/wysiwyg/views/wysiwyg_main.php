@@ -82,14 +82,16 @@
     div#wysiwyg_setting{
         margin-top : 10px;
         margin-bottom : 10px;
+        width:250px;
     }
     div#wysiwyg_setting div.form_label{
-        width : 200px;
+        width : 250px;
         display: block;
         float:left;
     }
     div#wysiwyg_setting div.form_input{
         float:left;
+        width:250px;
     }
     div#logo{
     	max-width: 120px;
@@ -133,6 +135,35 @@
 	{
 		cursor:pointer;
 	}
+	
+	/* small */
+    @media (max-width: 479px){
+    	div#content{
+    		width: 100%!important;
+    		float: left;
+    	}
+    	div#left{
+	        width:100%;
+	        float: right!important;
+	    }
+	    div#right{
+	    	width: 100%!important;
+	    	float: right;
+	    }
+    }
+    /* large */
+    @media (min-width: 480px){
+    	div#right{
+	    	float: right;
+	    }
+    	div#content{
+    		float: left;
+    	}
+    	div#left{
+	        float: left;
+	    }
+	    
+    }
 </style>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.css" />
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.js"></script>
@@ -655,34 +686,31 @@
 	        <div id="quicklink" class="font-size-large">Quick Link</div>
 	        <div class="clear"></div>
 	    </div>
-	    <div id="center">
-	        <div id="left" class="float-left min-height-100">Left Panel</div>
-	        <div id="right" class="float-right min-height-100 padding-10">
+	    <div id="center">  
+	        <div id="left" class="min-height-100">Left Panel</div>	
+	        <div id="content" class="min-height-100 padding-10">
+	        	This is the content
+	        	<div id="wysiwyg_setting">
+				    <div class="form_label">Add Quick Link : </div> 
+			        <div class="form_input">
+			            <?php echo form_dropdown('navigation', $navigation_list, NULL,'id="navigation_list"'); ?>&nbsp;
+			            <a href="#" id="add_quicklink"><img width="20px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/add.png'); ?>" /></a>
+			        </div>
+			        <div class="clear"></div>
+				    <div class="form_label">Change Language : </div> 
+			        <div class="form_input">
+			            <?php echo form_dropdown('navigation', $language_list, $language,'id="language_list"'); ?>
+			        </div>	
+				</div>
+				<a href="<?php echo site_url($cms["module_path"]);?>">See the changes</a>
+	        </div>
+	        <div id="right" class="min-height-100 padding-10">
 	            <div><b>Side-bar</b></div>
 	            <div id="sidebar"></div>
 	            <div><b>Advertisement</b></div>
 	            <div id="advertisement"></div>
-	        </div>
-	        <div id="content" class="float-left min-height-100 padding-10">
-	        	This is the content
-	        	<div id="wysiwyg_setting">
-				    <div id="quicklink_config">
-				        <div class="form_label">Add Quick Link : </div> 
-				        <div class="form_input">
-				            <?php echo form_dropdown('navigation', $navigation_list, NULL,'id="navigation_list"'); ?>&nbsp;
-				            <a href="#" id="add_quicklink"><img width="20px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/add.png'); ?>" /></a>
-				        </div>
-				        <div class="clear"></div>
-				    </div>
-				    <div id="language_config">
-				        <div class="form_label">Change Language : </div> 
-				        <div class="form_input">
-				            <?php echo form_dropdown('navigation', $language_list, $language,'id="language_list"'); ?>
-				        </div>				        
-				    </div>
-				</div>
-				<a href="<?php echo site_url($cms["module_path"]);?>">See the changes</a>
-	        </div>
+	        </div> 
+	        
 	        <div class="clear"></div>
 	    </div>
 	    <div id="footer" class="padding-10"><?php echo $site_footer?></div>  

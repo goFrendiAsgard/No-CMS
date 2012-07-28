@@ -27,7 +27,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $(".toggle_toc").click(function(){
-            $("#toc").toggle();
+            $("#toc").slideToggle('slow');
             return false;
         });
         

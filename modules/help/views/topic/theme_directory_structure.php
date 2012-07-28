@@ -1,12 +1,13 @@
 <?php include 'modules/help/assets/toc_include.php' ?>
 <h3>Themes Directory Structure</h3>
-<img src="<?php echo base_url();?>modules/help/assets/images/No-CMS-layout.png"
-					style="float: right; margin: 10px; padding: 10px; width: 70%" />
+
 <p>
 	No-CMS uses Phil Sturgeon's template as it's template engine.
 	The advantage of using Phil's template is you can start with the big picture
 	before go to details
 </p>
+<img src="<?php echo base_url();?>modules/help/assets/images/No-CMS-layout.png"
+					style="float: right; margin: 10px; padding: 10px; width: 70%" />
 <p>
 	One of the main idea behind No-CMS themes is to reduce verbosity of writing the same
 	things over and over again. The header, widget, navigation link, and footer usually not changed that much.
