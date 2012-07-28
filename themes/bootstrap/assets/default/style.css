@@ -100,6 +100,10 @@ div.layout_collapse_icon{
     .form-input-box input, .form-input-box textarea,
 	.form-input-box div.chzn-container, .form-input-box div.chzn-drop{
 	    max-width: 200px;
+	    float: left!important;
+	}
+	.form-display-as-box{
+	   width: 100%!important;
 	}
 	
 	.flexigrid table td,
@@ -133,6 +137,15 @@ div.layout_collapse_icon{
     #layout-widget{
         width: 100%;
         float: right;
+    }
+    
+    .form-input-box input, .form-input-box textarea,
+    .form-input-box div.chzn-container, .form-input-box div.chzn-drop{
+        max-width: 200px;
+        float: left!important;
+    }
+    .form-display-as-box{
+       width: 100%!important;
     }
     
     .flexigrid table td,
