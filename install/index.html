@@ -1,5 +1,8 @@
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="assets/style.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap-all.min.css" />
+    
     <style type="text/css">
         .warning_display{
 		    position : absolute;
@@ -8,6 +11,7 @@
 		}
     </style>
     <script type="text/javascript" src="../assets/nocms/js/jquery.js"></script>
+    <script src="../assets/bootstrap/js/bootstrap-all.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             check_all();  
@@ -81,33 +85,120 @@
     
 </head>
 <body>
-<div id="container">
-<h1>Install No-CMS on your server</h1>
-<div id="infoMessage" class="message warning_display"></div>
-<form action="install.php" method="post" accept-charset="utf-8">
-<fieldset>
-    <legend>Database Information</legend>
-    <label>Database Server</label><input type="text" id="db_server" name="db_server" value="localhost" class="input" /><br />
-    <label>Port</label><input type="text" id="db_port" name="db_port" value="3306" class="input" /><br />
-    <label>User Name</label><input type="text" id="db_username" name="db_username" value="root" class="input" /><br />
-    <label>Password</label><input type="password" id="db_password" name="db_password" value="" class="input" /><br />
-    <label>Database/Schema</label><input type="text" id="db_schema" name="db_schema" value="no_cms" class="input" />
-</fieldset>
-<fieldset>
-    <legend>Administrator</legend>
-    <label>Email</label><input type="text" id="adm_email" name="adm_email" value="admin@admin.com" class="input" /><br />
-    <label>User Name</label><input type="text" id="adm_username" name="adm_username" value="admin" class="input" /><br />
-    <label>Real Name</label><input type="text" id="adm_realname" name="adm_realname" value="Malfurion Stormrage" class="input" /><br />
-    <label>Password</label><input type="password" id="adm_password" name="adm_password" value="" class="input" /><br />
-    <label>Confirm Password</label><input type="password" id="adm_confirmpassword" name="adm_confirmpassword" value="" class="input" />
-</fieldset>
-<fieldset>
-    <legend>Preferences</legend>
-    <label>Hide Index.php<br />(mod_rewrite should be active)</label><input type="checkbox" id="hide_index" name="hide_index" value="hide_index" class="input" />
-</fieldset>
-<br />
-<input type="submit" id="button_install" name="Install" value="INSTALL NOW"  />
-</form>
+<div class="container-fluid">
+	<div class="row-fluid">
+	    <div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container-fluid">
+	            <a class="brand" href="#">Install No-CMS on your server</a>
+	            <div class="nav-collapse">
+	               <ul class="nav">
+	                   <li><a href="#database">Database Settings</a></li>
+	                   <li><a href="#admin">No-CMS Administrator Settings</a></li>
+	                   <li><a href="#preference">Preferences</a></li>
+	               </ul>
+	            </div> 
+	        </div>  	          
+	      </div>
+	    </div>
+	    <div class="span8">
+	        <form class="form-horizontal well" action="install.php" method="post" accept-charset="utf-8">
+			    <fieldset>
+			        <a name="database"></a>
+			        <legend>Database Settings</legend>
+			        <div class="control-group">
+			           <label class="control-label" for="db_server">Server</label>
+			           <div class="controls">
+			               <input type="text" id="db_server" name="db_server" value="localhost" class="input-xlarge input" />
+			               <p class="help-block">Server name (e.g: 'localhost', '127.0.0.1', 'http://yourdomain.com')</p>
+			           </div>
+			        </div>
+			        <div class="control-group">
+			           <label class="control-label" for="db_port">Port</label>
+			           <div class="controls">
+			               <input type="text" id="db_port" name="db_port" value="3306" class="input-xlarge input" />
+			               <p class="help-block">MySQL port, usually 3306</p>
+			           </div>
+			        </div>
+			        <div class="control-group">
+			           <label class="control-label" for="db_username">Username</label>
+			           <div class="controls">
+			               <input type="text" id="db_username" name="db_username" value="root" class="input-xlarge input" />
+			               <p class="help-block">MySQL username</p>
+			           </div>
+			        </div>
+			        <div class="control-group">
+			           <label class="control-label" for="db_password">Password</label>
+			           <div class="controls">
+			               <input type="password" id="db_password" name="db_password" value="" class="input-xlarge input" />
+			               <p class="help-block">MySQL password</p>
+			           </div>
+			        </div>
+			        <div class="control-group">
+			           <label class="control-label" for="db_schema">Schema</label>
+			           <div class="controls">
+			               <input type="text" id="db_schema" name="db_schema" value="no_cms" class="input-xlarge input" />
+			               <p class="help-block">Database schema (will be created if not exists)</p>
+			           </div>
+			        </div>
+			    </fieldset>
+			    <fieldset>
+			        <a name="admin"></a>
+			        <legend>No-CMS Administrator Settings</legend>
+			        <div class="control-group">
+			           <label class="control-label" for="adm_email">E mail</label>
+			           <div class="controls">
+			               <input type="text" id="adm_email" name="adm_email" value="admin@admin.com" class="input-xlarge input" />
+			               <p class="help-block">No-CMS administrator email</p>
+			           </div>
+			        </div>
+			        <div class="control-group">
+                       <label class="control-label" for="adm_username">Username</label>
+                       <div class="controls">
+                           <input type="text" id="adm_username" name="adm_username" value="admin" class="input-xlarge input" />
+                           <p class="help-block">admin's username</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="adm_realname">Real Name</label>
+                       <div class="controls">
+                           <input type="text" id="adm_realname" name="adm_realname" value="Me Gusta" class="input-xlarge input" />
+                           <p class="help-block">admin's realname</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="adm_password">Password</label>
+                       <div class="controls">
+                           <input type="password" id="adm_password" name="adm_password" value="" class="input-xlarge input" />
+                           <p class="help-block">admin's password</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="adm_confirmpassword">Confirm Password</label>
+                       <div class="controls">
+                           <input type="password" id="adm_confirmpassword" name="adm_confirmpassword" value="" class="input-xlarge input" />
+                           <p class="help-block">admin's password again</p>
+                       </div>
+                    </div>
+			    </fieldset>
+			    <fieldset>
+			        <a name="preference"></a>
+			        <legend>Preferences</legend>
+			        <div class="control-group">
+                       <label class="control-label" for="hide_index">Hide Index.php</label>
+                       <div class="controls">
+                           <input type="checkbox" id="hide_index" name="hide_index" checked class="input-xlarge input" />
+                           <p class="help-block">(mod_rewrite should be active)</p>
+                       </div>
+                    </div>
+			    </fieldset>
+			    <input type="submit" id="button_install" class="btn btn-primary" name="Install" value="INSTALL NOW"  />
+			</form>    
+	    </div>
+	    
+	    <div id="infoMessage" class="message warning_display span5"></div>
+	
+	</div>
 </div>
-<div id="debug"></div>
+
 </body>

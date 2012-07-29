@@ -2,11 +2,8 @@
 ::moz-selection{ background-color: #E13300; color: white; }
 ::webkit-selection{ background-color: #E13300; color: white; }
 
-body {
-    background-color: #fff;
-    margin: 40px;
-    font: 13px/20px normal Helvetica, Arial, sans-serif;
-    color: #4F5155;
+.input-xlarge{
+	height: 28px!important;
 }
 
 a {
@@ -36,8 +33,9 @@ code {
     padding: 12px 10px 12px 10px;
 }
 
-#body{
-    margin: 0 15px 0 15px;
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
 }
 
 p.footer{
@@ -72,12 +70,11 @@ form{
     box-shadow:         1px 1px 5px 6px #ccc;
     z-index: 5000; 
     display: block;    
+    position:fixed!important;
+	top:60px;
+	right:0px;
 }
 
-.input{
-    position : absolute;
-    left : 300px;
-}
 #button_install{
     display:none;
 }
