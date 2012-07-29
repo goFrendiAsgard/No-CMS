@@ -9,6 +9,7 @@ img.photo_thumbnail{
 }
 </style>
 <?php
+echo '<base href="'.base_url().'" target="_blank" />';
 echo '<div>';
 echo form_open($cms['module_path']);
 echo form_dropdown('category', $available_category, $category);

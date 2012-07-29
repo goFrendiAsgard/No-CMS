@@ -83,6 +83,15 @@
 		mysql_query($query, $db_connection) or show_mysql_error($query);
 	}
 	
+	function get_base_url(){
+		$pieces = explode('/', $_SERVER["REQUEST_URI"]);
+		for ($i=0; $i<2; $i++){
+			unset($pieces[count($pieces)-1]);
+		}
+		$path = implode('/',$pieces) . '/';
+		return $path;
+	}
+	
 	function check_all($install=NULL){
 		$db_server = get_input("db_server");
 		$db_port = get_input("db_port");
@@ -121,15 +130,19 @@
 		// writable
 		if(!is_writable('../application/config/database.php')){
 			$success = FALSE;
-			$errors[] = "application/config/database.php is not writeable";
+			$errors[] = "application/config/database.php is not writable";
 		}
 		if(!is_writable('../application/config/routes.php')){
 			$success = FALSE;
-			$errors[] = "application/config/routes.php is not writeable";
+			$errors[] = "application/config/routes.php is not writable";
 		}
 		if(!is_writable('../application/config/config.php')){
 			$success = FALSE;
-			$errors[] = "application/config/config.php is not writeable";
+			$errors[] = "application/config/config.php is not writable";
+		}
+		if(!is_writable('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js')){
+			$success = FALSE;
+			$errors[] = 'assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js is not writable';
 		}
 		if(!is_writable('../')){
 			if($hide_index != ""){
@@ -192,6 +205,16 @@
 				$str = file_get_contents('./resources/routes.php');
 				file_put_contents('../application/config/routes.php',$str);
 				
+				// jquery.ckeditor.config.js
+				$str = file_get_contents('./resources/jquery.ckeditor.config.js');
+				$base_path = get_base_url();
+				$str = replace($str,
+						array('@base_path'),
+						array($base_path)
+				);
+				file_put_contents('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js', $str);
+				
+				
 				if($hide_index != ""){
 					// config.php
 					$str = file_get_contents('./resources/config.php');
@@ -201,16 +224,11 @@
 					);
 					file_put_contents('../application/config/config.php', $str);
 					 
-					// .htaccess
-					$pieces = explode('/', $_SERVER["REQUEST_URI"]);
-					for ($i=0; $i<2; $i++){
-						unset($pieces[count($pieces)-1]);
-					}
-					$path = implode('/',$pieces) . '/';
+					// .htaccess					
 					$str = file_get_contents('./resources/htaccess');
 					$str = replace($str,
-							array('@rewrite_base'),
-							array($path)
+							array('@base_path'),
+							array($base_path)
 					);
 					file_put_contents('../.htaccess', $str);
 				}else{

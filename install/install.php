@@ -26,7 +26,11 @@
 	<div id="container">
 		<div id="php_error" class="message"><?php
 		    include('function.php');
-		    check_all(true);		    
+		    $error = check_all(true);
+		    if($error!=''){
+		    	file_put_contents('.htaccess', 'Deny from all');
+		    }
+		    echo $error;		    
 		?></div>
 		
 		<h1>Installation finished</h1>
