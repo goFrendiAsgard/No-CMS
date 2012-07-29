@@ -16,6 +16,11 @@
     <script type="text/javascript" src="../assets/nocms/js/jquery.js"></script>
     <script src="../assets/bootstrap/js/bootstrap-all.min.js"></script>
     <script type="text/javascript">
+        var DATABASE_CLICKED = true;
+        var ADMIN_CLICKED = false;
+        var PREFERENCE_CLICKED = false;
+        var SUCCESS = false;
+        
         $(document).ready(function(){
             check_all();  
             $(".input").keyup(function(event){
@@ -29,21 +34,40 @@
                 $('fieldset#admin').hide();
                 $('fieldset#preference').hide();
                 $('fieldset#database').slideDown('slow');
+                DATABASE_CLICKED = true;
+                show_hide_button()
+                return false;
             });
             
             $('a[href="#admin"]').click(function(){
             	$('fieldset#database').hide();
             	$('fieldset#preference').hide();
             	$('fieldset#admin').slideDown('slow');
+            	ADMIN_CLICKED = true;
+            	show_hide_button();
+            	return false;
             });
             
             $('a[href="#preference"]').click(function(){
                 $('fieldset#database').hide();
                 $('fieldset#admin').hide();
                 $('fieldset#preference').slideDown('slow');
+                PREFERENCE_CLICKED = true;
+                show_hide_button();
+                return false;
             });
             
-        })
+        });
+        
+        function show_hide_button(){
+        	if(SUCCESS && DATABASE_CLICKED && ADMIN_CLICKED && PREFERENCE_CLICKED){
+                $(".button_install").show();
+                $('.button_install').removeAttr('disabled');  
+            }else{
+                $(".button_install").hide();
+                $('.button_install').attr('disabled', 'disabled');
+            }
+        }
         
         function check_all(){
         	$('#button_install').attr('disabled', 'disabled');
@@ -63,7 +87,7 @@
                     hide_index : $("#hide_index").attr('checked')? $("#hide_index").val(): '',
                 },
                 success : function(response){
-                    var success = response.success;
+                    SUCCESS = response.success;
                     var warnings = response.warnings;
                     var errors = response.errors;
                     
@@ -91,13 +115,8 @@
                     	$('#infoMessage').hide();
                     }
                     
-                    if(success){
-                        $(".button_install").show();
-                        $('.button_install').removeAttr('disabled');    
-                    }else{
-                        $(".button_install").hide();
-                        $('.button_install').attr('disabled', 'disabled');
-                    }
+                    show_hide_button();
+                    
                     
                 }
             });
