@@ -113,7 +113,7 @@
 		$errors = array();
 		$warnings = array();
 		// curl
-		if(function_exists('curl_version') == "Enabled"){
+		if(!in_array  ('curl', get_loaded_extensions())){
 			$warnings[] = 'CURL is not enabled. Some modules might require it';
 		}
 		// database
