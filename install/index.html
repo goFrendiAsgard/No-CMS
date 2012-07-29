@@ -9,6 +9,9 @@
 		    left : 600px;
 		    width : 400px;    
 		}
+		#preference, #admin{
+		    display:none;
+		}
     </style>
     <script type="text/javascript" src="../assets/nocms/js/jquery.js"></script>
     <script src="../assets/bootstrap/js/bootstrap-all.min.js"></script>
@@ -21,6 +24,25 @@
             $(".input").change(function(event){
                 check_all();
             });
+            
+            $('a[href="#database"]').click(function(){
+                $('fieldset#admin').hide();
+                $('fieldset#preference').hide();
+                $('fieldset#database').slideDown('slow');
+            });
+            
+            $('a[href="#admin"]').click(function(){
+            	$('fieldset#database').hide();
+            	$('fieldset#preference').hide();
+            	$('fieldset#admin').slideDown('slow');
+            });
+            
+            $('a[href="#preference"]').click(function(){
+                $('fieldset#database').hide();
+                $('fieldset#admin').hide();
+                $('fieldset#preference').slideDown('slow');
+            });
+            
         })
         
         function check_all(){
@@ -70,11 +92,11 @@
                     }
                     
                     if(success){
-                        $("#button_install").show();
-                        $('#button_install').removeAttr('disabled');    
+                        $(".button_install").show();
+                        $('.button_install').removeAttr('disabled');    
                     }else{
-                        $("#button_install").hide();
-                        $('#button_install').attr('disabled', 'disabled');
+                        $(".button_install").hide();
+                        $('.button_install').attr('disabled', 'disabled');
                     }
                     
                 }
@@ -103,9 +125,8 @@
 	    </div>
 	    <div class="span8">
 	        <form class="form-horizontal well" action="install.php" method="post" accept-charset="utf-8">
-			    <fieldset>
-			        <a name="database"></a>
-			        <legend>Database Settings</legend>
+			    <fieldset id="database">
+			        <legend>Step #1 Database Settings</legend>
 			        <div class="control-group">
 			           <label class="control-label" for="db_server">Server</label>
 			           <div class="controls">
@@ -141,10 +162,15 @@
 			               <p class="help-block">Database schema (will be created if not exists)</p>
 			           </div>
 			        </div>
+			        <div>                    
+	                    <a class="btn" href="#admin">Go to No-CMS administrator settings</a>
+	                    <a class="btn" href="#preference">Go to preferences</a>
+	                    <a class="btn btn-primary" href="#admin">Next Step</a>
+	                </div>
 			    </fieldset>
-			    <fieldset>
-			        <a name="admin"></a>
-			        <legend>No-CMS Administrator Settings</legend>
+			    
+			    <fieldset id="admin">
+			        <legend>Step #2 No-CMS Administrator Settings</legend>
 			        <div class="control-group">
 			           <label class="control-label" for="adm_email">E mail</label>
 			           <div class="controls">
@@ -180,19 +206,30 @@
                            <p class="help-block">admin's password again</p>
                        </div>
                     </div>
-			    </fieldset>
-			    <fieldset>
-			        <a name="preference"></a>
-			        <legend>Preferences</legend>
+                    <div>                   
+	                    <a class="btn" href="#database">Back to database settings</a>
+	                    <a class="btn" href="#preference">Go to preferences</a>
+	                    <a class="btn btn-primary" href="#preference">Next Step</a>
+	                </div>
+			    </fieldset> 
+			    
+			    <fieldset id="preference">
+			        <legend>Step #3 Preferences</legend>
 			        <div class="control-group">
                        <label class="control-label" for="hide_index">Hide Index.php</label>
                        <div class="controls">
-                           <input type="checkbox" id="hide_index" name="hide_index" checked class="input-xlarge input" />
+                           <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" />
                            <p class="help-block">(mod_rewrite should be active)</p>
                        </div>
                     </div>
+                    <div>
+	                    <a class="btn" href="#database">Back to database settings</a>
+	                    <a class="btn" href="#admin">Back to administrator settings</a>	                    
+	                </div>
 			    </fieldset>
-			    <input type="submit" id="button_install" class="btn btn-primary" name="Install" value="INSTALL NOW"  />
+			    <div style="margin-top: 10px;">
+			        <input type="submit" class="button_install btn btn-primary" name="Install" value="INSTALL NOW"  />
+			    </div>
 			</form>    
 	    </div>
 	    

@@ -75,6 +75,6 @@ form{
 	right:0px;
 }
 
-#button_install{
+.button_install{
     display:none;
 }
