@@ -25,17 +25,16 @@
 		});
 	</script>
 </head>
-<body>	
-	<div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-            <a class="brand" href="#">Installation finished</a>
-        </div>  	          
-      </div>
-    </div>
+<body>			
 	<div id="container-fluid">
-		<div class="row-fluid">	
-			<div class="span"></div>
+		<div class="row-fluid">
+			<div class="navbar navbar-fixed-top">
+		      <div class="navbar-inner">
+		        <div class="container-fluid">
+		            <a class="brand" href="#">Installation finished</a>
+		        </div>  	          
+		      </div>
+		    </div>
 			<div id="if_no_error" class="well span9">
 				<p><strong>Installation succeed !!!</strong><br />
 				You still have some little (but important) things to do:

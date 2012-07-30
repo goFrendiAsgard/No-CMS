@@ -48,8 +48,8 @@ class Example extends CMS_Controller{
     			array(
     			    "url"=>$this->cms_module_path('gofrendi.noCMS.example').'/view_4', 
     			    "title"=>'view_4()',
-    			    "description"=>'$this->view(\'example/example_index\', $this->data, NULL, NULL, \'orange\', \'mobile\');'.br().
-    			    	'Change the theme into orange and layout into mobile for only this request'
+    			    "description"=>'$this->view(\'example/example_index\', $this->data, NULL, NULL, \'neutral\', \'mobile\');'.br().
+    			    	'Change the theme into neutral and layout into mobile for only this request'
     			)
     			
     		)
@@ -73,7 +73,7 @@ class Example extends CMS_Controller{
     }
     
     public function view_4(){
-    	$this->view($this->cms_module_path('gofrendi.noCMS.example').'/example_index', $this->data, NULL, NULL, 'orange', 'mobile');
+    	$this->view($this->cms_module_path('gofrendi.noCMS.example').'/example_index', $this->data, NULL, NULL, 'neutral', 'mobile');
     }
 }
 

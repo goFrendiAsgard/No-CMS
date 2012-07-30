@@ -1,9 +1,15 @@
-<?php require_once BASEPATH . "../themes/".$cms['site_theme']."/lib/function.php"; ?>
-    <img class="layout_float_left layout_margin_5" src ="<?php echo $cms['site_logo']; ?>" />
-    
-    <div class="layout_float_left">
-        <h1><?php echo $cms['site_name']; ?></h1>
-        <h2><?php echo $cms['site_slogan']; ?></h2>
-    </div>
-    <div class="layout_clear"></div>
-    <?php echo build_quicklink($cms['quicklinks']); ?>
+<?php require_once BASEPATH."../themes/".$cms['site_theme']."/lib/function.php";?>
+
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">
+          	<img src ="<?php echo $cms['site_logo'];?>" style="max-height:30px; max-width:30px;" />          	
+          </a>          
+          <div class="nav-collapse">
+            <?php echo build_quicklink($cms['quicklinks']);?>
+          </div><!--/.nav-collapse -->
+        </div>
