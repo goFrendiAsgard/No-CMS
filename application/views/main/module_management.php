@@ -62,7 +62,7 @@
 	<?php echo form_open_multipart('main/module_management');?>
 	<input type="file" name="userfile" size="20" />	
 	<br /><br />	
-	<input class="btn btn-primary" type="submit" value="upload" />	
+	<input class="btn btn-primary" type="submit" value="Upload Module" />	
 	</form>
 </div>
 

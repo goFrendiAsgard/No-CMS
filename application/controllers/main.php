@@ -518,20 +518,23 @@ class Main extends CMS_Controller {
     }
 
     public function module_management() {
-    	if(isset($_FILES['userfile']['name'])){  
-    		$upload_path = BASEPATH.'../modules/';
+    	$data['upload_error_message'] = ''; 
+    	$input_file_name = 'userfile';
+    	if(isset($_FILES[$input_file_name]['name'])){  
+    		$upload_path = './modules/';
 	    	$config['upload_path'] = $upload_path;
 	    	$config['allowed_types'] = 'zip';
-	    	$config['max_size']	= '2048';
-	    	$this->load->library('upload', $config);
-	    	$upload_data = $this->upload->data();
-    		if ( ! $this->upload->do_upload()){
-    			$error = array('error' => $this->upload->display_errors());
-    			echo $error['error'];
+	    	$config['max_size']	= 8*1024;
+	    	$config['overwrite'] = TRUE;
+	    	$this->load->library('upload', $config);	    	
+    		if ( ! $this->upload->do_upload($input_file_name)){
+    			$data['upload_error_message'] = $this->upload->display_errors();
     		}
     		else{
     			$this->load->library('unzip');
-    			$this->unzip->extract($upload_data['full_path'].$_FILES['userfile']['name']);
+    			$upload_data = $this->upload->data();
+    			$this->unzip->extract($upload_data['full_path']);
+    			unlink($upload_data['full_path']);
     		}    		
     	}  	
 
