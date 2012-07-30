@@ -58,3 +58,11 @@
         echo '</div>';
     }
 ?>
+<div style="clear:both; margin: 5px; padding-top: 30px;">
+	<?php echo form_open_multipart('main/module_management');?>
+	<input type="file" name="userfile" size="20" />	
+	<br /><br />	
+	<input class="btn btn-primary" type="submit" value="upload" />	
+	</form>
+</div>
+

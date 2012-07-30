@@ -518,6 +518,24 @@ class Main extends CMS_Controller {
     }
 
     public function module_management() {
+    	if(isset($_FILES['userfile']['name'])){  
+    		$upload_path = BASEPATH.'../modules/';
+	    	$config['upload_path'] = $upload_path;
+	    	$config['allowed_types'] = 'zip';
+	    	$config['max_size']	= '2048';
+	    	$this->load->library('upload', $config);
+	    	$upload_data = $this->upload->data();
+    		if ( ! $this->upload->do_upload()){
+    			$error = array('error' => $this->upload->display_errors());
+    			echo $error['error'];
+    		}
+    		else{
+    			$this->load->library('unzip');
+    			$this->unzip->extract($upload_data['full_path'].$_FILES['userfile']['name']);
+    		}    		
+    	}  	
+
+		// show the view
         $data['modules'] = $this->cms_get_module_list();
         $this->view('main/module_management', $data, 'main_module_management');
     }
