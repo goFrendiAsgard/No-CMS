@@ -263,3 +263,5 @@ Roadmap
 * (done, tested) use "slow slidetoggle" in help and bootstrap theme 
 * (done, tested) use bootstrap for installation
 * (proposed) use database for help module
+* (proposed) upload module feature
+* (done, tested) use 'title' for blog url

@@ -6,8 +6,9 @@
  */
 class Blog extends CMS_Controller {
     //put your code here
-    public function index($article_id=NULL){
-        
+    public function index($article_url=NULL){
+    	$this->load->helper('inflector');
+    	
         $category = $this->input->post('category');
         $search = $this->input->post('search');
         $words = $search? explode(' ', $search) : array();
@@ -41,7 +42,7 @@ class Blog extends CMS_Controller {
             $where_search = "TRUE";
         }
         
-        $where_article_id = isset($article_id)?"article_id=$article_id":"TRUE";
+        $where_article_url = isset($article_url)?"article_title LIKE '".addslashes(humanize($article_url))."'":"TRUE";
         
                 
         $SQL = "SELECT article_id, article_title, content, date, allow_comment,
@@ -50,13 +51,13 @@ class Blog extends CMS_Controller {
                 LEFT JOIN cms_user ON (cms_user.user_id = blog_article.author_user_id)
                 WHERE 
                     $where_category AND
-                    $where_search AND $where_article_id";
+                    $where_search AND $where_article_url";
         
         $query = $this->db->query($SQL);
         foreach($query->result() as $row){
             $separator = '<div style="page-break-after: always;">
 	<span style="display: none;">&nbsp;</span></div>';
-            if(isset($article_id)){
+            if(isset($article_url)){
                 $contents = explode($separator, $row->content);
                 $content = implode('',$contents);
             }else{
@@ -65,19 +66,20 @@ class Blog extends CMS_Controller {
             }
             
             $result = array(
+            	"id" => $row->article_id,
                 "title" => $row->article_title,
+            	"article_url" => underscore($row->article_title),
                 "content" => $content,
                 "author" => $row->author,
-                "date" => $row->date,
-                "id" => $row->article_id,
-                "allow_comment" => isset($article_id) && $row->allow_comment,
+                "date" => $row->date,                
+                "allow_comment" => isset($article_url) && $row->allow_comment,
                 "comments" => $this->get_comments($row->article_id),
                 "photos" => $this->get_photos($row->article_id)
             );
             $data['article'][] = $result;
         }
         
-        $data['view_readmore'] = !isset($article_id);
+        $data['view_readmore'] = !isset($article_url);
         
         $this->view("blog_view", $data, 'blog_index');
     }

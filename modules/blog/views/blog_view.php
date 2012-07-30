@@ -9,9 +9,9 @@ img.photo_thumbnail{
 }
 </style>
 <?php
-echo '<base href="'.base_url().'" target="_blank" />';
+echo '<base href="'.base_url().'" />';
 echo '<div>';
-echo form_open($cms['module_path']);
+echo form_open($cms['module_path'], array("class"=>"form-search"));
 echo form_dropdown('category', $available_category, $category);
 echo form_input('search', $search);
 echo form_submit('submit', 'Search');
@@ -34,7 +34,7 @@ foreach($article as $single_article){
     echo '<br />';
     
     if($view_readmore){
-        echo anchor($cms['module_path'].'/index/'.$single_article['id'],'read more');
+        echo anchor($cms['module_path'].'/index/'.$single_article['article_url'],'read more');
     }
     if($single_article['allow_comment']){
     	echo '<hr />';
