@@ -55,3 +55,4 @@
 </script>
 <div id="toc"></div>
 <div class="toggle_toc"><a class="toggle_toc" href="#toc">Table of Contents</a></div>
+<div style="clear:both;"></div>

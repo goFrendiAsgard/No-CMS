@@ -65,8 +65,8 @@ div.layout_collapse_icon{
 {
     max-width: 59px;
 }
-.form-input-box input, .form-input-box textarea,
-.form-input-box div.chzn-container, .form-input-box div.chzn-drop{
+.form-input-box>input, .form-input-box>textarea,
+.form-input-box>div.chzn-container, .form-input-box>div.chzn-drop{
     max-width: 400px;
 }
 .pGroup .btnseparator
@@ -97,8 +97,8 @@ div.layout_collapse_icon{
         float: right;
     }
     
-    .form-input-box input, .form-input-box textarea,
-	.form-input-box div.chzn-container, .form-input-box div.chzn-drop{
+    .form-input-box>input, .form-input-box>textarea,
+    .form-input-box>div.chzn-container, .form-input-box>div.chzn-drop{
 	    max-width: 200px;
 	    float: left!important;
 	}
@@ -139,8 +139,8 @@ div.layout_collapse_icon{
         float: right;
     }
     
-    .form-input-box input, .form-input-box textarea,
-    .form-input-box div.chzn-container, .form-input-box div.chzn-drop{
+    .form-input-box>input, .form-input-box>textarea,
+    .form-input-box>div.chzn-container, .form-input-box>div.chzn-drop{
         max-width: 200px;
         float: left!important;
     }
