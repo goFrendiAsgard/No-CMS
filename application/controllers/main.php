@@ -516,27 +516,45 @@ class Main extends CMS_Controller {
 
         $this->view('grocery_CRUD', $output, 'main_config_management');
     }
-
-    public function module_management() {
-    	$data['upload_error_message'] = ''; 
-    	$input_file_name = 'userfile';
-    	if(isset($_FILES[$input_file_name]['name'])){  
-    		$upload_path = './modules/';
-	    	$config['upload_path'] = $upload_path;
-	    	$config['allowed_types'] = 'zip';
-	    	$config['max_size']	= 8*1024;
-	    	$config['overwrite'] = TRUE;
-	    	$this->load->library('upload', $config);	    	
+    
+    protected function upload($upload_path, $input_file_name='userfile', $submit_name='upload'){
+    	$data = array(
+    			"uploading"=>TRUE,
+    			"success"=>FALSE, 
+    			"message"=>""
+    		);
+    	if(isset($_POST[$submit_name])){
+    		$config['upload_path'] = $upload_path;
+    		$config['allowed_types'] = 'zip';
+    		$config['max_size']	= 8*1024;
+    		$config['overwrite'] = TRUE;
+    		$this->load->library('upload', $config);
     		if ( ! $this->upload->do_upload($input_file_name)){
-    			$data['upload_error_message'] = $this->upload->display_errors();
+    			$data['uploading'] = TRUE;
+    			$data['success'] = FALSE;
+    			$data['message'] = $this->upload->display_errors();
     		}
     		else{
     			$this->load->library('unzip');
     			$upload_data = $this->upload->data();
     			$this->unzip->extract($upload_data['full_path']);
     			unlink($upload_data['full_path']);
-    		}    		
-    	}  	
+    			$data['uploading'] = TRUE;
+    			$data['success'] = TRUE;
+    			$data['message'] = '';
+    		}
+    	}else{
+    		$data['uploading'] = FALSE;
+    		$data['success'] = FALSE;
+    		$data['message'] = '';
+    	}
+    	return $data;
+    	
+    }
+
+    public function module_management() {
+    	// upload new module
+    	$data['upload'] = $this->upload('./modules/', 'userfile', 'upload');
 
 		// show the view
         $data['modules'] = $this->cms_get_module_list();
@@ -544,6 +562,10 @@ class Main extends CMS_Controller {
     }
 
     public function change_theme($theme = NULL) {
+    	// upload new theme
+    	$data['upload'] = $this->upload('./themes/', 'userfile', 'upload');
+    	
+    	// show the view
         if (isset($theme)) {
             $this->cms_set_config('site_theme', $theme);
             redirect('main/change_theme');

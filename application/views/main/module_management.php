@@ -35,6 +35,20 @@
 	div.module_not_installed{
 		background-image: url('<?php echo base_url('assets/nocms/images/icons/checkbox_unchecked.png');?>');		
 	}
+	#message:not(:empty){
+        background-color:#FFCACA;
+	    padding: 5px 5px 5px 5px;
+	    margin : 10px;
+	    font-size: small;
+	    min-height : 25px;
+	    border-radius:5px;
+	    -moz-border-radius:5px;
+	    -moz-box-shadow:    1px 1px 5px 6px #ccc;
+	    -webkit-box-shadow: 1px 1px 5px 6px #ccc;
+	    box-shadow:         1px 1px 5px 6px #ccc;	
+	    margin-top: 30px;
+	    clear:both;    
+    }
 </style>
 <h3>Module Management</h3>
 <?php
@@ -57,12 +71,18 @@
         echo '</a>';
         echo '</div>';
     }
+	echo '<div style="clear:both"></div>';
+    if($upload['uploading'] && !$upload['success']){    	
+    	echo '<div id="message">';
+    	echo '<b>Error:</b> '.$upload['message'];
+    	echo '</div>';
+    }
 ?>
-<div style="clear:both; margin: 5px; padding-top: 30px;">
-	<?php echo form_open_multipart('main/module_management');?>
-	<input type="file" name="userfile" size="20" />	
-	<br /><br />	
-	<input class="btn btn-primary" type="submit" value="Upload Module" />	
+<div style="clear:both; margin: 5px;">	
+	<form action="<?php echo site_url('main/module_management');?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+		<input type="file" name="userfile" size="20" />	
+		<br /><br />	
+		<input name="upload" class="btn btn-primary" type="submit" value="Upload New Module" />	
 	</form>
 </div>
 
