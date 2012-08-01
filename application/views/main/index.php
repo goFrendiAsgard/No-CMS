@@ -26,8 +26,12 @@
 		<?php 
 			foreach($module_list as $module){
 				if($module['installed']){
-					echo '<li><code>$route[\'default_controller\'] = "'.
-						$module['module_path'].'";</code></li>';
+					$module_path = $module['module_path'];
+					$controllers = $module['controllers'];
+					foreach($controllers as $controller){
+						echo '<li><code>$route[\'default_controller\'] = "'.
+								$module_path.'/'.$controller.'";</code></li>';
+					}					
 				}
 			}
 		?>

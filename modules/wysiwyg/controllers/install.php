@@ -25,7 +25,7 @@ class Install extends CMS_Module_Installer {
     }
     
     private function build_all(){        
-        $this->add_navigation("wysiwyg_index","WYSIWYG", $this->cms_module_path(), 4, "main_management");
+        $this->add_navigation("wysiwyg_index","WYSIWYG", $this->cms_module_path().'/wysiwyg/index', 4, "main_management");
     }
 }
 

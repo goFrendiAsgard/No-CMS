@@ -34,7 +34,7 @@ foreach($article as $single_article){
     echo '<br />';
     
     if($view_readmore){
-        echo anchor($cms['module_path'].'/index/'.$single_article['article_url'],'read more');
+        echo anchor($cms['module_path'].'/blog/index/'.$single_article['article_url'],'read more');
     }
     if($single_article['allow_comment']){
     	echo '<hr />';
@@ -48,7 +48,7 @@ foreach($article as $single_article){
     	}
     	
     	echo '<b>Add Comments </b>'.br().br();
-    	echo form_open($cms['module_path'].'/add_comment/'.$single_article['id']);
+    	echo form_open($cms['module_path'].'/blog/add_comment/'.$single_article['id']);
     	echo form_label('Name :').br();
     	echo form_input('name').br();
     	echo form_label('Email :').br();

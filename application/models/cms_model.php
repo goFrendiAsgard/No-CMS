@@ -250,7 +250,7 @@ class CMS_Model extends CI_Model {
      * @param  navigation_name
      * @desc  return parent of navigation_name's detail, only used for get_navigation_path
      */
-    private final function get_navigation_parent($navigation_name) {
+    private final function _get_navigation_parent($navigation_name) {
         if (!$navigation_name)
             return false;
         $query = $this->db->query(
@@ -280,7 +280,7 @@ class CMS_Model extends CI_Model {
      * @param  navigation_name
      * @desc  return navigation detail, only used for get_navigation_path
      */
-    private final function get_navigation($navigation_name) {
+    private final function _get_navigation($navigation_name) {
         if (!$navigation_name)
             return false;
         $query = $this->db->query(
@@ -310,8 +310,8 @@ class CMS_Model extends CI_Model {
     public final function cms_get_navigation_path($navigation_name = NULL) {
         if (!isset($navigation_name))
             return array();
-        $result = array($this->get_navigation($navigation_name));
-        while ($parent = $this->get_navigation_parent($navigation_name)) {
+        $result = array($this->_get_navigation($navigation_name));
+        while ($parent = $this->_get_navigation_parent($navigation_name)) {
             $result[] = $parent;
             $navigation_name = $parent["navigation_name"];
         }
@@ -501,13 +501,23 @@ class CMS_Model extends CI_Model {
             if (!is_dir('modules/' . $directory))
                 continue;
 
-            //temporary module_name = directory_name
+            $files = directory_map('modules/'.$directory.'/controllers');
+            $module_controllers = array();
+            foreach($files as $file){
+            	$filename_array = explode('.', $file);
+            	$extension = $filename_array[count($filename_array)-1];
+            	unset($filename_array[count($filename_array)-1]);
+            	$filename = implode('.',$filename_array);
+            	if($extension=='php' && $filename!='install'){
+            		$module_controllers[] = $filename;
+            	}
+            }
             $module_name = $this->cms_module_name($directory);
-
             $module[] = array(
             	"module_name" => $module_name,
                 "module_path" => $directory,
-                "installed" => $module_name!=""
+                "installed" => $module_name!="",
+            	"controllers" => $module_controllers,
             );
         }
         return $module;

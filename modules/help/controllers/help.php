@@ -14,7 +14,7 @@ class help extends CMS_Controller {
         $this->view($this->cms_module_path().'/help_index', $data, 'help_index');
     } 
     
-    public function group($underscored_name){
+    public function group($underscored_name=NULL){
     	$this->load->model($this->cms_module_path().'/help_model');
     	$data = array(
     			"toc"=>$this->help_model->group($underscored_name),
@@ -22,7 +22,7 @@ class help extends CMS_Controller {
         $this->view($this->cms_module_path().'/help_group', $data, 'help_index');    	
     }
     
-    public function topic($underscored_title){
+    public function topic($underscored_title=NULL){
     	$this->load->model($this->cms_module_path().'/help_model');
     	$data = array(
     			"content"=>$this->help_model->topic_content($underscored_title),
@@ -30,7 +30,7 @@ class help extends CMS_Controller {
     	$this->view($this->cms_module_path().'/help_topic', $data, 'help_index');    	
     }
 
-    public function help_help_group(){
+    public function data_group(){
         $crud = new grocery_CRUD();
         
         // table name
@@ -48,10 +48,10 @@ class help extends CMS_Controller {
         
         // render
         $output = $crud->render();
-        $this->view("grocery_CRUD", $output, "help_help_group");
+        $this->view("grocery_CRUD", $output, "help_group");
     }
 
-    public function help_help_topic(){
+    public function data_topic(){
         $crud = new grocery_CRUD();
         
         // table name
@@ -73,7 +73,7 @@ class help extends CMS_Controller {
         
         // render
         $output = $crud->render();
-        $this->view("grocery_CRUD", $output, "help_help_topic");
+        $this->view("grocery_CRUD", $output, "help_topic");
     }
 
 

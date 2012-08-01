@@ -1,4 +1,10 @@
 <head>
+	<?php 
+	$site_url = '../';
+	if(!isset($_POST['hide_index'])){
+		$site_url .= 'index.php/';
+	} 
+	?>
 	<link rel="stylesheet" type="text/css" href="assets/style.css"></link>
 	<link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap-all.min.css" />
 	
@@ -14,15 +20,42 @@
 	<script src="../assets/bootstrap/js/bootstrap-all.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			
 			if($('#php_error').html()!=""){
 				$('div#if_error').show();
 				$('div#if_no_error').hide();
-			}else{
+			}else{				
 				$('div#php_error').hide();
 				$('div#if_error').hide();
-				$('div#if_no_error').show();
+				install_module();
+				$('div#if_no_error').show();				
 			}
 		});
+		function install_module(){
+			var modules =  ['wysiwyg', 'help', 'module_generator'];
+			var site_url = '<?php echo $site_url;?>';
+			for(var i=0; i<modules.length; i++){
+				var module = modules[i];
+				$.ajax({
+					'url': site_url+module+'/install/install/silent',
+					'type': 'POST',
+					'dataType': 'json',
+					'async': false,
+					'data':{
+							'identity': '<?php echo $_POST['adm_username'];?>',
+							'password': '<?php echo $_POST['adm_password'];?>'
+						},
+					'success': function(response){
+							if(!response['success']){
+								console.log('error installing '+response['module_path']);
+							}							
+						},
+					'error': function(response){
+							console.log('error send request');
+						}
+				});
+			}
+		}
 	</script>
 </head>
 <body>			

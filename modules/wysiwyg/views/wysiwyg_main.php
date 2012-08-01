@@ -166,6 +166,7 @@
     }
 </style>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.css" />
+<?php echo '<base href="'.base_url().'" />';?>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
 <script type="text/javascript">

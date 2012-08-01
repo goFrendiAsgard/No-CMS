@@ -9,11 +9,22 @@ class CMS_Module_Installer extends CMS_Controller {
     protected $DEPENDENCIES = array();
     protected $NAME = '';
     
-    public function index(){
-        $this->install();
+    public final function index(){
+    	if($this->cms_is_module_installed($this->NAME)){
+        	$this->uninstall();
+    	}else{
+    		$this->install();
+    	}
     }
     
-    public function install(){
+    public final function install($ajax=NULL){
+    	// login (in case of called from No-CMS installer)
+    	$identity = $this->input->post('identity');
+    	$password = $this->input->post('password');
+    	if($identity && $password){
+    		$this->cms_do_login($identity, $password);
+    	}
+    	
         if($this->cms_have_privilege('cms_install_module')){
             $dependencies_error = FALSE;
             foreach($this->DEPENDENCIES as $dependency){
@@ -30,21 +41,33 @@ class CMS_Module_Installer extends CMS_Controller {
             if($error){
             	$data=array(
             			'module_name'=>$this->NAME,
-            			'module_path'=>$this->uri->segment(1),
+            			'module_path'=>$this->cms_module_path(),
             			'dependencies'=>$this->DEPENDENCIES,
             			'dependencies_error'=>$dependencies_error,
             			'alreadyInstalled_error'=>$alreadyInstalled_error,
             			'undefinedName_error'=>$undefinedName_error,
+            			'success'=>FALSE,
             	);
-            	$this->view('main/module_management_fail_install',$data,'main_module_management');
+            	if(!isset($ajax)){
+            		$this->view('main/module_management_fail_install',$data,'main_module_management');
+            	}else{
+            		echo json_encode($data);
+            	}    	
             }else{
             	$this->register_module();
             	$this->do_install();
-            	redirect('main/module_management');            	
+            	if(!isset($ajax)){
+            		redirect('main/module_management');
+            	}else{
+            		$data = array(
+            				'success'=>TRUE,
+            			);
+            		echo json_encode($data);
+            	}            	
             }
         }        
     }
-    public function uninstall(){
+    public final function uninstall(){
         if($this->cms_have_privilege('cms_install_module')){
         	$children = $this->child();
         	$dependencies_error = count($children) != 0;
@@ -62,7 +85,7 @@ class CMS_Module_Installer extends CMS_Controller {
             			'alreadyUninstalled_error'=>$alreadyUninstalled_error,
             			'undefinedName_error'=>$undefinedName_error,
             	);
-            	$this->view('main/module_management_fail_uninstall',$data,'main_module_management');                
+            	$this->view('main/module_management_fail_uninstall',$data,'main_module_management'); 
             }else{
             	$this->unregister_module();
             	$this->do_uninstall();
@@ -77,13 +100,13 @@ class CMS_Module_Installer extends CMS_Controller {
     protected function do_uninstall(){
         //this should be overridden by module developer
     }
-    protected function executeSQL($SQL, $separator){
+    protected final function executeSQL($SQL, $separator){
         $queries = explode($separator, $SQL);
         foreach($queries as $query){
             $this->db->query($query);
         }
     }
-    protected function add_navigation($navigation_name, $title, $url, $authorization_id=1, $parent_name=NULL, $index = NULL, $description=NULL){
+    protected final function add_navigation($navigation_name, $title, $url, $authorization_id=1, $parent_name=NULL, $index = NULL, $description=NULL){
             	
     	//get parent's navigation_id
         $SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_name='".addslashes($parent_name)."'";
@@ -120,7 +143,7 @@ class CMS_Module_Installer extends CMS_Controller {
         }      
         $this->db->insert('cms_navigation',$data);
     }
-    protected function remove_navigation($navigation_name){
+    protected final function remove_navigation($navigation_name){
         //get navigation_id
         $SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_name='".addslashes($navigation_name)."'";
         $query = $this->db->query($SQL);
@@ -139,7 +162,7 @@ class CMS_Module_Installer extends CMS_Controller {
             $this->db->delete('cms_navigation', $where);
         }
     }
-    protected function add_privilege($privilege_name, $title, $authorization_id=1, $parent_name=NULL, $description=NULL){
+    protected final function add_privilege($privilege_name, $title, $authorization_id=1, $parent_name=NULL, $description=NULL){
         $data = array(
             "privilege_name" => $privilege_name,
             "title" => $title,
@@ -148,7 +171,7 @@ class CMS_Module_Installer extends CMS_Controller {
         );
         $this->db->insert('cms_navigation',$data);        
     }
-    protected function remove_privilege($privilege_name){
+    protected final function remove_privilege($privilege_name){
         $SQL = "SELECT privilege_id FROM cms_privilege WHERE privilege_name='".addslashes($privilege_name)."'";
         $query = $this->db->query($SQL);
         
@@ -166,7 +189,7 @@ class CMS_Module_Installer extends CMS_Controller {
         }
     }
     
-    private function register_module(){
+    private final function register_module(){
         //insert to cms_module
         $data = array(
         	'module_name'=>$this->NAME,
@@ -198,9 +221,9 @@ class CMS_Module_Installer extends CMS_Controller {
         }
         
     }
-    private function unregister_module(){
+    private final function unregister_module(){
         //get current cms_module_id as child_id
-        $SQL = "SELECT module_id FROM cms_module WHERE module_path='".  addslashes($this->uri->segment(1))."'";
+        $SQL = "SELECT module_id FROM cms_module WHERE module_name='".  addslashes($this->NAME)."'";
         $query = $this->db->query($SQL);
         $row = $query->row();
         $child_id = $row->module_id;
@@ -211,38 +234,41 @@ class CMS_Module_Installer extends CMS_Controller {
         $this->db->delete('cms_module_dependency',$where);
         
         $where = array(
-            'module_path'=>$this->uri->segment(1)
+            'module_path'=>$this->cms_module_path()
         );
         $this->db->delete('cms_module',$where);
     }
     
-    private function child(){
-        $SQL = "SELECT module_id FROM cms_module WHERE module_path='".  addslashes($this->uri->segment(1))."'";
-        $query = $this->db->query($SQL);
+    private final function child(){
+        $SQL = "SELECT module_id FROM cms_module WHERE module_name='".  addslashes($this->NAME)."'";
         $query = $this->db->query($SQL);
         $row = $query->row();
-        $parent_id = $row->module_id;
-        
-        $SQL = "
-            SELECT module_name, module_path 
-            FROM 
-                cms_module_dependency,
-                cms_module
-            WHERE
-                module_id = child_id AND
-                parent_id=".$parent_id;
-        $query = $this->db->query($SQL);
-        $result = array();
-        foreach($query->result() as $row){
-            $result[] = array(
-            		"module_name"=>$row->module_name,
-            		"module_path"=>$row->module_name
-            	);
+        if($query->num_rows()>0){
+	        $parent_id = $row->module_id;
+	        
+	        $SQL = "
+	            SELECT module_name, module_path 
+	            FROM 
+	                cms_module_dependency,
+	                cms_module
+	            WHERE
+	                module_id = child_id AND
+	                parent_id=".$parent_id;
+	        $query = $this->db->query($SQL);
+	        $result = array();
+	        foreach($query->result() as $row){
+	            $result[] = array(
+	            		"module_name"=>$row->module_name,
+	            		"module_path"=>$row->module_name
+	            	);
+	        }
+	        return $result;
+        }else{
+        	return array();
         }
-        return $result;
     }
     
-    protected function add_widget($widget_name, $title, $authorization_id=1, $url=NULL, $slug=NULL, $index=NULL, $description=NULL){
+    protected final function add_widget($widget_name, $title, $authorization_id=1, $url=NULL, $slug=NULL, $index=NULL, $description=NULL){
     	//if it is null, index = max index+1
     	if(!isset($index)){
     		if(isset($slug)){
@@ -269,7 +295,7 @@ class CMS_Module_Installer extends CMS_Controller {
         );
         $this->db->insert('cms_widget',$data);        
     }
-    protected function remove_widget($widget_name){
+    protected final function remove_widget($widget_name){
         $SQL = "SELECT widget_id FROM cms_widget WHERE widget_name='".addslashes($widget_name)."'";
         $query = $this->db->query($SQL);
         $row = $query->row();

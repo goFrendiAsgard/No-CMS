@@ -33,9 +33,9 @@ class Install extends CMS_Module_Installer {
     }
     
     private function build_all(){
-        $this->add_navigation("help_index", "No-CMS User Guide", $this->cms_module_path()."/index", 1);
-        $this->add_navigation("help_group", "Topic Group", $this->cms_module_path()."/".$this->cms_module_path()."_help_group", 4, "help_index");
-        $this->add_navigation("help_topic", "Topic", $this->cms_module_path()."/".$this->cms_module_path()."_help_topic", 4, "help_index");
+        $this->add_navigation("help_index", "No-CMS User Guide", $this->cms_module_path()."/help/index", 1);
+        $this->add_navigation("help_group", "Topic Group", $this->cms_module_path()."/help/data_group", 4, "help_index");
+        $this->add_navigation("help_topic", "Topic", $this->cms_module_path()."/help/data_topic", 4, "help_index");
 
         $this->db->query('
             #
