@@ -209,7 +209,7 @@ class Main extends CMS_Controller {
 
     public function management() {
     	$data = array(
-    		"show_help" => $this->cms_is_module_installed('gofrendi.noCMS.help') && $this->cms_allow_navigate('help'),
+    		"show_help" => $this->cms_is_module_installed('gofrendi.noCMS.help') && $this->cms_allow_navigate('help_index'),
     		"show_wysiwyg" => $this->cms_is_module_installed('gofrendi.noCMS.wysiwyg') && $this->cms_allow_navigate('wysiwyg_index'),
     		"show_module_generator" => $this->cms_is_module_installed('gofrendi.noCMS.moduleGenerator') && $this->cms_allow_navigate('module_generator_index'),
     	);    	

@@ -266,3 +266,5 @@ Roadmap
 * (done, tested) upload new module feature
 * (done, tested) upload new theme feature
 * (done, tested) use 'title' for blog url
+* (cancelled) change default controller programmatically and use it on $this->view
+* (done, tested) add how to change default_controller instructions

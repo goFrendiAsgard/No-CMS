@@ -35,6 +35,7 @@
 		        </div>  	          
 		      </div>
 		    </div>
+		    
 			<div id="if_no_error" class="well span9">
 				<p><strong>Installation succeed !!!</strong><br />
 				You still have some little (but important) things to do:

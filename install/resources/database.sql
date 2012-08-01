@@ -276,10 +276,10 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (15, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL),
 (16, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 0, 1, 0, NULL),
 (17, 'wysiwyg_index', 4, 'WYSIWYG', NULL, 'wysiwyg', 4, 9, 1, 0, NULL),
-(18, 'module_generator_index', 4, 'Module Generator', NULL, 'module_generator/index', 3, 10, 1, 0, NULL),
+(18, 'module_generator_index', 4, 'Module Generator', NULL, 'module_generator/index', 4, 10, 1, 0, NULL),
 (19, 'help_index', NULL, 'No-CMS User Guide', NULL, 'help/index', 1, 11, 1, 0, NULL),
-(20, 'help_help_group', 19, 'Topic Group', NULL, 'help/help_help_group', 4, 0, 1, 0, NULL),
-(21, 'help_help_topic', 19, 'Topic', NULL, 'help/help_help_topic', 4, 1, 1, 0, NULL);
+(20, 'help_group', 19, 'Topic Group', NULL, 'help/help_help_group', 4, 0, 1, 0, NULL),
+(21, 'help_topic', 19, 'Topic', NULL, 'help/help_help_topic', 4, 1, 1, 0, NULL);
 
 /*split*/
 

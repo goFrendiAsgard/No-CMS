@@ -109,7 +109,8 @@
                     				$expand.$navigation['title'], 
                     				array('class'=>$pageLinkClass));
                     }else{
-                    	$html.= $navigation['title'];
+                    	$html.= '<a class="'.$pageLinkClass.'">'.
+                    		$expand.$navigation['title'].'</a>';
                     }
                     
                     if(isset($navigation['description'])){ 

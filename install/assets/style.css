@@ -69,10 +69,12 @@ form{
     -webkit-box-shadow: 1px 1px 5px 6px #ccc;
     box-shadow:         1px 1px 5px 6px #ccc;
     z-index: 5000; 
-    display: block;    
-    position:fixed!important;
+    display: block;
 	top:60px;
 	right:0px;
+}
+,fix{
+	position:fixed!important;
 }
 
 .button_install{
