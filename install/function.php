@@ -144,6 +144,10 @@
 			$success = FALSE;
 			$errors[] = 'assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js is not writable';
 		}
+		if(!is_writable('./')){
+			$success = FALSE;
+			$errors[] = 'install directory is not writable';
+		}
 		if(!is_writable('../')){
 			if($hide_index != ""){
 				$success = FALSE;
@@ -170,7 +174,7 @@
 			return $data;
 		}else{ // installation			
 			if(!$success){ // redirect if not success
-				header('location:index.html');
+				return false;
 			}else{ // perform installation
 				
 				// connection
@@ -243,7 +247,10 @@
 					// .htaccess
 					file_put_contents('../.htaccess', '');
 				}
+				return true;
 			}
+			// put htaccess in install directory
+			file_put_contents('.htaccess', 'Deny from all');
 			
 		}
 	}

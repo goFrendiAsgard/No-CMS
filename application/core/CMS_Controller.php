@@ -7,7 +7,7 @@
  */
 class CMS_Controller extends CI_Controller {
 
-    private $is_mobile = false;
+    private $cms_is_mobile = false;
 
     public function __construct() {
         parent::__construct();
@@ -27,7 +27,7 @@ class CMS_Controller extends CI_Controller {
 
         $this->load->model('CMS_Model');
 
-        $this->is_mobile = $this->agent->is_mobile();
+        $this->cms_is_mobile = $this->agent->is_mobile();
     }
 
     /**
@@ -280,7 +280,7 @@ class CMS_Controller extends CI_Controller {
         	if (isset($custom_layout)) {
         		$layout = $custom_layout;
         	} else {
-        		$layout = $this->is_mobile ? 'mobile' : 'default';
+        		$layout = $this->cms_is_mobile ? 'mobile' : 'default';
         	}
         	
         	//let's decide the real theme and layout used by their availability

@@ -23,8 +23,16 @@ class Install extends CMS_Module_Installer{
         $this->remove_navigation("module_generator_index");        
     }
     
-    private function build_all(){        
-        $this->add_navigation("module_generator_index","Module Generator", $this->cms_module_path()."/module_generator/index", 4, 'main_management');
+    private function build_all(){  
+    	$original_directory = 'module_generator';
+    	$module_url = $this->cms_module_path();
+    	$module_main_controller_url = '';
+    	if($module_url != $original_directory){
+    		$module_main_controller_url = $module_url.'/'.$original_directory;
+    	}else{
+    		$module_main_controller_url = $module_url;
+    	}      
+        $this->add_navigation("module_generator_index","Module Generator", $module_main_controller_url."/index", 4, 'main_management');
     }
 }
 

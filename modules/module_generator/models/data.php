@@ -36,7 +36,7 @@ class data extends CMS_Model{
                     'add_insert'  => TRUE,              // Whether to add INSERT data to backup file
                     'newline'     => PHP_EOL,        // Newline character used in backup file
                   );
-            $sqls = addslashes($this->dbutil->backup($prefs));            
+            $sqls = $this->dbutil->backup($prefs);            
             $sqls = '          '.$sqls;  
             $sqls = explode(';', $sqls);
             for($i=0; $i<count($sqls)-1; $i++){
@@ -44,9 +44,9 @@ class data extends CMS_Model{
             	$sql = trim($sql);
             	$sql = str_replace(PHP_EOL, PHP_EOL.$_.$_.$_, $sql);
             	$str = '';
-            	$str .= $_.$_. '$this->db->query(\''.PHP_EOL;
+            	$str .= $_.$_. '$this->db->query("'.PHP_EOL;
             	$str .= $_.$_.$_. $sql.PHP_EOL;
-            	$str .= $_.$_. '\');'.PHP_EOL;
+            	$str .= $_.$_. '");'.PHP_EOL;
             	if($i==0){
 		            $create_table .= $str;
             	}else{
@@ -62,34 +62,42 @@ class data extends CMS_Model{
     	$_ = $this->_;
         $result = '';
         foreach($tables as $table){
-            $result .= $_.$_. '$this->db->query(\''.PHP_EOL;
+            $result .= $_.$_. '$this->db->query("'.PHP_EOL;
             $result .= $_.$_.$_. 'DROP TABLE IF EXISTS `'.$table.'`; '.PHP_EOL;
-            $result .= $_.$_. '\');'.PHP_EOL;
+            $result .= $_.$_. '");'.PHP_EOL;
         }
         return $result;
     }
     
-    public function get_add_navigation($moduleName, $tables = array()){
+    public function get_add_navigation($moduleDirectory, $tables = array()){
     	$_ = $this->_;
         $result = '';
-        $result .= $_.$_.'$this->add_navigation("'.$moduleName.'_index", "'.$moduleName.'", $this->cms_module_path()."/index", 4);'.PHP_EOL;
+        $result .= $_.$_.'$original_directory = "'.$moduleDirectory.'";'.PHP_EOL;    
+    	$result .= $_.$_.'$module_url = $this->cms_module_path();'.PHP_EOL;
+    	$result .= $_.$_.'$module_main_controller_url = "";'.PHP_EOL;
+    	$result .= $_.$_.'if($module_url != $original_directory){'.PHP_EOL;
+    	$result .= $_.$_.'	$module_main_controller_url = $module_url."/".$original_directory;'.PHP_EOL;
+    	$result .= $_.$_.'}else{'.PHP_EOL;
+    	$result .= $_.$_.'	$module_main_controller_url = $module_url;'.PHP_EOL;
+    	$result .= $_.$_.'}'.PHP_EOL;
+        $result .= $_.$_.'$this->add_navigation("'.$moduleDirectory.'_index", "'.$moduleDirectory.'", $module_main_controller_url."/index", 4);'.PHP_EOL;
         foreach($tables as $table){
-            $result .= $_.$_.'$this->add_navigation("'.$moduleName.'_'.$table.'", "Data '.$table.'", $this->cms_module_path()."/".$this->cms_module_path()."_'.$table.'", 4, "'.$moduleName.'_index");'.PHP_EOL;
+            $result .= $_.$_.'$this->add_navigation("'.$moduleDirectory.'_'.$table.'", "Data '.$table.'", $module_main_controller_url."/'.$moduleDirectory.'_'.$table.'", 4, "'.$moduleDirectory.'_index");'.PHP_EOL;
         }
         return $result;
     }
     
-    public function get_remove_navigation($moduleName, $tables = array()){
+    public function get_remove_navigation($moduleDirectory, $tables = array()){
     	$_ = $this->_;
     	$result = '';
         foreach($tables as $table){
-            $result .= $_.$_.'$this->remove_navigation("'.$moduleName.'_'.$table.'");'.PHP_EOL;
+            $result .= $_.$_.'$this->remove_navigation("'.$moduleDirectory.'_'.$table.'");'.PHP_EOL;
         }
-        $result .= $_.$_.'$this->remove_navigation("'.$moduleName.'_index");'.PHP_EOL;
+        $result .= $_.$_.'$this->remove_navigation("'.$moduleDirectory.'_index");'.PHP_EOL;
         return $result;
     }
     
-    public function get_functions($moduleName, $tables = array()){
+    public function get_functions($moduleDirectory, $tables = array()){
     	$_ = $this->_;
     	
     	$this->load->helper('inflector');
@@ -114,7 +122,7 @@ class data extends CMS_Model{
         		}
         	}
         	
-            $result .= $_.'public function '.$moduleName.'_'.$table.'(){'.PHP_EOL;
+            $result .= $_.'public function '.$moduleDirectory.'_'.$table.'(){'.PHP_EOL;
             $result .= $_.$_.'$crud = new grocery_CRUD();'.PHP_EOL;
             $result .= $_.$_.PHP_EOL;
             $result .= $_.$_.'// table name'.PHP_EOL;
@@ -132,7 +140,7 @@ class data extends CMS_Model{
             $result .= $_.$_.PHP_EOL;
             $result .= $_.$_.'// render'.PHP_EOL;
             $result .= $_.$_.'$output = $crud->render();'.PHP_EOL;
-            $result .= $_.$_.'$this->view("grocery_CRUD", $output, "'.$moduleName.'_'.$table.'");'.PHP_EOL;
+            $result .= $_.$_.'$this->view("grocery_CRUD", $output, "'.$moduleDirectory.'_'.$table.'");'.PHP_EOL;
             $result .= $_.'}'.PHP_EOL.PHP_EOL;
         }
         return $result;

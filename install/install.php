@@ -1,9 +1,23 @@
 <head>
 	<?php 
+	include('function.php');
+	$result = check_all();
+	if(!$result['success']){
+		header('location:index.html');
+	}
+	
 	$site_url = '../';
 	if(!isset($_POST['hide_index'])){
 		$site_url .= 'index.php/';
 	} 
+	$adm_username = '';
+	if(isset($_POST['adm_username'])){
+		$adm_username = $_POST['adm_username'];
+	}
+	$adm_password = '';
+	if(isset($_POST['adm_password'])){
+		$adm_password = $_POST['adm_password'];
+	}
 	?>
 	<link rel="stylesheet" type="text/css" href="assets/style.css"></link>
 	<link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap-all.min.css" />
@@ -42,8 +56,8 @@
 					'dataType': 'json',
 					'async': false,
 					'data':{
-							'identity': '<?php echo $_POST['adm_username'];?>',
-							'password': '<?php echo $_POST['adm_password'];?>'
+							'identity': '<?php echo $adm_username;?>',
+							'password': '<?php echo $adm_password;?>'
 						},
 					'success': function(response){
 							if(!response['success']){
@@ -122,13 +136,8 @@
 					</li>
 					<li>If manual installation doesn't work, you can ask in forum, open an issue in github, or put comment in No-CMS blog</li>
 				</ol>
-				<div id="php_error" class="message"><?php
-				    include('function.php');
-				    $error = check_all(true);
-				    if($error==''){
-				    	file_put_contents('.htaccess', 'Deny from all');
-				    }
-				    echo $error;		    
+				<div id="php_error" class="message"><?php				    
+				    check_all(true);
 				?></div>
 			</div>
 		

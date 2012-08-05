@@ -33,9 +33,18 @@ class Install extends CMS_Module_Installer {
     }
     
     private function build_all(){
-        $this->add_navigation("help_index", "No-CMS User Guide", $this->cms_module_path()."/help/index", 1);
-        $this->add_navigation("help_group", "Topic Group", $this->cms_module_path()."/help/data_group", 4, "help_index");
-        $this->add_navigation("help_topic", "Topic", $this->cms_module_path()."/help/data_topic", 4, "help_index");
+    	$original_directory = 'help';
+    	$module_url = $this->cms_module_path();
+    	$module_main_controller_url = '';
+    	if($module_url != $original_directory){
+    		$module_main_controller_url = $module_url.'/'.$original_directory;
+    	}else{
+    		$module_main_controller_url = $module_url;
+    	}
+    	
+        $this->add_navigation("help_index", "No-CMS User Guide", $module_main_controller_url."/index", 1);
+        $this->add_navigation("help_group", "Topic Group", $module_main_controller_url."/data_group", 4, "help_index");
+        $this->add_navigation("help_topic", "Topic", $module_main_controller_url."/data_topic", 4, "help_index");
 
         $this->db->query('
             #

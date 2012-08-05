@@ -88,12 +88,21 @@ class Install extends CMS_Module_Installer {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
          ");
         
-        $this->add_navigation("blog_index","Blog", $this->cms_module_path()."/blog");
-        $this->add_navigation("blog_management", "Manage Blog", $this->cms_module_path()."/blog/manage", 4);
-        $this->add_navigation("blog_category", "Manage Category", $this->cms_module_path()."/blog/category", 4, "blog_management");
-        $this->add_navigation("blog_article", "Manage Article", $this->cms_module_path()."/blog/article", 4, "blog_management");
-        $this->add_navigation("blog_photo", "Manage Photo", $this->cms_module_path()."/blog/photo", 4, "blog_management");
-        $this->add_navigation("blog_comment", "Manage Comment", $this->cms_module_path()."/blog/comment", 4, "blog_management");
+        $original_directory = 'blog';
+        $module_url = $this->cms_module_path();
+        $module_main_controller_url = '';
+        if($module_url != $original_directory){
+        	$module_main_controller_url = $module_url.'/'.$original_directory;
+        }else{
+        	$module_main_controller_url = $module_url;
+        }
+        
+        $this->add_navigation("blog_index","Blog", $module_main_controller_url);
+        $this->add_navigation("blog_management", "Manage Blog", $module_main_controller_url."/manage", 4);
+        $this->add_navigation("blog_category", "Manage Category", $module_main_controller_url."/category", 4, "blog_management");
+        $this->add_navigation("blog_article", "Manage Article", $module_main_controller_url."/article", 4, "blog_management");
+        $this->add_navigation("blog_photo", "Manage Photo", $module_main_controller_url."/photo", 4, "blog_management");
+        $this->add_navigation("blog_comment", "Manage Comment", $module_main_controller_url."/comment", 4, "blog_management");
     }
 }
 

@@ -5,9 +5,9 @@
  *
  * @author theModuleGenerator
  */
-class @moduleName extends CMS_Controller {
+class @moduleDirectory extends CMS_Controller {
     public function index(){
-        $this->view($this->cms_module_path().'/@moduleName_index', NULL, '@moduleName_index');
+        $this->view($this->cms_module_path().'/@moduleDirectory_index', NULL, '@moduleDirectory_index');
     } 
 
 @functions

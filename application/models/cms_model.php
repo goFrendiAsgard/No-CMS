@@ -250,7 +250,7 @@ class CMS_Model extends CI_Model {
      * @param  navigation_name
      * @desc  return parent of navigation_name's detail, only used for get_navigation_path
      */
-    private final function _get_navigation_parent($navigation_name) {
+    private final function cms_get_navigation_parent($navigation_name) {
         if (!$navigation_name)
             return false;
         $query = $this->db->query(
@@ -280,7 +280,7 @@ class CMS_Model extends CI_Model {
      * @param  navigation_name
      * @desc  return navigation detail, only used for get_navigation_path
      */
-    private final function _get_navigation($navigation_name) {
+    private final function cms_get_navigation($navigation_name) {
         if (!$navigation_name)
             return false;
         $query = $this->db->query(
@@ -310,8 +310,8 @@ class CMS_Model extends CI_Model {
     public final function cms_get_navigation_path($navigation_name = NULL) {
         if (!isset($navigation_name))
             return array();
-        $result = array($this->_get_navigation($navigation_name));
-        while ($parent = $this->_get_navigation_parent($navigation_name)) {
+        $result = array($this->cms_get_navigation($navigation_name));
+        while ($parent = $this->cms_get_navigation_parent($navigation_name)) {
             $result[] = $parent;
             $navigation_name = $parent["navigation_name"];
         }
@@ -371,13 +371,13 @@ class CMS_Model extends CI_Model {
      * @param  navigation, navigations
      * @desc  only used in allow_navigate
      */
-    private final function _allow_navigate($navigation, $navigations = NULL) {        
+    private final function cms_private_allow_navigate($navigation, $navigations = NULL) {        
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
         for ($i=0; $i<count($navigations); $i++) {
             if ($navigation == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"]==1){
                 return true;            
-            }else if ($this->_allow_navigate($navigation, $navigations[$i]["child"])){  
+            }else if ($this->cms_private_allow_navigate($navigation, $navigations[$i]["child"])){  
                 return true;
             }
         }
@@ -390,7 +390,7 @@ class CMS_Model extends CI_Model {
      * @desc  check if user authorized to navigate into a page specified in parameter
      */
     public final function cms_allow_navigate($navigation) {
-        return $this->_allow_navigate($navigation);
+        return $this->cms_private_allow_navigate($navigation);
     }
 
     /**
