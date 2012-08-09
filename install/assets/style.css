@@ -80,3 +80,12 @@ form{
 .button_install{
     display:none;
 }
+
+.warning_display{
+    position : absolute;
+    left : 600px;
+    width : 400px;    
+}
+#preference, #admin{
+    display:none;
+}

@@ -204,10 +204,12 @@
 						array($db_server,$db_port,$db_username,$db_password,$db_schema)
 				);
 				file_put_contents('../application/config/database.php',$str);
+				@chmod('../application/config/database.php', 0555);
 				
 				// routes.php
 				$str = file_get_contents('./resources/routes.php');
 				file_put_contents('../application/config/routes.php',$str);
+				@chmod('../application/config/routes.php', 0555);
 				
 				// jquery.ckeditor.config.js
 				$str = file_get_contents('./resources/jquery.ckeditor.config.js');
@@ -217,7 +219,7 @@
 						array($base_path)
 				);
 				file_put_contents('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js', $str);
-				
+				@chmod('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js', 0555);
 				
 				if($hide_index != ""){
 					// config.php
@@ -227,7 +229,8 @@
 							array('')
 					);
 					file_put_contents('../application/config/config.php', $str);
-					 
+					@chmod('../application/config/config.php', 0555);
+					
 					// .htaccess					
 					$str = file_get_contents('./resources/htaccess');
 					$str = replace($str,
@@ -235,6 +238,7 @@
 							array($base_path)
 					);
 					file_put_contents('../.htaccess', $str);
+					@chmod('../.htaccess', 0555);
 				}else{
 					// config.php
 					$str = file_get_contents('./resources/config.php');
@@ -243,14 +247,18 @@
 							array('index.php')
 					);
 					file_put_contents('../application/config/config.php', $str);
+					@chmod('../application/config/config.php', 0555);
 					 
 					// .htaccess
 					file_put_contents('../.htaccess', '');
+					@chmod('../.htaccess', 0555);
 				}
+				// put htaccess in install directory
+				file_put_contents('.htaccess', 'Deny from all');
+				@chmod('.htaccess', 0555);
 				return true;
 			}
-			// put htaccess in install directory
-			file_put_contents('.htaccess', 'Deny from all');
+			
 			
 		}
 	}
