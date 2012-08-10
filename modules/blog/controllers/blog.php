@@ -5,152 +5,51 @@
  * @author gofrendi
  */
 class Blog extends CMS_Controller {
-    //put your code here
+	
+	private $article_per_page;
+	
+	public function __construct(){
+		parent::__construct();
+		$this->article_per_page = 5;
+	}
+	
     public function index($article_url=NULL){
-    	$this->load->helper('inflector');
+    	$this->load->model($this->cms_module_path().'/blog_model');
     	
         $category = $this->input->post('category');
         $search = $this->input->post('search');
-        $words = $search? explode(' ', $search) : array();
+        $page = $this->input->post('page');        
+        $single_article = isset($article_url);
         
-        $data = array();
-        $data['category'] = $category? $category : '';
-        $data['search'] = $search? $search : '';
+        $data['only_show_article'] = $this->input->post('only_article');
         
-        $data['available_category'] = array(''=>'No Category');
-        $SQL = "SELECT category_name FROM blog_category";
-        $query = $this->db->query($SQL);
-        foreach($query->result() as $row){
-        	$data['available_category'][$row->category_name] = $row->category_name;
-        }
-        
-        $data['article'] = array();
-        
-        $where_category = isset($category) && ($category!="")? "article_id IN 
-            (SELECT article_id FROM blog_category_article, blog_category 
-                WHERE blog_category.category_id = blog_category_article.category_id
-                 AND category_name ='".addslashes($category)."'
-            )" : "TRUE";
-        
-        if($search){
-            $where_search = "(FALSE ";
-            foreach($words as $word){
-                $where_search .= " OR (article_title LIKE '%".addslashes($word)."%' OR content LIKE '%".addslashes($word)."%')";
-            }
-            $where_search .=")";
+        $data['category'] = $category;
+        $data['search'] = $search;
+        $data['available_category'] = $this->blog_model->get_available_category();
+        $data['single_article'] = $single_article;
+        if($single_article){
+        	$data['article'] = $this->blog_model->get_single_article($article_url);
         }else{
-            $where_search = "TRUE";
+        	$limit = $this->article_per_page;
+        	$offset = $this->article_per_page*$page;
+        	$data['articles'] = $this->blog_model->get_articles($limit, $offset, 
+        			$category, $search);
         }
-        
-        $where_article_url = isset($article_url)?"article_title LIKE '".addslashes(humanize($article_url))."'":"TRUE";
-        
-                
-        $SQL = "SELECT article_id, article_title, content, date, allow_comment,
-                    real_name AS author
-                FROM blog_article
-                LEFT JOIN cms_user ON (cms_user.user_id = blog_article.author_user_id)
-                WHERE 
-                    $where_category AND
-                    $where_search AND $where_article_url";
-        
-        $query = $this->db->query($SQL);
-        foreach($query->result() as $row){
-            $separator = '<div style="page-break-after: always;">
-	<span style="display: none;">&nbsp;</span></div>';
-            if(isset($article_url)){
-                $contents = explode($separator, $row->content);
-                $content = implode('',$contents);
-            }else{
-                $contents = explode($separator, $row->content);
-                $content = $contents[0];
-            }
-            
-            $result = array(
-            	"id" => $row->article_id,
-                "title" => $row->article_title,
-            	"article_url" => underscore($row->article_title),
-                "content" => $content,
-                "author" => $row->author,
-                "date" => $row->date,                
-                "allow_comment" => isset($article_url) && $row->allow_comment,
-                "comments" => $this->get_comments($row->article_id),
-                "photos" => $this->get_photos($row->article_id)
-            );
-            $data['article'][] = $result;
-        }
-        
-        $data['view_readmore'] = !isset($article_url);
         
         $this->view("blog_view", $data, 'blog_index');
     }
     
     public function add_comment($article_id){
-    	$SQL = "SELECT allow_comment FROM blog_article WHERE article_id = $article_id";
-    	$query = $this->db->query($SQL);
-    	$row = $query->row();
-    	if(isset($row->allow_comment) && ($row->allow_comment == 1)){
-    		$cms_user_id = $this->cms_userid();
-    		$name = $this->input->post('name');
-    		$email = $this->input->post('email');
-    		$website = $this->input->post('website');
-    		$content = $this->input->post('content');
-    		
-    		$data = array(
-    			'article_id' => $article_id,
-    			'name' => $name,
-    			'email' => $email,
-    			'website' => $website,
-    			'content' => $content    			
-    		);
-    		if(isset($cms_user_id) && ($cms_user_id>0)){
-    			$data['author_user_id'] = $cms_user_id;
-    		}
-    		$this->db->insert('blog_comment', $data);
-    	}
-    	redirect($this->cms_module_path('gofrendi.blog').'/index/'.$article_id);
-    }
-    
-    private function get_photos($article_id){
-    	$SQL = "SELECT url FROM blog_photo WHERE article_id = '".$article_id."'";
-    	$query = $this->db->query($SQL);
+    	$this->load->model($this->cms_module_path().'/blog_model');
     	
-    	$data = array();
-    	foreach($query->result() as $row){
-    		$result = array(
-    			"url" => $row->url
-    		);
-    		$data[] = $result;
-    	}    	
-    	return $data;
-    }
-    
-    private function get_comments($article_id){
-    	$SQL = "SELECT comment_id, date, author_user_id, name, email, website, content
-    		FROM blog_comment
-    		WHERE article_id = '$article_id'";
-    	$query = $this->db->query($SQL);
-    	
-    	$data = array();
-    	foreach($query->result() as $row){
-    		
-    		if(isset($row->author_user_id)){
-    			$SQL_user = "SELECT real_name FROM cms_user WHERE user_id = ".$row->author_user_id;
-    			$query_user = $this->db->query($SQL_user);
-    			$row_user = $query_user->row();
-    			$name = $row_user->real_name;
-    		}else{
-    			$name = $row->name;
-    		}
-    		$this->load->helper('url');
-    		$result = array(
-    	                "date" => date('Y-m-d'),
-    	                "content" => $row->content,
-    	                "name" => $name,
-    	                "website" => prep_url($row->website)
-    		);
-    		$data[] = $result;
+    	$name = $this->input->post('name', TRUE);
+    	$email = $this->input->post('email', TRUE);
+    	$website = $this->input->post('website', TRUE);
+    	$content = $this->input->post('content', TRUE);
+    	if($content){
+    		$this->blog_model->add_comment($article_id, $name, $email, $website, $content);
     	}
-    	return $data;
+    	redirect($this->cms_module_path('gofrendi.blog').'/blog/index/'. $this->blog_model->get_article_url($article_id));
     }
     
     public function manage(){
@@ -241,7 +140,7 @@ class Blog extends CMS_Controller {
     
     public function before_insert_article($post_array){
         $post_array['author_user_id'] = $this->cms_userid();
-        $post_array['date'] = date('Y-m-d');
+        $post_array['date'] = date('Y-m-d H:i:s');
         return $post_array;
     }
     
