@@ -11,7 +11,7 @@
 		$topic = $topics[$j];
 		echo '<li>';
 		echo anchor(
-			site_url($cms["module_path"]."/topic/".$topic['underscored_title']),
+			site_url($cms["module_path"]."/topic/".$topic['url']),
 			$topic['title']);
 		echo '</li>';
 	}

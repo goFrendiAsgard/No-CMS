@@ -40,12 +40,14 @@ class Install extends CMS_Module_Installer {
             CREATE TABLE IF NOT EXISTS `blog_article` (
               `article_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
               `article_title` varchar(100) NOT NULL,
-              `date` DATE NOT NULL,
+        	  `article_url` varchar(100) NOT NULL,
+              `date` DATETIME NOT NULL,
               `author_user_id` int(20) unsigned NOT NULL,
               `content` text,
               `allow_comment` tinyint(3) unsigned NOT NULL DEFAULT '0',
               PRIMARY KEY (`article_id`),
-        	  UNIQUE KEY (`article_title`)
+        	  UNIQUE KEY (`article_title`),
+        	  UNIQUE KEY (`article_url`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
          ");
         $this->db->query("

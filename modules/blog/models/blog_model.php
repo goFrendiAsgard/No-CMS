@@ -1,51 +1,31 @@
 <?php
 class Blog_Model extends CMS_Model{
 	
-	private $separator = '';
-	private $restricted_keyword = array(
-			array(
-				'?', 
-				'&',
-			),
-			array( 
-				'%20q', 
-				'%20and',
-			)
-	);
-	
+	private $separator = '';	
 	public function __construct(){
 		parent::__construct();
 		$this->separator = '<div style="page-break-after: always;">'.PHP_EOL.'	<span style="display: none;">&nbsp;</span></div>';
 	}
 	
-	private function url_to_title($url){
-		$this->load->helper('inflector');		
-		$title = humanize($url);
-		$title = str_replace($this->restricted_keyword[1], $this->restricted_keyword[0], $url);
-		return $title;
-	}
-	
-	private function title_to_url($title){
-		$this->load->helper('inflector');
-		$url = str_replace($this->restricted_keyword[0], $this->restricted_keyword[1], $title);
-		$url = underscore($url);
-		return $url;
+	public function get_count_article_url($article_url){
+		$SQL = "SELECT article_id FROM blog_article WHERE article_url ='".addslashes($article_url)."'";
+		$query = $this->db->query($SQL);
+		return $query->num_rows();
 	}
 	
 	public function get_article_url($article_id){
 		$SQL = "
 			SELECT
-				article_id, article_title
+				article_id, article_url
 			FROM blog_article
 			WHERE article_id = $article_id";
 		$query = $this->db->query($SQL);
 		if($query->num_rows()>0){
 			$row = $query->row();
-			return $this->title_to_url($row->article_title);
+			return $row->article_url;
 		}else{
 			return false;
-		}
-		
+		}		
 	}
 	
 	
@@ -61,11 +41,11 @@ class Blog_Model extends CMS_Model{
 	
 	public function get_single_article($article_url){
 		$where_article_url = isset($article_url)?
-			"article_title LIKE '".addslashes($this->url_to_title($article_url))."'":"TRUE";
+			"article_url = '".addslashes($article_url)."'":"TRUE";
 		
 		$SQL = "
 			SELECT 
-				article_id, article_title, content, date, allow_comment,
+				article_id, article_title, article_url, content, date, allow_comment,
 				real_name AS author
 			FROM blog_article
 			LEFT JOIN cms_user ON (cms_user.user_id = blog_article.author_user_id)
@@ -79,7 +59,7 @@ class Blog_Model extends CMS_Model{
 			$result = array(
 					"id" => $row->article_id,
 					"title" => $row->article_title,
-					"article_url" => $this->title_to_url($row->article_title),
+					"article_url" => $row->article_url,
 					"content" => $content,
 					"author" => $row->author,
 					"date" => $row->date,
@@ -117,7 +97,7 @@ class Blog_Model extends CMS_Model{
 		
 		$SQL = "
 			SELECT
-				article_id, article_title, content, date, allow_comment, 
+				article_id, article_title, article_url, content, date, allow_comment, 
 				real_name AS author
 			FROM blog_article
 			LEFT JOIN cms_user ON (cms_user.user_id = blog_article.author_user_id)
@@ -135,7 +115,7 @@ class Blog_Model extends CMS_Model{
 			$data[] = array(
 					"id" => $row->article_id,
 					"title" => $row->article_title,
-					"article_url" => $this->title_to_url($row->article_title),
+					"article_url" => $row->article_url,
 					"content" => $content,
 					"author" => $row->author,
 					"date" => $row->date,

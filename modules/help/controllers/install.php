@@ -54,9 +54,11 @@ class Install extends CMS_Module_Installer {
             CREATE TABLE `help_group` (
               `id` int(11) NOT NULL AUTO_INCREMENT,
               `name` varchar(60) NOT NULL,
+        	  `url` varchar(60) NOT NULL,
         	  `content` text,
               PRIMARY KEY (`id`),
-              UNIQUE KEY `name` (`name`)
+              UNIQUE KEY `name` (`name`),
+        	  UNIQUE KEY `url`(`url`)
             ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1
         ');
         $this->db->query('
@@ -68,8 +70,11 @@ class Install extends CMS_Module_Installer {
               `id` int(11) NOT NULL AUTO_INCREMENT,
               `group_id` int(11) NOT NULL,
               `title` varchar(60) NOT NULL,
+        	  `url` varchar(60) NOT NULL,
               `content` text NOT NULL,
               PRIMARY KEY (`id`),
+        	  UNIQUE KEY `title`(`title`),
+        	  UNIQUE KEY `url`(`url`),
               KEY `group_id` (`group_id`),
               CONSTRAINT `help_topic_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `help_group` (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=latin1

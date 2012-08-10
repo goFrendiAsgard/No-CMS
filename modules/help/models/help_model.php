@@ -2,20 +2,33 @@
 
 class Help_Model extends CMS_Model{
 	
-	public function group($underscored_name = NULL){
-		$this->load->helper('inflector');
+	public function count_group($url){
+		$SQL = "SELECT id FROM help_group WHERE url = '".addslashes($url)."'";
+		$query = $this->db->query($SQL);
+		return $query->num_rows();
+	}
+	
+	public function count_topic($url){
+		$SQL = "SELECT id FROM help_topic WHERE url = '".addslashes($url)."'";
+		$query = $this->db->query($SQL);
+		return $query->num_rows();
+	}
+	
+	public function group($url = NULL){
 		// wheres
-		$where_name = isset($underscored_name)?
-		"(name LIKE '".addslashes(humanize($underscored_name))."')" : "TRUE";
+		$where_name = isset($url)?
+		"(url = '".addslashes($url)."')" : "TRUE";
 		
-		$SQL = "SELECT id, name, content FROM help_group WHERE $where_name ORDER BY id";
+		$SQL = "SELECT id, url, name, content FROM help_group WHERE $where_name ORDER BY id";
 		$query = $this->db->query($SQL);
 		$data = array();
 		foreach($query->result() as $row){
+			$topics = $this->topic(NULL, $row->id);
 			$data[] = array(
 					"name" => $row->name,
-					"underscored_name" => underscore($row->name),
-					"topics" => $this->topic(NULL, $row->id),
+					"url" => $row->url,
+					"topic_count" => count($topics),
+					"topics" => $topics,
 					"content" => $row->content,
 				);
 		}
@@ -23,7 +36,6 @@ class Help_Model extends CMS_Model{
 	}
 	
 	public function topic($keyword = NULL, $group_id = NULL){
-		$this->load->helper('inflector');
 		// wheres
 		$where_keyword = isset($keyword)?
 			"(title LIKE '%".addslashes($keyword).
@@ -31,7 +43,7 @@ class Help_Model extends CMS_Model{
 		$where_group_id = isset($group_id)?
 			"(group_id = '".addslashes($group_id)."')" : "TRUE";
 		
-		$SQL = "SELECT title
+		$SQL = "SELECT title, url
 			FROM help_topic 
 			WHERE $where_keyword AND $where_group_id ORDER BY id";
 		$query = $this->db->query($SQL);
@@ -39,20 +51,19 @@ class Help_Model extends CMS_Model{
 		foreach($query->result() as $row){
 			$data[] = array(
 					"title" => $row->title,
-					"underscored_title" => underscore($row->title)
+					"url" => $row->url
 				);
 		}
 		return $data;		
 		
 	}
 	
-	public function topic_content($underscored_title = NULL){
-		$this->load->helper('inflector');
+	public function topic_content($url = NULL){
 		// wheres
-		$where_title = isset($underscored_title)?
-		"(title LIKE '".addslashes(humanize($underscored_title))."')" : "TRUE";
+		$where_title = isset($url)?
+		"(url LIKE '".addslashes($url)."')" : "TRUE";
 	
-		$SQL = "SELECT title, content
+		$SQL = "SELECT title, content, url
 		FROM help_topic
 		WHERE $where_title ORDER BY id";
 		$query = $this->db->query($SQL);
@@ -60,7 +71,7 @@ class Help_Model extends CMS_Model{
 		foreach($query->result() as $row){
 			$data[] = array(
 					"title" => $row->title,
-					"underscored_title" => underscore($row->title),
+					"url" => $row->url,
 					"content" => $row->content,
 			);
 		}

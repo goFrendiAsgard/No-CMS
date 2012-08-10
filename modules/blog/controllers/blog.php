@@ -18,7 +18,8 @@ class Blog extends CMS_Controller {
     	
         $category = $this->input->post('category');
         $search = $this->input->post('search');
-        $page = $this->input->post('page');        
+        $page = $this->input->post('page');  
+        if(!$page) $page = 0;      
         $single_article = isset($article_url);
         
         $data['only_show_article'] = $this->input->post('only_article');
@@ -61,9 +62,10 @@ class Blog extends CMS_Controller {
 
         $crud->set_table('blog_article');
         $crud->columns('article_title','content', 'Categories', 'author_user_id', 'date', 'allow_comment');
-        $crud->edit_fields('article_title','content', 'Categories', 'date', 'author_user_id', 'allow_comment');
-        $crud->add_fields('article_title','content', 'Categories', 'date', 'author_user_id', 'allow_comment');
+        $crud->edit_fields('article_title', 'article_url','content', 'Categories', 'date', 'author_user_id', 'allow_comment');
+        $crud->add_fields('article_title', 'article_url','content', 'Categories', 'date', 'author_user_id', 'allow_comment');
         $crud->display_as('article_title','Title')
+        		 ->display_as('article_url', 'URL')
                  ->display_as('content','Content')
                  ->display_as('date','Date Created')
                  ->display_as('author_user_id','Author');
@@ -75,6 +77,7 @@ class Blog extends CMS_Controller {
         
         $crud->change_field_type('author_user_id', 'hidden');
         $crud->change_field_type('date', 'hidden');
+        $crud->change_field_type('article_url', 'hidden');
         $crud->change_field_type('allow_comment', 'true_false');
         
         $crud->add_action('Photos', base_url().'modules/blog/assets/images/photo.png', 'blog/photo');
@@ -139,8 +142,21 @@ class Blog extends CMS_Controller {
     }
     
     public function before_insert_article($post_array){
+    	$this->load->helper('url');
+    	$this->load->model($this->cms_module_path().'/blog_model');
+    	$url = url_title($post_array['article_title']);
+    	$count_url = $this->blog_model->get_count_article_url($url);
+    	if($count_url>0){
+    		$index = $count_url;
+    		while($this->blog_model->get_count_article_url($url.'_'.$index)>0){
+    			$index++;
+    		}
+    		$url .= '_'.$index;
+    	}
+    	    	
         $post_array['author_user_id'] = $this->cms_userid();
         $post_array['date'] = date('Y-m-d H:i:s');
+        $post_array['article_url'] = $url;
         return $post_array;
     }
     

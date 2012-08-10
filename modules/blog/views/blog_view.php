@@ -11,24 +11,27 @@
 	</style>
 	<?php if(!$single_article){?>
 		<script type="text/javascript">
+			var PAGE = 0;
 			$(window).scroll(function(){
 			    if($(window).scrollTop() == $(document).height() - $(window).height())
 			    {
+			    	PAGE ++;
+			        $("#blog_content").append('<span id="blog_content_'+PAGE+'"></span>');
 			        $('div#loadmoreajaxloader').show();
+			        
 			        $.ajax({
 				        type: "POST",
 				        data: {
-					        "page" : $("#blog_page").val(),
+					        "page" : PAGE,
 					        "only_article" : true,
 					    },
 				        url: "<?php echo base_url($cms['module_path'].'/blog/index?_only_content=true'); ?>",
 				        success: function(html)
 				        {
-				            if(html)
+							if(html)
 				            {
-				                $("#blog_content").append(html);
+				                $("#blog_content_"+PAGE).after(html);
 				                $('div#loadmoreajaxloader').hide();
-				                $("#blog_page").val($("#blog_page").val()+1);
 				            }else
 				            {
 				                $('div#loadmoreajaxloader').html('<center>No more posts to show.</center>');
@@ -62,7 +65,6 @@ if(!$single_article){
 	
 	if(!$only_show_article){
 	    echo '</div>';
-	    echo '<input id="blog_page" value="1" type="hidden" />';
 		echo '<div id="loadmoreajaxloader" style="display:none;">
 			<center><img src="'.base_url('modules/'.$cms['module_path'].'/assets/images/ajax-loader.gif').'" /></center></div>';
 	}
