@@ -23,6 +23,7 @@ class Blog extends CMS_Controller {
         $single_article = isset($article_url);
         
         $data['only_show_article'] = $this->input->post('only_article');
+        $data['allow_edit'] = $this->cms_allow_navigate('blog_article');
         
         $data['category'] = $category;
         $data['search'] = $search;

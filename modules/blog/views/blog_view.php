@@ -12,33 +12,40 @@
 	<?php if(!$single_article){?>
 		<script type="text/javascript">
 			var PAGE = 0;
+			var LOADING = false;
 			$(window).scroll(function(){
-			    if($(window).scrollTop() == $(document).height() - $(window).height())
-			    {
-			    	PAGE ++;
-			        $("#blog_content").append('<span id="blog_content_'+PAGE+'"></span>');
-			        $('div#loadmoreajaxloader').show();
-			        
-			        $.ajax({
-				        type: "POST",
-				        data: {
-					        "page" : PAGE,
-					        "only_article" : true,
-					    },
-				        url: "<?php echo base_url($cms['module_path'].'/blog/index?_only_content=true'); ?>",
-				        success: function(html)
-				        {
-							if(html)
-				            {
-				                $("#blog_content_"+PAGE).after(html);
-				                $('div#loadmoreajaxloader').hide();
-				            }else
-				            {
-				                $('div#loadmoreajaxloader').html('<center>No more posts to show.</center>');
-				            }
-				        }
-			        });
-			    }
+				if(!LOADING){					
+				    if($(window).scrollTop() == $(document).height() - $(window).height())
+				    {
+				    	LOADING = true;
+				    	PAGE ++;
+				        $("#blog_content").append('<span id="blog_content_'+PAGE+'"></span>');
+				        $('div#loadmoreajaxloader').show();
+				        
+				        $.ajax({
+					        async: false,
+					        type: "POST",
+					        data: {
+						        "page" : PAGE,
+						        "only_article" : true,
+						    },
+					        url: "<?php echo base_url($cms['module_path'].'/blog/index?_only_content=true'); ?>",
+					        success: function(html)
+					        {
+								if(html)
+					            {
+					                $("#blog_content_"+PAGE).after(html);
+					                $('div#loadmoreajaxloader').hide();
+					            }else
+					            {
+					                $('div#loadmoreajaxloader').html('<center>No more posts to show.</center>');
+					            }
+					        }
+				        });
+				        LOADING = false;
+				    }
+				    
+				}
 			});
 			
 		</script>
@@ -49,6 +56,12 @@
 
 if(!$only_show_article){
 	show_search_form($cms, $available_category, $category, $search);
+	if($allow_edit){
+		echo '<p>';
+		echo anchor($cms['module_path'].'/blog/article/add/',
+				'Add New Article', array("class"=>"btn"));
+		echo '</p>';
+	}
 }
 
 if(!$single_article){
@@ -59,7 +72,7 @@ if(!$single_article){
 	// blog content
 	if($articles !== FALSE){
 		foreach($articles as $article){
-			show_article($cms, $article, false);
+			show_article($cms, $article, false, $allow_edit);
 		}
 	}
 	
@@ -70,13 +83,13 @@ if(!$single_article){
 	}
 }else{
 	if($article !== FALSE){
-		show_article($cms, $article, true);
+		show_article($cms, $article, true, $allow_edit);
 	}
 }
 
 // FUNCTIONS ===================================================================
 
-function show_article($cms, $article, $single=true){
+function show_article($cms, $article, $single=true, $allow_edit = false){
 	if($single){
 		echo '<h2>'.$article['title'].'</h2>'.br();
 	}else{
@@ -100,11 +113,14 @@ function show_article($cms, $article, $single=true){
 		echo br();
 		echo anchor($cms['module_path'].'/blog/index/'.$article['article_url'],
 				'read more', array("class"=>"btn btn-primary"));
-		echo '<hr />';
-	}else{
-		echo '<hr />';
-		show_comment($cms, $article);
+		echo '&nbsp;';
 	}
+	if($allow_edit){
+		echo anchor($cms['module_path'].'/blog/article/edit/'.$article['id'],
+				'edit', array("class"=>"btn"));
+	}
+	echo '<hr />';
+	if($single)	show_comment($cms, $article);
 	
 }
 
