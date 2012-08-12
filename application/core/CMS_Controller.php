@@ -7,8 +7,6 @@
  */
 class CMS_Controller extends CI_Controller {
 
-    private $cms_is_mobile = false;
-
     public function __construct() {
         parent::__construct();
 
@@ -17,17 +15,20 @@ class CMS_Controller extends CI_Controller {
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
-        $this->load->library('user_agent');
-        //$this->load->library('session');
         $this->load->library('form_validation');
+        
+        // if there is old_url, than save it
+        $this->load->library('session');
+        $old_url = $this->session->flashdata('cms_old_url');
+        if (!is_bool($old_url)) {
+        	$this->session->keep_flashdata('cms_old_url');
+        }
         /* ------------------ */
 
         $this->load->library('grocery_CRUD');
         $this->load->library('template');
 
         $this->load->model('CMS_Model');
-
-        $this->cms_is_mobile = $this->agent->is_mobile();
     }
 
     /**
@@ -171,18 +172,11 @@ class CMS_Controller extends CI_Controller {
     protected final function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL, $custom_theme = NULL, $custom_layout = NULL, $return_as_string = FALSE) {
     	    	
     	$result = NULL;
-        
-        // if there is old_url, than save it
-        $this->load->library('session');
-        $old_url = $this->session->flashdata('cms_old_url');
-        if (!is_bool($old_url)) {
-        	$this->session->keep_flashdata('cms_old_url');
-        }
 
         $this->load->helper('url');
 
-        //it can be called as $this->view('view_path', $data, true);
-        //or $this->view('view_path', $data, $navigation_name, true);
+        // this method can be called as $this->view('view_path', $data, true);
+        // or $this->view('view_path', $data, $navigation_name, true);
         if (is_bool($navigation_name) && !isset($privilege_required) && !isset($custom_theme) && !isset($custom_layout)) {
             $return_as_string = $navigation_name;
             $navigation_name = NULL;
@@ -197,7 +191,7 @@ class CMS_Controller extends CI_Controller {
             $custom_layout = NULL;
         }
 
-        //if no navigation_name provided, just guess it through the url
+        // if no navigation_name provided, just guess it through the url
         if (!isset($navigation_name)) {
             $uriString = $this->uri->uri_string();
             $SQL = "SELECT navigation_name FROM cms_navigation WHERE url = '" . addslashes($uriString) . "'";
@@ -208,26 +202,26 @@ class CMS_Controller extends CI_Controller {
             }
         }
 
-        //check allowance
+        // check allowance
         if (!isset($navigation_name) || $this->cms_allow_navigate($navigation_name)) {
             if (!isset($privilege_required)) {
                 $allowed = true;
             } else if (count($privilege_required) > 0) {
-                //privilege_required is array
+                // privilege_required is array
                 $allowed = true;
                 foreach ($privilege_required as $privilege) {
                     $allowed = $allowed && $this->cms_have_privilege($privilege);
                     if (!$allowed)
                         break;
                 }
-            }else {//privilege_required is string
+            }else {// privilege_required is string
                 $allowed = $this->cms_have_privilege($privilege_required);
             }
         } else {
             $allowed = false;
         }
         
-        //check if static page        
+        // check if static page        
         $data = (array) $data;
         if(isset($navigation_name) && !isset($data['_content'])){
             $SQL = "SELECT static_content FROM cms_navigation WHERE is_static=1 AND navigation_name='$navigation_name'";
@@ -241,7 +235,7 @@ class CMS_Controller extends CI_Controller {
         }
         
 
-        //if allowed then show, else don't
+        // if allowed then show, else don't
         if ($allowed) {
         	//get configuration
         	$cms['site_name'] = $this->cms_get_config('site_name');
@@ -261,34 +255,44 @@ class CMS_Controller extends CI_Controller {
         	$widget = $this->cms_widgets();
         	$cms['widget'] = $widget;
         	
-        	//get user name, quicklinks, module_name & module_path
+        	// get user name, quicklinks, module_name & module_path
         	$cms['user_name'] = $this->cms_username();
         	$cms['quicklinks'] = $this->cms_quicklinks();
         	$cms['module_path'] = $this->cms_module_path();
         	$cms['module_name'] = $this->cms_module_name($cms['module_path']);
         	
-        	//if $custom_theme defined, use it as theme
-        	//else use site_theme configuration
+        	// if $custom_theme defined, use it as theme
+        	// else use site_theme configuration
         	if (isset($custom_theme)) {
         		$theme = $custom_theme;
         	} else {
         		$theme = $cms['site_theme'];
         	}
         	
-        	//if $custom_layout defined, use it as layout
-        	//else look at user agent
+        	// if $custom_layout defined, use it as layout
+        	// else look at user agent
         	if (isset($custom_layout)) {
         		$layout = $custom_layout;
-        	} else {
-        		$layout = $this->cms_is_mobile ? 'mobile' : 'default';
-        	}
+        	} else { 
+        		$this->load->library('user_agent');
+        		$layout = $this->agent->is_mobile() ? 'mobile' : 'default';
+        	}      	
+        	
         	
         	//let's decide the real theme and layout used by their availability
-        	if (!$this->cms_themes_okay($theme, $layout)) {
-        		if ($layout == 'mobile' && $this->cms_themes_okay($theme, 'default')) {
+        	if (!$this->cms_layout_exists($theme, $layout)) {
+        		if ($layout == 'mobile' && $this->cms_layout_exists($theme, 'default')) {
         			$layout = 'default';
         		} else {
         			$theme = 'neutral';
+        		}
+        	}
+        	
+        	// backend template
+        	$cms_userid = $this->cms_userid();
+        	if (isset($cms_userid) && $cms_userid) {
+        		if ($this->cms_layout_exists($theme, $layout . '_backend')) {
+        			$layout = $layout . '_backend';
         		}
         	}
         	
@@ -301,25 +305,27 @@ class CMS_Controller extends CI_Controller {
         	// if only content
             if ((isset($_REQUEST['_only_content']))) {
                 $result = $this->load->view($view_url, $data, $return_as_string);
-            } else {
-                //backend template
-                $cms_userid = $this->cms_userid();
-                if (isset($cms_userid) && $cms_userid) {
-                    if ($this->cms_themes_okay($theme, $layout . '_backend')) {
-                        $layout = $layout . '_backend';
-                    }
-                }
+            } else {           
 
                 // set layout and partials                
                 $this->template->set_theme($theme);
                 $this->template->set_layout($layout);
                 
-                $this->template->set_partial('header', 'partials/' . $layout . '/header.php', $data);
-                $this->template->set_partial('left', 'partials/' . $layout . '/left.php', $data);
-                $this->template->set_partial('footer', 'partials/' . $layout . '/footer.php', $data);
-                $this->template->set_partial('right', 'partials/' . $layout . '/right.php', $data);
-                $this->template->set_partial('navigation_path', 'partials/' . $layout . '/navigation_path.php', $data);
-                
+                $this->load->helper('directory');
+                $partial_path = BASEPATH.'../themes/' . $theme . '/views/partials/' . $layout.'/';
+                $partials = directory_map($partial_path, 1);
+                foreach($partials as $partial){
+                	// if is directory or is not php, then ignore it
+                	if (is_dir($partial))
+                		continue;
+                	$partial_extension = pathinfo($partial_path.$partial, PATHINFO_EXTENSION);
+                	if(strtoupper($partial_extension) != 'PHP')
+                		continue;
+                	
+                	// add partial to template
+                	$partial_name = pathinfo($partial_path.$partial, PATHINFO_FILENAME);
+                	$this->template->set_partial($partial_name, 'partials/' . $layout . '/'.$partial, $data);                	                	
+                }
                 $result = $this->template->build($view_url, $data, $return_as_string);
             }
         } else {
@@ -341,14 +347,8 @@ class CMS_Controller extends CI_Controller {
         return $result;
     }
 
-    private final function cms_themes_okay($theme, $layout) {
-        return
-              is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php') &&
-                is_file('themes/' . $theme . '/views/partials/' . $layout . '/footer.php') &&
-                is_file('themes/' . $theme . '/views/partials/' . $layout . '/header.php') &&
-                is_file('themes/' . $theme . '/views/partials/' . $layout . '/navigation_path.php') &&
-                is_file('themes/' . $theme . '/views/partials/' . $layout . '/left.php') &&
-                is_file('themes/' . $theme . '/views/partials/' . $layout . '/right.php');
+    private final function cms_layout_exists($theme, $layout) {
+        return is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php');
     }
 
     /**

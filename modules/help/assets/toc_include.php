@@ -1,15 +1,18 @@
 <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.css';?>" />
 <style type="text/css">
     div#toc, div.toggle_toc{
-        background-color :white;
-        padding : 5px;  
+        background-color :white;                 
         -moz-box-shadow:    inset 0 0 10px #000000;
         -webkit-box-shadow: inset 0 0 10px #000000;
         box-shadow:         inset 0 0 10px #000000;
         margin-left : 5px;
         margin-right : 5px;
     }
+    div#toc, div#toc_content{
+    	padding : 10px;
+    }
     div.toggle_toc{
+    	padding: 5px;
         display:inline;
         float : right;
         border-bottom-left-radius : 10px;
@@ -26,18 +29,16 @@
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.js';?>"></script>
 <script type="text/javascript">
     $(document).ready(function(){
+        get_toc();
+        
         $(".toggle_toc").click(function(){
             $("#toc").slideToggle('slow');
             return false;
-        });
-        
-        $.ajax({
-            url : '<?php echo site_url($cms['module_path']).'?_only_content=true';?>',
-            success : function(response){
-                $("#toc").html(response);
-            }
-        })
-        
+        }); 
+
+        $("#btn_search").click(get_toc);
+        $("#keyword").keyup(get_toc);
+                
         $("pre.phpSnippet").snippet(
             "php",{
                 style:"ide-eclipse",
@@ -51,8 +52,26 @@
                     clipboard:"<?php echo base_url().'assets/jquery_snippet/ZeroClipboard.swf';?>",
                     showNum:false}
             );
-    })
+    });
+
+    function get_toc(){
+    	$.ajax({
+        	type : 'POST',
+        	data : {
+            	"keyword" : $("#keyword").val(),	
+            },
+            url : '<?php echo site_url($cms['module_path']).'?_only_content=true';?>',
+            success : function(response){
+                $("#toc_content").html(response);
+            }
+        });
+    }
 </script>
-<div id="toc"></div>
+<div id="toc">
+	<input id="keyword" name="keyword" type="text"></input>
+	<input id="btn_search" class="btn btn-primary" name="search" type="submit" value="search"></input>
+	<div style="clear:both;"></div>
+	<div id="toc_content"></div>
+</div>
 <div class="toggle_toc"><a class="toggle_toc" href="#toc">Table of Contents</a></div>
 <div style="clear:both;"></div>

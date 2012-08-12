@@ -8,8 +8,12 @@
 class help extends CMS_Controller {	
     public function index(){
     	$this->load->model($this->cms_module_path().'/help_model');
+    	$keyword = $this->input->post('keyword');
+    	if(!$keyword){
+    		$keyword = NULL;
+    	}
     	$data = array(
-    			"toc"=>$this->help_model->group(),
+    			"toc"=>$this->help_model->group(NULL, $keyword),
     		);
         $this->view($this->cms_module_path().'/help_index', $data, 'help_index');
     } 
@@ -18,6 +22,8 @@ class help extends CMS_Controller {
     	$this->load->model($this->cms_module_path().'/help_model');
     	$data = array(
     			"toc"=>$this->help_model->group($url),
+    			"allow_edit_group" => $this->cms_allow_navigate('help_group'),
+    			"allow_edit_topic" => $this->cms_allow_navigate('help_topic')
     		);
         $this->view($this->cms_module_path().'/help_group', $data, 'help_index');    	
     }
@@ -26,6 +32,7 @@ class help extends CMS_Controller {
     	$this->load->model($this->cms_module_path().'/help_model');
     	$data = array(
     			"content"=>$this->help_model->topic_content($url),
+    			"allow_edit_topic" => $this->cms_allow_navigate('help_topic')
     	);
     	$this->view($this->cms_module_path().'/help_topic', $data, 'help_index');    	
     }

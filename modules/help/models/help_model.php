@@ -14,17 +14,29 @@ class Help_Model extends CMS_Model{
 		return $query->num_rows();
 	}
 	
-	public function group($url = NULL){
+	public function group($url = NULL, $keyword = NULL){
 		// wheres
-		$where_name = isset($url)?
-		"(url = '".addslashes($url)."')" : "TRUE";
+		$where_url = isset($url)?
+			"(url = '".addslashes($url)."')" : "TRUE";
+		$where_keyword = isset($keyword)?
+			"(name LIKE '%".addslashes($keyword)."%')
+			OR (
+				SELECT count(id) FROM help_topic 
+				WHERE 
+					(title LIKE '%".addslashes($keyword)."%' OR 
+					content LIKE '%".addslashes($keyword)."%') AND
+					help_topic.group_id = help_group.id 
+			)>0 " : "TRUE";
 		
-		$SQL = "SELECT id, url, name, content FROM help_group WHERE $where_name ORDER BY id";
+		$SQL = "SELECT id, url, name, content 
+			FROM help_group 
+			WHERE $where_keyword AND $where_url ORDER BY id";
 		$query = $this->db->query($SQL);
 		$data = array();
 		foreach($query->result() as $row){
-			$topics = $this->topic(NULL, $row->id);
+			$topics = $this->topic($row->id, $keyword);
 			$data[] = array(
+					"id" => $row->id,
 					"name" => $row->name,
 					"url" => $row->url,
 					"topic_count" => count($topics),
@@ -35,7 +47,7 @@ class Help_Model extends CMS_Model{
 		return $data;
 	}
 	
-	public function topic($keyword = NULL, $group_id = NULL){
+	public function topic($group_id = NULL, $keyword = NULL){
 		// wheres
 		$where_keyword = isset($keyword)?
 			"(title LIKE '%".addslashes($keyword).
@@ -43,13 +55,14 @@ class Help_Model extends CMS_Model{
 		$where_group_id = isset($group_id)?
 			"(group_id = '".addslashes($group_id)."')" : "TRUE";
 		
-		$SQL = "SELECT title, url
+		$SQL = "SELECT id, title, url
 			FROM help_topic 
 			WHERE $where_keyword AND $where_group_id ORDER BY id";
 		$query = $this->db->query($SQL);
 		$data = array();
 		foreach($query->result() as $row){
 			$data[] = array(
+					"id" => $row->id,
 					"title" => $row->title,
 					"url" => $row->url
 				);
@@ -58,24 +71,28 @@ class Help_Model extends CMS_Model{
 		
 	}
 	
-	public function topic_content($url = NULL){
-		// wheres
-		$where_title = isset($url)?
-		"(url LIKE '".addslashes($url)."')" : "TRUE";
+	public function topic_content($url){
 	
-		$SQL = "SELECT title, content, url
-		FROM help_topic
-		WHERE $where_title ORDER BY id";
+		$SQL = "SELECT id, title, content, url
+			FROM help_topic
+			WHERE (url LIKE '".addslashes($url)."')  ORDER BY id";
 		$query = $this->db->query($SQL);
-		$data = array();
-		foreach($query->result() as $row){
-			$data[] = array(
+		if($query->num_rows()>0){
+			$row = $query->row();
+			$data = array(
+					"success" => true,
+					"id" => $row->id,
 					"title" => $row->title,
 					"url" => $row->url,
 					"content" => $row->content,
 			);
+			return $data;
+		}else{
+			$data = array(
+					"success" => false,
+				);
+			return $data;
 		}
-		return $data;
 	
 	}
 	

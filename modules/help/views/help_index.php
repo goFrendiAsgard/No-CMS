@@ -31,7 +31,7 @@
 		// group
 		$html .= '<b>';
 		$html .= anchor(
-			site_url($cms["module_path"]."/group/".$group['url']),
+			site_url($cms["module_path"]."/help/group/".$group['url']),
 			$group['name']);
 		$html .= '</b>';
 		// topic
@@ -39,7 +39,7 @@
 		foreach($group['topics'] as $topic){
 			$html.= '<li>';
 			$html.= anchor(
-					site_url($cms["module_path"]."/topic/".$topic['url']),
+					site_url($cms["module_path"]."/help/topic/".$topic['url']),
 					$topic['title']);
 			$html.= '</li>';
 		}

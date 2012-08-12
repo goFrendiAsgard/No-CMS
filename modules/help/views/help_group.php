@@ -4,6 +4,13 @@
 	echo '<base href="'.base_url().'" />';
 	$group = $toc[0];
 	echo '<b>'.$group['name'].'</b>';
+	if($allow_edit_group){
+		echo '&nbsp;';
+		echo anchor(
+				site_url($cms["module_path"]."/help/data_group/edit/".$group['id']), 
+				'edit', 
+				array('class'=>'btn'));
+	}
 	echo '<p>'.$group['content'].'</p>';
 	$topics = $group['topics'];
 	echo '<ul>';
@@ -11,8 +18,15 @@
 		$topic = $topics[$j];
 		echo '<li>';
 		echo anchor(
-			site_url($cms["module_path"]."/topic/".$topic['url']),
+			site_url($cms["module_path"]."/help/topic/".$topic['url']),
 			$topic['title']);
+		if($allow_edit_topic){
+			echo '&nbsp;';
+			echo anchor(
+					site_url($cms["module_path"]."/help/data_topic/edit/".$topic['id']),
+					'edit',
+					array('class'=>'btn'));
+		}
 		echo '</li>';
 	}
 	echo '</ul>';
