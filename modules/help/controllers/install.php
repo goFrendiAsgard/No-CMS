@@ -19,6 +19,9 @@ class Install extends CMS_Module_Installer {
     }
     
     private function remove_all(){
+    	
+    	$this->remove_quicklink("help_index");
+    	
         $this->remove_navigation("help_topic");
         $this->remove_navigation("help_group");
         $this->remove_navigation("help_index");
@@ -45,6 +48,8 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation("help_index", "No-CMS User Guide", $module_main_controller_url."/index", 1);
         $this->add_navigation("help_group", "Topic Group", $module_main_controller_url."/data_group", 4, "help_index");
         $this->add_navigation("help_topic", "Topic", $module_main_controller_url."/data_topic", 4, "help_index");
+        
+        $this->add_quicklink("help_index");
 
         $this->db->query('
             #

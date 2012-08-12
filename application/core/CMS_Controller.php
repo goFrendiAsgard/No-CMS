@@ -313,18 +313,20 @@ class CMS_Controller extends CI_Controller {
                 
                 $this->load->helper('directory');
                 $partial_path = BASEPATH.'../themes/' . $theme . '/views/partials/' . $layout.'/';
-                $partials = directory_map($partial_path, 1);
-                foreach($partials as $partial){
-                	// if is directory or is not php, then ignore it
-                	if (is_dir($partial))
-                		continue;
-                	$partial_extension = pathinfo($partial_path.$partial, PATHINFO_EXTENSION);
-                	if(strtoupper($partial_extension) != 'PHP')
-                		continue;
-                	
-                	// add partial to template
-                	$partial_name = pathinfo($partial_path.$partial, PATHINFO_FILENAME);
-                	$this->template->set_partial($partial_name, 'partials/' . $layout . '/'.$partial, $data);                	                	
+                if(is_dir($partial_path)){
+	                $partials = directory_map($partial_path, 1);
+	                foreach($partials as $partial){
+	                	// if is directory or is not php, then ignore it
+	                	if (is_dir($partial))
+	                		continue;
+	                	$partial_extension = pathinfo($partial_path.$partial, PATHINFO_EXTENSION);
+	                	if(strtoupper($partial_extension) != 'PHP')
+	                		continue;
+	                	
+	                	// add partial to template
+	                	$partial_name = pathinfo($partial_path.$partial, PATHINFO_FILENAME);
+	                	$this->template->set_partial($partial_name, 'partials/' . $layout . '/'.$partial, $data);                	                	
+	                }
                 }
                 $result = $this->template->build($view_url, $data, $return_as_string);
             }

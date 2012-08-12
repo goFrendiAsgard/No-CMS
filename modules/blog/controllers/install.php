@@ -26,6 +26,7 @@ class Install extends CMS_Module_Installer {
         $this->db->query("DROP TABLE IF EXISTS `blog_article`;");
         $this->db->query("DROP TABLE IF EXISTS `blog_category`;");
         
+        $this->remove_quicklink("blog_index");        
         
         $this->remove_navigation("blog_comment");
         $this->remove_navigation("blog_photo");
@@ -105,6 +106,8 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation("blog_article", "Manage Article", $module_main_controller_url."/article", 4, "blog_management");
         $this->add_navigation("blog_photo", "Manage Photo", $module_main_controller_url."/photo", 4, "blog_management");
         $this->add_navigation("blog_comment", "Manage Comment", $module_main_controller_url."/comment", 4, "blog_management");
+        
+        $this->add_quicklink('blog_index');
     }
 }
 

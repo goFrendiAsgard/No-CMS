@@ -310,6 +310,43 @@ class CMS_Module_Installer extends CMS_Controller {
             $this->db->delete("cms_widget",$where);
         }
     }
+    
+    protected final function add_quicklink($navigation_name){
+    	$SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_name ='".addslashes($navigation_name)."'";
+    	$query = $this->db->query($SQL);
+    	if($query->num_rows()>0){
+    		$row = $query->row();
+    		$navigation_id = $row->navigation_id;
+    		// index = max index+1
+    		$SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_quicklink`";
+    		$query = $this->db->query($SQL);
+    		$row = $query->row();
+    		$index = $row->newIndex;    			 
+    		if(!isset($index)) $index = 0;
+    		
+    		// insert
+    		$data = array(
+    			"navigation_id" => $navigation_id,
+    			"index" => $index
+    		);
+    		$this->db->insert('cms_quicklink', $data);
+    	}
+    }
+    
+    protected final function remove_quicklink($navigation_name){
+    	$SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_name ='".addslashes($navigation_name)."'";
+    	$query = $this->db->query($SQL);
+    	if($query->num_rows()>0){
+    		$row = $query->row();
+    		$navigation_id = $row->navigation_id;
+    	
+    		// delete
+    		$where = array(
+    				"navigation_id" => $navigation_id
+    		);
+    		$this->db->delete('cms_quicklink', $where);
+    	}	
+    }
 }
 
 ?>

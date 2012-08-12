@@ -46,7 +46,7 @@
 			}
 		});
 		function install_module(){
-			var modules =  ['wysiwyg', 'help', 'module_generator'];
+			var modules =  ['wysiwyg', 'help', 'module_generator', 'blog'];
 			var site_url = '<?php echo $site_url;?>';
 			for(var i=0; i<modules.length; i++){
 				var module = modules[i];

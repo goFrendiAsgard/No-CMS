@@ -125,7 +125,7 @@ div.layout_collapse_icon{
         width: 100%;
         min-height: 768px;
     }
-    #layout-content-widget{
+    #layout-banner-content-widget{
         overflow: auto;
         width: 100%;
         margin-bottom: 30px;
@@ -169,12 +169,15 @@ div.layout_collapse_icon{
 		margin-left:0px;
 		width: 100%;
 	}
+    #layout-banner-content-widget{
+        width:100%;
+        margin-bottom: 30px;
+    } 
     #layout-banner{
         padding:10px;
     }
     #layout-content-widget{
         margin-left: 0px;
-        width: 100%;
     }
     .flexigrid table td,
     .flexigrid table th{
@@ -201,12 +204,15 @@ div.layout_collapse_icon{
 		float:left;
 		margin-left:0px;
     }
+    #layout-banner-content-widget{
+        float:right;
+        min-height: 100%;
+    }
     #layout-banner{
         padding:20px;
     }
     #layout-content-widget{
         margin-left: 0px;
-        float: right;
     }
 }
 
@@ -216,11 +222,14 @@ div.layout_collapse_icon{
 		float:left;
 		margin-left:0px;
     }
+    #layout-banner-content-widget{
+        float:right;
+        min-height: 100%;
+    }
     #layout-banner{
         padding:30px;
     }
     #layout-content-widget{
         margin-left: 0px;
-        float: right;
     }
 }

@@ -1,1 +1,0 @@
-<?php echo $cms['site_footer'];?>

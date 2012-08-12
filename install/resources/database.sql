@@ -273,7 +273,8 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 INSERT INTO `cms_quicklink` (`quicklink_id`, `navigation_id`, `index`) VALUES
 (1, 16, 0),
 (2, 5, 1),
-(3, 2, 2);
+(3, 2, 2),
+(4, 4, 3);
 /*split*/
 
 INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`, `slug`) VALUES
@@ -299,7 +300,7 @@ INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VA
 (3, 'site_logo', '@base_url/assets/nocms/images/No-CMS-logo.png', 'Site logo'),
 (4, 'site_favicon', '@base_url/assets/nocms/images/No-CMS-favicon.png', 'Site favicon'),
 (5, 'site_footer', 'goFrendiAsgard &copy; 2011', 'Site footer'),
-(6, 'site_theme', 'bootstrap', 'Site theme'),
+(6, 'site_theme', 'neutral', 'Site theme'),
 (7, 'site_language', 'english', 'Site language'),
 (8, 'max_menu_depth', '5', 'Depth of menu recursive'),
 (9, 'cms_email_address', 'no-reply@No-CMS.com', 'Email address'),

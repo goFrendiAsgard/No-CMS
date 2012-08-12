@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+	
     //view description
     $(".layout_nav li").mouseenter(function(){
         $(this).children(".layout_nav_description").show();
@@ -17,11 +17,10 @@ $(document).ready(function(){
     });
 
     //expand and collapse
-    $(".layout_nav li a.layout_expand").click(function(){
-        //expand or collapse
-        $(this).parent(".layout_nav li").children(".layout_nav").toggle();
-        if($(this).html()=="[+]"){$(this).html("[-]");}
-        else{$(this).html("[+]");}                    
+    $(".layout_nav li .layout_expand").click(function(){
+        $(this).parent('a').parent(".layout_nav li").children(".layout_nav").slideToggle('slow');
+        $(this).toggleClass('layout_collapse_icon');
+        $(this).toggleClass('layout_expand_icon');          
         return false;
     });
     
@@ -41,3 +40,5 @@ function adjust_content_width(){
 			100
 	);
 }
+
+

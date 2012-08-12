@@ -1,3 +1,4 @@
+<?php require_once BASEPATH."../themes/".$cms['site_theme']."/lib/function.php";?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -34,33 +35,44 @@
   <body>
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
-      	<?php echo $template['partials']['header'];?>        
-      </div>
-    </div>
+      	<div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">
+          	<img src ="<?php echo $cms['site_logo'];?>" style="max-height:30px; max-width:30px;" />          	
+          </a>          
+          <div class="nav-collapse">
+            <?php echo build_quicklink($cms['quicklinks']);?>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->       
+      </div><!--/.navbar-innder -->
+    </div><!--/.nav .navbar-fixed-top -->
+    
     <div class="container-fluid">
       <div class="row-fluid">
               
-        <div id="layout-content-widget" class="span9">
-        	<div id="layout-content" class="span9">
-	            <?php echo $template['body'];?>
-	            <div class="clear"></div>
-	        </div><!--/span-->       
-	        <div id="layout-widget" class="span3">
-	            <?php echo $template['partials']['right'] ?>	            
-	        </div><!--/span-->
-        </div><!--/content-->  
-        
-        <div id="layout-sidebar" class="span3">
-          <div class="well sidebar-nav">
-          	<a name="layout-menu"></a>
-          	<?php echo $template['partials']['left'];?>     
-          </div><!--/.well -->
-        </div><!--/#layout-sidebar-->
+        <div id="layout-banner-content-widget" class="span12">
+        	<div id="layout-content-widget" class="span12">
+            	<div id="layout-content" class="span9">
+	                <?php echo $template['body'];?>
+	                <div class="clear"></div>
+	            </div><!--/#layout-content-->       
+	            <div id="layout-widget" class="span3">
+	                <h4>WIDGET</h4><hr />
+                    <?php echo build_widget_html($cms['widget'], 'sidebar');?>
+                    <h4>ADVERTISEMENT</h4><hr />
+                    <?php echo build_widget_html($cms['widget'], 'advertisement');?>	            
+	            </div><!--/#layout-widget-->
+            </div><!--/#layout-content-widget-->
+        </div><!--/#layout-banner-content-widget--> 
               
       </div><!--/row-->
       <hr>
       <footer>
-        <?php echo $template['partials']['footer'];?>
+        <?php echo $cms['site_footer'];?>
       </footer>
     </div><!--/.fluid-container-->
 
