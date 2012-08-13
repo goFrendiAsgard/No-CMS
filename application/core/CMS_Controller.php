@@ -172,7 +172,6 @@ class CMS_Controller extends CI_Controller {
     protected final function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL, $custom_theme = NULL, $custom_layout = NULL, $return_as_string = FALSE) {
     	    	
     	$result = NULL;
-
         $this->load->helper('url');
 
         // this method can be called as $this->view('view_path', $data, true);
@@ -351,6 +350,12 @@ class CMS_Controller extends CI_Controller {
 
     private final function cms_layout_exists($theme, $layout) {
         return is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php');
+    }
+    
+    private final function cms_cache($time = 5){
+        // cache
+    	$this->load->driver('cache');
+    	$this->output->cache($time);
     }
 
     /**

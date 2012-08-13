@@ -70,10 +70,16 @@
     <IfModule mod_headers.c>
         <FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf)$">
             Header set Cache-Control "max-age=2592000"
+            Header set Expires "Thu, 15 Apr 2020 20:00:00 GMT"
+            Header unset ETag
+            FileETag None
         </FilesMatch>
     
         <FilesMatch ".(js|css|pdf|txt)$">
             Header set Cache-Control "max-age=604800"
+            Header set Expires "Thu, 15 Apr 2020 20:00:00 GMT"
+            Header unset ETag
+            FileETag None
         </FilesMatch>
         
         Header append Cache-Control "public"
@@ -84,5 +90,3 @@
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/xhtml text/html text/plain text/xml text/javascript application/x-javascript text/css
 </IfModule>
-
-FileETag MTime Size
