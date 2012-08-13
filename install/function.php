@@ -49,17 +49,15 @@
 				}else{
 					$privilege_exists = false;
 					while($row = mysql_fetch_row($result)){
-						if(strpos($row[0],'ALL PRIVILEGES')>=0){
+						if(strpos($row[0],'ALL PRIVILEGES')===FALSE &&	strpos($row[0],'CREATE,')===FALSE){
+							$privilege_exists = false;
+						}else{
 							$privilege_exists = true;
 							break;
-						}
-						if(strpos($row[0],'CREATE,')>=0){
-							$privilege_exists = true;
-							break;
-						}
+						}						
 					}
 					if(!$privilege_exists){
-						$return["error_message"] = 'No create database privilege, please select the alredy exists one';
+						$return["error_message"] = 'No create database privilege, please select the already exists one';
 						$return["success"] = false;
 					}
 				}

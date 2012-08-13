@@ -47,6 +47,12 @@
                 return false;
             });
             
+            $('#btn_install').click(function(){
+            	$('#btn_install').hide();
+            	$('#img_loader').show();
+            	return true;
+            });
+            
         });
         
         function show_hide_button(){
@@ -65,7 +71,7 @@
                 type : "POST",
                 url : "check_all.php",
                 dataType: "json",
-                async : false,
+                async : true,
                 data : {
                     db_server : $("#db_server").val(),
                     db_port : $("#db_port").val(),
@@ -237,7 +243,8 @@
 	                </div>
 			    </fieldset>
 			    <div style="margin-top: 10px;">
-			        <input type="submit" class="button_install btn btn-primary" name="Install" value="INSTALL NOW"  />
+			        <input type="submit" id="btn_install" class="button_install btn btn-primary" name="Install" value="INSTALL NOW"  />
+			        <img id="img_loader" style="display:none;" src="./assets/ajax-loader.gif" />
 			    </div>
 			</form>    
 	    </div>

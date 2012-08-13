@@ -27,7 +27,7 @@
 			display: none;
 		}
 		div#if_no_error{
-			display: block;
+			display: none;
 		}
 	</style>
 	<script type="text/javascript" src="../assets/nocms/js/jquery.js"></script>
@@ -41,34 +41,43 @@
 			}else{				
 				$('div#php_error').hide();
 				$('div#if_error').hide();
-				install_module();
-				$('div#if_no_error').show();				
+				var modules =  ['wysiwyg', 'help', 'module_generator', 'blog'];
+				var done = 0;
+				var site_url = '<?php echo $site_url;?>';
+				for(var i=0; i<modules.length; i++){
+					var module = modules[i];
+					$.ajax({
+						'url': site_url+module+'/install/install/',
+						'type': 'POST',
+						'dataType': 'json',
+						'async': true,
+						'data':{
+								'silent' : true,
+								'identity': '<?php echo $adm_username;?>',
+								'password': '<?php echo $adm_password;?>'
+							},
+						'success': function(response){
+								if(!response['success']){
+									console.log('error installing '+response['module_path']);
+								}							
+							},
+						'error': function(response){
+								console.log('error send request');
+							},
+						'complete' : function(){
+								done ++;
+								if(done == modules.length){
+									$('div#if_no_error').show();
+									$('div#installation_process').hide();
+								}
+							}
+					});
+				}
+								
 			}
 		});
 		function install_module(){
-			var modules =  ['wysiwyg', 'help', 'module_generator', 'blog'];
-			var site_url = '<?php echo $site_url;?>';
-			for(var i=0; i<modules.length; i++){
-				var module = modules[i];
-				$.ajax({
-					'url': site_url+module+'/install/install/silent',
-					'type': 'POST',
-					'dataType': 'json',
-					'async': false,
-					'data':{
-							'identity': '<?php echo $adm_username;?>',
-							'password': '<?php echo $adm_password;?>'
-						},
-					'success': function(response){
-							if(!response['success']){
-								console.log('error installing '+response['module_path']);
-							}							
-						},
-					'error': function(response){
-							console.log('error send request');
-						}
-				});
-			}
+			
 		}
 	</script>
 </head>
@@ -81,6 +90,10 @@
 		            <a class="brand" href="#">Installation finished</a>
 		        </div>  	          
 		      </div>
+		    </div>
+		    
+		    <div id="installation_process" class="well span9">
+		    	Installing <img id="img_loader" src="./assets/ajax-loader.gif" />
 		    </div>
 		    
 			<div id="if_no_error" class="well span9">

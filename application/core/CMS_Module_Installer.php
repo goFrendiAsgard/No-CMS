@@ -17,8 +17,9 @@ class CMS_Module_Installer extends CMS_Controller {
     	}
     }
     
-    public final function install($ajax=NULL){
+    public final function install(){
     	// login (in case of called from No-CMS installer)
+    	$silent = $this->input->post('silent');
     	$identity = $this->input->post('identity');
     	$password = $this->input->post('password');
     	if($identity && $password){
@@ -48,21 +49,25 @@ class CMS_Module_Installer extends CMS_Controller {
             			'undefinedName_error'=>$undefinedName_error,
             			'success'=>FALSE,
             	);
-            	if(!isset($ajax)){
+            	if(!$silent){
             		$this->view('main/module_management_fail_install',$data,'main_module_management');
             	}else{
-            		echo json_encode($data);
+            		$this->output
+	            		->set_content_type('application/json')
+	            		->set_output(json_encode($data));
             	}    	
             }else{
             	$this->register_module();
             	$this->do_install();
-            	if(!isset($ajax)){
+            	if(!$silent){
             		redirect('main/module_management');
             	}else{
             		$data = array(
             				'success'=>TRUE,
             			);
-            		echo json_encode($data);
+            		$this->output
+	            		->set_content_type('application/json')
+	            		->set_output(json_encode($data));
             	}            	
             }
         }        
