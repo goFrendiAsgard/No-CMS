@@ -28,6 +28,8 @@
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.js';?>"></script>
 <script type="text/javascript">
+	var REQUEST_EXISTS = false;
+	var REQUEST = "";
     $(document).ready(function(){
         get_toc();
         
@@ -55,7 +57,12 @@
     });
 
     function get_toc(){
-    	$.ajax({
+    	$("#img_ajax_loader").show();
+        if(REQUEST_EXISTS){
+        	REQUEST.abort();
+        }
+        REQUEST_EXISTS = true;        
+        REQUEST = $.ajax({
         	type : 'POST',
         	data : {
             	"keyword" : $("#keyword").val(),	
@@ -63,13 +70,16 @@
             url : '<?php echo site_url($cms['module_path']).'?_only_content=true';?>',
             success : function(response){
                 $("#toc_content").html(response);
-            }
+                REQUEST_EXISTS = false;
+                $("#img_ajax_loader").hide();
+            }            
         });
     }
 </script>
 <div id="toc">
 	<input id="keyword" name="keyword" type="text"></input>
 	<input id="btn_search" class="btn btn-primary" name="search" type="submit" value="search"></input>
+	<img id="img_ajax_loader" style="display:none;" src="<?php echo base_url('assets/nocms/images/ajax-loader.gif');?>" />
 	<div style="clear:both;"></div>
 	<div id="toc_content"></div>
 </div>

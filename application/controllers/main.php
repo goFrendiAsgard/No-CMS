@@ -132,7 +132,7 @@ class Main extends CMS_Controller {
             "exists"=>$exists,
             "message"=>$message
         );
-        echo json_encode($data);        
+        $this->cms_show_json($data);        
     }
     
     public function check_change_profile(){
@@ -148,7 +148,7 @@ class Main extends CMS_Controller {
     			"exists"=>$exists,
     			"message"=>$message
     	);
-    	echo json_encode($data);
+    	$this->cms_show_json($data);
     }
 
     public function change_profile() {
@@ -591,7 +591,7 @@ class Main extends CMS_Controller {
                 redirect($url.'?_only_content=1');
             }
         } else {
-            echo "widget doesn't exist";
+            $this->cms_show_html("widget doesn't exist");
         }
     }
     

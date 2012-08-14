@@ -175,16 +175,14 @@ class nnga extends CMS_Controller {
         $result = $this->ai_nnga->currentState();
         $result['loop'] = $this->input->post('loop');
         unset($result['ga_alreadyCalculatedGenes']);
-        echo json_encode($result);
+        $this->cms_show_json($result);
     }
     
     public function state($identifier=NULL){
         $this->initialize($identifier);
         
         $result = $this->ai_nnga->currentState();        
-        echo '<pre>';
-        echo var_dump($result);
-        echo '</pre>';
+        $this->cms_show_variable($result);
     }
     
 }

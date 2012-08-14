@@ -163,6 +163,39 @@ class CMS_Controller extends CI_Controller {
     protected final function cms_do_change_profile($user_name, $email, $real_name, $password) {
         return $this->CMS_Model->cms_do_change_profile($user_name, $email, $real_name, $password);
     }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param  variable
+     * @desc  show variable in json encoded form
+     */
+    protected final function cms_show_json($variable){
+    	$this->output
+	    	->set_content_type('application/json')
+	    	->set_output(json_encode($variable));
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param  variable
+     * @desc  show variable for debugging purpose
+     */
+    protected final function cms_show_variable($variable){
+    	$this->output
+    		->set_content_type('text/html')
+    		->set_output('<pre>'.print_r($variable, true).'</pre>');
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param  html
+     * @desc  you are encouraged to use this instead of echo $html
+     */
+    protected final function cms_show_html($html){
+    	$this->output
+	    	->set_content_type('text/html')
+	    	->set_output($html);
+    }
 
     /**
      * @author  goFrendiAsgard

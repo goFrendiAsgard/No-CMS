@@ -10,6 +10,8 @@
         var ADMIN_CLICKED = false;
         var PREFERENCE_CLICKED = false;
         var SUCCESS = false;
+        var REQUEST
+        var RUNNING_REQUEST = false;
         
         $(document).ready(function(){
             check_all();  
@@ -49,7 +51,7 @@
             
             $('#btn_install').click(function(){
             	$('#btn_install').hide();
-            	$('#img_loader').show();
+            	$('#img_loader_install').show();
             	return true;
             });
             
@@ -67,7 +69,12 @@
         
         function check_all(){
         	$('#button_install').attr('disabled', 'disabled');
-        	$.ajax({
+        	if(RUNNING_REQUEST){
+                REQUEST.abort();
+            }
+        	$('#div_loader_message').show();
+        	RUNNING_REQUEST = true;
+        	REQUEST = $.ajax({
                 type : "POST",
                 url : "check_all.php",
                 dataType: "json",
@@ -110,9 +117,8 @@
                     }else{
                     	$('#infoMessage').hide();
                     }
-                    
+                    $('#div_loader_message').hide();
                     show_hide_button();
-                    
                     
                 }
             });
@@ -234,7 +240,12 @@
                        <label class="control-label" for="hide_index">Hide Index.php</label>
                        <div class="controls">
                            <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" />
-                           <p class="help-block">(mod_rewrite should be active)</p>
+                           <p class="help-block">(Hide 'index.php' from url, please make sure that mod_rewrite is activated)</p>
+                       </div>
+                       <label class="control-label" for="gzip_compression">Use GZIP compression</label>
+                       <div class="controls">
+                           <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input-xlarge input" />
+                           <p class="help-block">(For compression to work, nothing can be sent before the output buffer is called by the output class.  Do not 'echo' any values with compression enabled)</p>
                        </div>
                     </div>
                     <div>
@@ -244,12 +255,16 @@
 			    </fieldset>
 			    <div style="margin-top: 10px;">
 			        <input type="submit" id="btn_install" class="button_install btn btn-primary" name="Install" value="INSTALL NOW"  />
-			        <img id="img_loader" style="display:none;" src="./assets/ajax-loader.gif" />
+			        <img id="img_loader_install" style="display:none;" src="./assets/ajax-loader.gif" />
 			    </div>
 			</form>    
 	    </div>
-	    
-	    <div id="infoMessage" class="message warning_display fix span5"></div>
+	    <div id="ajax_result" class="absolute">	       	    
+	       <div id="infoMessage" class="message warning_display span12"></div>
+	       <div id="div_loader_message" class="span12" style="display:none;">
+	           Checking <img src="./assets/ajax-loader.gif" />
+	       </div>	       
+	    </div>
 	
 	</div>
 </div>

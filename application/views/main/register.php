@@ -16,11 +16,18 @@
 </style>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
 <script type="text/javascript">
+	var REQUEST_EXISTS = false;
+	var REQUEST = "";
     function check_user_exists(){
         var user_name =  $('input[name="user_name"]').val();
         var password = $('input[name="password"]').val();
         var confirm_password = $('input[name="confirm_password"]').val();
-        $.ajax({
+        $("#img_ajax_loader").show();
+        if(REQUEST_EXISTS){
+        	REQUEST.abort();
+        }
+        REQUEST_EXISTS = true;        
+        REQUEST = $.ajax({
             "url" : "check_registration",
             "type" : "POST",
             "data" : {"user_name":user_name},
@@ -49,6 +56,8 @@
                 if(message != $('#message').html()){
                     $('#message').html(message);                    
                 }
+                REQUEST_EXISTS = false;
+                $("#img_ajax_loader").hide();
             }
         });
     }
@@ -77,4 +86,5 @@
     echo form_close();
     echo br();
 ?>
+<img id="img_ajax_loader" style="display:none;" src="<?php echo base_url('assets/nocms/images/ajax-loader.gif');?>" /><br />
 <div id="message"></div>

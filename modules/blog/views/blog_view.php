@@ -25,9 +25,11 @@
 				        $.ajax({
 					        async: false,
 					        type: "POST",
-					        data: {
+					        data: {						        
 						        "page" : PAGE,
 						        "only_article" : true,
+						        "search" : $("#input_search").val(),
+						        "category" : $("#input_category").val(),
 						    },
 					        url: "<?php echo base_url($cms['module_path'].'/blog/index?_only_content=true'); ?>",
 					        success: function(html)
@@ -79,7 +81,7 @@ if(!$single_article){
 	if(!$only_show_article){
 	    echo '</div>';
 		echo '<div id="loadmoreajaxloader" style="display:none;">
-			<center><img src="'.base_url('modules/'.$cms['module_path'].'/assets/images/ajax-loader.gif').'" /></center></div>';
+			<center><img src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /></center></div>';
 	}
 }else{
 	if($article !== FALSE){
@@ -156,8 +158,8 @@ function show_search_form($cms, $available_category, $category, $search){
 	echo '<base href="'.base_url().'" />';
 	echo '<div>';
 	echo form_open($cms['module_path'].'/blog/index', array("class"=>"form-search"));
-	echo form_dropdown('category', $available_category, $category);
-	echo form_input('search', $search);
+	echo form_dropdown('category', $available_category, $category, 'id="input_category"');
+	echo form_input('search', $search, 'id="input_search"');
 	echo form_submit('submit', 'Search');
 	echo form_close();
 	echo '</div>';

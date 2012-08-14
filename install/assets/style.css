@@ -54,6 +54,14 @@ p.footer{
     -webkit-box-shadow: 0 0 8px #D0D0D0;
 }
 
+#ajax_result{
+	top: 60px;
+	right: 0px;
+	display: block;
+	left : 600px;
+    width : 400px;    
+}
+
 form{
     width : 500px;
 }
@@ -73,18 +81,18 @@ form{
 	top:60px;
 	right:0px;
 }
-,fix{
-	position:fixed!important;
+.fix{
+	position:fix!important;
 }
-
+.absolute{	
+    position: absolute!important;
+}
 .button_install{
     display:none;
 }
 
 .warning_display{
-    position : absolute;
-    left : 600px;
-    width : 400px;    
+        
 }
 #preference, #admin{
     display:none;

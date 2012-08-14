@@ -72,7 +72,7 @@
 <div style="clear:both; margin: 5px;">
 	<form action="<?php echo site_url('main/change_theme');?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
 		<input type="file" name="userfile" size="20" />	
-		<br /><br />	
-		<input name="upload" class="btn btn-primary" type="submit" value="Upload New Theme" />	
+		<br /><br />		
+		<input name="upload" class="btn btn-primary" type="submit" value="Upload New Theme" />		
 	</form>
 </div>

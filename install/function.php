@@ -104,6 +104,7 @@
 		$adm_confirmpassword = get_secure_input("adm_confirmpassword");
 		
 		$hide_index = get_secure_input("hide_index");
+		$gzip_compression = get_secure_input("gzip_compression");
 		
 		// Main program
 		
@@ -219,17 +220,31 @@
 				file_put_contents('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js', $str);
 				@chmod('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js', 0555);
 				
+				
+				// config.php
+				$key_config = array();
+				$replace_config = array(); 
+				if($gzip_compression !=""){
+					$key_config[] = '@gzip';
+					$replace_config[] = 'TRUE';
+				}else{
+					$key_config[] = '@gzip';
+					$replace_config[] = 'FALSE';
+				}
 				if($hide_index != ""){
-					// config.php
-					$str = file_get_contents('./resources/config.php');
-					$str = replace($str,
-							array('@index_page'),
-							array('')
-					);
-					file_put_contents('../application/config/config.php', $str);
-					@chmod('../application/config/config.php', 0555);
-					
-					// .htaccess					
+					$key_config[] = '@index_page';
+					$replace_config[] = '';
+				}else{
+					$key_config[] = '@index_page';
+					$replace_config[] = '';
+				}
+				$str = file_get_contents('./resources/config.php');
+				$str = replace($str, $key_config, $replace_config);
+				file_put_contents('../application/config/config.php', $str);
+				@chmod('../application/config/config.php', 0555);
+				
+				// .htaccess
+				if($hide_index != ""){
 					$str = file_get_contents('./resources/htaccess');
 					$str = replace($str,
 							array('@base_path'),
@@ -238,19 +253,10 @@
 					file_put_contents('../.htaccess', $str);
 					@chmod('../.htaccess', 0555);
 				}else{
-					// config.php
-					$str = file_get_contents('./resources/config.php');
-					$str = replace($str,
-							array('@index_page'),
-							array('index.php')
-					);
-					file_put_contents('../application/config/config.php', $str);
-					@chmod('../application/config/config.php', 0555);
-					 
-					// .htaccess
 					file_put_contents('../.htaccess', '');
 					@chmod('../.htaccess', 0555);
 				}
+				
 				// put htaccess in install directory
 				file_put_contents('.htaccess', 'Deny from all');
 				@chmod('.htaccess', 0555);

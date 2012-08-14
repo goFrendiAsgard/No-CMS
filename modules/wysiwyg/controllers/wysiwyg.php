@@ -51,7 +51,6 @@ class Wysiwyg extends CMS_Controller {
         $data['language'] = $this->cms_get_config('site_language');
         
         $this->view($this->cms_module_path().'/wysiwyg_main', $data, 'wysiwyg_index');
-        //echo 'coba';
     }
     
     public function change_name(){
@@ -80,7 +79,7 @@ class Wysiwyg extends CMS_Controller {
         $this->check_allow();
         $this->load->model($this->cms_module_path().'/navigation_model');
         $result = $this->navigation_model->get_navigation();
-        echo json_encode($result);
+        $this->cms_show_json($result);
     }
     
     public function toggle_navigation(){
@@ -122,7 +121,7 @@ class Wysiwyg extends CMS_Controller {
         $this->check_allow();
         $this->load->model($this->cms_module_path().'/quicklink_model');
         $result = $this->quicklink_model->get_quicklink();
-        echo json_encode($result);
+        $this->cms_show_json($result);
     }
     
     public function left_quicklink(){
@@ -158,7 +157,7 @@ class Wysiwyg extends CMS_Controller {
         $slug = isset($slug)? $slug : $this->input->post('slug');
         $this->load->model($this->cms_module_path().'/widget_model');
         $result = $this->widget_model->get_widget($slug);
-        echo json_encode($result);
+        $this->cms_show_json($result);
     }
     
     public function up_widget(){
@@ -219,13 +218,13 @@ class Wysiwyg extends CMS_Controller {
     public function get_favicon(){
         $this->check_allow();
         $result['value'] = $this->cms_get_config('site_favicon');
-        echo json_encode($result);
+        $this->cms_show_json($result);
     }
     
     public function get_logo(){
         $this->check_allow();
         $result['value'] = $this->cms_get_config('site_logo');
-        echo json_encode($result);
+        $this->cms_show_json($result);
     }
     
     

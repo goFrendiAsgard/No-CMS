@@ -88,7 +88,7 @@
         
         <div id="layout-sidebar" class="span3">
           <div class="well sidebar-nav">
-          	<a name="layout-menu"></a>
+          	<a name="layout-menu"></a>          	
           	<?php echo build_menu($cms['navigations'], $cms['navigation_path']);?>     
           </div><!--/.well -->
         </div><!--/#layout-sidebar-->
