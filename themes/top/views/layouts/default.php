@@ -72,6 +72,16 @@
       <div class="row-fluid">
               
         <div id="layout-banner-content-widget" class="span12">
+        	<div id="layout-banner" class="hero-unit row-fluid hidden-phone span12">
+	        	<div class="span2">
+	        		<img src ="<?php echo $cms['site_logo'];?>" /> 
+	        	</div>        	
+	            <div class="span10">
+		            <h1><?php echo $cms['site_name'];?></h1>
+		            <p><?php echo $cms['site_slogan'];?></p>
+	            </div>	            
+	            <div class="clear"></div>            
+	        </div><!-- /.layout-banner -->
 	        <div id="layout-menu">
 	            <?php echo build_menu($cms['navigations'], $cms['navigation_path']);?>
 	            <div class="clear"></div> 
