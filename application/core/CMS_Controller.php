@@ -169,7 +169,7 @@ class CMS_Controller extends CI_Controller {
      * @param  variable
      * @desc  show variable in json encoded form
      */
-    protected final function cms_show_json($variable, $options){
+    protected final function cms_show_json($variable, $options = NULL){
     	$this->output
 	    	->set_content_type('application/json')
 	    	->set_output(json_encode($variable, $options));
