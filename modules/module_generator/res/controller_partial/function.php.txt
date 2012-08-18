@@ -1,0 +1,20 @@
+    public function @function_name(){
+        $crud = new grocery_CRUD();
+        
+        // table name
+        $crud->set_table('@table_name');
+        
+        // displayed columns on list
+        $crud->columns(@field_list);
+        // displayed columns on edit operation
+        $crud->edit_fields(@field_list);
+        // displayed columns on add operation
+        $crud->add_fields(@field_list);
+        
+        // caption of each columns
+@display_as
+        
+        // render
+        $output = $crud->render();
+        $this->view("grocery_CRUD", $output, "@navigation_name");
+    }
