@@ -501,7 +501,7 @@ class CMS_Model extends CI_Model {
             if (!is_dir('modules/' . $directory))
                 continue;
 
-            $files = directory_map('modules/'.$directory.'/controllers');
+            $files = directory_map('modules/'.$directory.'/controllers', 1);
             $module_controllers = array();
             foreach($files as $file){
             	$filename_array = explode('.', $file);
