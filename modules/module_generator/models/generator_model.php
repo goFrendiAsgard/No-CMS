@@ -13,14 +13,14 @@ class Generator_Model extends CMS_Model{
 	// get tables & fields list 
 	public function list_tables(){
 		$list_tables = $this->db->list_tables();
-		$result = array();
+		$return = array();
 		foreach($list_tables as $table_name){
-			$result[] = array(
+			$return[] = array(
 					"table_name" => $table_name,
 					"fields" => $this->list_fields($table_name),
 				);
 		}
-		return $result;		
+		return $return;		
 	}
 	
 	// get fields of certain table
@@ -28,14 +28,28 @@ class Generator_Model extends CMS_Model{
 		$return = $this->db->list_fields($table_name);
 		return $return;
 	}
-	
+
+	// get auto increment field
+	public function auto_increment_field($table_name){
+		$table_name = addslashes($table_name);
+		$sql = "SHOW COLUMNS 
+			FROM `$table_name` 
+			WHERE Extra LIKE '%auto_increment%'";
+		$query = $this->db->query($sql);
+		if($query->num_rows()>0){
+			$row = $query->row();
+			return $row->Field;
+		}else{
+			return '';
+		}		
+	}
 	
 	// get create tables syntax
 	public function get_create_tables_syntax($table_names){
 		$result_create = '';
 		$result_insert = '';
 		for($i=0; $i<count($table_names); $i++){
-			$table = $table_names[$i];
+			$table = addslashes($table_names[$i]);
 			
 			// get create syntax
 			$query = $this->db->query("SHOW CREATE TABLE `$table`");

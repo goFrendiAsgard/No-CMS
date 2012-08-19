@@ -162,6 +162,7 @@ function submit(){
 			if(response.success){
 				$("#error_message").hide();
 				$("#error_message").html('');
+				alert('The module has been generated successfully');
 			}else{		
 				var html = "";
 				html += "<ul>";
@@ -172,11 +173,13 @@ function submit(){
 				html += "</ul>";
 				$("#error_message").html(html);
 				$("#error_message").show();
+				alert('Some error ocured when trying to generate module');				
 			}
 		},
 		error: function(response){
 			$("#error_message").html('AJAX request failed');
 			$("#error_message").show();
+			alert('Some error ocured when trying to generate module');
 			console.log(response);
 		},
 		complete: function(){

@@ -69,7 +69,7 @@ class Module_Generator extends CMS_Controller{
 			if($overwrite && $this->is_exists($directory) && !$this->is_writable($directory)){
 				$errors[] = "Directory '/modules/$directory' is not writable";		
 			}else if(!$overwrite && $this->is_exists($directory)){
-				$errors[] = "Directory '/modules/$directory' already exists";
+				$errors[] = "Directory '/modules/$directory' already exists, activate 'Force overwrite' option to overwrite";
 			}
 		}
 		if(!$structures){
@@ -98,6 +98,7 @@ class Module_Generator extends CMS_Controller{
 				$result = array(
 						"table_name" => $table_name,
 						"fields" => $this->generator_model->list_fields($table_name),
+						"ai_field" => $this->generator_model->auto_increment_field($table_name),
 						"navigation_name" => underscore($directory.'_'.$navigation_caption),
 						"navigation_caption" => $navigation_caption,
 						"function_name" => $function_name,
@@ -150,10 +151,15 @@ class Module_Generator extends CMS_Controller{
     	$this->make_folder($directory.'/controllers');
     	$this->make_folder($directory.'/controllers/data');
     	$this->make_folder($directory.'/assets');
-    	$this->make_folder($directory.'/assets/db/');
-    	$this->make_folder($directory.'/assets/images/');
-    	$this->make_folder($directory.'/assets/scripts/');
-    	$this->make_folder($directory.'/assets/styles/');
+    	$this->make_folder($directory.'/assets/db');
+    	$this->make_folder($directory.'/assets/images');
+    	$this->make_folder($directory.'/assets/scripts');
+    	$this->make_folder($directory.'/assets/styles');
+    	
+    	$this->make_htaccess_deny($directory.'/models');
+    	$this->make_htaccess_deny($directory.'/views');
+    	$this->make_htaccess_deny($directory.'/controllers');
+    	$this->make_htaccess_deny($directory.'/assets/db');
     	
     	// get all unique table_name & controller name    	
     	$unique_table_names = array();
@@ -198,7 +204,7 @@ class Module_Generator extends CMS_Controller{
     	$remove_navigation_template = $this->read_file($current_module_path."/res/install_partial/remove_navigation.php.txt");
     	$navigation_parent_name = $directory.'_index'; 
     	$add_navigation = "";
-    	$remove_navigation = "";
+    	$remove_navigation = "";    	
     	foreach($navigations as $navigation){
     		$search = array(
     				'@navigation_name', 
@@ -216,12 +222,18 @@ class Module_Generator extends CMS_Controller{
     		$remove_navigation = $this->replace($remove_navigation_template, $search, $replace).
     			PHP_EOL.$remove_navigation;
     	}
+    	$quoted_unique_table_names = array();
+    	foreach($unique_table_names as $table_name){
+    		$quoted_unique_table_names[] = "'".$table_name."'";
+    	}
+    	$unique_table_list = implode(', ', $quoted_unique_table_names);
     	$search = array(
     			'@navigation_parent_name',
     			'@add_navigations',
     			'@remove_navigations',
     			'@namespace',
     			'@directory',
+    			'@table_list',
     		);
     	$replace = array(
     			$navigation_parent_name,
@@ -229,6 +241,7 @@ class Module_Generator extends CMS_Controller{
     			$remove_navigation,
     			$namespace,
     			$directory,
+    			$unique_table_list,
     		); 
     	$this->copy_file($current_module_path.'/res/install.php.txt', 
     			$directory.'/controllers/install.php', $search, $replace); 
@@ -256,9 +269,11 @@ class Module_Generator extends CMS_Controller{
     			$table_name = $property['table_name'];
     			$navigation_name = $property['navigation_name'];
     			$fields = $property['fields'];
+    			$ai_field = $property['ai_field'];
     			$function_name = $property['function_name'];
     			$quoted_fields = array();
     			foreach($fields as $field){
+    				if($field == $ai_field) continue;
     				// quoted_fields
     				$quoted_fields[] = "'".$field."'";
     				// display_as
@@ -310,6 +325,10 @@ class Module_Generator extends CMS_Controller{
     private function make_file($fileName, $content){
     	file_put_contents(BASEPATH.'../modules/'.$fileName, $content);
     	chmod(BASEPATH.'../modules/'.$fileName, 0777);
+    }
+    
+    private function make_htaccess_deny($folderName){
+    	$this->make_file($folderName.'/.htaccess', 'Deny From All');
     }
     
     private function read_file($fileName){
