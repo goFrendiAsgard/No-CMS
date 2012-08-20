@@ -136,7 +136,7 @@ function get_controller_and_navigation_name(table_name){
 	};
 }
 
-function adjust_available_table(){
+function adjust_available_table_add(){
 	var table_name = $("#available_table_add>option:selected").val();
 	var names = get_controller_and_navigation_name(table_name);
 	var controller_name = names["controller_name"];
@@ -202,7 +202,7 @@ $(document).ready(function(){
 		var option = '<option '+attribute+'>'+table_name+'</option>';
 		$('#available_table_add').append(option);
 	}
-	adjust_available_table();
+	adjust_available_table_add();
 	$("#btn_show_form_add").colorbox({inline:true, width:"50%", href:"#form_add"});
 	$("#btn_show_form_edit").colorbox({
 			inline:true, width:"50%", href:"#form_edit",
@@ -249,8 +249,8 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$("#available_table").change(function(){
-		adjust_available_table();
+	$("#available_table_add").change(function(){
+		adjust_available_table_add();
 	});	
 	
 	$("#btn_submit").click(function(){

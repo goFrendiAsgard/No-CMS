@@ -16,15 +16,14 @@ class Install extends CMS_Module_Installer {
     }
     //this should be what happen when user uninstall this module
     protected function do_uninstall(){
+    	$this->backup_database(
+    			array('blog_category', 'blog_article', 'blog_category_article', 
+    				'blog_comment', 'blog_photo'));
         $this->remove_all();
     }
     
     private function remove_all(){
-    	$this->db->query("DROP TABLE IF EXISTS `blog_comment`;");        
-        $this->db->query("DROP TABLE IF EXISTS `blog_photo`;");
-        $this->db->query("DROP TABLE IF EXISTS `blog_category_article`;");
-        $this->db->query("DROP TABLE IF EXISTS `blog_article`;");
-        $this->db->query("DROP TABLE IF EXISTS `blog_category`;");
+    	$module_path = $this->cms_module_path();
         
         $this->remove_quicklink("blog_index");        
         
@@ -33,71 +32,22 @@ class Install extends CMS_Module_Installer {
         $this->remove_navigation("blog_article");
         $this->remove_navigation("blog_category");
         $this->remove_navigation("blog_management");
-        $this->remove_navigation("blog_index");         
+        $this->remove_navigation("blog_index"); 
+
+        // import uninstall.sql
+        $this->import_sql(BASEPATH.'../modules/'.$module_path.
+        		'/assets/db/uninstall.sql');
     }
     
     private function build_all(){
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS `blog_article` (
-              `article_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
-              `article_title` varchar(100) NOT NULL,
-        	  `article_url` varchar(100) NOT NULL,
-              `date` DATETIME NOT NULL,
-              `author_user_id` int(20) unsigned NOT NULL,
-              `content` text,
-              `allow_comment` tinyint(3) unsigned NOT NULL DEFAULT '0',
-              PRIMARY KEY (`article_id`),
-        	  UNIQUE KEY (`article_title`),
-        	  UNIQUE KEY (`article_url`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-         ");
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS `blog_comment` (
-              `comment_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
-              `article_id` int(20) unsigned NOT NULL,
-              `date` DATE NOT NULL,
-              `author_user_id` int(20) unsigned NULL,
-              `name` varchar(50),
-              `email` varchar(50),
-              `website` varchar(50), 
-              `content` text,
-              PRIMARY KEY (`comment_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-         ");
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS `blog_photo` (
-              `photo_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
-              `article_id` int(20) unsigned NOT NULL,
-              `url` varchar(50),
-              PRIMARY KEY (`photo_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-         ");
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS `blog_category` (
-              `category_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
-              `category_name` varchar(100) NOT NULL,
-              `description` text,
-              PRIMARY KEY (`category_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-         ");
-        $this->db->query("
-            CREATE TABLE IF NOT EXISTS `blog_category_article` (
-              `category_id` int(20) unsigned NOT NULL,
-              `article_id` int(20) unsigned NOT NULL,
-              PRIMARY KEY (`category_id`,`article_id`),
-              KEY `article_id` (`article_id`),
-              CONSTRAINT `blog_category_article_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `blog_article` (`article_id`),
-              CONSTRAINT `blog_category_article_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `blog_category` (`category_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-         ");
+        $module_path = $this->cms_module_path();
         
         $original_directory = 'blog';
-        $module_url = $this->cms_module_path();
         $module_main_controller_url = '';
-        if($module_url != $original_directory){
-        	$module_main_controller_url = $module_url.'/'.$original_directory;
+        if($module_path != $original_directory){
+        	$module_main_controller_url = $module_path.'/'.$original_directory;
         }else{
-        	$module_main_controller_url = $module_url;
+        	$module_main_controller_url = $module_path;
         }
         
         $this->add_navigation("blog_index","Blog", $module_main_controller_url);
@@ -108,6 +58,53 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation("blog_comment", "Manage Comment", $module_main_controller_url."/comment", 4, "blog_management");
         
         $this->add_quicklink('blog_index');
+        
+        // import install.sql
+        $this->import_sql(BASEPATH.'../modules/'.$module_path.
+        		'/assets/db/install.sql');
+    }
+    
+    private function import_sql($file_name){
+    	$sql_array = explode('/*split*/',
+    			file_get_contents($file_name)
+    	);
+    	foreach($sql_array as $sql){
+    		$this->db->query($sql);
+    	}
+    }
+    
+    private function backup_database($table_names, $limit = 100){
+    	$module_path = $this->cms_module_path();
+    
+    	$this->load->dbutil();
+    	$sql = '';
+    
+    	// create DROP TABLE syntax
+    	for($i=count($table_names)-1; $i>=0; $i--){
+    		$table_name = $table_names[$i];
+    		$sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
+    	}
+    	if($sql !='')$sql.= PHP_EOL;
+    
+    	// create CREATE TABLE and INSERT syntax
+    	$prefs = array(
+    			'tables'      => $table_names,
+    			'ignore'      => array(),
+    			'format'      => 'txt',
+    			'filename'    => 'mybackup.sql',
+    			'add_drop'    => FALSE,
+    			'add_insert'  => TRUE,
+    			'newline'     => PHP_EOL
+    	);
+    	$sql.= $this->dbutil->backup($prefs);
+    
+    	//write file
+    	$file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
+    	file_put_contents(
+    			BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
+    			$sql
+    	);
+    
     }
 }
 
