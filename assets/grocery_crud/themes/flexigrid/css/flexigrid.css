@@ -768,7 +768,7 @@ input.field_error
 }
 a
 {
-	color: blue;
+	/*color: blue;*/
 	text-decoration: none;	
 }
 a:hover
