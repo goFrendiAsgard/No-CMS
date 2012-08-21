@@ -37,6 +37,7 @@ function edit(){
 	var index = $("#index_edit").val();
 	var controller_name = $("#controller_name_edit").val();
 	var navigation_caption = $("#navigation_caption_edit").val();
+	var table_name = module_table[index]["table_name"];
 	module_table[index]["controller_name"] = controller_name;
 	module_table[index]["navigation_caption"] = navigation_caption;
 	$('#module_data>option[index="'+index+'"]').html(get_option_caption(table_name, controller_name, navigation_caption));
