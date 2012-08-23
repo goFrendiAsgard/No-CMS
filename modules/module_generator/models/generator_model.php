@@ -81,7 +81,11 @@ class Generator_Model extends CMS_Model{
 					$value_str = "  (";
 					$field_value = array();
 					foreach($list_fields as $field){
-						$field_value[$field] = "'".addslashes($row[$field])."'";
+						if($row[$field]==''){
+							$field_value[$field] = "NULL";
+						}else{
+							$field_value[$field] = "'".addslashes($row[$field])."'";
+						}
 					}					
 					$value_str .= implode(", ", $field_value);
 					$value_str .= ")";	
