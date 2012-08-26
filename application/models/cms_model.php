@@ -498,8 +498,11 @@ class CMS_Model extends CI_Model {
         $directories = directory_map('modules', 1);
         $module = array();
         foreach ($directories as $directory) {
-            if (!is_dir('modules/' . $directory))
+            if (!is_dir('modules/'.$directory))
                 continue;
+            
+            if (!file_exists('modules/'.$directory.'/controllers/install.php'))
+            	continue;
 
             $files = directory_map('modules/'.$directory.'/controllers', 1);
             $module_controllers = array();

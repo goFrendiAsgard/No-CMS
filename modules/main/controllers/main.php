@@ -220,7 +220,7 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_authorization');
-        $crud->set_subject('Authorization List');
+        $crud->set_subject('Authorization');
 
         $crud->columns('authorization_id', 'authorization_name', 'description');
         $crud->display_as('authorization_id', 'Code')
@@ -244,7 +244,8 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_user');
-        $crud->set_subject('User List');
+        $crud->set_subject('User');
+        
         $crud->required_fields('user_name');
 
         $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
@@ -286,6 +287,8 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_group');
+        $crud->set_subject('User Group');
+        
         $crud->columns('group_name', 'description');
         $crud->edit_fields('group_name', 'description', 'users', 'navigations', 'privileges');
         $crud->add_fields('group_name', 'description', 'users', 'navigations', 'privileges');
@@ -295,7 +298,7 @@ class Main extends CMS_Controller {
                 ->display_as('navigations', 'Navigations')
                 ->display_as('privileges', 'Privileges');
 
-        $crud->set_subject('User List');
+        
         $crud->set_relation_n_n('users', 'cms_group_user', 'cms_user', 'group_id', 'user_id', 'user_name');
         $crud->set_relation_n_n('navigations', 'cms_group_navigation', 'cms_navigation', 'group_id', 'navigation_id', 'navigation_name');
         $crud->set_relation_n_n('privileges', 'cms_group_privilege', 'cms_privilege', 'group_id', 'privilege_id', 'privilege_name');
@@ -328,6 +331,8 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_navigation');
+        $crud->set_subject('Navigation (Page)');
+        
         $crud->columns('navigation_name', 'parent_id', 'title', 'active', 'is_static', 'authorization_id', 'groups');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'description', /*'index',*/ 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
         $crud->add_fields('navigation_name', 'parent_id', 'title', 'description', /*'index',*/ 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
@@ -367,6 +372,8 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_quicklink');
+        $crud->set_subject('Quick Link');
+        
         $crud->columns('navigation_id');
         $crud->edit_fields('navigation_id');
         $crud->add_fields('navigation_id');
@@ -388,6 +395,8 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_privilege');
+        $crud->set_subject('Privilege');
+        
         $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name'); //, 'groups');
 
         $crud->set_relation_n_n('groups', 'cms_group_privilege', 'cms_group', 'privilege_id', 'group_id', 'group_name');
@@ -405,6 +414,8 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_widget');
+        $crud->set_subject('Widget');
+        
         $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'slug', 'groups');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->add_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
@@ -501,6 +512,8 @@ class Main extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('cms_config');
+        $crud->set_subject('Configuration');
+        
         $crud->columns('config_name', 'value', 'description');
         $crud->edit_fields('config_name', 'value', 'description');
         $crud->add_fields('config_name', 'value', 'description');
