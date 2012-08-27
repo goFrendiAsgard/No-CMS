@@ -158,6 +158,7 @@
 			    CodeIgniter forum member can visit  No-CMS thread here:  <a href="http://codeigniter.com/forums/viewthread/209171/">http://codeigniter.com/forums/viewthread/209171/</a><br />
 			    Github user can visit No-CMS repo:  <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />
 			    While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />
+			    In case of you've found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />
 			    That's all. Start your new adventure with No-CMS !!!
 		    </p>
 	    </div>

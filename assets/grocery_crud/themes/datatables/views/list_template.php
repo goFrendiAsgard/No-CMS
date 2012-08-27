@@ -2,12 +2,12 @@
 	if (!defined('BASEPATH')) exit('No direct script access allowed');
 	
 	$this->set_css($this->default_theme_path.'/datatables/css/demo_table_jui.css');
-	$this->set_css($this->default_theme_path.'/datatables/css/ui/simple/jquery-ui-1.8.10.custom.css');
+	$this->set_css($this->default_css_path.'/ui/simple/jquery-ui-1.8.23.custom.css');
 	$this->set_css($this->default_theme_path.'/datatables/css/datatables.css');	
 	$this->set_css($this->default_theme_path.'/datatables/css/jquery.dataTables.css');
 	$this->set_css($this->default_theme_path.'/datatables/extras/TableTools/media/css/TableTools.css');
-	$this->set_js($this->default_javascript_path.'/jquery-1.7.1.min.js');
-	$this->set_js($this->default_theme_path.'/datatables/js/jquery-ui-1.8.10.custom.min.js');
+	$this->set_js($this->default_javascript_path.'/jquery-1.8.0.min.js');
+	$this->set_js($this->default_javascript_path.'/jquery_plugins/jquery-ui-1.8.23.custom.min.js');
 	$this->set_js($this->default_theme_path.'/datatables/js/jquery.dataTables.min.js');
 	$this->set_js($this->default_theme_path.'/datatables/js/datatables.js');
 	$this->set_js($this->default_theme_path.'/datatables/extras/TableTools/media/js/ZeroClipboard.js');
@@ -38,6 +38,27 @@
 
 	var default_per_page = <?php echo $default_per_page;?>;
 
+	var unset_export = <?php echo ($unset_export ? 'true' : 'false'); ?>;
+	var unset_print = <?php echo ($unset_print ? 'true' : 'false'); ?>;
+
+	<?php
+	//A work around for method order_by that doesn't work correctly on datatables theme
+	//@todo remove PHP logic from the view to the basic library 
+	$ordering = 0;
+	$sorting = 'asc';
+	if(!empty($order_by))
+	{
+		foreach($columns as $num => $column) {
+			if($column->field_name == $order_by[0]) {
+				$ordering = $num;
+				$sorting = isset($order_by[1]) && $order_by[1] == 'asc' || $order_by[1] == 'desc' ? $order_by[1] : $sorting ;
+			}
+		}
+	}	
+	?>
+	
+	var datatables_aaSorting = [[ <?php echo $ordering; ?>, "<?php echo $sorting;?>" ]];
+	
 </script>
 <?php 
 	if(!empty($actions)){
@@ -54,6 +75,14 @@
 <?php 
 	}
 ?>
+<?php if($unset_export && $unset_print){?>
+<style type="text/css">
+	.datatables-add-button
+	{
+		position: static !important;	
+	}
+</style>
+<?php }?>
 <div id='report-error' class='report-div error report-list'></div>
 <div id='report-success' class='report-div success report-list' <?php if($success_message !== null){?>style="display:block"<?php }?>>
 <?php if($success_message !== null){?>

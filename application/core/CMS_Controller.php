@@ -288,6 +288,7 @@ class CMS_Controller extends CI_Controller {
         	$cms['widget'] = $widget;
         	
         	// get user name, quicklinks, module_name & module_path
+        	$cms['user_id'] = $this->cms_userid();
         	$cms['user_name'] = $this->cms_username();
         	$cms['quicklinks'] = $this->cms_quicklinks();
         	$cms['module_path'] = $this->cms_module_path();

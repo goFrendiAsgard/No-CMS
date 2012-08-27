@@ -267,7 +267,7 @@ class Main extends CMS_Controller {
 
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'main_user_management');
+        $this->view('main/user', $output, 'main_user_management');
     }
 
     public function before_insert_user($post_array) {
@@ -312,7 +312,7 @@ class Main extends CMS_Controller {
 
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'main_group_management');
+        $this->view('main/group', $output, 'main_group_management');
     }
 
     public function before_delete_group($post_array) {
