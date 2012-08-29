@@ -6,6 +6,90 @@
  * @author gofrendi
  */
 class Main extends CMS_Controller {
+	
+	protected function upload($upload_path, $input_file_name='userfile', $submit_name='upload'){
+		$data = array(
+				"uploading"=>TRUE,
+				"success"=>FALSE,
+				"message"=>""
+		);
+		if(isset($_POST[$submit_name])){
+			$config['upload_path'] = $upload_path;
+			$config['allowed_types'] = 'zip';
+			$config['max_size']	= 8*1024;
+			$config['overwrite'] = TRUE;
+			$this->load->library('upload', $config);
+			if ( ! $this->upload->do_upload($input_file_name)){
+				$data['uploading'] = TRUE;
+				$data['success'] = FALSE;
+				$data['message'] = $this->upload->display_errors();
+			}
+			else{
+				$this->load->library('unzip');
+				$upload_data = $this->upload->data();
+				$this->unzip->extract($upload_data['full_path']);
+				unlink($upload_data['full_path']);
+				$data['uploading'] = TRUE;
+				$data['success'] = TRUE;
+				$data['message'] = '';
+			}
+		}else{
+			$data['uploading'] = FALSE;
+			$data['success'] = FALSE;
+			$data['message'] = '';
+		}
+		return $data;
+		 
+	}
+	
+	public function module_management() {
+		// upload new module
+		$data['upload'] = $this->upload('./modules/', 'userfile', 'upload');
+	
+		// show the view
+		$data['modules'] = $this->cms_get_module_list();
+		$this->view('main/module_management', $data, 'main_module_management');
+	}
+	
+	public function change_theme($theme = NULL) {
+		// upload new theme
+		$data['upload'] = $this->upload('./themes/', 'userfile', 'upload');
+		 
+		// show the view
+		if (isset($theme)) {
+			$this->cms_set_config('site_theme', $theme);
+			redirect('main/change_theme');
+		} else {
+			$data['themes'] = $this->cms_get_layout_list();
+			$this->view('main/change_theme', $data, 'main_change_theme');
+		}
+	}
+	
+	public function show_widget($id){
+		if (isset($id)) {
+			$SQL = "SELECT url, is_static, static_content FROM cms_widget WHERE widget_id=" . $id;
+			$query = $this->db->query($SQL);
+			$row = $query->row();
+			$is_static = $row->is_static==1;
+			$url = $row->url;
+			$static_content = $this->cms_parse_keyword($row->static_content);
+	
+			if($is_static){
+				$data['_content'] = $static_content;
+				$this->view('main/static_page', $data);
+			}else{
+				redirect($url.'?_only_content=1');
+			}
+		} else {
+			$this->cms_show_html("widget doesn't exist");
+		}
+	}
+	
+	//this is used for the real static page which doesn't has any URL in navigation management
+	public function static_page($navigation_name){
+		//it actually only trigger static_page event on CMS_Controller.view()
+		$this->view('main/static_page',NULL,$navigation_name);
+	}
 
     public function login() {
         //retrieve old_url from flashdata if exists
@@ -120,35 +204,39 @@ class Main extends CMS_Controller {
     }
     
     public function check_registration(){
-        $user_name = $this->input->post('user_name');
-        $exists = $this->cms_is_user_exists($user_name);
-        $message = "";
-        if($user_name==""){
-            $message = $this->cms_lang("Username is empty");
-        }else if($exists){
-            $message = $this->cms_lang("Username already exists");
-        }
-        $data = array(
-            "exists"=>$exists,
-            "message"=>$message
-        );
-        $this->cms_show_json($data);        
+    	if($this->input->is_ajax_request()){
+	        $user_name = $this->input->post('user_name');
+	        $exists = $this->cms_is_user_exists($user_name);
+	        $message = "";
+	        if($user_name==""){
+	            $message = $this->cms_lang("Username is empty");
+	        }else if($exists){
+	            $message = $this->cms_lang("Username already exists");
+	        }
+	        $data = array(
+	            "exists"=>$exists,
+	            "message"=>$message
+	        );
+	        $this->cms_show_json($data); 
+    	}       
     }
     
     public function check_change_profile(){
-    	$user_name = $this->input->post('user_name');
-    	$exists = $this->cms_is_user_exists($user_name) && $user_name!=$this->cms_username();
-    	$message = "";
-    	if($user_name==""){
-    		$message = $this->cms_lang("Username is empty");
-    	}else if($exists){
-    		$message = $this->cms_lang("Username already exists");
+    	if($this->input->is_ajax_request()){
+	    	$user_name = $this->input->post('user_name');
+	    	$exists = $this->cms_is_user_exists($user_name) && $user_name!=$this->cms_username();
+	    	$message = "";
+	    	if($user_name==""){
+	    		$message = $this->cms_lang("Username is empty");
+	    	}else if($exists){
+	    		$message = $this->cms_lang("Username already exists");
+	    	}
+	    	$data = array(
+	    			"exists"=>$exists,
+	    			"message"=>$message
+	    	);
+	    	$this->cms_show_json($data);
     	}
-    	$data = array(
-    			"exists"=>$exists,
-    			"message"=>$message
-    	);
-    	$this->cms_show_json($data);
     }
 
     public function change_profile() {
@@ -215,7 +303,8 @@ class Main extends CMS_Controller {
     	);    	
         $this->view('main/management', $data, 'main_management');
     }
-
+	
+    // AUTHORIZATION ===========================================================
     public function authorization() {
         $crud = new grocery_CRUD();
 
@@ -239,7 +328,8 @@ class Main extends CMS_Controller {
 
         $this->view('grocery_CRUD', $output);
     }
-
+	
+    // USER ====================================================================
     public function user() {
         $crud = new grocery_CRUD();
 
@@ -283,6 +373,7 @@ class Main extends CMS_Controller {
         return $post_array;
     }
 
+    // GROUP ===================================================================
     public function group() {
         $crud = new grocery_CRUD();
 
@@ -326,7 +417,8 @@ class Main extends CMS_Controller {
         }
         return $post_array;
     }
-
+	
+    // NAVIGATION ==============================================================
     public function navigation() {
         $crud = new grocery_CRUD();
 
@@ -358,6 +450,8 @@ class Main extends CMS_Controller {
         $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name');
 
         $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id', 'group_name');
+        
+        $crud->callback_column('active', array($this, 'column_navigation_active'));
 		        
         $crud->callback_before_insert(array($this, 'before_insert_navigation'));
 
@@ -365,9 +459,64 @@ class Main extends CMS_Controller {
         
         $str = 'coba';
 
-        $this->view('grocery_CRUD', $output, 'main_navigation_management');
+        $this->view('navigation', $output, 'main_navigation_management');
     }
-
+    
+    public function before_insert_navigation($post_array) {
+    	//get parent's navigation_id
+    	$SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_id='" . $post_array['parent_id'] . "'";
+    	$query = $this->db->query($SQL);
+    	$row = $query->row();
+    
+    	$parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+    
+    	//index = max index+1
+    	if (isset($parent_id)) {
+    		$whereParentId = "(parent_id = $parent_id)";
+    	} else {
+    		$whereParentId = "(parent_id IS NULL)";
+    	}
+    	$SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_navigation` WHERE $whereParentId";
+    	$query = $this->db->query($SQL);
+    	$row = $query->row();
+    	$index = $row->newIndex;
+    	if (!isset($index))
+    		$index = 0;
+    
+    	$post_array['index'] = $index;
+    
+    	return $post_array;
+    }
+    
+    public function column_navigation_active($value, $row){
+    	$target = site_url($this->cms_module_path().
+    		'/toggle_navigation_active/'.$row->navigation_name);
+    	if($value==0){
+    		return '<span target="'.$target.'" class="navigation_active">Inactive</span>';
+    	}else{
+    		return '<span target="'.$target.'" class="navigation_active">Active</span>';
+    	}
+    }
+    
+    public function toggle_navigation_active($navigation_name){
+    	$this->db->select('active')
+    		->from('cms_navigation')
+    		->where('navigation_name', $navigation_name);
+    	$query = $this->db->get();
+    	if($query->num_rows()>0){
+    		$row = $query->row();
+    		$new_value = ($row->active == 0)? 1: 0;
+	    	$this->db->update('cms_navigation',
+	    			array('active'=>$new_value), 
+	    			array('navigation_name'=> $navigation_name)
+	    		);
+	    	$this->cms_show_json(array('success'=>true));
+    	}else{
+    		$this->cms_show_json(array('success'=>false));
+    	}
+    }
+	
+    // QUICKLINK ===============================================================
     public function quicklink() {
         $crud = new grocery_CRUD();
 
@@ -390,7 +539,22 @@ class Main extends CMS_Controller {
 
         $this->view('grocery_CRUD', $output, 'main_quicklink_management');
     }
-
+    
+    public function before_insert_quicklink($post_array) {
+    	$SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_quicklink`";
+    	$query = $this->db->query($SQL);
+    	$row = $query->row();
+    	$index = $row->newIndex;
+    
+    	if (!isset($index))
+    		$index = 0;
+    
+    	$post_array['index'] = $index;
+    
+    	return $post_array;
+    }
+	
+    // PRIVILEGE ===============================================================
     public function privilege() {
         $crud = new grocery_CRUD();
 
@@ -409,7 +573,8 @@ class Main extends CMS_Controller {
 
         $this->view('grocery_CRUD', $output, 'main_privilege_management');
     }
-
+	
+    // WIDGET ==================================================================
     public function widget() {
         $crud = new grocery_CRUD();
 
@@ -467,47 +632,8 @@ class Main extends CMS_Controller {
 
         return $post_array;
     }
-
-    public function before_insert_quicklink($post_array) {
-        $SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_quicklink`";
-        $query = $this->db->query($SQL);
-        $row = $query->row();
-        $index = $row->newIndex;
-
-        if (!isset($index))
-            $index = 0;
-
-        $post_array['index'] = $index;
-
-        return $post_array;
-    }
-
-    public function before_insert_navigation($post_array) {
-        //get parent's navigation_id
-        $SQL = "SELECT navigation_id FROM cms_navigation WHERE navigation_id='" . $post_array['parent_id'] . "'";
-        $query = $this->db->query($SQL);
-        $row = $query->row();
-
-        $parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
-
-        //index = max index+1
-        if (isset($parent_id)) {
-            $whereParentId = "(parent_id = $parent_id)";
-        } else {
-            $whereParentId = "(parent_id IS NULL)";
-        }
-        $SQL = "SELECT max(`index`)+1 AS newIndex FROM `cms_navigation` WHERE $whereParentId";
-        $query = $this->db->query($SQL);
-        $row = $query->row();
-        $index = $row->newIndex;
-        if (!isset($index))
-            $index = 0;
-
-        $post_array['index'] = $index;
-
-        return $post_array;
-    }    
-
+	
+    // CONFIG ==================================================================
     public function config() {
         $crud = new grocery_CRUD();
 
@@ -528,90 +654,6 @@ class Main extends CMS_Controller {
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'main_config_management');
-    }
-    
-    protected function upload($upload_path, $input_file_name='userfile', $submit_name='upload'){
-    	$data = array(
-    			"uploading"=>TRUE,
-    			"success"=>FALSE, 
-    			"message"=>""
-    		);
-    	if(isset($_POST[$submit_name])){
-    		$config['upload_path'] = $upload_path;
-    		$config['allowed_types'] = 'zip';
-    		$config['max_size']	= 8*1024;
-    		$config['overwrite'] = TRUE;
-    		$this->load->library('upload', $config);
-    		if ( ! $this->upload->do_upload($input_file_name)){
-    			$data['uploading'] = TRUE;
-    			$data['success'] = FALSE;
-    			$data['message'] = $this->upload->display_errors();
-    		}
-    		else{
-    			$this->load->library('unzip');
-    			$upload_data = $this->upload->data();
-    			$this->unzip->extract($upload_data['full_path']);
-    			unlink($upload_data['full_path']);
-    			$data['uploading'] = TRUE;
-    			$data['success'] = TRUE;
-    			$data['message'] = '';
-    		}
-    	}else{
-    		$data['uploading'] = FALSE;
-    		$data['success'] = FALSE;
-    		$data['message'] = '';
-    	}
-    	return $data;
-    	
-    }
-
-    public function module_management() {
-    	// upload new module
-    	$data['upload'] = $this->upload('./modules/', 'userfile', 'upload');
-
-		// show the view
-        $data['modules'] = $this->cms_get_module_list();
-        $this->view('main/module_management', $data, 'main_module_management');
-    }
-
-    public function change_theme($theme = NULL) {
-    	// upload new theme
-    	$data['upload'] = $this->upload('./themes/', 'userfile', 'upload');
-    	
-    	// show the view
-        if (isset($theme)) {
-            $this->cms_set_config('site_theme', $theme);
-            redirect('main/change_theme');
-        } else {
-            $data['themes'] = $this->cms_get_layout_list();
-            $this->view('main/change_theme', $data, 'main_change_theme');
-        }
-    }
-    
-    public function show_widget($id){
-        if (isset($id)) {
-            $SQL = "SELECT url, is_static, static_content FROM cms_widget WHERE widget_id=" . $id;
-            $query = $this->db->query($SQL);
-            $row = $query->row();
-            $is_static = $row->is_static==1;
-            $url = $row->url;
-            $static_content = $this->cms_parse_keyword($row->static_content);
-            
-            if($is_static){
-                $data['_content'] = $static_content;
-                $this->view('main/static_page', $data);
-            }else{
-                redirect($url.'?_only_content=1');
-            }
-        } else {
-            $this->cms_show_html("widget doesn't exist");
-        }
-    }
-    
-    //this is used for the real static page which doesn't has any URL in navigation management
-    public function static_page($navigation_name){
-        //it actually only trigger static_page event on CMS_Controller.view()
-        $this->view('main/static_page',NULL,$navigation_name);
     }
     
     

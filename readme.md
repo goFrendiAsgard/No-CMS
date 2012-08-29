@@ -281,3 +281,8 @@ v0.5.5
 * (done, tested) use grocery-CRUD 1.3 stable
 * (proposed) widget by not using ajax
 * (proposed) asset management library to minify and combine scripts into one external script
+
+v0.5.6
+* (in progress) add "toggle" navigation feature on table view (also will be applied for widget etc)
+* (proposed) wysiwyg error on IE
+* (proposed) check installer in xampp
