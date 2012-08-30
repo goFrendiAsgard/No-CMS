@@ -156,7 +156,7 @@
 			$success = FALSE;
 			$errors[] = 'install directory is not writable';
 		}
-		if($hide_index != ""){
+		if($hide_index !== ""){
 			if(!is_writable('../')){			
 				$success = FALSE;
 				$errors[] = "No-CMS directory is not writeable, we can't make .htaccess there";
@@ -244,12 +244,12 @@
 					$key_config[] = '@gzip';
 					$replace_config[] = 'FALSE';
 				}
-				if($hide_index != ""){
+				if($hide_index !== ""){
 					$key_config[] = '@index_page';
 					$replace_config[] = '';
 				}else{
 					$key_config[] = '@index_page';
-					$replace_config[] = '';
+					$replace_config[] = 'index.php';
 				}
 				$str = file_get_contents('./resources/config.php');
 				$str = replace($str, $key_config, $replace_config);
@@ -257,7 +257,7 @@
 				@chmod('../application/config/config.php', 0555);
 				
 				// .htaccess
-				if($hide_index != ""){
+				if($hide_index !== ""){
 					$str = file_get_contents('./resources/htaccess');
 					$str = replace($str,
 							array('@base_path'),
