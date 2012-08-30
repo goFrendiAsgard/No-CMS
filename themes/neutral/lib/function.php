@@ -31,14 +31,14 @@
 		    	$js.= '}';
 	    		$js.= '});';
     		}
-    	}
+    	}/*
     	$js = '
 	    	<script type="text/javascript">
 	    		$(document).ready(function(){
 	    			'.$js.'
 	    		});
 	    	</script>
-	    ';
+	    ';*/
     	return $js;
     }
     

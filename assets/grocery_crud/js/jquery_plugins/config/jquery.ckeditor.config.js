@@ -1,3 +1,6 @@
 $(function(){
-	$( 'textarea.texteditor' ).ckeditor();
+	$( 'textarea.texteditor' ).ckeditor({
+        baseHref : "/~gofrendi/No-CMS/", 
+        baseUrl  : "/~gofrendi/No-CMS/",
+    });
 });
