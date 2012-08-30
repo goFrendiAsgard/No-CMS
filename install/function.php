@@ -90,6 +90,15 @@
 		return $path;
 	}
 	
+	function is_mod_rewrite_active(){
+		if (function_exists('apache_get_modules')) {
+			$modules = apache_get_modules();
+			return in_array('mod_rewrite', $modules);
+		} else {
+			return getenv('HTTP_MOD_REWRITE')=='On' ? true : false ;
+		}
+	}
+	
 	function check_all($install=NULL){
 		$db_server = get_input("db_server");
 		$db_port = get_input("db_port");
@@ -147,10 +156,14 @@
 			$success = FALSE;
 			$errors[] = 'install directory is not writable';
 		}
-		if(!is_writable('../')){
-			if($hide_index != ""){
+		if($hide_index != ""){
+			if(!is_writable('../')){			
 				$success = FALSE;
 				$errors[] = "No-CMS directory is not writeable, we can't make .htaccess there";
+			}
+			if(!is_mod_rewrite_active()){
+				$success = FALSE;
+				$errors[] = "mod_rewrite is not enabled";
 			}
 		}
 		// admin password

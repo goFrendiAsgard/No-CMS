@@ -456,8 +456,6 @@ class Main extends CMS_Controller {
         $crud->callback_before_insert(array($this, 'before_insert_navigation'));
 
         $output = $crud->render();
-        
-        $str = 'coba';
 
         $this->view('navigation', $output, 'main_navigation_management');
     }
@@ -490,7 +488,7 @@ class Main extends CMS_Controller {
     
     public function column_navigation_active($value, $row){
     	$target = site_url($this->cms_module_path().
-    		'/toggle_navigation_active/'.$row->navigation_name);
+    		'/toggle_navigation_active/'.$row->navigation_id);
     	if($value==0){
     		return '<span target="'.$target.'" class="navigation_active">Inactive</span>';
     	}else{
@@ -498,21 +496,23 @@ class Main extends CMS_Controller {
     	}
     }
     
-    public function toggle_navigation_active($navigation_name){
-    	$this->db->select('active')
-    		->from('cms_navigation')
-    		->where('navigation_name', $navigation_name);
-    	$query = $this->db->get();
-    	if($query->num_rows()>0){
-    		$row = $query->row();
-    		$new_value = ($row->active == 0)? 1: 0;
-	    	$this->db->update('cms_navigation',
-	    			array('active'=>$new_value), 
-	    			array('navigation_name'=> $navigation_name)
-	    		);
-	    	$this->cms_show_json(array('success'=>true));
-    	}else{
-    		$this->cms_show_json(array('success'=>false));
+    public function toggle_navigation_active($navigation_id){
+    	if($this->input->is_ajax_request()){
+	    	$this->db->select('active')
+	    		->from('cms_navigation')
+	    		->where('navigation_id', $navigation_id);
+	    	$query = $this->db->get();
+	    	if($query->num_rows()>0){
+	    		$row = $query->row();
+	    		$new_value = ($row->active == 0)? 1: 0;
+		    	$this->db->update('cms_navigation',
+		    			array('active'=>$new_value), 
+		    			array('navigation_id'=> $navigation_id)
+		    		);
+		    	$this->cms_show_json(array('success'=>true));
+	    	}else{
+	    		$this->cms_show_json(array('success'=>false));
+	    	}
     	}
     }
 	
@@ -608,10 +608,12 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('groups', 'cms_group_widget', 'cms_group', 'widget_id', 'group_id', 'group_name');
 
         $crud->callback_before_insert(array($this, 'before_insert_widget'));
+        
+        $crud->callback_column('active', array($this, 'column_widget_active'));
 
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'main_widget_management');
+        $this->view('widget', $output, 'main_widget_management');
     }
 
     public function before_insert_widget($post_array) {
@@ -631,6 +633,36 @@ class Main extends CMS_Controller {
         $post_array['index'] = $index;
 
         return $post_array;
+    }
+    
+    public function column_widget_active($value, $row){    	
+    	$target = site_url($this->cms_module_path().
+    			'/toggle_widget_active/'.$row->widget_id);
+    	if($value==0){
+    		return '<span target="'.$target.'" class="widget_active">Inactive</span>';
+    	}else{
+    		return '<span target="'.$target.'" class="widget_active">Active</span>';
+    	}
+    }
+    
+    public function toggle_widget_active($widget_id){
+    	if($this->input->is_ajax_request()){
+	    	$this->db->select('active')
+		    	->from('cms_widget')
+		    	->where('widget_id', $widget_id);
+	    	$query = $this->db->get();
+	    	if($query->num_rows()>0){
+	    		$row = $query->row();
+	    		$new_value = ($row->active == 0)? 1: 0;
+	    		$this->db->update('cms_widget',
+	    				array('active'=>$new_value),
+	    				array('widget_id'=> $widget_id)
+	    		);
+	    		$this->cms_show_json(array('success'=>true));
+	    	}else{
+	    		$this->cms_show_json(array('success'=>false));
+	    	}
+    	}
     }
 	
     // CONFIG ==================================================================
