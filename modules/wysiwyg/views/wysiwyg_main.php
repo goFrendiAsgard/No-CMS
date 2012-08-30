@@ -136,6 +136,10 @@
 		cursor:pointer;
 	}
 	
+	span.inactive{
+    	color: #D3D3D3;
+    }
+	
 	/* small */
     @media (max-width: 479px){
     	div#content{
@@ -164,32 +168,28 @@
 	    }
 	    
     }
+    
 </style>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.css" />
 <?php echo '<base href="'.base_url().'" />';?>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
 <script type="text/javascript">
-    function adjust_width(){
-        var wysiwyg_width = $("div#wysiwyg").width();
-        $("div#center").width(wysiwyg_width-2);
-        $("div#header").width(wysiwyg_width-2);
-		
-        var center_width = $("div#center").width();
-        var left_width = $("div#left").width();
-        var right_width = $("div#right").width();		
-        $("div#content").width(center_width-left_width-right_width-6-60);
-		
-    }
     
     function parse_navigation(objs){
         var html="";
+        var inactive_class = "";
         if(objs.length>0){
             html +="<ul>";
             for(var i=0; i<objs.length; i++){
                 obj = objs[i];
+                if(!obj.active){
+                    inactive_class = "inactive";
+                }else{
+                    inactive_class = "";
+                }
                 html += '<li>';
-                html += '<span class="text_content">'+obj.title+'</span>';
+                html += '<span class="text_content '+inactive_class+'">'+obj.title+'</span>';
                 html += '<input type="hidden" class="navigation_id" value="'+obj.id+'" />';
                 if(!obj.is_root){
                     html += ' <a href="#" class="promote_navigation"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/left.png'); ?>" /></a>';
@@ -261,15 +261,17 @@
     
     function parse_widget(objs){
         var html = "";
+        var inactive_class = "";
         if(objs.length>0){
             for(var i=0; i<objs.length; i++){
                 obj = objs[i];
                 html+='<div class="widget">';
-                if(obj.active){
-                	html += '<span class="text_content">'+obj.title+'</span>';
+                if(!obj.active){
+                    inactive_class = "inactive";
                 }else{
-                	html += '<span class="text_content">{Unused} '+obj.title+'</span>';
+                    inactive_class = "";
                 }
+                html += '<span class="text_content '+inactive_class+'">'+obj.title+'</span>';
                 html += '<input type="hidden" class="widget_id" value="'+obj.id+'" />';
                 html += '<input type="hidden" class="widget_slug" value="'+obj.slug+'" />';
                 if(i>0){
@@ -314,7 +316,6 @@
     }
     
     function reload_all(){
-        adjust_width();
         get_navigation();
         get_quicklink();
         get_widget();
@@ -605,10 +606,6 @@
         
         
     });
-    
-    $(document).resize(function(){
-        adjust_width();
-    });	
     
     jQuery(function(){
         new qq.FileUploader({
