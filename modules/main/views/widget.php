@@ -6,12 +6,17 @@
 	}
 </style>
 <?php 
-foreach($css_files as $file): ?>
-	<link type="text/css" rel="stylesheet" href="<?php echo $file; ?>" />
-<?php endforeach; ?>
-<?php foreach($js_files as $file): ?>
-	<script src="<?php echo $file; ?>"></script>
-<?php endforeach; ?>
+	$asset = new CMS_Asset(); 
+	foreach($css_files as $file){
+		$asset->add_css($file);
+	} 
+	echo $asset->compile_css();
+	
+	foreach($js_files as $file){
+		$asset->add_js($file);
+	}
+	echo $asset->compile_js(TRUE);
+?>
 <script type="text/javascript">
 	$(document).ready(function(){
 		
@@ -37,4 +42,6 @@ foreach($css_files as $file): ?>
 		
 	});
 </script>
-<?php echo $output; ?>
+<?php 	
+	echo $output;
+?>

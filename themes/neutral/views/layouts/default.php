@@ -13,17 +13,15 @@
     <!-- Le styles -->
     <?php 
 	    $asset = new CMS_Asset();
-	    $asset->add_css(base_url("themes/".$cms['site_theme']."/assets/default/style.css"));
+	    $asset->add_themes_css('style.css', $cms['site_theme'], 'default');
 	    $asset->add_cms_css('bootstrap/css/bootstrap-all.min.css');	
 	    echo $asset->compile_css();
-	?>
-	<?php 
-	    $asset = new CMS_Asset();
+	    
 	    $asset->add_cms_js('nocms/js/jquery.js');
 	    $asset->add_cms_js("bootstrap/js/bootstrap-all.min.js");
 	    $asset->add_string_js(build_widget_js($cms['widget'], 'sidebar'));
 	    $asset->add_string_js(build_widget_js($cms['widget'], 'advertisement'));
-	    $asset->add_js(base_url("themes/".$cms['site_theme']."/assets/default/script.js"));
+	    $asset->add_themes_js('script.js', $cms['site_theme'], 'default');
 	    echo $asset->compile_js(TRUE);
 	?>
 	
@@ -103,6 +101,7 @@
 
     
     <!-- Placed at the end of the document so the pages load faster -->
+    
     
     
   </body>

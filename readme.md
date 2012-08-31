@@ -284,5 +284,5 @@ v0.5.6
 * (done, tested) wysiwyg error on IE
 * (done, not tested) ensure installer also works in xampp (htaccess issue)
 * (proposed) widget by not using ajax
-* (proposed) asset management library to minify and combine scripts into one external script
+* (done, partially, not work well with big file) asset management library to minify and combine scripts into one external script
 * (proposed) master-detail by using grocery-crud
