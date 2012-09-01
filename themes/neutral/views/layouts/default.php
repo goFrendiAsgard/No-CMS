@@ -18,10 +18,10 @@
 	    echo $asset->compile_css();
 	    
 	    $asset->add_cms_js('nocms/js/jquery.js');
-	    $asset->add_cms_js("bootstrap/js/bootstrap-all.min.js");
+	    $asset->add_cms_js("bootstrap/js/bootstrap-all.min.js");	    
+	    $asset->add_themes_js('script.js', $cms['site_theme'], 'default');
 	    $asset->add_string_js(build_widget_js($cms['widget'], 'sidebar'));
 	    $asset->add_string_js(build_widget_js($cms['widget'], 'advertisement'));
-	    $asset->add_themes_js('script.js', $cms['site_theme'], 'default');
 	    echo $asset->compile_js(TRUE);
 	?>
 	

@@ -56,11 +56,11 @@ class CMS_Asset{
 	}
 	
 	public function add_module_js($path, $module){
-		$this->add_js(base_url($module_path.'/assets/'.$path));
+		$this->add_js(base_url('modules/'.$module.'/assets/'.$path));
 	}
 	
 	public function add_module_css($path, $module){
-		$this->add_css(base_url($module_path.'/assets/'.$path));
+		$this->add_css(base_url('modules/'.$module.'/assets/'.$path));
 	}
 	
 	public function add_cms_css($path){

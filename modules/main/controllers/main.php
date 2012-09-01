@@ -352,12 +352,26 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('groups', 'cms_group_user', 'cms_group', 'user_id', 'group_id', 'group_name');
         $crud->callback_before_insert(array($this, 'before_insert_user'));
         $crud->callback_before_delete(array($this, 'before_delete_user'));
+        
+        if($crud->getState() == 'edit'){
+        	$state_info = $crud->getStateInfo();
+	        $primary_key = $state_info->primary_key;
+	        if($primary_key == $this->cms_userid() || $primary_key == 1){
+	        	$crud->callback_edit_field('active', array($this, 'read_only_user_active'));
+	        }
+        }
 
         $crud->set_lang_string('delete_error_message', 'You cannot delete super admin user or your own account');
 
         $output = $crud->render();
 
         $this->view('main/user', $output, 'main_user_management');
+    }
+    
+    public function read_only_user_active($value, $row){
+    	$input = '<input name="active" value="'.$value.'" type="hidden" />';
+    	$caption = $value==0? 'Inactive' : 'Active';
+    	return $input.$caption;
     }
 
     public function before_insert_user($post_array) {
@@ -457,7 +471,7 @@ class Main extends CMS_Controller {
 
         $output = $crud->render();
 
-        $this->view('navigation', $output, 'main_navigation_management');
+        $this->view('main/navigation', $output, 'main_navigation_management');
     }
     
     public function before_insert_navigation($post_array) {
@@ -613,7 +627,7 @@ class Main extends CMS_Controller {
 
         $output = $crud->render();
 
-        $this->view('widget', $output, 'main_widget_management');
+        $this->view('main/widget', $output, 'main_widget_management');
     }
 
     public function before_insert_widget($post_array) {
@@ -682,12 +696,26 @@ class Main extends CMS_Controller {
 
         $crud->unset_texteditor('description');
         $crud->unset_texteditor('value');
+        
+        if($crud->getState() == 'edit'){
+        	$crud->callback_edit_field('config_name', 
+        			array($this, 'read_only_config_name'));
+        	$crud->callback_edit_field('description',
+        			array($this, 'read_only_config_description'));
+        }
 
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'main_config_management');
+        $this->view('main/config', $output, 'main_config_management');
     }
     
+    public function read_only_config_name($value, $row){
+    	return '<input name="config_name" value="'.$value.'" type="hidden" />'.$value;
+    }
+    
+    public function read_only_config_description($value, $row){
+    	return '<input name="config_description" value="'.$value.'" type="hidden" />'.$value;
+    }
     
 
 }

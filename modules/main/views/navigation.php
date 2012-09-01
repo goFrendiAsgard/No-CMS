@@ -1,12 +1,6 @@
-<style type="text/css">
-	.navigation_active{
-		cursor: pointer;
-		text-decoration: underline;
-		color: blue;
-	}
-</style>
 <?php 
 	$asset = new CMS_Asset(); 
+	$asset->add_module_css('styles/navigation.css','main');
 	foreach($css_files as $file){
 		$asset->add_css($file);
 	} 
@@ -15,32 +9,7 @@
 	foreach($js_files as $file){
 		$asset->add_js($file);
 	}
-	echo $asset->compile_js(TRUE);	
-?>
-	<script type="text/javascript">
-		$(document).ready(function(){			
-			$(".navigation_active").click(function(){
-				var str = $(this).html();
-				var $this = $(this);
-				$.ajax({
-					url: $(this).attr('target'),
-					dataType: 'json',
-					success: function(response){					
-						if(str == 'Active'){
-							str = 'Inactive';
-						}else{
-							str = 'Active';
-						}
-						if(response.success){
-							console.log(str);
-							$this.html(str);
-						}
-					}
-				});
-			});
-			
-		});
-	</script>
-<?php 
+	$asset->add_module_js('scripts/navigation.js','main');
+	echo $asset->compile_js(TRUE);
 	echo $output;
 ?>

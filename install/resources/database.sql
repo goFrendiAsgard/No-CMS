@@ -198,7 +198,7 @@ CREATE TABLE `cms_module_dependency` (
 CREATE TABLE `cms_config` (
   `config_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `config_name` varchar(50) NOT NULL,
-  `value` varchar(200) NULL,
+  `value` text NULL,
   `description` text,
   PRIMARY KEY (`config_id`),
   UNIQUE KEY `config_name` (`config_name`)

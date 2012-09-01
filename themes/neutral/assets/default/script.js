@@ -23,22 +23,18 @@ $(document).ready(function(){
         $(this).toggleClass('layout_expand_icon');          
         return false;
     });
-    
-    $(window).resize(function() {
-    	adjust_content_width();
-	});
-    
-    adjust_content_width();
 
 });
 
-function adjust_content_width(){
-	$('#layout_content').width(
-			$('#layout_center').width() -
-			$('#layout_right').width() -
-			$('#layout_left').width() -
-			100
-	);
+function load_widget(path, widget_name){
+	$.ajax({
+		url : path,
+		type: "POST",
+		data: {_only_content:true},
+		success : function(response){
+			$("#layout_widget_container_"+widget_name+" .widget_content").replaceWith(response);
+		}
+	});
 }
 
 

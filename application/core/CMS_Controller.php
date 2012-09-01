@@ -335,8 +335,8 @@ class CMS_Controller extends CI_Controller {
         	// include data_partial into data
         	$data['cms'] = $cms;
         	
-        	// if only content
-            if ((isset($_REQUEST['_only_content']))) {
+        	// if only content or request is ajax
+            if ((isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
                 $result = $this->load->view($view_url, $data, $return_as_string);
             } else {           
 
