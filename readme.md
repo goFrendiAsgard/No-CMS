@@ -284,7 +284,7 @@ v0.5.6
 + (done, tested) wysiwyg error on IE
 + (done, tested) ensure installer also works in xampp (htaccess issue)
 + (proposed) widget by not using ajax, need some tasks:
-    - add "_as_string" parameter, as "_only_content"
+    - add "_as_string" parameter, just as "_only_content"
     - in Controller's view, return string if _as_string activated
     - add "cms_widget" content
 + (done, tested) asset management library using head.js
