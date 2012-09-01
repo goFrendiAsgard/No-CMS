@@ -195,21 +195,17 @@ class CMS_Model extends CI_Model {
      * @param  parent_id, max_menu_depth
      * @desc  return navigation child if parent_id specified, else it will return root navigation
      */
-    public final function cms_widgets($slug = NULL) {
+    public final function cms_widgets() {
         $user_name = $this->cms_username();
         $user_id = $this->cms_userid();
         $not_login = !$user_name ? "TRUE" : "FALSE";
         $login = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
-        if (isset($slug)) {
-            $whereSlug = "slug = '" . addcslashes($slug) . "'";
-        } else {
-            $whereSlug = "1=1";
-        }
-
         $query = $this->db->query(
-                "SELECT widget_id, widget_name, is_static, title, description, url, slug 
+                "SELECT 
+        			widget_id, widget_name, is_static, title, 
+        			description, url, slug, static_content 
                 FROM cms_widget AS w WHERE
                     (                        
                         (authorization_id = 1) OR
@@ -228,18 +224,47 @@ class CMS_Model extends CI_Model {
                                 )>0
                             )
                         )
-                    ) AND active=1 AND $whereSlug ORDER BY w.index"
+                    ) AND active=1"
         );
         $result = array();
         foreach ($query->result() as $row) {
-            $result[] = array(
+        	// generate widget content
+        	$content = '';
+        	if($row->is_static==1){
+        		$content = $this->cms_parse_keyword($row->static_content);
+        	}else{
+        		// url
+        		$url = $row->url;
+        		if(!strpos(strtolower($url), 'http')){
+        			$url = base_url($url);
+        		}
+        		// script
+        		$script  = '$.ajax({';
+        		$script .= 'url:"'.$url.'",';
+        		$script .= 'data:{_only_content:true},';
+        		$script .= 'success:function(response){';
+        		$script .= '$("div#_cms_widget_'.$row->widget_id.'").html(response);';
+        		$script .= '}';
+        		$script .= '});';
+        		// asset
+        		$asset = new CMS_Asset();
+        		$asset->add_cms_js('nocms/js/jquery.js');
+        		$asset->add_string_js($script);
+        		// content
+        		$content .= '<div id="_cms_widget_'.$row->widget_id.'">';
+        		$content .= $asset->compile_js(true);
+        		$content .= '</div>';
+        	}
+        	// make widget based on slug
+        	if(!isset($result[$row->slug])){
+        		$result[$row->slug] = array();
+        	}
+            $result[$row->slug][] = array(
                 "widget_id" => $row->widget_id,
                 "widget_name" => $row->widget_name,
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
-                "is_static" => $row->is_static,
-                "url" => $row->url,
-                "slug" => $row->slug
+            	"content" => $content,
             );
         }
         return $result;

@@ -1,10 +1,3 @@
-<?php
- Header("Cache-Control: must-revalidate");
-
- $offset = 60 * 60 * 24 * 3;
- $ExpStr = "Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
- Header($ExpStr);
-?>
 <?php require_once BASEPATH."../themes/".$cms['site_theme']."/lib/function.php";?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,10 +37,6 @@
     
     <script type="text/javascript" src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/dropdown/";?>js/jquery.dropdownPlain.js"></script>
     
-    <?php
-    	echo build_widget_js($cms['widget'], 'sidebar');
-    	echo build_widget_js($cms['widget'], 'advertisement');
-    ?>
   </head>
   <body>
     <div class="navbar navbar-fixed-top">

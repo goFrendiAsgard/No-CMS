@@ -20,8 +20,6 @@
 	    $asset->add_cms_js('nocms/js/jquery.js');
 	    $asset->add_cms_js("bootstrap/js/bootstrap-all.min.js");	    
 	    $asset->add_themes_js('script.js', $cms['site_theme'], 'default');
-	    $asset->add_string_js(build_widget_js($cms['widget'], 'sidebar'));
-	    $asset->add_string_js(build_widget_js($cms['widget'], 'advertisement'));
 	    echo $asset->compile_js(TRUE);
 	?>
 	
@@ -76,7 +74,7 @@
 		            <?php echo $template['body'];?>
 		            <div class="clear"></div>
 		        </div><!--/#layout-content-->       
-		        <div id="layout-widget" class="span3">
+		        <div id="layout-widget" class="span3">		        	
 		            <h4>WIDGET</h4><hr />
                     <?php echo build_widget_html($cms['widget'], 'sidebar');?>
                     <h4>ADVERTISEMENT</h4><hr />

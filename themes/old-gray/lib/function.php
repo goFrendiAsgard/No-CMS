@@ -1,42 +1,37 @@
 <?php
     //include the widget
     function build_widget($widgets, $slug = NULL){
-        $html = '';
-        $js = '';
-        
-        foreach($widgets as $widget){
-            if((isset($slug) && ($widget["slug"]==$slug)) || !isset($slug)){
-                $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'">';
-                $html.= '<h4>'.$widget['title'].'</h4>';
-                $html.= '<div class="widget_content"></div>';
-                $path=base_url().'index.php/main/show_widget/'.$widget['widget_id'].'?_only_content=true';
-                $js.= '
-                        $.ajax({
-                            url : "'.$path.'",
-                            type: "POST",
-                            data: {_only_content:true},
-                            success : function(response){
-                                $("#layout_widget_container_'.$widget['widget_name'].' .widget_content").replaceWith(response);
-
-                            }
-                        }); 
-                ';
-                $html.= '</div>';
-            }
+    	// slug set, but unavailable
+        if(isset($slug) && !isset($widgets[$slug])) return "";
+        // slug not set
+        if(!isset($slug)){
+        	$tmp_widgets = array();
+        	foreach($widgets as $widget_slug){
+        		foreach($widget_slug as $widget){
+        			$tmp_widgets[] = $widget;
+        		}
+        	}
+        	$widgets = $tmp_widgets;
+        }else if(isset($slug)){        
+        	$widgets = $widgets[$slug];
         }
-        $js = '
-            <script type="text/javascript">
-                $(document).ready(function(){
-                    '.$js.'
-                });
-            </script>
-        ';
-        return $js.$html;
+        
+        $html = "";
+        foreach($widgets as $widget){
+        		
+                $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'" class="layout_widget_container">';
+                $html.= '<h5>'.$widget['title'].'</h5>';
+                $html.= '<div class="widget_content">'.$widget['content'].'</div>';
+                $html.= '<br />';
+                $html.= '<br />';
+                $html.= '</div>';
+        }
+        return $html;
     }
     
     
     
-    function build_menu($navigations, $path, $invisible = FALSE){
+function build_menu($navigations, $path, $invisible = FALSE){
         if(count($navigations)==0) return '';//just exit and do nothing
         
         //check if there is navigation_array that match with array
@@ -107,7 +102,7 @@
         return $html;
     }
     
-    function build_quicklink($navigations){
+ 	function build_quicklink($navigations){
     	if(count($navigations)==0) return '';//just exit and do nothing
     	
     	$html = '';

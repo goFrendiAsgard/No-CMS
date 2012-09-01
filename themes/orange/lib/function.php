@@ -1,45 +1,32 @@
 <?php
     //include the widget
     function build_widget_html($widgets, $slug = NULL){
-        $html = '';
+    	// slug set, but unavailable
+        if(isset($slug) && !isset($widgets[$slug])) return "";
+        // slug not set
+        if(!isset($slug)){
+        	$tmp_widgets = array();
+        	foreach($widgets as $widget_slug){
+        		foreach($widget_slug as $widget){
+        			$tmp_widgets[] = $widget;
+        		}
+        	}
+        	$widgets = $tmp_widgets;
+        }else if(isset($slug)){        
+        	$widgets = $widgets[$slug];
+        }
         
+        $html = "";
         foreach($widgets as $widget){
-            if((isset($slug) && ($widget["slug"]==$slug)) || !isset($slug)){
+        		
                 $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'" class="layout_widget_container">';
                 $html.= '<h5>'.$widget['title'].'</h5>';
-                $html.= '<div class="widget_content"></div>';
+                $html.= '<div class="widget_content">'.$widget['content'].'</div>';
                 $html.= '<br />';
                 $html.= '<br />';
                 $html.= '</div>';
-            }
         }
         return $html;
-    }
-    
-    function build_widget_js($widgets, $slug = NULL){
-    	$js = '';
-    
-    	foreach($widgets as $widget){
-    		if((isset($slug) && ($widget["slug"]==$slug)) || !isset($slug)){
-    			$path=base_url().'index.php/main/show_widget/'.$widget['widget_id'].'?_only_content=true';
-    			$js.= '$.ajax({';
-		    	$js.= 'url : "'.$path.'",';
-		    	$js.= 'type: "POST",';
-		    	$js.= 'data: {_only_content:true},';
-		    	$js.= 'success : function(response){';
-		    	$js.= '$("#layout_widget_container_'.$widget['widget_name'].' .widget_content").replaceWith(response);';
-		    	$js.= '}';
-	    		$js.= '});';
-    		}
-    	}
-    	$js = '
-	    	<script type="text/javascript">
-	    		$(document).ready(function(){
-	    			'.$js.'
-	    		});
-	    	</script>
-	    ';
-    	return $js;
     }
     
     

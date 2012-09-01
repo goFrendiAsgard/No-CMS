@@ -65,26 +65,6 @@ class Main extends CMS_Controller {
 		}
 	}
 	
-	public function show_widget($id){
-		if (isset($id)) {
-			$SQL = "SELECT url, is_static, static_content FROM cms_widget WHERE widget_id=" . $id;
-			$query = $this->db->query($SQL);
-			$row = $query->row();
-			$is_static = $row->is_static==1;
-			$url = $row->url;
-			$static_content = $this->cms_parse_keyword($row->static_content);
-	
-			if($is_static){
-				$data['_content'] = $static_content;
-				$this->view('main/static_page', $data);
-			}else{
-				redirect($url.'?_only_content=1');
-			}
-		} else {
-			$this->cms_show_html("widget doesn't exist");
-		}
-	}
-	
 	//this is used for the real static page which doesn't has any URL in navigation management
 	public function static_page($navigation_name){
 		//it actually only trigger static_page event on CMS_Controller.view()

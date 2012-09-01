@@ -88,18 +88,8 @@ class CMS_Asset{
 			foreach($resources as $resource){
 				if(isset($resource['path'])){
 					$path = $resource['path'];
-					$handle = fopen($path, "rb");
-					// write content
-					while (!feof($handle)) {
-						$str = fread($handle, 8192);
-						$content = $str;
-						file_put_contents($file_name, $content, FILE_APPEND);
-					}
-					if($content[strlen($content)-1] != ';'){
-						file_put_contents($file_name, ';', FILE_APPEND);
-					}
-					fclose($handle);
-					
+					$content = file_get_contents($path);
+					file_put_contents($file_name, $content, FILE_APPEND);					
 				}else{
 					// write content
 					$content = $resource['content'];

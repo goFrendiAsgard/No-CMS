@@ -43,11 +43,7 @@
     <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
     
     <script type="text/javascript" src="<?php echo base_url()."themes/".$cms['site_theme']."/assets/dropdown/";?>js/jquery.dropdownPlain.js"></script>
-    
-    <?php
-    	echo build_widget_js($cms['widget'], 'sidebar');
-    	echo build_widget_js($cms['widget'], 'advertisement');
-    ?>
+
   </head>
   <body>
     <div class="navbar navbar-fixed-top">

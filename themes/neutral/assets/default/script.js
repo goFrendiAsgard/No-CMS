@@ -26,15 +26,4 @@ $(document).ready(function(){
 
 });
 
-function load_widget(path, widget_name){
-	$.ajax({
-		url : path,
-		type: "POST",
-		data: {_only_content:true},
-		success : function(response){
-			$("#layout_widget_container_"+widget_name+" .widget_content").replaceWith(response);
-		}
-	});
-}
-
 
