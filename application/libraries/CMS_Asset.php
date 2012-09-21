@@ -136,7 +136,7 @@ class CMS_Asset{
 	public function compile_css($combine = FALSE){
 		if($combine){
 			$file_name = $this->combine_css($this->styles,'css');
-			$this->scripts = array();
+			$this->styles = array();
 			return '<link rel="stylesheet" type="text/css" href="'.$file_name.'" />';			
 		}else{
 			$return = '';
@@ -155,7 +155,7 @@ class CMS_Asset{
 	public function compile_js($combine = FALSE){
 		if($combine){
 			$file_name = $this->combine_js($this->scripts,'js');
-			$this->styles = array();
+			$this->scripts = array();
 			return '<script type="text/javascript" src="'.$file_name.'" />';	
 		}else{
 			$return = '';
