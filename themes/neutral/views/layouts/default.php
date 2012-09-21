@@ -20,7 +20,7 @@
 	    $asset->add_cms_js('nocms/js/jquery.js');
 	    $asset->add_cms_js("bootstrap/js/bootstrap-all.min.js");	    
 	    $asset->add_themes_js('script.js', $cms['site_theme'], 'default');
-	    echo $asset->compile_js(TRUE);
+	    echo $asset->compile_js();	    
 	?>
 	
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->

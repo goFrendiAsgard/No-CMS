@@ -105,7 +105,7 @@ class CMS_Asset{
 	private function combine_js($resources, $extension = 'js'){
 		$long_name = '';
 		foreach($resources as $resource){
-			if(isset($resource['path'])){
+			if(isset($resource['path'])){			
 				$long_name .= $resource['path'];
 			}else{
 				$long_name .= $resource['content'];
@@ -114,33 +114,30 @@ class CMS_Asset{
 		$md5_name = md5($long_name);
 		$file_name = BASEPATH.'../assets/cache/'.$md5_name.'.'.$extension;
 		$file_url = base_url('assets/cache/'.$md5_name.'.'.$extension);
-		
 		if(!file_exists($file_name)){
-			$content = '';
-			$tail_content = '';
 			if(file_exists($file_name)) unlink($file_name);
-			$external_js = array();
 			foreach($resources as $resource){
 				if(isset($resource['path'])){
 					$path = $resource['path'];
-					$content .= 'head.js("'.$path.'",function(){';
-					$tail_content .= '});';					
+					$content = file_get_contents($path);
+					file_put_contents($file_name, $content, FILE_APPEND);					
 				}else{
-					$content .= $resource['content'];
-				}				
-			}
-			file_put_contents($file_name, $content.$tail_content, FILE_APPEND);
-				
+					// write content
+					$content = $resource['content'];
+					file_put_contents($file_name, $content, FILE_APPEND);
+				}
+				file_put_contents($file_name, PHP_EOL, FILE_APPEND);
+			}			
+			
 		}
-		return $file_url;
-		
+		return $file_url;		
 	}
 	
 	public function compile_css($combine = FALSE){
 		if($combine){
-			$file_name = $this->combine_css($this->styles,'css');			
-			return '<link rel="stylesheet" type="text/css" href="'.$file_name.'" />';
-			$this->styles = array();
+			$file_name = $this->combine_css($this->styles,'css');
+			$this->scripts = array();
+			return '<link rel="stylesheet" type="text/css" href="'.$file_name.'" />';			
 		}else{
 			$return = '';
 			foreach($this->styles as $style){
@@ -158,18 +155,15 @@ class CMS_Asset{
 	public function compile_js($combine = FALSE){
 		if($combine){
 			$file_name = $this->combine_js($this->scripts,'js');
-			$head_js_file = base_url('assets/nocms/js/head.min.js');
-			$return = '<script type="text/javascript" src="'.$head_js_file.'"></script>';			
-			$return .= '<script type="text/javascript" src="'.$file_name.'"></script>';
-			$this->scripts = array();
-			return $return;			
+			$this->styles = array();
+			return '<script type="text/javascript" src="'.$file_name.'" />';	
 		}else{
 			$return = '';
 			foreach($this->scripts as $script){
 				if(isset($script['path'])){
 					$return .= '<script type="text/javascript" src="'.$script['path'].'"></script>';
 				}else{
-					$return .= '<script type="text/javascript"><!-- '.$script['content'].' --></script>';
+					$return .= '<script type="text/javascript">'.$script['content'].'</script>';
 				}
 			}
 			$this->scripts = array();

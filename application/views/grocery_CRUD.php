@@ -8,6 +8,6 @@
 	foreach($js_files as $file){
 		$asset->add_js($file);
 	}
-	echo $asset->compile_js(TRUE);	
+	echo $asset->compile_js();	
 	echo $output;
 ?>

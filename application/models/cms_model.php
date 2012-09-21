@@ -252,7 +252,7 @@ class CMS_Model extends CI_Model {
         		$asset->add_string_js($script);
         		// content
         		$content .= '<div id="_cms_widget_'.$row->widget_id.'">';
-        		$content .= $asset->compile_js(true);
+        		$content .= $asset->compile_js();
         		$content .= '</div>';
         	}
         	// make widget based on slug
@@ -817,6 +817,7 @@ class CMS_Model extends CI_Model {
      * @desc parse keyword like @site_url and @base_url 
      */
     public final function cms_parse_keyword($value) {
+    	$value = str_replace('@user_name', $this->cms_username(), $value);
         $value = str_replace('@site_url', site_url(), $value);
         $value = str_replace('@base_url', base_url(), $value);
         return $value;

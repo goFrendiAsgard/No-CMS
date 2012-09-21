@@ -10,7 +10,7 @@
 		$asset->add_js($file);
 	}
 	$asset->add_module_js('scripts/widget.js', 'main');
-	echo $asset->compile_js(TRUE);
+	echo $asset->compile_js();
 	
 	echo $output;
 ?>
