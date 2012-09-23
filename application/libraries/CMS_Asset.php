@@ -81,8 +81,8 @@ class CMS_Asset{
 			}
 		}
 		$md5_name = md5($long_name);
-		$file_name = BASEPATH.'../assets/cache/'.$md5_name.'.'.$extension;
-		$file_url = base_url('assets/cache/'.$md5_name.'.'.$extension);
+		$file_name = BASEPATH.'../assets/caches/'.$md5_name.'.'.$extension;
+		$file_url = base_url('assets/caches/'.$md5_name.'.'.$extension);
 		if(!file_exists($file_name)){
 			if(file_exists($file_name)) unlink($file_name);
 			foreach($resources as $resource){
@@ -112,8 +112,8 @@ class CMS_Asset{
 			}
 		}
 		$md5_name = md5($long_name);
-		$file_name = BASEPATH.'../assets/cache/'.$md5_name.'.'.$extension;
-		$file_url = base_url('assets/cache/'.$md5_name.'.'.$extension);
+		$file_name = BASEPATH.'../assets/caches/'.$md5_name.'.'.$extension;
+		$file_url = base_url('assets/caches/'.$md5_name.'.'.$extension);
 		if(!file_exists($file_name)){
 			if(file_exists($file_name)) unlink($file_name);
 			foreach($resources as $resource){

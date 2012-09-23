@@ -136,9 +136,9 @@
 			$warnings[] = $result['warning_message'];
 		}
 		// writable
-		if(!is_writable('../assets/cache')){
+		if(!is_writable('../assets/caches')){
 			$success = FALSE;
-			$errors[] = "Asset cache directory (assets/cache) is not writable";
+			$errors[] = "Asset cache directory (assets/caches) is not writable";
 		}
 		if(!is_writable('../application/config/database.php')){
 			$success = FALSE;
