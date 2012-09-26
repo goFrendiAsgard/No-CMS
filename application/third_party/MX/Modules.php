@@ -1,5 +1,7 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
+(defined('EXT')) OR define('EXT', '.php');
+
 global $CFG;
 
 /* get module locations from config settings or use the default module location and offset */
@@ -24,17 +26,17 @@ spl_autoload_register('Modules::autoload');
  *
  * @copyright	Copyright (c) 2011 Wiredesignz
  * @version 	5.4
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -76,34 +78,33 @@ class Modules
 	
 	/** Load a module controller **/
 	public static function load($module) {
-		
+
 		(is_array($module)) ? list($module, $params) = each($module) : $params = NULL;	
 		
 		/* get the requested controller class name */
-		$alias = strtolower(end(explode('/', $module)));
+		$alias = strtolower(basename($module));
 
-		/* return an existing controller from the registry */
-		if (isset(self::$registry[$alias])) return self::$registry[$alias];
+		/* create or return an existing controller from the registry */
+		if ( ! isset(self::$registry[$alias])) {
 			
-		/* get the module path */
-		$segments = explode('/', $module);
+			/* find the controller */
+			list($class) = CI::$APP->router->locate(explode('/', $module));
+	
+			/* controller cannot be located */
+			if (empty($class)) return;
+	
+			/* set the module directory */
+			$path = APPPATH.'controllers/'.CI::$APP->router->fetch_directory();
 			
-		/* find the controller */
-		list($class) = CI::$APP->router->locate($segments);
-
-		/* controller cannot be located */
-		if (empty($class)) return;
-
-		/* set the module directory */
-		$path = APPPATH.'controllers/'.CI::$APP->router->fetch_directory();
+			/* load the controller class */
+			$class = $class.CI::$APP->config->item('controller_suffix');
+			self::load_file($class, $path);
+			
+			/* create and register the new controller */
+			$controller = ucfirst($class);	
+			self::$registry[$alias] = new $controller($params);
+		}
 		
-		/* load the controller class */
-		$class = $class.CI::$APP->config->item('controller_suffix');
-		self::load_file($class, $path);
-		
-		/* create and register the new controller */
-		$controller = ucfirst($class);	
-		self::$registry[$alias] = new $controller($params);
 		return self::$registry[$alias];
 	}
 	
@@ -144,7 +145,7 @@ class Modules
 				return $result;
 			}	
 			include_once $location;
-		} else {
+		} else { 
 		
 			/* load config or language array */
 			include $location;
@@ -158,7 +159,7 @@ class Modules
 		return $result;
 	}
 
-	/**
+	/** 
 	* Find a file
 	* Scans for files located within modules directories.
 	* Also scans application directories for models, plugins and views.
@@ -169,7 +170,7 @@ class Modules
 		$segments = explode('/', $file);
 
 		$file = array_pop($segments);
-		$file_ext = strpos($file, '.') ? $file : $file.EXT;
+		$file_ext = (pathinfo($file, PATHINFO_EXTENSION)) ? $file : $file.EXT;
 		
 		$path = ltrim(implode('/', $segments).'/', '/');	
 		$module ? $modules[$module] = $path : $modules = array();
@@ -182,44 +183,13 @@ class Modules
 			foreach($modules as $module => $subpath) {			
 				$fullpath = $location.$module.'/'.$base.$subpath;
 				
-				if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
-				
-				if ($base == 'libraries/' AND is_file($fullpath.ucfirst($file_ext)))
+				if ($base == 'libraries/' AND is_file($fullpath.ucfirst($file_ext))) 
 					return array($fullpath, ucfirst($file));
+					
+				if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 			}
 		}
 		
-		/* is it a global plugin? */
-		if ($base == 'plugins/') {
-			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);	
-			show_error("Unable to locate the file: {$path}{$file_ext}");
-		}
-		
-		/* is the file in an admin theme? */
-		if ($base == 'views/') {
-			if (defined('ADMIN_THEME')) {
-				// check system folder
-				if (is_file(APPPATH.'themes/'.ADMIN_THEME.'/'.$base.$path.$file_ext))
-				{
-					return array(APPPATH.'themes/'.ADMIN_THEME.'/'.$base.$path, $file);	
-				}
-				// check shared addons folder
-				elseif (is_file(SHARED_ADDONPATH.'themes/'.ADMIN_THEME.'/'.$base.$path.$file_ext))
-				{
-					return array(SHARED_ADDONPATH.'themes/'.ADMIN_THEME.'/'.$base.$path, $file);	
-				}
-				// check addons folder
-				elseif (is_file(ADDONPATH.'themes/'.ADMIN_THEME.'/'.$base.$path.$file_ext))
-				{
-					return array(ADDONPATH.'themes/'.ADMIN_THEME.'/'.$base.$path, $file);	
-				}
-			}
-			else {
-				if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
-			}
-			show_error("Unable to locate the file: {$path}{$file_ext}");
-		}
-
 		return array(FALSE, $file);	
 	}
 	
