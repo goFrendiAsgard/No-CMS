@@ -284,5 +284,7 @@ v0.5.6
 + (done, tested) wysiwyg error on IE
 + (done, tested) ensure installer also works in xampp (htaccess issue)
 + (done, tested) more simple widget
-+ (done, tested) asset management library using head.js
++ (cancelled) asset management library using head.js
++ (done, tested) asset management library using jsmin
++ (done, tested) using MX_Controller as CMS_Controller base class
 + (proposed) master-detail by using grocery-crud

@@ -95,6 +95,10 @@ class Module_Generator extends CMS_Controller{
 				$navigation_caption = $structure['navigation_caption'];
 				$function_name = underscore($navigation_caption);
 				
+				if($function_name == $controller_name){
+					$function_name = 'action_'.$function_name;
+				}
+				
 				$result = array(
 						"table_name" => $table_name,
 						"fields" => $this->generator_model->list_fields($table_name),

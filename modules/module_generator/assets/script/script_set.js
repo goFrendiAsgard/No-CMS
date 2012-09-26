@@ -105,7 +105,7 @@ function up(){
 }
 
 function down(){
-	$("#module_data>option:selected").each(function(){
+	$($("#module_data>option:selected").get().reverse()).each(function(){
 		var child = $(this);
 		var index = parseInt(child.attr("index"));
 		// check if allowed up

@@ -171,10 +171,16 @@
     
 </style>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.css" />
-<?php echo '<base href="'.base_url().'" />';?>
+
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/fileuploader/fileuploader.js"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
 <script type="text/javascript">
+	<?php 
+		$MODULE_URL = base_url('modules/'.$cms["module_path"]);
+		$CONTROLLER_URL = site_url($cms["module_path"].'/wysiwyg');
+	?>
+	var MODULE_URL = '<?php echo $MODULE_URL; ?>';
+    var CONTROLLER_URL = '<?php echo $CONTROLLER_URL; ?>'; 
     
     function parse_navigation(objs){
         var html="";
@@ -192,19 +198,19 @@
                 html += '<span class="text_content '+inactive_class+'">'+obj.title+'</span>';
                 html += '<input type="hidden" class="navigation_id" value="'+obj.id+'" />';
                 if(!obj.is_root){
-                    html += ' <a href="#" class="promote_navigation"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/left.png'); ?>" /></a>';
+                    html += ' <a href="#" class="promote_navigation"><img width="10px" src="'+MODULE_URL+'/assets/images/left.png" /></a>';
                 }
                 if(i>0){
-                    html += ' <a href="#" class="demote_navigation"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/right.png'); ?>" /></a>';
-                    html += ' <a href="#" class="up_navigation"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/up.png'); ?>" /></a>';
+                    html += ' <a href="#" class="demote_navigation"><img width="10px" src="'+MODULE_URL+'/assets/images/right.png" /></a>';
+                    html += ' <a href="#" class="up_navigation"><img width="10px" src="'+MODULE_URL+'/assets/images/up.png" /></a>';
                 }  
                 if(i<(objs.length-1)){
-                    html += ' <a href="#" class="down_navigation"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/down.png'); ?>" /></a>';
+                    html += ' <a href="#" class="down_navigation"><img width="10px" src="'+MODULE_URL+'/assets/images/down.png" /></a>';
                 }                
                 if(obj.active){
-                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/eye-open.png'); ?>" /></a>';
+                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="'+MODULE_URL+'/assets/images/eye-open.png" /></a>';
                 }else{
-                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/eye-close.png'); ?>" /></a>';
+                    html += ' <a href="#" class="toggle_navigation"><img width="10px" src="'+MODULE_URL+'/assets/images/eye-close.png" /></a>';
                 }
                 html += parse_navigation(obj.children);
                 html += '</li>';
@@ -216,7 +222,7 @@
     
     function get_navigation(){
         $.ajax({
-            "url" : "<?php echo site_url($cms["module_path"].'/get_navigation');?>",
+            "url" : CONTROLLER_URL+"/get_navigation",
             "dataType" : "json",
             "type" : "POST",
             "success" : function(response){
@@ -235,12 +241,12 @@
                 html += '<span class="text_content">'+obj.title+'</span>';
                 html += '<input type="hidden" class="quicklink_id" value="'+obj.id+'" />';
                 if(i>0){
-                    html += ' <a href="#" class="left_quicklink"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/left.png'); ?>" /></a>';
+                    html += ' <a href="#" class="left_quicklink"><img width="10px" src="'+MODULE_URL+'/assets/images/left.png" /></a>';
                 }  
                 if(i<(objs.length-1)){
-                    html += ' <a href="#" class="right_quicklink"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/right.png'); ?>" /></a>';
+                    html += ' <a href="#" class="right_quicklink"><img width="10px" src="'+MODULE_URL+'/assets/images/right.png" /></a>';
                 }
-                html += ' <a href="#" class="remove_quicklink"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/delete.png'); ?>" /></a>';
+                html += ' <a href="#" class="remove_quicklink"><img width="10px" src="'+MODULE_URL+'/assets/images/delete.png" /></a>';
                 html+="</span>";
             }
         }
@@ -249,7 +255,7 @@
     
     function get_quicklink(){
         $.ajax({
-            "url" :  "<?php echo site_url($cms["module_path"].'/get_quicklink');?>",
+            "url" :  CONTROLLER_URL+"/get_quicklink",
             "dataType" : "json",
             "type" : "POST",
             "success" : function(response){
@@ -275,15 +281,15 @@
                 html += '<input type="hidden" class="widget_id" value="'+obj.id+'" />';
                 html += '<input type="hidden" class="widget_slug" value="'+obj.slug+'" />';
                 if(i>0){
-                    html += ' <a href="#" class="up_widget"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/up.png'); ?>" /></a>';
+                    html += ' <a href="#" class="up_widget"><img width="10px" src="'+MODULE_URL+'/assets/images/up.png" /></a>';
                 }  
                 if(i<(objs.length-1)){
-                    html += ' <a href="#" class="down_widget"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/down.png'); ?>" /></a>';
+                    html += ' <a href="#" class="down_widget"><img width="10px" src="'+MODULE_URL+'/assets/images/down.png" /></a>';
                 }
                 if(obj.active){
-                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/eye-open.png'); ?>" /></a>';
+                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="'+MODULE_URL+'/assets/images/eye-open.png" /></a>';
                 }else{
-                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/eye-close.png'); ?>" /></a>';
+                    html += ' <a href="#" class="toggle_widget"><img width="10px" src="'+MODULE_URL+'/assets/images/eye-close.png" /></a>';
                 }
                 html+="</div>";
                 
@@ -294,7 +300,7 @@
     
     function get_widget(){
         $.ajax({
-            "url" : "<?php echo site_url($cms["module_path"].'/get_widget/sidebar');?>",
+            "url" : CONTROLLER_URL+'/get_widget/sidebar',
             "dataType" : "json",
             "type" : "POST",
             "success": function(response){
@@ -305,7 +311,7 @@
         
         //load the advertisement
         $.ajax({
-            "url" :  "<?php echo site_url($cms["module_path"].'/get_widget/advertisement');?>",
+            "url" :  CONTROLLER_URL+'/get_widget/advertisement',
             "dataType" : "json",
             "type" : "POST",
             "success": function(response){
@@ -342,7 +348,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/change_name/');?>",
+                "url" :  CONTROLLER_URL+'/change_name/',
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -365,7 +371,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"],'/change_slogan/');?>",
+                "url" :  CONTROLLER_URL+'/change_slogan/',
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -388,7 +394,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/change_footer/');?>",
+                "url" :  CONTROLLER_URL+'/change_footer/',
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -415,7 +421,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"],'/toggle_navigation');?>",
+                "url" :  CONTROLLER_URL+'/toggle_navigation',
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -430,7 +436,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/promote_navigation');?>",
+                "url" :  CONTROLLER_URL+'/promote_navigation',
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -445,7 +451,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/demote_navigation');?>",
+                "url" :  CONTROLLER_URL+'/demote_navigation',
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -460,7 +466,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/up_navigation');?>",
+                "url" :  CONTROLLER_URL+'/up_navigation',
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -475,7 +481,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/down_navigation');?>",
+                "url" :  CONTROLLER_URL+'/down_navigation',
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -490,7 +496,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/left_quicklink');?>",
+                "url" :  CONTROLLER_URL+'/left_quicklink',
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -505,7 +511,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/right_quicklink');?>",
+                "url" :  CONTROLLER_URL+'/right_quicklink',
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -520,7 +526,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/remove_quicklink');?>",
+                "url" :  CONTROLLER_URL+'/remove_quicklink',
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -534,7 +540,7 @@
         $("#add_quicklink").click(function(){
             var navigation_id = $("#navigation_list option:selected").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/add_quicklink');?>",
+                "url" :  CONTROLLER_URL+'/add_quicklink',
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -548,7 +554,7 @@
         $("#language_list").click(function(){
             var language = $("#language_list option:selected").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/change_language');?>",
+                "url" :  CONTROLLER_URL+'/change_language',
                 "type" : "POST",
                 "data" : {"value" : language},
                 "success" : function(response){
@@ -562,7 +568,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/toggle_widget');?>",
+                "url" :  CONTROLLER_URL+'/toggle_widget',
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -577,7 +583,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/up_widget');?>",
+                "url" :  CONTROLLER_URL+'/up_widget',
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -592,7 +598,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" :  "<?php echo site_url($cms["module_path"].'/down_widget');?>",
+                "url" :  CONTROLLER_URL+'/down_widget',
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -610,7 +616,7 @@
     jQuery(function(){
         new qq.FileUploader({
             element: $("div#upload-favicon")[0],
-            action: '<?php echo site_url('/'.$cms["module_path"].'/upload_favicon'); ?>',
+            action: CONTROLLER_URL+'/upload_favicon',
             allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'ico'],        
             // each file size limit in bytes
             // this option isn't supported in all browsers
@@ -619,7 +625,7 @@
             onComplete: function(id, fileName, responseJSON){
                 if(responseJSON["success"]){
                     $.ajax({
-                        url: '<?php echo site_url($cms["module_path"].'/get_favicon');?>',
+                        url: CONTROLLER_URL+'/get_favicon',
                         dataType:'json',
                         success : function(response){
                             $('.image-favicon').attr('src',response['value']);
@@ -631,7 +637,7 @@
         
         new qq.FileUploader({
             element: $("div#upload-logo")[0],
-            action: '<?php echo site_url('/'.$cms["module_path"].'/upload_logo'); ?>',
+            action: CONTROLLER_URL+'/upload_logo',
             allowedExtensions: ['jpeg', 'jpg', 'gif', 'png', 'ico'],
             // each file size limit in bytes
             // this option isn't supported in all browsers
@@ -640,7 +646,7 @@
             onComplete: function(id, fileName, responseJSON){
                 if(responseJSON["success"]){
                     $.ajax({
-                        url: '<?php echo site_url($cms["module_path"].'/get_logo');?>',
+                        url: CONTROLLER_URL+'/get_logo',
                         dataType:'json',
                         success : function(response){
                             $('.image-logo').attr('src',response['value']);
@@ -657,7 +663,7 @@
 <div id="wysiwyg-container">
 	<div id="wysiwyg">   
 	    <div id="favicon">
-	        <img class="image-favicon" src="<?php echo $site_favicon; ?>" style="float:left;" />	         
+	        <img class="image-favicon" src="<?php echo $site_favicon; ?>" style="float:left;"></img>	         
 	    </div>
 	    <div id="upload-favicon" style="float:left;">       
 	        <noscript>          
@@ -692,7 +698,7 @@
 				    <div class="form_label">Add Quick Link : </div> 
 			        <div class="form_input">
 			            <?php echo form_dropdown('navigation', $navigation_list, NULL,'id="navigation_list"'); ?>&nbsp;
-			            <a href="#" id="add_quicklink"><img width="20px" src="<?php echo base_url('modules/'.$cms["module_path"].'/assets/images/add.png'); ?>" /></a>
+			            <a href="#" id="add_quicklink"><img width="20px" src="<?php echo $MODULE_URL;?>/assets/images/add.png" /></a>
 			        </div>
 			        <div class="clear"></div>
 				    <div class="form_label">Change Language : </div> 

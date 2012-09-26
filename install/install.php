@@ -93,7 +93,7 @@
 		    </div>
 		    
 		    <div id="installation_process" class="well span9">
-		    	Installing <img id="img_loader" src="./assets/ajax-loader.gif" />
+		    	Installing Modules &nbsp; <img id="img_loader" src="./assets/ajax-loader.gif" />
 		    </div>
 		    
 			<div id="if_no_error" class="well span9">

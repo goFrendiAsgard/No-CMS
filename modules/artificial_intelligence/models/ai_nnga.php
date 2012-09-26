@@ -1,12 +1,7 @@
 <?php
-$ci =& get_instance();
-$cms_module_path = $ci->cms_module_path();
-require_once(APPPATH.'../modules/'.$cms_module_path.'/models/ai_core.php');
-require_once(APPPATH.'../modules/'.$cms_module_path.'/models/ai_neural_network.php');
-require_once(APPPATH.'../modules/'.$cms_module_path.'/models/ai_genetics_algorithm.php');
-
-
-
+require_once(dirname(__FILE__).'/ai_core.php');
+require_once(dirname(__FILE__).'/ai_neural_network.php');
+require_once(dirname(__FILE__).'/ai_genetics_algorithm.php');
 
 /**
  * Description of ai_nnga
