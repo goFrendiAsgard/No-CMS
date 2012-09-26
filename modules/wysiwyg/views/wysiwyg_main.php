@@ -216,7 +216,7 @@
     
     function get_navigation(){
         $.ajax({
-            "url" : "<?php echo $cms["module_path"];?>/get_navigation",
+            "url" : "<?php echo site_url($cms["module_path"].'/get_navigation');?>",
             "dataType" : "json",
             "type" : "POST",
             "success" : function(response){
@@ -249,7 +249,7 @@
     
     function get_quicklink(){
         $.ajax({
-            "url" :  "<?php echo $cms["module_path"];?>/get_quicklink",
+            "url" :  "<?php echo site_url($cms["module_path"].'/get_quicklink');?>",
             "dataType" : "json",
             "type" : "POST",
             "success" : function(response){
@@ -294,7 +294,7 @@
     
     function get_widget(){
         $.ajax({
-            "url" : "<?php echo $cms["module_path"];?>/get_widget/sidebar",
+            "url" : "<?php echo site_url($cms["module_path"].'/get_widget/sidebar');?>",
             "dataType" : "json",
             "type" : "POST",
             "success": function(response){
@@ -305,7 +305,7 @@
         
         //load the advertisement
         $.ajax({
-            "url" :  "<?php echo $cms["module_path"];?>/get_widget/advertisement",
+            "url" :  "<?php echo site_url($cms["module_path"].'/get_widget/advertisement');?>",
             "dataType" : "json",
             "type" : "POST",
             "success": function(response){
@@ -342,7 +342,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/change_name/",
+                "url" :  "<?php echo site_url($cms["module_path"].'/change_name/');?>",
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -365,7 +365,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/change_slogan/",
+                "url" :  "<?php echo site_url($cms["module_path"],'/change_slogan/');?>",
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -388,7 +388,7 @@
             }
             var value = $(this).val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/change_footer/",
+                "url" :  "<?php echo site_url($cms["module_path"].'/change_footer/');?>",
                 "type" : "POST",
                 "data" : {"value" : value},
                 "success" : function(response){
@@ -415,7 +415,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/toggle_navigation",
+                "url" :  "<?php echo site_url($cms["module_path"],'/toggle_navigation');?>",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -430,7 +430,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/promote_navigation",
+                "url" :  "<?php echo site_url($cms["module_path"].'/promote_navigation');?>",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -445,7 +445,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/demote_navigation",
+                "url" :  "<?php echo site_url($cms["module_path"].'/demote_navigation');?>",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -460,7 +460,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/up_navigation",
+                "url" :  "<?php echo site_url($cms["module_path"].'/up_navigation');?>",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -475,7 +475,7 @@
             var parent = $(this).parent("li");
             var navigation_id = parent.children("input.navigation_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/down_navigation",
+                "url" :  "<?php echo site_url($cms["module_path"].'/down_navigation');?>",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -490,7 +490,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/left_quicklink",
+                "url" :  "<?php echo site_url($cms["module_path"].'/left_quicklink');?>",
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -505,7 +505,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/right_quicklink",
+                "url" :  "<?php echo site_url($cms["module_path"].'/right_quicklink');?>",
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -520,7 +520,7 @@
             var parent = $(this).parent("span");
             var quicklink_id = parent.children("input.quicklink_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/remove_quicklink",
+                "url" :  "<?php echo site_url($cms["module_path"].'/remove_quicklink');?>",
                 "type" : "POST",
                 "data" : {"id" : quicklink_id},
                 "success" : function(){
@@ -534,7 +534,7 @@
         $("#add_quicklink").click(function(){
             var navigation_id = $("#navigation_list option:selected").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/add_quicklink",
+                "url" :  "<?php echo site_url($cms["module_path"].'/add_quicklink');?>",
                 "type" : "POST",
                 "data" : {"id" : navigation_id},
                 "success" : function(){
@@ -548,7 +548,7 @@
         $("#language_list").click(function(){
             var language = $("#language_list option:selected").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/change_language",
+                "url" :  "<?php echo site_url($cms["module_path"].'/change_language');?>",
                 "type" : "POST",
                 "data" : {"value" : language},
                 "success" : function(response){
@@ -562,7 +562,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/toggle_widget",
+                "url" :  "<?php echo site_url($cms["module_path"].'/toggle_widget');?>",
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -577,7 +577,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/up_widget",
+                "url" :  "<?php echo site_url($cms["module_path"].'/up_widget');?>",
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -592,7 +592,7 @@
             var parent = $(this).parent("div");
             var widget_id = parent.children("input.widget_id").val();
             $.ajax({
-                "url" :  "<?php echo $cms["module_path"];?>/down_widget",
+                "url" :  "<?php echo site_url($cms["module_path"].'/down_widget');?>",
                 "type" : "POST",
                 "data" : {"id" : widget_id},
                 "success" : function(){
@@ -619,7 +619,7 @@
             onComplete: function(id, fileName, responseJSON){
                 if(responseJSON["success"]){
                     $.ajax({
-                        url: '<?php echo $cms["module_path"];?>/get_favicon',
+                        url: '<?php echo site_url($cms["module_path"].'/get_favicon');?>',
                         dataType:'json',
                         success : function(response){
                             $('.image-favicon').attr('src',response['value']);
@@ -640,7 +640,7 @@
             onComplete: function(id, fileName, responseJSON){
                 if(responseJSON["success"]){
                     $.ajax({
-                        url: '<?php echo $cms["module_path"];?>/get_logo',
+                        url: '<?php echo site_url($cms["module_path"].'/get_logo');?>',
                         dataType:'json',
                         success : function(response){
                             $('.image-logo').attr('src',response['value']);

@@ -238,7 +238,7 @@ class CMS_Model extends CI_Model {
         		if(!strpos(strtolower($url), 'http')){
         			$url = base_url($url);
         		}
-        		// script
+        		// script        		
         		$script = 'if(typeof(jQuery) == undefined){';
         		$script .= '	var jqS = document.createElement("script");';
         		$script .= '	jqS.src = "'.base_url('assets/nocms/js/jquery.js').'";';
@@ -251,14 +251,14 @@ class CMS_Model extends CI_Model {
         		$script .= 'success:function(response){';
         		$script .= '$("div#_cms_widget_'.$row->widget_id.'").html(response);';
         		$script .= '}';
-        		$script .= '});';
+        		$script .= '});';        		
         		// asset
         		$asset = new CMS_Asset();
         		//$asset->add_cms_js('nocms/js/jquery.js');
-        		$asset->add_string_js($script);
+        		$asset->add_string_js($script);        		
         		// content
         		$content .= '<div id="_cms_widget_'.$row->widget_id.'">';
-        		$content .= $asset->compile_js();
+        		$content .= $asset->compile_js(TRUE);
         		$content .= '</div>';
         	}
         	// make widget based on slug
@@ -823,9 +823,19 @@ class CMS_Model extends CI_Model {
      * @desc parse keyword like @site_url and @base_url 
      */
     public final function cms_parse_keyword($value) {
+    	// user_name
     	$value = str_replace('@user_name', $this->cms_username(), $value);
-        $value = str_replace('@site_url', site_url(), $value);
-        $value = str_replace('@base_url', base_url(), $value);
+    	
+    	// site url
+    	$site_url = site_url();
+    	if($site_url[strlen($site_url)-1] != '/') $site_url.= '/';
+        $value = str_replace('@site_url', $site_url, $value);
+        
+        // base url
+        $base_url = base_url();
+        if($base_url[strlen($base_url)-1] != '/') $base_url.= '/';
+        $value = str_replace('@base_url', $base_url, $value);
+        
         return $value;
     }
     

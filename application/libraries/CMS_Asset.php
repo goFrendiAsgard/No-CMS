@@ -1,4 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+require_once(APPPATH.'/libraries/jsmin.php');
+
 class CMS_Asset{
 	private $ci;
 	
@@ -88,13 +91,13 @@ class CMS_Asset{
 			foreach($resources as $resource){
 				if(isset($resource['path'])){
 					$path = $resource['path'];
-					$content = file_get_contents($path);
-					file_put_contents($file_name, $content, FILE_APPEND);					
+					$content = file_get_contents($path);										
 				}else{
 					// write content
 					$content = $resource['content'];
-					file_put_contents($file_name, $content, FILE_APPEND);
 				}
+				$content = JSMin::minify($content);
+				file_put_contents($file_name, $content, FILE_APPEND);
 				file_put_contents($file_name, PHP_EOL, FILE_APPEND);
 			}			
 			
@@ -117,16 +120,21 @@ class CMS_Asset{
 		if(!file_exists($file_name)){
 			if(file_exists($file_name)) unlink($file_name);
 			foreach($resources as $resource){
+				$content = '';
 				if(isset($resource['path'])){
 					$path = $resource['path'];
-					$content = file_get_contents($path);
-					file_put_contents($file_name, $content, FILE_APPEND);					
+					$content = file_get_contents($path);										
 				}else{
 					// write content
 					$content = $resource['content'];
-					file_put_contents($file_name, $content, FILE_APPEND);
 				}
-				file_put_contents($file_name, PHP_EOL, FILE_APPEND);
+				$content = JSMin::minify($content);
+				if($content[strlen($content)-1]!=';'){
+					$content .= ';';
+				}else{
+					$content .= '/*is alright*/';
+				}
+				file_put_contents($file_name, $content.PHP_EOL.PHP_EOL, FILE_APPEND);
 			}			
 			
 		}
@@ -156,7 +164,7 @@ class CMS_Asset{
 		if($combine){
 			$file_name = $this->combine_js($this->scripts,'js');
 			$this->scripts = array();
-			return '<script type="text/javascript" src="'.$file_name.'" />';	
+			return '<script type="text/javascript" src="'.$file_name.'"></script>';	
 		}else{
 			$return = '';
 			foreach($this->scripts as $script){
