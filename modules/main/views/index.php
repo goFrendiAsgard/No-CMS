@@ -1,7 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-	$ci =& get_instance();
-	$module_list = $ci->cms_get_module_list();
-?>
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
 <h3>Home</h3>
 <p>
 	This is the home page. You have several options to modify this page.

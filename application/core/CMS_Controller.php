@@ -1,10 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of cms_model
+ * Description of cms_controller
  *
  * @author gofrendi
  */
+
 class CMS_Controller extends CI_Controller {
 
     public function __construct() {

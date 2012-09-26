@@ -272,7 +272,10 @@ class Main extends CMS_Controller {
     }
 
     public function index() {
-        $this->view('main/index', NULL, 'main_index');
+    	$data = array(
+    		"module_list" => $this->cms_get_module_list()
+    	);
+        $this->view('main/index', $data, 'main_index');
     }
 
     public function management() {
