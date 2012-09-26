@@ -6,7 +6,7 @@
  * @author gofrendi
  */
 
-class CMS_Controller extends CI_Controller {
+class CMS_Controller extends MX_Controller {
 
     public function __construct() {
         parent::__construct();
