@@ -288,3 +288,4 @@ v0.5.6
 + (done, tested) asset management library using jsmin
 + (done, tested) using MX_Controller as CMS_Controller base class
 + (proposed) master-detail by using grocery-crud
++ (done, tested) add only_content in navigation management

@@ -422,9 +422,9 @@ class Main extends CMS_Controller {
         $crud->set_table('cms_navigation');
         $crud->set_subject('Navigation (Page)');
         
-        $crud->columns('navigation_name', 'parent_id', 'title', 'active', 'is_static', 'authorization_id', 'groups');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'description', /*'index',*/ 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'description', /*'index',*/ 'active', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
+        $crud->columns('navigation_name', 'parent_id', 'title', 'active', 'only_content', 'is_static', 'authorization_id', 'groups');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'authorization_id', 'groups');
         $crud->change_field_type('active', 'true_false');
         $crud->change_field_type('is_static', 'true_false');		
         $crud->display_as('navigation_name', 'Navigation Code')
@@ -437,11 +437,13 @@ class Main extends CMS_Controller {
                 ->display_as('is_static', 'Static')
                 ->display_as('static_content', 'Static Content')
                 ->display_as('authorization_id', 'Authorization')
-                ->display_as('groups', 'Groups');        
+                ->display_as('groups', 'Groups')
+        		->display_as('only_content', 'Only show content');        
 		
         $crud->order_by('parent_id, index', 'asc');
 
         $crud->unset_texteditor('description');
+        $crud->change_field_type('only_content', 'true_false');
 
         $crud->set_relation('parent_id', '`cms_navigation`', '`navigation_name`');
         $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name');

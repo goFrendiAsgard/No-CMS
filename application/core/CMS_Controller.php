@@ -170,7 +170,7 @@ class CMS_Controller extends MX_Controller {
      * @param  variable
      * @desc  show variable in json encoded form
      */
-    protected final function cms_show_json($variable, $options = NULL){
+    protected final function cms_show_json($variable, $options = 0){
     	$this->output
 	    	->set_content_type('application/json')
 	    	->set_output(json_encode($variable, $options));
@@ -336,8 +336,16 @@ class CMS_Controller extends MX_Controller {
         	// include data_partial into data
         	$data['cms'] = $cms;
         	
+        	// get only_content from database
+        	$only_content = FALSE;
+        	$SQL = "SELECT only_content FROM cms_navigation WHERE navigation_name ='".addslashes($navigation_name)."'";
+        	$query = $this->db->query($SQL);
+        	if ($query->num_rows() > 0) {
+        		$row = $query->row();
+        		$only_content = ($row->only_content == 1);
+        	}
         	// if only content or request is ajax
-            if ((isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
+            if ($only_content || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
                 $result = $this->load->view($view_url, $data, $return_as_string);
             } else {           
 
