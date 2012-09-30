@@ -197,7 +197,7 @@
 				$db_connection = mysql_connect($db_server.':'.$db_port,$db_username,$db_password);
 				$db_exists = mysql_select_db($db_schema, $db_connection);
 				if(!$db_exists){
-					$query = 'CREATE DATABASE '.$db_schema;
+					$query = 'CREATE DATABASE '.$db_schema.' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;';
 					exec_sql($query, $db_connection);
 					mysql_select_db($db_schema, $db_connection);
 				}

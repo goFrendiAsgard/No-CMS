@@ -171,9 +171,17 @@ class CMS_Controller extends MX_Controller {
      * @desc  show variable in json encoded form
      */
     protected final function cms_show_json($variable, $options = 0){
+    	$result = '';
+    	// php 5.3.0 accepts 2 parameters, while lower version only accepts 1 parameter
+    	if(version_compare(PHP_VERSION, '5.3.0') >= 0){
+    		$result = json_encode($variable, $options);
+    	}else{
+    		$result = json_encode($variable);
+    	}
+    	// show the json
     	$this->output
 	    	->set_content_type('application/json')
-	    	->set_output(json_encode($variable, $options));
+	    	->set_output($result);
     }
     
     /**
