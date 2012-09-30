@@ -243,6 +243,7 @@ Here are some names of considerable contributors:
 * Alexandre Mota <-- The one who report a bug related to page authorization
 * Gusro <-- Find out bug related to static page. Since his report, static page has 2 versions. A dynamic page which is overwritten by static content, or pure static page without any View URL needed
 * Gangsar Swapurba <-- Discover some missleading-behavior. He made a lot of modification and found trivial but disgusting bugs of No-CMS. One of his report make me consider to provide an option to hide index.php
+* Everyone who was involved by creating issue & pull requests in github. I can't write every names there. But No-CMS can't be better without them :)
 
 Roadmap
 ===============
@@ -289,3 +290,5 @@ v0.5.6
 + (done, tested) using MX_Controller as CMS_Controller base class
 + (proposed) master-detail by using grocery-crud
 + (done, tested) add only_content in navigation management
++ (done, tested) preconditional check for cms_show_json_encode()
++ (done, tested) use UTF 8 as default collation
