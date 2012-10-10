@@ -23,10 +23,10 @@ class CMS_Model extends CI_Model {
     
     /**
      * @author goFrendiAsgard
-     * @param type $key
-     * @param type $value
+     * @param  string $key
+     * @param  mixed $value
      * @return mixed
-     * @desc if value specified, this will set CI session, else it will return CI session 
+     * @desc   if value specified, this will set CI_Session["key"], else it will return CI_session["key"] 
      */
     public final function cms_ci_session($key, $value = NULL) {
         if (isset($value)) {
@@ -36,37 +36,39 @@ class CMS_Model extends CI_Model {
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author goFrendiAsgard
      * @param  string $key   
-     * @desc  delete a CI session 
+     * @desc   unset CI_session["key"] 
      */
     public final function cms_unset_ci_session($key) {
         $this->session->unset_userdata($key);
     }
 
     /**
-     * @author  goFrendiAsgard
-     * @param  string $username  
+     * @author goFrendiAsgard
+     * @param  string $user_name  
      * @return mixed
-     * @desc  if username specified, this will set cms_username session, else, it will return cms_username  
+     * @desc   set or get CI_Session["cms_username"]  
      */
-    public final function cms_username($username = NULL) {
-        return $this->cms_ci_session('cms_username', $username);
+    public final function cms_username($user_name = NULL) {
+        return $this->cms_ci_session('cms_username', $user_name);
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @param  int $user_id
+     * @desc   set or get CI_Session["cms_userid"]
+     */
+    public final function cms_userid($user_id = NULL) {
+        return $this->cms_ci_session('cms_userid', $user_id);
     }
 
     /**
      * @author  goFrendiAsgard
-     * @param  int $userid
-     * @desc  if userid specified, this will set cms_userid session, else, it will return cms_userid  
-     */
-    public final function cms_userid($userid = NULL) {
-        return $this->cms_ci_session('cms_userid', $userid);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param  parent_id, max_menu_depth
-     * @desc  return navigation child if parent_id specified, else it will return root navigation
+     * @param   int parent_id
+     * @param   int max_menu_depth
+     * @desc    return navigation child if parent_id specified, else it will return root navigation
+     *           the max depth of menu is depended on max_menud_depth
      */
     public final function cms_navigations($parent_id = NULL, $max_menu_depth = NULL) {
         $user_name = $this->cms_username();
@@ -138,7 +140,8 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author goFrendiAsgard
-     * @desc return quick links
+     * @return mixed
+     * @desc   return quick links
      */
     public final function cms_quicklinks() {
         $user_name = $this->cms_username();
@@ -192,8 +195,8 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  parent_id, max_menu_depth
-     * @desc  return navigation child if parent_id specified, else it will return root navigation
+     * @return  mixed
+     * @desc    return widgets
      */
     public final function cms_widgets() {
         $user_name = $this->cms_username();
@@ -278,8 +281,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  navigation_name
-     * @desc  return parent of navigation_name's detail, only used for get_navigation_path
+     * @param   string navigation_name
+     * @return  mixed
+     * @desc    return parent of navigation_name's detail, only used for get_navigation_path
      */
     private final function cms_get_navigation_parent($navigation_name) {
         if (!$navigation_name)
@@ -308,8 +312,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  navigation_name
-     * @desc  return navigation detail, only used for get_navigation_path
+     * @param   string navigation_name
+     * @return  mixed
+     * @desc    return navigation detail, only used for get_navigation_path
      */
     private final function cms_get_navigation($navigation_name) {
         if (!$navigation_name)
@@ -335,8 +340,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  navigation_name
-     * @desc  return navigation path, used for layout
+     * @param   string navigation_name
+     * @return  mixed
+     * @desc    return navigation path, used for layout
      */
     public final function cms_get_navigation_path($navigation_name = NULL) {
         if (!isset($navigation_name))
@@ -357,7 +363,8 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @desc  return privileges of current user
+     * @return  mixed
+     * @desc    return privileges of current user
      */
     public final function cms_privileges() {
         $user_name = $this->cms_username();
@@ -399,16 +406,18 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  navigation, navigations
-     * @desc  only used in allow_navigate
+     * @param   string navigation_name
+     * @param   mixed navigations
+     * @return  bool
+     * @desc    only used in allow_navigate
      */
-    private final function cms_private_allow_navigate($navigation, $navigations = NULL) {        
+    private final function cms_private_allow_navigate($navigation_name, $navigations = NULL) {        
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
         for ($i=0; $i<count($navigations); $i++) {
-            if ($navigation == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"]==1){
+            if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"]==1){
                 return true;            
-            }else if ($this->cms_private_allow_navigate($navigation, $navigations[$i]["child"])){  
+            }else if ($this->cms_private_allow_navigate($navigation_name, $navigations[$i]["child"])){  
                 return true;
             }
         }
@@ -417,22 +426,24 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  navigation
-     * @desc  check if user authorized to navigate into a page specified in parameter
+     * @param   string navigation_name
+     * @return  bool
+     * @desc    check if user authorized to navigate into a page specified in parameter
      */
-    public final function cms_allow_navigate($navigation) {
-        return $this->cms_private_allow_navigate($navigation);
+    public final function cms_allow_navigate($navigation_name) {
+        return $this->cms_private_allow_navigate($navigation_name);
     }
 
     /**
      * @author  goFrendiAsgard
-     * @param  privilege
-     * @desc  check if user have privilege specified in parameter
+     * @param   string privilege_name
+     * @return  bool
+     * @desc    check if user have privilege specified in parameter
      */
-    public final function cms_have_privilege($privilege) {
+    public final function cms_have_privilege($privilege_name) {
         $privileges = $this->cms_privileges();
         for ($i = 0; $i < count($privileges); $i++) {
-            if ($privilege == $privileges[$i]["privilege_name"])
+            if ($privilege_name == $privileges[$i]["privilege_name"])
                 return true;
         }
         return false;
@@ -440,8 +451,10 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  identity, password
-     * @desc  login
+     * @param   string identity
+     * @param   string password
+     * @return  bool
+     * @desc    login with identity and password. Identity can be user_name or e-mail
      */
     public final function cms_do_login($identity, $password) {
         $query = $this->db->query(
@@ -460,8 +473,7 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  
-     * @desc  logout
+     * @desc    logout
      */
     public final function cms_do_logout() {
         $this->cms_unset_ci_session('cms_username');
@@ -470,8 +482,11 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  user_name, email, real_name, password
-     * @desc  register
+     * @param   string user_name
+     * @param   string email
+     * @param   string real_name
+     * @param   string password
+     * @desc    register new user
      */
     public final function cms_do_register($user_name, $email, $real_name, $password) {
         $data = array(
@@ -486,8 +501,11 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  user_name, email, real_name, password
-     * @desc  change profile
+     * @param   string user_name
+     * @param   string email
+     * @param   string real_name
+     * @param   string password
+     * @desc    change current profile (user_name, email, real_name and password)
      */
     public final function cms_do_change_profile($user_name, $email, $real_name, $password) {
         $data = array(
@@ -505,8 +523,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  module_name
-     * @desc  checked if module installed
+     * @param   string module_name
+     * @return  bool
+     * @desc    checked if module installed
      */
     public final function cms_is_module_installed($module_name) {
         $query = $this->db->query(
@@ -521,8 +540,8 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  
-     * @desc  get module list
+	 * @return  mixed
+     * @desc    get module list
      */
     public final function cms_get_module_list() {
         $this->load->helper('directory');
@@ -557,11 +576,17 @@ class CMS_Model extends CI_Model {
         return $module;
     }
     
-    public final function cms_module_path($name=NULL){
-    	if(!isset($name)){
+    /**
+     * @author  goFrendiAsgard
+     * @param   string module_name
+     * @return  string
+     * @desc    get module_path (folder name) of specified module_name (name space)
+     */
+    public final function cms_module_path($module_name=NULL){
+    	if(!isset($module_name)){
     		return $this->router->fetch_module();
     	}else{
-    		$SQL = "SELECT module_path FROM cms_module WHERE module_name='".addslashes($name)."'";
+    		$SQL = "SELECT module_path FROM cms_module WHERE module_name='".addslashes($module_name)."'";
     		$query = $this->db->query($SQL);
     		if($query->num_rows()>0){
     			$row = $query->row();
@@ -572,8 +597,14 @@ class CMS_Model extends CI_Model {
     	}
     }
     
-    public final function cms_module_name($path){
-    	$SQL = "SELECT module_name FROM cms_module WHERE module_path='".addslashes($path)."'";
+    /**
+     * @author  goFrendiAsgard
+     * @param   string module_path
+     * @return  string
+     * @desc    get module_name (name space) of specified module_path (folder name)
+     */
+    public final function cms_module_name($module_path){
+    	$SQL = "SELECT module_name FROM cms_module WHERE module_path='".addslashes($module_path)."'";
     	$query = $this->db->query($SQL);
     	if($query->num_rows()>0){
     		$row = $query->row();
@@ -586,8 +617,8 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  
-     * @desc  get layout list
+     * @return  mixed  
+     * @desc    get layout list
      */
     public final function cms_get_layout_list() {
         $this->load->helper('directory');
@@ -609,8 +640,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  identity 
-     * @desc  generate activation code, 
+     * @param   string identity 
+     * @return  bool
+     * @desc    generate activation code, and send email to applicant 
      */
     public final function cms_generate_activation_code($identity) {
         $query = $this->db->query(
@@ -651,8 +683,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  activation_code, new_password
-     * @desc  generate_activation_code
+     * @param   string activation_code
+     * @param   string new_password
+     * @desc    change password based on activation_code and new_password
      */
     public final function cms_forgot_password($activation_code, $new_password) {
         $query = $this->db->query(
@@ -673,8 +706,12 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  from_address, from_name, to_address, subject, message
-     * @desc  send email 
+     * @param   string from_address
+     * @param   string from_name
+     * @param   string to_address
+     * @param   string subject
+     * @param   string message
+     * @desc    send email 
      */
     public final function cms_send_email($from_address, $from_name, $to_address, $subject, $message) {
         $this->load->library('email');
@@ -710,8 +747,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  activation_code 
-     * @desc  valid_activation_code
+     * @param   string activation_code
+     * @return  bool 
+     * @desc    validate activation_code
      */
     public final function cms_valid_activation_code($activation_code) {
         $query = $this->db->query(
@@ -728,11 +766,10 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param string $name config name
-     * @param string $value new value
-     * @param string $description description
-     * @return void
-     * @desc  set config
+     * @param   string name
+     * @param   string value
+     * @param   string description
+     * @desc    set config variable
      */
     public final function cms_set_config($name, $value, $description = NULL) {
         $query = $this->db->query(
@@ -759,9 +796,8 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  string $name
-     * @return void
-     * @desc  unset config
+     * @param   string name
+     * @desc    unset configuration variable
      */
     public final function cms_unset_config($name) {
         $where = array("config_name" => $name);
@@ -770,9 +806,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param  string $name
-     * @return string
-     * @desc  get config
+     * @param   string name
+     * @return  string
+     * @desc    get configuration variable
      */
     public final function cms_get_config($name) {
         $query = $this->db->query(
@@ -786,11 +822,10 @@ class CMS_Model extends CI_Model {
     }
 
     /**
-     * @author goFrendiAsgard
-     * @param string $key
-     * @param string $module
-     * @return string
-     * @desc get language
+     * @author  goFrendiAsgard
+     * @param   string key
+     * @return  string
+     * @desc    get translation of key in site_language
      */
     public final function cms_lang($key) {
         $language = $this->cms_get_config('site_language');
@@ -818,9 +853,9 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author goFrendiAsgard
-     * @param string $value
+     * @param  string value
      * @return string
-     * @desc parse keyword like @site_url and @base_url 
+     * @desc   parse keyword like @site_url and @base_url 
      */
     public final function cms_parse_keyword($value) {
     	// user_name
@@ -840,7 +875,10 @@ class CMS_Model extends CI_Model {
     }
     
     /**
-     * 
+     * @author goFrendiAsgard
+     * @param  string user_name
+     * @return bool
+     * @desc   check if user already exists
      */
     public final function cms_is_user_exists($username){
         $SQL = "SELECT user_name FROM cms_user WHERE user_name='".  addslashes($username)."'";

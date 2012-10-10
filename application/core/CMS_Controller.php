@@ -33,45 +33,50 @@ class CMS_Controller extends MX_Controller {
     }
 
     /**
-     * @author  goFrendiAsgard
-     * @param  key,value
-     * @desc  if value specified, this will set CI session, else, it will return CI session
+     * @author goFrendiAsgard
+     * @param  string $key
+     * @param  mixed $value
+     * @return mixed
+     * @desc   if value specified, this will set CI_Session["key"], else it will return CI_session["key"] 
      */
     private final function cms_ci_session($key, $value = NULL) {
         return $this->CMS_Model->cms_ci_session($key, $value);
     }
 
     /**
-     * @author  goFrendiAsgard
-     * @param  key
-     * @desc  delete a CI session
+     * @author goFrendiAsgard
+     * @param  string $key   
+     * @desc   unset CI_session["key"] 
      */
     private final function cms_unset_ci_session($key) {
         return $this->CMS_Model->cms_unset_ci_session($key);
     }
 
     /**
-     * @author  goFrendiAsgard
-     * @param  username
-     * @desc  if username specified, this will set cms_username session, else, it will return cms_username
+     * @author goFrendiAsgard
+     * @param  string $user_name  
+     * @return mixed
+     * @desc   set or get CI_Session["cms_username"]  
      */
-    protected final function cms_username($username = NULL) {
-        return $this->CMS_Model->cms_username($username);
+    protected final function cms_username($user_name = NULL) {
+        return $this->CMS_Model->cms_username($user_name);
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @param  int $user_id
+     * @desc   set or get CI_Session["cms_userid"]
+     */
+    protected final function cms_userid($user_id = NULL) {
+        return $this->CMS_Model->cms_userid($user_id);
     }
 
     /**
      * @author  goFrendiAsgard
-     * @param  userid
-     * @desc  if userid specified, this will set cms_userid session, else, it will return cms_userid
-     */
-    protected final function cms_userid($userid = NULL) {
-        return $this->CMS_Model->cms_userid($userid);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param  parent_id, max_menu_depth
-     * @desc  return navigation child if parent_id specified, else it will return root navigation
+     * @param   int parent_id
+     * @param   int max_menu_depth
+     * @desc    return navigation child if parent_id specified, else it will return root navigation
+     *           the max depth of menu is depended on max_menud_depth
      */
     private final function cms_navigations($parent_id = NULL, $max_menu_depth = NULL) {
         return $this->CMS_Model->cms_navigations($parent_id, $max_menu_depth);
@@ -79,7 +84,8 @@ class CMS_Controller extends MX_Controller {
 
     /**
      * @author goFrendiAsgard
-     * @desc return quick links
+     * @return mixed
+     * @desc   return quick links
      */
     private final function cms_quicklinks() {
         return $this->CMS_Model->cms_quicklinks();
@@ -87,8 +93,8 @@ class CMS_Controller extends MX_Controller {
 
     /**
      * @author  goFrendiAsgard
-     * @param  parent_id, max_menu_depth
-     * @desc  return widgets
+     * @return  mixed
+     * @desc    return widgets
      */
     private final function cms_widgets() {
         return $this->CMS_Model->cms_widgets();
@@ -96,8 +102,9 @@ class CMS_Controller extends MX_Controller {
 
     /**
      * @author  goFrendiAsgard
-     * @param  navigation_name
-     * @desc  return navigation path, used for layout
+     * @param   string navigation_name
+     * @return  mixed
+     * @desc    return navigation path, used for layout
      */
     private final function cms_get_navigation_path($navigation_name = NULL) {
         return $this->CMS_Model->cms_get_navigation_path($navigation_name);
@@ -105,7 +112,8 @@ class CMS_Controller extends MX_Controller {
 
     /**
      * @author  goFrendiAsgard
-     * @desc  return privileges of current user
+     * @return  mixed
+     * @desc    return privileges of current user
      */
     private final function cms_privileges() {
         return $this->CMS_Model->cms_privileges();
@@ -113,26 +121,30 @@ class CMS_Controller extends MX_Controller {
 
     /**
      * @author  goFrendiAsgard
-     * @param  navigation
-     * @desc  check if user authorized to navigate into a page specified in parameter
+     * @param   string navigation_name
+     * @return  bool
+     * @desc    check if user authorized to navigate into a page specified in parameter
      */
-    protected final function cms_allow_navigate($navigation) {
-        return $this->CMS_Model->cms_allow_navigate($navigation);
+    protected final function cms_allow_navigate($navigation_name) {
+        return $this->CMS_Model->cms_allow_navigate($navigation_name);
     }
 
     /**
      * @author  goFrendiAsgard
-     * @param  privilege
-     * @desc  check if user have privilege specified in parameter
+     * @param   string privilege_name
+     * @return  bool
+     * @desc    check if user have privilege specified in parameter
      */
-    protected final function cms_have_privilege($privilege) {
-        return $this->CMS_Model->cms_have_privilege($privilege);
+    protected final function cms_have_privilege($privilege_name) {
+        return $this->CMS_Model->cms_have_privilege($privilege_name);
     }
 
     /**
      * @author  goFrendiAsgard
-     * @param  identity, password
-     * @desc  login
+     * @param   string identity
+     * @param   string password
+     * @return  bool
+     * @desc    login with identity and password. Identity can be user_name or e-mail
      */
     protected final function cms_do_login($identity, $password) {
         return $this->CMS_Model->cms_do_login($identity, $password);
@@ -140,8 +152,7 @@ class CMS_Controller extends MX_Controller {
 
     /**
      * @author  goFrendiAsgard
-     * @param
-     * @desc  logout
+     * @desc    logout
      */
     protected final function cms_do_logout() {
         $this->CMS_Model->cms_do_logout();
@@ -149,8 +160,11 @@ class CMS_Controller extends MX_Controller {
 
     /**
      * @author  goFrendiAsgard
-     * @param  user_name, email, real_name, password
-     * @desc  register
+     * @param   string user_name
+     * @param   string email
+     * @param   string real_name
+     * @param   string password
+     * @desc    register new user
      */
     protected final function cms_do_register($user_name, $email, $real_name, $password) {
         return $this->CMS_Model->cms_do_register($user_name, $email, $real_name, $password);
@@ -158,58 +172,179 @@ class CMS_Controller extends MX_Controller {
 
     /**
      * @author  goFrendiAsgard
-     * @param  user_name, email, real_name, password
-     * @desc  change profile
+     * @param   string user_name
+     * @param   string email
+     * @param   string real_name
+     * @param   string password
+     * @desc    change current profile (user_name, email, real_name and password)
      */
     protected final function cms_do_change_profile($user_name, $email, $real_name, $password) {
         return $this->CMS_Model->cms_do_change_profile($user_name, $email, $real_name, $password);
-    }
-    
-    /**
-     * @author  goFrendiAsgard
-     * @param  variable
-     * @desc  show variable in json encoded form
-     */
-    protected final function cms_show_json($variable, $options = 0){
-    	$result = '';
-    	// php 5.3.0 accepts 2 parameters, while lower version only accepts 1 parameter
-    	if(version_compare(PHP_VERSION, '5.3.0') >= 0){
-    		$result = json_encode($variable, $options);
-    	}else{
-    		$result = json_encode($variable);
-    	}
-    	// show the json
-    	$this->output
-	    	->set_content_type('application/json')
-	    	->set_output($result);
-    }
-    
-    /**
-     * @author  goFrendiAsgard
-     * @param  variable
-     * @desc  show variable for debugging purpose
-     */
-    protected final function cms_show_variable($variable){
-    	$this->output
-    		->set_content_type('text/html')
-    		->set_output('<pre>'.print_r($variable, true).'</pre>');
-    }
-    
-    /**
-     * @author  goFrendiAsgard
-     * @param  html
-     * @desc  you are encouraged to use this instead of echo $html
-     */
-    protected final function cms_show_html($html){
-    	$this->output
-	    	->set_content_type('text/html')
-	    	->set_output($html);
-    }
+    } 
 
     /**
      * @author  goFrendiAsgard
-     * @param  view_url, data, navigation_name, privilege_required, custom_theme, custom_layout return_as_string
-     * @desc  replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
+     * @param   string module_name
+     * @return  bool
+     * @desc    checked if module installed
+     */
+    protected final function cms_is_module_installed($module_name) {
+    	return $this->CMS_Model->cms_is_module_installed($module_name);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+	 * @return  mixed
+     * @desc    get module list
+     */
+    public final function cms_get_module_list() {
+    	return $this->CMS_Model->cms_get_module_list();
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string module_name
+     * @return  string
+     * @desc    get module_path (folder name) of specified module_name (name space)
+     */
+    public final function cms_module_path($name=NULL){
+    	return $this->CMS_Model->cms_module_path($name);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string module_path
+     * @return  string
+     * @desc    get module_name (name space) of specified module_path (folder name)
+     */
+    public final function cms_module_name($path){
+    	return $this->CMS_Model->cms_module_name($path);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @return  mixed  
+     * @desc    get layout list
+     */
+    protected final function cms_get_layout_list() {
+    	return $this->CMS_Model->cms_get_layout_list();
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string identity 
+     * @return  bool
+     * @desc    generate activation code, and send email to applicant 
+     */
+    protected final function cms_generate_activation_code($identity) {
+    	return $this->CMS_Model->cms_generate_activation_code($identity);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string activation_code
+     * @param   string new_password
+     * @desc    change password based on activation_code and new_password
+     */
+    protected final function cms_forgot_password($activation_code, $new_password) {
+    	return $this->CMS_Model->cms_forgot_password($activation_code, $new_password);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string from_address
+     * @param   string from_name
+     * @param   string to_address
+     * @param   string subject
+     * @param   string message
+     * @desc    send email 
+     */
+    protected final function cms_send_email($from_address, $from_name, $to_address, $subject, $message) {
+    	return $this->CMS_Model->cms_send_email($from_address, $from_name, $to_address, $subject, $message);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string activation_code
+     * @return  bool 
+     * @desc    validate activation_code
+     */
+    protected final function cms_valid_activation_code($activation_code) {
+    	return $this->CMS_Model->cms_valid_activation_code($activation_code);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string name
+     * @param   string value
+     * @param   string description
+     * @desc    set config variable
+     */
+    protected final function cms_set_config($name, $value, $description = NULL) {
+    	return $this->CMS_Model->cms_set_config($name, $value, $description);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string name
+     * @desc    unset configuration variable
+     */
+    protected final function cms_unset_config($name) {
+    	return $this->CMS_Model->cms_unset_config($name);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string name
+     * @return  string
+     * @desc    get configuration variable
+     */
+    protected final function cms_get_config($name) {
+    	return $this->CMS_Model->cms_get_config($name);
+    }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @param   string key
+     * @return  string
+     * @desc    get translation of key in site_language
+     */
+    protected final function cms_lang($key, $module =NULL) {
+    	return $this->CMS_Model->cms_lang($key, $module);
+    }
+    
+    /**
+     * @author goFrendiAsgard
+     * @param  string value
+     * @return string
+     * @desc   parse keyword like @site_url and @base_url 
+     */
+    public final function cms_parse_keyword($value) {
+    	return $this->CMS_Model->cms_parse_keyword($value);
+    }
+    
+    /**
+     * @author goFrendiAsgard
+     * @param  string user_name
+     * @return bool
+     * @desc   check if user already exists
+     */
+    public final function cms_is_user_exists($username){
+    	return $this->CMS_Model->cms_is_user_exists($username);
+    }
+    
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string view_url
+     * @param   string data
+     * @param   string navigation_name
+     * @param   array privilege_required
+     * @param   string custom_theme
+     * @param   string custom_layout 
+     * @param   bool return_as_string
+     * @return  string or null
+     * @desc    replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
      */
     protected final function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL, $custom_theme = NULL, $custom_layout = NULL, $return_as_string = FALSE) {
     	    	
@@ -409,131 +544,48 @@ class CMS_Controller extends MX_Controller {
     	$this->output->cache($time);
     }
 
+    
+    
     /**
      * @author  goFrendiAsgard
-     * @param  module_name
-     * @desc  checked if module installed
+     * @param   mixed variable
+     * @param   int options
+     * @desc    show variable in json encoded form
      */
-    protected final function cms_is_module_installed($module_name) {
-        return $this->CMS_Model->cms_is_module_installed($module_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param
-     * @desc  get module list
-     */
-    public final function cms_get_module_list() {
-        return $this->CMS_Model->cms_get_module_list();
+    protected final function cms_show_json($variable, $options = 0){
+    	$result = '';
+    	// php 5.3.0 accepts 2 parameters, while lower version only accepts 1 parameter
+    	if(version_compare(PHP_VERSION, '5.3.0') >= 0){
+    		$result = json_encode($variable, $options);
+    	}else{
+    		$result = json_encode($variable);
+    	}
+    	// show the json
+    	$this->output
+    	->set_content_type('application/json')
+    	->set_output($result);
     }
     
-    public final function cms_module_path($name=NULL){
-    	return $this->CMS_Model->cms_module_path($name);
+    /**
+     * @author  goFrendiAsgard
+     * @param   mixed variable
+     * @desc    show variable for debugging purpose
+     */
+    protected final function cms_show_variable($variable){
+    	$this->output
+    	->set_content_type('text/html')
+    	->set_output('<pre>'.print_r($variable, true).'</pre>');
     }
     
-    public final function cms_module_name($path){
-    	return $this->CMS_Model->cms_module_name($path);
-    }
-
     /**
      * @author  goFrendiAsgard
-     * @param
-     * @desc  get module list
+     * @param   string html
+     * @desc    you are encouraged to use this instead of echo $html
      */
-    protected final function cms_get_layout_list() {
-        return $this->CMS_Model->cms_get_layout_list();
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param  identity
-     * @desc  generate activation code,
-     */
-    protected final function cms_generate_activation_code($identity) {
-        return $this->CMS_Model->cms_generate_activation_code($identity);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param  activation_code, new_password
-     * @desc  generate_activation_code
-     */
-    protected final function cms_forgot_password($activation_code, $new_password) {
-        return $this->CMS_Model->cms_forgot_password($activation_code, $new_password);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param  from_address, from_name, to_address, subject, message
-     * @desc  generate activation code,
-     */
-    protected final function cms_send_email($from_address, $from_name, $to_address, $subject, $message) {
-        return $this->CMS_Model->cms_send_email($from_address, $from_name, $to_address, $subject, $message);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param  activation_code
-     * @desc  valid_activation_code
-     */
-    protected final function cms_valid_activation_code($activation_code) {
-        return $this->CMS_Model->cms_valid_activation_code($activation_code);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param string $name config name
-     * @param string $value new value
-     * @param string $description description
-     * @return void
-     * @desc  set config
-     */
-    protected final function cms_set_config($name, $value, $description = NULL) {
-        return $this->CMS_Model->cms_set_config($name, $value, $description);        
-    }
-
-    /** 
-     * @author  goFrendiAsgard
-     * @param  string $name
-     * @return void
-     * @desc  unset config
-     */
-    protected final function cms_unset_config($name) {
-        return $this->CMS_Model->cms_unset_config($name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param  string $name
-     * @return string
-     * @desc  get config
-     */
-    protected final function cms_get_config($name) {
-        return $this->CMS_Model->cms_get_config($name);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     * @param string $key, string $module
-     * @return string
-     * @desc get language
-     */
-    protected final function cms_lang($key, $module =NULL) {
-        return $this->CMS_Model->cms_lang($key, $module);
-    }
-    
-     /**
-     * @author goFrendiAsgard
-     * @param string $value
-     * @return string
-     * @desc parse keyword like @site_url and @base_url 
-     */
-    public final function cms_parse_keyword($value) {
-        return $this->CMS_Model->cms_parse_keyword($value);
-    }
-    
-    public final function cms_is_user_exists($username){
-       return $this->CMS_Model->cms_is_user_exists($username);       
+    protected final function cms_show_html($html){
+    	$this->output
+    	->set_content_type('text/html')
+    	->set_output($html);
     }
 
 }
