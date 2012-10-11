@@ -625,7 +625,9 @@
             onComplete: function(id, fileName, responseJSON){
                 if(responseJSON["success"]){
                     $.ajax({
-                        url: CONTROLLER_URL+'/get_favicon',
+                        url: CONTROLLER_URL+'/change_favicon',
+                        type: 'POST',
+                        data: {'file_name': fileName},
                         dataType:'json',
                         success : function(response){
                             $('.image-favicon').attr('src',response['value']);
@@ -646,7 +648,9 @@
             onComplete: function(id, fileName, responseJSON){
                 if(responseJSON["success"]){
                     $.ajax({
-                        url: CONTROLLER_URL+'/get_logo',
+                        url: CONTROLLER_URL+'/change_logo',
+                        type: 'POST',
+                        data: {'file_name': fileName},
                         dataType:'json',
                         success : function(response){
                             $('.image-logo').attr('src',response['value']);

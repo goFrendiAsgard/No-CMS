@@ -188,14 +188,16 @@ class Wysiwyg extends CMS_Controller {
         
         // list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $allowedExtensions = array('jpeg', 'jpg', 'gif', 'png', 'ico');
+        
         // max file size in bytes
-        $sizeLimit = 10 * 1024 * 1024;
+        $max_upload = (int)(ini_get('upload_max_filesize'));
+        $sizeLimit = $max_upload * 1024 * 1024;
 
-        $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);
+        $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);        
         $result = $uploader->handleUpload(BASEPATH.'../assets/nocms/images/custom_favicon/');
-        $this->cms_set_config('site_favicon', '@base_urlassets/nocms/images/custom_favicon/'.$result["filename"]);
+        
         // to pass data through iframe you will need to encode all html tags
-        echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+        $this->cms_show_html(json_encode($result), ENT_NOQUOTES);
     }
     
     public function upload_logo(){
@@ -205,14 +207,32 @@ class Wysiwyg extends CMS_Controller {
         
         // list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $allowedExtensions = array('jpeg', 'jpg', 'gif', 'png', 'ico');
+        
         // max file size in bytes
-        $sizeLimit = 10 * 1024 * 1024;
+        $max_upload = (int)(ini_get('upload_max_filesize'));
+        $sizeLimit = $max_upload * 1024 * 1024;
 
         $uploader = new qqFileUploader($allowedExtensions, $sizeLimit);        
         $result = $uploader->handleUpload(BASEPATH.'../assets/nocms/images/custom_logo/');
-        $this->cms_set_config('site_logo', '@base_urlassets/nocms/images/custom_logo/'.$result["filename"]);
+        
         // to pass data through iframe you will need to encode all html tags
-        echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
+        $this->cms_show_html(json_encode($result), ENT_NOQUOTES);
+    }
+    
+    public function change_favicon(){
+    	$file_name = $this->input->post('file_name');
+    	if($file_name){
+    		$this->cms_set_config('site_favicon', '@base_urlassets/nocms/images/custom_favicon/'.$file_name);
+    	}
+    	$this->get_favicon();
+    }
+    
+    public function change_logo(){
+    	$file_name = $this->input->post('file_name');
+    	if($file_name){
+    		$this->cms_set_config('site_logo', '@base_urlassets/nocms/images/custom_logo/'.$file_name);
+    	}
+    	$this->get_logo();
     }
     
     public function get_favicon(){
