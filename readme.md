@@ -292,3 +292,6 @@ v0.5.6
 + (done, tested) add only_content in navigation management
 + (done, tested) preconditional check for cms_show_json_encode()
 + (done, tested) use UTF 8 as default collation
++ (done, tested) repairing WYSIWYG upload for favicon and logo
++ (done, tested) add "fake" library to make autocompletion work (as suggested by Skombourdis here http://www.web-and-development.com/codeigniter-and-eclipse-autocomplete/)
++ (proposed) use CodeIgniter 2.1.3
