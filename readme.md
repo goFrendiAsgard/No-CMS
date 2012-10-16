@@ -109,7 +109,7 @@ For CodeIgniter developer who want to use No-CMS for their project, developer gu
 
 Module
 ------
-* Your module must be located at modules directory (your_neo_cms_installation_path/modules)
+* Your module must be located at modules directory (your_no_cms_installation_path/modules)
 * Your module must have an "installer controller" to make it install-able
 * Your module must be consist of at least 3 subdirectories (models, views, and controllers)
 * If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
@@ -117,7 +117,7 @@ Module
 Controller
 ----------
 * Controllers deal with every process in your module
-* Controllers must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
+* Controllers must be located at your_no_cms_installation_path/modules/your_module_name/controllers
 * Main controller must have the same name as your_module_name (your_module_name.php)
 * Every controller musth contains a class which extends CMS_Controller:
 
@@ -129,7 +129,7 @@ Controller
 
 Installer Controller
 --------------------
-* Installer controller must be located at your_neo_cms_installation_path/modules/your_module_name/controllers
+* Installer controller must be located at your_no_cms_installation_path/modules/your_module_name/controllers
 * Installer controller must be named "Install.php"
 * Installer controller must extends "CMS_Module_Installer"
 * You should provide do_install() and do_uninstall() method to make it fully work
@@ -137,7 +137,7 @@ Installer Controller
 Model
 -----
 * Models deal with every data in your module
-* Models must be located at your_neo_cms_installation_path/modules/your_module_name/models
+* Models must be located at your_no_cms_installation_path/modules/your_module_name/models
 * Every model musth contains a class which extends CMS_Model:
 
 ```html
@@ -151,7 +151,7 @@ Model
 Views
 -----
 * Views deal with every output in your module
-* Views must be located at your_neo_cms_installation_path/modules/your_module_name/views
+* Views must be located at your_no_cms_installation_path/modules/your_module_name/views
 * Every view must be php file
 * To load a view by using controller, you can write:
 
@@ -294,4 +294,5 @@ v0.5.6
 + (done, tested) use UTF 8 as default collation
 + (done, tested) repairing WYSIWYG upload for favicon and logo
 + (done, tested) add "fake" library to make autocompletion work (as suggested by Skombourdis here http://www.web-and-development.com/codeigniter-and-eclipse-autocomplete/)
-+ (proposed) use CodeIgniter 2.1.3
++ (done) use CodeIgniter 2.1.3
++ (done, tested) make navigation page more interactive when editing static content
