@@ -296,3 +296,4 @@ v0.5.6
 + (done, tested) add "fake" library to make autocompletion work (as suggested by Skombourdis here http://www.web-and-development.com/codeigniter-and-eclipse-autocomplete/)
 + (done) use CodeIgniter 2.1.3
 + (done, tested) make navigation page more interactive when editing static content
++ (done, tested) repair login and logout widget since @site_url is already add trailing slash automatically
