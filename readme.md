@@ -297,3 +297,6 @@ v0.5.6
 + (done) use CodeIgniter 2.1.3
 + (done, tested) make navigation page more interactive when editing static content
 + (done, tested) repair login and logout widget since @site_url is already add trailing slash automatically
++ (proposed) wysiwyg upload limit problem
++ (done, tested) make widget order works
++ (done, tested) make dynamic widget works properly
