@@ -19,9 +19,6 @@ $(document).ready(function(){
 			}
 		});
 	});
-	// add shadow static content input box
-	console.log($('#static_content_field_box'));
-	$('#static_content_field_box').append('<div id="static_content_input_box_shadow" style="display: block; ">');
 					
     // check
 	adjust_component_view();
@@ -31,25 +28,26 @@ $(document).ready(function(){
 	$("#field-is_static-false").click(function(){
 		adjust_component_view();
 	});
+	$("#field-authorization_id").change(function(){
+	    adjust_component_view();
+	})
 });
 
 function adjust_component_view(){
+    // static
 	var is_static = $("#field-is_static-true").is(':checked');
-	var is_not_static = $("#field-is_static-false").is(':checked');
-	var static_content = $("textarea#field-static_content").html();
-	static_content = static_content.replace(/&lt;/g,'<');
-	static_content = static_content.replace(/&gt;/g,'>');
-	console.log(static_content);
-	$("div#static_content_input_box_shadow").html(static_content);
 	if(is_static){
-		$("div#static_content_input_box").show();
-		$("div#static_content_input_box_shadow").hide();
-		$("#field-url").attr('disabled', 'disabled');
-		$("#field-url").addClass('input_disable');
-	}else if(is_not_static){
-		$("div#static_content_input_box").hide();
-		$("div#static_content_input_box_shadow").show();
-		$("#field-url").removeAttr('disabled');
-		$("#field-url").removeClass('input_disable');
+		$("div#static_content_field_box").show();
+		$("div#url_field_box").hide();
+	}else{
+		$("div#static_content_field_box").hide();
+		$("div#url_field_box").show();
+	}
+	// authorization
+	var authorization_id = $('select#field-authorization_id option:selected').val();
+	if(authorization_id == 4){
+	    $("div#groups_field_box").show();
+	}else{
+	    $("div#groups_field_box").hide();
 	}
 }

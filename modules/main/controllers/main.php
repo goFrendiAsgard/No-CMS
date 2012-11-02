@@ -570,7 +570,7 @@ class Main extends CMS_Controller {
 
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'main_privilege_management');
+        $this->view('main/privilege', $output, 'main_privilege_management');
     }
 	
     // WIDGET ==================================================================
@@ -581,8 +581,8 @@ class Main extends CMS_Controller {
         $crud->set_subject('Widget');
         
         $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'slug', 'groups');
-        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
-        $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
+        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
+        $crud->add_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->change_field_type('active', 'true_false');
         $crud->change_field_type('is_static', 'true_false');
         $crud->change_field_type('index', 'integer');
@@ -592,6 +592,7 @@ class Main extends CMS_Controller {
                 ->display_as('active', 'Active')
                 ->display_as('description', 'Description')
                 ->display_as('url', 'URL (Where is it point to)')
+                ->display_as('index', 'Order')
                 ->display_as('is_static', 'Static')
                 ->display_as('static_content', 'Static Content')
                 ->display_as('slug', 'Slug')
