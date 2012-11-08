@@ -830,13 +830,47 @@ class CMS_Model extends CI_Model {
     }
 
     /**
+	 * @author	goFrendiAsgard
+	 * @param	string language
+	 * @return	string language
+	 * @desc	set language for this session only 
+	 */
+	public final function cms_language($language=NULL){
+		if(isset($language)){
+			$this->cms_ci_session('cms_lang', $language);
+		}else{
+			$language = '';
+			$language = $this->cms_ci_session('cms_lang');
+			if(!$language){
+				$language = $this->cms_get_config('site_language');	
+				$this->cms_ci_session('cms_lang', $language);
+			}
+			return $language;
+		}
+	}
+	
+	/**
+	 * @author	goFrendiAsgard
+	 * @return	array list of available languages
+	 * @desc	get available languages 
+	 */
+	public final function cms_language_list(){
+        $this->load->helper('file');
+        $result = get_filenames('assets/nocms/languages');
+        for($i=0; $i<count($result); $i++){
+            $result[$i] = str_ireplace('.php', '', $result[$i]);
+        }
+        return $result;
+    }
+
+    /**
      * @author  goFrendiAsgard
      * @param   string key
      * @return  string
      * @desc    get translation of key in site_language
      */
     public final function cms_lang($key) {
-        $language = $this->cms_get_config('site_language');
+    	$language = $this->cms_language();
         
         $module_path = $this->cms_module_path();
         $local_language_file = "modules/$module_path/assets/languages/$language.php";

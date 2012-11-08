@@ -287,6 +287,18 @@ class Main extends CMS_Controller {
         $this->view('main/management', $data, 'main_management');
     }
 	
+	public function language($language=NULL){
+		if(isset($language)){
+			$this->cms_language($language);
+			$this->index();
+		}else{			
+			$data = array(
+				"language_list"=>$this->cms_language_list()
+			);
+			$this->view('main/language',$data,'main_language');
+		}		
+	}
+	
     // AUTHORIZATION ===========================================================
     public function authorization() {
         $crud = new grocery_CRUD();

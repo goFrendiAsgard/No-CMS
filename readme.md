@@ -300,3 +300,4 @@ v0.5.6
 + (proposed) wysiwyg upload limit problem
 + (done, tested) make widget order works
 + (done, tested) make dynamic widget works properly
++ (done, tested) add per-session language setting

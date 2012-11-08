@@ -302,6 +302,25 @@ class CMS_Controller extends MX_Controller {
     protected final function cms_get_config($name) {
     	return $this->CMS_Model->cms_get_config($name);
     }
+	
+	/**
+	 * @author	goFrendiAsgard
+	 * @param	string language
+	 * @return	string language
+	 * @desc	set language for this session only 
+	 */
+	protected final function cms_language($language=NULL){
+		return $this->CMS_Model->cms_language($language);
+	}
+	
+	/**
+	 * @author	goFrendiAsgard
+	 * @return	array list of available languages
+	 * @desc	get available languages 
+	 */
+	public final function cms_language_list(){
+        return $this->CMS_Model->cms_language_list();
+    }
     
     /**
      * @author  goFrendiAsgard

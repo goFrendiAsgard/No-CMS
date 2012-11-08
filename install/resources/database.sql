@@ -268,7 +268,8 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 4, 1, 0, NULL, 0),
 (14, 'main_quicklink_management', 4, 'Quick Link Management', 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL, 0),
 (15, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL, 0),
-(16, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 0, 1, 0, NULL, 0);
+(16, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 0, 1, 0, NULL, 0),
+(17, 'main_language', NULL, 'Language', 'Choose the language', 'main/language', 1, 0, 1, 0, NULL, 0);
 /*split*/
 
 INSERT INTO `cms_quicklink` (`quicklink_id`, `navigation_id`, `index`) VALUES
