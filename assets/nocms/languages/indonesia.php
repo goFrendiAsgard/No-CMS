@@ -1,6 +1,7 @@
 <?php
 
 $lang['Home'] = 'Rumah';
+$lang['Language'] = 'Bahasa';
 $lang['Login'] = 'Masuk';
 $lang['Logout'] = 'Keluar';
 $lang['Forgot Password'] = 'Lupa Password';
