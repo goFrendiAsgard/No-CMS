@@ -667,13 +667,13 @@
 <div id="wysiwyg-container">
 	<div id="wysiwyg">   
 	    <div id="favicon">
-	        <img class="image-favicon" src="<?php echo $site_favicon; ?>" style="float:left;"></img>	         
-	    </div>
-	    <div id="upload-favicon" style="float:left;">       
-	        <noscript>          
-	            <p>Please enable JavaScript to use file uploader.</p>
-	        </noscript>         
-	    </div>
+	        <img class="image-favicon" src="<?php echo $site_favicon; ?>" style="float:left;"></img>
+	        <div id="upload-favicon" style="float:left;">       
+		        <noscript>          
+		            <p>Please enable JavaScript to use file uploader.</p>
+		        </noscript>         
+		    </div>	         
+	    </div>	    
 	    <div id="header" class="padding-10">
 	        <div id="logo" class="float-left">
 	        	<img class="image-logo" src="<?php echo $site_logo; ?>" />

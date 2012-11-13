@@ -146,7 +146,7 @@ class Blog_Model extends CMS_Model{
 		}
 	}
 	
-	private function get_photos($article_id){
+	public function get_photos($article_id){
 		$SQL = "SELECT url FROM blog_photo WHERE article_id = '".$article_id."'";
 		$query = $this->db->query($SQL);
 		 
@@ -160,13 +160,14 @@ class Blog_Model extends CMS_Model{
 		return $data;
 	}
 	
-	private function get_comments($article_id){
+	public function get_comments($article_id){
+		date_default_timezone_set('UTC');
 		$search = array('<', '>');
 		$replace = array('&lt;', '&gt;');
 		
 		$SQL = "SELECT comment_id, date, author_user_id, name, email, website, content
 		FROM blog_comment
-		WHERE article_id = '$article_id'";
+		WHERE article_id = '$article_id' ORDER BY `date` desc";
 		$query = $this->db->query($SQL);
 		 
 		$data = array();

@@ -72,6 +72,7 @@ class Wysiwyg extends CMS_Controller {
         $this->check_allow();
         $value = $this->input->post('value');
         $this->cms_set_config('site_language', $value);
+		$this->cms_language($value);
     }
     
     

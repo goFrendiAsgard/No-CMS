@@ -3,11 +3,11 @@
 	<script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
 	<script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 	<style type="text/css">
-	img.photo_thumbnail{
-	 width: auto;
-	 height: 75px;
-	 margin: 5px;
-	}
+		img.photo_thumbnail{
+			width: auto;
+			height: 75px;
+			margin: 5px;
+		}
 	</style>
 	<?php if(!$single_article){?>
 		<script type="text/javascript">
@@ -102,8 +102,8 @@ function show_article($cms, $article, $single=true, $allow_edit = false){
 	echo '<p>'.$article['content'].'</p>';
 	
 	foreach($article['photos'] as $photo){
-		echo '<a class="photo_'.$article['id'].'" href="'.base_url().'assets/uploads/files/'.$photo['url'].'">';
-		echo '<img class="photo_thumbnail" src="'.base_url().'assets/uploads/files/'.$photo['url'].'" />';
+		echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/'.$photo['url']).'">';
+		echo '<img class="photo_thumbnail" src="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/'.$photo['url']).'" />';
 		echo '</a>';
 	}
 	echo '<script type="text/javascript">

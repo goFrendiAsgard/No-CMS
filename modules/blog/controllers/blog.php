@@ -62,15 +62,21 @@ class Blog extends CMS_Controller {
         $crud = new grocery_CRUD();
 
         $crud->set_table('blog_article');
-        $crud->columns('article_title','content', 'Categories', 'author_user_id', 'date', 'allow_comment');
-        $crud->edit_fields('article_title', 'article_url','content', 'Categories', 'date', 'author_user_id', 'allow_comment');
+        $crud->columns('article_title','Categories', 'author_user_id', 'date', 'allow_comment', 'photos', 'comments');
+        $crud->edit_fields('article_title', 'article_url','content', 'Categories', 'date', 'author_user_id', 'allow_comment', 'photos','comments');
         $crud->add_fields('article_title', 'article_url','content', 'Categories', 'date', 'author_user_id', 'allow_comment');
         $crud->display_as('article_title','Title')
         		 ->display_as('article_url', 'URL')
                  ->display_as('content','Content')
                  ->display_as('date','Date Created')
-                 ->display_as('author_user_id','Author');
+                 ->display_as('author_user_id','Author')
+				 ->display_as('photos','Photos')
+				 ->display_as('comments','Comments');
         $crud->set_subject('Article');
+		$crud->callback_column('photos',array($this,'article_callback_column_photos'));
+		$crud->callback_edit_field('photos', array($this,'article_callback_edit_field_photos'));
+		$crud->callback_column('comments',array($this,'article_callback_column_comments'));
+		$crud->callback_edit_field('comments', array($this,'article_callback_edit_field_comments'));
         $crud->callback_before_insert(array($this,'before_insert_article'));
         $crud->callback_before_update(array($this,'before_insert_article'));
         $crud->set_relation_n_n('Categories', 'blog_category_article', 'blog_category', 'article_id', 'category_id' , 'category_name');
@@ -80,13 +86,13 @@ class Blog extends CMS_Controller {
         $crud->change_field_type('date', 'hidden');
         $crud->change_field_type('article_url', 'hidden');
         $crud->change_field_type('allow_comment', 'true_false');
-        
+        /*
         $crud->add_action('Photos', base_url().'modules/blog/assets/images/photo.png', 'blog/photo');
         $crud->add_action('Comments', base_url().'modules/blog/assets/images/comment.png', 'blog/comment');
-        
+        */
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'blog_article');        
+        $this->view('blog_article', $output, 'blog_article');        
     }
     
     public function photo($article_id=NULL){
@@ -98,14 +104,15 @@ class Blog extends CMS_Controller {
     		$crud->change_field_type('article_id', 'hidden');
     	}
         $crud->display_as('article_id','Article\'s title');
-    	$crud->set_field_upload('url','assets/uploads/files');
+    	$crud->set_field_upload('url','modules/'.$this->cms_module_path().'/assets/uploads');
     	$crud->set_relation('article_id', 'blog_article', 'article_title');
     	
     	$crud->callback_before_insert(array($this,'before_insert_photo'));
     	
     	$output = $crud->render();
+		$output->article_id = $article_id;
     	
-    	$this->view('grocery_CRUD', $output, 'blog_photo');
+    	$this->view('blog_photo', $output, 'blog_photo');
     	
     }
     
@@ -128,9 +135,74 @@ class Blog extends CMS_Controller {
     	$crud->callback_before_insert(array($this,'before_insert_comment'));
     	
     	$output = $crud->render();
+		$output->article_id = $article_id;
     	
-    	$this->view('grocery_CRUD', $output, 'blog_comment');
+    	$this->view('blog_comment', $output, 'blog_comment');
     }
+
+	public function article_callback_column_photos($value, $row){
+		$this->load->model('blog_model');
+		$result = '';
+		$photos = $this->blog_model->get_photos($row->article_id);
+		$result .= anchor(site_url($this->cms_module_path().'/photo/'.$row->article_id),'Manage Photos');
+		if(count($photos)>0){
+			$result .= br();
+			foreach($photos as $photo){
+				$result .= '<a target="_blank" class="photo_'.$row->article_id.'" href="'.base_url('modules/'.$this->cms_module_path().'/assets/uploads/'.$photo['url']).'">';
+				$result .= '<img class="photo_thumbnail_grid" src="'.base_url('modules/'.$this->cms_module_path().'/assets/uploads/'.$photo['url']).'" />';
+				$result .= '</a>';
+			}
+		}		
+		return $result;
+	}
+	
+	public function article_callback_edit_field_photos($value, $primary_key){
+		$this->load->model('blog_model');
+		$result = '';
+		$photos = $this->blog_model->get_photos($primary_key);
+		if(count($photos)>0){
+			foreach($photos as $photo){
+				$result .= '<a target="_blank" class="photo_'.$primary_key.'" href="'.base_url('modules/'.$this->cms_module_path().'/assets/uploads/'.$photo['url']).'">';
+				$result .= '<img class="photo_thumbnail_grid" src="'.base_url('modules/'.$this->cms_module_path().'/assets/uploads/'.$photo['url']).'" />';
+				$result .= '</a>';
+			}
+			$result .= br();	
+		}		
+		$result .= anchor(site_url($this->cms_module_path().'/photo/'.$primary_key),'Manage Photos');
+		return $result;
+	}
+
+	public function article_callback_column_comments($value, $row){
+		$this->load->model('blog_model');
+		$comments = $this->blog_model->get_comments($row->article_id);
+		$comment_count = count($comments);
+		$result = '';
+		if($comment_count==0){
+			$result .= 'There is no comment yet';			
+		}else if($comment_count==1){
+			$result .= anchor(site_url($this->cms_module_path().'/comment/'.$row->article_id),'There is 1 comment');
+		}else{
+			$result .= anchor(site_url($this->cms_module_path().'/comment/'.$row->article_id),'There are '.$comment_count.' comments');
+		}
+		
+		return $result;
+	}
+	
+	public function article_callback_edit_field_comments($value, $primary_key){
+		$this->load->model('blog_model');
+		$comments = $this->blog_model->get_comments($primary_key);
+		$comment_count = count($comments);
+		$result = '';
+		if($comment_count==0){
+			$result .= 'There is no comment yet';			
+		}else if($comment_count==1){
+			$result .= anchor(site_url($this->cms_module_path().'/comment/'.$primary_key),'There is 1 comment');
+		}else{
+			$result .= anchor(site_url($this->cms_module_path().'/comment/'.$primary_key),'There are '.$comment_count.' comments');
+		}
+		
+		return $result;
+	}
     
     public function before_insert_comment($post_array){
     	$post_array['article_id'] = $this->uri->segment(3);
