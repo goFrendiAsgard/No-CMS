@@ -110,9 +110,8 @@ function show_article($cms, $article, $single=true, $allow_edit = false){
 	$(".photo_'.$article['id'].'").colorbox({rel:"photo_'.$article['id'].'", transition:"none", width:"75%", height:"75%", slideshow:true});
 	</script>';
 	
-	
-	if(!$single){
-		echo br();
+	echo br();
+	if(!$single){		
 		echo anchor($cms['module_path'].'/blog/index/'.$article['article_url'],
 				'read more', array("class"=>"btn btn-primary"));
 		echo '&nbsp;';

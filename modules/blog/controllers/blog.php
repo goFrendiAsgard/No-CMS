@@ -108,6 +108,7 @@ class Blog extends CMS_Controller {
     	$crud->set_relation('article_id', 'blog_article', 'article_title');
     	
     	$crud->callback_before_insert(array($this,'before_insert_photo'));
+		$crud->callback_column($this->unique_field_name('article_id'), array($this,'callback_column_article_id'));
     	
     	$output = $crud->render();
 		$output->article_id = $article_id;
@@ -133,6 +134,7 @@ class Blog extends CMS_Controller {
     	$crud->set_relation('article_id', 'blog_article', 'article_title');
     	
     	$crud->callback_before_insert(array($this,'before_insert_comment'));
+		$crud->callback_column($this->unique_field_name('article_id'), array($this,'callback_column_article_id'));
     	
     	$output = $crud->render();
 		$output->article_id = $article_id;
@@ -203,6 +205,14 @@ class Blog extends CMS_Controller {
 		
 		return $result;
 	}
+	
+	public function callback_column_article_id($value, $row){
+		$this->load->model('blog_model');
+		$article_url = $this->blog_model->get_article_url($row->article_id);
+		$article = $this->blog_model->get_single_article($article_url);
+		$title = $article['title'];
+		return anchor(site_url($this->cms_module_path().'/article/edit/'.$row->article_id),$title);
+	}
     
     public function before_insert_comment($post_array){
     	$post_array['article_id'] = $this->uri->segment(3);
@@ -251,6 +261,10 @@ class Blog extends CMS_Controller {
 
         $this->view('grocery_CRUD', $output, 'blog_category');
         
+    }
+	
+	private function unique_field_name($field_name) {
+            return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
     }
 }
 
