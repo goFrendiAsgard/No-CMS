@@ -9,6 +9,8 @@ class CMS_Model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
+		
+		date_default_timezone_set('UTC');
 
         /* Standard Libraries */
         $this->load->database();
@@ -871,26 +873,40 @@ class CMS_Model extends CI_Model {
      */
     public final function cms_lang($key) {
     	$language = $this->cms_language();
+		
+		$lang = array();
         
-        $module_path = $this->cms_module_path();
-        $local_language_file = "modules/$module_path/assets/languages/$language.php";
-        if(file_exists($local_language_file)){
-        	$language_file = $local_language_file;
-        }else{
-        	$language_file = "assets/nocms/languages/$language.php";
+		// language setting from all modules but this current module
+		$modules = $this->cms_get_module_list();
+		foreach($modules as $module){
+			$module_path = $module['module_path'];
+			if($module_path != $this->cms_module_path()){								
+				$local_language_file = "modules/$module_path/assets/languages/$language.php";
+				if(file_exists($local_language_file)){
+					include($local_language_file);
+				}
+			}			
+		}
+		// global nocms language setting override previous language setting
+		$language_file = "assets/nocms/languages/$language.php";
+        if(file_exists($language_file)){
+        	include($language_file);
         }
+		// language setting from current module
+		$module_path = $this->cms_module_path();
+		$local_language_file = "modules/$module_path/assets/languages/$language.php";
+		if(file_exists($local_language_file)){
+			include($local_language_file);
+		}
 
-        if (file_exists($language_file)) {
-            include($language_file);
-
-            if (isset($lang[$key])) {
-                return $lang[$key];
-            } else {
-                return $key;
-            }
+        // get the language
+        if (isset($lang[$key])) {
+            return $lang[$key];
         } else {
             return $key;
         }
+		
+		
     }
 
     /**

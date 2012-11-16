@@ -301,3 +301,4 @@ v0.5.6
 + (done, tested) make widget order works
 + (done, tested) make dynamic widget works properly
 + (done, tested) add per-session language setting
++ (done, tested) better language handling
