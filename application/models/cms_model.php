@@ -816,18 +816,21 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param   string name
+     * @param   string name, bool raw
      * @return  string
      * @desc    get configuration variable
      */
-    public final function cms_get_config($name) {
+    public final function cms_get_config($name, $raw=False) {
         $query = $this->db->query(
                 "SELECT `value` FROM cms_config WHERE
                     config_name = '" . addslashes($name) . "'"
         );
         $row = $query->row();
         $value = $row->value;
-        $value = $this->cms_parse_keyword($value);
+		// if raw is false, then don't parse keyword
+		if(!$raw){
+			$value = $this->cms_parse_keyword($value);
+		}        
         return $value;
     }
 
@@ -844,7 +847,7 @@ class CMS_Model extends CI_Model {
 			$language = '';
 			$language = $this->cms_ci_session('cms_lang');
 			if(!$language){
-				$language = $this->cms_get_config('site_language');	
+				$language = $this->cms_get_config('site_language', True);	
 				$this->cms_ci_session('cms_lang', $language);
 			}
 			return $language;

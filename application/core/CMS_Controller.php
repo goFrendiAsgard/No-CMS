@@ -295,12 +295,12 @@ class CMS_Controller extends MX_Controller {
     
     /**
      * @author  goFrendiAsgard
-     * @param   string name
+     * @param   string name, bool raw
      * @return  string
      * @desc    get configuration variable
      */
-    protected final function cms_get_config($name) {
-    	return $this->CMS_Model->cms_get_config($name);
+    public final function cms_get_config($name, $raw=False) {
+    	return $this->CMS_Model->cms_get_config($name, $raw);
     }
 	
 	/**
