@@ -205,7 +205,7 @@
 				// database.sql
 				$sql = file_get_contents('./resources/database.sql');
 				$sql = replace($sql,
-						array('@adm_username','@adm_email','@adm_password','@adm_realname'),
+						array('{{ adm_username }}','{{ adm_email }}','{{ adm_password }}','{{ adm_realname }}'),
 						array($adm_username,$adm_email,md5($adm_password),$adm_realname)
 				);
 				$queries = explode('/*split*/', $sql);
@@ -216,7 +216,7 @@
 				// database.php
 				$str = file_get_contents('./resources/database.php');
 				$str = replace($str,
-						array('@db_server','@db_port','@db_username','@db_password','@db_schema'),
+						array('{{ db_server }}','{{ db_port }}','{{ db_username }}','{{ db_password }}','{{ db_schema }}'),
 						array($db_server,$db_port,$db_username,$db_password,$db_schema)
 				);
 				file_put_contents('../application/config/database.php',$str);
@@ -231,7 +231,7 @@
 				$str = file_get_contents('./resources/jquery.ckeditor.config.js');
 				$base_path = get_base_url();
 				$str = replace($str,
-						array('@base_path'),
+						array('{{ base_path }}'),
 						array($base_path)
 				);
 				file_put_contents('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js', $str);
@@ -242,17 +242,17 @@
 				$key_config = array();
 				$replace_config = array(); 
 				if($gzip_compression !=""){
-					$key_config[] = '@gzip';
+					$key_config[] = '{{ gzip }}';
 					$replace_config[] = 'TRUE';
 				}else{
-					$key_config[] = '@gzip';
+					$key_config[] = '{{ gzip }}';
 					$replace_config[] = 'FALSE';
 				}
 				if($hide_index !== ""){
-					$key_config[] = '@index_page';
+					$key_config[] = '{{ index_page }}';
 					$replace_config[] = '';
 				}else{
-					$key_config[] = '@index_page';
+					$key_config[] = '{{ index_page }}';
 					$replace_config[] = 'index.php';
 				}
 				$str = file_get_contents('./resources/config.php');
@@ -264,7 +264,7 @@
 				if($hide_index !== ""){
 					$str = file_get_contents('./resources/htaccess');
 					$str = replace($str,
-							array('@base_path'),
+							array('{{ base_path }}'),
 							array($base_path)
 					);
 					file_put_contents('../.htaccess', $str);

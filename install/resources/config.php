@@ -26,7 +26,7 @@ $config['base_url']	= '';
 | variable so that it is blank.
 |
 */
-$config['index_page'] = '@index_page';
+$config['index_page'] = '{{ index_page }}';
 
 /*
 |--------------------------------------------------------------------------
@@ -315,7 +315,7 @@ $config['csrf_expire'] = 7200;
 | by the output class.  Do not 'echo' any values with compression enabled.
 |
 */
-$config['compress_output'] = @gzip;
+$config['compress_output'] = {{ gzip }};
 
 /*
 |--------------------------------------------------------------------------

@@ -12,14 +12,14 @@ class CMS_Model extends CI_Model {
 		
 		date_default_timezone_set('UTC');
 
-        /* Standard Libraries */
-        $this->load->database();
+        /* Standard Libraries */        
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
         $this->load->library('user_agent');
         $this->load->library('session');
         $this->load->library('form_validation');
+		$this->load->database();
         /* ------------------ */
     }
     
@@ -295,7 +295,7 @@ class CMS_Model extends CI_Model {
      * @return  mixed
      * @desc    return parent of navigation_name's detail, only used for get_navigation_path
      */
-    private final function cms_get_navigation_parent($navigation_name) {
+    private final function cms_private_get_navigation_parent($navigation_name) {
         if (!$navigation_name)
             return false;
         $query = $this->db->query(
@@ -326,7 +326,7 @@ class CMS_Model extends CI_Model {
      * @return  mixed
      * @desc    return navigation detail, only used for get_navigation_path
      */
-    private final function cms_get_navigation($navigation_name) {
+    private final function cms_private_get_navigation($navigation_name) {
         if (!$navigation_name)
             return false;
         $query = $this->db->query(
@@ -357,8 +357,8 @@ class CMS_Model extends CI_Model {
     public final function cms_get_navigation_path($navigation_name = NULL) {
         if (!isset($navigation_name))
             return array();
-        $result = array($this->cms_get_navigation($navigation_name));
-        while ($parent = $this->cms_get_navigation_parent($navigation_name)) {
+        $result = array($this->cms_private_get_navigation($navigation_name));
+        while ($parent = $this->cms_private_get_navigation_parent($navigation_name)) {
             $result[] = $parent;
             $navigation_name = $parent["navigation_name"];
         }
@@ -681,8 +681,8 @@ class CMS_Model extends CI_Model {
             $email_message = $this->cms_get_config('cms_email_forgot_message');
             $activation_link = site_url('main/forgot/' . $activation_code);
 
-            $email_message = str_replace('@realname', $real_name, $email_message);
-            $email_message = str_replace('@activation_link', $activation_link, $email_message);
+            $email_message = str_replace('{{ realname }}', $real_name, $email_message);
+            $email_message = str_replace('{{ activation_link }}', $activation_link, $email_message);
 
             //send email to user
             $this->cms_send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);
@@ -864,18 +864,16 @@ class CMS_Model extends CI_Model {
         }
         return $result;
     }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param   string key
-     * @return  string
-     * @desc    get translation of key in site_language
-     */
-    public final function cms_lang($key) {
-    	$language = $this->cms_language();
-		
+	
+	/**
+	 * @author  goFrendiAsgard
+     * @return  mixed
+     * @desc    get all language dictionary
+	 */
+	public final function cms_language_dictionary(){
+		$language = $this->cms_language();
 		$lang = array();
-        
+    
 		// language setting from all modules but this current module
 		$modules = $this->cms_get_module_list();
 		foreach($modules as $module){
@@ -898,10 +896,24 @@ class CMS_Model extends CI_Model {
 		if(file_exists($local_language_file)){
 			include($local_language_file);
 		}
+		
+		return $lang;	
+	}
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string key
+     * @return  string
+     * @desc    get translation of key in site_language
+     */
+    public final function cms_lang($key) {
+    	$language = $this->cms_language();
+		
+		$dictionary = $this->cms_language_dictionary();
 
         // get the language
-        if (isset($lang[$key])) {
-            return $lang[$key];
+        if (isset($dictionary[$key])) {
+            return $dictionary[$key];
         } else {
             return $key;
         }
@@ -913,21 +925,41 @@ class CMS_Model extends CI_Model {
      * @author goFrendiAsgard
      * @param  string value
      * @return string
-     * @desc   parse keyword like @site_url and @base_url 
+     * @desc   parse keyword like {{ site_url  }} , {{ base_url }} , {{ user_name }} , {{ module_path }} and {{ language }}
      */
     public final function cms_parse_keyword($value) {
     	// user_name
-    	$value = str_replace('@user_name', $this->cms_username(), $value);
+    	$value = str_replace('{{ user_name }}', $this->cms_username(), $value);
     	
     	// site url
     	$site_url = site_url();
     	if($site_url[strlen($site_url)-1] != '/') $site_url.= '/';
-        $value = str_replace('@site_url', $site_url, $value);
+        $value = str_replace('{{ site_url }}', $site_url, $value);
         
         // base url
         $base_url = base_url();
         if($base_url[strlen($base_url)-1] != '/') $base_url.= '/';
-        $value = str_replace('@base_url', $base_url, $value);
+        $value = str_replace('{{ base_url }}', $base_url, $value);
+        
+        // module path
+        $module_path = site_url($this->cms_module_path());
+		if($module_path[strlen($module_path)-1] != '/') $module_path.= '/';
+        $value = str_replace('{{ module_path }}', $module_path, $value);
+		
+		// language
+		$language = $this->cms_language();
+		$value = str_replace('{{ language }}', $language, $value);
+		
+		// translate language
+		$dictionary = $this->cms_language_dictionary();
+		foreach($dictionary as $dictionary_key=>$dictionary_value){
+			$value = str_replace("{{ language:$dictionary_key }}", $dictionary_value, $value);
+		}
+		
+		// strip off '{{ language:'
+		$value = preg_replace('/{{ language:/', '', $value);
+		// strip off ' }}'
+		$value = preg_replace('/ }}/', '', $value);
         
         return $value;
     }

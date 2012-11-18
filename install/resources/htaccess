@@ -1,7 +1,7 @@
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks -Indexes
     RewriteEngine On
-    RewriteBase @base_path
+    RewriteBase {{ base_path }}
 
     #Checks to see if the user is attempting to access a valid file,
     #such as an image or css document, if this isn't true it sends the

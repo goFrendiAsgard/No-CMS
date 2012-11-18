@@ -423,7 +423,7 @@ class CMS_Controller extends MX_Controller {
             $query = $this->db->query($SQL);
             if ($query->num_rows() > 0) {
                 $row = $query->row();
-                $static_content = $row->static_content;
+                $static_content = $this->cms_parse_keyword($row->static_content);
                 // static_content should contains string
                 if(!$static_content){
                 	$static_content = '';
