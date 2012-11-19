@@ -18,15 +18,6 @@ CREATE TABLE `blog_article` (
   UNIQUE KEY `article_url` (`article_url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
-CREATE TABLE `blog_article_lang` (
-  `article_lang_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
-  `article_id` int(20) unsigned NOT NULL,
-  `lang` varchar(100) NOT NULL,
-  `content` text,
-  PRIMARY KEY (`article_lang_id`),
-  UNIQUE KEY `article_lang` (`article_lang_id`, `article_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*split*/
 CREATE TABLE `blog_category_article` (
   `category_id` int(20) unsigned NOT NULL,
   `article_id` int(20) unsigned NOT NULL,

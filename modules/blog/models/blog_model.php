@@ -60,7 +60,7 @@ class Blog_Model extends CMS_Model{
 					"id" => $row->article_id,
 					"title" => $row->article_title,
 					"article_url" => $row->article_url,
-					"content" => $content,
+					"content" => $this->cms_parse_keyword($content),
 					"author" => $row->author,
 					"date" => $row->date,
 					"allow_comment" => $row->allow_comment,
@@ -116,7 +116,7 @@ class Blog_Model extends CMS_Model{
 					"id" => $row->article_id,
 					"title" => $row->article_title,
 					"article_url" => $row->article_url,
-					"content" => $content,
+					"content" => $this->cms_parse_keyword($content),
 					"author" => $row->author,
 					"date" => $row->date,
 					"photos" => $this->get_photos($row->article_id)

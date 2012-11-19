@@ -305,4 +305,5 @@ v0.5.6
 + (done, tested) fix infinite-recursion bugs as reported by Joseph Marikle, by adding "raw" parameter in cms_get_config
 + (proposed) make parse_keyword also works for dynamic language (change $this->view implementation)
 + (proposed) add "sign-up" email notification setting
-+ (proposed) more complete keyword, such as {{ activation_code }}, {{ real_name }}, {{ if_language:indonesia}} ... {{ end_if_language }}
++ (done, tested) more complete keyword, such as {{ activation_code }}, {{ real_name }}, {{ if_language:indonesia}} ... {{ end_if_language }}
++ (proposed) add "parse keyword" option for dynamic page, with consequences that everything inside "<input>" tag is also parsed 

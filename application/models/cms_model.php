@@ -6,13 +6,17 @@
  * @author gofrendi
  */
 class CMS_Model extends CI_Model {
+	
+	private $cms_model_properties;
 
     public function __construct() {
         parent::__construct();
 		
+		// PHP 5.3 ask for timezone, and throw a warning whenever it is not available
+		// so, just give this one :)
 		date_default_timezone_set('UTC');
 
-        /* Standard Libraries */        
+        // load helpers and libraries       
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
@@ -20,7 +24,15 @@ class CMS_Model extends CI_Model {
         $this->load->library('session');
         $this->load->library('form_validation');
 		$this->load->database();
-        /* ------------------ */
+		
+		// accessing file is faster than accessing database
+		// but I think accessing variable is faster than both of them
+		$this->cms_model_properties = array(
+			'session'=>array(),
+			'language_dictionary'=>array(),
+			'config'=>array(), 
+		);     
+        
     }
     
     /**
@@ -33,8 +45,13 @@ class CMS_Model extends CI_Model {
     public final function cms_ci_session($key, $value = NULL) {
         if (isset($value)) {
             $this->session->set_userdata($key, $value);
+			$this->cms_model_properties['session'][$key] = $value;
         }
-        return $this->session->userdata($key);
+		// add to cms_model_properties if not exists
+		if(!isset($this->cms_model_properties['session'][$key])){
+			$this->cms_model_properties['session'][$key] = $this->session->userdata($key);
+		}
+        return $this->cms_model_properties['session'][$key];
     }
 
     /**
@@ -44,6 +61,7 @@ class CMS_Model extends CI_Model {
      */
     public final function cms_unset_ci_session($key) {
         $this->session->unset_userdata($key);
+		unset($this->cms_model_properties['session'][$key]);
     }
 
     /**
@@ -802,6 +820,8 @@ class CMS_Model extends CI_Model {
                 $data['description'] = $description;
             $this->db->insert("cms_config", $data);
         }
+		// save as cms_model_properties too
+		$this->cms_model_properties['config'][$name] = $value;
     }
 
     /**
@@ -821,12 +841,19 @@ class CMS_Model extends CI_Model {
      * @desc    get configuration variable
      */
     public final function cms_get_config($name, $raw=False) {
-        $query = $this->db->query(
-                "SELECT `value` FROM cms_config WHERE
-                    config_name = '" . addslashes($name) . "'"
-        );
-        $row = $query->row();
-        $value = $row->value;
+    	$value = '';
+    	if(!isset($this->cms_model_properties['config'][$name])){
+    		$query = $this->db->query(
+	                "SELECT `value` FROM cms_config WHERE
+	                    config_name = '" . addslashes($name) . "'"
+	        );
+	        $row = $query->row();
+	        $value = $row->value;
+			$this->cms_model_properties['config'][$name] = $value;	
+    	}else{
+    		$value = $this->cms_model_properties['config'][$name];
+    	}
+        
 		// if raw is false, then don't parse keyword
 		if(!$raw){
 			$value = $this->cms_parse_keyword($value);
@@ -875,32 +902,36 @@ class CMS_Model extends CI_Model {
 	 */
 	public final function cms_language_dictionary(){
 		$language = $this->cms_language();
-		$lang = array();
+		if(count($this->cms_model_properties['language_dictionary']) == 0){
+			$lang = array();
     
-		// language setting from all modules but this current module
-		$modules = $this->cms_get_module_list();
-		foreach($modules as $module){
-			$module_path = $module['module_path'];
-			if($module_path != $this->cms_module_path()){								
-				$local_language_file = "modules/$module_path/assets/languages/$language.php";
-				if(file_exists($local_language_file)){
-					include($local_language_file);
-				}
-			}			
-		}
-		// global nocms language setting override previous language setting
-		$language_file = "assets/nocms/languages/$language.php";
-        if(file_exists($language_file)){
-        	include($language_file);
-        }
-		// language setting from current module
-		$module_path = $this->cms_module_path();
-		$local_language_file = "modules/$module_path/assets/languages/$language.php";
-		if(file_exists($local_language_file)){
-			include($local_language_file);
+			// language setting from all modules but this current module
+			$modules = $this->cms_get_module_list();
+			foreach($modules as $module){
+				$module_path = $module['module_path'];
+				if($module_path != $this->cms_module_path()){								
+					$local_language_file = "modules/$module_path/assets/languages/$language.php";
+					if(file_exists($local_language_file)){
+						include($local_language_file);
+					}
+				}			
+			}
+			// global nocms language setting override previous language setting
+			$language_file = "assets/nocms/languages/$language.php";
+	        if(file_exists($language_file)){
+	        	include($language_file);
+	        }
+			// language setting from current module
+			$module_path = $this->cms_module_path();
+			$local_language_file = "modules/$module_path/assets/languages/$language.php";
+			if(file_exists($local_language_file)){
+				include($local_language_file);
+			}
+			
+			$this->cms_model_properties['language_dictionary'] = $lang;	
 		}
 		
-		return $lang;	
+		return $this->cms_model_properties['language_dictionary'];	
 	}
 
     /**
@@ -931,38 +962,56 @@ class CMS_Model extends CI_Model {
      * @desc   parse keyword like {{ site_url  }} , {{ base_url }} , {{ user_name }} , {{ module_path }} and {{ language }}
      */
     public final function cms_parse_keyword($value) {
+    	$pattern = array();
+		$replacement = array();
+		
     	// user_name
-    	$value = str_replace('{{ user_name }}', $this->cms_username(), $value);
+    	$pattern[] = "/\{\{ user_name \}\}/";
+    	$replacement[] = $this->cms_username();
     	
-    	// site url
-    	$site_url = site_url();
+		// site_url
+		$site_url = site_url();
     	if($site_url[strlen($site_url)-1] != '/') $site_url.= '/';
-        $value = str_replace('{{ site_url }}', $site_url, $value);
-        
-        // base url
-        $base_url = base_url();
+		$pattern[] = '/\{\{ site_url \}\}/';
+		$replacement[] = $site_url;
+		
+		// base_url
+		$base_url = base_url();
         if($base_url[strlen($base_url)-1] != '/') $base_url.= '/';
-        $value = str_replace('{{ base_url }}', $base_url, $value);
-        
-        // module path
-        $module_path = site_url($this->cms_module_path());
+		$pattern[] = '/\{\{ base_url \}\}/';
+		$replacement[] = $base_url;
+		
+		// module_path
+		$module_path = site_url($this->cms_module_path());
 		if($module_path[strlen($module_path)-1] != '/') $module_path.= '/';
-        $value = str_replace('{{ module_path }}', $module_path, $value);
+		$pattern[] = '/\{\{ module_path \}\}/';
+		$replacement[] = $module_path;
 		
 		// language
-		$language = $this->cms_language();
-		$value = str_replace('{{ language }}', $language, $value);
+		$pattern[] = '/\{\{ language \}\}/';
+    	$replacement[] = $this->cms_language();
+		
+		// execute preg_replace
+		$value = preg_replace($pattern, $replacement, $value);
 		
 		// translate language
-		$dictionary = $this->cms_language_dictionary();
-		foreach($dictionary as $dictionary_key=>$dictionary_value){
-			$value = str_replace("{{ language:$dictionary_key }}", $dictionary_value, $value);
-		}
+		$pattern = '/\{\{ language:(.*?) \}\}/s';	
+		$replacement = function($arr){
+			return $this->cms_lang($arr[1]);	
+		};	
+    	$value = preg_replace_callback($pattern, $replacement, $value);
 		
-		// strip off '{{ language:'
-		$value = preg_replace('/{{ language:/', '', $value);
-		// strip off ' }}'
-		$value = preg_replace('/ }}/', '', $value);
+		// if language, elif		
+		$language = $this->cms_language();
+		$pattern = array();
+		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if }}/s";
+		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if }}/s";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if }}/s";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if }}/s";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if }}/s"; 
+		$replacement = '$1';
+		$value = preg_replace($pattern, $replacement, $value);
+		
         
         return $value;
     }
