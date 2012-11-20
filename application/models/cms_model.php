@@ -1006,8 +1006,10 @@ class CMS_Model extends CI_Model {
 		$pattern = array();
 		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if }}/s";
 		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if }}/s";
+		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ end_if }}/s";
 		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if }}/s";
 		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if }}/s";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if }}/s";
 		$pattern[] = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if }}/s"; 
 		$replacement = '$1';
 		$value = preg_replace($pattern, $replacement, $value);
