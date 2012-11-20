@@ -306,4 +306,4 @@ v0.5.6
 + (proposed) make parse_keyword also works for dynamic language (change $this->view implementation)
 + (proposed) add "sign-up" email notification setting
 + (done, tested) more complete keyword, such as {{ activation_code }}, {{ real_name }}, {{ if_language:indonesia}} ... {{ end_if_language }}
-+ (proposed) add "parse keyword" option for dynamic page, with consequences that everything inside "<input>" tag is also parsed 
++ (done) keyword is now also works for dynamic pages, but it is a bit tricky because I change every {{ into &#123;&#123; and every }} into &#125;&#125; in config's value, widget's static content and navigation's static content. Need cleaner way

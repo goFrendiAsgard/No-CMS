@@ -465,6 +465,7 @@ class Main extends CMS_Controller {
         $crud->callback_column('active', array($this, 'column_navigation_active'));
 		        
         $crud->callback_before_insert(array($this, 'before_insert_navigation'));
+		$crud->callback_before_update(array($this, 'before_update_navigation'));
 
         $output = $crud->render();
 
@@ -493,6 +494,16 @@ class Main extends CMS_Controller {
     		$index = 0;
     
     	$post_array['index'] = $index;
+		
+		// strip curly braces
+		$post_array['static_content'] = $this->cms_strip_curly_braces($post_array['static_content']);
+    
+    	return $post_array;
+    }
+	
+	public function before_update_navigation($post_array) {		
+		// strip curly braces
+		$post_array['static_content'] = $this->cms_strip_curly_braces($post_array['static_content']);
     
     	return $post_array;
     }
@@ -619,6 +630,7 @@ class Main extends CMS_Controller {
         $crud->set_relation_n_n('groups', 'cms_group_widget', 'cms_group', 'widget_id', 'group_id', 'group_name');
 
         $crud->callback_before_insert(array($this, 'before_insert_widget'));
+		$crud->callback_before_update(array($this, 'before_update_widget'));
         
         $crud->callback_column('active', array($this, 'column_widget_active'));
 
@@ -642,6 +654,14 @@ class Main extends CMS_Controller {
             $index = 0;
 
         $post_array['index'] = $index;
+		
+		$post_array['static_content'] = $this->cms_strip_curly_braces($post_array['static_content']);
+
+        return $post_array;
+    }
+	
+	public function before_update_widget($post_array) {		
+		$post_array['static_content'] = $this->cms_strip_curly_braces($post_array['static_content']);
 
         return $post_array;
     }
@@ -700,18 +720,33 @@ class Main extends CMS_Controller {
         	$crud->callback_edit_field('description',
         			array($this, 'read_only_config_description'));
         }
+		
+		$crud->callback_before_insert(array($this, 'before_insert_config'));
+		$crud->callback_before_update(array($this, 'before_update_config'));
 
         $output = $crud->render();
 
         $this->view('main/config', $output, 'main_config_management');
     }
+	
+	public function before_insert_config($post_array) {		
+		$post_array['value'] = $this->cms_strip_curly_braces($post_array['value']);
+		$post_array['description'] = $this->cms_strip_curly_braces($post_array['description']);
+        return $post_array;
+    }
+	
+	public function before_update_config($post_array) {		
+		$post_array['value'] = $this->cms_strip_curly_braces($post_array['value']);
+		$post_array['description'] = $this->cms_strip_curly_braces($post_array['description']);
+        return $post_array;
+    }
     
     public function read_only_config_name($value, $row){
-    	return '<input name="config_name" value="'.$value.'" type="hidden" />'.$value;
+    	return '<input name="field-config_name" value="'.$value.'" type="hidden" />'.$value;
     }
     
     public function read_only_config_description($value, $row){
-    	return '<input name="config_description" value="'.$value.'" type="hidden" />'.$value;
+    	return '<input name="field-description" value="'.$value.'" type="hidden" />'.$value;
     }
     
 

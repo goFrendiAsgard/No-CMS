@@ -254,7 +254,9 @@ class CMS_Model extends CI_Model {
         	// generate widget content
         	$content = '';
         	if($row->is_static==1){
-        		$content = $this->cms_parse_keyword($row->static_content);
+        		$content = $row->static_content;
+        		// unstrip curly braces
+        		$content = $this->cms_unstrip_curly_braces($content);
         	}else{
         		// url
         		$url = $row->url;
@@ -820,6 +822,8 @@ class CMS_Model extends CI_Model {
                 $data['description'] = $description;
             $this->db->insert("cms_config", $data);
         }
+		// strip curly braces
+		$value = $this->cms_strip_curly_braces($value);
 		// save as cms_model_properties too
 		$this->cms_model_properties['config'][$name] = $value;
     }
@@ -853,6 +857,9 @@ class CMS_Model extends CI_Model {
     	}else{
     		$value = $this->cms_model_properties['config'][$name];
     	}
+		
+		// unstrip curly braces
+		$value = $this->cms_unstrip_curly_braces($value);
         
 		// if raw is false, then don't parse keyword
 		if(!$raw){
@@ -1010,8 +1017,15 @@ class CMS_Model extends CI_Model {
 		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if }}/s";
 		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if }}/s";
 		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if }}/s";
-		$pattern[] = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if }}/s"; 
+		$pattern[] = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if }}/s";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ end_if }}/s"; 
 		$replacement = '$1';
+		$value = preg_replace($pattern, $replacement, $value);
+		
+		// clear un-translated language
+		$pattern = array();
+		$pattern[] = "/\{\{ if_language:.*?\{\{ end_if }}/s"; 
+		$replacement = '';
 		$value = preg_replace($pattern, $replacement, $value);
 		
         
@@ -1030,6 +1044,30 @@ class CMS_Model extends CI_Model {
         $num_rows = $query->num_rows();
         return $num_rows>0;        
     }
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @param string str
+	 * @return bool
+	 * @desc return str without {{ and }}, but using &#123;&#123; and &#125;&#125; instead
+	 */
+	public final function cms_strip_curly_braces($str){
+		$pattern = array('/{{/', '/}}/');
+		$replacement = array('&#123;&#123;', '&#125;&#125;');
+		return preg_replace($pattern, $replacement, $str);
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @param string str
+	 * @return bool
+	 * @desc return str without &#123;&#123; and &#125;&#125;, but using {{ and }} instead
+	 */
+	public final function cms_unstrip_curly_braces($str){		
+		$pattern = array('/&#123;&#123;/', '/&#125;&#125;/');
+		$replacement = array('{{', '}}');
+		return preg_replace($pattern, $replacement, $str);
+	}
 }
 
 ?>

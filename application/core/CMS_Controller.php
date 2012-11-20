@@ -351,6 +351,26 @@ class CMS_Controller extends MX_Controller {
     public final function cms_is_user_exists($username){
     	return $this->CMS_Model->cms_is_user_exists($username);
     }
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @param string str
+	 * @return bool
+	 * @desc return str without {{ and }}, but using &#123;&#123; and &#125;&#125; instead
+	 */
+	public final function cms_strip_curly_braces($str){
+		return $this->CMS_Model->cms_strip_curly_braces($str);
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @param string str
+	 * @return bool
+	 * @desc return str without &#123;&#123; and &#125;&#125;, but using {{ and }} instead
+	 */
+	public final function cms_unstrip_curly_braces($str){		
+		return $this->CMS_Model->cms_unstrip_curly_braces($str);
+	}
     
 
     /**
@@ -423,11 +443,13 @@ class CMS_Controller extends MX_Controller {
             $query = $this->db->query($SQL);
             if ($query->num_rows() > 0) {
                 $row = $query->row();
-                $static_content = $this->cms_parse_keyword($row->static_content);
+                $static_content = $row->static_content;
                 // static_content should contains string
                 if(!$static_content){
                 	$static_content = '';
                 }
+				$static_content = $this->cms_unstrip_curly_braces($static_content);
+				$static_content = $this->cms_parse_keyword($static_content);
                 $data["_content"] = $static_content;
                 return $this->view('main/static_page', $data, $navigation_name, $privilege_required, $custom_theme, $custom_layout, $return_as_string);
             }            
@@ -512,7 +534,13 @@ class CMS_Controller extends MX_Controller {
         	}
         	// if only content or request is ajax
             if ($only_content || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
-                $result = $this->load->view($view_url, $data, $return_as_string);
+                $result = $this->load->view($view_url, $data, TRUE);
+				$result = $this->cms_parse_keyword($result);
+				if($return_as_string){
+					return $result;
+				}else{
+					$this->cms_show_html($result);
+				}
             } else {           
 
                 // set layout and partials                
@@ -536,7 +564,13 @@ class CMS_Controller extends MX_Controller {
 	                	$this->template->set_partial($partial_name, 'partials/' . $layout . '/'.$partial, $data);                	                	
 	                }
                 }
-                $result = $this->template->build($view_url, $data, $return_as_string);
+                $result = $this->template->build($view_url, $data, TRUE);
+				$result = $this->cms_parse_keyword($result);
+				if($return_as_string){
+					return $result;
+				}else{
+					$this->cms_show_html($result);
+				}
             }
         } else {
             //if user not authorized, show login, save current url
