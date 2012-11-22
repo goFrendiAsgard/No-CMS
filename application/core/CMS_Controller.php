@@ -350,28 +350,7 @@ class CMS_Controller extends MX_Controller {
      */
     public final function cms_is_user_exists($username){
     	return $this->CMS_Model->cms_is_user_exists($username);
-    }
-	
-	/**
-	 * @author goFrendiAsgard
-	 * @param string str
-	 * @return bool
-	 * @desc return str without {{ and }}, but using &#123;&#123; and &#125;&#125; instead
-	 */
-	public final function cms_strip_curly_braces($str){
-		return $this->CMS_Model->cms_strip_curly_braces($str);
-	}
-	
-	/**
-	 * @author goFrendiAsgard
-	 * @param string str
-	 * @return bool
-	 * @desc return str without &#123;&#123; and &#125;&#125;, but using {{ and }} instead
-	 */
-	public final function cms_unstrip_curly_braces($str){		
-		return $this->CMS_Model->cms_unstrip_curly_braces($str);
-	}
-    
+    }    
 
     /**
      * @author  goFrendiAsgard

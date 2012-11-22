@@ -255,8 +255,6 @@ class CMS_Model extends CI_Model {
         	$content = '';
         	if($row->is_static==1){
         		$content = $row->static_content;
-        		// unstrip curly braces
-        		$content = $this->cms_unstrip_curly_braces($content);
         	}else{
         		// url
         		$url = $row->url;
@@ -822,8 +820,6 @@ class CMS_Model extends CI_Model {
                 $data['description'] = $description;
             $this->db->insert("cms_config", $data);
         }
-		// strip curly braces
-		$value = $this->cms_strip_curly_braces($value);
 		// save as cms_model_properties too
 		$this->cms_model_properties['config'][$name] = $value;
     }
@@ -857,9 +853,6 @@ class CMS_Model extends CI_Model {
     	}else{
     		$value = $this->cms_model_properties['config'][$name];
     	}
-		
-		// unstrip curly braces
-		$value = $this->cms_unstrip_curly_braces($value);
         
 		// if raw is false, then don't parse keyword
 		if(!$raw){
@@ -969,6 +962,8 @@ class CMS_Model extends CI_Model {
      * @desc   parse keyword like {{ site_url  }} , {{ base_url }} , {{ user_name }} , {{ module_path }} and {{ language }}
      */
     public final function cms_parse_keyword($value) {
+    	$value = $this->cms_escape_template($value);
+    	
     	$pattern = array();
 		$replacement = array();
 		
@@ -998,14 +993,15 @@ class CMS_Model extends CI_Model {
 		$pattern[] = '/\{\{ language \}\}/';
     	$replacement[] = $this->cms_language();
 		
-		// execute preg_replace
+		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
 		
 		// translate language
 		$pattern = '/\{\{ language:(.*?) \}\}/s';	
 		$replacement = function($arr){
 			return $this->cms_lang($arr[1]);	
-		};	
+		};
+		// execute regex
     	$value = preg_replace_callback($pattern, $replacement, $value);
 		
 		// if language, elif		
@@ -1020,15 +1016,17 @@ class CMS_Model extends CI_Model {
 		$pattern[] = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if }}/s";
 		$pattern[] = "/\{\{ if_language:.*?\{\{ end_if }}/s"; 
 		$replacement = '$1';
+		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
 		
 		// clear un-translated language
 		$pattern = array();
-		$pattern[] = "/\{\{ if_language:.*?\{\{ end_if }}/s"; 
+		$pattern = "/\{\{ if_language:.*?\{\{ end_if }}/s"; 
 		$replacement = '';
+		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
 		
-        
+        $value = $this->cms_unescape_template($value);
         return $value;
     }
     
@@ -1044,30 +1042,51 @@ class CMS_Model extends CI_Model {
         $num_rows = $query->num_rows();
         return $num_rows>0;        
     }
-	
-	/**
+    
+    /**
 	 * @author goFrendiAsgard
-	 * @param string str
-	 * @return bool
-	 * @desc return str without {{ and }}, but using &#123;&#123; and &#125;&#125; instead
+	 * @param  string expression
+	 * @return string
+	 * @desc return a "save" pattern which is not replace anything inside HTML tag, and 
+	 * anything between <textarea></textarea> and <option></option>
 	 */
-	public final function cms_strip_curly_braces($str){
-		$pattern = array('/{{/', '/}}/');
-		$replacement = array('&#123;&#123;', '&#125;&#125;');
-		return preg_replace($pattern, $replacement, $str);
+	protected final function cms_escape_template($str){
+		$pattern = array();
+		$pattern[] = '/(<[tT][eE][xX][tT][aA][rR][eE][aA][^<>]*>)(.*?)(<\/[tT][eE][xX][tT][aA][rR][eE][aA]>)/';
+		$pattern[] = '/([vV][aA][lL][uU][eE] *= *")(.*?)(")/';
+		
+		$replace = function($arr){
+		    $to_be_replaced = array('{{ ', ' }}');
+		    $to_replace = array('&#123;&#123; ', ' &#125;&#125;');
+		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];
+		};
+		$str = preg_replace_callback($pattern, $replace, $str);
+		
+		return $str;
 	}
 	
 	/**
 	 * @author goFrendiAsgard
-	 * @param string str
-	 * @return bool
-	 * @desc return str without &#123;&#123; and &#125;&#125;, but using {{ and }} instead
+	 * @param  string expression
+	 * @return string
+	 * @desc return an "unsave" pattern which is not replace anything inside HTML tag, and 
+	 * anything between <textarea></textarea> and <option></option>
 	 */
-	public final function cms_unstrip_curly_braces($str){		
-		$pattern = array('/&#123;&#123;/', '/&#125;&#125;/');
-		$replacement = array('{{', '}}');
-		return preg_replace($pattern, $replacement, $str);
+	protected final function cms_unescape_template($str){
+		$pattern = array();
+		$pattern[] = '/(<[tT][eE][xX][tT][aA][rR][eE][aA][^<>]*>)(.*?)(<\/[tT][eE][xX][tT][aA][rR][eE][aA]>)/';
+		$pattern[] = '/([vV][aA][lL][uU][eE] *= *")(.*?)(")/';
+		
+		$replace = function($arr){
+		    $to_replace = array('{{ ', ' }}');
+		    $to_be_replaced = array('&#123;&#123; ', ' &#125;&#125;');
+		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];
+		};
+		$str = preg_replace_callback($pattern, $replace, $str);
+		
+		return $str;
 	}
+    
 }
 
 ?>
