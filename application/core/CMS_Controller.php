@@ -427,7 +427,6 @@ class CMS_Controller extends MX_Controller {
                 if(!$static_content){
                 	$static_content = '';
                 }
-				$static_content = $this->cms_unstrip_curly_braces($static_content);
 				$static_content = $this->cms_parse_keyword($static_content);
                 $data["_content"] = $static_content;
                 return $this->view('main/static_page', $data, $navigation_name, $privilege_required, $custom_theme, $custom_layout, $return_as_string);
