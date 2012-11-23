@@ -1,6 +1,4 @@
-<?php  
-	if (!defined('BASEPATH')) exit('No direct script access allowed');
-?><table cellpadding="0" cellspacing="0" border="0" class="display" id="groceryCrudTable">
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="groceryCrudTable">
 	<thead>
 		<tr>
 			<?php foreach($columns as $column){?>
@@ -48,4 +46,19 @@
 		</tr>
 		<?php }?>
 	</tbody>
+	<tfoot>
+		<tr>
+			<?php foreach($columns as $column){?>
+				<th><input type="text" name="<?php echo $column->field_name; ?>" placeholder="<?php echo $this->l('list_search').' '.$column->display_as; ?>" class="search_<?php echo $column->field_name; ?>" /></th>
+			<?php }?>
+			<?php if(!$unset_delete || !$unset_edit || !empty($actions)){?>
+				<th>
+					<a href="javascript:void(0)" role="button" class="clear-filtering ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary floatR">
+						<span class="ui-button-icon-primary ui-icon ui-icon-arrowrefresh-1-e"></span>
+						<span class="ui-button-text"><?php echo $this->l('list_clear_filtering');?></span>
+					</a>
+				</th>
+			<?php }?>
+		</tr>
+	</tfoot>
 </table>

@@ -294,9 +294,9 @@ v0.5.6
 + (done, tested) use UTF 8 as default collation
 + (done, tested) repairing WYSIWYG upload for favicon and logo
 + (done, tested) add "fake" library to make autocompletion work (as suggested by Skombourdis here http://www.web-and-development.com/codeigniter-and-eclipse-autocomplete/)
-+ (done) use CodeIgniter 2.1.3
++ (done, tested) use CodeIgniter 2.1.3
 + (done, tested) make navigation page more interactive when editing static content
-+ (done, tested) repair login and logout widget since @site_url is already add trailing slash automatically
++ (done, tested) repair login and logout widget since {{ site_url }} is already add trailing slash automatically
 + (proposed) wysiwyg upload limit problem
 + (done, tested) make widget order works
 + (done, tested) make dynamic widget works properly
@@ -306,4 +306,5 @@ v0.5.6
 + (proposed) make parse_keyword also works for dynamic language (change $this->view implementation)
 + (proposed) add "sign-up" email notification setting
 + (done, tested) more complete keyword, such as {{ activation_code }}, {{ real_name }}, {{ if_language:indonesia}} ... {{ end_if_language }}
-+ (done) keyword is now also works for dynamic pages, but it is a bit tricky because I change every {{ into &#123;&#123; and every }} into &#125;&#125; in config's value, widget's static content and navigation's static content. Need cleaner way
++ (done, tested) keyword is now also works for dynamic pages, except for value property and textarea
++ (done, tested) use groceryCRUD 1.3.3 stable

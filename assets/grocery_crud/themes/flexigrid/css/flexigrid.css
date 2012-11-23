@@ -175,6 +175,10 @@ table th
 .flexigrid div.sDiv2 input,.flexigrid div.sDiv2 select {
 	vertical-align:middle;
 }
+.flexigrid.crud-form select
+{
+	min-width: 200px;
+}
 .flexigrid div.btnseparator {
 	float:left;
 	height:22px;
@@ -768,7 +772,7 @@ input.field_error
 }
 a
 {
-	/*color: blue;*/
+	color: blue;
 	text-decoration: none;	
 }
 a:hover
@@ -805,6 +809,11 @@ ul.chzn-choices li.search-field input
 	padding-top:10px;
 	padding-bottom:10px;
 	border-radius: 0px 0px 5px 5px;
+}
+textarea.texteditor, textarea.mini-texteditor
+{
+	width:750px;
+	height: 200px;
 }
 .flexigrid div.form-div{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color: #444;}
 .flexigrid div.form-div input[type=text],.flexigrid div.form-div textarea,.flexigrid div.form-div select{display:inline-block;line-height:18px;color:#444;border:1px solid #ccc;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;}
@@ -1387,3 +1396,13 @@ input[type="submit"].btn.btn-mini {
 }
 
 /* End of twitter bootstrap buttons */
+
+.pretty-radio-buttons
+{
+	margin-top: 6px;
+}
+
+.pretty-radio-buttons label
+{
+	margin-right: 10px;
+}

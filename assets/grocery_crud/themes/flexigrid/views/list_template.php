@@ -1,13 +1,16 @@
 <?php  
-	if (!defined('BASEPATH')) exit('No direct script access allowed');
-
 	$this->set_css($this->default_theme_path.'/flexigrid/css/flexigrid.css');
-	$this->set_js($this->default_javascript_path.'/jquery-1.8.0.min.js');
+	$this->set_js($this->default_javascript_path.'/'.grocery_CRUD::JQUERY);
 	$this->set_js($this->default_theme_path.'/flexigrid/js/cookies.js');
 	$this->set_js($this->default_theme_path.'/flexigrid/js/flexigrid.js');
 	$this->set_js($this->default_theme_path.'/flexigrid/js/jquery.form.js');
-	$this->set_js($this->default_theme_path.'/flexigrid/js/jquery.numeric.js');
+	$this->set_js($this->default_javascript_path.'/jquery_plugins/jquery.numeric.min.js');
 	$this->set_js($this->default_theme_path.'/flexigrid/js/jquery.printElement.min.js');
+	
+	/** Fancybox */
+	$this->set_css($this->default_css_path.'/jquery_plugins/fancybox/jquery.fancybox.css');
+	$this->set_js($this->default_javascript_path.'/jquery_plugins/jquery.fancybox.pack.js');
+	$this->set_js($this->default_javascript_path.'/jquery_plugins/jquery.easing-1.3.pack.js');	
 	
 ?>
 <script type='text/javascript'>
@@ -22,17 +25,17 @@
 </script>
 <div id="hidden-operations"></div>
 <div id='report-error' class='report-div error'></div>
-<div id='report-success' class='report-div success report-list' <?php if($success_message !== null){?>style="display:block"<?php }?>>
-<?php if($success_message !== null){?>
+<div id='report-success' class='report-div success report-list' <?php if($success_message !== null){?>style="display:block"<?php }?>><?php 
+if($success_message !== null){?>
 	<p><?php echo $success_message; ?></p>
-<?php }?>
-</div>	
+<?php }
+?></div>	
 <div class="flexigrid" style='width: 100%;'>
 	<div class="mDiv">
 		<div class="ftitle">
 			&nbsp;
 		</div>
-		<div title="Minimize/Maximize Table" class="ptogtitle">
+		<div title="<?php echo $this->l('minimize_maximize');?>" class="ptogtitle">
 			<span></span>
 		</div>
 	</div>
@@ -58,7 +61,7 @@
         	<a class="export-anchor" data-url="<?php echo $export_url; ?>" target="_blank">
 				<div class="fbutton">
 					<div>
-						<span class="export">Export</span>
+						<span class="export"><?php echo $this->l('list_export');?></span>
 					</div>
 				</div>
             </a>
@@ -68,7 +71,7 @@
         	<a class="print-anchor" data-url="<?php echo $print_url; ?>">
 				<div class="fbutton">
 					<div>
-						<span class="print">Print</span>
+						<span class="print"><?php echo $this->l('list_print');?></span>
 					</div>
 				</div>
             </a>
