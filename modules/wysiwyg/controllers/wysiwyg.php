@@ -223,7 +223,7 @@ class Wysiwyg extends CMS_Controller {
     public function change_favicon(){
     	$file_name = $this->input->post('file_name');
     	if($file_name){
-    		$this->cms_set_config('site_favicon', '@base_urlassets/nocms/images/custom_favicon/'.$file_name);
+    		$this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.$file_name);
     	}
     	$this->get_favicon();
     }
@@ -231,7 +231,7 @@ class Wysiwyg extends CMS_Controller {
     public function change_logo(){
     	$file_name = $this->input->post('file_name');
     	if($file_name){
-    		$this->cms_set_config('site_logo', '@base_urlassets/nocms/images/custom_logo/'.$file_name);
+    		$this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.$file_name);
     	}
     	$this->get_logo();
     }
