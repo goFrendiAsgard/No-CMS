@@ -553,7 +553,7 @@ class CMS_Model extends CI_Model {
         $this->db->insert('cms_user', $data);
 		// send activation code if needed
 		if($need_activation){
-			cms_generate_activation_code($user_name, TRUE, 'SIGNUP');	
+			$this->cms_generate_activation_code($user_name, TRUE, 'SIGNUP');	
 		}
 		
     }
@@ -700,15 +700,22 @@ class CMS_Model extends CI_Model {
     /**
      * @author  goFrendiAsgard
      * @param   string identity 
+	 * @param	bool send_mail
 	 * @param   string reason (FORGOT, SIGNUP)
      * @return  bool
      * @desc    generate activation code, and send email to applicant 
      */
     public final function cms_generate_activation_code($identity, $send_mail = FALSE, $reason='FORGOT') {
+    	// if generate activation reason is "FORGOT", then user should be active	
+    	$where_active = '1=1';	
+    	if($reason=='FORGOT'){
+    		$where_active = 'active = TRUE';
+    	}
+		// generate query
         $query = $this->db->query(
                 "SELECT user_name, real_name, user_id, email FROM cms_user WHERE
                     (user_name = '" . $identity . "' OR email = '" . $identity . "') AND
-                    active = TRUE"
+                    $where_active"
         );
         if ($query->num_rows() > 0) {
             $row = $query->row();
@@ -723,31 +730,24 @@ class CMS_Model extends CI_Model {
             $where = array("user_id" => $user_id);
             $this->db->update('cms_user', $data, $where);
             $this->load->library('email');
-			
+			echo var_dump($send_mail);
 			if($send_mail){
 				//prepare activation email to user
 	            $email_from_address = $this->cms_get_config('cms_email_reply_address');
 	            $email_from_name = $this->cms_get_config('cms_email_reply_name');
-				
-				$email_subject = $this->cms_get_config('cms_email_forgot_subject');
-	            $email_message = $this->cms_get_config('cms_email_forgot_message');
 							
-				if(!isset($reason) || (strtoupper($reason)!='FORGOT' && strtoupper($reason)!='SIGNUP') ){
-					$email_subject = 'Account Activation';
-	            	$email_message = 'Dear, {{ user_real_name }}<br />Click <a href="{{ activation_link }}">{{ activation_link }}</a> to activate your account';	
-				}else if(strtoupper($reason)=='FORGOT'){
+				$email_subject = 'Account Activation';
+	            $email_message = 'Dear, {{ user_real_name }}<br />Click <a href="{{ site_url }}main/activate/{{ activation_code }}">{{ site_url }}main/activate/{{ activation_code }}</a> to activate your account';
+				if(strtoupper($reason)=='FORGOT'){
 					$email_subject = $this->cms_get_config('cms_email_forgot_subject');
 	            	$email_message = $this->cms_get_config('cms_email_forgot_message');	
 				}else if(strtoupper($reason)=='SIGNUP'){
 					$email_subject = $this->cms_get_config('cms_email_signup_subject');
 	            	$email_message = $this->cms_get_config('cms_email_signup_message');	
 				}
-				            
-	            $activation_link = site_url('main/forgot/' . $activation_code);
-	
+				
 	            $email_message = str_replace('{{ user_real_name }}', $real_name, $email_message);
-	            $email_message = str_replace('{{ activation_link }}', $activation_link, $email_message);
-	
+	            $email_message = str_replace('{{ activation_code }}', $activation_code, $email_message);
 	            //send email to user
 	            return $this->cms_send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);	
 			}
@@ -761,23 +761,31 @@ class CMS_Model extends CI_Model {
      * @author  goFrendiAsgard
      * @param   string activation_code
      * @param   string new_password
-     * @desc    change password based on activation_code and new_password
+	 * @return  bool success
+     * @desc    activate user
      */
-    public final function cms_forgot_password($activation_code, $new_password) {
+    public final function cms_activate_account($activation_code, $new_password=NULL) {
         $query = $this->db->query(
                 "SELECT user_id FROM cms_user WHERE
-                    (activation_code = '" . md5($activation_code) . "') AND
-                    active = TRUE"
+                    (activation_code = '" . md5($activation_code) . "')"
         );
-        foreach ($query->result() as $row) {
-            $user_id = $row->user_id;
+		if($query->num_rows()>0){
+			$row = $query->row();
+			$user_id = $row->user_id;			
             $data = array(
-                "password" => md5($new_password),
-                "activation_code" => NULL
+                "activation_code" => NULL,
+                "active" => TRUE,
             );
+			if(isset($new_password)){
+				$data['password'] = md5($new_password);
+			}
+			
             $where = array("user_id" => $user_id);
             $this->db->update('cms_user', $data, $where);
-        }
+			return TRUE;	
+		}else{
+			return FALSE;
+		}
     }
 
     /**
@@ -819,7 +827,8 @@ class CMS_Model extends CI_Model {
         $this->email->subject($subject);
         $this->email->message($message);
 
-        return $this->email->send();		
+        $success = $this->email->send();
+		return $success;		
     }
 
     /**
@@ -832,8 +841,7 @@ class CMS_Model extends CI_Model {
         $query = $this->db->query(
                 "SELECT activation_code FROM cms_user WHERE
                     (activation_code = '" . md5($activation_code) . "') AND
-                    (activation_code IS NOT NULL) AND
-                    active = TRUE"
+                    (activation_code IS NOT NULL)"
         );
         if ($query->num_rows() > 0)
             return true;
@@ -1015,6 +1023,10 @@ class CMS_Model extends CI_Model {
     	
     	$pattern = array();
 		$replacement = array();
+		
+		// user_name
+    	$pattern[] = "/\{\{ user_id \}\}/";
+    	$replacement[] = $this->cms_user_id();
 		
     	// user_name
     	$pattern[] = "/\{\{ user_name \}\}/";

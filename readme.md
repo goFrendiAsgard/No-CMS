@@ -303,7 +303,7 @@ v0.5.6
 + (done, tested) add per-session language setting
 + (done, tested) better language handling
 + (done, tested) fix infinite-recursion bugs as reported by Joseph Marikle, by adding "raw" parameter in cms_get_config
-+ (done) add "sign-up" email notification setting
++ (done, tested) add "sign-up" email notification setting
 + (done, tested) more complete keyword, such as {{ activation_code }}, {{ real_name }}, {{ if_language:indonesia}} ... {{ end_if_language }}
 + (done, tested) keyword is now also works for dynamic pages, except for value property and textarea
 + (done, tested) use groceryCRUD 1.3.3 stable

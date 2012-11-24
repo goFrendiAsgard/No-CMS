@@ -116,6 +116,11 @@ class Main extends CMS_Controller {
         }
     }
 
+	public function activate($activation_code) {
+		$this->cms_activate_account($activation_code);
+		redirect('main/index');	
+	}
+
     public function forgot($activation_code=NULL) {
         if (isset($activation_code)) {
             //get user input
@@ -126,7 +131,7 @@ class Main extends CMS_Controller {
 
             if ($this->form_validation->run()) {
                 if ($this->cms_valid_activation_code($activation_code)) {
-                    $this->cms_forgot_password($activation_code, $password);
+                    $this->cms_activate_account($activation_code, $password);
                     redirect('main/index');
                 } else {
                     redirect('main/forgot');
@@ -378,9 +383,9 @@ class Main extends CMS_Controller {
         return $post_array;
     }
 
-    public function before_delete_user($post_array) {
+    public function before_delete_user($primary_key, $post_array) {
         //The super admin user cannot be deleted, a user cannot delete his/her own account
-        if (($post_array['user_id'] == 1) || ($post_array['user_id'] == $this->cms_user_id())) {
+        if (($primary_key == 1) || ($primary_key == $this->cms_user_id())) {
             return false;
         }
         return $post_array;
@@ -420,13 +425,13 @@ class Main extends CMS_Controller {
         $this->view('main/group', $output, 'main_group_management');
     }
 
-    public function before_delete_group($post_array) {
-        $SQL = "SELECT user_id FROM cms_group_user WHERE group_id =" . $post_array['group_id'] . ";";
+    public function before_delete_group($primary_key) {
+        $SQL = "SELECT user_id FROM cms_group_user WHERE group_id =" . $primary_key . ";";
         $query = $this->db->query($SQL);
         $count = $query->num_rows();
 
         /* Can only delete group with no user. Admin group cannot be deleted */
-        if ($post_array['group_id'] == 1 || $count > 0) {
+        if ($primary_key == 1 || $count > 0) {
             return false;
         }
         return $post_array;

@@ -253,22 +253,24 @@ class CMS_Controller extends MX_Controller {
     /**
      * @author  goFrendiAsgard
      * @param   string identity 
+	 * @param	bool send_mail
 	 * @param   string reason (FORGOT, SIGNUP)
      * @return  bool
      * @desc    generate activation code, and send email to applicant 
      */
     protected final function cms_generate_activation_code($identity, $send_mail = FALSE, $reason='FORGOT') {
-    	return $this->CMS_Model->cms_generate_activation_code($identity, $send_mail = FALSE, $reason='FORGOT');
+    	return $this->CMS_Model->cms_generate_activation_code($identity, $send_mail, $reason);
     }
     
     /**
      * @author  goFrendiAsgard
      * @param   string activation_code
      * @param   string new_password
-     * @desc    change password based on activation_code and new_password
+	 * @return  bool success
+     * @desc    activate user
      */
-    protected final function cms_forgot_password($activation_code, $new_password) {
-    	return $this->CMS_Model->cms_forgot_password($activation_code, $new_password);
+    protected final function cms_activate_account($activation_code, $new_password=NULL) {
+    	return $this->CMS_Model->cms_activate_account($activation_code, $new_password);
     }
     
     /**
