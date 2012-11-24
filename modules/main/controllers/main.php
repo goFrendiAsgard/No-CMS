@@ -144,9 +144,9 @@ class Main extends CMS_Controller {
             $this->form_validation->set_rules('identity', 'Identity', 'required|xss_clean');
 
             if ($this->form_validation->run()) {
-                if ($this->cms_generate_activation_code($identity))
+                if ($this->cms_generate_activation_code($identity, TRUE, 'FORGOT')){
                     redirect('main/index');
-                else {
+                }else {
                     $data = array("identity" => $identity);
                     $this->view('main/forgot_fill_identity', $data, 'main_forgot');
                 }
@@ -204,7 +204,7 @@ class Main extends CMS_Controller {
     public function check_change_profile(){
     	if($this->input->is_ajax_request()){
 	    	$user_name = $this->input->post('user_name');
-	    	$exists = $this->cms_is_user_exists($user_name) && $user_name!=$this->cms_username();
+	    	$exists = $this->cms_is_user_exists($user_name) && $user_name!=$this->cms_user_name();
 	    	$message = "";
 	    	if($user_name==""){
 	    		$message = $this->cms_lang("Username is empty");
@@ -220,7 +220,7 @@ class Main extends CMS_Controller {
     }
 
     public function change_profile() {
-    	$SQL = "SELECT user_name, email, real_name FROM cms_user WHERE user_id = ".$this->cms_userid();
+    	$SQL = "SELECT user_name, email, real_name FROM cms_user WHERE user_id = ".$this->cms_user_id();
     	$query = $this->db->query($SQL);
     	$row = $query->row();
     	
@@ -260,7 +260,7 @@ class Main extends CMS_Controller {
 
     public function widget_logout() {
         $data = array(
-            "user_name" => $this->cms_username(),
+            "user_name" => $this->cms_user_name(),
             "welcome_lang" => $this->cms_lang('Welcome'),
             "logout_lang" => $this->cms_lang('Logout')
         );
@@ -318,6 +318,8 @@ class Main extends CMS_Controller {
         $crud->unset_add();
         $crud->unset_delete();
         $crud->unset_edit();
+		
+		$crud->set_language($this->cms_language());
 
         $output = $crud->render();
 
@@ -351,13 +353,15 @@ class Main extends CMS_Controller {
         if($crud->getState() == 'edit'){
         	$state_info = $crud->getStateInfo();
 	        $primary_key = $state_info->primary_key;
-	        if($primary_key == $this->cms_userid() || $primary_key == 1){
+	        if($primary_key == $this->cms_user_id() || $primary_key == 1){
 	        	$crud->callback_edit_field('active', array($this, 'read_only_user_active'));
 	        }
         }
 
         $crud->set_lang_string('delete_error_message', 'You cannot delete super admin user or your own account');
-
+		
+		$crud->set_language($this->cms_language());
+		
         $output = $crud->render();
 
         $this->view('main/user', $output, 'main_user_management');
@@ -376,7 +380,7 @@ class Main extends CMS_Controller {
 
     public function before_delete_user($post_array) {
         //The super admin user cannot be deleted, a user cannot delete his/her own account
-        if (($post_array['user_id'] == 1) || ($post_array['user_id'] == $this->cms_userid())) {
+        if (($post_array['user_id'] == 1) || ($post_array['user_id'] == $this->cms_user_id())) {
             return false;
         }
         return $post_array;
@@ -408,7 +412,8 @@ class Main extends CMS_Controller {
 
 
         $crud->set_lang_string('delete_error_message', 'You cannot delete Admin group or group which is not empty, please empty the group first');
-
+		
+		$crud->set_language($this->cms_language());
 
         $output = $crud->render();
 
@@ -465,6 +470,8 @@ class Main extends CMS_Controller {
         $crud->callback_column('active', array($this, 'column_navigation_active'));
 		        
         $crud->callback_before_insert(array($this, 'before_insert_navigation'));
+		
+		$crud->set_language($this->cms_language());
 
         $output = $crud->render();
 
@@ -545,6 +552,8 @@ class Main extends CMS_Controller {
         $crud->set_relation('navigation_id', 'cms_navigation', 'navigation_name');
 
         $crud->callback_before_insert(array($this, 'before_insert_quicklink'));
+		
+		$crud->set_language($this->cms_language());
 
         $output = $crud->render();
 
@@ -579,6 +588,8 @@ class Main extends CMS_Controller {
         $crud->display_as('authorization_id', 'Authorization');
 
         $crud->unset_texteditor('description');
+		
+		$crud->set_language($this->cms_language());
 
         $output = $crud->render();
 
@@ -621,6 +632,8 @@ class Main extends CMS_Controller {
         $crud->callback_before_insert(array($this, 'before_insert_widget'));
         
         $crud->callback_column('active', array($this, 'column_widget_active'));
+		
+		$crud->set_language($this->cms_language());
 
         $output = $crud->render();
 
@@ -700,6 +713,8 @@ class Main extends CMS_Controller {
         	$crud->callback_edit_field('description',
         			array($this, 'read_only_config_description'));
         }
+		
+		$crud->set_language($this->cms_language());
 
         $output = $crud->render();
 

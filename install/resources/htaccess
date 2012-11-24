@@ -67,24 +67,10 @@
     ExpiresByType application/javascript    "access plus 2 months"
     ExpiresByType text/javascript           "access plus 2 months"
 
-    <IfModule mod_headers.c>
-        <FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf)$">
-            Header set Cache-Control "max-age=2592000"
-            Header set Expires "Thu, 15 Apr 2020 20:00:00 GMT"
-            Header unset ETag
-            FileETag None
-        </FilesMatch>
-    
-        <FilesMatch ".(js|css|pdf|txt)$">
-            Header set Cache-Control "max-age=604800"
-            Header set Expires "Thu, 15 Apr 2020 20:00:00 GMT"
-            Header unset ETag
-            FileETag None
-        </FilesMatch>
-        
-        Header append Cache-Control "public"
-  </IfModule>
+</IfModule>
 
+<IfModule mod_headers.c>
+    FileETag None
 </IfModule>
 
 <IfModule mod_deflate.c>

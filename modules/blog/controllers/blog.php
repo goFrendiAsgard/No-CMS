@@ -86,10 +86,7 @@ class Blog extends CMS_Controller {
         $crud->change_field_type('date', 'hidden');
         $crud->change_field_type('article_url', 'hidden');
         $crud->change_field_type('allow_comment', 'true_false');
-        /*
-        $crud->add_action('Photos', base_url().'modules/blog/assets/images/photo.png', 'blog/photo');
-        $crud->add_action('Comments', base_url().'modules/blog/assets/images/comment.png', 'blog/comment');
-        */
+		$crud->set_language($this->cms_language());
         $output = $crud->render();
 
         $this->view('blog_article', $output, 'blog_article');        
@@ -109,7 +106,7 @@ class Blog extends CMS_Controller {
     	
     	$crud->callback_before_insert(array($this,'before_insert_photo'));
 		$crud->callback_column($this->unique_field_name('article_id'), array($this,'callback_column_article_id'));
-    	
+    	$crud->set_language($this->cms_language());
     	$output = $crud->render();
 		$output->article_id = $article_id;
     	
@@ -135,7 +132,7 @@ class Blog extends CMS_Controller {
     	
     	$crud->callback_before_insert(array($this,'before_insert_comment'));
 		$crud->callback_column($this->unique_field_name('article_id'), array($this,'callback_column_article_id'));
-    	
+    	$crud->set_language($this->cms_language());
     	$output = $crud->render();
 		$output->article_id = $article_id;
     	
@@ -237,7 +234,7 @@ class Blog extends CMS_Controller {
     		$url .= '_'.$index;
     	}
     	    	
-        $post_array['author_user_id'] = $this->cms_userid();
+        $post_array['author_user_id'] = $this->cms_user_id();
         $post_array['date'] = date('Y-m-d H:i:s');
         $post_array['article_url'] = $url;
         return $post_array;
@@ -256,7 +253,7 @@ class Blog extends CMS_Controller {
         $crud->set_relation_n_n('Articles', 'blog_category_article', 'blog_article', 'category_id', 'article_id' , 'article_title');
         
         $crud->unset_texteditor('description');
-
+		$crud->set_language($this->cms_language());
         $output = $crud->render();
 
         $this->view('grocery_CRUD', $output, 'blog_category');

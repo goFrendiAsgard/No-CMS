@@ -1,6 +1,6 @@
 <?php require_once BASEPATH."../themes/".$cms['site_theme']."/lib/function.php";?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language:language_alias }}">
   <head>
     <meta charset="utf-8">
     <title><?php echo $template['title'];?></title>    
@@ -34,7 +34,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="<?php echo base_url()."themes/".$cms['site_theme']."/assets/default/";?>ico/apple-touch-icon-57-precomposed.png">
-    
+    <?php flush(); ?>
   </head>
   <body>
     <div class="navbar navbar-fixed-top">
@@ -73,12 +73,14 @@
 	        	<div id="layout-content" class="span9">
 		            <?php echo $template['body'];?>
 		            <div class="clear"></div>
+		            <?php flush(); ?>
 		        </div><!--/#layout-content-->       
 		        <div id="layout-widget" class="span3">		        	
 		            <h4>WIDGET</h4><hr />
                     <?php echo build_widget_html($cms['widget'], 'sidebar');?>
                     <h4>ADVERTISEMENT</h4><hr />
-                    <?php echo build_widget_html($cms['widget'], 'advertisement');?>	            
+                    <?php echo build_widget_html($cms['widget'], 'advertisement');?>
+                    <?php flush(); ?>	            
 		        </div><!--/#layout-widget-->
 	        </div><!--/#layout-content-widget-->
         </div><!--/#layout-banner-content-widget-->  

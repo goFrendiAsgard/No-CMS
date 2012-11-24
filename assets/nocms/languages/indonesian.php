@@ -1,5 +1,5 @@
 <?php
-
+$lang['language_alias'] = 'id';
 $lang['Home'] = 'Rumah';
 $lang['Language'] = 'Bahasa';
 $lang['Login'] = 'Masuk';

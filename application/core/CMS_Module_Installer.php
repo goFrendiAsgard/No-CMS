@@ -199,7 +199,7 @@ class CMS_Module_Installer extends CMS_Controller {
         $data = array(
         	'module_name'=>$this->NAME,
             'module_path'=>$this->uri->segment(1),
-            'user_id'=>$this->cms_userid()
+            'user_id'=>$this->cms_user_id()
         );
         $this->db->insert('cms_module',$data);
         

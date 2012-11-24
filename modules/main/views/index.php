@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
-<h3>Home</h3>
+<h3>Welcom, {{ user_name }}</h3>
 <p>
 	This is the home page. You have several options to modify this page.
 		

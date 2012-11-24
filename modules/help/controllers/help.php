@@ -56,6 +56,8 @@ class help extends CMS_Controller {
         
         $crud->change_field_type('url', 'hidden');
         $crud->callback_before_insert(array($this,'before_insert_group'));
+		
+		$crud->set_language($this->cms_language());
         
         // render
         $output = $crud->render();
@@ -84,6 +86,8 @@ class help extends CMS_Controller {
         $crud->set_relation('group_id', 'help_group', 'name');
         
         $crud->callback_before_insert(array($this,'before_insert_topic'));
+		
+		$crud->set_language($this->cms_language());
         
         // render
         $output = $crud->render();

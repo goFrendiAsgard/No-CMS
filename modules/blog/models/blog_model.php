@@ -130,7 +130,7 @@ class Blog_Model extends CMS_Model{
 		$query = $this->db->query($SQL);
 		$row = $query->row();
 		if(isset($row->allow_comment) && ($row->allow_comment == 1)){
-			$cms_user_id = $this->cms_userid();
+			$cms_user_id = $this->cms_user_id();
 		
 			$data = array(
 					'article_id' => $article_id,

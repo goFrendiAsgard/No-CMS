@@ -56,19 +56,39 @@ class CMS_Controller extends MX_Controller {
      * @author goFrendiAsgard
      * @param  string $user_name  
      * @return mixed
-     * @desc   set or get CI_Session["cms_username"]  
+     * @desc   set or get CI_Session["cms_user_name"]  
      */
-    protected final function cms_username($user_name = NULL) {
-        return $this->CMS_Model->cms_username($user_name);
+    protected final function cms_user_name($user_name = NULL) {
+        return $this->CMS_Model->cms_user_name($user_name);
+    }
+	
+	/**
+     * @author goFrendiAsgard
+     * @param  string $real_name  
+     * @return mixed
+     * @desc   set or get CI_Session["cms_user_real_name"]  
+     */
+    protected final function cms_user_real_name($real_name = NULL) {
+        return $this->CMS_Model->cms_user_real_name($user_name);
+    }
+	
+	 /**
+     * @author goFrendiAsgard
+     * @param  string $email 
+     * @return mixed
+     * @desc   set or get CI_Session["cms_user_email"]  
+     */
+    protected final function cms_user_email($email = NULL) {
+        return $this->CMS_Model->cms_user_email($email);
     }
 
     /**
      * @author goFrendiAsgard
      * @param  int $user_id
-     * @desc   set or get CI_Session["cms_userid"]
+     * @desc   set or get CI_Session["cms_user_id"]
      */
-    protected final function cms_userid($user_id = NULL) {
-        return $this->CMS_Model->cms_userid($user_id);
+    protected final function cms_user_id($user_id = NULL) {
+        return $this->CMS_Model->cms_user_id($user_id);
     }
 
     /**
@@ -233,11 +253,12 @@ class CMS_Controller extends MX_Controller {
     /**
      * @author  goFrendiAsgard
      * @param   string identity 
+	 * @param   string reason (FORGOT, SIGNUP)
      * @return  bool
      * @desc    generate activation code, and send email to applicant 
      */
-    protected final function cms_generate_activation_code($identity) {
-    	return $this->CMS_Model->cms_generate_activation_code($identity);
+    protected final function cms_generate_activation_code($identity, $send_mail = FALSE, $reason='FORGOT') {
+    	return $this->CMS_Model->cms_generate_activation_code($identity, $send_mail = FALSE, $reason='FORGOT');
     }
     
     /**
@@ -455,8 +476,8 @@ class CMS_Controller extends MX_Controller {
         	$cms['widget'] = $widget;
         	
         	// get user name, quicklinks, module_name & module_path
-        	$cms['user_id'] = $this->cms_userid();
-        	$cms['user_name'] = $this->cms_username();
+        	$cms['user_id'] = $this->cms_user_id();
+        	$cms['user_name'] = $this->cms_user_name();
         	$cms['quicklinks'] = $this->cms_quicklinks();
         	$cms['module_path'] = $this->cms_module_path();
         	$cms['module_name'] = $this->cms_module_name($cms['module_path']);
@@ -489,8 +510,8 @@ class CMS_Controller extends MX_Controller {
         	}
         	
         	// backend template
-        	$cms_userid = $this->cms_userid();
-        	if (isset($cms_userid) && $cms_userid) {
+        	$cms_user_id = $this->cms_user_id();
+        	if (isset($cms_user_id) && $cms_user_id) {
         		if ($this->cms_layout_exists($theme, $layout . '_backend')) {
         			$layout = $layout . '_backend';
         		}
