@@ -1018,55 +1018,55 @@ class CMS_Model extends CI_Model {
      * @return string
      * @desc   parse keyword like {{ site_url  }} , {{ base_url }} , {{ user_name }} , {{ module_path }} and {{ language }}
      */
-    public final function cms_parse_keyword($value) {
+    public final function cms_parse_keyword($value) {		
     	$value = $this->cms_escape_template($value);
-    	
+		
     	$pattern = array();
 		$replacement = array();
 		
 		// user_name
-    	$pattern[] = "/\{\{ user_id \}\}/";
+    	$pattern[] = "/\{\{ user_id \}\}/si";
     	$replacement[] = $this->cms_user_id();
 		
     	// user_name
-    	$pattern[] = "/\{\{ user_name \}\}/";
+    	$pattern[] = "/\{\{ user_name \}\}/si";
     	$replacement[] = $this->cms_user_name();
 		
 		// user_real_name
-    	$pattern[] = "/\{\{ user_real_name \}\}/";
+    	$pattern[] = "/\{\{ user_real_name \}\}/si";
     	$replacement[] = $this->cms_user_real_name();
 		
 		// user_email
-    	$pattern[] = "/\{\{ user_email \}\}/";
+    	$pattern[] = "/\{\{ user_email \}\}/si";
     	$replacement[] = $this->cms_user_email();
     	
 		// site_url
 		$site_url = site_url();
     	if($site_url[strlen($site_url)-1] != '/') $site_url.= '/';
-		$pattern[] = '/\{\{ site_url \}\}/';
+		$pattern[] = '/\{\{ site_url \}\}/si';
 		$replacement[] = $site_url;
 		
 		// base_url
 		$base_url = base_url();
         if($base_url[strlen($base_url)-1] != '/') $base_url.= '/';
-		$pattern[] = '/\{\{ base_url \}\}/';
+		$pattern[] = '/\{\{ base_url \}\}/si';
 		$replacement[] = $base_url;
 		
 		// module_path
 		$module_path = site_url($this->cms_module_path());
 		if($module_path[strlen($module_path)-1] != '/') $module_path.= '/';
-		$pattern[] = '/\{\{ module_path \}\}/';
+		$pattern[] = '/\{\{ module_path \}\}/si';
 		$replacement[] = $module_path;
 		
 		// language
-		$pattern[] = '/\{\{ language \}\}/';
+		$pattern[] = '/\{\{ language \}\}/si';
     	$replacement[] = $this->cms_language();
 		
 		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
 		
 		// translate language
-		$pattern = '/\{\{ language:(.*?) \}\}/s';	
+		$pattern = '/\{\{ language:(.*?) \}\}/si';	
 		$replacement = function($arr){
 			return $this->cms_lang($arr[1]);	
 		};
@@ -1076,21 +1076,21 @@ class CMS_Model extends CI_Model {
 		// if language, elif		
 		$language = $this->cms_language();
 		$pattern = array();
-		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if }}/s";
-		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if }}/s";
-		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ end_if }}/s";
-		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if }}/s";
-		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if }}/s";
-		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if }}/s";
-		$pattern[] = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if }}/s";
-		$pattern[] = "/\{\{ if_language:.*?\{\{ end_if }}/s"; 
+		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
+		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
+		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if \}\}/si";
+		$pattern[] = "/\{\{ if_language:.*?\{\{ end_if \}\}/si"; 
 		$replacement = '$1';
 		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
 		
 		// clear un-translated language
 		$pattern = array();
-		$pattern = "/\{\{ if_language:.*?\{\{ end_if }}/s"; 
+		$pattern = "/\{\{ if_language:.*?\{\{ end_if \}\}/s"; 
 		$replacement = '';
 		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
@@ -1121,13 +1121,13 @@ class CMS_Model extends CI_Model {
 	 */
 	protected final function cms_escape_template($str){
 		$pattern = array();
-		$pattern[] = '/(<[tT][eE][xX][tT][aA][rR][eE][aA][^<>]*>)(.*?)(<\/[tT][eE][xX][tT][aA][rR][eE][aA]>)/';
-		$pattern[] = '/([vV][aA][lL][uU][eE] *= *")(.*?)(")/';
+		$pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
+		$pattern[] = '/(value *= *")(.*?)(")/si';
 		
 		$replace = function($arr){
 		    $to_be_replaced = array('{{ ', ' }}');
 		    $to_replace = array('&#123;&#123; ', ' &#125;&#125;');
-		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];
+		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];			
 		};
 		$str = preg_replace_callback($pattern, $replace, $str);
 		
@@ -1143,8 +1143,8 @@ class CMS_Model extends CI_Model {
 	 */
 	protected final function cms_unescape_template($str){
 		$pattern = array();
-		$pattern[] = '/(<[tT][eE][xX][tT][aA][rR][eE][aA][^<>]*>)(.*?)(<\/[tT][eE][xX][tT][aA][rR][eE][aA]>)/';
-		$pattern[] = '/([vV][aA][lL][uU][eE] *= *")(.*?)(")/';
+		$pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
+		$pattern[] = '/(value *= *")(.*?)(")/si';
 		
 		$replace = function($arr){
 		    $to_replace = array('{{ ', ' }}');
