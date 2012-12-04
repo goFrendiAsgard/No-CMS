@@ -1067,18 +1067,10 @@ class CMS_Model extends CI_Model {
 		
 		// translate language
 		$pattern = '/\{\{ language:(.*?) \}\}/si';
-		// define replacment function
-		// php 5.4.0 or below doesn't support $this in anonymous function
-		if (strnatcmp(phpversion(),'5.4.0') >= 0){ 
-	        $replacement = function($arr){
-				return $this->cms_lang($arr[1]);	
-			};
-	    }else{
-	    	$_this = clone $this; 
-	        $replacement = function($arr){
-				return $_this->cms_lang($arr[1]);	
-			};
-	    }		
+		// define replacment function, php 5.4.0 or below doesn't support $this in anonymous function
+		$replacement = function($arr) use ($this){
+			return $this->cms_lang($arr[1]);	
+		};		
 		// execute regex
     	$value = preg_replace_callback($pattern, $replacement, $value);
 		
