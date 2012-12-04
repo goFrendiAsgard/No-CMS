@@ -6,17 +6,17 @@
  * @author gofrendi
  */
 class CMS_Model extends CI_Model {
-	
+
 	private $cms_model_properties;
 
     public function __construct() {
         parent::__construct();
-		
+
 		// PHP 5.3 ask for timezone, and throw a warning whenever it is not available
 		// so, just give this one :)
 		date_default_timezone_set('UTC');
 
-        // load helpers and libraries       
+        // load helpers and libraries
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
@@ -24,23 +24,23 @@ class CMS_Model extends CI_Model {
         $this->load->library('session');
         $this->load->library('form_validation');
 		$this->load->database();
-		
+
 		// accessing file is faster than accessing database
 		// but I think accessing variable is faster than both of them
 		$this->cms_model_properties = array(
 			'session'=>array(),
 			'language_dictionary'=>array(),
-			'config'=>array(), 
-		);     
-        
+			'config'=>array(),
+		);
+
     }
-    
+
     /**
      * @author goFrendiAsgard
      * @param  string $key
      * @param  mixed $value
      * @return mixed
-     * @desc   if value specified, this will set CI_Session["key"], else it will return CI_session["key"] 
+     * @desc   if value specified, this will set CI_Session["key"], else it will return CI_session["key"]
      */
     public final function cms_ci_session($key, $value = NULL) {
         if (isset($value)) {
@@ -56,8 +56,8 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author goFrendiAsgard
-     * @param  string $key   
-     * @desc   unset CI_session["key"] 
+     * @param  string $key
+     * @desc   unset CI_session["key"]
      */
     public final function cms_unset_ci_session($key) {
         $this->session->unset_userdata($key);
@@ -66,29 +66,29 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author goFrendiAsgard
-     * @param  string $user_name  
+     * @param  string $user_name
      * @return mixed
-     * @desc   set or get CI_Session["cms_user_name"]  
+     * @desc   set or get CI_Session["cms_user_name"]
      */
     public final function cms_user_name($user_name = NULL) {
         return $this->cms_ci_session('cms_user_name', $user_name);
     }
-	
+
 	 /**
      * @author goFrendiAsgard
-     * @param  string $real_name  
+     * @param  string $real_name
      * @return mixed
-     * @desc   set or get CI_Session["cms_user_real_name"]  
+     * @desc   set or get CI_Session["cms_user_real_name"]
      */
     public final function cms_user_real_name($real_name = NULL) {
         return $this->cms_ci_session('cms_user_real_name', $real_name);
     }
-	
+
 	 /**
      * @author goFrendiAsgard
-     * @param  string $email 
+     * @param  string $email
      * @return mixed
-     * @desc   set or get CI_Session["cms_user_email"]  
+     * @desc   set or get CI_Session["cms_user_email"]
      */
     public final function cms_user_email($email = NULL) {
         return $this->cms_ci_session('cms_user_email', $email);
@@ -136,14 +136,14 @@ class CMS_Model extends CI_Model {
                         (authorization_id = 2 AND $not_login) OR
                         (authorization_id = 3 AND $login) OR
                         (
-                            (authorization_id = 4 AND $login) AND 
+                            (authorization_id = 4 AND $login) AND
                             (
                                 (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                     OR $super_user OR
                                 (SELECT COUNT(*) FROM cms_group_navigation AS gn
-                                    WHERE 
+                                    WHERE
                                         gn.navigation_id=n.navigation_id AND
-                                        gn.group_id IN 
+                                        gn.group_id IN
                                             (SELECT group_id FROM cms_group_user WHERE user_id = '" . addslashes($user_id) . "')
                                 )>0
                             )
@@ -191,28 +191,28 @@ class CMS_Model extends CI_Model {
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
         $query = $this->db->query(
-                "SELECT q.navigation_id, navigation_name, is_static, title, description, url 
-                        FROM 
+                "SELECT q.navigation_id, navigation_name, is_static, title, description, url
+                        FROM
                         	cms_navigation AS n,
-                        	cms_quicklink AS q 
+                        	cms_quicklink AS q
                         WHERE
                         	(
                         		q.navigation_id = n.navigation_id
-                        	) 
+                        	)
                         	AND
                             (
                                 (authorization_id = 1) OR
                                 (authorization_id = 2 AND $not_login) OR
                                 (authorization_id = 3 AND $login) OR
                                 (
-                                    (authorization_id = 4 AND $login) AND 
+                                    (authorization_id = 4 AND $login) AND
                                     (
                                         (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                             OR $super_user OR
                                         (SELECT COUNT(*) FROM cms_group_navigation AS gn
-                                            WHERE 
+                                            WHERE
                                                 gn.navigation_id=n.navigation_id AND
-                                                gn.group_id IN 
+                                                gn.group_id IN
                                                     (SELECT group_id FROM cms_group_user WHERE user_id = '" . addslashes($user_id) . "')
                                         )>0
                                     )
@@ -246,23 +246,23 @@ class CMS_Model extends CI_Model {
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
         $query = $this->db->query(
-                "SELECT 
-        			widget_id, widget_name, is_static, title, 
-        			description, url, slug, static_content 
+                "SELECT
+        			widget_id, widget_name, is_static, title,
+        			description, url, slug, static_content
                 FROM cms_widget AS w WHERE
-                    (                        
+                    (
                         (authorization_id = 1) OR
                         (authorization_id = 2 AND $not_login) OR
                         (authorization_id = 3 AND $login) OR
                         (
-                            (authorization_id = 4 AND $login) AND 
+                            (authorization_id = 4 AND $login) AND
                             (
                                 (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                     OR $super_user OR
                                 (SELECT COUNT(*) FROM cms_group_widget AS gw
-                                    WHERE 
+                                    WHERE
                                         gw.widget_id=w.widget_id AND
-                                        gw.group_id IN 
+                                        gw.group_id IN
                                             (SELECT group_id FROM cms_group_user WHERE user_id = '" . addslashes($user_id) . "')
                                 )>0
                             )
@@ -290,7 +290,7 @@ class CMS_Model extends CI_Model {
         		$script .= '      jqS.type = "text/javascript";';
         		$script .= '      document.getElementsByTagName("head")[0].appendChild(jqS);';
         		$script .= '      console.log("no");';
-        		$script .= '      setTimeout("widget_'.$row->widget_id.'()", 50);';        		
+        		$script .= '      setTimeout("widget_'.$row->widget_id.'()", 50);';
         		$script .= '  }else{';
                 $script .= '      console.log("yes");';
         		$script .= '      $.ajax({';
@@ -306,7 +306,7 @@ class CMS_Model extends CI_Model {
         		// asset
         		$asset = new CMS_Asset();
         		//$asset->add_cms_js('nocms/js/jquery.js');
-        		$asset->add_string_js($script);        		
+        		$asset->add_string_js($script);
         		// content
         		$content .= '<div id="_cms_widget_'.$row->widget_id.'">';
         		$content .= $asset->compile_js();
@@ -337,8 +337,8 @@ class CMS_Model extends CI_Model {
         if (!$navigation_name)
             return false;
         $query = $this->db->query(
-                "SELECT navigation_id, navigation_name, title, description, url  
-                    FROM cms_navigation 
+                "SELECT navigation_id, navigation_name, title, description, url
+                    FROM cms_navigation
                     WHERE navigation_id = (
                         SELECT parent_id FROM cms_navigation
                         WHERE navigation_name = '" . addslashes($navigation_name) . "'
@@ -368,8 +368,8 @@ class CMS_Model extends CI_Model {
         if (!$navigation_name)
             return false;
         $query = $this->db->query(
-                "SELECT navigation_id, navigation_name, title, description, url 
-                    FROM cms_navigation 
+                "SELECT navigation_id, navigation_name, title, description, url
+                    FROM cms_navigation
                     WHERE navigation_name = '" . addslashes($navigation_name) . "'"
         );
         if ($query->num_rows == 0)
@@ -422,20 +422,20 @@ class CMS_Model extends CI_Model {
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
         $query = $this->db->query(
-                "SELECT privilege_name, title, description 
+                "SELECT privilege_name, title, description
                 FROM cms_privilege AS p WHERE
                     (authorization_id = 1) OR
                     (authorization_id = 2 AND $not_login) OR
                     (authorization_id = 3 AND $login) OR
                     (
-                        (authorization_id = 4 AND $login AND 
+                        (authorization_id = 4 AND $login AND
                         (
                             (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                 OR $super_user OR
                             (SELECT COUNT(*) FROM cms_group_privilege AS gp
-                                WHERE 
+                                WHERE
                                     gp.privilege_id=p.privilege_id AND
-                                    gp.group_id IN 
+                                    gp.group_id IN
                                         (SELECT group_id FROM cms_group_user WHERE user_id = '" . addslashes($user_id) . "')
                             )>0)
                         )
@@ -459,13 +459,13 @@ class CMS_Model extends CI_Model {
      * @return  bool
      * @desc    only used in allow_navigate
      */
-    private final function cms_private_allow_navigate($navigation_name, $navigations = NULL) {        
+    private final function cms_private_allow_navigate($navigation_name, $navigations = NULL) {
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
         for ($i=0; $i<count($navigations); $i++) {
             if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"]==1){
-                return true;            
-            }else if ($this->cms_private_allow_navigate($navigation_name, $navigations[$i]["child"])){  
+                return true;
+            }else if ($this->cms_private_allow_navigate($navigation_name, $navigations[$i]["child"])){
                 return true;
             }
         }
@@ -553,9 +553,9 @@ class CMS_Model extends CI_Model {
         $this->db->insert('cms_user', $data);
 		// send activation code if needed
 		if($need_activation){
-			$this->cms_generate_activation_code($user_name, TRUE, 'SIGNUP');	
+			$this->cms_generate_activation_code($user_name, TRUE, 'SIGNUP');
 		}
-		
+
     }
 
     /**
@@ -609,7 +609,7 @@ class CMS_Model extends CI_Model {
         foreach ($directories as $directory) {
             if (!is_dir('modules/'.$directory))
                 continue;
-            
+
             if (!file_exists('modules/'.$directory.'/controllers/install.php'))
             	continue;
 
@@ -634,7 +634,7 @@ class CMS_Model extends CI_Model {
         }
         return $module;
     }
-    
+
     /**
      * @author  goFrendiAsgard
      * @param   string module_name
@@ -655,7 +655,7 @@ class CMS_Model extends CI_Model {
     		}
     	}
     }
-    
+
     /**
      * @author  goFrendiAsgard
      * @param   string module_path
@@ -671,12 +671,12 @@ class CMS_Model extends CI_Model {
     	}else{
     		return '';
     	}
-    	 
+
     }
 
     /**
      * @author  goFrendiAsgard
-     * @return  mixed  
+     * @return  mixed
      * @desc    get layout list
      */
     public final function cms_get_layout_list() {
@@ -699,15 +699,15 @@ class CMS_Model extends CI_Model {
 
     /**
      * @author  goFrendiAsgard
-     * @param   string identity 
+     * @param   string identity
 	 * @param	bool send_mail
 	 * @param   string reason (FORGOT, SIGNUP)
      * @return  bool
-     * @desc    generate activation code, and send email to applicant 
+     * @desc    generate activation code, and send email to applicant
      */
     public final function cms_generate_activation_code($identity, $send_mail = FALSE, $reason='FORGOT') {
-    	// if generate activation reason is "FORGOT", then user should be active	
-    	$where_active = '1=1';	
+    	// if generate activation reason is "FORGOT", then user should be active
+    	$where_active = '1=1';
     	if($reason=='FORGOT'){
     		$where_active = 'active = TRUE';
     	}
@@ -735,21 +735,21 @@ class CMS_Model extends CI_Model {
 				//prepare activation email to user
 	            $email_from_address = $this->cms_get_config('cms_email_reply_address');
 	            $email_from_name = $this->cms_get_config('cms_email_reply_name');
-							
+
 				$email_subject = 'Account Activation';
 	            $email_message = 'Dear, {{ user_real_name }}<br />Click <a href="{{ site_url }}main/activate/{{ activation_code }}">{{ site_url }}main/activate/{{ activation_code }}</a> to activate your account';
 				if(strtoupper($reason)=='FORGOT'){
 					$email_subject = $this->cms_get_config('cms_email_forgot_subject');
-	            	$email_message = $this->cms_get_config('cms_email_forgot_message');	
+	            	$email_message = $this->cms_get_config('cms_email_forgot_message');
 				}else if(strtoupper($reason)=='SIGNUP'){
 					$email_subject = $this->cms_get_config('cms_email_signup_subject');
-	            	$email_message = $this->cms_get_config('cms_email_signup_message');	
+	            	$email_message = $this->cms_get_config('cms_email_signup_message');
 				}
-				
+
 	            $email_message = str_replace('{{ user_real_name }}', $real_name, $email_message);
 	            $email_message = str_replace('{{ activation_code }}', $activation_code, $email_message);
 	            //send email to user
-	            return $this->cms_send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);	
+	            return $this->cms_send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);
 			}
             // if send_mail == false, than it should be succeed
             return true;
@@ -771,7 +771,7 @@ class CMS_Model extends CI_Model {
         );
 		if($query->num_rows()>0){
 			$row = $query->row();
-			$user_id = $row->user_id;			
+			$user_id = $row->user_id;
             $data = array(
                 "activation_code" => NULL,
                 "active" => TRUE,
@@ -779,10 +779,10 @@ class CMS_Model extends CI_Model {
 			if(isset($new_password)){
 				$data['password'] = md5($new_password);
 			}
-			
+
             $where = array("user_id" => $user_id);
             $this->db->update('cms_user', $data, $where);
-			return TRUE;	
+			return TRUE;
 		}else{
 			return FALSE;
 		}
@@ -795,7 +795,7 @@ class CMS_Model extends CI_Model {
      * @param   string to_address
      * @param   string subject
      * @param   string message
-     * @desc    send email 
+     * @desc    send email
      */
     public final function cms_send_email($from_address, $from_name, $to_address, $subject, $message) {
         $this->load->library('email');
@@ -818,9 +818,9 @@ class CMS_Model extends CI_Model {
 	    $config['newline'] = "\r\n";
         $config['bcc_batch_mode'] = (boolean) $this->cms_get_config('cms_email_bcc_batch_mode');
         $config['bcc_batch_size'] = (integer)$this->cms_get_config('cms_email_bcc_batch_size');
-		
-		$message = $this->cms_parse_keyword($message);		
-		
+
+		$message = $this->cms_parse_keyword($message);
+
         $this->email->initialize($config);
         $this->email->from($from_address, $from_name);
         $this->email->to($to_address);
@@ -828,13 +828,13 @@ class CMS_Model extends CI_Model {
         $this->email->message($message);
 
         $success = $this->email->send();
-		return $success;		
+		return $success;
     }
 
     /**
      * @author  goFrendiAsgard
      * @param   string activation_code
-     * @return  bool 
+     * @return  bool
      * @desc    validate activation_code
      */
     public final function cms_valid_activation_code($activation_code) {
@@ -906,15 +906,15 @@ class CMS_Model extends CI_Model {
 	        );
 	        $row = $query->row();
 	        $value = $row->value;
-			$this->cms_model_properties['config'][$name] = $value;	
+			$this->cms_model_properties['config'][$name] = $value;
     	}else{
     		$value = $this->cms_model_properties['config'][$name];
     	}
-        
+
 		// if raw is false, then don't parse keyword
 		if(!$raw){
 			$value = $this->cms_parse_keyword($value);
-		}        
+		}
         return $value;
     }
 
@@ -922,7 +922,7 @@ class CMS_Model extends CI_Model {
 	 * @author	goFrendiAsgard
 	 * @param	string language
 	 * @return	string language
-	 * @desc	set language for this session only 
+	 * @desc	set language for this session only
 	 */
 	public final function cms_language($language=NULL){
 		if(isset($language)){
@@ -931,17 +931,17 @@ class CMS_Model extends CI_Model {
 			$language = '';
 			$language = $this->cms_ci_session('cms_lang');
 			if(!$language){
-				$language = $this->cms_get_config('site_language', True);	
+				$language = $this->cms_get_config('site_language', True);
 				$this->cms_ci_session('cms_lang', $language);
 			}
 			return $language;
 		}
 	}
-	
+
 	/**
 	 * @author	goFrendiAsgard
 	 * @return	array list of available languages
-	 * @desc	get available languages 
+	 * @desc	get available languages
 	 */
 	public final function cms_language_list(){
         $this->load->helper('file');
@@ -951,7 +951,7 @@ class CMS_Model extends CI_Model {
         }
         return $result;
     }
-	
+
 	/**
 	 * @author  goFrendiAsgard
      * @return  mixed
@@ -961,17 +961,17 @@ class CMS_Model extends CI_Model {
 		$language = $this->cms_language();
 		if(count($this->cms_model_properties['language_dictionary']) == 0){
 			$lang = array();
-    
+
 			// language setting from all modules but this current module
 			$modules = $this->cms_get_module_list();
 			foreach($modules as $module){
 				$module_path = $module['module_path'];
-				if($module_path != $this->cms_module_path()){								
+				if($module_path != $this->cms_module_path()){
 					$local_language_file = "modules/$module_path/assets/languages/$language.php";
 					if(file_exists($local_language_file)){
 						include($local_language_file);
 					}
-				}			
+				}
 			}
 			// global nocms language setting override previous language setting
 			$language_file = "assets/nocms/languages/$language.php";
@@ -984,11 +984,11 @@ class CMS_Model extends CI_Model {
 			if(file_exists($local_language_file)){
 				include($local_language_file);
 			}
-			
-			$this->cms_model_properties['language_dictionary'] = $lang;	
+
+			$this->cms_model_properties['language_dictionary'] = $lang;
 		}
-		
-		return $this->cms_model_properties['language_dictionary'];	
+
+		return $this->cms_model_properties['language_dictionary'];
 	}
 
     /**
@@ -999,7 +999,7 @@ class CMS_Model extends CI_Model {
      */
     public final function cms_lang($key) {
     	$language = $this->cms_language();
-		
+
 		$dictionary = $this->cms_language_dictionary();
 
         // get the language
@@ -1008,8 +1008,8 @@ class CMS_Model extends CI_Model {
         } else {
             return $key;
         }
-		
-		
+
+
     }
 
     /**
@@ -1018,62 +1018,73 @@ class CMS_Model extends CI_Model {
      * @return string
      * @desc   parse keyword like {{ site_url  }} , {{ base_url }} , {{ user_name }} , {{ module_path }} and {{ language }}
      */
-    public final function cms_parse_keyword($value) {		
+    public final function cms_parse_keyword($value) {
     	$value = $this->cms_escape_template($value);
-		
+
     	$pattern = array();
 		$replacement = array();
-		
+
 		// user_name
     	$pattern[] = "/\{\{ user_id \}\}/si";
     	$replacement[] = $this->cms_user_id();
-		
+
     	// user_name
     	$pattern[] = "/\{\{ user_name \}\}/si";
     	$replacement[] = $this->cms_user_name();
-		
+
 		// user_real_name
     	$pattern[] = "/\{\{ user_real_name \}\}/si";
     	$replacement[] = $this->cms_user_real_name();
-		
+
 		// user_email
     	$pattern[] = "/\{\{ user_email \}\}/si";
     	$replacement[] = $this->cms_user_email();
-    	
+
 		// site_url
 		$site_url = site_url();
     	if($site_url[strlen($site_url)-1] != '/') $site_url.= '/';
 		$pattern[] = '/\{\{ site_url \}\}/si';
 		$replacement[] = $site_url;
-		
+
 		// base_url
 		$base_url = base_url();
         if($base_url[strlen($base_url)-1] != '/') $base_url.= '/';
 		$pattern[] = '/\{\{ base_url \}\}/si';
 		$replacement[] = $base_url;
-		
+
 		// module_path
 		$module_path = site_url($this->cms_module_path());
 		if($module_path[strlen($module_path)-1] != '/') $module_path.= '/';
 		$pattern[] = '/\{\{ module_path \}\}/si';
 		$replacement[] = $module_path;
-		
+
 		// language
 		$pattern[] = '/\{\{ language \}\}/si';
     	$replacement[] = $this->cms_language();
-		
+
 		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
-		
+
 		// translate language
-		$pattern = '/\{\{ language:(.*?) \}\}/si';	
-		$replacement = function($arr){
-			return $this->cms_lang($arr[1]);	
-		};
+		$pattern = '/\{\{ language:(.*?) \}\}/si';
+
+       // php 5.4.0 or below doesn't support $this in anonymous function
+        if (strnatcmp(phpversion(),'5.4.0') >= 0){
+	        $replacement = function($arr){
+				return $this->cms_lang($arr[1]);
+			};
+	    } else {
+	    	$_this = clone $this;
+	        $replacement = function($arr){
+				return $_this->cms_lang($arr[1]);
+			};
+	    }
+
+
 		// execute regex
     	$value = preg_replace_callback($pattern, $replacement, $value);
-		
-		// if language, elif		
+
+		// if language, elif
 		$language = $this->cms_language();
 		$pattern = array();
 		$pattern[] = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
@@ -1083,22 +1094,22 @@ class CMS_Model extends CI_Model {
 		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
 		$pattern[] = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
 		$pattern[] = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if \}\}/si";
-		$pattern[] = "/\{\{ if_language:.*?\{\{ end_if \}\}/si"; 
+		$pattern[] = "/\{\{ if_language:.*?\{\{ end_if \}\}/si";
 		$replacement = '$1';
 		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
-		
+
 		// clear un-translated language
 		$pattern = array();
-		$pattern = "/\{\{ if_language:.*?\{\{ end_if \}\}/s"; 
+		$pattern = "/\{\{ if_language:.*?\{\{ end_if \}\}/s";
 		$replacement = '';
 		// execute regex
 		$value = preg_replace($pattern, $replacement, $value);
-		
+
         $value = $this->cms_unescape_template($value);
         return $value;
     }
-    
+
     /**
      * @author goFrendiAsgard
      * @param  string user_name
@@ -1109,53 +1120,53 @@ class CMS_Model extends CI_Model {
         $SQL = "SELECT user_name FROM cms_user WHERE user_name='".  addslashes($username)."'";
         $query = $this->db->query($SQL);
         $num_rows = $query->num_rows();
-        return $num_rows>0;        
+        return $num_rows>0;
     }
-    
+
     /**
 	 * @author goFrendiAsgard
 	 * @param  string expression
 	 * @return string
-	 * @desc return a "save" pattern which is not replace anything inside HTML tag, and 
+	 * @desc return a "save" pattern which is not replace anything inside HTML tag, and
 	 * anything between <textarea></textarea> and <option></option>
 	 */
 	protected final function cms_escape_template($str){
 		$pattern = array();
 		$pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
 		$pattern[] = '/(value *= *")(.*?)(")/si';
-		
+
 		$replace = function($arr){
 		    $to_be_replaced = array('{{ ', ' }}');
 		    $to_replace = array('&#123;&#123; ', ' &#125;&#125;');
-		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];			
+		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];
 		};
 		$str = preg_replace_callback($pattern, $replace, $str);
-		
+
 		return $str;
 	}
-	
+
 	/**
 	 * @author goFrendiAsgard
 	 * @param  string expression
 	 * @return string
-	 * @desc return an "unsave" pattern which is not replace anything inside HTML tag, and 
+	 * @desc return an "unsave" pattern which is not replace anything inside HTML tag, and
 	 * anything between <textarea></textarea> and <option></option>
 	 */
 	protected final function cms_unescape_template($str){
 		$pattern = array();
 		$pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
 		$pattern[] = '/(value *= *")(.*?)(")/si';
-		
+
 		$replace = function($arr){
 		    $to_replace = array('{{ ', ' }}');
 		    $to_be_replaced = array('&#123;&#123; ', ' &#125;&#125;');
 		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];
 		};
 		$str = preg_replace_callback($pattern, $replace, $str);
-		
+
 		return $str;
 	}
-    
+
 }
 
 ?>
