@@ -245,6 +245,7 @@ Here are some names of considerable contributors:
 * Gangsar Swapurba <-- Discover some missleading-behavior. He made a lot of modification and found trivial but disgusting bugs of No-CMS. One of his report make me consider to provide an option to hide index.php
 * alwin4711 <-- German translation contributor
 * David Moeljadi <-- Japanese translation contributor
+* Andrew Podner <-- His one day hardwork solve problem of $this scope in anonymous function
 * Everyone who was involved by creating issue & pull requests in github. I can't write every names there. But No-CMS can't be better without them :)
 
 Roadmap
