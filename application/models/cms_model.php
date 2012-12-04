@@ -1075,7 +1075,7 @@ class CMS_Model extends CI_Model {
 			};
 	    } else {
 	    	$_this = clone $this;
-	        $replacement = function($arr){
+	        $replacement = function($arr) use ($_this) {
 				return $_this->cms_lang($arr[1]);
 			};
 	    }
