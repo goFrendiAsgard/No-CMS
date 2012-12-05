@@ -23,4 +23,4 @@
     echo form_submit('login', 'Log In');
     echo form_close();
 ?>
-<div id="login_message"><?php echo $message; ?></div>
+<div id="login_message"><?php echo isset($message)?$message:''; ?></div>
