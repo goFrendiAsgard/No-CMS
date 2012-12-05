@@ -1067,20 +1067,11 @@ class CMS_Model extends CI_Model {
 		
 		// translate language
 		$pattern = '/\{\{ language:(.*?) \}\}/si';
-		// define replacment function
-		// php 5.4.0 or below doesn't support $this in anonymous function
-		if (strnatcmp(phpversion(),'5.4.0') >= 0){ 
-	        $replacement = function($arr){
-				return $this->cms_lang($arr[1]);	
-			};
-	    }else{
-	    	$_this = clone $this; 
-	        $replacement = function($arr) use ($_this) {
-				return $_this->cms_lang($arr[1]);	
-			};
-	    }		
 		// execute regex
-    	$value = preg_replace_callback($pattern, $replacement, $value);
+    	$value = preg_replace_callback(
+    		$pattern, 
+    		array($this, 'cms_preg_replace_callback_lang'), 
+    		$value);
 		
 		// if language, elif		
 		$language = $this->cms_language();
@@ -1133,12 +1124,10 @@ class CMS_Model extends CI_Model {
 		$pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
 		$pattern[] = '/(value *= *")(.*?)(")/si';
 		
-		$replace = function($arr){
-		    $to_be_replaced = array('{{ ', ' }}');
-		    $to_replace = array('&#123;&#123; ', ' &#125;&#125;');
-		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];			
-		};
-		$str = preg_replace_callback($pattern, $replace, $str);
+		$str = preg_replace_callback(
+			$pattern, 
+			array($this, 'cms_preg_replace_callback_escape_template'), 
+			$str);
 		
 		return $str;
 	}
@@ -1154,15 +1143,46 @@ class CMS_Model extends CI_Model {
 		$pattern = array();
 		$pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
 		$pattern[] = '/(value *= *")(.*?)(")/si';
-		
-		$replace = function($arr){
-		    $to_replace = array('{{ ', ' }}');
-		    $to_be_replaced = array('&#123;&#123; ', ' &#125;&#125;');
-		    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];
-		};
-		$str = preg_replace_callback($pattern, $replace, $str);
+		$str = preg_replace_callback(
+			$pattern, 
+			array($this, 'cms_preg_replace_callback_unescape_template'), 
+			$str);
 		
 		return $str;
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @param  array arr
+	 * @return string
+	 * @desc replace every '{{' and '}}' in $arr[1] into &#123; and &#125;
+	 */
+	private final function cms_preg_replace_callback_unescape_template($arr){
+		$to_replace = array('{{ ', ' }}');
+	    $to_be_replaced = array('&#123;&#123; ', ' &#125;&#125;');
+	    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];	
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @param  array arr
+	 * @return string
+	 * @desc replace every &#123; and &#125; in $arr[1] into '{{' and '}}';
+	 */
+	private final function cms_preg_replace_callback_escape_template($arr){
+		$to_be_replaced = array('{{ ', ' }}');
+	    $to_replace = array('&#123;&#123; ', ' &#125;&#125;');
+	    return  $arr[1] . str_replace($to_be_replaced, $to_replace, $arr[2]) . $arr[3];
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @param  array arr
+	 * @return string
+	 * @desc replace $arr[1] with respective language;
+	 */
+	private final function cms_preg_replace_callback_lang($arr){
+		return $this->cms_lang($arr[1]);
 	}
     
 }
