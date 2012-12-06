@@ -69,7 +69,7 @@ class CMS_Controller extends MX_Controller {
      * @desc   set or get CI_Session["cms_user_real_name"]  
      */
     protected final function cms_user_real_name($real_name = NULL) {
-        return $this->CMS_Model->cms_user_real_name($user_name);
+        return $this->CMS_Model->cms_user_real_name($real_name);
     }
 	
 	 /**
