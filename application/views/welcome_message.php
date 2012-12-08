@@ -13,8 +13,8 @@
 			padding-bottom: 40px;
 		}
 	</style>
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/bootstrap/css/bootstrap-all.min.css" />
-	<script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap-all.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/bootstrap/css/bootstrap.min.css" />
+	<script src="<?php echo base_url();?>assets/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>			
     <div id="container-fluid">

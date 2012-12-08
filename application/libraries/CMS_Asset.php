@@ -129,7 +129,7 @@ class CMS_Asset{
 					$content = $resource['content'];
 				}
 				$content = JSMin::minify($content);
-				if($content[strlen($content)-1]!=';'){
+				if(strlen($content)>0 && $content[strlen($content)-1]!=';'){
 					$content .= ';';
 				}else{
 					$content .= '/*is alright*/';

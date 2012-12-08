@@ -20,7 +20,7 @@
 	}
 	?>
 	<link rel="stylesheet" type="text/css" href="assets/style.css"></link>
-	<link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap-all.min.css" />
+	<link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap.min.css" />
 	
 	<style type="text/css">
 		div#if_error{
@@ -31,7 +31,7 @@
 		}
 	</style>
 	<script type="text/javascript" src="../assets/nocms/js/jquery.js"></script>
-	<script src="../assets/bootstrap/js/bootstrap-all.min.js"></script>
+	<script src="../assets/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 			
