@@ -67,6 +67,7 @@
             </div>	                       
         </div> 	    
     	<div id="layout-content" class="span9">
+    		<?php echo build_menu_path($cms['navigation_path']); ?>
             <?php echo $template['body'];?>
             <div class="clear"></div>
             <?php flush(); ?>
