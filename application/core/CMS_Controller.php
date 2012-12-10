@@ -119,6 +119,15 @@ class CMS_Controller extends MX_Controller {
     private final function cms_widgets() {
         return $this->CMS_Model->cms_widgets();
     }
+    
+    /**
+     * @author  goFrendiAsgard
+     * @return  string
+     * @desc    return submenu screen
+     */
+    public final function cms_submenu_screen($navigation_name){
+    	return $this->CMS_Model->cms_submenu_screen($navigation_name);
+	}
 
     /**
      * @author  goFrendiAsgard

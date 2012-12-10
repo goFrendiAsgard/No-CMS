@@ -280,18 +280,12 @@ class Main extends CMS_Controller {
     }
 
     public function index() {
-    	$data = array(
-    		"module_list" => $this->cms_get_module_list()
-    	);
+    	$data = array("submenu_screen"=>$this->cms_submenu_screen(NULL));
         $this->view('main/index', $data, 'main_index');
     }
 
     public function management() {
-    	$data = array(
-    		"show_help" => $this->cms_is_module_installed('gofrendi.noCMS.help') && $this->cms_allow_navigate('help_index'),
-    		"show_wysiwyg" => $this->cms_is_module_installed('gofrendi.noCMS.wysiwyg') && $this->cms_allow_navigate('wysiwyg_index'),
-    		"show_module_generator" => $this->cms_is_module_installed('gofrendi.noCMS.moduleGenerator') && $this->cms_allow_navigate('module_generator_index'),
-    	);    	
+    	$data = array("submenu_screen"=>$this->cms_submenu_screen('main_management'));
         $this->view('main/management', $data, 'main_management');
     }
 	

@@ -55,7 +55,8 @@ class Blog extends CMS_Controller {
     }
     
     public function manage(){
-        $this->view("manage_view", NULL, 'blog_management');
+    	$data = array("submenu_screen"=>$this->cms_submenu_screen('blog_management'));
+        $this->view("manage_view", $data, 'blog_management');
     }
     
     public function article(){

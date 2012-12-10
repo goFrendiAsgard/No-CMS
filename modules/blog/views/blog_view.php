@@ -157,9 +157,11 @@ function show_search_form($cms, $available_category, $category, $search){
 	echo '<base href="'.base_url().'" />';
 	echo '<div>';
 	echo form_open($cms['module_path'].'/blog/index', array("class"=>"form-search"));
-	echo form_dropdown('category', $available_category, $category, 'id="input_category"');
-	echo form_input('search', $search, 'id="input_search"');
-	echo form_submit('submit', 'Search');
+	echo form_dropdown('category', $available_category, $category, 'id="input_category" class="input-medium"');
+	echo '&nbsp;';
+	echo form_input('search', $search, 'id="input_search" class="input-medium search-query"');
+	echo '&nbsp;';
+	echo form_submit('submit', 'Search', 'class="btn btn-primary"');
 	echo form_close();
 	echo '</div>';
 }

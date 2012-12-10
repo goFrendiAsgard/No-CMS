@@ -327,6 +327,70 @@ class CMS_Model extends CI_Model {
         return $result;
     }
 
+	/**
+     * @author  goFrendiAsgard
+     * @return  string
+     * @desc    return submenu screen
+     */
+    public final function cms_submenu_screen($navigation_name){
+    	$submenus = array();
+		if(!isset($navigation_name)){
+			$submenus = $this->cms_navigations(NULL,1);
+		}else{
+			$query = $this->db->select('navigation_id')->from('cms_navigation')->where('navigation_name', $navigation_name)->get();
+			if($query->num_rows()==0){
+				return '';
+			}else{
+				$row = $query->row();
+				$navigation_id = $row->navigation_id;
+				$submenus = $this->cms_navigations($navigation_id,1);
+			}	
+		}
+    	
+		$html = '<ul class="thumbnails row-fluid">';
+		foreach($submenus as $submenu){
+			$navigation_name = $submenu["navigation_name"];
+			$title = $submenu["title"];
+			$url = $submenu["url"];
+			$description = $submenu["description"];
+			
+			// check image in current module
+			$module_path = $this->cms_module_path();
+			$image_file = "modules/$module_path/assets/navigation_icon/$navigation_name.png";
+			if(!file_exists($image_file)){
+				// check image in global
+				$image_file = "assets/nocms/navigation_icon/$navigation_name.png";
+				if(!file_exists($image_file)){
+					// check image in all other module
+					$modules = $this->cms_get_module_list();
+					$image_found = FALSE;
+					foreach($modules as $module){
+						$module_path = $module['module_path'];
+						if($module_path != $this->cms_module_path()){								
+							$image_file = "modules/$module_path/assets/navigation_icon/$navigation_name.png";
+							if(file_exists($image_file)){
+								$image_found = TRUE;
+								break;
+							}
+						}			
+					}
+					if(!$image_found){
+						$image_file = '';
+					}	
+				}
+			}
+			$html .='<li class="well" style="width:80px!important; height:90px!important; float:left!important; list-style-type:none;">';
+			$html .='<a href="'.site_url($url).'" style="width: 100%; height: 100%; display: block;">';
+			if($image_file != ''){
+				$html .='<img style="max-width:32px; max-height:32px;" src="'.base_url($image_file).'" /><br /><br />';
+			}
+			$html .= $title.'</a>';	
+			$html .='</li>';	
+		}
+		$html .= '</ul>';
+		return $html;	
+	}
+
     /**
      * @author  goFrendiAsgard
      * @param   string navigation_name
@@ -1111,6 +1175,7 @@ class CMS_Model extends CI_Model {
         $num_rows = $query->num_rows();
         return $num_rows>0;        
     }
+    
     
     /**
 	 * @author goFrendiAsgard
