@@ -353,6 +353,8 @@ class CMS_Model extends CI_Model {
 			$title = $submenu["title"];
 			$url = $submenu["url"];
 			$description = $submenu["description"];
+			$allowed = $submenu["allowed"];
+			if(!$allowed)continue;
 			
 			// check image in current module
 			$module_path = $this->cms_module_path();
