@@ -43,6 +43,9 @@ class MX_Loader extends CI_Loader
 	/** Initialize the loader variables **/
 	public function initialize($controller = NULL) {
 		
+		/* set the module name */
+		$this->_module = CI::$APP->router->fetch_module();
+		
 		if (is_a($controller, 'MX_Controller')) {	
 			
 			/* reference to the module controller */
@@ -57,10 +60,10 @@ class MX_Loader extends CI_Loader
 			
 		} else {
 			parent::initialize();
+			
+			/* autoload module items */
+			$this->_autoloader(array());
 		}
-		
-		/* set the module name */
-		$this->_module = CI::$APP->router->fetch_module();
 		
 		/* add this module path to the loader variables */
 		$this->_add_module_paths($this->_module);
