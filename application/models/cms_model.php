@@ -281,35 +281,13 @@ class CMS_Model extends CI_Model {
         		if(!strpos(strtolower($url), 'http')){
         			$url = site_url($url);
         		}
-        		// script
-        		$script  = 'function widget_'.$row->widget_id.'(){';
-        		$script .= '  if(typeof(jQuery) == "undefined"){';
-        		$script .= '      var jqS = document.createElement("script");';
-        		$script .= '      jqS.src = "'.base_url('assets/nocms/js/jquery.js').'";';
-        		$script .= '      console.log(jqS.src);';
-        		$script .= '      jqS.type = "text/javascript";';
-        		$script .= '      document.getElementsByTagName("head")[0].appendChild(jqS);';
-        		$script .= '      console.log("no");';
-        		$script .= '      setTimeout("widget_'.$row->widget_id.'()", 50);';        		
-        		$script .= '  }else{';
-                $script .= '      console.log("yes");';
-        		$script .= '      $.ajax({';
-        		$script .= '          url:"'.$url.'",';
-        		$script .= '          data:{_only_content:true},';
-        		$script .= '          success:function(response){';
-        		$script .= '              $("div#_cms_widget_'.$row->widget_id.'").html(response);';
-        		$script .= '          }';
-        		$script .= '      });';
-                $script .= '  }';
-                $script .= '}';
-                $script .= 'widget_'.$row->widget_id.'();';
         		// asset
         		$asset = new CMS_Asset();
         		//$asset->add_cms_js('nocms/js/jquery.js');
         		$asset->add_string_js($script);        		
         		// content
         		$content .= '<div id="_cms_widget_'.$row->widget_id.'">';
-        		$content .= $asset->compile_js();
+        		$content .= Modules::run($url);
         		$content .= '</div>';
         	}
         	// make widget based on slug

@@ -310,4 +310,7 @@ v0.5.6
 + (done, tested) more complete keyword, such as {{ activation_code }}, {{ real_name }}, {{ if_language:indonesia}} ... {{ end_if_language }}
 + (done, tested) keyword is now also works for dynamic pages, except for value property and textarea
 + (done, tested) use groceryCRUD 1.3.3 stable
-+ (done) use HMVC commit 868e975
++ (done, tested) use HMVC commit 868e975
++ (done, tested for PHP 5.4) use Module::run instead of AJAX to show widget
++ (proposed) facebook, twitter and open ID login
++ (proposed) Drupal's CCK like mechanism
