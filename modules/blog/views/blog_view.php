@@ -31,7 +31,7 @@
 						        "search" : $("#input_search").val(),
 						        "category" : $("#input_category").val(),
 						    },
-					        url: "<?php echo base_url($cms['module_path'].'/blog/index?_only_content=true'); ?>",
+					        url: "<?php echo site_url($cms['module_path'].'/blog/index?_only_content=true'); ?>",
 					        success: function(html)
 					        {
 								if(html)
