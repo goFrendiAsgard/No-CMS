@@ -39,21 +39,21 @@
   <body>
     <div class="navbar navbar-fixed-top navbar-inverse">
       <div class="navbar-inner">
-      	<div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#">
-          	<img src ="<?php echo $cms['site_logo'];?>" style="max-height:30px; max-width:30px;" />          	
-          </a>          
-          <div class="nav-collapse">
-            <?php echo build_quicklink($cms['quicklinks'], $cms['navigations']);?>
-          </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->       
-      </div><!--/.navbar-innder -->
-    </div><!--/.nav .navbar-fixed-top -->
+      	<div class="container-fluid">
+			<a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+			<a class="brand" href="#">
+				<img src ="<?php echo $cms['site_logo'];?>" style="max-height:20px; max-width:20px;" />          	
+			</a>          
+			<div class="nav-collapse in collapse" id="main-menu" style="height: auto; ">
+				<?php echo build_quicklink($cms['quicklinks'], $cms['navigations']);?>
+			</div>
+        </div>       
+      </div>
+    </div>
     
     <div class="container">
       <div class="row-fluid">
