@@ -78,7 +78,7 @@
 		}
 		$result .= '</ul>';
 		if($first){
-			$result = '<a class="dropdown-toggle" data-toggle="dropdown">'.$caption.
+			$result = '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.
 				' <span class="caret"></span></a>'.
 				$result;
 			
@@ -91,7 +91,7 @@
     function build_quicklink($quicklinks, $navigations = array()){
     	if(count($quicklinks)==0) return '';//just exit and do nothing
     	
-    	$html = '<ul class="nav">';
+    	$html = '<ul class="nav" id="main-menu-left">';
 		
 		if(count($navigations)>0){
 			$html.= '<li class="dropdown">';

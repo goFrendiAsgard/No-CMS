@@ -14,7 +14,8 @@
     <?php 
 	    $asset = new CMS_Asset();
 	    $asset->add_themes_css('style.css', $cms['site_theme'], 'default');
-	    $asset->add_themes_css('bootstrap.min.css', $cms['site_theme'], 'default');	
+	    $asset->add_themes_css('bootstrap.min.css', $cms['site_theme'], 'default');
+		$asset->add_themes_css('bootstrap-responsive.min.css', $cms['site_theme'], 'default');	
 	    echo $asset->compile_css();	    
 	    
 	    $asset->add_cms_js('nocms/js/jquery.js');
@@ -39,27 +40,27 @@
   <body>
     <div class="navbar navbar-fixed-top navbar-inverse">
       <div class="navbar-inner">
-      	<div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#">
-          	<img src ="<?php echo $cms['site_logo'];?>" style="max-height:30px; max-width:30px;" />          	
-          </a>          
-          <div class="nav-collapse">
-            <?php echo build_quicklink($cms['quicklinks'], $cms['navigations']);?>
-          </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->       
-      </div><!--/.navbar-innder -->
-    </div><!--/.nav .navbar-fixed-top -->
+      	<div class="container-fluid">
+			<a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+			<a class="brand" href="#">
+				<img src ="<?php echo $cms['site_logo'];?>" style="max-height:20px; max-width:20px;" />          	
+			</a>          
+			<div class="nav-collapse in collapse" id="main-menu" style="height: auto; ">
+				<?php echo build_quicklink($cms['quicklinks'], $cms['navigations']);?>
+			</div>
+        </div>       
+      </div>
+    </div>
     
     <div class="container">
       <div class="row-fluid">
     	<div id="layout-banner" class="well hidden-phone span12">
         	<div class="span2">
-        		<img src ="<?php echo $cms['site_logo'];?>" /> 
+        		<img src ="<?php echo $cms['site_logo'];?>"" /> 
         	</div>        	
             <div class="span10">
 	            <h1><?php echo $cms['site_name'];?></h1>
@@ -67,7 +68,7 @@
             </div>	                       
         </div> 	    
     	<div id="layout-content" class="span9">
-    		<?php echo build_menu_path($cms['navigation_path']); ?>
+    		<div><?php echo build_menu_path($cms['navigation_path']); ?></div>
     		<hr />
             <?php echo $template['body'];?>
             <div class="clear"></div>

@@ -22,14 +22,14 @@ No-CMS will be good for you if you say yes for majority of these statement:
 
 No-CMS as CMS
 --------------
-No-CMS is a good enough CMS. It is different from Wordpress, Drupal or Joomla. Those CMS are built from developers for users. 
-No-CMS is built by developer for developers, although everyone else can still use it as well.
+No-CMS is a "less assumption" CMS. It is different from Wordpress, Drupal, Joomla, Moodle or Zencart. Those CMS are built by developers for users with some special purpose in mind (e.g: blog, news, e-learning, e-commerce). 
+No-CMS is built by developer for developers, although everyone else can still use it as well. It already has some basic features such as authentication/authorization, widget and page management. You are free to use them or just get rid of them and make your custom code
 The main purpose of this CMS is to provide a good start of web application project, especially for CodeIgniter developer.
 
 No-CMS as Application development framework
 --------------------------------------------
 No-CMS is not just another CMS. No-CMS allows you to make your own module and your own themes.
-This means that you (as developer) can make a module that can be used for several project.
+This means that you (as developer) can make a module (e.g: forum module, FAQ module, etc) that can be used for several different project.
 
 No-CMS takes advantages of CodeIgniter as its core. 
 It provides rich set of libraries for commonly needed task, 
