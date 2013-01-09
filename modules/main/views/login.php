@@ -1,17 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <style type="text/css">
-    #login_message:not(:empty){
-        background-color:#FFCACA;
-	    padding: 5px 5px 5px 5px;
-	    margin : 10px;
-	    font-size: small;
-	    min-height : 25px;
-	    border-radius:5px;
-	    -moz-border-radius:5px;
-	    -moz-box-shadow:    1px 1px 5px 6px #ccc;
-	    -webkit-box-shadow: 1px 1px 5px 6px #ccc;
-	    box-shadow:         1px 1px 5px 6px #ccc;      
-        max-width : 400px;
+    #login_message:empty{
+        display:none;
     }
 </style>
 <?php

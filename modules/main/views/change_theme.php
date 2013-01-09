@@ -9,20 +9,9 @@
 		max-width: 128px;
 		height: auto;
 	}
-	#message:not(:empty){
-        background-color:#FFCACA;
-	    padding: 5px 5px 5px 5px;
-	    margin : 10px;
-	    font-size: small;
-	    min-height : 25px;
-	    border-radius:5px;
-	    -moz-border-radius:5px;
-	    -moz-box-shadow:    1px 1px 5px 6px #ccc;
-	    -webkit-box-shadow: 1px 1px 5px 6px #ccc;
-	    box-shadow:         1px 1px 5px 6px #ccc;
-	    margin-top: 30px;
-	    clear:both;
-    }
+	#message:empty{
+		display:none;
+	}
 </style>
 <h3>Change Theme</h3>
 <?php
@@ -48,7 +37,7 @@
 	echo '</ul>';
     echo '<div style="clear:both"></div>';
 	if($upload['uploading'] && !$upload['success']){    	
-    	echo '<div id="message">';
+    	echo '<div id="message" class="alert alert-error">';
     	echo '<b>Error:</b> '.$upload['message'];
     	echo '</div>';
     }
