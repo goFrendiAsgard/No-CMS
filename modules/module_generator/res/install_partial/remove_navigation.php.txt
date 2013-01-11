@@ -1,0 +1,1 @@
+        $this->remove_navigation("@navigation_name");

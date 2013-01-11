@@ -1,0 +1,29 @@
+<?php
+$lang['language_alias'] = 'jp';
+$lang['Home'] = 'ホーム';
+$lang['Language'] = '言語';
+$lang['Login'] = 'ログイン';
+$lang['Logout'] = 'ログアウト';
+$lang['Forgot Password'] = 'パスワード忘れた';
+$lang['Register'] = '登録';
+$lang['No-CMS User Guide'] = 'No-CMSユーザー案内';
+$lang['Change Profile'] = 'プロファイル変更';
+$lang['CMS Management'] = 'CMS管理';
+$lang['Group Management'] = 'グループ管理';
+$lang['User Management'] = 'ユーザー管理';
+$lang['Privilege Management'] = 'アクセス権管理';
+$lang['Navigation Management'] = 'ナビゲーション管理';
+$lang['Widget Management'] = 'ウィジェット管理';
+$lang['Module Management'] = 'モジュール管理';
+$lang['Change Theme'] = 'テーマ変更';
+$lang['Quick Link Management'] = 'クイックリンク管理';
+$lang['Configuration Management'] = '設定';
+
+$lang['User Info'] = 'ユーザー情報';
+$lang['Share This Page !!'] = 'このページを共有!!';
+$lang['Donate No-CMS'] = 'No-CMS寄付';
+
+$lang['Welcome'] = 'いらっしゃいませ';
+
+$lang['Username already exists'] = 'ユーザー名使用済み';
+$lang['Username is empty'] = 'ユーザー名未使用';

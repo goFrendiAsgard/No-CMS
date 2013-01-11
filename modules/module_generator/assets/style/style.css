@@ -1,0 +1,53 @@
+@CHARSET "UTF-8";
+.form select#module_data{
+    height:300px;
+}
+.no_display{
+	display: none;
+}
+
+#error_message{
+    background-color:#FFCACA;
+    padding: 5px 5px 5px 5px;
+    margin : 10px;
+    font-size: small;
+    min-height : 25px;
+    border-radius:5px;
+    -moz-border-radius:5px;
+    -moz-box-shadow:    1px 1px 5px 6px #ccc;
+    -webkit-box-shadow: 1px 1px 5px 6px #ccc;
+    box-shadow:         1px 1px 5px 6px #ccc;
+}
+
+.form{
+    float:left;
+    padding: 5px 5px 5px 5px;
+    margin : 10px;
+}
+.form label{
+    display:block;
+    width:200px;
+    float:left;
+}
+.form input[type="text"], .form input[type="password"], 
+.form textarea, .form input[type="checkbox"], .form checkbox, .form select{
+    float:left;
+    font-size:12px;
+    padding:4px 2px;
+    border:solid 1px #aacfe4;
+    width: 260px;
+    margin:2px 0 20px 10px;
+}
+
+/* small */
+@media (max-width: 479px){
+    .form{
+        width:200px;
+    }
+}
+/* large */
+@media (min-width: 480px){
+    .form{
+        width:500px;
+    }
+}
