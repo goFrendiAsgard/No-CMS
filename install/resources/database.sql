@@ -115,12 +115,21 @@ CREATE TABLE `cms_privilege` (
 
 CREATE TABLE `cms_user` (
   `user_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_name` varchar(45) NOT NULL,
-  `email` varchar(45) NOT NULL,
+  `user_name` varchar(45) NULL,
+  `email` varchar(45) NULL,
   `password` varchar(45) NOT NULL,
   `activation_code` varchar(45) NULL,
   `real_name` varchar(45) DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT '1',
+  `facebook_id` varchar(45),
+  `twitter_id` varchar(45),
+  `google_id` varchar(45),
+  `yahoo_id` varchar(45),
+  `linkedin_id` varchar(45),
+  `myspace_id` varchar(45),
+  `foursquare_id` varchar(45),
+  `aol_id` varchar(45),
+  `open_id_url` varchar(100),
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_name` (`user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
