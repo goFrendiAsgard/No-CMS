@@ -65,24 +65,11 @@ p.footer{
 form{
     width : 500px;
 }
-.message{
-    background-color:#FFCACA;
-    padding: 5px 5px 5px 5px;
-    margin : 10px;
-    font-size: small;
-    min-height : 25px;
-    border-radius:5px;
-    -moz-border-radius:5px;
-    -moz-box-shadow:    1px 1px 5px 6px #ccc;
-    -webkit-box-shadow: 1px 1px 5px 6px #ccc;
-    box-shadow:         1px 1px 5px 6px #ccc;
-    z-index: 5000; 
-    display: block;
-	top:60px;
-	right:0px;
+#infoMessage{
+	position:fixed!important;
 }
 .fix{
-	position:fix!important;
+	position:fixed!important;
 }
 .absolute{	
     position: absolute!important;
@@ -90,6 +77,6 @@ form{
 .button_install{
     display:none;
 }
-#preference, #admin{
+#preference, #admin, #authentication{
     display:none;
 }

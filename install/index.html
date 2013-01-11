@@ -9,6 +9,7 @@
         var DATABASE_CLICKED = true;
         var ADMIN_CLICKED = false;
         var PREFERENCE_CLICKED = false;
+        var AUTHENTICATION_CLICKED = false;
         var SUCCESS = false;
         var REQUEST
         var RUNNING_REQUEST = false;
@@ -25,6 +26,7 @@
             $('a[href="#database"]').click(function(){
                 $('fieldset#admin').hide();
                 $('fieldset#preference').hide();
+                $('fieldset#authentication').hide();
                 $('fieldset#database').slideDown('slow');
                 DATABASE_CLICKED = true;
                 show_hide_button()
@@ -34,6 +36,7 @@
             $('a[href="#admin"]').click(function(){
             	$('fieldset#database').hide();
             	$('fieldset#preference').hide();
+            	$('fieldset#authentication').hide();
             	$('fieldset#admin').slideDown('slow');
             	ADMIN_CLICKED = true;
             	show_hide_button();
@@ -43,8 +46,19 @@
             $('a[href="#preference"]').click(function(){
                 $('fieldset#database').hide();
                 $('fieldset#admin').hide();
+                $('fieldset#authentication').hide();
                 $('fieldset#preference').slideDown('slow');
                 PREFERENCE_CLICKED = true;
+                show_hide_button();
+                return false;
+            });
+            
+            $('a[href="#authentication"]').click(function(){
+                $('fieldset#database').hide();
+                $('fieldset#admin').hide();
+                $('fieldset#preference').hide();
+                $('fieldset#authentication').slideDown('slow');
+                AUTHENTICATION_CLICKED = true;
                 show_hide_button();
                 return false;
             });
@@ -58,7 +72,7 @@
         });
         
         function show_hide_button(){
-        	if(SUCCESS && DATABASE_CLICKED && ADMIN_CLICKED && PREFERENCE_CLICKED){
+        	if(SUCCESS && DATABASE_CLICKED && ADMIN_CLICKED && PREFERENCE_CLICKED && AUTHENTICATION_CLICKED){
                 $(".button_install").show();
                 $('.button_install').removeAttr('disabled');  
             }else{
@@ -139,6 +153,7 @@
 	                   <li><a href="#database">Database Settings</a></li>
 	                   <li><a href="#admin">No-CMS Administrator Settings</a></li>
 	                   <li><a href="#preference">Preferences</a></li>
+	                   <li><a href="#authentication">Third Party Authentication</a></li>
 	               </ul>
 	            </div> 
 	        </div>  	          
@@ -184,8 +199,6 @@
 			           </div>
 			        </div>
 			        <div>                    
-	                    <a class="btn" href="#admin">Go to No-CMS administrator settings</a>
-	                    <a class="btn" href="#preference">Go to preferences</a>
 	                    <a class="btn btn-primary" href="#admin">Next Step</a>
 	                </div>
 			    </fieldset>
@@ -228,8 +241,7 @@
                        </div>
                     </div>
                     <div>                   
-	                    <a class="btn" href="#database">Back to database settings</a>
-	                    <a class="btn" href="#preference">Go to preferences</a>
+	                    <a class="btn" href="#database">Back</a>
 	                    <a class="btn btn-primary" href="#preference">Next Step</a>
 	                </div>
 			    </fieldset> 
@@ -242,6 +254,8 @@
                            <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" />
                            <p class="help-block">(Hide 'index.php' from url, please make sure that mod_rewrite is activated)</p>
                        </div>
+                    </div>
+                    <div class="control-group">
                        <label class="control-label" for="gzip_compression">Use GZIP compression</label>
                        <div class="controls">
                            <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input-xlarge input" />
@@ -249,8 +263,251 @@
                        </div>
                     </div>
                     <div>
-	                    <a class="btn" href="#database">Back to database settings</a>
-	                    <a class="btn" href="#admin">Back to administrator settings</a>	                    
+	                    <a class="btn" href="#admin">Back</a>
+	                    <a class="btn btn-primary" href="#authentication">Next Step</a>	                    
+	                </div>
+			    </fieldset>
+			    <fieldset id="authentication">
+			        <legend>Step #4 Third Party Authentication</legend>
+			        
+			        <div style="text-align:right;">
+			        	<legend>Facebook <img src="./assets/icons/facebook.png"/></legend>			        	
+			        </div>
+			        <div class="control-group">                       
+                       <label class="control-label" for="auth_enable_facebook">Allow Facebook Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_facebook" name="auth_enable_facebook" class="input-xlarge input" />
+                           <p class="help-block">
+                           		To Allow Facebook Authentication:
+								<ol>
+									<li>Go to <a target="__blank" href="https://www.facebook.com/developers/">https://www.facebook.com/developers/</a> and create a new application.</li>
+									<li>Fill out any required fields such as the application name and description.</li>
+									<li>Put your website domain in the Site Url field. It should match with the current hostname (e.g: http://example.com)</li>
+								</ol>
+                           </p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_facebook_app_id">Facebook Application ID</label>
+                       <div class="controls">
+                           <input type="text" id="auth_facebook_app_id" name="auth_facebook_app_id" value="" class="input-xlarge input" />
+                           <p class="help-block">Facebook Application ID</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_facebook_app_secret">Facebook Application Secret</label>
+                       <div class="controls">
+                           <input type="text" id="auth_facebook_app_secret" name="auth_facebook_app_secret" value="" class="input-xlarge input" />
+                           <p class="help-block">Facebook Application Secret</p>
+                       </div>
+                    </div>                    
+                    
+                    <div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>Twitter <img src="./assets/icons/twitter.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">   
+                       <label class="control-label" for="auth_enable_twitter">Allow Twitter Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_twitter" name="auth_enable_twitter" class="input-xlarge input" />
+                           <p class="help-block">
+                           		To Allow Facebook Authentication:
+								<ol>
+									<li>Go to <a target="__blank" href="https://dev.twitter.com/apps">https://dev.twitter.com/apps</a> and create a new application.</li>
+									<li>Fill out any required fields such as the application name and description.</li>
+									<li>Put your website domain in the Application Website and Application Callback URL fields. It should match with the current hostname (e.g: http://example.com)</li>
+									<li>Set the Default Access Type to Read, Write, & Direct Messages.</li>
+								</ol>
+						   </p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_twitter_app_id">Twitter Application Key</label>
+                       <div class="controls">
+                           <input type="text" id="auth_twitter_app_key" name="auth_twitter_app_key" value="" class="input-xlarge input" />
+                           <p class="help-block">Twitter Application Key</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_twitter_app_secret">Twitter Application Secret</label>
+                       <div class="controls">
+                           <input type="text" id="auth_twitter_app_secret" name="auth_twitter_app_secret" value="" class="input-xlarge input" />
+                           <p class="help-block">Twitter Application Secret</p>
+                       </div>
+                    </div>
+                    
+                    <div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>Google <img src="./assets/icons/google.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_enable_google">Allow Google Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_google" name="auth_enable_google" class="input-xlarge input" />
+                           <p class="help-block">Enable Google Login</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_google_app_id">Google Application ID</label>
+                       <div class="controls">
+                           <input type="text" id="auth_google_app_id" name="auth_google_app_id" value="" class="input-xlarge input" />
+                           <p class="help-block">Google Application ID</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_google_app_secret">Google Application Secret</label>
+                       <div class="controls">
+                           <input type="text" id="auth_google_app_secret" name="auth_google_app_secret" value="" class="input-xlarge input" />
+                           <p class="help-block">Google Application Secret</p>
+                       </div>
+                    </div>
+                    
+					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>Yahoo <img src="./assets/icons/yahoo.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_enable_yahoo">Allow Yahoo Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_yahoo" name="auth_enable_yahoo" class="input-xlarge input" />
+                           <p class="help-block">Enable Yahoo Login</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_yahoo_app_id">Yahoo Application ID</label>
+                       <div class="controls">
+                           <input type="text" id="auth_yahoo_app_id" name="auth_yahoo_app_id" value="" class="input-xlarge input" />
+                           <p class="help-block">Yahoo Application ID</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_yahoo_app_secret">Yahoo Application Secret</label>
+                       <div class="controls">
+                           <input type="text" id="auth_yahoo_app_secret" name="auth_yahoo_app_secret" value="" class="input-xlarge input" />
+                           <p class="help-block">Yahoo Application Secret</p>
+                       </div>
+                    </div>
+                    
+					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>LinkedIn <img src="./assets/icons/linkedin.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_enable_linkedin">Allow linkedIn Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_linkedin" name="auth_enable_linkedin" class="input-xlarge input" />
+                           <p class="help-block">Enable LinkedIn Login</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_linkedin_app_key">LinkedIn Application Key</label>
+                       <div class="controls">
+                           <input type="text" id="auth_linkedin_app_key" name="auth_linkedin_app_key" value="" class="input-xlarge input" />
+                           <p class="help-block">LinkedIn Application Key</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_linkedin_app_secret">LinkedIn Application Secret</label>
+                       <div class="controls">
+                           <input type="text" id="auth_linkedin_app_secret" name="auth_linkedin_app_secret" value="" class="input-xlarge input" />
+                           <p class="help-block">LinkedIn Application Secret</p>
+                       </div>
+                    </div>
+                    
+					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>MySpace <img src="./assets/icons/myspace.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_enable_myspace">Allow MySpace Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_myspace" name="auth_enable_myspace" class="input-xlarge input" />
+                           <p class="help-block">Enable MySpace Login</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_myspace_app_id">MySpace Application Key</label>
+                       <div class="controls">
+                           <input type="text" id="auth_myspace_app_key" name="auth_myspace_app_key" value="" class="input-xlarge input" />
+                           <p class="help-block">MySpace Application Key</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_myspace_app_secret">MySpace Application Secret</label>
+                       <div class="controls">
+                           <input type="text" id="auth_myspace_app_secret" name="auth_myspace_app_secret" value="" class="input-xlarge input" />
+                           <p class="help-block">MySpace Application Secret</p>
+                       </div>
+                    </div>
+                    
+					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>Foursquare <img src="./assets/icons/foursquare.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_enable_foursquare">Allow Foursquare Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_foursquare" name="auth_enable_foursquare" class="input-xlarge input" />
+                           <p class="help-block">Enable Foursquare Login</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_foursquare_app_id">Foursquare Application ID</label>
+                       <div class="controls">
+                           <input type="text" id="auth_foursquare_app_id" name="auth_foursquare_app_id" value="" class="input-xlarge input" />
+                           <p class="help-block">Foursquare Application ID</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_foursquare_app_secret">foursquare Application Secret</label>
+                       <div class="controls">
+                           <input type="text" id="auth_foursquare_app_secret" name="auth_foursquare_app_secret" value="" class="input-xlarge input" />
+                           <p class="help-block">Foursquare Application Secret</p>
+                       </div>
+                    </div>
+                    
+					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>Windows Live <img src="./assets/icons/live.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_enable_windows_live">Allow Windows Live Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_windows_live" name="auth_enable_windows_live" class="input-xlarge input" />
+                           <p class="help-block">Enable Windows Live Login</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_windows_live_app_id">Windows Live Application ID</label>
+                       <div class="controls">
+                           <input type="text" id="auth_windows_live_app_id" name="auth_windows_live_app_id" value="" class="input-xlarge input" />
+                           <p class="help-block">Windows Live Application ID</p>
+                       </div>
+                    </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_windows_live_app_secret">windows_live Application Secret</label>
+                       <div class="controls">
+                           <input type="text" id="auth_windows_live_app_secret" name="auth_windows_live_app_secret" value="" class="input-xlarge input" />
+                           <p class="help-block">Windows Live Application Secret</p>
+                       </div>
+                    </div>
+                    
+					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>Open ID <img src="./assets/icons/openid.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_enable_open_id">Allow Open Id Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_open_id" name="auth_enable_open_id" class="input-xlarge input" />
+                           <p class="help-block">Enable Open Id Login</p>
+                       </div>
+                    </div>
+                    
+                    <div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
+			        	<legend>AOL <img src="./assets/icons/aol.png"/></legend>			        	
+			        </div>
+                    <div class="control-group">
+                       <label class="control-label" for="auth_enable_aol">Allow AOL Authentication</label>
+                       <div class="controls">
+                           <input type="checkbox" id="auth_enable_aol" name="auth_enable_aol" class="input-xlarge input" />
+                           <p class="help-block">Enable AOL Login</p>
+                       </div>
+                    </div>
+                    <div>
+	                    <a class="btn" href="#preference">Back</a>	                    
 	                </div>
 			    </fieldset>
 			    <div style="margin-top: 10px;">

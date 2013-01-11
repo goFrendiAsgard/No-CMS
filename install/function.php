@@ -115,15 +115,39 @@
 		$hide_index = get_secure_input("hide_index");
 		$gzip_compression = get_secure_input("gzip_compression");
 		
+		$auth_enable_facebook = get_secure_input("auth_enable_facebook");
+		$auth_facebook_app_id = get_secure_input("auth_facebook_app_id");
+		$auth_facebook_app_secret = get_secure_input("auth_facebook_app_secret");
+		$auth_enable_twitter = get_secure_input("auth_enable_twitter");
+		$auth_twitter_app_key = get_secure_input("auth_twitter_app_key");
+		$auth_twitter_app_secret = get_secure_input("auth_twitter_app_secret");
+		$auth_enable_google = get_secure_input("auth_enable_google");
+		$auth_google_app_id = get_secure_input("auth_google_app_id");
+		$auth_google_app_secret = get_secure_input("auth_google_app_secret");
+		$auth_enable_yahoo = get_secure_input("auth_enable_yahoo");
+		$auth_yahoo_app_id = get_secure_input("auth_yahoo_app_id");
+		$auth_yahoo_app_secret = get_secure_input("auth_yahoo_app_secret");
+		$auth_enable_linkedin = get_secure_input("auth_enable_linkedin");
+		$auth_linkedin_app_key = get_secure_input("auth_linkedin_app_key");
+		$auth_linkedin_app_secret = get_secure_input("auth_linkedin_app_secret");
+		$auth_enable_myspace = get_secure_input("auth_enable_myspace");
+		$auth_myspace_app_key = get_secure_input("auth_myspace_app_key");
+		$auth_myspace_app_secret = get_secure_input("auth_myspace_app_secret");
+		$auth_enable_foursquare = get_secure_input("auth_enable_foursquare");
+		$auth_foursquare_app_id = get_secure_input("auth_foursquare_app_id");
+		$auth_foursquare_app_secret = get_secure_input("auth_foursquare_app_secret");
+		$auth_enable_windows_live = get_secure_input("auth_enable_windows_live");
+		$auth_windows_live_app_id = get_secure_input("auth_windows_live_app_id");
+		$auth_windows_live_app_secret = get_secure_input("auth_windows_live_app_secret");
+		$auth_enable_open_id = get_secure_input("auth_enable_open_id");
+		$auth_enable_aol = get_secure_input("auth_enable_aol");
+		
 		// Main program
 		
 		$success = true;
 		$errors = array();
 		$warnings = array();
-		// curl
-		if(!in_array  ('curl', get_loaded_extensions())){
-			$warnings[] = 'CURL is not enabled. Some modules might require it';
-		}
+		
 		// database
 		$result = check_db($db_server, $db_port, $db_username, $db_password, $db_schema);
 		if(!$result['success']){
@@ -155,7 +179,7 @@
 		if(!is_writable('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js')){
 			$success = FALSE;
 			$errors[] = 'assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js is not writable';
-		}
+		}		
 		if(!is_writable('./')){
 			$success = FALSE;
 			$errors[] = 'install directory is not writable';
@@ -170,6 +194,7 @@
 				$errors[] = "mod_rewrite is not enabled";
 			}
 		}
+		
 		// admin password
 		if($adm_password == ""){
 			$success = FALSE;
@@ -178,6 +203,29 @@
 		if($adm_password != $adm_confirmpassword){
 			$success = FALSE;
 			$errors[] = "Admin's password confirmation doesn't match";
+		}
+		
+		// third party authentication
+		if($auth_enable_facebook !== "" ||
+		$auth_enable_twitter !== "" ||
+		$auth_enable_google !== "" ||
+		$auth_enable_yahoo !== "" ||
+		$auth_enable_linkedin !== "" ||
+		$auth_enable_myspace !== "" ||
+		$auth_enable_foursquare !== "" ||
+		$auth_enable_windows_live !== "" ||
+		$auth_enable_open_id !== "" ||
+		$auth_enable_aol !== ""){
+			// curl
+			if(!in_array  ('curl', get_loaded_extensions())){
+				$success = FALSE;
+				$errors[] = 'Third party authentication require php-curl, but it is not enabled';
+			}
+			// hybridauthlib configuration file
+			if(!is_writable('../application/config/hybridauthlib.php')){
+				$success = FALSE;
+				$errors[] = "application/config/hybridauthlib.php is not writable";
+			}
 		}
 		
 		// if not installed, than just return the warnings, errors and success
@@ -272,6 +320,142 @@
 				}else{
 					file_put_contents('../.htaccess', '');
 					@chmod('../.htaccess', 0555);
+				}
+				
+				// hybridauthlib.php
+				if($auth_enable_facebook !== "" ||
+				$auth_enable_twitter !== "" ||
+				$auth_enable_google !== "" ||
+				$auth_enable_yahoo !== "" ||
+				$auth_enable_linkedin !== "" ||
+				$auth_enable_myspace !== "" ||
+				$auth_enable_foursquare !== "" ||
+				$auth_enable_windows_live !== "" ||
+				$auth_enable_open_id !== "" ||
+				$auth_enable_aol !== ""){
+					
+					$key_config = array(
+						'{{ facebook_app_id }}',
+						'{{ facebook_app_secret }}',
+						'{{ twitter_app_key }}',
+						'{{ twitter_app_secret }}',
+						'{{ google_app_id }}',
+						'{{ google_app_secret }}',
+						'{{ yahoo_app_id }}',
+						'{{ yahoo_app_secret }}',
+						'{{ linkedin_app_key }}',
+						'{{ linkedin_app_secret }}',
+						'{{ myspace_app_key }}',
+						'{{ myspace_app_secret }}',
+						'{{ foursquare_app_id }}',
+						'{{ foursquare_app_secret }}',
+						'{{ windows_live_app_id }}',
+						'{{ windows_live_app_secret }}',
+					);
+					$replace_config = array(
+						$auth_facebook_app_id,
+						$auth_facebook_app_secret,
+						$auth_twitter_app_key,
+						$auth_twitter_app_secret,
+						$auth_google_app_id,
+						$auth_google_app_secret,
+						$auth_yahoo_app_id,
+						$auth_yahoo_app_secret,
+						$auth_linkedin_app_key,
+						$auth_linkedin_app_secret,
+						$auth_myspace_app_key,
+						$auth_myspace_app_secret,
+						$auth_foursquare_app_id,
+						$auth_foursquare_app_secret,
+						$auth_windows_live_app_id,
+						$auth_windows_live_app_secret,
+					);
+					
+					
+					if($auth_enable_facebook!=""){
+						$key_config[] = '{{ facebook_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ facebook_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					if($auth_enable_twitter!=""){
+						$key_config[] = '{{ twitter_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ twitter_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					if($auth_enable_google!=""){
+						$key_config[] = '{{ google_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ google_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					if($auth_enable_yahoo!=""){
+						$key_config[] = '{{ yahoo_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ yahoo_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					if($auth_enable_linkedin!=""){
+						$key_config[] = '{{ linkedin_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ linkedin_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					if($auth_enable_myspace!=""){
+						$key_config[] = '{{ myspace_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ myspace_enabled }}';
+						$replace_config[] = 'FALSE';
+					}					
+					
+					if($auth_enable_foursquare!=""){
+						$key_config[] = '{{ foursquare_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ foursquare_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					if($auth_enable_windows_live!=""){
+						$key_config[] = '{{ windows_live_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ windows_live_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					if($auth_enable_open_id!=""){
+						$key_config[] = '{{ open_id_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ open_id_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					if($auth_enable_aol!=""){
+						$key_config[] = '{{ aol_enabled }}';
+						$replace_config[] = 'TRUE';
+					}else{
+						$key_config[] = '{{ aol_enabled }}';
+						$replace_config[] = 'FALSE';
+					}
+					
+					$str = file_get_contents('./resources/hybridauthlib.php');
+					$str = replace($str, $key_config, $replace_config);
+					file_put_contents('../application/config/hybridauthlib.php', $str);
+					@chmod('../application/config/config.php', 0555);
 				}
 				
 				// put htaccess in install directory
