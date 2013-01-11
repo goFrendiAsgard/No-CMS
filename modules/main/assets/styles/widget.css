@@ -1,6 +1,0 @@
-@CHARSET "UTF-8";
-.widget_active{
-    cursor: pointer;
-    text-decoration: underline;
-    color: blue;
-}
