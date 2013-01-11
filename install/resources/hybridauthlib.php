@@ -12,7 +12,9 @@
 $config =
 	array(
 		// set on "base_url" the relative url that point to HybridAuth Endpoint
-		'base_url' => '/hauth/endpoint',
+		'base_url' => '/main/hauth/endpoint',
+		
+		'proxy' => '',
 
 		"providers" => array (
 			// openid providers

@@ -6,86 +6,7 @@
 	<title>Welcome to CodeIgniter</title>
 
 	<style type="text/css">
-		::selection {
-			background-color:#E13300;
-			color:#fff;
-		}
-
-		::moz-selection {
-			background-color:#E13300;
-			color:#fff;
-		}
-
-		::webkit-selection {
-			background-color:#E13300;
-			color:#fff;
-		}
-
-		body {
-			background-color:#fff;
-			margin:40px;
-			font:13px/20px normal Helvetica,Arial,sans-serif;
-			color:#4F5155;
-		}
-
-		a {
-			color:#039;
-			background-color:transparent;
-			font-weight:400;
-		}
-
-		h1 {
-			color:#444;
-			background-color:transparent;
-			border-bottom:1px solid #D0D0D0;
-			font-size:19px;
-			font-weight:400;
-			margin:0 0 14px;
-			padding:14px 15px 10px;
-		}
-
-		code,pre,fieldset {
-			font-family:Consolas,Monaco,Courier New,Courier,monospace;
-			font-size:12px;
-			border:1px solid #D0D0D0;
-			color:#002166;
-			display:block;
-			margin:10px 0 14px;
-			padding:12px 10px;
-		}
-
-		fieldset {
-			margin:10px 14px;
-			overflow:auto;
-		}
-
-		#body {
-			margin:0 15px;
-		}
-
-		p.footer {
-			border-top:1px solid #D0D0D0;
-			padding:10px 10px 0;
-			margin:20px 0 0;
-		}
-
-		#container {
-			margin:10px;
-			border:1px solid #D0D0D0;
-			-webkit-box-shadow:0 0 8px #D0D0D0;
-		}
-
-		.key {
-			border:1px solid #000;
-			border-right:none;
-			border-bottom:0;
-		}
-
-		.value {
-			border:1px solid #000;
-			border-left:none;
-			border-bottom:0;
-		}
+		
 
 		#provider-list {
 			list-style:none;
@@ -221,11 +142,7 @@
 <body>
 
 <div id="container">
-	<h1>Welcome to HybridIgniter</h1>
-
 	<div id="body">
-		<p>We've brought together CodeIgniter and Hybrid auth for the best solution for user authentication.</p>
-		<p>Select a service to authenticate with. If you have previously authenticated, it will be denoted below.</p>
 		<h4>Select a service:</h4>
 		<ul id="provider-list">
 		<?php
@@ -233,9 +150,9 @@
 			$this->load->helper('url');
 			foreach($providers as $provider => $data) {
 				if ($data['connected']) {
-					echo "<li>".anchor('hauth/logout/'.$provider,'Logout of '.$provider, array('class' => 'connected'))."</li>";
+					echo "<li>".anchor('main/hauth/logout/'.$provider,'Logout of '.$provider, array('class' => 'connected'))."</li>";
 				} else {
-					echo "<li>".anchor('hauth/login/'.$provider,$provider, array('class' => 'login'))."</li>";
+					echo "<li>".anchor('main/hauth/login/'.$provider,$provider, array('class' => 'login'))."</li>";
 				}
 			}
 		?>
