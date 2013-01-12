@@ -71,7 +71,7 @@ class Main extends CMS_Controller {
 		$this->view('main/static_page',NULL,$navigation_name);
 	}
 
-    public function login() {
+    public function login() {	
         //retrieve old_url from flashdata if exists
         $this->load->library('session');        
         $old_url = $this->session->flashdata('cms_old_url');
@@ -102,9 +102,10 @@ class Main extends CMS_Controller {
                 //view login again
                 $data = array(
                 		"identity" => $identity,
-                		"message" => 'Error: Login Failed'
+                		"message" => 'Error: Login Failed',
+                		"providers" => $this->cms_third_party_providers(),
 					);
-                $this->view('main/login', $data, 'main_login');
+				$this->view('main/login', $data, 'main_login');
             }
         } else {
 
@@ -114,7 +115,11 @@ class Main extends CMS_Controller {
             }
 
             //view login again
-            $data = array("identity" => $identity);
+            $data = array(
+            	"identity" => $identity,
+            	"message" => '',
+            	"providers" => $this->cms_third_party_providers(),
+			);
             $this->view('main/login', $data, 'main_login');
         }
     }

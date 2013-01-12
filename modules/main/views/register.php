@@ -1,17 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <style type="text/css">
-    #message:not(:empty){
-        background-color:#FFCACA;
-	    padding: 5px 5px 5px 5px;
-	    margin : 10px;
-	    font-size: small;
-	    min-height : 25px;
-	    border-radius:5px;
-	    -moz-border-radius:5px;
-	    -moz-box-shadow:    1px 1px 5px 6px #ccc;
-	    -webkit-box-shadow: 1px 1px 5px 6px #ccc;
-	    box-shadow:         1px 1px 5px 6px #ccc;      
-        max-width : 400px;
+    #message:empty{
+        display:none;
     }
 </style>
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
@@ -87,4 +77,4 @@
     echo br();
 ?>
 <img id="img_ajax_loader" style="display:none;" src="<?php echo base_url('assets/nocms/images/ajax-loader.gif');?>" /><br />
-<div id="message"></div>
+<div id="message" class="alert alert-error"></div>

@@ -238,7 +238,7 @@ class CMS_Model extends CI_Model {
      * @return  mixed
      * @desc    return widgets
      */
-    public final function cms_widgets() {
+    public final function cms_widgets() {    	
         $user_name = $this->cms_user_name();
         $user_id = $this->cms_user_id();
         $not_login = !$user_name ? "TRUE" : "FALSE";
@@ -278,16 +278,11 @@ class CMS_Model extends CI_Model {
         	}else{
         		// url
         		$url = $row->url;
-        		if(!strpos(strtolower($url), 'http')){
-        			$url = site_url($url);
-        		}
-        		// asset
-        		$asset = new CMS_Asset();
-        		//$asset->add_cms_js('nocms/js/jquery.js');
-        		$asset->add_string_js($script);        		
         		// content
         		$content .= '<div id="_cms_widget_'.$row->widget_id.'">';
-        		$content .= Modules::run($url);
+        		$this->cms_ci_session('cms_dynamic_widget',TRUE);
+        		$content .= Modules::run($url); 
+        		$this->cms_unset_ci_session('cms_dynamic_widget');        		        		
         		$content .= '</div>';
         	}
         	// make widget based on slug
@@ -302,6 +297,7 @@ class CMS_Model extends CI_Model {
             	"content" => $content,
             );
         }
+        
         return $result;
     }
 
@@ -1228,6 +1224,112 @@ class CMS_Model extends CI_Model {
 	 */
 	private final function cms_preg_replace_callback_lang($arr){
 		return $this->cms_lang($arr[1]);
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @return array providers
+	 */
+	public function cms_third_party_providers(){
+		$this->load->library('HybridAuthLib');
+		$providers = $this->hybridauthlib->getProviders();
+		return $providers;
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @return array status
+	 * @desc return all status from third-party provider
+	 */
+	public function cms_third_party_status(){
+		$this->load->library('HybridAuthLib');
+		$status = array();
+		$connected = $this->hybridauthlib->getConnectedProviders();
+		foreach($connected as $provider) {
+			if ($this->hybridauthlib->providerEnabled($provider)) {
+				$service = $this->hybridauthlib->authenticate($provider);
+				if ($service->isUserConnected()) {
+					$status[$provider] = (array)$this->hybridauthlib->getAdapter($provider)->getUserProfile();
+				}
+			}
+		}
+		return $status;
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @return boolean success
+	 * @desc login/register by using third-party provider
+	 */
+	public function cms_third_party_login($provider){
+		// if provider not valid then exit
+		$status = $this->cms_third_party_status();
+		if(!isset($status[$provider])) return FALSE;
+		
+		$identifier = $status[$provider]['identifier'];
+		
+				
+		$user_id = $this->cms_user_id();
+		$query = $this->db->select('user_id')
+			->from('cms_user')
+			->where('auth_'.$provider, $identifier)
+			->get();
+		if($query->num_rows()>0){ // get user_id based on auth field
+			$row = $query->row();
+			$user_id = $row->user_id;
+		}else{ // no identifier match, register it to the database
+			$third_party_email = $status[$provider]['email'];
+			$third_party_display_name = $status[$provider]['firstName'];
+			// if email match with the database, set $user_id		
+			if($user_id == FALSE){						
+				$query = $this->db->select('user_id')
+					->from('cms_user')
+					->where('email',$third_party_email)
+					->get();
+				if($query->num_rows()>0){
+					$row = $query->row();
+					$user_id = $row->user_id;
+				}
+			}
+			// if $user_id set (already_login, or $status[provider]['email'] match with database)
+			if($user_id != FALSE){
+				$data = array('auth_'.$provider=> $identifier);
+				$where = array('user_id'=>$user_id);
+				$this->db->update('cms_user',$data,$where);
+			}else{ // if not already login, register provider and id to the database
+				$data = array(
+						'user_name'=>$third_party_display_name,
+						'email'=>$third_party_email,
+						'auth_'.$provider => $identifier
+					);
+				$this->db->insert('cms_user',$data);
+				// get user_id
+				$query = $this->db->select('user_id')
+					->from('cms_user')
+					->where('email',$third_party_email)
+					->get();
+				if($query->num_rows()>0){
+					$row = $query->row();
+					$user_id = $row->user_id;
+				}
+			}	
+		}
+		
+		
+		// set cms_user_id, cms_user_name, cms_user_email, cms_user_real_name, just as when login from the normal way
+		$query = $this->db->select('user_id, user_name, email, real_name')
+			->from('cms_user')
+			->where('user_id',$user_id)
+			->get();
+		if($query->num_rows()>0){
+			$row = $query->row();
+			$this->cms_user_id($row->user_id);
+			$this->cms_user_name($row->user_name);
+			$this->cms_user_real_name($row->real_name);
+			$this->cms_user_email($row->email);
+			return TRUE;
+		}
+		return FALSE;
 	}
     
 }

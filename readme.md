@@ -42,6 +42,7 @@ No-CMS is also take advantages of several popular plugins such as
 * HMVC, to make fully modular separation
 * Phil Sturgeon's Template, to make customizable themes
 * groceryCRUD, to build CRUD application in a minute
+* HybridAuth, to provide third party authentication (e.g: facebook, twitter, openID etc)
 
 Out of all, No-CMS also provide some common features:
 
@@ -312,5 +313,5 @@ v0.5.6
 + (done, tested) use groceryCRUD 1.3.3 stable
 + (done, tested) use HMVC commit 868e975
 + (done, tested for PHP 5.4) use Module::run instead of AJAX to show widget
-+ (proposed) facebook, twitter and open ID login
++ (done, not tested) facebook, twitter and open ID login
 + (proposed) Drupal's CCK like mechanism

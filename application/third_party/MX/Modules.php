@@ -55,12 +55,11 @@ class Modules
 	**/
 	public static function run($module) {
 		
-		$method = 'index';
-		
+		$method = 'index';		
 		if(($pos = strrpos($module, '/')) != FALSE) {
 			$method = substr($module, $pos + 1);		
 			$module = substr($module, 0, $pos);
-		}
+		}		
 
 		if($class = self::load($module)) {
 			

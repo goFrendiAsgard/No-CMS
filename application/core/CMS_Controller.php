@@ -476,15 +476,6 @@ class CMS_Controller extends MX_Controller {
         	$cms['site_logo'] = $this->cms_get_config('site_logo');
         	$cms['site_favicon'] = $this->cms_get_config('site_favicon');
         	
-        	//get navigations
-        	$navigations = $this->cms_navigations();
-        	$navigation_path = $this->cms_get_navigation_path($navigation_name);
-        	$cms['navigations'] = $navigations;
-        	$cms['navigation_path'] = $navigation_path;
-        	
-        	//get widget
-        	$widget = $this->cms_widgets();
-        	$cms['widget'] = $widget;
         	
         	// get user name, quicklinks, module_name & module_path
         	$cms['user_id'] = $this->cms_user_id();
@@ -542,8 +533,11 @@ class CMS_Controller extends MX_Controller {
         		$row = $query->row();
         		$only_content = ($row->only_content == 1);
         	}
+			// in case of widget
+			$only_content = $only_content;
+			$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
         	// if only content or request is ajax
-            if ($only_content || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
+            if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            	
                 $result = $this->load->view($view_url, $data, TRUE);
 				$result = $this->cms_parse_keyword($result);
 				if($return_as_string){
@@ -551,7 +545,20 @@ class CMS_Controller extends MX_Controller {
 				}else{
 					$this->cms_show_html($result);
 				}
-            } else {           
+            } else {
+            	
+				//get widget
+				$widget = $this->cms_widgets();       	
+	        	$cms['widget'] = $widget;
+				
+				//get navigations
+	        	$navigations = $this->cms_navigations();
+	        	$navigation_path = $this->cms_get_navigation_path($navigation_name);
+	        	$cms['navigations'] = $navigations;
+	        	$cms['navigation_path'] = $navigation_path;
+				
+				// add widget and navigation
+				$data['cms'] = $cms;           
 
                 // set layout and partials                
                 $this->template->set_theme($theme);
@@ -595,10 +602,7 @@ class CMS_Controller extends MX_Controller {
             }else{
                 redirect('main/login');
             }
-            
-            
         }
-        return $result;
     }
 
     private final function cms_layout_exists($theme, $layout) {
@@ -629,8 +633,8 @@ class CMS_Controller extends MX_Controller {
     	}
     	// show the json
     	$this->output
-    	->set_content_type('application/json')
-    	->set_output($result);
+	    	->set_content_type('application/json')
+	    	->set_output($result);
     }
     
     /**
@@ -639,9 +643,11 @@ class CMS_Controller extends MX_Controller {
      * @desc    show variable for debugging purpose
      */
     protected final function cms_show_variable($variable){
-    	$this->output
-    	->set_content_type('text/html')
-    	->set_output('<pre>'.print_r($variable, true).'</pre>');
+    	ob_start();
+    	echo '<pre>';
+		echo var_dump($variable);
+    	echo '</pre>';
+		@ob_end_flush();
     }
     
     /**
@@ -650,9 +656,35 @@ class CMS_Controller extends MX_Controller {
      * @desc    you are encouraged to use this instead of echo $html
      */
     protected final function cms_show_html($html){
-    	$this->output
-    	->set_content_type('text/html')
-    	->set_output($html);
+    	ob_start();
+    	echo $html;
+		@ob_end_flush();		
     }
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @return array providers
+	 */
+	public function cms_third_party_providers(){
+		return $this->CMS_Model->cms_third_party_providers();
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @return array status
+	 * @desc return all status from third-party provider
+	 */
+	public function cms_third_party_status(){
+		return $this->CMS_Model->cms_third_party_status();
+	}
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @return boolean success
+	 * @desc login/register by using third-party provider
+	 */
+	public function cms_third_party_login($provider){
+		return $this->CMS_Model->cms_third_party_login($provider);
+	}
 
 }
