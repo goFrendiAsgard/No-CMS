@@ -184,6 +184,10 @@
 			$success = FALSE;
 			$errors[] = 'install directory is not writable';
 		}
+		if(!is_writable('../application/logs')){
+			$success = FALSE;
+			$errors[] = "Log directory (application/logs) is not writable";
+		}
 		if($hide_index !== ""){
 			if(!is_writable('../')){			
 				$success = FALSE;
@@ -225,6 +229,11 @@
 			if(!is_writable('../application/config/hybridauthlib.php')){
 				$success = FALSE;
 				$errors[] = "application/config/hybridauthlib.php is not writable";
+			}
+			// hybridauthlib log file
+			if(!is_writable('../application/logs/hybridauth.log')){
+				$success = FALSE;
+				$errors[] = "application/logs/hybridauth.log is not writable";
 			}
 		}
 		

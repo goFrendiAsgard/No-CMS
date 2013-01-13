@@ -52,9 +52,9 @@ class HAuth extends CMS_Controller {
 				if ($service->isUserConnected())
 				{
 					$this->cms_third_party_login($provider);
-					$this->hybridauthlib->logoutAllProviders();
+					//$this->hybridauthlib->logoutAllProviders();
 					log_message('debug', 'controller.HAuth.login: user authenticated.');
-					redirect('main/index', 'refresh');
+					redirect('', 'refresh');
 					
 				}
 				else // Cannot authenticate user

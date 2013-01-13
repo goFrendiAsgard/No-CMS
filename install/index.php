@@ -1,3 +1,46 @@
+<?php	
+	function get_current_url(){
+		if(
+			isset( $_SERVER['HTTPS'] ) && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 )
+		|| 	isset( $_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+		){
+			$protocol = 'https://';
+		}
+		else {
+			$protocol = 'http://';
+		}
+
+		$url = $protocol . $_SERVER['HTTP_HOST'];
+
+		// use port if non default
+		$url .= 
+			isset( $_SERVER['SERVER_PORT'] ) 
+			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443) )
+			? ':' . $_SERVER['SERVER_PORT'] 
+			: ''
+;
+		$url .= $_SERVER['PHP_SELF'];
+
+		// return current url
+		return $url;
+	}
+	
+	function get_callback_url($provider){
+		$current_url = get_current_url();
+		$current_url_arr = explode('/',$current_url);
+		$stripped_url_arr = array();
+		for($i=0; $i<count($current_url_arr)-2; $i++){
+			$stripped_url_arr[] = $current_url_arr[$i];
+		}
+		$stripped_url = implode('/', $stripped_url_arr);
+		$callback_url = $stripped_url.'/index.php/main/hauth/endpoint/?hauth.done='.$provider;
+		return $callback_url;
+	}
+	
+	$server_name = $_SERVER["SERVER_NAME"];
+	$google_callback_url = get_callback_url('Google');
+	$foursquare_callback_url = get_callback_url('Foursquare');
+?>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="assets/style.css" />
@@ -282,7 +325,8 @@
 								<ol>
 									<li>Go to <a target="__blank" href="https://www.facebook.com/developers/">https://www.facebook.com/developers/</a> and create a new application.</li>
 									<li>Fill out any required fields such as the application name and description.</li>
-									<li>Put your website domain in the Site Url field. It should match with the current hostname (e.g: http://example.com)</li>
+									<li>Put your website domain in the <b>Site Url</b> field. It should match with the current hostname (<b><?php echo $server_name; ?></b>)</li>
+									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
 								</ol>
                            </p>
                        </div>
@@ -310,12 +354,13 @@
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_twitter" name="auth_enable_twitter" class="input-xlarge input" />
                            <p class="help-block">
-                           		To Allow Facebook Authentication:
+                           		To Allow Twitter Authentication:
 								<ol>
 									<li>Go to <a target="__blank" href="https://dev.twitter.com/apps">https://dev.twitter.com/apps</a> and create a new application.</li>
 									<li>Fill out any required fields such as the application name and description.</li>
-									<li>Put your website domain in the Application Website and Application Callback URL fields. It should match with the current hostname (e.g: http://example.com)</li>
-									<li>Set the Default Access Type to Read, Write, & Direct Messages.</li>
+									<li>Put your website domain in the <b>Application Website</b> and <b>Application Callback URL</b> fields. It should match with the current hostname (<b><?php echo $server_name; ?></b>)</li>
+									<li>Set the Default Access Type to <b>Read</b>, <b>Write</b>, and <b>Direct Messages</b>.</li>
+									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
 								</ol>
 						   </p>
                        </div>
@@ -342,7 +387,16 @@
                        <label class="control-label" for="auth_enable_google">Allow Google Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_google" name="auth_enable_google" class="input-xlarge input" />
-                           <p class="help-block">Enable Google Login</p>
+                           <p class="help-block">
+                           	    To Allow Google Authentication:
+								<ol>
+									<li>Go to <a target="_blank" href="https://code.google.com/apis/console/">https://code.google.com/apis/console/</a> and create a new application.</li>
+									<li>Fill out any required fields such as the application name and description.</li>									
+									<li>On the <b>"Create Client ID"</b> popup switch to advanced settings by clicking on <b>(more options)</b>.</li>									
+									<li>Provide this URL as the <b>Callback URL</b> for your application: <b><?php echo $google_callback_url; ?></b></li>
+									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
+								</ol>
+						   </p>
                        </div>
                     </div>
                     <div class="control-group">
@@ -367,7 +421,16 @@
                        <label class="control-label" for="auth_enable_yahoo">Allow Yahoo Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_yahoo" name="auth_enable_yahoo" class="input-xlarge input" />
-                           <p class="help-block">Enable Yahoo Login</p>
+                           <p class="help-block">
+                           		To Allow Yahoo Authentication:
+								<ol>
+									<li>Go to <a target="__blank" href="https://developer.apps.yahoo.com/dashboard/createKey.html">https://developer.apps.yahoo.com/<br />dashboard/createKey.html</a> and create a new application.</li>
+									<li>Fill out any required fields such as the application name and description.</li>
+									<li>Put your website domain in the <b>Application URL</b> and <b>Application Domain</b> fields. It should match with the current hostname (<b><?php echo $server_name; ?></b>)</li>
+									<li>Set the Kind of Application to <b>Web-based</b>.</li>
+									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
+								</ol>
+						   </p>
                        </div>
                     </div>
                     <div class="control-group">
@@ -392,7 +455,16 @@
                        <label class="control-label" for="auth_enable_linkedin">Allow linkedIn Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_linkedin" name="auth_enable_linkedin" class="input-xlarge input" />
-                           <p class="help-block">Enable LinkedIn Login</p>
+                           <p class="help-block">
+                           		To Allow LinkedIn Authentication:
+								<ol>
+									<li>Go to <a target="__blank" href="https://www.linkedin.com/secure/developer">https://www.linkedin.com/secure/developer</a> and create a new application.</li>
+									<li>Fill out any required fields such as the application name and description.</li>
+									<li>Put your website domain in the <b>Integration URL</b> field. It should match with the current hostname (<b><?php echo $server_name; ?></b>)</li>
+									<li>Set the Application Type to <b>Web Application</b>.</li>
+									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
+								</ol>
+						   </p>
                        </div>
                     </div>
                     <div class="control-group">
@@ -417,7 +489,15 @@
                        <label class="control-label" for="auth_enable_myspace">Allow MySpace Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_myspace" name="auth_enable_myspace" class="input-xlarge input" />
-                           <p class="help-block">Enable MySpace Login</p>
+                           <p class="help-block">
+                           		To Allow MySpace Authentication:
+								<ol>
+									<li>Go to <a target="__blank" href="http://www.developer.myspace.com/">http://www.developer.myspace.com/</a> and create a new application.</li>
+									<li>Fill out any required fields such as the application name and description.</li>
+									<li>Put your website domain in the <b>External Url</b> and <b>External Callback Validation</b> fields. It should match with the current hostname (<b><?php echo $server_name; ?></b>)</li>
+									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
+								</ol>
+						   </p>
                        </div>
                     </div>
                     <div class="control-group">
@@ -442,7 +522,15 @@
                        <label class="control-label" for="auth_enable_foursquare">Allow Foursquare Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_foursquare" name="auth_enable_foursquare" class="input-xlarge input" />
-                           <p class="help-block">Enable Foursquare Login</p>
+                           <p class="help-block">
+                           	    To Allow Foursquare Authentication:
+								<ol>
+									<li>Go to <a target="_blank" href="https://www.foursquare.com/oauth/">https://www.foursquare.com/oauth/</a> and create a new application.</li>
+									<li>Fill out any required fields such as the application name and description.</li>									
+									<li>Provide this URL as the <b>Callback URL</b> for your application: <b><?php echo $foursquare_callback_url; ?></b></li>
+									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
+								</ol>
+						   </p>
                        </div>
                     </div>
                     <div class="control-group">
@@ -467,7 +555,15 @@
                        <label class="control-label" for="auth_enable_windows_live">Allow Windows Live Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_windows_live" name="auth_enable_windows_live" class="input-xlarge input" />
-                           <p class="help-block">Enable Windows Live Login</p>
+                           <p class="help-block">
+                           		To Allow Windows Live Authentication:
+								<ol>
+									<li>Go to <a target="__blank" href="https://manage.dev.live.com/ApplicationOverview.aspx">https://manage.dev.live.com/<br />ApplicationOverview.aspx</a> and create a new application.</li>
+									<li>Fill out any required fields such as the application name and description.</li>
+									<li>Put your website domain in the <b>Redirect Domain</b> field. It should match with the current hostname (<b><?php echo $server_name; ?></b>)</li>
+									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
+								</ol>
+						   </p>
                        </div>
                     </div>
                     <div class="control-group">
@@ -492,7 +588,7 @@
                        <label class="control-label" for="auth_enable_open_id">Allow Open Id Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_open_id" name="auth_enable_open_id" class="input-xlarge input" />
-                           <p class="help-block">Enable Open Id Login</p>
+                           <p class="help-block">Enable Open Id Authentication (No registration required for OpenID based providers)</p>
                        </div>
                     </div>
                     
@@ -503,7 +599,7 @@
                        <label class="control-label" for="auth_enable_aol">Allow AOL Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_aol" name="auth_enable_aol" class="input-xlarge input" />
-                           <p class="help-block">Enable AOL Login</p>
+                           <p class="help-block">Enable AOL Authentication (No registration required for OpenID based providers)</p>
                        </div>
                     </div>
                     <div>
@@ -525,5 +621,4 @@
 	
 	</div>
 </div>
-
 </body>
