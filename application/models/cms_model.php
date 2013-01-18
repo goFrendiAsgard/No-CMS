@@ -1300,8 +1300,21 @@ class CMS_Model extends CI_Model {
 				$where = array('user_id'=>$user_id);
 				$this->db->update('cms_user',$data,$where);
 			}else{ // if not already login, register provider and id to the database
+				// ensure there is no duplicate new user name
+				$new_user_name = $third_party_display_name;
+				$duplicate = TRUE;
+				while($duplicate){
+					$query = $this->db->select('user_name')->from('cms_user')->where('user_name',$new_user_name)->get();
+					if($query->num_rows()>0){
+						$query = $this->db->select('user_name')->from('cms_user')->get();
+						$user_count = $query->num_rows();
+						$new_user_name = 'user_'.$user_count.' ('.$new_user_name.')';
+					}else{
+						$duplicate = FALSE;
+					}
+				}
 				$data = array(
-						'user_name'=>$third_party_display_name,
+						'user_name'=>$new_user_name,
 						'email'=>$third_party_email,
 						'auth_'.$provider => $identifier
 					);
