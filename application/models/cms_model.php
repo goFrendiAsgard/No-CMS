@@ -355,6 +355,9 @@ class CMS_Model extends CI_Model {
 					}	
 				}
 			}
+			if($image_file==''){
+				$image_file = 'assets/nocms/images/icons/package.png';
+			}
 			$html .='<li class="well" style="width:80px!important; height:90px!important; float:left!important; list-style-type:none;">';
 			$html .='<a href="'.site_url($url).'" style="width: 100%; height: 100%; display: block;">';
 			if($image_file != ''){
