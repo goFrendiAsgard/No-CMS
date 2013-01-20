@@ -41,7 +41,7 @@
 			}else{				
 				$('div#php_error').hide();
 				$('div#if_error').hide();
-				var modules =  ['wysiwyg', 'help', 'module_generator', 'blog'];
+				var modules =  ['wysiwyg', 'help', 'nordrassil', 'blog'];
 				var done = 0;
 				var site_url = '<?php echo $site_url;?>';
 				for(var i=0; i<modules.length; i++){

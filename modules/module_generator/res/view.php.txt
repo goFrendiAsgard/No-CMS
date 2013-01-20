@@ -1,3 +1,0 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
-<h4>@moduleDirectory</h4>
-<p>Welcome to @moduleName</p>
