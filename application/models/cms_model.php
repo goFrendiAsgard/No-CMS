@@ -609,14 +609,16 @@ class CMS_Model extends CI_Model {
      * @param   string password
      * @desc    change current profile (user_name, email, real_name and password)
      */
-    public final function cms_do_change_profile($user_name, $email, $real_name, $password) {
+    public final function cms_do_change_profile($user_name, $email, $real_name, $password=NULL) {
         $data = array(
             "user_name" => $user_name,
             "email" => $email,
             "real_name" => $real_name,
-            "password" => md5($password),
             "active" => 1
         );
+		if(isset($password)){
+			$data['password'] = md5($password);
+		}
         $where = array(
             "user_name" => $user_name
         );
@@ -1300,8 +1302,6 @@ class CMS_Model extends CI_Model {
 				$where = array('user_id'=>$user_id);
 				$this->db->update('cms_user',$data,$where);
 			}else{ // if not already login, register provider and id to the database
-			
-				// ensure there is no duplicate new user name
 				$new_user_name = $third_party_display_name;
 				$duplicate = TRUE;
 				while($duplicate){
@@ -1314,15 +1314,12 @@ class CMS_Model extends CI_Model {
 						$duplicate = FALSE;
 					}
 				}
-				
-				// insert to database
 				$data = array(
 						'user_name'=>$new_user_name,
 						'email'=>$third_party_email,
 						'auth_'.$provider => $identifier
 					);
 				$this->db->insert('cms_user',$data);
-				
 				// get user_id
 				$query = $this->db->select('user_id')
 					->from('cms_user')

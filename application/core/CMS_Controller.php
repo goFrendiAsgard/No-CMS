@@ -207,7 +207,7 @@ class CMS_Controller extends MX_Controller {
      * @param   string password
      * @desc    change current profile (user_name, email, real_name and password)
      */
-    protected final function cms_do_change_profile($user_name, $email, $real_name, $password) {
+    protected final function cms_do_change_profile($user_name, $email, $real_name, $password=NULL) {
         return $this->CMS_Model->cms_do_change_profile($user_name, $email, $real_name, $password);
     } 
 

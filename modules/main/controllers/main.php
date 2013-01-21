@@ -241,8 +241,12 @@ class Main extends CMS_Controller {
         $user_name = $this->input->post('user_name');
         $email = $this->input->post('email');
         $real_name = $this->input->post('real_name');
+		$change_password = $this->input->post('change_password');
         $password = $this->input->post('password');
         $confirm_password = $this->input->post('confirm_password');
+		if(!$change_password){
+			$password = NULL;
+		}
         
         if(!$user_name) $user_name = $row->user_name;
         if(!$email) $email = $row->email;
@@ -252,8 +256,8 @@ class Main extends CMS_Controller {
         $this->form_validation->set_rules('user_name', 'User Name', 'required|xss_clean');
         $this->form_validation->set_rules('email', 'E mail', 'required|xss_clean|valid_email');
         $this->form_validation->set_rules('real_name', 'Real Name', 'required|xss_clean');
-        $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[confirm_password]');
-        $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
+        $this->form_validation->set_rules('password', 'Password', 'xss_clean|matches[confirm_password]');
+        $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'xss_clean');
 
         if ($this->form_validation->run()) {
             $this->cms_do_change_profile($user_name, $email, $real_name, $password);
