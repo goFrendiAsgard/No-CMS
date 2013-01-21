@@ -1236,6 +1236,9 @@ class CMS_Model extends CI_Model {
 	 * @return array providers
 	 */
 	public function cms_third_party_providers(){
+		if(!in_array  ('curl', get_loaded_extensions())){
+			return array();
+		}
 		$this->load->library('HybridAuthLib');
 		$providers = $this->hybridauthlib->getProviders();
 		return $providers;
@@ -1247,6 +1250,9 @@ class CMS_Model extends CI_Model {
 	 * @desc return all status from third-party provider
 	 */
 	public function cms_third_party_status(){
+		if(!in_array  ('curl', get_loaded_extensions())){
+			return array();
+		}
 		$this->load->library('HybridAuthLib');
 		$status = array();
 		$connected = $this->hybridauthlib->getConnectedProviders();

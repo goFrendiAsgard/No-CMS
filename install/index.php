@@ -145,6 +145,16 @@
                     adm_password : $("#adm_password").val(),
                     adm_confirmpassword : $("#adm_confirmpassword").val(),
                     hide_index : $("#hide_index").attr('checked')? $("#hide_index").val(): '',
+					auth_enable_facebook : $("#auth_enable_facebook").attr('checked')? $("#auth_enable_facebook").val(): '',
+					auth_enable_twitter : $("#auth_enable_twitter").attr('checked')? $("#auth_enable_twitter").val(): '',
+					auth_enable_google : $("#auth_enable_google").attr('checked')? $("#auth_enable_google").val(): '',
+					auth_enable_yahoo : $("#auth_enable_yahoo").attr('checked')? $("#auth_enable_yahoo").val(): '',
+					auth_enable_linkedin : $("#auth_enable_linkedin").attr('checked')? $("#auth_enable_linkedin").val(): '',
+					auth_enable_myspace : $("#auth_enable_myspace").attr('checked')? $("#auth_enable_myspace").val(): '',
+					auth_enable_foursquare : $("#auth_enable_foursquare").attr('checked')? $("#auth_enable_foursquare").val(): '',
+					auth_enable_windows_live : $("#auth_enable_windows_live").attr('checked')? $("#auth_enable_windows_live").val(): '',
+					auth_enable_open_id : $("#auth_enable_open_id").attr('checked')? $("#auth_enable_open_id").val(): '',
+					auth_enable_aol : $("#auth_enable_aol").attr('checked')? $("#auth_enable_aol").val(): '',
                 },
                 success : function(response){
                     SUCCESS = response.success;
@@ -294,14 +304,14 @@
 			        <div class="control-group">
                        <label class="control-label" for="hide_index">Hide Index.php</label>
                        <div class="controls">
-                           <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" />
+                           <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" value="true" />
                            <p class="help-block">(Hide 'index.php' from url, please make sure that mod_rewrite is activated)</p>
                        </div>
                     </div>
                     <div class="control-group">
                        <label class="control-label" for="gzip_compression">Use GZIP compression</label>
                        <div class="controls">
-                           <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input-xlarge input" />
+                           <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input-xlarge input" value="true" />
                            <p class="help-block">(For compression to work, nothing can be sent before the output buffer is called by the output class.  Do not 'echo' any values with compression enabled)</p>
                        </div>
                     </div>
@@ -319,7 +329,7 @@
 			        <div class="control-group">                       
                        <label class="control-label" for="auth_enable_facebook">Allow Facebook Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_facebook" name="auth_enable_facebook" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_facebook" name="auth_enable_facebook" class="input-xlarge input" value="true" />
                            <p class="help-block">
                            		To Allow Facebook Authentication:
 								<ol>
@@ -352,7 +362,7 @@
                     <div class="control-group">   
                        <label class="control-label" for="auth_enable_twitter">Allow Twitter Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_twitter" name="auth_enable_twitter" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_twitter" name="auth_enable_twitter" class="input-xlarge input" value="true" />
                            <p class="help-block">
                            		To Allow Twitter Authentication:
 								<ol>
@@ -386,7 +396,7 @@
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_google">Allow Google Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_google" name="auth_enable_google" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_google" name="auth_enable_google" class="input-xlarge input" value="true" />
                            <p class="help-block">
                            	    To Allow Google Authentication:
 								<ol>
@@ -420,7 +430,7 @@
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_yahoo">Allow Yahoo Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_yahoo" name="auth_enable_yahoo" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_yahoo" name="auth_enable_yahoo" class="input-xlarge input" value="true" />
                            <p class="help-block">
                            		To Allow Yahoo Authentication:
 								<ol>
@@ -454,7 +464,7 @@
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_linkedin">Allow linkedIn Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_linkedin" name="auth_enable_linkedin" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_linkedin" name="auth_enable_linkedin" class="input-xlarge input" value="true" />
                            <p class="help-block">
                            		To Allow LinkedIn Authentication:
 								<ol>
@@ -488,7 +498,7 @@
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_myspace">Allow MySpace Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_myspace" name="auth_enable_myspace" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_myspace" name="auth_enable_myspace" class="input-xlarge input" value="true" />
                            <p class="help-block">
                            		To Allow MySpace Authentication:
 								<ol>
@@ -521,7 +531,7 @@
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_foursquare">Allow Foursquare Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_foursquare" name="auth_enable_foursquare" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_foursquare" name="auth_enable_foursquare" class="input-xlarge input" value="true" />
                            <p class="help-block">
                            	    To Allow Foursquare Authentication:
 								<ol>
@@ -554,7 +564,7 @@
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_windows_live">Allow Windows Live Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_windows_live" name="auth_enable_windows_live" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_windows_live" name="auth_enable_windows_live" class="input-xlarge input" value="true" />
                            <p class="help-block">
                            		To Allow Windows Live Authentication:
 								<ol>
@@ -587,7 +597,7 @@
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_open_id">Allow Open Id Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_open_id" name="auth_enable_open_id" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_open_id" name="auth_enable_open_id" class="input-xlarge input" value="true" />
                            <p class="help-block">Enable Open Id Authentication (No registration required for OpenID based providers)</p>
                        </div>
                     </div>
@@ -598,7 +608,7 @@
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_aol">Allow AOL Authentication</label>
                        <div class="controls">
-                           <input type="checkbox" id="auth_enable_aol" name="auth_enable_aol" class="input-xlarge input" />
+                           <input type="checkbox" id="auth_enable_aol" name="auth_enable_aol" class="input-xlarge input" value="true" />
                            <p class="help-block">Enable AOL Authentication (No registration required for OpenID based providers)</p>
                        </div>
                     </div>

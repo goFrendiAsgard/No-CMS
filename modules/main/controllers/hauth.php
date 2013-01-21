@@ -6,17 +6,23 @@ class HAuth extends CMS_Controller {
 	{
 		// Constructor to auto-load HybridAuthLib
 		parent::__construct();
-		$this->load->library('HybridAuthLib');
+		if(in_array  ('curl', get_loaded_extensions())){
+			$this->load->library('HybridAuthLib');
+		}		
 	}
 
 	public function index()
 	{
-		// Send to the view all permitted services as a user profile if authenticated
-		$data['providers'] = $this->hybridauthlib->getProviders();
-		foreach($data['providers'] as $provider=>$d) {
-			if ($d['connected'] == 1) {
-				$data['providers'][$provider]['user_profile'] = $this->hybridauthlib->authenticate($provider)->getUserProfile();
+		if(in_array  ('curl', get_loaded_extensions())){
+			// Send to the view all permitted services as a user profile if authenticated
+			$data['providers'] = $this->hybridauthlib->getProviders();
+			foreach($data['providers'] as $provider=>$d) {
+				if ($d['connected'] == 1) {
+					$data['providers'][$provider]['user_profile'] = $this->hybridauthlib->authenticate($provider)->getUserProfile();
+				}
 			}
+		}else{
+			$data['providers'] = array();
 		}
 		$this->view('main/hauth/home', $data, 'main_third_party_auth');
 	}
