@@ -23,8 +23,12 @@
 	
 	$var_record_index = 'RECORD_INDEX_'.$master_column_name;
 	$var_data = 'DATA_'.$master_column_name;
-	$fn_synchronize = 'synchronize_'.$master_column_name;	
+	$fn_synchronize = 'synchronize_'.$master_column_name;
+	$fn_add_table_row = 'add_table_row_'.$master_column_name;	
 ?>
+&lt;?php
+	$record_index = 0;
+?&gt;
 <style type="text/css">
 	/* set width of every detail input*/
 	.<?php echo $column_input_class ?>{
@@ -40,26 +44,11 @@
 		echo '			<th>'.$caption.'</th>'.PHP_EOL;
 	}		
 ?>
-		<th>
-			Action
-		</th>
+			<th>Action</th>
 		</tr>
 	</thead>
-	<tbody>
-	&lt;?php
-	$record_index = 0;
-	foreach($result as $row){
-		echo '<tr id="<?php echo $tr_class ?>_'.$record_index.'" class="<?php echo $tr_class ?>">';
-<?php
-	foreach($detail_column_names as $name){
-		echo '		echo \'<td><input id="'.$column_input_class.'_'.$name.'_\'.$record_index.\'" record_index="\'.$record_index.\'" class="'.$column_input_class.'" column_name="'.$name.'" type="text" value="\'.$row[\''.$name.'\'].\'"/></td>\';'.PHP_EOL;
-	}		
-?>
-		echo '<td><input class="<?php echo $delete_button_class; ?> btn" record_index="'.$record_index.'" primary_key="'.$row['<?php echo $detail_primary_key_name ?>'].'" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';		
-		echo '</tr>';
-		$record_index += 1;
-	}
-	?&gt;
+	<tbody>	
+		<!-- the content will be here -->
 	</tbody>	
 </table>
 <input id="<?php echo $add_button_id; ?>" class="btn" type="button" value="Add <?php echo $detail_table_caption; ?>" />
@@ -67,6 +56,9 @@
 <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
 
 <script type="text/javascript">
+	/**
+	 * DATA INITIALIZATION ==================================================================================
+	 */
 	var <?php echo $var_record_index; ?> = &lt;?php echo $record_index; ?&gt;;	 
 	var <?php echo $var_data; ?> = {update:new Array(), insert:new Array(), delete:new Array()};
 	var old_data = &lt;?php echo json_encode($result); ?&gt;;
@@ -83,14 +75,59 @@
 		});
 	}
 	
+	/**
+	 * FUNCTIONS ============================================================================================
+	 */
+	
+	// syncrhonize data to <?php echo $real_input_id; ?>.
 	function <?php echo $fn_synchronize; ?>(){
 		$('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
 	}
-	
-	$(document).ready(function(){
-		<?php echo $fn_synchronize; ?>();
+	// add component to the table
+	function <?php echo $fn_add_table_row; ?>(value){
+		var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
+		<?php 		
+		foreach($detail_column_names as $name){
+			echo PHP_EOL;
+			echo '		// field "'.$name.'"'.PHP_EOL;
+			echo '		var field_value = \'\''.PHP_EOL;
+			echo '		if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
+			echo '			field_value = value.'.$name.';'.PHP_EOL;
+			echo '		}'.PHP_EOL;
+			echo '		component += \'<td>\';'.PHP_EOL;
+			echo '		component += \'<input id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
+				'+\'" class="'.$column_input_class.'" column_name="'.$name.'" type="text" value="\'+field_value+\'"/>\';'.PHP_EOL;
+			echo'		component += \'</td>\';'.PHP_EOL;
+		}
+		?>
 		
-		// add event
+		// delete button
+		component += '<td><input class="<?php echo $delete_button_class; ?> btn" record_index="'+<?php echo $var_record_index; ?>+'" primary_key="" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';
+		component += '</tr>';
+		
+		// add to the table
+		$('#<?php echo $table_id; ?> tbody').append(component);
+	}
+
+	
+	/**
+	 * MAIN PROGRAM ==========================================================================================
+	 */
+	$(document).ready(function(){
+		/**
+		 * INITIALIZATION
+		 */
+		<?php echo $fn_synchronize; ?>();
+		for(var i=0; i<old_data.length; i++){
+			console.log(old_data[i]);
+			<?php echo $fn_add_table_row; ?>(old_data[i]);
+			<?php echo $var_record_index; ?>++;
+		}
+		
+		
+		/**
+		 * ADD RECORD EVENT : <?php echo $add_button_id; ?>.click ===========================================
+		 */
 		$('#<?php echo $add_button_id; ?>').click(function(){
 			// new data
 			var data = new Object();			
@@ -99,32 +136,26 @@
 				echo '			data.'.$name.' = \'\';'.PHP_EOL;
 			}
 			?>
-			
-			// new component
-			var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
-			<?php echo PHP_EOL;
-			foreach($detail_column_names as $name){
-				echo '			component += \'<td><input id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.'+\'" class="'.$column_input_class.'" column_name="'.$name.'" type="text" value=""/></td>\';'.PHP_EOL;
-			}
-			?>
-			component += '<td><input class="<?php echo $delete_button_class; ?> btn" record_index="'+<?php echo $var_record_index; ?>+'" primary_key="" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';
-			component += '</tr>';
-			
-			// add data
+			// insert data to the <?php echo $var_data.PHP_EOL; ?>
 			<?php echo $var_data; ?>.insert.push({
 				'record_index' : <?php echo $var_record_index; ?>,
 				'primary_key' : '',
 				'data' : data,
 			});
 			
-			// add component
-			$('#<?php echo $table_id; ?> tbody').append(component);
-			
+			// add table's row
+			<?php echo $fn_add_table_row; ?>(data);			
+			// add <?php $var_record_index; ?> by 1
 			<?php echo $var_record_index; ?>++;
+			
+			// synchronize to the <?php echo $real_input_id.PHP_EOL; ?>
 			<?php echo $fn_synchronize; ?>();
 		});
 		
-		// delete event
+		
+		/** 
+		 * DELETE RECORD EVENT : <?php echo $delete_button_class; ?>.click =================================
+		 */
 		$('.<?php echo $delete_button_class ?>').live('click', function(){
 			var record_index = $(this).attr('record_index');
 			// remove the component
@@ -156,9 +187,12 @@
 				}
 			}			
 			<?php echo $fn_synchronize; ?>();
-		});		
+		});
+				
 		
-		// update event
+		/** 
+		 * UPDATE FIELD EVENT : <?php echo $column_input_class; ?>.change ==================================
+		 */
 		$('.<?php echo $column_input_class; ?>').live('change', function(){				
 			var value = $(this).val();
 			var column_name = $(this).attr('column_name');
@@ -189,16 +223,3 @@
 	})
 	
 </script>
-
-
-<?php
-    /**
-	echo var_dump($project_name);
-	echo var_dump($master_table_name);
-	echo var_dump($master_column_name);
-	echo var_dump($detail_table_name);
-	echo var_dump($detail_foreign_key_name);
-	echo var_dump($master_primary_key_name);
-	echo var_dump($detail_table);
-	 **/
-?>

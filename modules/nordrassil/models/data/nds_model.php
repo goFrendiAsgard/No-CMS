@@ -227,7 +227,14 @@ class Nds_Model extends CMS_Model{
 					$column_array[] = '  `'.$column_name.'` '.$column_type.'('.$column_size.') unsigned NOT NULL AUTO_INCREMENT';
 					$primary = '  PRIMARY KEY (`'.$column_name.'`)';
 				}else if($role == 'primary' || $role == '' || $role == 'lookup'){
-					$column_array[] = '  `'.$column_name.'` '.$column_type.'('.$column_size.')';
+					if($column_type == 'date' || $column_type == 'text'){
+						$column_array[] = '  `'.$column_name.'` '.$column_type;	
+					}else{
+						if(!isset($column_size) || $column_size == ''){
+							$column_size = 100;
+						}
+						$column_array[] = '  `'.$column_name.'` '.$column_type.'('.$column_size.')';
+					}
 				}
 			}
 			$column_string = implode(','.PHP_EOL, $column_array);
