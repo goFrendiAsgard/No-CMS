@@ -1,0 +1,1 @@
+        $this->remove_navigation("{{ front_navigation_name }}");

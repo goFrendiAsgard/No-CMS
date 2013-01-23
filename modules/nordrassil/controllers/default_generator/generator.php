@@ -27,6 +27,7 @@ class Generator extends CMS_Controller{
 		$this->create_installer($project_path, $tables, $project_name);
 		$this->create_main_controller_and_view($project_path, $project_name);
 		$this->create_controller_and_view($project_path, $project_name, $tables);
+		$this->create_front_controller_and_view($project_path, $project_name, $tables);
 		
 		
 		if($this->input->is_ajax_request()){
@@ -34,6 +35,60 @@ class Generator extends CMS_Controller{
 			$this->cms_show_json($response);
 		}else{
 			$this->cms_show_variable($projects);
+		}
+		
+	}
+	
+	private function create_front_controller_and_view($project_path, $project_name, $tables){
+		// filter tables, just the everything without "dont_make_form" option
+		$selected_tables = array();
+		for($i=0; $i<count($tables); $i++){
+			$table = $tables[$i];
+			if($table['options']['make_frontpage']){
+				$selected_tables[] = $table;
+			}
+		}
+		$tables = $selected_tables;
+		
+		$this->load->helper('inflector');
+		// get save_project_name
+		$save_project_name = underscore($project_name);
+		foreach($tables as $table){
+			$table_name = $table['name'];
+			$table_caption = $table['caption'];
+			$save_table_name = underscore($table_name);
+			$controller_name = $save_project_name.'_'.$save_table_name;
+			$navigation_name = $save_project_name.'_front_'.$save_table_name;
+			$columns = $table['columns'];
+			
+			$pattern = array(
+				'project_name',
+				'controller_name',
+				'table_name',
+				'navigation_name',
+				'table_caption',
+			);
+			$replacement = array(
+				$save_project_name,
+				$controller_name,
+				$table_name,
+				$navigation_name,
+				$table_caption,
+			);
+			// prepare data
+			$data = array(
+				'table_name' => $table_name,
+				'columns' => $columns
+			);
+			// controllers
+			$str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern,$replacement);
+			$this->nds->write_file($project_path.'controllers/front/'.$controller_name.'.php', $str);
+			// models
+			$str = $this->nds->read_view('nordrassil/default_generator/front_model.php',$data,$pattern,$replacement);
+			$this->nds->write_file($project_path.'models/front/'.$controller_name.'_model.php', $str);
+			// views
+			$str = $this->nds->read_view('nordrassil/default_generator/front_view.php',$data,$pattern,$replacement);
+			$this->nds->write_file($project_path.'views/front/'.$controller_name.'_index.php', $str);
 		}
 		
 	}
@@ -54,6 +109,7 @@ class Generator extends CMS_Controller{
 		$save_project_name = underscore($project_name);
 		foreach($tables as $table){
 			$table_name = $table['name'];
+			$table_caption = $table['caption'];
 			$save_table_name = underscore($table_name);
 			$navigation_name = $save_project_name.'_'.$save_table_name;
 			$columns = $table['columns'];
@@ -185,6 +241,7 @@ class Generator extends CMS_Controller{
 			$pattern = array(
 				'navigation_name',
 				'table_name',
+				'table_caption',
 				'controller_name',
 				'field_list',
 				'display_as',
@@ -200,6 +257,7 @@ class Generator extends CMS_Controller{
 			$replacement = array(
 				$navigation_name,
 				$table_name,
+				$table_caption,
 				$navigation_name,
 				$field_list,
 				$display_as,
@@ -260,42 +318,67 @@ class Generator extends CMS_Controller{
 			$table_list_array[] = '\''.$table['name'].'\'';
 		}
 		$table_list = implode(',',$table_list_array);
+		
 		//remove_navigations
-		$remove_navigations = '';
+		$remove_back_navigations = '';
+		$remove_front_navigations = '';
 		foreach(array_reverse($tables) as $table){
 			if(!$table['options']['dont_make_form']){
 				$table_name = $table['name'];
 				$save_table_name = underscore($table_name);
 				$navigation_name = $save_project_name.'_'.$save_table_name;
-				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_navigation',NULL,
+				$front_navigation_name = $save_project_name.'_front_'.$save_table_name;
+				// back
+				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_back_navigation',NULL,
 					'navigation_name', $navigation_name
 				);
-				$remove_navigations .= $str.PHP_EOL;
+				$remove_back_navigations .= $str.PHP_EOL;
+				// front
+				if($table['options']['make_frontpage']){					
+					$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_front_navigation',NULL,
+						'front_navigation_name', $front_navigation_name);
+					$remove_front_navigations .= $str.PHP_EOL;
+				}
 			}
-		}		
+		}
+		$remove_navigations = $remove_front_navigations.$remove_back_navigations;
+				
 		//add_navigations
-		$add_navigations = '';
+		$add_back_navigations = '';
+		$add_front_navigations = '';
 		foreach($tables as $table){
 			if(!$table['options']['dont_make_form']){
 				$table_name = $table['name'];
 				$save_table_name = underscore($table_name);
 				$table_caption = $table['caption'];
-				$navigation_name = $save_project_name.'_'.$save_table_name;
-				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_navigation',NULL,
-					array(
+				$navigation_name = $save_project_name.'_'.$save_table_name;	
+				$front_navigation_name = $save_project_name.'_front_'.$save_table_name;
+				$pattern = 	array(
+						'front_navigation_name',
 						'navigation_name',
 						'navigation_caption',
-						'navigation_parent_name'
-					),
-					array(
+						'navigation_parent_name',
+					);
+				$replacement = array(
+						$front_navigation_name,
 						$navigation_name,
 						$table_caption,
 						$save_project_name.'_index',
-					)
-				);
-				$add_navigations .= $str.PHP_EOL;
+					);
+				// back
+				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_back_navigation',NULL,
+					$pattern, $replacement);
+				$add_back_navigations .= $str.PHP_EOL;
+				// front
+				if($table['options']['make_frontpage']){					
+					$str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_front_navigation',NULL,
+						$pattern, $replacement);
+					$add_front_navigations .= $str.PHP_EOL;
+				}
 			}
 		}
+		$add_navigations = $add_front_navigations.$add_back_navigations;
+		
 		$pattern = array(
 			'namespace',
 			'table_list',
@@ -332,10 +415,13 @@ class Generator extends CMS_Controller{
 		$this->nds->make_directory($project_path.'assets/images/');
 		$this->nds->make_directory($project_path.'controllers/');
 		$this->nds->make_directory($project_path.'controllers/data/');
+		$this->nds->make_directory($project_path.'controllers/front/');
 		$this->nds->make_directory($project_path.'models/');
 		$this->nds->make_directory($project_path.'models/data');
+		$this->nds->make_directory($project_path.'models/front');
 		$this->nds->make_directory($project_path.'views/');
 		$this->nds->make_directory($project_path.'views/data');
+		$this->nds->make_directory($project_path.'views/front');
 		// create htaccess
 		$str = $this->nds->read_view('default_generator/htaccess');
 		$this->nds->write_file($project_path.'assets/db/.htaccess', $str);

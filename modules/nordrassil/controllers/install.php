@@ -63,6 +63,7 @@ class Install extends CMS_Module_Installer {
 		$table_options = array(
 			array('name'=>'dont_make_form', 'description'=>'make form for this table'),
 			array('name'=>'dont_create_table', 'description'=>'don\'t create/drop table on installation'),
+			array('name'=>'make_frontpage', 'description'=>'Make front page for this table'),
 		);
 		$column_options = array(
 			array('name'=>'hide', 'description'=>'shown'),

@@ -21,6 +21,9 @@ class {{ controller_name }} extends CMS_Controller {
         // table name
         $crud->set_table('{{ table_name }}');
         
+        // set subject
+        $crud->set_subject('{{ table_caption }}');
+        
         // displayed columns on list
         $crud->columns({{ field_list }});
         // displayed columns on edit operation

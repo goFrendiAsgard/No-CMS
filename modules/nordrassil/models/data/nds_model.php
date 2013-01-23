@@ -108,22 +108,27 @@ class Nds_Model extends CMS_Model{
 					$column = $row;
 					$column_id = $column['column_id'];
 					unset($column['column_id']);
+					// lookup
 					$column ['lookup_table_name'] = $this->get_table_name($column['lookup_table_id']);
-					unset($column['lookup_table_id']);
-					$column ['relation_table_name'] = $this->get_table_name($column['relation_table_id']);
-					unset($column['relation_table_id']);
-					$column ['selection_table_name'] = $this->get_table_name($column['selection_table_id']);
-					unset($column['selection_table_id']);
 					$column ['lookup_column_name'] = $this->get_column_name($column['lookup_column_id']);
+					$column['lookup_table_primary_key'] = $this->get_primary_key($column['lookup_table_id']);					
+					unset($column['lookup_table_id']);
 					unset($column['lookup_column_id']);
+					// relation
+					$column ['relation_table_name'] = $this->get_table_name($column['relation_table_id']);
 					$column ['relation_table_column_name'] = $this->get_column_name($column['relation_table_column_id']);
-					unset($column['relation_table_column_id']);
+					$column ['relation_priority_column_name'] = $this->get_column_name($column['relation_priority_column_id']);
 					$column ['relation_selection_column_name'] = $this->get_column_name($column['relation_selection_column_id']);
 					unset($column['relation_selection_column_id']);
-					$column ['relation_priority_column_name'] = $this->get_column_name($column['relation_priority_column_id']);
-					unset($column['relation_priority_column_id']);
+					unset($column['relation_priority_column_id']);					
+					unset($column['relation_table_id']);
+					unset($column['relation_table_column_id']);
+					// selection
+					$column ['selection_table_name'] = $this->get_table_name($column['selection_table_id']);
 					$column ['selection_column_name'] = $this->get_column_name($column['selection_column_id']);
+					$column['selection_table_primary_key'] = $this->get_primary_key($column['selection_table_id']);
 					unset($column['selection_column_id']);
+					unset($column['selection_table_id']);					
 					
 					// get table options
 					$column_options = array();
@@ -161,6 +166,19 @@ class Nds_Model extends CMS_Model{
 	
 	private function get_column_name($column_id){
 		$query = $this->db->select('name')->from('nds_column')->where('column_id',$column_id)->get();
+		if($query->num_rows()>0){
+			$row = $query->row();
+			return $row->name;
+		}else{
+			return '';
+		}
+	}
+	
+	private function get_primary_key($table_id){
+		$query = $this->db->select('name')
+			->from('nds_column')
+			->where(array('table_id'=>$table_id, 'role'=>'primary'))
+			->get();
 		if($query->num_rows()>0){
 			$row = $query->row();
 			return $row->name;
