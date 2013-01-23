@@ -84,6 +84,8 @@ class Nds_Model extends CMS_Model{
 				$table = $row;
 				$table_id = $table['table_id'];
 				unset($table['table_id']);
+				$table['name'] = addslashes($table['name']);
+				$table['caption'] = addslashes($table['caption']);
 				
 				// get table options
 				$table_options = array();
@@ -107,6 +109,8 @@ class Nds_Model extends CMS_Model{
 				foreach($query->result_array() as $row){
 					$column = $row;
 					$column_id = $column['column_id'];
+					$column['name'] = addslashes($column['name']);
+					$column['caption'] = addslashes($column['caption']);
 					unset($column['column_id']);
 					// lookup
 					$column ['lookup_table_name'] = $this->get_table_name($column['lookup_table_id']);
@@ -158,7 +162,7 @@ class Nds_Model extends CMS_Model{
 		$query = $this->db->select('name')->from('nds_table')->where('table_id',$table_id)->get();
 		if($query->num_rows()>0){
 			$row = $query->row();
-			return $row->name;
+			return addslashes($row->name);
 		}else{
 			return '';
 		}
@@ -168,7 +172,7 @@ class Nds_Model extends CMS_Model{
 		$query = $this->db->select('name')->from('nds_column')->where('column_id',$column_id)->get();
 		if($query->num_rows()>0){
 			$row = $query->row();
-			return $row->name;
+			return addslashes($row->name);
 		}else{
 			return '';
 		}
@@ -181,7 +185,7 @@ class Nds_Model extends CMS_Model{
 			->get();
 		if($query->num_rows()>0){
 			$row = $query->row();
-			return $row->name;
+			return addslashes($row->name);
 		}else{
 			return '';
 		}

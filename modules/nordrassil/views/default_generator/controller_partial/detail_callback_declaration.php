@@ -20,8 +20,11 @@
 			->where('<?php echo $detail_foreign_key_name; ?>', $primary_key)
 			->get();
 		$result = $query->result_array();
+		$this->config->load('grocery_crud');
+        $date_format = $this->config->item('grocery_crud_date_format');
 		$data = array(
-			'result' => $result
+			'result' => $result,
+			'date_format' => $date_format,
 		);
 		return $this->load->view('<?php echo $view_path; ?>',$data, TRUE);
 	}

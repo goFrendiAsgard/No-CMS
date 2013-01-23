@@ -3,13 +3,16 @@
 	$detail_columns = $detail_table['columns'];
 	$detail_column_captions = array();
 	$detail_column_names = array();
+	$detail_column_data_types = array();
 	foreach($detail_columns as $detail_column){
 		$caption = $detail_column['caption'];
 		$name = $detail_column['name'];
+		$data_type = $detail_column['data_type'];
 		if($name == $detail_primary_key_name) continue;
 		if($name == $detail_foreign_key_name) continue;
 		$detail_column_captions[] = $caption;
 		$detail_column_names[] = $name;
+		$detail_column_data_types[] = $data_type;
 	}
 	
 	$detail_table_caption = $detail_table['caption'];
@@ -59,6 +62,7 @@
 	/**
 	 * DATA INITIALIZATION ==================================================================================
 	 */
+	var DATE_FORMAT = '&lt;? echo $date_format ?&gt;';
 	var <?php echo $var_record_index; ?> = &lt;?php echo $record_index; ?&gt;;	 
 	var <?php echo $var_data; ?> = {update:new Array(), insert:new Array(), delete:new Array()};
 	var old_data = &lt;?php echo json_encode($result); ?&gt;;
@@ -86,19 +90,39 @@
 	// add component to the table
 	function <?php echo $fn_add_table_row; ?>(value){
 		var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
-		<?php 		
-		foreach($detail_column_names as $name){
+		<?php
+		$date_exist = FALSE; 		
+		for($i=0; $i<count($detail_column_names); $i++){
+			$name = $detail_column_names[$i];
+			$data_type = $detail_column_data_types[$i];
+			$additional_class_array = array();
+			if($data_type=='date'){
+				$additional_class_array[] = 'datepicker-input';
+				$date_exist = TRUE;
+			}
+			if(count($additional_class_array)>0){
+				$additional_class = ' '.implode(' ',$additional_class_array);	
+			}else{
+				$additional_class = '';
+			}
 			echo PHP_EOL;
 			echo '		// field "'.$name.'"'.PHP_EOL;
 			echo '		var field_value = \'\''.PHP_EOL;
 			echo '		if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
-			echo '			field_value = value.'.$name.';'.PHP_EOL;
+			if($data_type=='date'){
+				echo '			field_value = php_date_to_js(value.'.$name.');'.PHP_EOL;
+			}else{
+				echo '			field_value = value.'.$name.';'.PHP_EOL;
+			}			
 			echo '		}'.PHP_EOL;
 			echo '		component += \'<td>\';'.PHP_EOL;
 			echo '		component += \'<input id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
-				'+\'" class="'.$column_input_class.'" column_name="'.$name.'" type="text" value="\'+field_value+\'"/>\';'.PHP_EOL;
+				'+\'" class="'.$column_input_class.$additional_class.'" column_name="'.$name.'" type="text" value="\'+field_value+\'"/>\';'.PHP_EOL;
+			if($data_type == 'date'){
+				echo '		component += \'<a href="#" class="datepicker-input-clear btn">Clear</a>\''.PHP_EOL;
+			}
 			echo'		component += \'</td>\';'.PHP_EOL;
-		}
+		}		
 		?>
 		
 		// delete button
@@ -107,6 +131,74 @@
 		
 		// add to the table
 		$('#<?php echo $table_id; ?> tbody').append(component);
+		
+		<?php
+		if($date_exist){
+		echo PHP_EOL."
+		// change into datepicker
+		$('.datepicker-input').datepicker({
+				dateFormat: js_date_format,
+				showButtonPanel: true,
+				changeMonth: true,
+				changeYear: true
+		});
+		// clear event
+		$('.datepicker-input-clear').click(function(){
+			$(this).parent().find('.datepicker-input').val(\"\");
+			return false;
+		});".PHP_EOL;			
+		}
+		?>
+		
+	}
+	
+	function js_date_to_php(js_date){
+		if(typeof(js_date)=='undefined' || js_date == ''){
+			return '';
+		}
+		var date = '';
+		var month = '';
+		var year = '';	
+		var php_date = '';	
+		if(DATE_FORMAT == 'uk-date'){
+			var date_array = js_date.split('/')
+			day = date_array[0];
+			month = date_array[1];
+			year = date_array[2];
+			php_date = year+'-'+month+'-'+day;
+		}else if(DATE_FORMAT == 'us-date'){
+			var date_array = js_date.split('/')
+			day = date_array[1];
+			month = date_array[0];
+			year = date_array[2];
+			php_date = year+'-'+month+'-'+day;
+		}else if(DATE_FORMAT == 'sql-date'){
+			var date_array = js_date.split('-')
+			day = date_array[2];
+			month = date_array[1];
+			year = date_array[0];
+			php_date = year+'-'+month+'-'+day;
+		}
+		return php_date;
+	}
+	
+	function php_date_to_js(php_date){
+		if(typeof(php_date)=='undefined' || php_date == ''){
+			return '';
+		}
+		var date_array = php_date.split('-');
+		var year = date_array[0];
+		var month = date_array[1];
+		var day = date_array[2];
+		if(DATE_FORMAT == 'uk-date'){
+			return day+'/'+month+'/'+year;
+		}else if(DATE_FORMAT == 'us-date'){
+			return month+'/'+date+'/'+year;
+		}else if(DATE_FORMAT == 'sql-date'){
+			return year+'-'+month+'-'+day;
+		}else{
+			return '';
+		}
 	}
 
 	
@@ -119,7 +211,6 @@
 		 */
 		<?php echo $fn_synchronize; ?>();
 		for(var i=0; i<old_data.length; i++){
-			console.log(old_data[i]);
 			<?php echo $fn_add_table_row; ?>(old_data[i]);
 			<?php echo $var_record_index; ?>++;
 		}
@@ -198,6 +289,9 @@
 			var column_name = $(this).attr('column_name');
 			var record_index = $(this).attr('record_index');
 			var record_index_found = false;
+			if($(this).hasClass('datepicker-input')){
+				value = js_date_to_php(value);
+			}
 			for(var i=0; i<<?php echo $var_data; ?>.insert.length; i++){
 				if(<?php echo $var_data; ?>.insert[i].record_index == record_index){
 					record_index_found = true;

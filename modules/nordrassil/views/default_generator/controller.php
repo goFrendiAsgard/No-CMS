@@ -69,8 +69,8 @@ class {{ controller_name }} extends CMS_Controller {
 {{ detail_callback_call }}        
         
         // render
-        $output = $crud->render();
-        $this->view("grocery_CRUD", $output, "{{ navigation_name }}");
+        $output = $crud->render();        
+        $this->view("{{ directory }}/data/{{ controller_name }}_index", $output, "{{ navigation_name }}");
         
     }
     

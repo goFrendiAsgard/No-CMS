@@ -34,6 +34,8 @@
 	var PAGE = 0;
 	var URL = '&lt;?php echo site_url("{{ project_name }}/front/{{ controller_name }}/get_data"); ?&gt;';
 	var LOADING = false;
+	var REQUEST
+    var RUNNING_REQUEST = false;
 	
 	function fetch_more_data(async){
 		if(typeof(async) == 'undefined'){
@@ -41,7 +43,12 @@
 		}
 		$('#content-bottom').html('Load more {{ table_caption }} ...');
 		var keyword = $('#input_search').val();
-		$.ajax({
+		// kill all previous AJAX
+		if(RUNNING_REQUEST){
+            REQUEST.abort();
+        }
+        RUNNING_REQUEST = true;
+		REQUEST = $.ajax({
 			'url'  : URL,
 			'type' : 'POST',
 			'async': async,
@@ -63,10 +70,12 @@
 					contents += '</div>'
 				}
 				$('#content').append(contents);
-				$('#content-bottom').html('No more {{ table_caption }}');
+				$('#content-bottom').html('No more {{ table_caption }} to show');
+				RUNNING_REQUEST = false;
+				PAGE ++;
 			}
 		});
-		PAGE ++;
+		
 	}
 	
 	function reset_content(){
