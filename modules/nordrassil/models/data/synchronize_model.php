@@ -6,6 +6,11 @@ class Synchronize_Model extends CMS_Model{
 	private $db_port;
 	private $db_password;
 	private $db_schema;
+	private $numeric_data_type = array(
+			'int','real','tinyint', 'smallint', 'mediumint',
+			'integer', 'bigint', 'float', 'double', 
+			'decimal', 'numeric',
+		);
 	
 	public function synchronize($project_id){
 		// make project_id save of SQL injection		
@@ -94,16 +99,36 @@ class Synchronize_Model extends CMS_Model{
 				$role = '';
 			}
 			$data_type = $row['DATA_TYPE'];
-			// get length (data_size) of the column
 			$length = NULL;
-			if($data_type == 'int' || $data_type=='tinyint' || $data_type=='double'){
-				$length = $row['NUMERIC_PRECISION'];
+			$value_selection_mode = NULL;
+			$value_selection_item = NULL;
+			// get enum or set
+			if($data_type == 'set' || $data_type == 'enum'){
+				$pattern = '/^'.$data_type.'\((.*)\)$/';
+				$value_selection_mode = $data_type;
+				$data_type = 'varchar';
+				$length = 255;
+				
+				$column_sql = "SHOW COLUMNS FROM $save_db_schema.$save_table_name WHERE field ='".addslashes($row['COLUMN_NAME'])."'";
+				$column_result = mysqli_query($this->connection, $column_sql);
+				$column_row = mysqli_fetch_array($column_result);
+				$type = $column_row['Type'];
+				$matches = array();
+				if(preg_match($pattern, $type, $matches)>0){
+					$value_selection_item = $matches[1];
+				}
 			}else{
-				$length = $row['CHARACTER_MAXIMUM_LENGTH'];
+				// get length (data_size) of the column			
+				if(in_array($data_type, $this->numeric_data_type)){
+					$length = $row['NUMERIC_PRECISION'];
+				}else{
+					$length = $row['CHARACTER_MAXIMUM_LENGTH'];
+				}
+				if(!isset($length)){
+					$length = 10;
+				}	
 			}
-			if(!isset($length)){
-				$length = 10;
-			}
+			
 			// inserting the field
 			$data = array(
 					'table_id' => $table_id,
@@ -111,7 +136,9 @@ class Synchronize_Model extends CMS_Model{
 					'caption' => humanize($row['COLUMN_NAME']),
 					'data_type' => $data_type,
 					'data_size' => $length,
-					'role' => $role
+					'role' => $role,
+					'value_selection_mode'=>$value_selection_mode,
+					'value_selection_item'=>$value_selection_item,
 				);
 			$this->db->insert('nds_column', $data);
 		}

@@ -1,5 +1,17 @@
 <?php
 class Nds_Model extends CMS_Model{
+	public $available_data_type = array(
+			'int','varchar','char','real','text','date',
+			'tinyint', 'smallint', 'mediumint', 'integer', 'bigint', 'float', 'double', 
+			'decimal', 'numeric', 'datetime', 'timestamp', 'time', 
+			'year', 'tinyblob', 'tinytext', 'blob', 'mediumblob', 'mediumtext', 
+			'longblob', 'longtext',
+		);
+	public $type_without_length = array('text','date','datetime','timestamp','time','year',
+			'tinyblob', 'tinytext', 'blob', 'mediumblob', 'mediumtext', 'longblob', 'longtext'
+		);
+	public $detault_data_type = 'varchar';
+	
 	public function get_all_project(){
 		$query = $this->db->select('project_id, nds_project.name, nds_template.generator_path')
 			->from('nds_project')
@@ -102,7 +114,7 @@ class Nds_Model extends CMS_Model{
 				$columns = array();
 				$query = $this->db->select('column_id, caption, name, data_type, data_size, role, lookup_table_id, lookup_column_id, 
 					relation_table_id, relation_table_column_id, relation_selection_column_id, relation_priority_column_id, 
-					selection_table_id, selection_column_id')
+					selection_table_id, selection_column_id, value_selection_mode, value_selection_item')
 					->from('nds_column')
 					->where('table_id', $table_id)
 					->get();
@@ -132,8 +144,14 @@ class Nds_Model extends CMS_Model{
 					$column ['selection_column_name'] = $this->get_column_name($column['selection_column_id']);
 					$column['selection_table_primary_key'] = $this->get_primary_key($column['selection_table_id']);
 					unset($column['selection_column_id']);
-					unset($column['selection_table_id']);					
-					
+					unset($column['selection_table_id']);
+					// value selection (for enum and set)
+					$column['value_selection_item'] = isset($column['value_selection_item'])?$column['value_selection_item']:'';
+					$column['value_selection_mode'] = isset($column['value_selection_mode'])?$column['value_selection_mode']:'';
+					if($column['value_selection_mode']!=''){
+						$column['data_size'] = 255;
+					}
+										
 					// get table options
 					$column_options = array();
 					foreach($column_option_headers as $name=>$option_id){
@@ -249,11 +267,15 @@ class Nds_Model extends CMS_Model{
 					$column_array[] = '  `'.$column_name.'` '.$column_type.'('.$column_size.') unsigned NOT NULL AUTO_INCREMENT';
 					$primary = '  PRIMARY KEY (`'.$column_name.'`)';
 				}else if($role == 'primary' || $role == '' || $role == 'lookup'){
-					if($column_type == 'date' || $column_type == 'text'){
+					if(in_array($column_type, $this->type_without_length)){
 						$column_array[] = '  `'.$column_name.'` '.$column_type;	
 					}else{
 						if(!isset($column_size) || $column_size == ''){
-							$column_size = 100;
+							$column_size = 10;
+						}
+						if(!in_array($column_type, $this->available_data_type)){
+							$column_type = $this->detault_data_type;
+							$column_size = 255;
 						}
 						$column_array[] = '  `'.$column_name.'` '.$column_type.'('.$column_size.')';
 					}

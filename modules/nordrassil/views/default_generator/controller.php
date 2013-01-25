@@ -54,6 +54,7 @@ class {{ controller_name }} extends CMS_Controller {
 		 * eg: 
 		 * 		$crud->field_type( $field_name , $field_type, $value  );
 		**/
+{{ enum_set_field }}
 {{ hide_field }}
 		
 		/** HINT: Put callback here

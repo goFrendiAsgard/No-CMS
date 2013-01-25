@@ -79,15 +79,21 @@
 		});
 		
 		// when role changed
-		adjust_form_by_role();
+		
 		$("select#field-role").change(function(){
-			adjust_form_by_role();
+			adjust_form_by_role_and_data_type();
 		});
+		$("select#field-data_type").change(function(){
+			adjust_form_by_role_and_data_type();
+		})
+		
+		adjust_form_by_role_and_data_type();
 			
 	});
 	
-	function adjust_form_by_role(){
+	function adjust_form_by_role_and_data_type(){
 		var role = $("select#field-role").val();
+		var data_type = $("select#field-data_type").val();		
 		$("#data_type_field_box").hide();
 		$("#data_size_field_box").hide();
 		$("#lookup_table_id_field_box").hide();
@@ -98,6 +104,8 @@
 		$("#relation_priority_column_id_field_box").hide();
 		$("#selection_table_id_field_box").hide();
 		$("#selection_column_id_field_box").hide();
+		$("#value_selection_mode_field_box").hide();
+		$("#value_selection_item_field_box").hide();		
 		if(role=='' || role=='primary' || role=='lookup'){
 			$("#data_type_field_box").show();
 			$("#data_size_field_box").show();
@@ -116,6 +124,11 @@
 			$("#selection_table_id_field_box").show();
 			$("#selection_column_id_field_box").show();
 		}
+		if(role == '' && data_type=='varchar'){
+			$("#value_selection_mode_field_box").show();
+			$("#value_selection_item_field_box").show();
+		}
+		
 	}
 	
 </script>

@@ -296,6 +296,7 @@ class nds extends CMS_Controller {
 	}
 
     public function column($table_id=NULL){
+    	$this->load->model('nordrassil/data/nds_model');
         $crud = new grocery_CRUD();
         
         // table name
@@ -304,10 +305,10 @@ class nds extends CMS_Controller {
         // displayed columns on list
         $crud->columns('table_id','name','caption','data_type','data_size','role','options','priority');
         // displayed columns on edit operation
-        $crud->edit_fields('table_id','name','caption','data_type','data_size','role','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
+        $crud->edit_fields('table_id','name','caption','data_type','data_size','role','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
         	'relation_selection_column_id','relation_priority_column_id','selection_table_id','selection_column_id');
         // displayed columns on add operation
-        $crud->add_fields('table_id','name','caption','data_type','data_size','role','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
+        $crud->add_fields('table_id','name','caption','data_type','data_size','role','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
         	'relation_selection_column_id','relation_priority_column_id','selection_table_id','selection_column_id');
         
         // caption of each columns
@@ -324,10 +325,13 @@ class nds extends CMS_Controller {
         $crud->display_as('relation_selection_column_id','Relation Column To Selection Table');
         $crud->display_as('relation_priority_column_id','Relation Priority Column');
         $crud->display_as('selection_table_id','Selection Table');
-		$crud->display_as('selection_column_id','Selection Column');
+		$crud->display_as('selection_column_id','Viewed Selection Column');
+		$crud->display_as('value_selection_mode','Selection Mode');
+		$crud->display_as('value_selection_item','Selection Item');
 		
-		$crud->change_field_type('data_type', 'enum', array('varchar','int','float','date','text'));
-		$crud->change_field_type('role', 'enum', array('primary','lookup','detail many to many','detail one to many'));
+		$crud->field_type('data_type', 'enum', $this->nds_model->available_data_type);
+		$crud->field_type('role', 'enum', array('primary','lookup','detail many to many','detail one to many'));
+		$crud->field_type('value_selection_mode', 'enum', array('set','enum'));
 		
 		$crud->set_relation('table_id','nds_table','name');
 		$crud->set_relation_n_n('options','nds_column_option','nds_template_option','column_id','option_id','name');

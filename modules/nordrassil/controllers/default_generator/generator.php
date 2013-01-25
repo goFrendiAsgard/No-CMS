@@ -119,6 +119,7 @@ class Generator extends CMS_Controller{
 			$set_relation_array = array();
 			$set_relation_n_n_array = array();
 			$hide_field_array = array();
+			$enum_set_array = array();
 			$detail_callback_call_array = array();
 			$detail_callback_declaration_array = array();
 			$detail_before_delete_array = array();
@@ -169,6 +170,15 @@ class Generator extends CMS_Controller{
 				if($column['options']['hide']){
 					$hide_field_array[] = $this->nds->read_view('nordrassil/default_generator/controller_partial/hide_field',NULL,
 						'field_name',$column_name
+					);
+				}
+				// enum or set
+				if($column['value_selection_mode'] != ''){
+					$value_selection_mode = $column['value_selection_mode'];
+					$value_selection_item = $column['value_selection_item'];
+					$enum_set_array[] = $this->nds->read_view('nordrassil/default_generator/controller_partial/enum_set_field',NULL,
+						array('field_name', 'value_selection_mode', 'value_selection_item'),
+						array($column_name, $value_selection_mode, $value_selection_item)
 					);
 				}
 				// detail (one to many) field
@@ -233,6 +243,7 @@ class Generator extends CMS_Controller{
 			$set_relation = implode(PHP_EOL, $set_relation_array);
 			$set_relation_n_n = implode(PHP_EOL, $set_relation_n_n_array);
 			$hide_field = implode(PHP_EOL, $hide_field_array);
+			$enum_set_field = implode(PHP_EOL, $enum_set_array);
 			$detail_callback_call = implode(PHP_EOL, $detail_callback_call_array);
 			$detail_callback_declaration = implode(PHP_EOL, $detail_callback_declaration_array);
 			$detail_before_delete = implode(PHP_EOL, $detail_before_delete_array);
@@ -248,6 +259,7 @@ class Generator extends CMS_Controller{
 				'set_relation',
 				'set_relation_n_n',
 				'hide_field',
+				'enum_set_field',
 				'directory',
 				'detail_callback_call',
 				'detail_callback_declaration',
@@ -264,6 +276,7 @@ class Generator extends CMS_Controller{
 				$set_relation,
 				$set_relation_n_n,
 				$hide_field,
+				$enum_set_field,
 				$save_project_name,
 				$detail_callback_call,
 				$detail_callback_declaration,

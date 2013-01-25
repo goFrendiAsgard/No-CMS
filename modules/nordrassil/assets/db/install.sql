@@ -66,6 +66,8 @@ CREATE TABLE `nds_column` (
   `selection_table_id` int(11) NULL,
   `selection_column_id` int(11) NULL,
   `priority` int(11) NOT NULL,
+  `value_selection_mode` varchar(50),
+  `value_selection_item` varchar(255) NULL,
   PRIMARY KEY (`column_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/
