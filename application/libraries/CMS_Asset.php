@@ -179,5 +179,3 @@ class CMS_Asset{
 		}
 	}
 }
-
-?>
