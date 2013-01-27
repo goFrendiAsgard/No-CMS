@@ -168,7 +168,6 @@
 	
 	function is_mod_rewrite_active(){
 		$mod_rewrite = NULL;
-		/*
 		if (function_exists('apache_get_modules')) {
 			$modules = apache_get_modules();
 			if(in_array('mod_rewrite', $modules)){
@@ -185,7 +184,6 @@
 				$mod_rewrite = TRUE;
 			}
 		}
-		 * */
 		if(!isset($mod_rewrite)){
 			$htaccess_content  = '<IfModule mod_rewrite.c>'.PHP_EOL;
 			$htaccess_content .= '   Options +FollowSymLinks -Indexes'.PHP_EOL;
@@ -439,7 +437,17 @@
 					file_put_contents('../.htaccess', $str);
 					@chmod('../.htaccess', 0555);
 				}else{
-					file_put_contents('../.htaccess', '');
+					$str  = '<IfModule mod_php5.c>'.PHP_EOL;
+					$str .= '	php_value output_handler none'.PHP_EOL;
+					$str .= '	php_flag register_globals off'.PHP_EOL;
+					$str .= '	php_flag safe_mode off'.PHP_EOL;
+					$str .= '</IfModule>'.PHP_EOL;
+					$str  = '<IfModule mod_php4.c>'.PHP_EOL;
+					$str .= '	php_value output_handler none'.PHP_EOL;
+					$str .= '	php_flag register_globals off'.PHP_EOL;
+					$str .= '	php_flag safe_mode off'.PHP_EOL;
+					$str .= '</IfModule>';
+					file_put_contents('../.htaccess', $str);
 					@chmod('../.htaccess', 0555);
 				}
 				

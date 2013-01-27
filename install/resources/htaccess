@@ -76,3 +76,14 @@
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/xhtml text/html text/plain text/xml text/javascript application/x-javascript text/css
 </IfModule>
+
+<IfModule mod_php5.c>
+  php_value output_handler none
+  php_flag register_globals off
+  php_flag safe_mode off
+</IfModule>
+<IfModule mod_php4.c>
+  php_value output_handler none
+  php_flag register_globals off
+  php_flag safe_mode off
+</IfModule>

@@ -1,22 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <style type="text/css">
-	#message:not(:empty){
-        background-color:#FFCACA;
-	    padding: 5px 5px 5px 5px;
-	    margin : 10px;
-	    font-size: small;
-	    min-height : 25px;
-	    border-radius:5px;
-	    -moz-border-radius:5px;
-	    -moz-box-shadow:    1px 1px 5px 6px #ccc;
-	    -webkit-box-shadow: 1px 1px 5px 6px #ccc;
-	    box-shadow:         1px 1px 5px 6px #ccc;      
-        max-width : 400px;
+	#message::empty{
+        display:none;
     }
 </style>
 <h4>Installation Failed</h4>
-<div id="message">
-	<?php
+<div id="message" class="alert alert-error"><?php
 		echo 'Cannot install "<em>'.$module_name.'</em>" on "'.$module_path.'" ';
 	    echo anchor('main/module_management','Back');
 	    echo br();
@@ -38,5 +27,4 @@
 		    echo ul($dependencies);
 		    echo '</p>';
 	    }
-	?>
-</div>
+	?></div>

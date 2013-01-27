@@ -7,7 +7,13 @@ class HAuth extends CMS_Controller {
 		// Constructor to auto-load HybridAuthLib
 		parent::__construct();
 		if(in_array  ('curl', get_loaded_extensions())){
-			$this->load->library('HybridAuthLib');
+			try{
+				$this->load->library('HybridAuthLib');
+			}catch(Exception $e){
+				redirect('');
+			}			
+		}else{
+			redirect('');
 		}		
 	}
 
