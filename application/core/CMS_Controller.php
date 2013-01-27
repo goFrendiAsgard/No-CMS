@@ -642,7 +642,7 @@ class CMS_Controller extends MX_Controller {
      * @desc    show variable for debugging purpose
      */
     protected final function cms_show_variable($variable){
-    	ob_start();
+    	@ob_start();
     	echo '<pre>';
 		echo var_dump($variable);
     	echo '</pre>';
@@ -655,7 +655,7 @@ class CMS_Controller extends MX_Controller {
      * @desc    you are encouraged to use this instead of echo $html
      */
     protected final function cms_show_html($html){
-    	ob_start();
+    	@ob_start();
     	echo $html;
 		@ob_end_flush();
     }
