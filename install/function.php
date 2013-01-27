@@ -186,7 +186,7 @@
 			$htaccess_content .= '   RewriteRule ^test_mod_rewrite$    test.php'.PHP_EOL;
 			$htaccess_content .= '</IfModule>';
 			file_put_contents(get_test_path('.htaccess'), $htaccess_content);
-			$response = file_get_contents(get_test_url('test_mod_rewrite'));
+			$response = @file_get_contents(get_test_url('test_mod_rewrite'));
 			unlink(get_test_path('.htaccess'));
 			if($response == 'ok'){
 				$mod_rewrite = TRUE;
