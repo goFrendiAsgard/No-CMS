@@ -79,7 +79,14 @@
 	}
 	
 	function get_test_rewrite_base(){
-		return $_SERVER["REQUEST_URI"].'test';
+		$rewrite_base_arr = explode('/', $_SERVER["REQUEST_URI"]);
+		$stripped_rewrite_base_arr = array();
+		for($i=0; $i<count($rewrite_base_arr)-1; $i++){
+			$stripped_rewrite_base_arr[] = $rewrite_base_arr[$i];
+		}
+		$stripped_rewrite_base = implode('/',$stripped_rewrite_base_arr);
+		$rewrite_base = $stripped_rewrite_base.'/test/';
+		return $rewrite_base;
 	}
 	
 	function check_db($server, $port, $username, $password, $schema){
@@ -118,7 +125,7 @@
 					}else{
 						$privilege_exists = false;
 						while($row = mysql_fetch_row($result)){
-							if(strpos($row[0],'ALL PRIVILEGES')>-1 || (strpos($row[0],'CREATE,')>-1 && strpos($row[0],'ON *.*'))){
+							if((strpos($row[0],'ALL PRIVILEGES')>-1 || strpos($row[0],'CREATE,')>-1) && strpos($row[0],'ON *.*')){
 								$privilege_exists = true;
 								break;
 							}						
@@ -161,6 +168,7 @@
 	
 	function is_mod_rewrite_active(){
 		$mod_rewrite = NULL;
+		/*
 		if (function_exists('apache_get_modules')) {
 			$modules = apache_get_modules();
 			if(in_array('mod_rewrite', $modules)){
@@ -177,6 +185,7 @@
 				$mod_rewrite = TRUE;
 			}
 		}
+		 * */
 		if(!isset($mod_rewrite)){
 			$htaccess_content  = '<IfModule mod_rewrite.c>'.PHP_EOL;
 			$htaccess_content .= '   Options +FollowSymLinks -Indexes'.PHP_EOL;
