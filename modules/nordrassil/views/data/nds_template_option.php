@@ -14,4 +14,3 @@
 		echo anchor(site_url('nordrassil/data/nds/template/edit/'.$template_id),'Back to template','class="btn btn-primary"');
 	}	
 	echo $output;
-?>

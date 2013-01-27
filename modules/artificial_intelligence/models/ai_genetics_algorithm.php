@@ -291,5 +291,3 @@ class AI_Genetics_Algorithm extends AI_Core{
         return $state;
     }
 }
-
-?>

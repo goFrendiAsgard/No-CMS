@@ -56,4 +56,3 @@
 		create_div($html);
 	}
 	echo '<div style="clear:both;"></div>';
-?>

@@ -176,7 +176,17 @@ class Nds_Model extends CMS_Model{
 		return $data;
 	}
 
-	private function get_table_name($table_id){
+	public function get_project_name($project_id){
+		$query = $this->db->select('name')->from('nds_project')->where('project_id',$project_id)->get();
+		if($query->num_rows()>0){
+			$row = $query->row();
+			return addslashes($row->name);
+		}else{
+			return '';
+		}
+	}
+
+	public function get_table_name($table_id){
 		$query = $this->db->select('name')->from('nds_table')->where('table_id',$table_id)->get();
 		if($query->num_rows()>0){
 			$row = $query->row();
@@ -186,7 +196,7 @@ class Nds_Model extends CMS_Model{
 		}
 	}
 	
-	private function get_column_name($column_id){
+	public function get_column_name($column_id){
 		$query = $this->db->select('name')->from('nds_column')->where('column_id',$column_id)->get();
 		if($query->num_rows()>0){
 			$row = $query->row();
@@ -196,7 +206,7 @@ class Nds_Model extends CMS_Model{
 		}
 	}
 	
-	private function get_primary_key($table_id){
+	public function get_primary_key($table_id){
 		$query = $this->db->select('name')
 			->from('nds_column')
 			->where(array('table_id'=>$table_id, 'role'=>'primary'))

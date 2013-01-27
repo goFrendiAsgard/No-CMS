@@ -54,4 +54,3 @@ class {{ controller_name }}_Model extends  CMS_Model{
 	}
 	
 }
-?&gt;

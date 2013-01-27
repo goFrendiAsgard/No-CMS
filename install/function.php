@@ -91,12 +91,21 @@
 	}
 	
 	function is_mod_rewrite_active(){
+		$mod_rewrite = FALSE;
 		if (function_exists('apache_get_modules')) {
 			$modules = apache_get_modules();
-			return in_array('mod_rewrite', $modules);
-		} else {
-			return getenv('HTTP_MOD_REWRITE')=='On' ? true : false ;
+			$mod_rewrite = in_array('mod_rewrite', $modules);
+		} 
+		if (!isset($mod_rewrite) && isset($_SERVER["HTTP_MOD_REWRITE"])) {
+			$mod_rewrite = strtoupper($_SERVER["HTTP_MOD_REWRITE"])=="ON" ? TRUE : FALSE ;
 		}
+		if(!isset($mod_rewrite)){
+			$mod_rewrite = strtoupper(getenv('HTTP_MOD_REWRITE'))=='ON' ? TRUE : FALSE ;
+		}
+		if(!isset($mod_rewrite)){
+			$mod_rewrite = FALSE;
+		}
+		return $mod_rewrite;
 	}
 	
 	function check_all($install=NULL){	

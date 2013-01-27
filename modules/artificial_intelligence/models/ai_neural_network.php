@@ -410,5 +410,3 @@ class AI_Neural_Network extends AI_Core {
     }
     
 }
-
-?>

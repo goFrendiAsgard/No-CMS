@@ -191,5 +191,3 @@ class Navigation_Model extends CMS_Model{
     }
     
 }
-
-?>

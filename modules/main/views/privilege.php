@@ -11,4 +11,3 @@
 	$asset->add_module_js('scripts/privilege.js','main');
 	echo $asset->compile_js();
 	echo $output;
-?>

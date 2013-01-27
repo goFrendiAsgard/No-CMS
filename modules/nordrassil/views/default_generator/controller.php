@@ -13,7 +13,7 @@ class {{ controller_name }} extends CMS_Controller {
         $crud = new grocery_CRUD();
         
         // set model
-        $crud->set_model('{{ directory }}/data/{{ controller_name }}_model');
+        $crud->set_model($this->cms_module_path().'/data/{{ controller_name }}_model');
         
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());
@@ -71,7 +71,7 @@ class {{ controller_name }} extends CMS_Controller {
         
         // render
         $output = $crud->render();        
-        $this->view("{{ directory }}/data/{{ controller_name }}_index", $output, "{{ navigation_name }}");
+        $this->view($this->cms_module_path().'/data/{{ controller_name }}_index', $output, '{{ navigation_name }}');
         
     }
     
@@ -109,5 +109,3 @@ class {{ controller_name }} extends CMS_Controller {
 {{ detail_callback_declaration }}
     
 }
-
-?&gt;

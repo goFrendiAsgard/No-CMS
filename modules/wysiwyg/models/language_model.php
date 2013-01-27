@@ -15,5 +15,3 @@ class Language_Model extends CMS_Model {
         return $result;
     }
 }
-
-?>

@@ -36,5 +36,3 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation("wysiwyg_index","WYSIWYG", $module_main_controller_url.'/index', 4, "main_management");
     }
 }
-
-?>

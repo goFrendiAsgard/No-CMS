@@ -107,5 +107,3 @@ class Install extends CMS_Module_Installer {
     
     }
 }
-
-?>

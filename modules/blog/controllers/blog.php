@@ -265,5 +265,3 @@ class Blog extends CMS_Controller {
             return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
     }
 }
-
-?>

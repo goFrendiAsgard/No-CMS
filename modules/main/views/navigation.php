@@ -12,4 +12,3 @@
 	$asset->add_module_js('scripts/navigation.js','main');
 	echo $asset->compile_js();
 	echo $output;
-?>

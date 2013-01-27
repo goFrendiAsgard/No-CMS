@@ -38,7 +38,7 @@ class Install extends CMS_Module_Installer {
         $module_path = $this->cms_module_path();
     
         // parent of all navigations
-        $this->add_navigation("{{ navigation_parent_name }}", "{{ project_name }}", 
+        $this->add_navigation("{{ navigation_parent_name }}", "{{ project_caption }}", 
             $module_path."/{{ main_controller }}/index", 4);
         
         // add navigations
@@ -92,5 +92,3 @@ class Install extends CMS_Module_Installer {
         
     }
 }
-
-?&gt;

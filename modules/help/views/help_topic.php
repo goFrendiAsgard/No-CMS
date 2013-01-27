@@ -16,4 +16,3 @@
 	}else{
 		echo "<h4>No Topic Found</h4>";
 	}
-?>

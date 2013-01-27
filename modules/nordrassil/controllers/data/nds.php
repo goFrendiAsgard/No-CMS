@@ -9,6 +9,8 @@ class nds extends CMS_Controller {
 	
     public function template(){
         $crud = new grocery_CRUD();
+		
+		$crud->set_subject('Generator Template');
         
         // table name
         $crud->set_table('nds_template');
@@ -129,6 +131,8 @@ class nds extends CMS_Controller {
 
     public function project(){
         $crud = new grocery_CRUD();
+		
+		$crud->set_subject('Project');
         
         // table name
         $crud->set_table('nds_project');
@@ -136,9 +140,9 @@ class nds extends CMS_Controller {
         // displayed columns on list
         $crud->columns('template_id','name','options','tables','manage_tables');
         // displayed columns on edit operation
-        $crud->edit_fields('template_id','name','options','db_server','db_port','db_schema','db_user','db_password','tables');
+        $crud->edit_fields('template_id','name','options','db_server','db_port','db_schema','db_user','db_password','db_table_prefix','tables');
         // displayed columns on add operation
-        $crud->add_fields('template_id','name','options','db_server','db_port','db_schema','db_user','db_password');
+        $crud->add_fields('template_id','name','options','db_server','db_port','db_schema','db_user','db_password','db_table_prefix');
         
         // caption of each columns
         $crud->display_as('template_id','Template');
@@ -149,6 +153,7 @@ class nds extends CMS_Controller {
 		$crud->display_as('db_schema','Database Schema');
 		$crud->display_as('db_user','Database User');
 		$crud->display_as('db_password','Database Password');
+		$crud->display_as('db_table_prefix','Database Table Prefix');
 		$crud->display_as('tables','Tables');
 		$crud->display_as('manage_tables','Manage Tables');
 		
@@ -212,12 +217,21 @@ class nds extends CMS_Controller {
 
     public function table($project_id = NULL){
         $crud = new grocery_CRUD();
+		
+		$crud->set_subject('Table');
         
         // table name
         $crud->set_table('nds_table');
+		
+		if(isset($project_id) && intval($project_id)>0){
+    		$crud->where('nds_table.project_id', $project_id);
+    		// displayed columns on list
+        	$crud->columns('name','caption','priority','options','columns','manage_columns');
+    	}else{
+    		// displayed columns on list
+        	$crud->columns('project_id','name','caption','priority','options','columns','manage_columns');
+    	}        
         
-        // displayed columns on list
-        $crud->columns('project_id','name','caption','priority','options','columns','manage_columns');
         // displayed columns on edit operation
         $crud->edit_fields('project_id','name','caption','priority','options','columns');
         // displayed columns on add operation
@@ -236,7 +250,6 @@ class nds extends CMS_Controller {
 		$crud->set_relation_n_n('options','nds_table_option','nds_template_option','table_id','option_id','name');
 		
 		if(isset($project_id) && intval($project_id)>0){
-    		$crud->where('nds_table.project_id', $project_id);
     		$crud->change_field_type('project_id', 'hidden', $project_id);
     	}
 		
@@ -252,8 +265,10 @@ class nds extends CMS_Controller {
         
         // render
         $output = $crud->render();
-		if(isset($project_id)){
+		if(isset($project_id) && is_numeric($project_id)){
 			$output->project_id = $project_id;
+			$this->load->model('nordrassil/data/nds_model');
+			$output->project_name = $this->nds_model->get_project_name($project_id);
 		}
         $this->view($this->cms_module_path()."/data/nds_table", $output, "nordrassil_project");
     }
@@ -298,17 +313,25 @@ class nds extends CMS_Controller {
     public function column($table_id=NULL){
     	$this->load->model('nordrassil/data/nds_model');
         $crud = new grocery_CRUD();
+		
+		$crud->set_subject('Column');
         
         // table name
         $crud->set_table('nds_column');
+		if(isset($table_id) && intval($table_id)>0){
+    		$crud->where('nds_column.table_id', $table_id);
+			// displayed columns on list
+        	$crud->columns('name','caption','role','data_type','data_size','options','priority');
+    	}else{
+    		// displayed columns on list
+        	$crud->columns('table_id','name','caption','role','data_type','data_size','options','priority');
+    	}
         
-        // displayed columns on list
-        $crud->columns('table_id','name','caption','data_type','data_size','role','options','priority');
         // displayed columns on edit operation
-        $crud->edit_fields('table_id','name','caption','data_type','data_size','role','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
+        $crud->edit_fields('table_id','name','caption','role','data_type','data_size','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
         	'relation_selection_column_id','relation_priority_column_id','selection_table_id','selection_column_id');
         // displayed columns on add operation
-        $crud->add_fields('table_id','name','caption','data_type','data_size','role','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
+        $crud->add_fields('table_id','name','caption','role','data_type','data_size','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
         	'relation_selection_column_id','relation_priority_column_id','selection_table_id','selection_column_id');
         
         // caption of each columns
@@ -319,13 +342,13 @@ class nds extends CMS_Controller {
 		$crud->display_as('data_size','Size');
         $crud->display_as('role','Role');
         $crud->display_as('lookup_table_id','Lookup Table');
-        $crud->display_as('lookup_column_id','Lookup Column');
+        $crud->display_as('lookup_column_id','Lookup Shown Column');
         $crud->display_as('relation_table_id','Relation Table');
         $crud->display_as('relation_table_column_id','Relation Column To This Table');
         $crud->display_as('relation_selection_column_id','Relation Column To Selection Table');
         $crud->display_as('relation_priority_column_id','Relation Priority Column');
         $crud->display_as('selection_table_id','Selection Table');
-		$crud->display_as('selection_column_id','Viewed Selection Column');
+		$crud->display_as('selection_column_id','Selection Shown Column');
 		$crud->display_as('value_selection_mode','Selection Mode');
 		$crud->display_as('value_selection_item','Selection Item');
 		
@@ -347,7 +370,6 @@ class nds extends CMS_Controller {
 		$crud->set_relation('selection_column_id','nds_column','name');
 		
 		if(isset($table_id) && intval($table_id)>0){
-    		$crud->where('nds_column.table_id', $table_id);
     		$crud->change_field_type('table_id', 'hidden', $table_id);
     	}
 		
@@ -360,12 +382,15 @@ class nds extends CMS_Controller {
         
         // render
         $output = $crud->render();
-		if(isset($table_id)){
+		if(isset($table_id) && is_numeric($table_id)){
+			$this->load->model('nordrassil/data/nds_model');
 			$query = $this->db->select('project_id')->from('nds_table')->where('table_id',$table_id)->get();
 			$row = $query->row();
 			$project_id = $row->project_id;
-			$output->project_id = $project_id;
+			$output->project_id = $project_id;			
+			$output->project_name = $this->nds_model->get_project_name($project_id);
 			$output->table_id = $table_id;
+			$output->table_name = $this->nds_model->get_table_name($table_id);
 		}
         $this->view($this->cms_module_path()."/data/nds_column", $output, "nordrassil_project");
     }

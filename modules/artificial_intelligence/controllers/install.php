@@ -42,5 +42,3 @@ class Install extends CMS_Module_Installer{
         $this->add_navigation("ai_nnga_set","Set Parameters", $module_url."/nnga/set", 3, "ai_nnga_index");
     }
 }
-
-?>

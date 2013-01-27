@@ -22,7 +22,8 @@ CREATE TABLE `nds_project` (
   `db_port` varchar(50) NOT NULL,
   `db_schema` varchar(50) NOT NULL,
   `db_user` varchar(50) NOT NULL,
-  `db_password` varchar(50) NOT NULL,  
+  `db_password` varchar(50) NOT NULL,
+  `db_table_prefix` varchar(50) NOT NULL,
   PRIMARY KEY (`project_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/

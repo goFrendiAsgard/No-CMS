@@ -1361,5 +1361,3 @@ class CMS_Model extends CI_Model {
 	}
     
 }
-
-?>

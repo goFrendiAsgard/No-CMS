@@ -8,8 +8,11 @@
 class {{ controller_name }} extends CMS_Controller {
 
 	public function index(){
-		$data = NULL;
-        $this->view('{{ project_name }}/front/{{ controller_name }}_index',$data, '{{ navigation_name }}');
+		$data = array(
+			'allow_navigate_backend' => $this->cms_allow_navigate('{{ backend_navigation_name }}'),
+			'backend_url' => site_url($this->cms_module_path().'/data/{{ controller_name }}/index'),
+		);
+        $this->view($this->cms_module_path().'/front/{{ controller_name }}_index',$data, '{{ navigation_name }}');
     }
     
     public function get_data(){
@@ -25,5 +28,3 @@ class {{ controller_name }} extends CMS_Controller {
 	}
     
 }
-
-?&gt;

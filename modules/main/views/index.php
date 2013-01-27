@@ -2,4 +2,3 @@
 <h3>Welcome {{ user_name }}</h3>
 <?php
 	echo $submenu_screen;
-?>

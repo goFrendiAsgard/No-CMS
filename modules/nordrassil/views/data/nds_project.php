@@ -17,7 +17,8 @@
 	// also add adjust.js which contain of field adjustment function
 	$asset->add_module_js('scripts/adjust.js', $cms['module_path']);
 	echo $asset->compile_js();
-	echo '<h4>Project</h4>';	
+	echo '<h4>Project</h4>';
+	echo anchor(site_url('nordrassil/data/nds/project/'),'Show All Project','class="btn btn-primary"');	
 	echo $output;
 ?>
 

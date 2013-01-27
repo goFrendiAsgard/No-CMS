@@ -59,6 +59,7 @@ class Generator extends CMS_Controller{
 			$save_table_name = underscore($table_name);
 			$controller_name = $save_project_name.'_'.$save_table_name;
 			$navigation_name = $save_project_name.'_front_'.$save_table_name;
+			$backend_navigation_name = $save_project_name.'_'.$save_table_name;
 			$columns = $table['columns'];
 			
 			$pattern = array(
@@ -67,6 +68,7 @@ class Generator extends CMS_Controller{
 				'table_name',
 				'navigation_name',
 				'table_caption',
+				'backend_navigation_name',
 			);
 			$replacement = array(
 				$save_project_name,
@@ -74,6 +76,7 @@ class Generator extends CMS_Controller{
 				$table_name,
 				$navigation_name,
 				$table_caption,
+				$backend_navigation_name,
 			);
 			// prepare data
 			$data = array(
@@ -110,6 +113,7 @@ class Generator extends CMS_Controller{
 		foreach($tables as $table){
 			$table_name = $table['name'];
 			$table_caption = $table['caption'];
+			$table_make_frontpage = $table['options']['make_frontpage'];
 			$save_table_name = underscore($table_name);
 			$navigation_name = $save_project_name.'_'.$save_table_name;
 			$columns = $table['columns'];
@@ -290,7 +294,11 @@ class Generator extends CMS_Controller{
 			$str = $this->nds->read_view('nordrassil/default_generator/model.php',NULL,$pattern,$replacement);
 			$this->nds->write_file($project_path.'models/data/'.$navigation_name.'_model.php', $str);
 			// views
-			$str = $this->nds->read_view('nordrassil/default_generator/view.php',NULL,$pattern,$replacement);
+			$data = array(
+				'make_frontpage'=>$table_make_frontpage,
+				'controller_name'=>$navigation_name,
+			);
+			$str = $this->nds->read_view('nordrassil/default_generator/view.php',$data,$pattern,$replacement);
 			$this->nds->write_file($project_path.'views/data/'.$navigation_name.'_index.php', $str);
 			
 		}
@@ -401,6 +409,7 @@ class Generator extends CMS_Controller{
 			'directory',
 			'main_controller',
 			'project_name',
+			'project_caption',
 		); 
 		$replacement = array(
 			underscore($this->cms_user_name()).'.'.$save_project_name,
@@ -410,7 +419,8 @@ class Generator extends CMS_Controller{
 			$add_navigations,
 			$project_name,
 			$save_project_name,
-			$project_name
+			$project_name,
+			humanize($project_name),
 		);
 		$str = $this->nds->read_view('default_generator/install',NULL,$pattern, $replacement);
 		$this->nds->write_file($project_path.'controllers/install.php', $str);

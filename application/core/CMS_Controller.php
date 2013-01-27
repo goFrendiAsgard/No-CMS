@@ -534,7 +534,6 @@ class CMS_Controller extends MX_Controller {
         		$only_content = ($row->only_content == 1);
         	}
 			// in case of widget
-			$only_content = $only_content;
 			$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
         	// if only content or request is ajax
             if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            	
@@ -658,7 +657,7 @@ class CMS_Controller extends MX_Controller {
     protected final function cms_show_html($html){
     	ob_start();
     	echo $html;
-		@ob_end_flush();		
+		@ob_end_flush();
     }
 	
 	/**

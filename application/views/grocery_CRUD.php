@@ -10,4 +10,3 @@
 	}
 	echo $asset->compile_js();	
 	echo $output;
-?>

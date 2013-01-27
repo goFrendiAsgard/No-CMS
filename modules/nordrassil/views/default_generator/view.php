@@ -13,3 +13,8 @@ echo $asset->compile_js();
 echo $output;
 
 ?&gt;
+<?php
+	if($make_frontpage){
+		echo '<a class="btn btn-primary" href="{{ module_path }}front/'.$controller_name.'/index">Show Front Page</a>';
+	}
+?>

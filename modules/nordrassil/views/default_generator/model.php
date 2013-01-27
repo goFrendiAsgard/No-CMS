@@ -10,4 +10,3 @@ class {{ controller_name }}_Model  extends grocery_CRUD_Model{
 		parent::__construct();
 	}	
 }
-?&gt;

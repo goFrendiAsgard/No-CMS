@@ -14,4 +14,3 @@
 		echo br();
 	}	
 	echo $output;
-?>

@@ -742,5 +742,3 @@ class Main extends CMS_Controller {
     
 
 }
-
-?>

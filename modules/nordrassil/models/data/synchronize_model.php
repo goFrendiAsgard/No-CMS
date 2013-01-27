@@ -34,7 +34,7 @@ class Synchronize_Model extends CMS_Model{
 		
 		
 		// select the current nor_project
-		$query = $this->db->select('db_server, db_user, db_password, db_schema, db_port')
+		$query = $this->db->select('db_server, db_user, db_password, db_schema, db_port, db_table_prefix')
 			->from('nds_project')
 			->where(array('project_id'=>$project_id))
 			->get();
@@ -45,6 +45,7 @@ class Synchronize_Model extends CMS_Model{
 			$this->db_user = $row->db_user;
 			$this->db_password = $row->db_password;
 			$this->db_schema = $row->db_schema;
+			$this->db_table_prefix = $row->db_table_prefix;
 			if(!isset($this->db_port) || $this->db_port == ''){
 				$this->db_port = '3306';
 			}
@@ -62,16 +63,31 @@ class Synchronize_Model extends CMS_Model{
 	private function create_table($project_id){
 		$this->load->helper('inflector');
 		$save_db_schema = addslashes($this->db_schema);
-		$SQL = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA='$save_db_schema'";
+		$save_db_table_prefix = addslashes($this->db_table_prefix);
+		$SQL = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA='$save_db_schema' AND TABLE_NAME like'$save_db_table_prefix%'";
 		$this->db_log($SQL);
 		$this->db_log(print_r($this->connection, True));
 		$result = mysqli_query($this->connection, $SQL);
+						
 		while($row = mysqli_fetch_array($result)){
+			// create caption
+			$caption = '';
+			$prefix_length = isset($this->db_table_prefix)?strlen($this->db_table_prefix):0;
+			if($prefix_length>0){
+				$caption = substr($row['TABLE_NAME'], $prefix_length);
+				$caption = humanize($caption);
+				$caption = trim($caption);
+				if(strlen($caption)==0){
+					$caption = humanize($row['TABLE_NAME']);
+				}
+			}else{
+				$caption = humanize($row['TABLE_NAME']);
+			}
 			// inserting the table
 			$data = array(
 					'project_id' => $project_id,
 					'name'=> $row['TABLE_NAME'],
-					'caption' => humanize($row['TABLE_NAME'])
+					'caption' => $caption
 				);
 			$this->db->insert('nds_table', $data);
 			// inserting the field

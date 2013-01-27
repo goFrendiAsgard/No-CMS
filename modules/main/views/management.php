@@ -2,4 +2,3 @@
 <h3>CMS Management</h3>
 <?php
 	echo $submenu_screen;
-?>

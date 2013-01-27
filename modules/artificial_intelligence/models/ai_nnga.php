@@ -144,7 +144,3 @@ class AI_NNGA extends AI_Neural_Network {
     }
     
 }
-
-
-
-?>

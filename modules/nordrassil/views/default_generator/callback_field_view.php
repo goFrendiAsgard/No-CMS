@@ -4,15 +4,21 @@
 	$detail_column_captions = array();
 	$detail_column_names = array();
 	$detail_column_data_types = array();
+	$detail_column_role = array();
+	$detail_value_selection_mode = array();
 	foreach($detail_columns as $detail_column){
 		$caption = $detail_column['caption'];
 		$name = $detail_column['name'];
 		$data_type = $detail_column['data_type'];
+		$role = $detail_column['role'];
+		$value_selection_mode = $detail_column['value_selection_mode'];
 		if($name == $detail_primary_key_name) continue;
 		if($name == $detail_foreign_key_name) continue;
 		$detail_column_captions[] = $caption;
 		$detail_column_names[] = $name;
 		$detail_column_data_types[] = $data_type;
+		$detail_column_role[] = $role;
+		$detail_value_selection_mode[] = $value_selection_mode;
 	}
 	
 	$detail_table_caption = $detail_table['caption'];
@@ -34,8 +40,17 @@
 ?&gt;
 <style type="text/css">
 	/* set width of every detail input*/
-	.<?php echo $column_input_class ?>{
-		width:100px!important;
+	#<?php echo $table_id; ?> .<?php echo $column_input_class ?>{
+		min-width:150px!important;
+		max-width:150px!important;
+	}
+	#<?php echo $table_id; ?> .datepicker-input{
+		min-width:100px!important;
+		max-width:100px!important;
+	}
+	#<?php echo $table_id; ?> .chzn-drop{
+		min-width:150px!important;
+		max-width:150px!important;
 	}
 </style>
 
@@ -62,7 +77,8 @@
 	/**
 	 * DATA INITIALIZATION ==================================================================================
 	 */
-	var DATE_FORMAT = '&lt;? echo $date_format ?&gt;';
+	var DATE_FORMAT = '&lt;?php echo $date_format ?&gt;';
+	var OPTIONS = &lt;?php echo json_encode($options); ?&gt;;
 	var <?php echo $var_record_index; ?> = &lt;?php echo $record_index; ?&gt;;	 
 	var <?php echo $var_data; ?> = {update:new Array(), insert:new Array(), delete:new Array()};
 	var old_data = &lt;?php echo json_encode($result); ?&gt;;
@@ -87,14 +103,20 @@
 	function <?php echo $fn_synchronize; ?>(){
 		$('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
 	}
+	
+	
 	// add component to the table
 	function <?php echo $fn_add_table_row; ?>(value){
 		var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
+		console.log(value);
 		<?php
 		$date_exist = FALSE; 		
 		for($i=0; $i<count($detail_column_names); $i++){
 			$name = $detail_column_names[$i];
+			$caption = $detail_column_captions[$i];
 			$data_type = $detail_column_data_types[$i];
+			$role = $detail_column_role[$i];
+			$selection_mode = $detail_value_selection_mode[$i];
 			$additional_class_array = array();
 			if($data_type=='date'){
 				$additional_class_array[] = 'datepicker-input';
@@ -116,10 +138,38 @@
 			}			
 			echo '		}'.PHP_EOL;
 			echo '		component += \'<td>\';'.PHP_EOL;
-			echo '		component += \'<input id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
-				'+\'" class="'.$column_input_class.$additional_class.'" column_name="'.$name.'" type="text" value="\'+field_value+\'"/>\';'.PHP_EOL;
-			if($data_type == 'date'){
-				echo '		component += \'<a href="#" class="datepicker-input-clear btn">Clear</a>\''.PHP_EOL;
+			if($role=='lookup' || $role=='detail many to many' || $selection_mode=='enum' || $selection_mode=='set'){
+				if($role=='lookup' || $selection_mode=='enum'){
+					echo '		var multiple = \'\';'.PHP_EOL;
+				}else{
+					echo '		var multiple = \'multiple="multiple"\';'.PHP_EOL;
+				}
+				echo '		component += \'<select id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
+					'+\'" class="'.$column_input_class.$additional_class.' chzn-select" column_name="'.$name.'" \'+multiple+\'>\';'.PHP_EOL;				
+				echo '		var options = OPTIONS.'.$name.';'.PHP_EOL;
+				echo '		component += \'<option value></option>\';'.PHP_EOL;
+				echo '		for(var i=0; i<options.length; i++){'.PHP_EOL;
+				echo '			var option = options[i];'.PHP_EOL;
+				if($role=='lookup' || $selection_mode=='enum'){
+					echo '			var selected = \'\';'.PHP_EOL;
+					echo '			if(option[\'value\'] == field_value){'.PHP_EOL;
+					echo '				selected = \'selected="selected"\';'.PHP_EOL;
+					echo '			}'.PHP_EOL;
+				}else{
+					echo '			var selected = \'\';'.PHP_EOL;
+					echo '			if($.inArray(option[\'value\'],field_value)>-1){'.PHP_EOL;
+					echo '				selected = \'selected="selected"\';'.PHP_EOL;
+					echo '			}'.PHP_EOL;
+				}
+				echo '			component += \'<option value="\'+option[\'value\']+\'" \'+selected+\'>\'+option[\'caption\']+\'</option>\';'.PHP_EOL;
+				echo '		}'.PHP_EOL;
+				echo '		component += \'</select>\';'.PHP_EOL;
+			}else{
+				echo '		component += \'<input id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
+					'+\'" class="'.$column_input_class.$additional_class.'" column_name="'.$name.'" type="text" value="\'+field_value+\'"/>\';'.PHP_EOL;
+				if($data_type == 'date'){
+					echo '		component += \'<a href="#" class="datepicker-input-clear btn">Clear</a>\';'.PHP_EOL;
+				}
 			}
 			echo'		component += \'</td>\';'.PHP_EOL;
 		}		
@@ -132,25 +182,24 @@
 		// add to the table
 		$('#<?php echo $table_id; ?> tbody').append(component);
 		
-		<?php
-		if($date_exist){
-		echo PHP_EOL."
-		// change into datepicker
-		$('.datepicker-input').datepicker({
+		// datepicker and combobox mutation:
+		// datepikcer-input
+		$('#<?php echo $table_id; ?> .datepicker-input').datepicker({
 				dateFormat: js_date_format,
 				showButtonPanel: true,
 				changeMonth: true,
 				changeYear: true
 		});
-		// clear event
-		$('.datepicker-input-clear').click(function(){
-			$(this).parent().find('.datepicker-input').val(\"\");
+		// date-picker-input-clear
+		$('#<?php echo $table_id; ?> .datepicker-input-clear').click(function(){
+			$(this).parent().find('.datepicker-input').val('');
 			return false;
-		});".PHP_EOL;			
-		}
-		?>
+		});
+		// chzn-select
+		$("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true});
 		
 	}
+	
 	
 	function js_date_to_php(js_date){
 		if(typeof(js_date)=='undefined' || js_date == ''){
@@ -181,6 +230,7 @@
 		}
 		return php_date;
 	}
+	
 	
 	function php_date_to_js(php_date){
 		if(typeof(php_date)=='undefined' || php_date == ''){
@@ -289,14 +339,18 @@
 			var column_name = $(this).attr('column_name');
 			var record_index = $(this).attr('record_index');
 			var record_index_found = false;
+			// date picker
 			if($(this).hasClass('datepicker-input')){
 				value = js_date_to_php(value);
+			}
+			if(typeof(value)=='undefined'){
+				value = '';
 			}
 			for(var i=0; i<<?php echo $var_data; ?>.insert.length; i++){
 				if(<?php echo $var_data; ?>.insert[i].record_index == record_index){
 					record_index_found = true;
-					// edit value
-					eval('<?php echo $var_data; ?>.insert['+i+'].data.'+column_name+' = \''+value+'\';');
+					// insert value
+					eval('<?php echo $var_data; ?>.insert['+i+'].data.'+column_name+' = '+JSON.stringify(value)+';');
 					break;
 				}
 			}
@@ -305,7 +359,7 @@
 					if(<?php echo $var_data; ?>.update[i].record_index == record_index){
 						record_index_found = true;
 						// edit value
-						eval('<?php echo $var_data; ?>.update['+i+'].data.'+column_name+' = \''+value+'\';');
+						eval('<?php echo $var_data; ?>.update['+i+'].data.'+column_name+' = '+JSON.stringify(value)+';');
 						break;
 					}
 				}

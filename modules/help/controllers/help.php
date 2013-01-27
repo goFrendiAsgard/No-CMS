@@ -131,5 +131,3 @@ class help extends CMS_Controller {
 
     
 }
-
-?>

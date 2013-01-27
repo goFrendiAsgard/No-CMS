@@ -97,5 +97,3 @@ class Help_Model extends CMS_Model{
 	}
 	
 }
-
-?>

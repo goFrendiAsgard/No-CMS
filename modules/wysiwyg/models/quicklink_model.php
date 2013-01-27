@@ -94,5 +94,3 @@ class Quicklink_Model extends CMS_Model {
         
     }
 }
-
-?>

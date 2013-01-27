@@ -19,9 +19,9 @@
 	echo $asset->compile_js();
 	echo '<h4>Column</h4>';
 	if(isset($project_id)){
-		echo anchor(site_url('nordrassil/data/nds/project/edit/'.$project_id),'Back to project','class="btn btn-primary"');
+		echo anchor(site_url('nordrassil/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
 		echo '&nbsp;';
-		echo anchor(site_url('nordrassil/data/nds/table/'.$project_id.'/edit/'.$table_id),'Back to table','class="btn btn-primary"');
+		echo anchor(site_url('nordrassil/data/nds/table/'.$project_id.'/edit/'.$table_id),'Table "<b>'.$table_name.'</b>"','class="btn btn-primary"');
 	}
 	echo $output;
 ?>

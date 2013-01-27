@@ -11,5 +11,3 @@ class artificial_intelligence extends CMS_Controller{
         $this->view("artificial_intelligence_index", NULL, "ai_artificial_intelligence_index");
     }
 }
-
-?>

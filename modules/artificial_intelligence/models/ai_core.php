@@ -79,5 +79,3 @@ class AI_Core extends CMS_Model{
     }
     
 }
-
-?>

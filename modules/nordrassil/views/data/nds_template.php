@@ -11,4 +11,3 @@
 	echo $asset->compile_js();
 	echo '<h4>Template</h4>';
 	echo $output;
-?>

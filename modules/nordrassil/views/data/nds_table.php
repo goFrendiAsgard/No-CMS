@@ -19,7 +19,7 @@
 	echo $asset->compile_js();
 	echo '<h4>Table</h4>';
 	if(isset($project_id)){
-		echo anchor(site_url('nordrassil/data/nds/project/edit/'.$project_id),'Back to project','class="btn btn-primary"');
+		echo anchor(site_url('nordrassil/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
 	}
 	echo $output;
 ?>

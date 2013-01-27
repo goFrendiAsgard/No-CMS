@@ -81,5 +81,3 @@ class Widget_Model extends CMS_Model {
         
     }
 }
-
-?>

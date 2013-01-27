@@ -186,5 +186,3 @@ class nnga extends CMS_Controller {
     }
     
 }
-
-?>

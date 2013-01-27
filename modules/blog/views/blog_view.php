@@ -165,7 +165,3 @@ function show_search_form($cms, $available_category, $category, $search){
 	echo form_close();
 	echo '</div>';
 }
-
-
-
-?>
