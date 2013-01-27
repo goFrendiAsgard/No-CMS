@@ -17,6 +17,71 @@
 		return $str;
 	}
 	
+	function get_current_url(){
+		if(
+			isset( $_SERVER['HTTPS'] ) && ( $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1 )
+		|| 	isset( $_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+		){
+			$protocol = 'https://';
+		}
+		else {
+			$protocol = 'http://';
+		}
+
+		$url = $protocol . $_SERVER['HTTP_HOST'];
+
+		// use port if non default
+		$url .= 
+			isset( $_SERVER['SERVER_PORT'] ) 
+			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443) )
+			? ':' . $_SERVER['SERVER_PORT'] 
+			: '';
+		$url .= $_SERVER['PHP_SELF'];
+
+		// return current url
+		return $url;
+	}
+	
+	function get_callback_url($provider){
+		$current_url = get_current_url();
+		$current_url_arr = explode('/',$current_url);
+		$stripped_url_arr = array();
+		for($i=0; $i<count($current_url_arr)-2; $i++){
+			$stripped_url_arr[] = $current_url_arr[$i];
+		}
+		$stripped_url = implode('/', $stripped_url_arr);
+		$callback_url = $stripped_url.'/index.php/main/hauth/endpoint/?hauth.done='.$provider;
+		return $callback_url;
+	}
+	
+	function get_test_path($segments){
+		$path = $_SERVER['SCRIPT_FILENAME'];
+		$path_arr = explode('/',$path);
+		$stripped_path_arr = array();
+		for($i=0; $i<count($path_arr)-1; $i++){
+			$stripped_path_arr[] = $path_arr[$i];
+		}
+		$stripped_path = implode('/', $stripped_path_arr);
+		$test_path = $stripped_path.'/test/'.$segments;
+		return $test_path;
+	}
+	
+	function get_test_url($segments){
+		$current_url = get_current_url();
+		$current_url_arr = explode('/',$current_url);
+		$stripped_url_arr = array();
+		for($i=0; $i<count($current_url_arr)-1; $i++){
+			$stripped_url_arr[] = $current_url_arr[$i];
+		}
+		$stripped_url = implode('/', $stripped_url_arr);
+		$test_url = $stripped_url.'/test/'.$segments;
+		return $test_url;
+	}
+	
+	function get_test_rewrite_base(){
+		return $_SERVER["REQUEST_URI"].'test';
+	}
+	
 	function check_db($server, $port, $username, $password, $schema){
 		$return = array(
 				"success"=>true,
@@ -39,30 +104,34 @@
 		}
 		
 		if($return["success"]){
-			$db_exists = mysql_select_db($schema, $connection);
-			if(!$db_exists){
-				$SQL = "show grants for `$username`@`$server`;";
-				$result = mysql_query($SQL, $connection);
-				if($result === false){
-					$return["error_message"] = 'Cannot check database privilege';
-					$return["success"] = false;
-				}else{
-					$privilege_exists = false;
-					while($row = mysql_fetch_row($result)){
-						if(strpos($row[0],'ALL PRIVILEGES')===FALSE &&	strpos($row[0],'CREATE,')===FALSE){
-							$privilege_exists = false;
-						}else{
-							$privilege_exists = true;
-							break;
-						}						
-					}
-					if(!$privilege_exists){
-						$return["error_message"] = 'No create database privilege, please select the already exists one';
+			if($schema==''){
+				$return["error_message"] = 'Database Schema is empty';
+				$return["success"] = false;
+			}else{
+				$db_exists = @mysql_select_db($schema, $connection);
+				if(!$db_exists){
+					$SQL = "show grants for `$username`@`$server`;";
+					$result = @mysql_query($SQL, $connection);
+					if($result === false){
+						$return["error_message"] = 'Cannot check database privilege';
 						$return["success"] = false;
+					}else{
+						$privilege_exists = false;
+						while($row = mysql_fetch_row($result)){
+							if(strpos($row[0],'ALL PRIVILEGES')>-1 || (strpos($row[0],'CREATE,')>-1 && strpos($row[0],'ON *.*'))){
+								$privilege_exists = true;
+								break;
+							}						
+						}
+						if(!$privilege_exists){
+							$return["error_message"] = 'No create database privilege, please select the already exists one';
+							$return["success"] = false;
+						}
 					}
-				}
-				
-			}			
+					
+				}					
+			}
+						
 		}
 		 
 		return $return;
@@ -91,16 +160,37 @@
 	}
 	
 	function is_mod_rewrite_active(){
-		$mod_rewrite = FALSE;
+		$mod_rewrite = NULL;
 		if (function_exists('apache_get_modules')) {
 			$modules = apache_get_modules();
-			$mod_rewrite = in_array('mod_rewrite', $modules);
+			if(in_array('mod_rewrite', $modules)){
+				$mod_rewrite = TRUE;
+			}
 		} 
 		if (!isset($mod_rewrite) && isset($_SERVER["HTTP_MOD_REWRITE"])) {
-			$mod_rewrite = strtoupper($_SERVER["HTTP_MOD_REWRITE"])=="ON" ? TRUE : FALSE ;
+			if(strtoupper($_SERVER["HTTP_MOD_REWRITE"])=="ON"){
+				$mod_rewrite = TRUE;
+			}			
 		}
 		if(!isset($mod_rewrite)){
-			$mod_rewrite = strtoupper(getenv('HTTP_MOD_REWRITE'))=='ON' ? TRUE : FALSE ;
+			if(strtoupper(getenv('HTTP_MOD_REWRITE'))=="ON"){
+				$mod_rewrite = TRUE;
+			}
+		}
+		if(!isset($mod_rewrite)){
+			$htaccess_content  = '<IfModule mod_rewrite.c>'.PHP_EOL;
+			$htaccess_content .= '   Options +FollowSymLinks -Indexes'.PHP_EOL;
+			$htaccess_content .= '   RewriteEngine On'.PHP_EOL;
+			$htaccess_content .= '   RewriteBase '.get_test_rewrite_base().PHP_EOL;
+			$htaccess_content .= '   # fake rule to verify if mod rewriting works (if there are unbearable restrictions..)'.PHP_EOL;
+			$htaccess_content .= '   RewriteRule ^test_mod_rewrite$    test.php'.PHP_EOL;
+			$htaccess_content .= '</IfModule>';
+			file_put_contents(get_test_path('.htaccess'), $htaccess_content);
+			$response = file_get_contents(get_test_url('test_mod_rewrite'));
+			unlink(get_test_path('.htaccess'));
+			if($response == 'ok'){
+				$mod_rewrite = TRUE;
+			}
 		}
 		if(!isset($mod_rewrite)){
 			$mod_rewrite = FALSE;
@@ -192,6 +282,10 @@
 		if(!is_writable('./')){
 			$success = FALSE;
 			$errors[] = 'install directory is not writable';
+		}
+		if(!is_writable('./test/')){
+			$success = FALSE;
+			$errors[] = 'install/test directory is not writable';
 		}
 		if(!is_writable('../application/logs')){
 			$success = FALSE;
