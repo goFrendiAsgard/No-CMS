@@ -38,7 +38,7 @@ or
 						$('#status').removeClass('alert-info alert-success alert-error alert-action');
 						$('#status').addClass('alert-success');
 					}else{
-						$('#status').html('<b>Something going wrong : </b>'+response['message']);
+						$('#status').html('<b>Something going wrong : </b><br />'+response['message']);
 						$('#status').removeClass('alert-info alert-success alert-error alert-action');
 						$('#status').addClass('alert-error');
 					}

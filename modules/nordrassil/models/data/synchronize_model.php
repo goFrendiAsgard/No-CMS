@@ -127,7 +127,7 @@ class Synchronize_Model extends CMS_Model{
 				
 				$column_sql = "SHOW COLUMNS FROM $save_db_schema.$save_table_name WHERE field ='".addslashes($row['COLUMN_NAME'])."'";
 				$column_result = mysqli_query($this->connection, $column_sql);
-				$column_row = mysqli_fetch_array($column_result);
+				$column_row = mysqli_fetch_array($column_result);				
 				$type = $column_row['Type'];
 				$matches = array();
 				if(preg_match($pattern, $type, $matches)>0){
@@ -144,7 +144,10 @@ class Synchronize_Model extends CMS_Model{
 					$length = 10;
 				}	
 			}
-			
+			if($role == 'primary'){
+				$data_type = 'int';
+				$length = 10;
+			}
 			// inserting the field
 			$data = array(
 					'table_id' => $table_id,

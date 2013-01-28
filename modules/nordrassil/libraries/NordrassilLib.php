@@ -3,6 +3,10 @@ class NordrassilLib{
 	public function __construct(){
 		$this->ci =& get_instance();
 		$this->ci->load->model('nordrassil/data/nds_model');
+		$this->available_data_type = $this->ci->nds_model->available_data_type;
+		$this->type_without_length = $this->ci->nds_model->type_without_length;
+		$this->auto_increment_data_type = $this->ci->nds_model->auto_increment_data_type;
+		$this->detault_data_type = $this->ci->nds_model->detault_data_type;
 	}
 	public function get_project($project_id){
 		return $this->ci->nds_model->get_project($project_id);

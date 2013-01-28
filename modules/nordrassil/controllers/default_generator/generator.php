@@ -18,20 +18,84 @@ class Generator extends CMS_Controller{
 		$project_options = $projects['options'];
 		$tables = $projects['tables'];
 		
-		$this->load->helper('inflector');
-		$project_path = dirname(BASEPATH).'/modules/'.underscore($project_name).'/';
-		
-		$this->create_directory($project_path);
-		$this->create_install_db_file($project_path, $tables);
-		$this->create_uninstall_db_file($project_path, $tables);
-		$this->create_installer($project_path, $tables, $project_name);
-		$this->create_main_controller_and_view($project_path, $project_name);
-		$this->create_controller_and_view($project_path, $project_name, $tables);
-		$this->create_front_controller_and_view($project_path, $project_name, $tables);
-		
+		// Check tables information (blame user before user blame us :D)
+		$success = TRUE;
+		$message = '';
+		foreach($tables as $table){
+			$table_name = $table['name'];
+			$options = $table['options'];			
+			$columns = $table['columns'];
+			$dont_make_form = $options['dont_make_form'];
+			// check primary key
+			$primary_key_exists = FALSE;
+			foreach($columns as $column){
+				$column_name = $column['name'];
+								
+				if($column['role']=='primary' || $column['role']=='lookup' || $column['role'] == ''){
+					if($column['data_type'] == ''){
+						$success = FALSE;
+						$message .= $table_name.'.'.$column_name.' doesn\'t have data type<br />'.PHP_EOL;
+					}
+					if($column['role']=='primary'){
+						$primary_key_exists = TRUE;
+						if(!in_array($column['role'],$this->nds->auto_increment_data_type)){
+							$success = FALSE;
+							$message .= $table_name.'.'.$column_name.' should be int, smallint, or longint<br />'.PHP_EOL;
+						}
+					}else if($column['role'] == 'lookup'){
+						if($column['lookup_table_name'] == '' || $column['lookup_column_name'] == ''){
+							$success = FALSE;
+							$message .= $table_name.'.'.$column_name.' doesn\'t have lookup table name or lookup column name<br />'.PHP_EOL;
+						}
+					}
+				}else if($column['role'] == 'detail many to many'){
+					if($column['relation_table_name'] == '' || $column['relation_table_column_name'] == '' || $column['relation_selection_column_name'] == '' ||
+						$column['selection_table_name'] == '' || $column['selection_column_name'] == ''
+					){
+						$success = FALSE;
+						$message .= $table_name.'.'.$column_name.' doesn\'t have complete information<br />'.PHP_EOL;
+					}					
+				}else if($column['role'] == 'detail one to many'){
+					if($column['relation_table_name'] == '' || $column['relation_table_column_name'] == ''){
+						$success = FALSE;
+						$message .= $table_name.'.'.$column_name.' doesn\'t have complete information<br />'.PHP_EOL;
+					}
+				}
+			}
+			if(!$primary_key_exists){
+				$one_to_many_exists = FALSE;
+				foreach($tables as $other_table){
+					if($other_table['name'] == $table_name) continue;
+					foreach($other_table['columns'] as $other_column){
+						if($other_column['role'] == 'detail one to many' && $other_column['relation_table_name'] == $table_name){
+							$one_to_many_exists = TRUE;
+							break;
+						}
+					}
+					if($one_to_many_exists) break;
+				}
+				// one to many exists
+				if(!$dont_make_form || $one_to_many_exists){
+					$success = FALSE;
+					$message .= $table_name.' doesn\'t have primary key<br />'.PHP_EOL;
+				}			
+			}		
+		}
+		if($success){
+			$this->load->helper('inflector');
+			$project_path = dirname(BASEPATH).'/modules/'.underscore($project_name).'/';
+			
+			$this->create_directory($project_path);
+			$this->create_install_db_file($project_path, $tables);
+			$this->create_uninstall_db_file($project_path, $tables);
+			$this->create_installer($project_path, $tables, $project_name);
+			$this->create_main_controller_and_view($project_path, $project_name);
+			$this->create_controller_and_view($project_path, $project_name, $tables);
+			$this->create_front_controller_and_view($project_path, $project_name, $tables);
+		}
 		
 		if($this->input->is_ajax_request()){
-			$response = array('success'=>TRUE, 'message'=>'nothing wrong');
+			$response = array('success'=>$success, 'message'=>$message);
 			$this->cms_show_json($response);
 		}else{
 			$this->cms_show_variable($projects);

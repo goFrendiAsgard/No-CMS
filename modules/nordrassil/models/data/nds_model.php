@@ -7,9 +7,11 @@ class Nds_Model extends CMS_Model{
 			'year', 'tinyblob', 'tinytext', 'blob', 'mediumblob', 'mediumtext', 
 			'longblob', 'longtext',
 		);
-	public $type_without_length = array('text','date','datetime','timestamp','time','year',
-			'tinyblob', 'tinytext', 'blob', 'mediumblob', 'mediumtext', 'longblob', 'longtext'
+	public $type_without_length = array('text','date','datetime','timestamp','time','year', 
+			'float', 'double', 'decimal', 'tinyblob', 'tinytext', 'blob', 'mediumblob', 
+			'mediumtext', 'longblob', 'longtext'
 		);
+	public $auto_increment_data_type = array('int', 'tinyint', 'smallint', 'mediumint', 'integer', 'bigint');
 	public $detault_data_type = 'varchar';
 	
 	public function get_all_project(){
@@ -273,8 +275,12 @@ class Nds_Model extends CMS_Model{
 				$column_type = $column['data_type'];
 				$column_size = $column['data_size'];
 				$role = $column['role'];
-				if($role == 'primary' && $column_type=='int'){
-					$column_array[] = '  `'.$column_name.'` '.$column_type.'('.$column_size.') unsigned NOT NULL AUTO_INCREMENT';
+				if($role == 'primary'){
+					if(in_array($column_type, $this->auto_increment_data_type)){
+						$column_array[] = '  `'.$column_name.'` '.$column_type.'('.$column_size.') unsigned NOT NULL AUTO_INCREMENT';
+					}else{
+						$column_array[] = '  `'.$column_name.'` '.$column_type.'('.$column_size.') NOT NULL';
+					}					
 					$primary = '  PRIMARY KEY (`'.$column_name.'`)';
 				}else if($role == 'primary' || $role == '' || $role == 'lookup'){
 					if(in_array($column_type, $this->type_without_length)){
