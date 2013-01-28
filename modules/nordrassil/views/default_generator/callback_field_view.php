@@ -72,7 +72,9 @@
 <input id="<?php echo $add_button_id; ?>" class="btn" type="button" value="Add <?php echo $detail_table_caption; ?>" />
 <br />
 <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
-
+<script type="text" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
+<script type="text" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
+<script type="text" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>
 <script type="text/javascript">
 	/**
 	 * DATA INITIALIZATION ==================================================================================
@@ -108,7 +110,6 @@
 	// add component to the table
 	function <?php echo $fn_add_table_row; ?>(value){
 		var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
-		console.log(value);
 		<?php
 		$date_exist = FALSE; 		
 		for($i=0; $i<count($detail_column_names); $i++){

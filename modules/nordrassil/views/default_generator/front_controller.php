@@ -24,7 +24,14 @@ class {{ controller_name }} extends CMS_Controller {
     	// get data from model
     	$this->load->model('{{ project_name }}/front/{{ controller_name }}_model');
     	$result = $this->{{ controller_name }}_model->get_data($keyword, $page);
-		$this->cms_show_json($result);
+    	$data = array(
+    		'result'=>$result,
+    		'allow_navigate_backend' => $this->cms_allow_navigate('{{ backend_navigation_name }}'),
+			'backend_url' => site_url($this->cms_module_path().'/data/{{ controller_name }}/index'),
+    	);
+    	if($this->cms_allow_navigate('{{ navigation_name }}')){
+    		$this->load->view($this->cms_module_path().'/front/{{ controller_name }}_partial',$data);
+    	}
 	}
     
 }

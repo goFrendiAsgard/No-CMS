@@ -21,15 +21,15 @@
 ?>
 &lt;?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?&gt;
 <style type="text/css">
+	#record_content{
+		margin-top: 5px;
+		margin-bottom: 10px;
+	}
 	.record_container{
 		margin:10px;
 	}
 	.edit_delete_record_container{
 		margin-top: 10px;
-	}
-	#record_content{
-		margin-top: 5px;
-		margin-bottom: 10px;
 	}
 </style>
 <input type="text" name="search" value="" id="input_search" class="input-medium search-query">
@@ -70,29 +70,9 @@
 				'keyword' : keyword,
 				'page' : PAGE,
 			},
-			'dataType' : 'json',
-			'success'  : function(response){
-				// fetch response
-				var contents = '';
-				for(var i=0; i<response.length; i++){
-					record = response[i];
-					contents += '<div id="record_'+record.<?php echo $primary_key; ?>+'" class="record_container well">';
-					<?php echo PHP_EOL;
-						for($i=0; $i<count($fields); $i++){
-							echo '					contents +=\'<b>'.$captions[$i].' :</b> \'+record.'.$fields[$i].'+\'  <br />\'; '.PHP_EOL;
-						}
-					?>
-					if(ALLOW_NAVIGATE_BACKEND){
-						contents += '<div class="edit_delete_record_container">';
-						contents += '<a href="'+BACKEND_URL+'/edit/'+record.<?php echo $primary_key; ?>+'" class="btn edit_record" primary_key = "'+record.<?php echo $primary_key; ?>+'">Edit</a>';
-						contents += '&nbsp;';
-						contents += '<a href="'+BACKEND_URL+'/delete/'+record.<?php echo $primary_key; ?>+'" class="btn delete_record" primary_key = "'+record.<?php echo $primary_key; ?>+'">Delete</a>';
-						contents += '</div>'
-					}
-					contents += '</div>'
-				}
+			'success'  : function(response){				
 				// show contents
-				$('#record_content').append(contents);
+				$('#record_content').append(response);
 				
 				// show bottom contents
 				var bottom_content = 'No more {{ table_caption }} to show.';

@@ -313,5 +313,6 @@ v0.5.6
 + (done, tested) use groceryCRUD 1.3.3 stable
 + (done, tested) use HMVC commit 868e975
 + (done, tested for PHP 5.4) use Module::run instead of AJAX to show widget
-+ (done, not tested) facebook, twitter and open ID login
++ (done, tested) facebook, twitter and open ID login
 + (proposed) Drupal's CCK like mechanism
++ (proposed) Make nordrassil generated code easier to be edited.

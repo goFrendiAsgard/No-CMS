@@ -83,15 +83,18 @@ class Generator extends CMS_Controller{
 				'table_name' => $table_name,
 				'columns' => $columns
 			);
-			// controllers
+			// controller
 			$str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern,$replacement);
 			$this->nds->write_file($project_path.'controllers/front/'.$controller_name.'.php', $str);
-			// models
+			// model
 			$str = $this->nds->read_view('nordrassil/default_generator/front_model.php',$data,$pattern,$replacement);
 			$this->nds->write_file($project_path.'models/front/'.$controller_name.'_model.php', $str);
-			// views
+			// main view
 			$str = $this->nds->read_view('nordrassil/default_generator/front_view.php',$data,$pattern,$replacement);
 			$this->nds->write_file($project_path.'views/front/'.$controller_name.'_index.php', $str);
+			// partial view
+			$str = $this->nds->read_view('nordrassil/default_generator/front_view_partial.php',$data,$pattern,$replacement);
+			$this->nds->write_file($project_path.'views/front/'.$controller_name.'_partial.php', $str);
 		}
 		
 	}

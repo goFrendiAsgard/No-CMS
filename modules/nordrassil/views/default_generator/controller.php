@@ -67,8 +67,8 @@ class {{ controller_name }} extends CMS_Controller {
 		$crud->callback_after_update(array($this,'after_update'));
 		$crud->callback_after_delete(array($this,'after_delete'));
 		// callback for one to many detail columns
-{{ detail_callback_call }}        
-        
+{{ detail_callback_call }}
+
         // render
         $output = $crud->render();        
         $this->view($this->cms_module_path().'/data/{{ controller_name }}_index', $output, '{{ navigation_name }}');
