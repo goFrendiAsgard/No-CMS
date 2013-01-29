@@ -292,7 +292,7 @@ v0.6.0
 + (cancelled) asset management library using head.js
 + (done, tested) asset management library using jsmin
 + (done, tested) using MX_Controller as CMS_Controller base class
-+ (proposed) master-detail by using grocery-crud
++ (cancelled) master-detail by using grocery-crud
 + (done, tested) add only_content in navigation management
 + (done, tested) preconditional check for cms_show_json_encode()
 + (done, tested) use UTF 8 as default collation
@@ -301,7 +301,7 @@ v0.6.0
 + (done, tested) use CodeIgniter 2.1.3
 + (done, tested) make navigation page more interactive when editing static content
 + (done, tested) repair login and logout widget since {{ site_url }} is already add trailing slash automatically
-+ (done) wysiwyg upload limit problem
++ (done, tested) wysiwyg upload limit problem
 + (done, tested) make widget order works
 + (done, tested) make dynamic widget works properly
 + (done, tested) add per-session language setting
@@ -312,11 +312,13 @@ v0.6.0
 + (done, tested) keyword is now also works for dynamic pages, except for value property and textarea
 + (done, tested) use groceryCRUD 1.3.3 stable
 + (done, tested) use HMVC commit 868e975
-+ (done, tested for PHP 5.4) use Module::run instead of AJAX to show widget
++ (done, tested) use Module::run instead of AJAX to show widget
 + (done, tested) facebook, twitter and open ID login
-+ (proposed) Drupal's CCK like mechanism
-+ (proposed) Make nordrassil generated code easier to be edited.
 + (done, tested) avoid SQL injection on login. Damn, just know about it. Thank you for Idris Sardi
++ (done, tested) fix active & inactive link on navigation management and widget management
++ (done, tested) fix theme appearance for "inactive page", Thank you for Sugeng Widodo
++ (done, tested) add theme setting for each page
 
 v0.6.1 (development)
-+ (done) add theme setting for each page
++ (proposed) Drupal's CCK like mechanism
++ (proposed) Make nordrassil generated code easier to be edited.
