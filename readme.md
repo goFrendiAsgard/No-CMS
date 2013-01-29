@@ -284,7 +284,7 @@ v0.5.5
 + (done, tested) put main controllers and views in module directory
 + (done, tested) use grocery-CRUD 1.3 stable
 
-v0.5.6
+v0.6.0
 + (done, tested) add "toggle" navigation feature on table view (also will be applied for widget etc)
 + (done, tested) wysiwyg error on IE
 + (done, tested) ensure installer also works in xampp (htaccess issue)
@@ -316,3 +316,4 @@ v0.5.6
 + (done, tested) facebook, twitter and open ID login
 + (proposed) Drupal's CCK like mechanism
 + (proposed) Make nordrassil generated code easier to be edited.
++ (done, tested) avoid SQL injection on login. Damn, just know about it. Thank you for Idris Sardi

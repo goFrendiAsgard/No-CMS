@@ -550,7 +550,7 @@ class CMS_Model extends CI_Model {
     public final function cms_do_login($identity, $password) {
         $query = $this->db->query(
                 "SELECT user_id, user_name, real_name, email FROM cms_user WHERE
-                    (user_name = '" . $identity . "' OR email = '" . $identity . "') AND
+                    (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
                     password = '" . md5($password) . "' AND
                     active = TRUE"
         );
@@ -759,7 +759,7 @@ class CMS_Model extends CI_Model {
 		// generate query
         $query = $this->db->query(
                 "SELECT user_name, real_name, user_id, email FROM cms_user WHERE
-                    (user_name = '" . $identity . "' OR email = '" . $identity . "') AND
+                    (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
                     $where_active"
         );
         if ($query->num_rows() > 0) {
