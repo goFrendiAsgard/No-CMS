@@ -309,6 +309,77 @@ class Nds_Model extends CMS_Model{
 		return $result;
 	}
 	
+	public function get_insert_table_syntax($project_id, $tables){
+		
+		$query = $this->db->select()->from('nds_project')->where('project_id', $project_id)->get();
+		if($query->num_rows()>0){
+			$row = $query->row();
+			$db_server = $row->db_server;
+			$db_port = $row->db_port;
+			$db_user = $row->db_user;
+			$db_password = $row->db_password;
+			$db_schema = $row->db_schema;
+			
+			$connection = @mysqli_connect($db_server, $db_user, $db_password, 'information_schema', $db_port);
+			@mysqli_select_db($connection, $db_schema);
+			
+			if($connection === FALSE){
+				return '';
+			}
+			
+			$result_array = array();
+			foreach($tables as $table){			
+				// create drop syntax
+				$table_name = addslashes($table['name']);
+				// add columns
+				$columns = $table['columns'];
+				$column_names = array();
+				foreach($columns as $column){
+					$column_names[] = $column['name'];
+				}
+				
+				$raw_available_columns = array();
+				$available_columns = array();
+				$available_values = array();
+				$SQL = "SELECT * FROM `".$table_name."`;";
+				$result = mysqli_query($connection, $SQL);
+				if(mysqli_num_rows($result)>0){
+					while($row = mysqli_fetch_assoc($result)){
+						$values = array();
+						foreach($row as $key=>$value){
+							// get available columns (the lazy way)
+							if(!in_array($key,$raw_available_columns) && in_array($key,$column_names)){
+								$raw_available_columns[] = $key;
+								$available_columns[] = '`'.addslashes($key).'`';
+							}
+							if(in_array($key,$raw_available_columns)){
+								$values[] = '\''.addslashes($value).'\'';
+							}
+						}
+						$available_values[] = '('.implode(', ',$values).')';
+					}
+					
+					$available_column_list = implode(', ',$available_columns);
+					$available_value_list = implode(','.PHP_EOL, $available_values);
+										
+					
+					$insert_syntax = 'INSERT INTO `'.$table_name.'` ('.$available_column_list.') VALUES'.PHP_EOL;
+					$insert_syntax .= $available_value_list.';';
+					$result_array[] = $insert_syntax;
+					
+				}
+				
+				
+				
+			}
+			$result = implode(PHP_EOL.'/*split*/'.PHP_EOL, $result_array);	
+			return $result;
+			
+		}
+		return '';		
+		
+	}
+	
 	public function get_drop_table_syntax($tables){
 		$result_array = array();
 		foreach($tables as $table){			

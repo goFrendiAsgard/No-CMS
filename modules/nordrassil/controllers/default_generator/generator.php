@@ -38,7 +38,7 @@ class Generator extends CMS_Controller{
 					}
 					if($column['role']=='primary'){
 						$primary_key_exists = TRUE;
-						if(!in_array($column['role'],$this->nds->auto_increment_data_type)){
+						if(!in_array($column['data_type'],$this->nds->auto_increment_data_type)){
 							$success = FALSE;
 							$message .= $table_name.'.'.$column_name.' should be int, smallint, or longint<br />'.PHP_EOL;
 						}
@@ -86,7 +86,7 @@ class Generator extends CMS_Controller{
 			$project_path = dirname(BASEPATH).'/modules/'.underscore($project_name).'/';
 			
 			$this->create_directory($project_path);
-			$this->create_install_db_file($project_path, $tables);
+			$this->create_install_db_file($project_id,$project_path, $tables);
 			$this->create_uninstall_db_file($project_path, $tables);
 			$this->create_installer($project_path, $tables, $project_name);
 			$this->create_main_controller_and_view($project_path, $project_name);
@@ -165,6 +165,7 @@ class Generator extends CMS_Controller{
 	
 	private function create_controller_and_view($project_path, $project_name, $tables){		
 		// filter tables, just the everything without "dont_make_form" option
+		$all_tables = $tables;
 		$selected_tables = array();
 		for($i=0; $i<count($tables); $i++){
 			$table = $tables[$i];
@@ -258,7 +259,7 @@ class Generator extends CMS_Controller{
 					$detail_foreign_key_name = $column['relation_table_column_name'];
 					$detail_primary_key_name = '';
 					$detail_table = array();
-					foreach($tables as $detail_table_candidate){
+					foreach($all_tables as $detail_table_candidate){
 						if($detail_table_candidate['name'] == $detail_table_name){
 							$detail_table = $detail_table_candidate;
 							$detail_columns = $detail_table['columns'];
@@ -520,7 +521,8 @@ class Generator extends CMS_Controller{
 		$this->nds->write_file($project_path.'models/.htaccess', $str);
 	}
 
-	private function create_install_db_file($project_path, $tables){
+	private function create_install_db_file($project_id, $project_path, $tables){
+		// create table syntax
 		$selected_tables = array();
 		for($i=0; $i<count($tables); $i++){
 			$table = $tables[$i];
@@ -528,7 +530,18 @@ class Generator extends CMS_Controller{
 				$selected_tables[] = $table;
 			}
 		}
-		$str = $this->nds->get_create_table_syntax($selected_tables);
+		$create_table = $this->nds->get_create_table_syntax($selected_tables);
+		// insert table syntax
+		$selected_tables = array();
+		for($i=0; $i<count($tables); $i++){
+			$table = $tables[$i];
+			if($table['options']['import_data']){
+				$selected_tables[] = $table;
+			}
+		}
+		$insert_table = $this->nds->get_insert_table_syntax($project_id, $selected_tables); 
+		
+		$str = implode(PHP_EOL.'/*split*/'.PHP_EOL, array($create_table, $insert_table));
 		$this->nds->write_file($project_path.'assets/db/install.sql', $str);
 	}
 	

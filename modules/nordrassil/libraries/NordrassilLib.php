@@ -20,6 +20,9 @@ class NordrassilLib{
 	public function get_drop_table_syntax($tables){
 		return $this->ci->nds_model->get_drop_table_syntax($tables);
 	}
+	public function get_insert_table_syntax($project_id, $tables){
+		return $this->ci->nds_model->get_insert_table_syntax($project_id, $tables);
+	}
 	public function replace($string, $pattern, $replacement){
 		if(!isset($pattern)){
 			return $string;
