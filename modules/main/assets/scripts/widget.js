@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$(".widget_active").click(function(){
+	$(".widget_active").live('click', function(){
 	    var str = $(this).html();
 	    var $this = $(this);
 	    $.ajax({
@@ -12,7 +12,6 @@ $(document).ready(function(){
 	                str = 'Active';
 	            }
 	            if(response.success){
-	                console.log(str);
 	                $this.html(str);
 	            }
 	        }

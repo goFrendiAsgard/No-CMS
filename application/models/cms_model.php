@@ -148,7 +148,7 @@ class CMS_Model extends CI_Model {
                                 )>0
                             )
                         )
-                    ) AS allowed
+					) AS allowed
                 FROM cms_navigation AS n WHERE
                     $where_is_root ORDER BY n.index"
         );

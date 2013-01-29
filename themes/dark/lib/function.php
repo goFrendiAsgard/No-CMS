@@ -38,9 +38,9 @@
 		}
 		$result = '<ul  class="dropdown-menu nav nav-pills nav-stacked" style="'.$style.'">';
 		foreach($navigations as $navigation){
-			if($navigation['allowed'] || $navigation['have_allowed_children']){
+			if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
 				// make text
-				if($navigation['allowed']){
+				if($navigation['allowed'] && $navigation['active']){
 					$text = '<a class="dropdown-toggle" href="'.site_url($navigation['url']).'">'.$navigation['title'].'</a>';
 				}else{
 					$text = $navigation['title'];
@@ -61,9 +61,9 @@
 		if(count($navigations) == 0) return '';
 		$result = '<ul  class="dropdown-menu">';
 		foreach($navigations as $navigation){
-			if($navigation['allowed'] || $navigation['have_allowed_children']){
+			if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
 				// make text
-				if($navigation['allowed']){
+				if($navigation['allowed'] && $navigation['active']){
 					$text = '<a href="'.site_url($navigation['url']).'">'.$navigation['title'].'</a>';
 				}else{
 					$text = '<a href="#">'.$navigation['title'].'</a>';

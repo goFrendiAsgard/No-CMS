@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	// grid, toggle active/inactive
-	$(".navigation_active").click(function(){
+	$(".navigation_active").live('click', function(){
 		var str = $(this).html();
 		var $this = $(this);
 		$.ajax({
@@ -13,7 +13,6 @@ $(document).ready(function(){
 					str = 'Active';
 				}
 				if(response.success){
-					console.log(str);
 					$this.html(str);
 				}
 			}
