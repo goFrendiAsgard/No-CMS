@@ -424,7 +424,7 @@ class CMS_Controller extends MX_Controller {
             $query = $this->db->query($SQL);
             if ($query->num_rows() > 0) {
                 $row = $query->row();
-                $navigation_name = $row->navigation_name;
+                $navigation_name = stripslashes($row->navigation_name);
             }
         }
 
@@ -545,6 +545,26 @@ class CMS_Controller extends MX_Controller {
 					$this->cms_show_html($result);
 				}
             } else {
+            	
+				// fetch default theme
+				if (isset($navigation_name)) {
+					$SQL = "SELECT default_theme FROM cms_navigation WHERE navigation_name = '".addslashes($navigation_name)."'";
+					$query = $this->db->query($SQL);
+					if ($query->num_rows() > 0) {
+						$row = $query->row();
+						$default_theme = $row->default_theme;
+						if(isset($default_theme) && $default_theme != ''){
+							$themes = $this->cms_get_layout_list();
+							$theme_path = array();
+							foreach($themes as $theme){
+								$theme_path[] = $theme['path'];
+							}
+							if(in_array($default_theme, $theme_path)){
+								$theme = $default_theme;
+							}
+						}
+					}
+				}
             	
 				//get widget
 				$widget = $this->cms_widgets();       	

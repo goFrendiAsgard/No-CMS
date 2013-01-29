@@ -317,3 +317,6 @@ v0.6.0
 + (proposed) Drupal's CCK like mechanism
 + (proposed) Make nordrassil generated code easier to be edited.
 + (done, tested) avoid SQL injection on login. Damn, just know about it. Thank you for Idris Sardi
+
+v0.6.1 (development)
++ (done) add layout type
