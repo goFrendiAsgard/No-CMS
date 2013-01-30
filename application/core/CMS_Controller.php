@@ -400,6 +400,10 @@ class CMS_Controller extends MX_Controller {
     	    	
     	$result = NULL;
         $this->load->helper('url');
+		
+		/**
+		 * PREPARE PARAMETERS *********************************************************************************************
+		 */
 
         // this method can be called as $this->view('view_path', $data, true);
         // or $this->view('view_path', $data, $navigation_name, true);
@@ -417,7 +421,9 @@ class CMS_Controller extends MX_Controller {
             $custom_layout = NULL;
         }
 
-        // if no navigation_name provided, just guess it through the url
+        /**
+		 * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
+		 */
         if (!isset($navigation_name)) {
             $uriString = $this->uri->uri_string();
             $SQL = "SELECT navigation_name FROM cms_navigation WHERE url = '" . addslashes($uriString) . "'";
@@ -427,8 +433,10 @@ class CMS_Controller extends MX_Controller {
                 $navigation_name = stripslashes($row->navigation_name);
             }
         }
-
-        // check allowance
+		
+		/**
+		 * CHECK IF THE CURRENT NAVIGATION IS ACCESSIBLE  *****************************************************************
+		 */
         if (!isset($navigation_name) || $this->cms_allow_navigate($navigation_name)) {
             if (!isset($privilege_required)) {
                 $allowed = true;
@@ -447,7 +455,9 @@ class CMS_Controller extends MX_Controller {
             $allowed = false;
         }
         
-        // check if static page        
+        /**
+		 * CHECK IF THE PAGE IS STATIC  **********************************************************************************
+		 */        
         $data = (array) $data;
         if(isset($navigation_name) && !isset($data['_content'])){
             $SQL = "SELECT static_content FROM cms_navigation WHERE is_static=1 AND navigation_name='$navigation_name'";
@@ -461,48 +471,67 @@ class CMS_Controller extends MX_Controller {
                 }
 				$static_content = $this->cms_parse_keyword($static_content);
                 $data["_content"] = $static_content;
-                return $this->view('main/static_page', $data, $navigation_name, $privilege_required, $custom_theme, $custom_layout, $return_as_string);
+                return $this->view('main/static_page', $data, $navigation_name, $privilege_required, 
+                	$custom_theme, $custom_layout, $return_as_string);
             }            
         }
         
 
-        // if allowed then show, else don't
-        if ($allowed) {
-        	//get configuration
-        	$cms['site_name'] = $this->cms_get_config('site_name');
-        	$cms['site_slogan'] = $this->cms_get_config('site_slogan');
-        	$cms['site_footer'] = $this->cms_get_config('site_footer');
-        	$cms['site_theme'] = $this->cms_get_config('site_theme');
-        	$cms['site_logo'] = $this->cms_get_config('site_logo');
-        	$cms['site_favicon'] = $this->cms_get_config('site_favicon');
-        	
-        	
-        	// get user name, quicklinks, module_name & module_path
-        	$cms['user_id'] = $this->cms_user_id();
-        	$cms['user_name'] = $this->cms_user_name();
-        	$cms['quicklinks'] = $this->cms_quicklinks();
-        	$cms['module_path'] = $this->cms_module_path();
-        	$cms['module_name'] = $this->cms_module_name($cms['module_path']);
-        	
-        	// if $custom_theme defined, use it as theme
-        	// else use site_theme configuration
-        	if (isset($custom_theme)) {
-        		$theme = $custom_theme;
-        	} else {
-        		$theme = $cms['site_theme'];
+        /**
+		 * SHOW THE PAGE IF IT IS ACCESSIBLE  *****************************************************************************
+		 */
+        if ($allowed) {        	
+			
+			// CHECK IF IT IS ONLY CONTENT
+        	$only_content = FALSE;
+        	$SQL = "SELECT only_content FROM cms_navigation WHERE navigation_name ='".addslashes($navigation_name)."'";
+        	$query = $this->db->query($SQL);
+        	if ($query->num_rows() > 0) {
+        		$row = $query->row();
+        		$only_content = ($row->only_content == 1);
         	}
+			
+			// CHECK IF IT IS WIDGET
+			$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
         	
-        	// if $custom_layout defined, use it as layout
-        	// else look at user agent
+			
+			// GET THE THEME
+			$theme = '';
+			if (isset($navigation_name)) {
+				$SQL = "SELECT default_theme FROM cms_navigation WHERE navigation_name = '".addslashes($navigation_name)."'";
+				$query = $this->db->query($SQL);
+				if ($query->num_rows() > 0) {
+					$row = $query->row();
+					$default_theme = $row->default_theme;
+					if(isset($default_theme) && $default_theme != ''){
+						$themes = $this->cms_get_layout_list();
+						$theme_path = array();
+						foreach($themes as $theme){
+							$theme_path[] = $theme['path'];
+						}
+						if(in_array($default_theme, $theme_path)){
+							$theme = $default_theme;
+						}
+					}
+				} else if (isset($custom_theme)) {
+	        		$theme = $custom_theme;
+	        	} else {
+	        		$theme = $this->cms_get_config('site_theme');
+	        	}
+			}else{
+				$theme = $this->cms_get_config('site_theme');
+			}
+        	
+        	// GET THE LAYOUT
         	if (isset($custom_layout)) {
         		$layout = $custom_layout;
         	} else { 
         		$this->load->library('user_agent');
         		$layout = $this->agent->is_mobile() ? 'mobile' : 'default';
-        	}      	
+        	}  	
         	
         	
-        	//let's decide the real theme and layout used by their availability
+        	// ADJUST THEME AND LAYOUT
         	if (!$this->cms_layout_exists($theme, $layout)) {
         		if ($layout == 'mobile' && $this->cms_layout_exists($theme, 'default')) {
         			$layout = 'default';
@@ -511,31 +540,50 @@ class CMS_Controller extends MX_Controller {
         		}
         	}
         	
-        	// backend template
+        	// BACKEND LAYOUT (in case of user has logged in)
         	$cms_user_id = $this->cms_user_id();
         	if (isset($cms_user_id) && $cms_user_id) {
         		if ($this->cms_layout_exists($theme, $layout . '_backend')) {
         			$layout = $layout . '_backend';
         		}
         	}
-        	
-        	//re-adjust $cms['site_theme']
+			
+			// PREPARE SETTINGS
+        	$cms['site_name'] = $this->cms_get_config('site_name');
+        	$cms['site_slogan'] = $this->cms_get_config('site_slogan');
+        	$cms['site_footer'] = $this->cms_get_config('site_footer');
         	$cms['site_theme'] = $theme;
-        	
-        	// include data_partial into data
-        	$data['cms'] = $cms;
-        	
-        	// get only_content from database
-        	$only_content = FALSE;
-        	$SQL = "SELECT only_content FROM cms_navigation WHERE navigation_name ='".addslashes($navigation_name)."'";
-        	$query = $this->db->query($SQL);
-        	if ($query->num_rows() > 0) {
-        		$row = $query->row();
-        		$only_content = ($row->only_content == 1);
-        	}
-			// in case of widget
-			$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
-        	// if only content or request is ajax
+        	$cms['site_logo'] = $this->cms_get_config('site_logo');
+        	$cms['site_favicon'] = $this->cms_get_config('site_favicon'); 
+        	$cms['user_id'] = $this->cms_user_id();
+        	$cms['user_name'] = $this->cms_user_name();
+        	$cms['quicklinks'] = $this->cms_quicklinks();
+        	$cms['module_path'] = $this->cms_module_path();
+        	$cms['module_name'] = $this->cms_module_name($cms['module_path']);
+			
+			// GET WIDGET AND NAVIGATION ONLY IF NEEDED.
+			// THE ONLY_CONTENT PAGE, DYNAMIC WIDGET, AND AJAX REQUESTED PAGE DOESN'T NEED THOSE
+			if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
+				$cms['widget'] = array();
+				$cms['navigations'] = array();
+				$cms['navigation_path'] = array();
+			}else{
+				// GET WIDGET
+				$widget = $this->cms_widgets();       	
+	        	$cms['widget'] = $widget;				
+				
+				// GET NAVIGATIONS
+	        	$navigations = $this->cms_navigations();
+	        	$navigation_path = $this->cms_get_navigation_path($navigation_name);
+	        	$cms['navigations'] = $navigations;
+	        	$cms['navigation_path'] = $navigation_path;
+			}
+			
+			// DEFINE $data			
+			$data['cms'] = $cms;
+			
+						
+        	// IT'S SHOW TIME
             if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            	
                 $result = $this->load->view($view_url, $data, TRUE);
 				$result = $this->cms_parse_keyword($result);
@@ -544,40 +592,7 @@ class CMS_Controller extends MX_Controller {
 				}else{
 					$this->cms_show_html($result);
 				}
-            } else {
-            	
-				// fetch default theme
-				if (isset($navigation_name)) {
-					$SQL = "SELECT default_theme FROM cms_navigation WHERE navigation_name = '".addslashes($navigation_name)."'";
-					$query = $this->db->query($SQL);
-					if ($query->num_rows() > 0) {
-						$row = $query->row();
-						$default_theme = $row->default_theme;
-						if(isset($default_theme) && $default_theme != ''){
-							$themes = $this->cms_get_layout_list();
-							$theme_path = array();
-							foreach($themes as $theme){
-								$theme_path[] = $theme['path'];
-							}
-							if(in_array($default_theme, $theme_path)){
-								$theme = $default_theme;
-							}
-						}
-					}
-				}
-            	
-				//get widget
-				$widget = $this->cms_widgets();       	
-	        	$cms['widget'] = $widget;
-				
-				//get navigations
-	        	$navigations = $this->cms_navigations();
-	        	$navigation_path = $this->cms_get_navigation_path($navigation_name);
-	        	$cms['navigations'] = $navigations;
-	        	$cms['navigation_path'] = $navigation_path;
-				
-				// add widget and navigation
-				$data['cms'] = $cms;           
+            } else {    
 
                 // set layout and partials                
                 $this->template->set_theme($theme);
@@ -607,9 +622,11 @@ class CMS_Controller extends MX_Controller {
 				}else{
 					$this->cms_show_html($result);
 				}
-            }
+            }		
         } else {
-            //if user not authorized, show login, save current url
+        	/**
+			 * REDIRECT IF PAGE IS INACCESSIBLE  **************************************************************************
+			 */
             $uriString = $this->uri->uri_string();                        
             $old_url = $this->session->flashdata('old_url');            
             if (is_bool($old_url)) {                
