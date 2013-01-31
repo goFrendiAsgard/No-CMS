@@ -123,6 +123,9 @@ class CMS_Asset{
 				$content = '';
 				if(isset($resource['path'])){
 					$path = $resource['path'];
+					if(strpos($path, base_url())==0){
+						$path = BASEPATH.'..'.substr($path, strlen(base_url())-1);
+					}
 					$content = file_get_contents($path);										
 				}else{
 					// write content
