@@ -184,6 +184,18 @@
 				$mod_rewrite = TRUE;
 			}
 		}
+		if(!isset($mod_rewrite) && in_array  ('curl', get_loaded_extensions())){
+			file_put_contents(get_test_path('.htaccess'), $htaccess_content);
+			$ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, get_test_url('test_mod_rewrite'));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+            $response = curl_exec($ch);
+            curl_close($ch);
+            unlink(get_test_path('.htaccess'));
+			if($response == 'ok'){
+				$mod_rewrite = TRUE;
+			}
+		}
 		if(!isset($mod_rewrite)){
 			$htaccess_content  = '<IfModule mod_rewrite.c>'.PHP_EOL;
 			$htaccess_content .= '   Options +FollowSymLinks -Indexes'.PHP_EOL;
