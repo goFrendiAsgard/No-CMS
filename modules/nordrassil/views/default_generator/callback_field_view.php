@@ -1,4 +1,5 @@
 <?php
+	$integer_type = $auto_increment_data_type = array('int', 'tinyint', 'smallint', 'mediumint', 'integer', 'bigint');
 	$view_path = $project_name.'/data/field_'.$project_name.'_'.$master_table_name.'_'.$master_column_name;
 	$detail_columns = $detail_table['columns'];
 	$detail_column_captions = array();
@@ -97,14 +98,7 @@
 		});
 	}
 	
-	/**
-	 * FUNCTIONS ============================================================================================
-	 */
 	
-	// syncrhonize data to <?php echo $real_input_id; ?>.
-	function <?php echo $fn_synchronize; ?>(){
-		$('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
-	}
 	
 	
 	// add component to the table
@@ -121,7 +115,9 @@
 			$additional_class_array = array();
 			if($data_type=='date'){
 				$additional_class_array[] = 'datepicker-input';
-				$date_exist = TRUE;
+			}
+			if(in_array($data_type, $integer_type)){
+				$additional_class_array[] = 'numeric';
 			}
 			if(count($additional_class_array)>0){
 				$additional_class = ' '.implode(' ',$additional_class_array);	
@@ -139,14 +135,16 @@
 			}			
 			echo '		}'.PHP_EOL;
 			echo '		component += \'<td>\';'.PHP_EOL;
+			// create input based on role and type
 			if($role=='lookup' || $role=='detail many to many' || $selection_mode=='enum' || $selection_mode=='set'){
+				$multiple = '';
 				if($role=='lookup' || $selection_mode=='enum'){
-					echo '		var multiple = \'\';'.PHP_EOL;
+					$multiple = '';
 				}else{
-					echo '		var multiple = \'multiple="multiple"\';'.PHP_EOL;
+					$multiple = ' multiple = "multiple"';
 				}
 				echo '		component += \'<select id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
-					'+\'" class="'.$column_input_class.$additional_class.' chzn-select" column_name="'.$name.'" \'+multiple+\'>\';'.PHP_EOL;				
+					'+\'" class="'.$column_input_class.$additional_class.' chzn-select" column_name="'.$name.'" '.$multiple.'>\';'.PHP_EOL;				
 				echo '		var options = OPTIONS.'.$name.';'.PHP_EOL;
 				echo '		component += \'<option value></option>\';'.PHP_EOL;
 				echo '		for(var i=0; i<options.length; i++){'.PHP_EOL;
@@ -183,74 +181,12 @@
 		// add to the table
 		$('#<?php echo $table_id; ?> tbody').append(component);
 		
-		// datepicker and combobox mutation:
-		// datepikcer-input
-		$('#<?php echo $table_id; ?> .datepicker-input').datepicker({
-				dateFormat: js_date_format,
-				showButtonPanel: true,
-				changeMonth: true,
-				changeYear: true
-		});
-		// date-picker-input-clear
-		$('#<?php echo $table_id; ?> .datepicker-input-clear').click(function(){
-			$(this).parent().find('.datepicker-input').val('');
-			return false;
-		});
-		// chzn-select
-		$("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true});
+		mutate_input();
 		
 	}
 	
 	
-	function js_date_to_php(js_date){
-		if(typeof(js_date)=='undefined' || js_date == ''){
-			return '';
-		}
-		var date = '';
-		var month = '';
-		var year = '';	
-		var php_date = '';	
-		if(DATE_FORMAT == 'uk-date'){
-			var date_array = js_date.split('/')
-			day = date_array[0];
-			month = date_array[1];
-			year = date_array[2];
-			php_date = year+'-'+month+'-'+day;
-		}else if(DATE_FORMAT == 'us-date'){
-			var date_array = js_date.split('/')
-			day = date_array[1];
-			month = date_array[0];
-			year = date_array[2];
-			php_date = year+'-'+month+'-'+day;
-		}else if(DATE_FORMAT == 'sql-date'){
-			var date_array = js_date.split('-')
-			day = date_array[2];
-			month = date_array[1];
-			year = date_array[0];
-			php_date = year+'-'+month+'-'+day;
-		}
-		return php_date;
-	}
 	
-	
-	function php_date_to_js(php_date){
-		if(typeof(php_date)=='undefined' || php_date == ''){
-			return '';
-		}
-		var date_array = php_date.split('-');
-		var year = date_array[0];
-		var month = date_array[1];
-		var day = date_array[2];
-		if(DATE_FORMAT == 'uk-date'){
-			return day+'/'+month+'/'+year;
-		}else if(DATE_FORMAT == 'us-date'){
-			return month+'/'+date+'/'+year;
-		}else if(DATE_FORMAT == 'sql-date'){
-			return year+'-'+month+'-'+day;
-		}else{
-			return '';
-		}
-	}
 
 	
 	/**
@@ -369,6 +305,119 @@
 		});
 		
 		
-	})
+	});
+	
+	/**
+	 * FUNCTIONS ============================================================================================
+	 */
+	
+	// synchronize data to <?php echo $real_input_id; ?>.
+	function <?php echo $fn_synchronize; ?>(){
+		$('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
+	}
+	
+	
+	function js_date_to_php(js_date){
+		if(typeof(js_date)=='undefined' || js_date == ''){
+			return '';
+		}
+		var date = '';
+		var month = '';
+		var year = '';	
+		var php_date = '';	
+		if(DATE_FORMAT == 'uk-date'){
+			var date_array = js_date.split('/')
+			day = date_array[0];
+			month = date_array[1];
+			year = date_array[2];
+			php_date = year+'-'+month+'-'+day;
+		}else if(DATE_FORMAT == 'us-date'){
+			var date_array = js_date.split('/')
+			day = date_array[1];
+			month = date_array[0];
+			year = date_array[2];
+			php_date = year+'-'+month+'-'+day;
+		}else if(DATE_FORMAT == 'sql-date'){
+			var date_array = js_date.split('-')
+			day = date_array[2];
+			month = date_array[1];
+			year = date_array[0];
+			php_date = year+'-'+month+'-'+day;
+		}
+		return php_date;
+	}
+	
+	
+	function php_date_to_js(php_date){
+		if(typeof(php_date)=='undefined' || php_date == ''){
+			return '';
+		}
+		var date_array = php_date.split('-');
+		var year = date_array[0];
+		var month = date_array[1];
+		var day = date_array[2];
+		if(DATE_FORMAT == 'uk-date'){
+			return day+'/'+month+'/'+year;
+		}else if(DATE_FORMAT == 'us-date'){
+			return month+'/'+date+'/'+year;
+		}else if(DATE_FORMAT == 'sql-date'){
+			return year+'-'+month+'-'+day;
+		}else{
+			return '';
+		}
+	}
+	
+	function IsNumeric(input){
+		return (input - 0) == input && input.length > 0;
+	}
+	
+	function mutate_input(){
+		/* 
+		 * datepicker and combobox mutation
+		 */
+		// datepikcer-input
+		$('#<?php echo $table_id; ?> .datepicker-input').datepicker({
+				dateFormat: js_date_format,
+				showButtonPanel: true,
+				changeMonth: true,
+				changeYear: true
+		});
+		// date-picker-input-clear
+		$('#<?php echo $table_id; ?> .datepicker-input-clear').click(function(){
+			$(this).parent().find('.datepicker-input').val('');
+			return false;
+		});
+		// chzn-select
+		$("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true});
+		// numeric
+		//$('#<?php echo $table_id; ?> .numeric').numeric();
+		$('#<?php echo $table_id; ?> .numeric').keydown(function(e){			
+			if(e.keyCode == 38)
+			{
+				if(IsNumeric($(this).val()))
+				{
+					var new_number = parseInt($(this).val()) + 1;
+					$(this).val(new_number);
+				}else if($(this).val().length == 0)
+				{
+					var new_number = 1;
+					$(this).val(new_number);
+				}
+			}
+			else if(e.keyCode == 40)
+			{
+				if(IsNumeric($(this).val()))
+				{
+					var new_number = parseInt($(this).val()) - 1;
+					$(this).val(new_number);
+				}else if($(this).val().length == 0)
+				{
+					var new_number = -1;
+					$(this).val(new_number);
+				}
+			}
+			$(this).trigger('change');			
+		});
+	}
 	
 </script>
