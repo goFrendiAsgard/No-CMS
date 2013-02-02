@@ -133,8 +133,6 @@
 			echo '		if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
 			if($data_type=='date'){
 				echo '			field_value = php_date_to_js(value.'.$name.');'.PHP_EOL;
-			}else if($data_type=='datetime'){
-				echo '			field_value = php_datetime_to_js(value.'.$name.');'.PHP_EOL;
 			}else{
 				echo '			field_value = value.'.$name.';'.PHP_EOL;
 			}			
