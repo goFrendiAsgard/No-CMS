@@ -42,16 +42,20 @@
 <style type="text/css">
 	/* set width of every detail input*/
 	#<?php echo $table_id; ?> .<?php echo $column_input_class ?>{
-		min-width:150px!important;
+		width:auto!important;
+		min-width:50px!important;
 		max-width:150px!important;
 	}
 	#<?php echo $table_id; ?> .datepicker-input{
-		min-width:100px!important;
+		width:auto!important;
+		min-width:50px!important;
 		max-width:100px!important;
 	}
+	#<?php echo $table_id; ?> .chzn-container,
 	#<?php echo $table_id; ?> .chzn-drop{
-		min-width:150px!important;
-		max-width:150px!important;
+		width:auto!important;
+		min-width:100px!important;
+		max-width:250px!important;
 	}
 </style>
 
@@ -73,9 +77,9 @@
 <input id="<?php echo $add_button_id; ?>" class="btn" type="button" value="Add <?php echo $detail_table_caption; ?>" />
 <br />
 <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
-<script type="text" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
-<script type="text" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
-<script type="text" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>
+<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
+<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
+<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>
 <script type="text/javascript">
 	/**
 	 * DATA INITIALIZATION ==================================================================================
@@ -115,8 +119,7 @@
 			$additional_class_array = array();
 			if($data_type=='date'){
 				$additional_class_array[] = 'datepicker-input';
-			}
-			if(in_array($data_type, $integer_type)){
+			}else if(in_array($data_type, $integer_type)){
 				$additional_class_array[] = 'numeric';
 			}
 			if(count($additional_class_array)>0){
@@ -130,6 +133,8 @@
 			echo '		if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
 			if($data_type=='date'){
 				echo '			field_value = php_date_to_js(value.'.$name.');'.PHP_EOL;
+			}else if($data_type=='datetime'){
+				echo '			field_value = php_datetime_to_js(value.'.$name.');'.PHP_EOL;
 			}else{
 				echo '			field_value = value.'.$name.';'.PHP_EOL;
 			}			
@@ -316,6 +321,20 @@
 		$('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
 	}
 	
+	function js_datetime_to_php(js_datetime){
+		var datetime_array = js_datetime.split(' ');
+		var js_date = datetime_array[0];
+		var time = datetime_array[1];
+		var php_date = js_date_to_php(js_date);
+		return php_date + ' ' + time;
+	}
+	function php_datetime_to_js(php_datetime){
+		var datetime_array = php_datetime.split(' ');
+		var php_date = datetime_array[0];
+		var time = datetime_array[1];
+		var js_date = php_date_to_js(php_date);
+		return js_date + ' ' + time;
+	}
 	
 	function js_date_to_php(js_date){
 		if(typeof(js_date)=='undefined' || js_date == ''){
@@ -390,7 +409,7 @@
 		// chzn-select
 		$("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true});
 		// numeric
-		//$('#<?php echo $table_id; ?> .numeric').numeric();
+		$('#<?php echo $table_id; ?> .numeric').numeric();
 		$('#<?php echo $table_id; ?> .numeric').keydown(function(e){			
 			if(e.keyCode == 38)
 			{
@@ -418,6 +437,7 @@
 			}
 			$(this).trigger('change');			
 		});
+		
 	}
 	
 </script>
