@@ -500,18 +500,21 @@ class CMS_Controller extends MX_Controller {
 			if (isset($navigation_name)) {
 				$SQL = "SELECT default_theme FROM cms_navigation WHERE navigation_name = '".addslashes($navigation_name)."'";
 				$query = $this->db->query($SQL);
+				// get default_theme of this page
+				$default_theme = NULL;
 				if ($query->num_rows() > 0) {
 					$row = $query->row();
-					$default_theme = $row->default_theme;
-					if(isset($default_theme) && $default_theme != ''){
-						$themes = $this->cms_get_layout_list();
-						$theme_path = array();
-						foreach($themes as $theme){
-							$theme_path[] = $theme['path'];
-						}
-						if(in_array($default_theme, $theme_path)){
-							$theme = $default_theme;
-						}
+					$default_theme = $row->default_theme;					
+				}
+				// set the theme based on default_theme and custom_theme existence
+				if(isset($default_theme) && $default_theme != ''){
+					$themes = $this->cms_get_layout_list();
+					$theme_path = array();
+					foreach($themes as $theme){
+						$theme_path[] = $theme['path'];
+					}
+					if(in_array($default_theme, $theme_path)){
+						$theme = $default_theme;
 					}
 				} else if (isset($custom_theme)) {
 	        		$theme = $custom_theme;
