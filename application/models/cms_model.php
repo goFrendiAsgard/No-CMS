@@ -131,7 +131,7 @@ class CMS_Model extends CI_Model {
         $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
         $query = $this->db->query(
                 "SELECT navigation_id, navigation_name, is_static, title, description, url, active,
-                    (
+                	(
                         (authorization_id = 1) OR
                         (authorization_id = 2 AND $not_login) OR
                         (authorization_id = 3 AND $login) OR
@@ -281,7 +281,29 @@ class CMS_Model extends CI_Model {
         		// content
         		$content .= '<div id="_cms_widget_'.$row->widget_id.'">';
         		$this->cms_ci_session('cms_dynamic_widget',TRUE);
-        		$content .= Modules::run($url); 
+        		if(strpos(strtoupper($url), 'HTTP://')!==FALSE || strpos(strtoupper($url), 'HTTPS://')!==FALSE){
+    				$response = FALSE;
+    				// use CURL    				
+					if($response == FALSE && in_array  ('curl', get_loaded_extensions())){
+        				$ch = curl_init();
+			            curl_setopt($ch, CURLOPT_URL, $url);
+			            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);						 
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			            $response = @curl_exec($ch);
+			            curl_close($ch);
+					}
+					// use file get content
+					if($response == FALSE){
+    					$response = @file_get_contents($url);
+					}
+					// add the content
+					if($response !== FALSE){
+						$response = preg_replace('#(href|src|action)="([^:"]*)(?:")#','$1="'.$url.'/$2"',$response);
+						$content .= $response;
+					}					
+        		}else{
+        			$content .= Modules::run($url); 
+        		}        		
         		$this->cms_unset_ci_session('cms_dynamic_widget');        		        		
         		$content .= '</div>';
         	}
