@@ -606,8 +606,8 @@ class CMS_Model extends CI_Model {
      * @desc    register new user
      */
     public final function cms_do_register($user_name, $email, $real_name, $password) {
-    	// check if activation needed
-    	$need_activation = (bool)$this->cms_get_config('cms_signup_activation');
+    	// check if activation needed    	
+    	$need_activation =  strtoupper($this->cms_get_config('cms_signup_activation')) == 'TRUE';
         $data = array(
             "user_name" => $user_name,
             "email" => $email,
@@ -797,7 +797,6 @@ class CMS_Model extends CI_Model {
             $where = array("user_id" => $user_id);
             $this->db->update('cms_user', $data, $where);
             $this->load->library('email');
-			echo var_dump($send_mail);
 			if($send_mail){
 				//prepare activation email to user
 	            $email_from_address = $this->cms_get_config('cms_email_reply_address');
