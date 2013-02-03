@@ -81,6 +81,7 @@
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>
 <script type="text/javascript">
+
 	/**
 	 * DATA INITIALIZATION ==================================================================================
 	 */
@@ -101,12 +102,15 @@
 			'data' : data,
 		});
 	}
+	// end of initialization
 	
 	
 	
-	
-	// add component to the table
+	/**
+	 * ADD ROW FUNCTION =====================================================================================
+	 */
 	function <?php echo $fn_add_table_row; ?>(value){
+		
 		var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
 		<?php
 		$date_exist = FALSE; 		
@@ -128,7 +132,7 @@
 				$additional_class = '';
 			}
 			echo PHP_EOL;
-			echo '		// field "'.$name.'"'.PHP_EOL;
+			echo '		/* ====== field "'.$name.'" ====== */'.PHP_EOL;
 			echo '		var field_value = \'\''.PHP_EOL;
 			echo '		if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
 			if($data_type=='date'){
@@ -173,32 +177,30 @@
 					echo '		component += \'<a href="#" class="datepicker-input-clear btn">Clear</a>\';'.PHP_EOL;
 				}
 			}
-			echo'		component += \'</td>\';'.PHP_EOL;
+			echo'		component += \'</td>\';'.PHP_EOL.PHP_EOL;
 		}		
 		?>
 		
-		// delete button
+		
+		/* ====== DELETE BUTTON ====== */
 		component += '<td><input class="<?php echo $delete_button_class; ?> btn" record_index="'+<?php echo $var_record_index; ?>+'" primary_key="" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';
 		component += '</tr>';
 		
-		// add to the table
+		/* ====== ADD CONTENT TO TABLE ====== */
 		$('#<?php echo $table_id; ?> tbody').append(component);
 		
 		mutate_input();
 		
-	}
+	} // end of ADD ROW FUNCTION
 	
 	
-	
-
 	
 	/**
 	 * MAIN PROGRAM ==========================================================================================
 	 */
 	$(document).ready(function(){
-		/**
-		 * INITIALIZATION
-		 */
+		
+		/* ======== INITIALIZATION ======== */
 		<?php echo $fn_synchronize; ?>();
 		for(var i=0; i<old_data.length; i++){
 			<?php echo $fn_add_table_row; ?>(old_data[i]);
@@ -206,9 +208,7 @@
 		}
 		
 		
-		/**
-		 * ADD RECORD EVENT : <?php echo $add_button_id; ?>.click ===========================================
-		 */
+		/* ======== ADD RECORD EVENT : <?php echo $add_button_id; ?>.click ======== */
 		$('#<?php echo $add_button_id; ?>').click(function(){
 			// new data
 			var data = new Object();			
@@ -234,9 +234,7 @@
 		});
 		
 		
-		/** 
-		 * DELETE RECORD EVENT : <?php echo $delete_button_class; ?>.click =================================
-		 */
+		/* ======== DELETE RECORD EVENT : <?php echo $delete_button_class; ?>.click ======== */
 		$('.<?php echo $delete_button_class ?>').live('click', function(){
 			var record_index = $(this).attr('record_index');
 			// remove the component
@@ -271,9 +269,7 @@
 		});
 				
 		
-		/** 
-		 * UPDATE FIELD EVENT : <?php echo $column_input_class; ?>.change ==================================
-		 */
+		/* ======== UPDATE FIELD EVENT : <?php echo $column_input_class; ?>.change ======== */
 		$('.<?php echo $column_input_class; ?>').live('change', function(){				
 			var value = $(this).val();
 			var column_name = $(this).attr('column_name');
@@ -308,10 +304,13 @@
 		});
 		
 		
-	});
+	}); // end of MAIN PROGRAM
+	
+	
+	
 	
 	/**
-	 * FUNCTIONS ============================================================================================
+	 * GENERAL FUNCTIONS =====================================================================================
 	 */
 	
 	// synchronize data to <?php echo $real_input_id; ?>.
@@ -389,9 +388,6 @@
 	}
 	
 	function mutate_input(){
-		/* 
-		 * datepicker and combobox mutation
-		 */
 		// datepikcer-input
 		$('#<?php echo $table_id; ?> .datepicker-input').datepicker({
 				dateFormat: js_date_format,

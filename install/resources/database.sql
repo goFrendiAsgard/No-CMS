@@ -54,9 +54,9 @@ CREATE TABLE `cms_group` (
 CREATE TABLE `cms_widget` (
   `widget_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `widget_name` varchar(45) NOT NULL,
-  `title` varchar(45) NOT NULL,
+  `title` varchar(50) NOT NULL,
   `description` text,
-  `url` varchar(45) DEFAULT NULL,
+  `url` varchar(100) DEFAULT NULL,
   `authorization_id` tinyint(4) unsigned NOT NULL DEFAULT '1',
   `active` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `index` int(20) NOT NULL DEFAULT '0',
@@ -87,7 +87,8 @@ CREATE TABLE IF NOT EXISTS `cms_navigation` (
   PRIMARY KEY (`navigation_id`),
   UNIQUE KEY `navigation_name` (`navigation_name`),
   KEY `parent_id` (`parent_id`),
-  KEY `authorization_id` (`authorization_id`)
+  KEY `authorization_id` (`authorization_id`).
+  CONSTRAINT `cms_navigation_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 /*split*/
 
@@ -122,14 +123,14 @@ CREATE TABLE `cms_user` (
   `activation_code` varchar(45) NULL,
   `real_name` varchar(45) DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT '1',
-  `auth_OpenID` varchar(45),
-  `auth_Facebook` varchar(45),
-  `auth_Twitter` varchar(45),
-  `auth_Yahoo` varchar(45),
-  `auth_LinkedIn` varchar(45),
-  `auth_MySpace` varchar(45),
-  `auth_Foursquare` varchar(45),
-  `auth_AOL` varchar(45),
+  `auth_OpenID` varchar(100),
+  `auth_Facebook` varchar(100),
+  `auth_Twitter` varchar(100),
+  `auth_Yahoo` varchar(100),
+  `auth_LinkedIn` varchar(100),
+  `auth_MySpace` varchar(100),
+  `auth_Foursquare` varchar(100),
+  `auth_AOL` varchar(100),
   `auth_Live` varchar(100),
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_name` (`user_name`)

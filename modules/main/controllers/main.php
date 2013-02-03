@@ -519,6 +519,10 @@ class Main extends CMS_Controller {
     		$index = 0;
     
     	$post_array['index'] = $index;
+		
+		if(!isset($post_array['authorization_id']) || $post_array['authorization_id']==''){
+			$post_array['authorization_id'] = 1;
+		}
     
     	return $post_array;
     }
@@ -623,8 +627,8 @@ class Main extends CMS_Controller {
         $crud->set_subject('Widget');
         
         $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'slug', 'groups');
-        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
-        $crud->add_fields('widget_name', 'title', 'active', 'description', 'index', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
+        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
+        $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         $crud->field_type('index', 'integer');
@@ -674,6 +678,10 @@ class Main extends CMS_Controller {
             $index = 0;
 
         $post_array['index'] = $index;
+		
+		if(!isset($post_array['authorization_id']) || $post_array['authorization_id']==''){
+			$post_array['authorization_id'] = 1;
+		}
 
         return $post_array;
     }
