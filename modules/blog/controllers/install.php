@@ -32,7 +32,9 @@ class Install extends CMS_Module_Installer {
         $this->remove_navigation("blog_article");
         $this->remove_navigation("blog_category");
         $this->remove_navigation("blog_management");
-        $this->remove_navigation("blog_index"); 
+        $this->remove_navigation("blog_index");
+		 
+		$this->remove_widget('blog_widget_newest');
 
         // import uninstall.sql
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
@@ -58,6 +60,8 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation("blog_comment", "Manage Comment", $module_main_controller_url."/comment", 4, "blog_management");
         
         $this->add_quicklink('blog_index');
+		
+		$this->add_widget('blog_widget_newest','Article',1,$module_path.'/widget/newest','sidebar');
         
         // import install.sql
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
