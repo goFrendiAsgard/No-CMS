@@ -389,14 +389,12 @@ class CMS_Controller extends MX_Controller {
      * @param   string view_url
      * @param   string data
      * @param   string navigation_name
-     * @param   array privilege_required
-     * @param   string custom_theme
-     * @param   string custom_layout 
+     * @param   array config 
      * @param   bool return_as_string
      * @return  string or null
      * @desc    replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
      */
-    protected final function view($view_url, $data = NULL, $navigation_name = NULL, $privilege_required = NULL, $custom_theme = NULL, $custom_layout = NULL, $return_as_string = FALSE) {
+    protected final function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE) {
     	    	
     	$result = NULL;
         $this->load->helper('url');
@@ -407,19 +405,25 @@ class CMS_Controller extends MX_Controller {
 
         // this method can be called as $this->view('view_path', $data, true);
         // or $this->view('view_path', $data, $navigation_name, true);
-        if (is_bool($navigation_name) && !isset($privilege_required) && !isset($custom_theme) && !isset($custom_layout)) {
+        if (is_bool($navigation_name) && count($config)==0) {
             $return_as_string = $navigation_name;
             $navigation_name = NULL;
-        } else if (is_bool($privilege_required) && !isset($custom_theme) && !isset($custom_layout)) {
-            $return_as_string = $privilege_required;
-            $privilege_required = NULL;
-        } else if (is_bool($custom_theme) && !isset($custom_layout)) {
-            $return_as_string = $custom_theme;
-            $custom_theme = NULL;
-        } else if (is_bool($custom_layout)) {
-            $return_as_string = $custom_layout;
-            $custom_layout = NULL;
+			$config = NULL;
+        } else if (is_bool($config)) {
+            $return_as_string = $config;
+			$config = NULL;
         }
+		
+		if(!isset($return_as_string)) $return_as_string = FALSE;
+		if(!isset($config)) $config = array();
+		
+		$privilege_required = isset($config['privileges']) ? $config['privileges'] : array();
+		$custom_theme = isset($config['theme']) ? $config['theme'] : NULL;
+		$custom_layout = isset($config['layout']) ? $config['layout'] : NULL;
+		$custom_title = isset($config['title']) ? $config['title'] : NULL;
+		$custom_metadata = isset($config['metadata']) ? $config['metadata'] : array();
+		$custom_partial = isset($config['partials']) ? $config['partials'] : NULL;
+		$custom_keyword = isset($config['keyword']) ? $config['keyword'] : NULL;
 
         /**
 		 * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
@@ -440,7 +444,7 @@ class CMS_Controller extends MX_Controller {
         if (!isset($navigation_name) || $this->cms_allow_navigate($navigation_name)) {
             if (!isset($privilege_required)) {
                 $allowed = true;
-            } else if (count($privilege_required) > 0) {
+            } else if (is_array($privilege_required)) {
                 // privilege_required is array
                 $allowed = true;
                 foreach ($privilege_required as $privilege) {
@@ -480,50 +484,73 @@ class CMS_Controller extends MX_Controller {
         /**
 		 * SHOW THE PAGE IF IT IS ACCESSIBLE  *****************************************************************************
 		 */
-        if ($allowed) {        	
-			
-			// CHECK IF IT IS ONLY CONTENT
-        	$only_content = FALSE;
-        	$SQL = "SELECT only_content FROM cms_navigation WHERE navigation_name ='".addslashes($navigation_name)."'";
-        	$query = $this->db->query($SQL);
-        	if ($query->num_rows() > 0) {
-        		$row = $query->row();
-        		$only_content = ($row->only_content == 1);
-        	}
-			
+        if ($allowed) { 
+						
 			// CHECK IF IT IS WIDGET
 			$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
         	
 			
-			// GET THE THEME
+			// GET THE THEME, TITLE & ONLY_CONTENT FROM DATABASE
 			$theme = '';
+			$title = '';
+			$keyword = '';
+			$only_content = TRUE;
+			$default_theme = NULL;
+			$page_title = NULL;
+			$page_keyword = NULL;
 			if (isset($navigation_name)) {
-				$SQL = "SELECT default_theme FROM cms_navigation WHERE navigation_name = '".addslashes($navigation_name)."'";
+				$SQL = "SELECT title, page_title, page_keyword, default_theme, only_content FROM cms_navigation WHERE navigation_name = '".addslashes($navigation_name)."'";
 				$query = $this->db->query($SQL);
-				// get default_theme of this page
-				$default_theme = NULL;
+				// get default_theme, and default_title of this page				
 				if ($query->num_rows() > 0) {
 					$row = $query->row();
-					$default_theme = $row->default_theme;					
-				}
-				// set the theme based on default_theme and custom_theme existence
-				if(isset($default_theme) && $default_theme != ''){
-					$themes = $this->cms_get_layout_list();
-					$theme_path = array();
-					foreach($themes as $theme){
-						$theme_path[] = $theme['path'];
+					$default_theme = $row->default_theme;
+					if(isset($row->page_title) && $row->page_title != ''){
+						$page_title = $row->page_title;
+					}else if(isset($row->title) && $row->title != ''){
+						$page_title = $row->title;
 					}
-					if(in_array($default_theme, $theme_path)){
-						$theme = $default_theme;
-					}
-				} else if (isset($custom_theme)) {
-	        		$theme = $custom_theme;
-	        	} else {
-	        		$theme = $this->cms_get_config('site_theme');
-	        	}
-			}else{
-				$theme = $this->cms_get_config('site_theme');
+					$page_keyword = isset($row->page_keyword) ? $row->page_keyword : '';
+					$only_content = ($row->only_content == 1);					
+				}				
 			}
+			
+			// ASSIGN THEME
+			if (isset($custom_theme)) {
+        		$theme = $custom_theme;
+        	} else if (isset($default_theme) && $default_theme != ''){
+				$themes = $this->cms_get_layout_list();
+				$theme_path = array();
+				foreach($themes as $theme){
+					$theme_path[] = $theme['path'];
+				}
+				if(in_array($default_theme, $theme_path)){
+					$theme = $default_theme;
+				}
+			} else {
+        		$theme = $this->cms_get_config('site_theme');
+        	}
+			
+			// ASSIGN TITLE
+			$title = '';
+			if(isset($custom_title)){
+				$title = $custom_title;
+			} else if (isset($page_title) && $page_title != '') {
+				$title = $page_title;
+			} else {
+				$title = $this->cms_get_config('site_name');
+			}
+			
+			// ASSIGN KEYWORD
+			if(isset($page_keyword) && $page_keyword != ''){
+				$keyword = $page_keyword;
+				if($custom_keyword != ''){
+					$keyword .= ', '.$custom_keyword;
+				}
+			}else{
+				$keyword = $custom_keyword;
+			}
+			
         	
         	// GET THE LAYOUT
         	if (isset($custom_layout)) {
@@ -597,9 +624,20 @@ class CMS_Controller extends MX_Controller {
 				}
             } else {    
 
-                // set layout and partials                
+                // set theme, layout and title
+                $this->template->title($title);               
                 $this->template->set_theme($theme);
                 $this->template->set_layout($layout);
+				
+				// set metadata
+				if($keyword != ''){
+					$keyword_metadata = '<meta name="keyword" content="'.$keyword.'">';
+					$this->template->append_metadata($keyword_metadata);
+				}
+				foreach($custom_metadata as $metadata){
+					$this->template->append_metadata($metadata);
+				}
+				
                 
                 $this->load->helper('directory');
                 $partial_path = BASEPATH.'../themes/' . $theme . '/views/partials/' . $layout.'/';
@@ -615,9 +653,14 @@ class CMS_Controller extends MX_Controller {
 	                	
 	                	// add partial to template
 	                	$partial_name = pathinfo($partial_path.$partial, PATHINFO_FILENAME);
-	                	$this->template->set_partial($partial_name, 'partials/' . $layout . '/'.$partial, $data);                	                	
+						if(isset($custom_partial[$partial_name])){
+							$this->template->inject_partial($partial_name, $custom_partial[$partial_name]);
+						}else{
+							$this->template->set_partial($partial_name, 'partials/' . $layout . '/'.$partial, $data);
+						}	                	                	                	
 	                }
                 }
+				
                 $result = $this->template->build($view_url, $data, TRUE);
 				$result = $this->cms_parse_keyword($result);
 				if($return_as_string){

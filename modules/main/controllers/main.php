@@ -451,8 +451,8 @@ class Main extends CMS_Controller {
         $crud->set_subject('Navigation (Page)');
         
         $crud->columns('navigation_name', 'parent_id', 'title', 'active', 'only_content', 'is_static', 'authorization_id', 'groups');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
 		// get themes to give options for default_theme field
@@ -465,7 +465,9 @@ class Main extends CMS_Controller {
         $crud->display_as('navigation_name', 'Navigation Code')
                 ->display_as('is_root', 'Is Root')
                 ->display_as('parent_id', 'Parent')
-                ->display_as('title', 'Title (What visitor see)')
+                ->display_as('title', 'Navigation Title (What visitor see)')
+				->display_as('page_title', 'Page Title')
+				->display_as('page_keyword', 'Page Keyword (Comma Separated)')
                 ->display_as('description', 'Description')
                 ->display_as('url', 'URL (Where is it point to)')
                 ->display_as('active', 'Active')

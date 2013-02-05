@@ -75,6 +75,8 @@ CREATE TABLE IF NOT EXISTS `cms_navigation` (
   `navigation_name` varchar(45) NOT NULL,
   `parent_id` int(20) unsigned DEFAULT NULL,
   `title` varchar(50) NOT NULL,
+  `page_title` varchar(50) NULL,
+  `page_keyword` varchar(100) NULL,
   `description` text,
   `url` varchar(100) DEFAULT NULL,
   `authorization_id` tinyint(4) unsigned NOT NULL DEFAULT '1',
@@ -87,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `cms_navigation` (
   PRIMARY KEY (`navigation_id`),
   UNIQUE KEY `navigation_name` (`navigation_name`),
   KEY `parent_id` (`parent_id`),
-  KEY `authorization_id` (`authorization_id`).
+  KEY `authorization_id` (`authorization_id`),
   CONSTRAINT `cms_navigation_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 /*split*/
@@ -263,25 +265,25 @@ INSERT INTO `cms_user` (`user_id`, `user_name`, `email`, `password`, `real_name`
 (1, '{{ adm_username }}', '{{ adm_email }}', '{{ adm_password }}', '{{ adm_realname }}', 1);
 /*split*/
 
-INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `description`, `url`, `authorization_id`, `index`, `active`, `is_static`, `static_content`, `only_content`) VALUES
-(1, 'main_login', NULL, 'Login', 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL, 0),
-(2, 'main_forgot', NULL, 'Forgot Password', 'Accidentally forgot password', 'main/forgot', 2, 3, 1, 0, NULL, 0),
-(3, 'main_logout', NULL, 'Logout', 'Logout for deauthentication', 'main/logout', 3, 2, 1, 0, NULL, 0),
-(4, 'main_management', NULL, 'CMS Management', 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 6, 1, 0, NULL, 0),
-(5, 'main_register', NULL, 'Register', 'New User Registration', 'main/register', 2, 4, 1, 0, NULL, 0),
-(6, 'main_change_profile', NULL, 'Change Profile', 'Change Current Profile', 'main/change_profile', 3, 5, 1, 0, NULL, 0),
-(7, 'main_group_management', 4, 'Group Management', 'Group Management', 'main/group', 4, 0, 1, 0, NULL, 0),
-(8, 'main_navigation_management', 4, 'Navigation Management', 'Navigation management', 'main/navigation', 4, 3, 1, 0, NULL, 0),
-(9, 'main_privilege_management', 4, 'Privilege Management', 'Privilege Management', 'main/privilege', 4, 2, 1, 0, NULL, 0),
-(10, 'main_user_management', 4, 'User Management', 'Manage User', 'main/user', 4, 1, 1, 0, NULL, 0),
-(11, 'main_module_management', 4, 'Module Management', 'Install Or Uninstall Thirdparty Module', 'main/module_management', 4, 5, 1, 0, NULL, 0),
-(12, 'main_change_theme', 4, 'Change Theme', 'Change Theme', 'main/change_theme', 4, 6, 1, 0, NULL, 0),
-(13, 'main_widget_management', 4, 'Widget Management', 'Manage Widgets', 'main/widget', 4, 4, 1, 0, NULL, 0),
-(14, 'main_quicklink_management', 4, 'Quick Link Management', 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL, 0),
-(15, 'main_config_management', 4, 'Configuration Management', 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL, 0),
-(16, 'main_index', NULL, 'Home', 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h3>\n	Welcome {{ user_name }}</h3>\n<p>\n	This is the home page. You have several options to modify this page.</p>\n<ul>\n	<li>\n		<b>Using static page</b>\n		<p>\n			You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/16">Navigation Management</a><br />\n			This is the most recommended way to do.</p>\n	</li>\n	<li>\n		<b>Redirect default controller</b>\n		<p>\n			You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />\n			<code>/application/config/routes.php</code>, around line 41.<br />\n			Please make sure that your default controller is valid.<br />\n			This is recommended if you also want your own page to be a default homepage.</p>\n	</li>\n	<li>\n		<b>Using dynamic page and edit the view manually</b>\n		<p>\n			You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/16">Navigation Management</a><br />\n			and edit the corresponding view on <code>/modules/main/index.php</code></p>\n	</li>\n</ul>\n<hr />\n<p>\n	<b>Any other question? : </b><br />\n	CodeIgniter forum member can visit No-CMS thread here: <a href="http://codeigniter.com/forums/viewthread/209171/">http://codeigniter.com/forums/viewthread/209171/</a><br />\n	Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />\n	While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />\n	In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />\n	That&#39;s all. Start your new adventure with No-CMS !!!</p>\n', 0),
-(17, 'main_language', NULL, 'Language', 'Choose the language', 'main/language', 1, 0, 1, 0, NULL, 0),
-(18, 'main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', 'main/hauth/index', 1, 0, 1, 0, NULL, 0);
+INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `page_title`, `page_keyword`, `description`, `url`, `authorization_id`, `index`, `active`, `is_static`, `static_content`, `only_content`) VALUES
+(1, 'main_login', NULL, 'Login', 'Login', NULL, 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL, 0),
+(2, 'main_forgot', NULL, 'Forgot Password', 'Forgot', NULL, 'Accidentally forgot password', 'main/forgot', 2, 3, 1, 0, NULL, 0),
+(3, 'main_logout', NULL, 'Logout', 'Logout', NULL, 'Logout for deauthentication', 'main/logout', 3, 2, 1, 0, NULL, 0),
+(4, 'main_management', NULL, 'CMS Management', 'CMS Management', NULL, 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 6, 1, 0, NULL, 0),
+(5, 'main_register', NULL, 'Register', 'Register', NULL, 'New User Registration', 'main/register', 2, 4, 1, 0, NULL, 0),
+(6, 'main_change_profile', NULL, 'Change Profile', 'Change Profile', NULL, 'Change Current Profile', 'main/change_profile', 3, 5, 1, 0, NULL, 0),
+(7, 'main_group_management', 4, 'Group Management', 'Group Management', NULL, 'Group Management', 'main/group', 4, 0, 1, 0, NULL, 0),
+(8, 'main_navigation_management', 4, 'Navigation Management', 'Navigation Management', NULL, 'Navigation management', 'main/navigation', 4, 3, 1, 0, NULL, 0),
+(9, 'main_privilege_management', 4, 'Privilege Management', 'Privilege Management', NULL, 'Privilege Management', 'main/privilege', 4, 2, 1, 0, NULL, 0),
+(10, 'main_user_management', 4, 'User Management', 'User Management', NULL, 'Manage User', 'main/user', 4, 1, 1, 0, NULL, 0),
+(11, 'main_module_management', 4, 'Module Management', 'Module Management', NULL, 'Install Or Uninstall Thirdparty Module', 'main/module_management', 4, 5, 1, 0, NULL, 0),
+(12, 'main_change_theme', 4, 'Change Theme', 'Change Theme', NULL, 'Change Theme', 'main/change_theme', 4, 6, 1, 0, NULL, 0),
+(13, 'main_widget_management', 4, 'Widget Management', 'Widget Management', NULL, 'Manage Widgets', 'main/widget', 4, 4, 1, 0, NULL, 0),
+(14, 'main_quicklink_management', 4, 'Quick Link Management', 'Quick Link Management', NULL, 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL, 0),
+(15, 'main_config_management', 4, 'Configuration Management', 'Configuration Management', NULL, 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL, 0),
+(16, 'main_index', NULL, 'Home', 'Home', NULL, 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h3>\n	Welcome {{ user_name }}</h3>\n<p>\n	This is the home page. You have several options to modify this page.</p>\n<ul>\n	<li>\n		<b>Using static page</b>\n		<p>\n			You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/16">Navigation Management</a><br />\n			This is the most recommended way to do.</p>\n	</li>\n	<li>\n		<b>Redirect default controller</b>\n		<p>\n			You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />\n			<code>/application/config/routes.php</code>, around line 41.<br />\n			Please make sure that your default controller is valid.<br />\n			This is recommended if you also want your own page to be a default homepage.</p>\n	</li>\n	<li>\n		<b>Using dynamic page and edit the view manually</b>\n		<p>\n			You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/16">Navigation Management</a><br />\n			and edit the corresponding view on <code>/modules/main/index.php</code></p>\n	</li>\n</ul>\n<hr />\n<p>\n	<b>Any other question? : </b><br />\n	CodeIgniter forum member can visit No-CMS thread here: <a href="http://codeigniter.com/forums/viewthread/209171/">http://codeigniter.com/forums/viewthread/209171/</a><br />\n	Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />\n	While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />\n	In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />\n	That&#39;s all. Start your new adventure with No-CMS !!!</p>\n', 0),
+(17, 'main_language', NULL, 'Language', 'Language', NULL, 'Choose the language', 'main/language', 1, 0, 1, 0, NULL, 0),
+(18, 'main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', NULL, 'Third Party Authentication', 'main/hauth/index', 1, 0, 1, 0, NULL, 0);
 /*split*/
 
 INSERT INTO `cms_quicklink` (`quicklink_id`, `navigation_id`, `index`) VALUES
