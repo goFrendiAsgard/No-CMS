@@ -308,16 +308,21 @@ class CMS_Model extends CI_Model {
         		$content .= '</div>';
         	}
         	// make widget based on slug
-        	if(!isset($result[$row->slug])){
-        		$result[$row->slug] = array();
-        	}
-            $result[$row->slug][] = array(
-                "widget_id" => $row->widget_id,
-                "widget_name" => $row->widget_name,
-                "title" => $this->cms_lang($row->title),
-                "description" => $row->description,
-            	"content" => $content,
-            );
+        	$slugs = explode(',', $row->slug);
+			foreach($slugs as $slug){
+				$slug = trim($slug);
+				if(!isset($result[$slug])){
+	        		$result[$slug] = array();
+	        	}
+	            $result[$slug][] = array(
+	                "widget_id" => $row->widget_id,
+	                "widget_name" => $row->widget_name,
+	                "title" => $this->cms_lang($row->title),
+	                "description" => $row->description,
+	            	"content" => $content,
+	            );				
+			}
+        	
         }
         
         return $result;
