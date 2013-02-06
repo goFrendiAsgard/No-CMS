@@ -178,7 +178,7 @@ Model
 -----
 * Models deal with every data in your module
 * Models must be located at your_no_cms_installation_path/modules/your_module_name/models
-* Every model musth contains a class which extends CMS_Model:
+* Every model must contains a class which extends CMS_Model:
 
 ```php
    <?php
@@ -237,6 +237,41 @@ Views
     $result = $this->view('view_name', $data, 'navigation_code_required', $config, TRUE);
 ```
 
+* In your view, you can also write some "magical" keywords, e.g:
+
+```html
+	<h3>{{ language:Welcome }} {{ user_name }}</h3>
+	<p>Your current language setting is {{ language }}</p>
+	{{ if_language:english }}
+		<p>Nice to meet you, {{ user_real_name }}</p>
+	{{ elif_language:japanese }}
+		<p>始めまして, {{ user_real_name }}　さん</p>
+	{{ elif_language:indonesia }}
+		<p>Senang bertemu dengan anda, {{ user_real_name }}</p>
+	{{ end_if }}
+	<script type="text/javascript" src="{{ base_url }}/assets/nocms/js/jquery.js"></script>	
+```
+
+* Here is the list of those magical keywords:
+
+```
+	{{ user_id }}
+	{{ user_name }}
+	{{ user_real_name }}
+	{{ user_email }}
+	{{ site_url }}
+	{{ base_url }}
+	{{ module_path }}
+	{{ language:some_word }} 
+	
+	{{ if_language:a_language }}
+	   something that will be appeared for a language
+	{{ elif_language:another_language }}
+		something that will be appeared for another language
+	{{ else }}
+		something that will be appeared for another case
+	{{ end_if }}
+```
 Contributing
 ============
 
