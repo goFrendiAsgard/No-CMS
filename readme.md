@@ -156,7 +156,7 @@ Views
 * Every view must be php file
 * To load a view by using controller, you can write:
 
-```html
+```php
    <?php
      $this->view('view_name');
    ?>
@@ -164,7 +164,7 @@ Views
 
 * To load a view by using controller, and parse some data on it, you can write:
 
-```html
+```php
    <?php
     $this->view('view_name', $data);
    ?>
@@ -172,17 +172,35 @@ Views
 
 * To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
 
-```html
+```php
    <?php
     $this->view('view_name', $data, 'navigation_code_required');
    ?>
 ```
 
-* To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, you can write:
+* To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, and use custom title and keyword, you can write:
 
-```html
+```php
    <?php
-    $this->view('view_name', $data, 'navigation_code_required', array('privilege_1_required', 'privilege_2_required'));
+    $config = array(
+    	'privileges' => array('priv_1', 'priv_2'),
+    	'title' => 'page_title',
+    	'keyword' => 'home page, No-CMS, cool',    	
+    );
+    $this->view('view_name', $data, 'navigation_code_required', $config);
+   ?>
+```
+
+* If you want to have the result returned as variable instead of written to output buffer, you can add 5th parameter:
+
+```php
+   <?php
+    $config = array(
+    	'privileges' => array('priv_1', 'priv_2'),
+    	'title' => 'page_title',
+    	'keyword' => 'home page, No-CMS, cool',    	
+    );
+    $result = $this->view('view_name', $data, 'navigation_code_required', $config, TRUE);
    ?>
 ```
 
@@ -318,6 +336,9 @@ v0.6.0
 + (done, tested) fix active & inactive link on navigation management and widget management
 + (done, tested) fix theme appearance for "inactive page", Thank you for Sugeng Widodo
 + (done, tested) add theme setting for each page
++ (done, tested) multi slug for widget
++ (done, tested) change view mechanism
++ (done, tested) per page keyword and per page title
 
 v0.6.1 (development)
 + (proposed) Drupal's CCK like mechanism
