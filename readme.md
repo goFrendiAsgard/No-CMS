@@ -111,7 +111,7 @@ For CodeIgniter developer who want to use No-CMS for their project, developer gu
 Module
 ------
 * Your module must be located at modules directory (your_no_cms_installation_path/modules)
-* Your module must have an "installer controller" to make it install-able
+* Your module can have an "installer controller" to make it install-able
 * Your module must be consist of at least 3 subdirectories (models, views, and controllers)
 * If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
 
@@ -119,12 +119,20 @@ Controller
 ----------
 * Controllers deal with every process in your module
 * Controllers must be located at your_no_cms_installation_path/modules/your_module_name/controllers
-* Main controller must have the same name as your_module_name (your_module_name.php)
 * Every controller musth contains a class which extends CMS_Controller:
 
-```html
+```php
    <?php
-    class Your_Module_Name extends CMS_Controller{Your logic goes here.....}
+    class Your_Controller_Name extends CMS_Controller{
+    	// You can access below function by using this url: 
+    	// http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
+    	public function show(){
+   			$this->load->model('your_model_name');
+   			$data = array();
+   			$data['result'] = $this->your_model_name->get_data();
+   			$this->view('your_view_name', $data, 'navigation_name');
+   		}
+    }
    ?>
 ```
 
@@ -135,16 +143,51 @@ Installer Controller
 * Installer controller must extends "CMS_Module_Installer"
 * You should provide do_install() and do_uninstall() method to make it fully work
 
+```php
+   <?php
+   class Install extends CMS_Module_Installer {
+   		// in order to install this module, a user should install prerequisites modules first
+		protected $DEPENDENCIES = array('prerequisites_module_1', 'prerequisites_module_2');
+		// the module name space, please ensure this is unique for each module, adding your name as the first part is always a good idea
+		protected $NAME = 'your_name.your_module_name';
+		
+		// WHEN USER INSTALL THIS MODULE, THIS WILL BE EXECUTED
+		protected function do_install(){
+			// add a new navigation point to module_name/controller_name/function_name that can only be accessed by authorized user       
+	        $this->add_navigation("navigation_name", "navigation_title", "module_name/controller_name/function_name", $this->PRIV_AUTHORIZED);        
+	        // add quicklink of that navigation (optional)
+	        $this->add_quicklink("navigation_name");
+	        // add widget that can be accessed by everyone		
+			$this->add_widget("widget_name", "widget_title", $this->PRIV_EVERYONE, "module_name/other_controller_name/function_name", "sidebar");
+		}
+		
+		// WHEN USER UNINSTALL THIS MODULE, THIS WILL BE EXECUTED
+		protected function do_uninstall(){
+			// remove the quicklink
+			$this->remove_quicklink("navigation_name");
+			// remove the navigation
+	        $this->remove_navigation("navigation_name");
+	        // remove the widget
+			$this->remove_widget("widget_name");	        
+		}
+   }
+   ?>
+```
+
 Model
 -----
 * Models deal with every data in your module
 * Models must be located at your_no_cms_installation_path/modules/your_module_name/models
 * Every model musth contains a class which extends CMS_Model:
 
-```html
+```php
    <?php
    class Your_Model_Name extends CMS_Model{
-     //Your logic goes here.....
+   		// Get some data or whatever ...
+   		public function get_data(){
+   			$query = $this->db->get('table_name');
+   			return $query->result();
+   		}
    }
    ?>
 ```
@@ -157,51 +200,41 @@ Views
 * To load a view by using controller, you can write:
 
 ```php
-   <?php
      $this->view('view_name');
-   ?>
 ```
 
 * To load a view by using controller, and parse some data on it, you can write:
 
 ```php
-   <?php
     $this->view('view_name', $data);
-   ?>
 ```
 
 * To load a view by using controller, and make sure that only users with certain navigation can see it, you can write:
 
 ```php
-   <?php
     $this->view('view_name', $data, 'navigation_code_required');
-   ?>
 ```
 
 * To load a view by using controller, and make sure that only users with certain navigation & privileges can see it, and use custom title and keyword, you can write:
 
 ```php
-   <?php
     $config = array(
     	'privileges' => array('priv_1', 'priv_2'),
     	'title' => 'page_title',
     	'keyword' => 'home page, No-CMS, cool',    	
     );
     $this->view('view_name', $data, 'navigation_code_required', $config);
-   ?>
 ```
 
 * If you want to have the result returned as variable instead of written to output buffer, you can add 5th parameter:
 
 ```php
-   <?php
     $config = array(
     	'privileges' => array('priv_1', 'priv_2'),
     	'title' => 'page_title',
     	'keyword' => 'home page, No-CMS, cool',    	
     );
     $result = $this->view('view_name', $data, 'navigation_code_required', $config, TRUE);
-   ?>
 ```
 
 Contributing
