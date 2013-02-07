@@ -12,7 +12,7 @@ class Widget extends CMS_Controller {
 	
 	public function newest($how_many=5){
 		$data = array();
-    	$data['articles'] = $this->blog_model->get_articles($how_many, 0, 
+    	$data['articles'] = $this->blog_model->get_articles(0, $how_many, 
     			NULL, NULL);
 		$this->view($this->cms_module_path().'/widget_newest', $data);
 	}

@@ -14,35 +14,44 @@ class Blog extends CMS_Controller {
 	}
 	
     public function index($article_url=NULL){
-    	$this->load->model($this->cms_module_path().'/blog_model');
-    	
-        $category = $this->input->post('category');
-        $search = $this->input->post('search');
-        $page = $this->input->post('page');  
-        if(!$page) $page = 0;      
-        $single_article = isset($article_url);
-        
-        $data['only_show_article'] = $this->input->post('only_article');
-        $data['allow_edit'] = $this->cms_allow_navigate('blog_article');
-        
-        $data['category'] = $category;
-        $data['search'] = $search;
-        $data['available_category'] = $this->blog_model->get_available_category();
-        $data['single_article'] = $single_article;
-        if($single_article){
-        	$data['article'] = $this->blog_model->get_single_article($article_url);
-        }else{
-        	$limit = $this->article_per_page;
-        	$offset = $this->article_per_page*$page;
-        	$data['articles'] = $this->blog_model->get_articles($limit, $offset, 
-        			$category, $search);
-        }
-        
-        $this->view("blog_view", $data, 'blog_index');
+    	$this->load->model($this->cms_module_path('gofrendi.blog').'/blog_model');
+    	$data = array(
+			'allow_navigate_backend' => $this->cms_allow_navigate('blog_index'),
+			'backend_url' => site_url($this->cms_module_path('gofrendi.blog').'/article'),
+			'categories'=>$this->blog_model->get_available_category(),
+			'chosen_category' => $this->input->get('category'),
+			'keyword' => $this->input->get('keyword'),
+		);
+		if(isset($article_url)){
+			$data['article'] = $this->blog_model->get_single_article($article_url);
+		}
+        $this->view($this->cms_module_path('gofrendi.blog').'/blog_index',$data, 'blog_index');
     }
+
+	public function get_article(){
+		// get page and keyword parameter
+    	$keyword = $this->input->post('keyword');
+    	$page = $this->input->post('page');
+		$category = $this->input->post('category');
+    	if(!$keyword) $keyword = '';
+    	if(!$page) $page = 0;
+		if(!$category) $category = '';
+		$limit = 5;
+    	// get data from model
+    	$this->load->model($this->cms_module_path('gofrendi.blog').'/blog_model');
+    	$articles = $this->blog_model->get_articles($page, $limit, $category, $keyword);
+    	$data = array(
+    		'articles'=>$articles,
+    		'allow_navigate_backend' => $this->cms_allow_navigate('blog_index'),
+			'backend_url' => site_url($this->cms_module_path('gofrendi.blog').'/article'),
+    	);
+    	if($this->cms_allow_navigate('blog_index')){
+    		$this->view($this->cms_module_path().'/blog_show_article',$data,'blog_index',array('only_content'=>TRUE));
+    	}
+	}
     
     public function add_comment($article_id){
-    	$this->load->model($this->cms_module_path().'/blog_model');
+    	$this->load->model($this->cms_module_path('gofrendi.blog').'/blog_model');
     	
     	$name = $this->input->post('name', TRUE);
     	$email = $this->input->post('email', TRUE);
@@ -56,7 +65,7 @@ class Blog extends CMS_Controller {
     
     public function manage(){
     	$data = array("submenu_screen"=>$this->cms_submenu_screen('blog_management'));
-        $this->view("manage_view", $data, 'blog_management');
+        $this->view($this->cms_module_path('gofrendi.blog')."/manage_view", $data, 'blog_management');
     }
     
     public function article(){
@@ -90,7 +99,7 @@ class Blog extends CMS_Controller {
 		$crud->set_language($this->cms_language());
         $output = $crud->render();
 
-        $this->view('blog_article', $output, 'blog_article');        
+        $this->view($this->cms_module_path('gofrendi.blog').'/blog_article', $output, 'blog_article');        
     }
     
     public function photo($article_id=NULL){
@@ -111,7 +120,7 @@ class Blog extends CMS_Controller {
     	$output = $crud->render();
 		$output->article_id = $article_id;
     	
-    	$this->view('blog_photo', $output, 'blog_photo');
+    	$this->view($this->cms_module_path('gofrendi.blog').'/blog_photo', $output, 'blog_photo');
     	
     }
     
@@ -137,7 +146,7 @@ class Blog extends CMS_Controller {
     	$output = $crud->render();
 		$output->article_id = $article_id;
     	
-    	$this->view('blog_comment', $output, 'blog_comment');
+    	$this->view($this->cms_module_path('gofrendi.blog').'/blog_comment', $output, 'blog_comment');
     }
 
 	public function article_callback_column_photos($value, $row){

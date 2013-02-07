@@ -302,7 +302,7 @@ class CMS_Model extends CI_Model {
 						$content .= $response;
 					}					
         		}else{
-        			$content .= Modules::run($url); 
+        			$content .= @Modules::run($url); 
         		}        		
         		$this->cms_unset_ci_session('cms_dynamic_widget');        		        		
         		$content .= '</div>';

@@ -424,6 +424,7 @@ class CMS_Controller extends MX_Controller {
 		$custom_metadata = isset($config['metadata']) ? $config['metadata'] : array();
 		$custom_partial = isset($config['partials']) ? $config['partials'] : NULL;
 		$custom_keyword = isset($config['keyword']) ? $config['keyword'] : NULL;
+		$only_content = isset($config['only_content']) ? $config['only_content'] : NULL;
 
         /**
 		 * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
@@ -488,13 +489,13 @@ class CMS_Controller extends MX_Controller {
 						
 			// CHECK IF IT IS WIDGET
 			$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
+			$this->cms_unset_ci_session('cms_dynamic_widget');
         	
 			
 			// GET THE THEME, TITLE & ONLY_CONTENT FROM DATABASE
 			$theme = '';
 			$title = '';
-			$keyword = '';
-			$only_content = TRUE;
+			$keyword = '';			
 			$default_theme = NULL;
 			$page_title = NULL;
 			$page_keyword = NULL;
@@ -511,8 +512,13 @@ class CMS_Controller extends MX_Controller {
 						$page_title = $row->title;
 					}
 					$page_keyword = isset($row->page_keyword) ? $row->page_keyword : '';
-					$only_content = ($row->only_content == 1);					
+					if(!isset($only_content)){
+						$only_content = ($row->only_content == 1);
+					}										
 				}				
+			}
+			if(!isset($only_content)){
+				$only_content = TRUE;
 			}
 			
 			// ASSIGN THEME

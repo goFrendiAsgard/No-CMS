@@ -1,10 +1,11 @@
 <?php
 class Blog_Model extends CMS_Model{
 	
-	private $separator = '';	
+	public $page_break_separator = '';	
 	public function __construct(){
 		parent::__construct();
-		$this->separator = '<div style="page-break-after: always;">'.PHP_EOL.'	<span style="display: none;">&nbsp;</span></div>';
+		//$this->page_break_separator = '<div style="page-break-after: always;">'.PHP_EOL.'	<span style="display: none;">&nbsp;</span></div>';
+		$this->page_break_separator = '/(<div style=\"page-break-after: always;\">\s*<span style=\"display: none;\">&nbsp;<\/span><\/div>)/i';		
 	}
 	
 	public function get_count_article_url($article_url){
@@ -30,7 +31,7 @@ class Blog_Model extends CMS_Model{
 	
 	
 	public function get_available_category(){
-		$result = array(''=>'No Category');
+		$result = array(''=>'All Category');
 		$SQL = "SELECT category_name FROM blog_category";
 		$query = $this->db->query($SQL);
 		foreach($query->result() as $row){
@@ -54,8 +55,8 @@ class Blog_Model extends CMS_Model{
 		$query = $this->db->query($SQL);
 		if($query->num_rows()>0){
 			$row = $query->row();
-			$contents = explode($this->separator, $row->content);
-			$content = implode($this->separator, $contents);
+			$contents = preg_split($this->page_break_separator, $row->content);
+			$content = implode('', $contents);
 			$result = array(
 					"id" => $row->article_id,
 					"title" => $row->article_title,
@@ -73,7 +74,7 @@ class Blog_Model extends CMS_Model{
 		}
 	}
 	
-	public function get_articles($offset, $limit, $category, $search){
+	public function get_articles($page, $limit, $category, $search){
 		$words = $search? explode(' ', $search) : array();
 		
 		$data = array();
@@ -94,7 +95,7 @@ class Blog_Model extends CMS_Model{
 			$where_search = "TRUE";
 		}
 		
-		
+		$offset = $page * $limit;
 		$SQL = "
 			SELECT
 				article_id, article_title, article_url, content, date, allow_comment, 
@@ -105,11 +106,11 @@ class Blog_Model extends CMS_Model{
 				$where_category AND
 				$where_search			
 		    ORDER BY date DESC, article_id DESC
-			LIMIT $limit, $offset";
+			LIMIT $offset, $limit";
 		
 		$query = $this->db->query($SQL);
 		foreach($query->result() as $row){			
-			$contents = explode($this->separator, $row->content);
+			$contents = preg_split($this->page_break_separator, $row->content);
 			$content = $contents[0];
 		
 			$data[] = array(

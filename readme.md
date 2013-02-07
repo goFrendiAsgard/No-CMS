@@ -262,7 +262,7 @@ Views
 	{{ site_url }}
 	{{ base_url }}
 	{{ module_path }}
-	{{ language:some_word }} 
+	{{ language:some_word }}
 	
 	{{ if_language:a_language }}
 	   something that will be appeared for a language
