@@ -341,7 +341,8 @@ INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VA
 (28, 'cms_email_validate', 'FALSE', 'Whether to validate the email address. Default: true, Alternatives : true, false'),
 (29, 'cms_email_priority', '3', '1, 2, 3, 4, 5	Email Priority. 1 = highest. 5 = lowest. 3 = normal.'),
 (30, 'cms_email_bcc_batch_mode', 'FALSE', 'Enable BCC Batch Mode. Default: false, Alternatives: true'),
-(31, 'cms_email_bcc_batch_size', '200', 'Number of emails in each BCC batch.');
+(31, 'cms_email_bcc_batch_size', '200', 'Number of emails in each BCC batch.'),
+(32, 'cms_google_analytic_property_id', '', 'Google analytics property ID (e.g: UA-30285787-1). Leave blank if you don''t want to use it.');
 /*split*/
 
 INSERT INTO `cms_group_user` (`group_id`, `user_id`) VALUES

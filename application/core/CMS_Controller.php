@@ -640,6 +640,7 @@ class CMS_Controller extends MX_Controller {
 					$keyword_metadata = '<meta name="keyword" content="'.$keyword.'">';
 					$this->template->append_metadata($keyword_metadata);
 				}
+				
 				// include jquery
 				$jquery_cdn_path = 'http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js';
 				$jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
@@ -650,6 +651,26 @@ class CMS_Controller extends MX_Controller {
 				    $jquery_path = $jquery_cdn_path;
 				}
 				$this->template->append_metadata('<script type="text/javascript" src="'.$jquery_path.'"></script>');
+				
+				// google analytic
+				$analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
+				if(trim($analytic_property_id) != ''){
+					// create analytic code
+					$analytic_code = '<script type="text/javascript">
+					  var _gaq = _gaq || [];
+					  _gaq.push([\'_setAccount\', \''.$analytic_property_id.'\']);
+					  _gaq.push([\'_trackPageview\']);
+					  (function() {
+					    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;
+					    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';
+					    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);
+					  })();
+					</script>';
+					// add to the template
+					$this->template->append_metadata($analytic_code);	
+				}
+				
+				
 				// config metadata
 				foreach($custom_metadata as $metadata){
 					$this->template->append_metadata($metadata);
