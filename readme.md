@@ -124,10 +124,25 @@ Controller
 ```php
    <?php
     class Your_Controller_Name extends CMS_Controller{
-    	// You can access below function by using this url: 
-    	// http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
+    	/**
+    	 * This is the normal way. You can access below function by using this url: 
+    	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
+    	 */
     	public function show(){
    			$this->load->model('your_model_name');
+   			$data = array();
+   			$data['result'] = $this->your_model_name->get_data();
+   			$this->view('your_view_name', $data, 'navigation_name');
+   		}
+   		
+   		/**
+    	 * To ensure that the whole function will not work if user not authorized, 
+    	 * you can also use allow_navigate function. You can access below function by using this url: 
+    	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/strict
+    	 */
+   		public function strict(){
+   		    if(!$this->allow_navigate('navigation_name')) show_404();
+   		    $this->load->model('your_model_name');
    			$data = array();
    			$data['result'] = $this->your_model_name->get_data();
    			$this->view('your_view_name', $data, 'navigation_name');
