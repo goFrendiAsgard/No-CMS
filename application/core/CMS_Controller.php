@@ -635,11 +635,22 @@ class CMS_Controller extends MX_Controller {
                 $this->template->set_theme($theme);
                 $this->template->set_layout($layout);
 				
-				// set metadata
+				// set keyword metadata
 				if($keyword != ''){
 					$keyword_metadata = '<meta name="keyword" content="'.$keyword.'">';
 					$this->template->append_metadata($keyword_metadata);
 				}
+				// include jquery
+				$jquery_cdn_path = 'http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js';
+				$jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
+				$headers = @get_headers($jquery_cdn_path);
+				if(strpos($headers[0],'200') === FALSE){    
+				    $jquery_path = $jquery_local_path;
+				}else{
+				    $jquery_path = $jquery_cdn_path;
+				}
+				$this->template->append_metadata('<script type="text/javascript" src="'.$jquery_path.'"></script>');
+				// config metadata
 				foreach($custom_metadata as $metadata){
 					$this->template->append_metadata($metadata);
 				}

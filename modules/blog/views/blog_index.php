@@ -91,9 +91,6 @@
 	?>
 </div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
-<!--
-<script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
--->
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?>"></script>
 <script type="text/javascript">

@@ -19,7 +19,6 @@
 		$asset->add_themes_css('bootstrap-responsive.min.css', $cms['site_theme'], 'default');	
 	    echo $asset->compile_css();	    
 	    
-	    $asset->add_cms_js('nocms/js/jquery.js');
 	    $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
 	    $asset->add_themes_js('script.js', $cms['site_theme'], 'default');
 	    echo $asset->compile_js(TRUE);	    

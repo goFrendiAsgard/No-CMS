@@ -9,6 +9,7 @@ class nds extends CMS_Controller {
 	
     public function template(){
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 		
 		$crud->set_subject('Generator Template');
         
@@ -76,6 +77,7 @@ class nds extends CMS_Controller {
 
     public function template_option($template_id=NULL){
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
         
         // table name
         $crud->set_table('nds_template_option');
@@ -131,6 +133,7 @@ class nds extends CMS_Controller {
 
     public function project(){
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 		
 		$crud->set_subject('Project');
         
@@ -217,6 +220,7 @@ class nds extends CMS_Controller {
 
     public function table($project_id = NULL){
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 		
 		$crud->set_subject('Table');
         
@@ -313,6 +317,7 @@ class nds extends CMS_Controller {
     public function column($table_id=NULL){
     	$this->load->model('nordrassil/data/nds_model');
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 		
 		$crud->set_subject('Column');
         

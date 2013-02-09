@@ -70,6 +70,7 @@ class Blog extends CMS_Controller {
     
     public function article(){
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('blog_article');
         $crud->columns('article_title','Categories', 'author_user_id', 'date', 'allow_comment', 'photos', 'comments');
@@ -104,6 +105,7 @@ class Blog extends CMS_Controller {
     
     public function photo($article_id=NULL){
     	$crud = new grocery_CRUD();
+		$crud->unset_jquery();
     	
     	$crud->set_table('blog_photo');
     	if(isset($article_id) && intval($article_id)>0){
@@ -126,6 +128,7 @@ class Blog extends CMS_Controller {
     
     public function comment($article_id=NULL){
     	$crud = new grocery_CRUD();
+		$crud->unset_jquery();
     	
     	$crud->set_table('blog_comment');
     	if(isset($article_id) && intval($article_id)>0){
@@ -252,6 +255,7 @@ class Blog extends CMS_Controller {
     
     public function category(){
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('blog_category');
         $crud->columns('category_name','description');

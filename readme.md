@@ -426,3 +426,4 @@ v0.6.0
 v0.6.1 (development)
 + (proposed) Drupal's CCK like mechanism
 + (proposed) Make nordrassil generated code easier to be edited.
++ (done, tested) Include JQuery by default, use jquerytools CDN if possible

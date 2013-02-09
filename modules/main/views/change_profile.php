@@ -4,7 +4,6 @@
 		display:none;
 	}
 </style>
-<script type="text/javascript" src="<?php echo base_url(); ?>assets/nocms/js/jquery.js"></script>
 <script type="text/javascript">
 	var REQUEST_EXISTS = false;
 	var REQUEST = "";

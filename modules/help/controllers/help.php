@@ -39,6 +39,7 @@ class help extends CMS_Controller {
 
     public function data_group(){
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
         
         // table name
         $crud->set_table("help_group");
@@ -66,6 +67,7 @@ class help extends CMS_Controller {
 
     public function data_topic(){
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
         
         // table name
         $crud->set_table("help_topic");

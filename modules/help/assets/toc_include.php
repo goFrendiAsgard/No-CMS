@@ -25,7 +25,6 @@
         border-top-right-radius : 10px;
     }
 </style>
-<script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery.js';?>"></script>
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.js';?>"></script>
 <script type="text/javascript">
 	var REQUEST_EXISTS = false;

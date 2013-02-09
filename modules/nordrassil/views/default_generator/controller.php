@@ -11,6 +11,7 @@ class {{ controller_name }} extends CMS_Controller {
 		
 		// initialize groceryCRUD
         $crud = new grocery_CRUD();
+        $crud->unset_jquery();
         
         // set model
         $crud->set_model($this->cms_module_path().'/data/{{ controller_name }}_model');

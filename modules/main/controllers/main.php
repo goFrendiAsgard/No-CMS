@@ -313,6 +313,7 @@ class Main extends CMS_Controller {
     // AUTHORIZATION ===========================================================
     public function authorization() {
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('cms_authorization');
         $crud->set_subject('Authorization');
@@ -340,6 +341,7 @@ class Main extends CMS_Controller {
     // USER ====================================================================
     public function user() {
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('cms_user');
         $crud->set_subject('User');
@@ -400,6 +402,7 @@ class Main extends CMS_Controller {
     // GROUP ===================================================================
     public function group() {
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('cms_group');
         $crud->set_subject('User Group');
@@ -446,6 +449,7 @@ class Main extends CMS_Controller {
     // NAVIGATION ==============================================================
     public function navigation() {
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('cms_navigation');
         $crud->set_subject('Navigation (Page)');
@@ -562,6 +566,7 @@ class Main extends CMS_Controller {
     // QUICKLINK ===============================================================
     public function quicklink() {
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('cms_quicklink');
         $crud->set_subject('Quick Link');
@@ -602,6 +607,7 @@ class Main extends CMS_Controller {
     // PRIVILEGE ===============================================================
     public function privilege() {
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('cms_privilege');
         $crud->set_subject('Privilege');
@@ -624,6 +630,7 @@ class Main extends CMS_Controller {
     // WIDGET ==================================================================
     public function widget() {
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('cms_widget');
         $crud->set_subject('Widget');
@@ -721,6 +728,7 @@ class Main extends CMS_Controller {
     // CONFIG ==================================================================
     public function config() {
         $crud = new grocery_CRUD();
+		$crud->unset_jquery();
 
         $crud->set_table('cms_config');
         $crud->set_subject('Configuration');
