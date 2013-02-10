@@ -429,3 +429,4 @@ v0.6.1 (development)
 + (done, tested) Include JQuery by default, use jquerytools CDN if possible
 + (done, tested) add google analytic configuration
 + (proposed) automatically create thumbnail for blog's photos
++ (done, tested) add cms_guard_page function for better authorization
