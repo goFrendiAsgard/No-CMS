@@ -43,6 +43,7 @@ class Main extends CMS_Controller {
 	}
 	
 	public function module_management() {
+		$this->cms_guard_page('main_module_management');
 		// upload new module
 		$data['upload'] = $this->upload('./modules/', 'userfile', 'upload');
 	
@@ -52,6 +53,7 @@ class Main extends CMS_Controller {
 	}
 	
 	public function change_theme($theme = NULL) {
+		$this->cms_guard_page('main_change_theme');
 		// upload new theme
 		$data['upload'] = $this->upload('./themes/', 'userfile', 'upload');
 		 
@@ -71,7 +73,8 @@ class Main extends CMS_Controller {
 		$this->view('main/static_page',NULL,$navigation_name);
 	}
 
-    public function login() {	
+    public function login() {
+    	$this->cms_guard_page('main_login');	
         //retrieve old_url from flashdata if exists
         $this->load->library('session');        
         $old_url = $this->session->flashdata('cms_old_url');
@@ -130,6 +133,7 @@ class Main extends CMS_Controller {
 	}
 
     public function forgot($activation_code=NULL) {
+    	$this->cms_guard_page('main_forgot');
         if (isset($activation_code)) {
             //get user input
             $password = $this->input->post('password');
@@ -171,6 +175,7 @@ class Main extends CMS_Controller {
     }
 
     public function register() {
+    	$this->cms_guard_page('main_register');
         //get user input
         $user_name = $this->input->post('user_name');
         $email = $this->input->post('email');
@@ -233,6 +238,7 @@ class Main extends CMS_Controller {
     }
 
     public function change_profile() {
+    	$this->cms_guard_page('main_change_profile');
     	$SQL = "SELECT user_name, email, real_name FROM cms_user WHERE user_id = ".$this->cms_user_id();
     	$query = $this->db->query($SQL);
     	$row = $query->row();
@@ -289,16 +295,19 @@ class Main extends CMS_Controller {
     }
 
     public function index() {
+    	$this->cms_guard_page('main_index');
     	$data = array("submenu_screen"=>$this->cms_submenu_screen(NULL));
         $this->view('main/index', $data, 'main_index');
     }
 
     public function management() {
+    	$this->cms_guard_page('main_management');
     	$data = array("submenu_screen"=>$this->cms_submenu_screen('main_management'));
         $this->view('main/management', $data, 'main_management');
     }
 	
 	public function language($language=NULL){
+		$this->cms_guard_page('main_language');
 		if(isset($language)){
 			$this->cms_language($language);
 			$this->index();
@@ -311,7 +320,7 @@ class Main extends CMS_Controller {
 	}
 	
     // AUTHORIZATION ===========================================================
-    public function authorization() {
+    public function authorization() {    	
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
@@ -340,6 +349,7 @@ class Main extends CMS_Controller {
 	
     // USER ====================================================================
     public function user() {
+    	$this->cms_guard_page('main_user_management');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
@@ -401,6 +411,7 @@ class Main extends CMS_Controller {
 
     // GROUP ===================================================================
     public function group() {
+    	$this->cms_guard_page('main_group_management');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
@@ -448,6 +459,7 @@ class Main extends CMS_Controller {
 	
     // NAVIGATION ==============================================================
     public function navigation() {
+    	$this->cms_guard_page('main_navigation_management');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
@@ -565,6 +577,7 @@ class Main extends CMS_Controller {
 	
     // QUICKLINK ===============================================================
     public function quicklink() {
+    	$this->cms_guard_page('main_quicklink_management');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
@@ -606,6 +619,7 @@ class Main extends CMS_Controller {
 	
     // PRIVILEGE ===============================================================
     public function privilege() {
+    	$this->cms_guard_page('main_privilege_management');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
@@ -629,6 +643,7 @@ class Main extends CMS_Controller {
 	
     // WIDGET ==================================================================
     public function widget() {
+    	$this->cms_guard_page('main_widget_management');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
@@ -727,6 +742,7 @@ class Main extends CMS_Controller {
 	
     // CONFIG ==================================================================
     public function config() {
+    	$this->cms_guard_page('main_config_management');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 

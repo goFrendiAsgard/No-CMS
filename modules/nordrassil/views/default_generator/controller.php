@@ -8,6 +8,8 @@
 class {{ controller_name }} extends CMS_Controller {
 
 	public function index(){
+		// guard the page
+		$this->cms_guard_page('{{ navigation_name }}');
 		
 		// initialize groceryCRUD
         $crud = new grocery_CRUD();

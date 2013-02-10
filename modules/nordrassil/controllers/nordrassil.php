@@ -6,6 +6,7 @@
  */
 class nordrassil extends CMS_Controller {
     public function index(){
+    	$this->cms_guard_page('nordrassil_index');
     	$this->load->model('nordrassil/data/nds_model');
 		$data['projects'] = $this->nds_model->get_all_project();
 		

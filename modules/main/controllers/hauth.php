@@ -17,8 +17,8 @@ class HAuth extends CMS_Controller {
 		}		
 	}
 
-	public function index()
-	{
+	public function index(){
+		$this->cms_guard_page('main_third_party_auth');
 		if(in_array  ('curl', get_loaded_extensions())){
 			// Send to the view all permitted services as a user profile if authenticated
 			$data['providers'] = $this->hybridauthlib->getProviders();
@@ -34,6 +34,7 @@ class HAuth extends CMS_Controller {
 	}
 	
 	public function open_id(){
+		$this->cms_guard_page('main_third_party_auth');
 		$this->view('main/hauth/open_id', NULL, 'main_third_party_auth');
 	}
 

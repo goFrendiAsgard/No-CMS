@@ -10,7 +10,7 @@ class Widget extends CMS_Controller {
 		$this->load->model($this->cms_module_path().'/blog_model');
 	}
 	
-	public function newest($how_many=5){
+	public function newest($how_many=5){		
 		$data = array();
     	$data['articles'] = $this->blog_model->get_articles(0, $how_many, 
     			NULL, NULL);

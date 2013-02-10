@@ -8,10 +8,6 @@
 class CMS_Module_Installer extends CMS_Controller {
     protected $DEPENDENCIES = array();
     protected $NAME = '';
-	public static $PRIV_EVERYONE = 1;
-	public static $PRIV_NOT_AUTHENTICATED = 2;
-	public static $PRIV_AUTHENTICATED = 3;
-	public static $PRIV_AUTHORIZED = 4;
     
     public final function index(){
     	if($this->cms_is_module_installed($this->NAME)){

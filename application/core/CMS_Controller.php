@@ -7,6 +7,10 @@
  */
 
 class CMS_Controller extends MX_Controller {
+	public static $PRIV_EVERYONE = 1;
+	public static $PRIV_NOT_AUTHENTICATED = 2;
+	public static $PRIV_AUTHENTICATED = 3;
+	public static $PRIV_AUTHORIZED = 4;
 
     public function __construct() {
         parent::__construct();
@@ -382,7 +386,51 @@ class CMS_Controller extends MX_Controller {
      */
     public final function cms_is_user_exists($username){
     	return $this->CMS_Model->cms_is_user_exists($username);
-    }    
+    }
+	
+	/**
+	 * @author goFrendiAsgard
+	 * @param string navigation_name
+	 * @param string or array privilege_required
+	 * @desc guard a page from unauthorized access
+	 */
+	public final function cms_guard_page($navigation_name = NULL, $privilege_required = NULL){
+		$privilege_required = isset($privilege_required) ? $privilege_required : array();
+		
+		// check if allowed
+		if (!isset($navigation_name) || $this->cms_allow_navigate($navigation_name)) {
+            if (!isset($privilege_required)) {
+                $allowed = true;
+            } else if (is_array($privilege_required)) {
+                // privilege_required is array
+                $allowed = true;
+                foreach ($privilege_required as $privilege) {
+                    $allowed = $allowed && $this->cms_have_privilege($privilege);
+                    if (!$allowed)
+                        break;
+                }
+            }else {// privilege_required is string
+                $allowed = $this->cms_have_privilege($privilege_required);
+            }
+        } else {
+            $allowed = false;
+        }
+		
+		// if not allowed then redirect
+		if(!$allowed){
+			$uriString = $this->uri->uri_string();                        
+            $old_url = $this->session->flashdata('old_url');            
+            if (is_bool($old_url)) {                
+                $this->session->set_flashdata('cms_old_url', $uriString);                
+            }
+            
+            if($this->cms_allow_navigate('main_login')){            	
+				redirect('main/login');
+            }else{
+                redirect('');
+            }
+		}
+	}    
 
     /**
      * @author  goFrendiAsgard
@@ -442,23 +490,7 @@ class CMS_Controller extends MX_Controller {
 		/**
 		 * CHECK IF THE CURRENT NAVIGATION IS ACCESSIBLE  *****************************************************************
 		 */
-        if (!isset($navigation_name) || $this->cms_allow_navigate($navigation_name)) {
-            if (!isset($privilege_required)) {
-                $allowed = true;
-            } else if (is_array($privilege_required)) {
-                // privilege_required is array
-                $allowed = true;
-                foreach ($privilege_required as $privilege) {
-                    $allowed = $allowed && $this->cms_have_privilege($privilege);
-                    if (!$allowed)
-                        break;
-                }
-            }else {// privilege_required is string
-                $allowed = $this->cms_have_privilege($privilege_required);
-            }
-        } else {
-            $allowed = false;
-        }
+        $this->cms_guard_page($navigation_name, $privilege_required);
         
         /**
 		 * CHECK IF THE PAGE IS STATIC  **********************************************************************************
@@ -485,243 +517,226 @@ class CMS_Controller extends MX_Controller {
         /**
 		 * SHOW THE PAGE IF IT IS ACCESSIBLE  *****************************************************************************
 		 */
-        if ($allowed) { 
-						
-			// CHECK IF IT IS WIDGET
-			$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
-			$this->cms_unset_ci_session('cms_dynamic_widget');
-        	
-			
-			// GET THE THEME, TITLE & ONLY_CONTENT FROM DATABASE
-			$theme = '';
-			$title = '';
-			$keyword = '';			
-			$default_theme = NULL;
-			$page_title = NULL;
-			$page_keyword = NULL;
-			if (isset($navigation_name)) {
-				$SQL = "SELECT title, page_title, page_keyword, default_theme, only_content FROM cms_navigation WHERE navigation_name = '".addslashes($navigation_name)."'";
-				$query = $this->db->query($SQL);
-				// get default_theme, and default_title of this page				
-				if ($query->num_rows() > 0) {
-					$row = $query->row();
-					$default_theme = $row->default_theme;
-					if(isset($row->page_title) && $row->page_title != ''){
-						$page_title = $row->page_title;
-					}else if(isset($row->title) && $row->title != ''){
-						$page_title = $row->title;
-					}
-					$page_keyword = isset($row->page_keyword) ? $row->page_keyword : '';
-					if(!isset($only_content)){
-						$only_content = ($row->only_content == 1);
-					}										
-				}				
-			}
-			if(!isset($only_content)){
-				$only_content = TRUE;
-			}
-			
-			// ASSIGN THEME
-			if (isset($custom_theme)) {
-        		$theme = $custom_theme;
-        	} else if (isset($default_theme) && $default_theme != ''){
-				$themes = $this->cms_get_layout_list();
-				$theme_path = array();
-				foreach($themes as $theme){
-					$theme_path[] = $theme['path'];
+		 
+    	// CHECK IF IT IS WIDGET
+		$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
+		$this->cms_unset_ci_session('cms_dynamic_widget');
+    	
+		
+		// GET THE THEME, TITLE & ONLY_CONTENT FROM DATABASE
+		$theme = '';
+		$title = '';
+		$keyword = '';			
+		$default_theme = NULL;
+		$page_title = NULL;
+		$page_keyword = NULL;
+		if (isset($navigation_name)) {
+			$SQL = "SELECT title, page_title, page_keyword, default_theme, only_content FROM cms_navigation WHERE navigation_name = '".addslashes($navigation_name)."'";
+			$query = $this->db->query($SQL);
+			// get default_theme, and default_title of this page				
+			if ($query->num_rows() > 0) {
+				$row = $query->row();
+				$default_theme = $row->default_theme;
+				if(isset($row->page_title) && $row->page_title != ''){
+					$page_title = $row->page_title;
+				}else if(isset($row->title) && $row->title != ''){
+					$page_title = $row->title;
 				}
-				if(in_array($default_theme, $theme_path)){
-					$theme = $default_theme;
-				}
-			} else {
-        		$theme = $this->cms_get_config('site_theme');
-        	}
-			
-			// ASSIGN TITLE
-			$title = '';
-			if(isset($custom_title)){
-				$title = $custom_title;
-			} else if (isset($page_title) && $page_title != '') {
-				$title = $page_title;
-			} else {
-				$title = $this->cms_get_config('site_name');
+				$page_keyword = isset($row->page_keyword) ? $row->page_keyword : '';
+				if(!isset($only_content)){
+					$only_content = ($row->only_content == 1);
+				}										
+			}				
+		}
+		if(!isset($only_content)){
+			$only_content = TRUE;
+		}
+		
+		// ASSIGN THEME
+		if (isset($custom_theme)) {
+    		$theme = $custom_theme;
+    	} else if (isset($default_theme) && $default_theme != ''){
+			$themes = $this->cms_get_layout_list();
+			$theme_path = array();
+			foreach($themes as $theme){
+				$theme_path[] = $theme['path'];
 			}
+			if(in_array($default_theme, $theme_path)){
+				$theme = $default_theme;
+			}
+		} else {
+    		$theme = $this->cms_get_config('site_theme');
+    	}
+		
+		// ASSIGN TITLE
+		$title = '';
+		if(isset($custom_title)){
+			$title = $custom_title;
+		} else if (isset($page_title) && $page_title != '') {
+			$title = $page_title;
+		} else {
+			$title = $this->cms_get_config('site_name');
+		}
+		
+		// ASSIGN KEYWORD
+		if(isset($page_keyword) && $page_keyword != ''){
+			$keyword = $page_keyword;
+			if($custom_keyword != ''){
+				$keyword .= ', '.$custom_keyword;
+			}
+		}else{
+			$keyword = $custom_keyword;
+		}
+		
+    	
+    	// GET THE LAYOUT
+    	if (isset($custom_layout)) {
+    		$layout = $custom_layout;
+    	} else { 
+    		$this->load->library('user_agent');
+    		$layout = $this->agent->is_mobile() ? 'mobile' : 'default';
+    	}  	
+    	
+    	
+    	// ADJUST THEME AND LAYOUT
+    	if (!$this->cms_layout_exists($theme, $layout)) {
+    		if ($layout == 'mobile' && $this->cms_layout_exists($theme, 'default')) {
+    			$layout = 'default';
+    		} else {
+    			$theme = 'neutral';
+    		}
+    	}
+    	
+    	// BACKEND LAYOUT (in case of user has logged in)
+    	$cms_user_id = $this->cms_user_id();
+    	if (isset($cms_user_id) && $cms_user_id) {
+    		if ($this->cms_layout_exists($theme, $layout . '_backend')) {
+    			$layout = $layout . '_backend';
+    		}
+    	}
+		
+		// PREPARE SETTINGS
+    	$cms['site_name'] = $this->cms_get_config('site_name');
+    	$cms['site_slogan'] = $this->cms_get_config('site_slogan');
+    	$cms['site_footer'] = $this->cms_get_config('site_footer');
+    	$cms['site_theme'] = $theme;
+    	$cms['site_logo'] = $this->cms_get_config('site_logo');
+    	$cms['site_favicon'] = $this->cms_get_config('site_favicon'); 
+    	$cms['user_id'] = $this->cms_user_id();
+    	$cms['user_name'] = $this->cms_user_name();
+    	$cms['quicklinks'] = $this->cms_quicklinks();
+    	$cms['module_path'] = $this->cms_module_path();
+    	$cms['module_name'] = $this->cms_module_name($cms['module_path']);
+		
+		// GET WIDGET AND NAVIGATION ONLY IF NEEDED.
+		// THE ONLY_CONTENT PAGE, DYNAMIC WIDGET, AND AJAX REQUESTED PAGE DOESN'T NEED THOSE
+		if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
+			$cms['widget'] = array();
+			$cms['navigations'] = array();
+			$cms['navigation_path'] = array();
+		}else{
+			// GET WIDGET
+			$widget = $this->cms_widgets();       	
+        	$cms['widget'] = $widget;				
 			
-			// ASSIGN KEYWORD
-			if(isset($page_keyword) && $page_keyword != ''){
-				$keyword = $page_keyword;
-				if($custom_keyword != ''){
-					$keyword .= ', '.$custom_keyword;
-				}
+			// GET NAVIGATIONS
+        	$navigations = $this->cms_navigations();
+        	$navigation_path = $this->cms_get_navigation_path($navigation_name);
+        	$cms['navigations'] = $navigations;
+        	$cms['navigation_path'] = $navigation_path;
+		}
+		
+		// DEFINE $data			
+		$data['cms'] = $cms;
+		
+					
+    	// IT'S SHOW TIME
+        if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            	
+            $result = $this->load->view($view_url, $data, TRUE);
+			$result = $this->cms_parse_keyword($result);
+			if($return_as_string){
+				return $result;
 			}else{
-				$keyword = $custom_keyword;
+				$this->cms_show_html($result);
 			}
-			
-        	
-        	// GET THE LAYOUT
-        	if (isset($custom_layout)) {
-        		$layout = $custom_layout;
-        	} else { 
-        		$this->load->library('user_agent');
-        		$layout = $this->agent->is_mobile() ? 'mobile' : 'default';
-        	}  	
-        	
-        	
-        	// ADJUST THEME AND LAYOUT
-        	if (!$this->cms_layout_exists($theme, $layout)) {
-        		if ($layout == 'mobile' && $this->cms_layout_exists($theme, 'default')) {
-        			$layout = 'default';
-        		} else {
-        			$theme = 'neutral';
-        		}
-        	}
-        	
-        	// BACKEND LAYOUT (in case of user has logged in)
-        	$cms_user_id = $this->cms_user_id();
-        	if (isset($cms_user_id) && $cms_user_id) {
-        		if ($this->cms_layout_exists($theme, $layout . '_backend')) {
-        			$layout = $layout . '_backend';
-        		}
-        	}
-			
-			// PREPARE SETTINGS
-        	$cms['site_name'] = $this->cms_get_config('site_name');
-        	$cms['site_slogan'] = $this->cms_get_config('site_slogan');
-        	$cms['site_footer'] = $this->cms_get_config('site_footer');
-        	$cms['site_theme'] = $theme;
-        	$cms['site_logo'] = $this->cms_get_config('site_logo');
-        	$cms['site_favicon'] = $this->cms_get_config('site_favicon'); 
-        	$cms['user_id'] = $this->cms_user_id();
-        	$cms['user_name'] = $this->cms_user_name();
-        	$cms['quicklinks'] = $this->cms_quicklinks();
-        	$cms['module_path'] = $this->cms_module_path();
-        	$cms['module_name'] = $this->cms_module_name($cms['module_path']);
-			
-			// GET WIDGET AND NAVIGATION ONLY IF NEEDED.
-			// THE ONLY_CONTENT PAGE, DYNAMIC WIDGET, AND AJAX REQUESTED PAGE DOESN'T NEED THOSE
-			if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
-				$cms['widget'] = array();
-				$cms['navigations'] = array();
-				$cms['navigation_path'] = array();
-			}else{
-				// GET WIDGET
-				$widget = $this->cms_widgets();       	
-	        	$cms['widget'] = $widget;				
-				
-				// GET NAVIGATIONS
-	        	$navigations = $this->cms_navigations();
-	        	$navigation_path = $this->cms_get_navigation_path($navigation_name);
-	        	$cms['navigations'] = $navigations;
-	        	$cms['navigation_path'] = $navigation_path;
-			}
-			
-			// DEFINE $data			
-			$data['cms'] = $cms;
-			
-						
-        	// IT'S SHOW TIME
-            if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            	
-                $result = $this->load->view($view_url, $data, TRUE);
-				$result = $this->cms_parse_keyword($result);
-				if($return_as_string){
-					return $result;
-				}else{
-					$this->cms_show_html($result);
-				}
-            } else {    
+        } else {    
 
-                // set theme, layout and title
-                $this->template->title($title);               
-                $this->template->set_theme($theme);
-                $this->template->set_layout($layout);
-				
-				// set keyword metadata
-				if($keyword != ''){
-					$keyword_metadata = '<meta name="keyword" content="'.$keyword.'">';
-					$this->template->append_metadata($keyword_metadata);
-				}
-				
-				// include jquery
-				$jquery_cdn_path = 'http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js';
-				$jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
-				$headers = @get_headers($jquery_cdn_path);
-				if(strpos($headers[0],'200') === FALSE){    
-				    $jquery_path = $jquery_local_path;
-				}else{
-				    $jquery_path = $jquery_cdn_path;
-				}
-				$this->template->append_metadata('<script type="text/javascript" src="'.$jquery_path.'"></script>');
-				
-				// google analytic
-				$analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
-				if(trim($analytic_property_id) != ''){
-					// create analytic code
-					$analytic_code = '<script type="text/javascript">
-					  var _gaq = _gaq || [];
-					  _gaq.push([\'_setAccount\', \''.$analytic_property_id.'\']);
-					  _gaq.push([\'_trackPageview\']);
-					  (function() {
-					    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;
-					    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';
-					    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);
-					  })();
-					</script>';
-					// add to the template
-					$this->template->append_metadata($analytic_code);	
-				}
-				
-				
-				// config metadata
-				foreach($custom_metadata as $metadata){
-					$this->template->append_metadata($metadata);
-				}
-				
-                
-                $this->load->helper('directory');
-                $partial_path = BASEPATH.'../themes/' . $theme . '/views/partials/' . $layout.'/';
-                if(is_dir($partial_path)){
-	                $partials = directory_map($partial_path, 1);
-	                foreach($partials as $partial){
-	                	// if is directory or is not php, then ignore it
-	                	if (is_dir($partial))
-	                		continue;
-	                	$partial_extension = pathinfo($partial_path.$partial, PATHINFO_EXTENSION);
-	                	if(strtoupper($partial_extension) != 'PHP')
-	                		continue;
-	                	
-	                	// add partial to template
-	                	$partial_name = pathinfo($partial_path.$partial, PATHINFO_FILENAME);
-						if(isset($custom_partial[$partial_name])){
-							$this->template->inject_partial($partial_name, $custom_partial[$partial_name]);
-						}else{
-							$this->template->set_partial($partial_name, 'partials/' . $layout . '/'.$partial, $data);
-						}	                	                	                	
-	                }
-                }
-				
-                $result = $this->template->build($view_url, $data, TRUE);
-				$result = $this->cms_parse_keyword($result);
-				if($return_as_string){
-					return $result;
-				}else{
-					$this->cms_show_html($result);
-				}
-            }		
-        } else {
-        	/**
-			 * REDIRECT IF PAGE IS INACCESSIBLE  **************************************************************************
-			 */
-            $uriString = $this->uri->uri_string();                        
-            $old_url = $this->session->flashdata('old_url');            
-            if (is_bool($old_url)) {                
-                $this->session->set_flashdata('cms_old_url', $uriString);                
-            }
+            // set theme, layout and title
+            $this->template->title($title);               
+            $this->template->set_theme($theme);
+            $this->template->set_layout($layout);
+			
+			// set keyword metadata
+			if($keyword != ''){
+				$keyword_metadata = '<meta name="keyword" content="'.$keyword.'">';
+				$this->template->append_metadata($keyword_metadata);
+			}
+			
+			// include jquery
+			$jquery_cdn_path = 'http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js';
+			$jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
+			$headers = @get_headers($jquery_cdn_path);
+			if(strpos($headers[0],'200') === FALSE){    
+			    $jquery_path = $jquery_local_path;
+			}else{
+			    $jquery_path = $jquery_cdn_path;
+			}
+			$this->template->append_metadata('<script type="text/javascript" src="'.$jquery_path.'"></script>');
+			
+			// google analytic
+			$analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
+			if(trim($analytic_property_id) != ''){
+				// create analytic code
+				$analytic_code = '<script type="text/javascript">
+				  var _gaq = _gaq || [];
+				  _gaq.push([\'_setAccount\', \''.$analytic_property_id.'\']);
+				  _gaq.push([\'_trackPageview\']);
+				  (function() {
+				    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;
+				    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';
+				    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);
+				  })();
+				</script>';
+				// add to the template
+				$this->template->append_metadata($analytic_code);	
+			}
+			
+			
+			// config metadata
+			foreach($custom_metadata as $metadata){
+				$this->template->append_metadata($metadata);
+			}
+			
             
-            if(!$this->cms_allow_navigate('main_login')){
-            	redirect('');
-            }else{
-                redirect('main/login');
+            $this->load->helper('directory');
+            $partial_path = BASEPATH.'../themes/' . $theme . '/views/partials/' . $layout.'/';
+            if(is_dir($partial_path)){
+                $partials = directory_map($partial_path, 1);
+                foreach($partials as $partial){
+                	// if is directory or is not php, then ignore it
+                	if (is_dir($partial))
+                		continue;
+                	$partial_extension = pathinfo($partial_path.$partial, PATHINFO_EXTENSION);
+                	if(strtoupper($partial_extension) != 'PHP')
+                		continue;
+                	
+                	// add partial to template
+                	$partial_name = pathinfo($partial_path.$partial, PATHINFO_FILENAME);
+					if(isset($custom_partial[$partial_name])){
+						$this->template->inject_partial($partial_name, $custom_partial[$partial_name]);
+					}else{
+						$this->template->set_partial($partial_name, 'partials/' . $layout . '/'.$partial, $data);
+					}	                	                	                	
+                }
             }
+			
+            $result = $this->template->build($view_url, $data, TRUE);
+			$result = $this->cms_parse_keyword($result);
+			if($return_as_string){
+				return $result;
+			}else{
+				$this->cms_show_html($result);
+			}
         }
     }
 

@@ -19,6 +19,7 @@ class nnga extends CMS_Controller {
     }
     
     public function index($identifier=NULL){
+    	$this->cms_guard_page('ai_nnga_index');
         $this->initialize($identifier);
         $this->view($this->cms_module_path().'/nnga_index', NULL, 'ai_nnga_index');
     }
@@ -28,6 +29,7 @@ class nnga extends CMS_Controller {
         if(!$this->ai_nnga->core_exists()){
             redirect($this->cms_module_path().'/nnga/set'.$identifier);
         }else{
+        	$this->cms_guard_page('ai_nnga_monitor');
             $data = array("identifier"=>$identifier);
             $this->view($this->cms_module_path().'/nnga_monitor', $data, 'ai_nnga_monitor');
         }
@@ -83,6 +85,7 @@ class nnga extends CMS_Controller {
             redirect($this->cms_module_path().'/nnga/monitor/'.$identifier);
             
         }else{
+        	$this->cms_guard_page('ai_nnga_set');
             $state = $this->ai_nnga->currentState();
             $nnState = $state["nn"];
             $gaState = $state["ga"];

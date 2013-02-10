@@ -7,6 +7,7 @@
  */
 class help extends CMS_Controller {	
     public function index(){
+    	$this->cms_guard_page('help_index');
     	$this->load->model($this->cms_module_path().'/help_model');
     	$keyword = $this->input->post('keyword');
     	if(!$keyword){
@@ -19,6 +20,7 @@ class help extends CMS_Controller {
     } 
     
     public function group($url=NULL){
+    	$this->cms_guard_page('help_index');
     	$this->load->model($this->cms_module_path().'/help_model');
     	$data = array(
     			"toc"=>$this->help_model->group($url),
@@ -29,6 +31,7 @@ class help extends CMS_Controller {
     }
     
     public function topic($url=NULL){
+    	$this->cms_guard_page('help_index');
     	$this->load->model($this->cms_module_path().'/help_model');
     	$data = array(
     			"content"=>$this->help_model->topic_content($url),
@@ -38,6 +41,7 @@ class help extends CMS_Controller {
     }
 
     public function data_group(){
+    	$this->cms_guard_page('help_group');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
         
@@ -66,6 +70,7 @@ class help extends CMS_Controller {
     }
 
     public function data_topic(){
+    	$this->cms_guard_page('help_topic');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
         

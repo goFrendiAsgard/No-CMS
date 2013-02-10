@@ -14,6 +14,7 @@ class Blog extends CMS_Controller {
 	}
 	
     public function index($article_url=NULL){
+    	$this->cms_guard_page('blog_index');
     	$this->load->model($this->cms_module_path('gofrendi.blog').'/blog_model');
     	$data = array(
 			'allow_navigate_backend' => $this->cms_allow_navigate('blog_index'),
@@ -29,6 +30,7 @@ class Blog extends CMS_Controller {
     }
 
 	public function get_article(){
+		$this->cms_guard_page('blog_index');
 		// get page and keyword parameter
     	$keyword = $this->input->post('keyword');
     	$page = $this->input->post('page');
@@ -45,12 +47,11 @@ class Blog extends CMS_Controller {
     		'allow_navigate_backend' => $this->cms_allow_navigate('blog_index'),
 			'backend_url' => site_url($this->cms_module_path('gofrendi.blog').'/article'),
     	);
-    	if($this->cms_allow_navigate('blog_index')){
-    		$this->view($this->cms_module_path().'/blog_show_article',$data,'blog_index',array('only_content'=>TRUE));
-    	}
+    	$this->view($this->cms_module_path().'/blog_show_article',$data,'blog_index',array('only_content'=>TRUE));
 	}
     
     public function add_comment($article_id){
+    	$this->cms_guard_page('blog_index');
     	$this->load->model($this->cms_module_path('gofrendi.blog').'/blog_model');
     	
     	$name = $this->input->post('name', TRUE);
@@ -64,11 +65,13 @@ class Blog extends CMS_Controller {
     }
     
     public function manage(){
+    	$this->cms_guard_page('blog_management');
     	$data = array("submenu_screen"=>$this->cms_submenu_screen('blog_management'));
         $this->view($this->cms_module_path('gofrendi.blog')."/manage_view", $data, 'blog_management');
     }
     
     public function article(){
+    	$this->cms_guard_page('blog_article');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
@@ -104,6 +107,7 @@ class Blog extends CMS_Controller {
     }
     
     public function photo($article_id=NULL){
+    	$this->cms_guard_page('blog_photo');
     	$crud = new grocery_CRUD();
 		$crud->unset_jquery();
     	
@@ -127,6 +131,7 @@ class Blog extends CMS_Controller {
     }
     
     public function comment($article_id=NULL){
+    	$this->cms_guard_page('blog_comment');
     	$crud = new grocery_CRUD();
 		$crud->unset_jquery();
     	
@@ -254,6 +259,7 @@ class Blog extends CMS_Controller {
     }
     
     public function category(){
+    	$this->cms_guard_page('blog_category');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 

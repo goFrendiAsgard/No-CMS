@@ -8,6 +8,7 @@
 class nds extends CMS_Controller {	
 	
     public function template(){
+    	$this->cms_guard_page('nordrassil_template');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 		
@@ -76,6 +77,7 @@ class nds extends CMS_Controller {
 	}
 
     public function template_option($template_id=NULL){
+    	$this->cms_guard_page('nordrassil_template');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
         
@@ -132,6 +134,7 @@ class nds extends CMS_Controller {
 	}
 
     public function project(){
+    	$this->cms_guard_page('nordrassil_project');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 		
@@ -219,6 +222,7 @@ class nds extends CMS_Controller {
 	}
 
     public function table($project_id = NULL){
+    	$this->cms_guard_page('nordrassil_project');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 		
@@ -315,6 +319,7 @@ class nds extends CMS_Controller {
 	}
 
     public function column($table_id=NULL){
+    	$this->cms_guard_page('nordrassil_project');
     	$this->load->model('nordrassil/data/nds_model');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();

@@ -20,10 +20,12 @@ class Wysiwyg extends CMS_Controller {
     }
     
     public function index(){
+    	$this->cms_guard_page('wysiwyg_index');
     	$this->view($this->cms_module_path().'/wysiwyg_index', NULL, 'wysiwyg_index');
     }
 
     public function main() {
+    	$this->cms_guard_page('wysiwyg_index');
         $data = NULL;
         $data['site_favicon'] = $this->cms_get_config('site_favicon');
         $data['site_logo'] = $this->cms_get_config('site_logo');
