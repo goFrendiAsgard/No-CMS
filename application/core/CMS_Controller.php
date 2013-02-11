@@ -452,7 +452,7 @@ class CMS_Controller extends MX_Controller {
 					$navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'].'/index');
 				}
 				// redirect to default controller
-				if(isset($navigation_name)){
+				if(isset($navigation_name) && $this->cms_allow_navigate($navigation_name)){
 					redirect('');
 				}else{
 					show_404();
@@ -538,7 +538,7 @@ class CMS_Controller extends MX_Controller {
 				$static_content = $this->cms_parse_keyword($static_content);
                 $data["_content"] = $static_content;
                 return $this->view('main/static_page', $data, $navigation_name, $privilege_required, 
-                	$custom_theme, $custom_layout, $return_as_string);
+                	$custom_theme, $custom_layout, $return_as_string); 
             }            
         }
         
@@ -685,7 +685,7 @@ class CMS_Controller extends MX_Controller {
 				$this->cms_show_html($result);
 			}
         } else {    
-
+			
             // set theme, layout and title
             $this->template->title($title);               
             $this->template->set_theme($theme);
@@ -695,17 +695,25 @@ class CMS_Controller extends MX_Controller {
 			if($keyword != ''){
 				$keyword_metadata = '<meta name="keyword" content="'.$keyword.'">';
 				$this->template->append_metadata($keyword_metadata);
-			}
+			}			
 			
 			// include jquery
 			$jquery_cdn_path = 'http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js';
 			$jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
-			$headers = @get_headers($jquery_cdn_path);
-			if(strpos($headers[0],'200') === FALSE){    
-			    $jquery_path = $jquery_local_path;
-			}else{
-			    $jquery_path = $jquery_cdn_path;
+			if(!$this->session->userdata('cms_jquery_source')){
+				$headers = @get_headers($jquery_cdn_path);
+				if(strpos($headers[0],'200') === FALSE){
+					$this->session->set_userdata('cms_jquery_source', 'CDN');
+				}else{
+					$this->session->set_userdata('cms_jquery_source', 'Local');
+				}				
 			}
+			if($this->session->userdata('cms_jquery_source') == 'CDN'){
+				$jquery_path = $jquery_cdn_path;
+			}else if($this->session->userdata('cms_jquery_source') == 'Local'){
+				$jquery_path = $jquery_local_path;
+			}
+			
 			$this->template->append_metadata('<script type="text/javascript" src="'.$jquery_path.'"></script>');
 			
 			// google analytic
@@ -757,6 +765,7 @@ class CMS_Controller extends MX_Controller {
 			
             $result = $this->template->build($view_url, $data, TRUE);
 			$result = $this->cms_parse_keyword($result);
+			
 			if($return_as_string){
 				return $result;
 			}else{
@@ -817,7 +826,7 @@ class CMS_Controller extends MX_Controller {
      */
     protected final function cms_show_html($html){
 		@ob_start();
-    	echo $html;
+		echo $html;
 		@ob_end_flush();
     }
 	
