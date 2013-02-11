@@ -221,12 +221,17 @@ class CMS_Model extends CI_Model {
         );
         $result = array();
         foreach ($query->result() as $row) {
+        	if((!isset($row->url) || $row->url == '') && $row->is_static==1){
+        		$url = 'main/static_page/'.$row->navigation_name;
+        	}else{
+        		$url = $row->url;
+        	}
             $result[] = array(
                 "navigation_id" => $row->navigation_id,
                 "navigation_name" => $row->navigation_name,
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
-                "url" => $row->url,
+                "url" => $url,
                 "is_static" => $row->is_static
             );
         }
@@ -968,7 +973,7 @@ class CMS_Model extends CI_Model {
      * @return  string
      * @desc    get configuration variable
      */
-    public final function cms_get_config($name, $raw=False) {
+    public final function cms_get_config($name, $raw=FALSE) {
     	$value = '';
     	if(!isset($this->cms_model_properties['config'][$name])){
     		$query = $this->db->query(
