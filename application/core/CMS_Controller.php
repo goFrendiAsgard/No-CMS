@@ -389,6 +389,26 @@ class CMS_Controller extends MX_Controller {
     }
 	
 	/**
+     * @author goFrendiAsgard
+     * @param  string url_string
+     * @return bool
+     * @desc   guess the navigation name of an url
+     */
+	private final function cms_navigation_name($url_string=NULL){
+		if(!isset($url_string)){
+			$uriString = $this->uri->uri_string();
+		}		
+        $SQL = "SELECT navigation_name FROM cms_navigation WHERE url = '" . addslashes($uriString) . "'";
+        $query = $this->db->query($SQL);
+		$navigation_name = NULL;
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
+            $navigation_name = stripslashes($row->navigation_name);
+        }
+		return $navigation_name;
+	}
+	
+	/**
 	 * @author goFrendiAsgard
 	 * @param string navigation_name
 	 * @param string or array privilege_required
@@ -427,7 +447,16 @@ class CMS_Controller extends MX_Controller {
             if($this->cms_allow_navigate('main_login')){            	
 				redirect('main/login');
             }else{
-                redirect('');
+            	$navigation_name = $this->cms_navigation_name($this->router->routes['default_controller']);
+				if(!isset($navigation_name)){
+					$navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'].'/index');
+				}
+				// redirect to default controller
+				if(isset($navigation_name)){
+					redirect('');
+				}else{
+					show_404();
+				}                
             }
 		}
 	}    
@@ -473,18 +502,18 @@ class CMS_Controller extends MX_Controller {
 		$custom_partial = isset($config['partials']) ? $config['partials'] : NULL;
 		$custom_keyword = isset($config['keyword']) ? $config['keyword'] : NULL;
 		$only_content = isset($config['only_content']) ? $config['only_content'] : NULL;
+		
+		/** 
+		 * CHECK IF IT IS WIDGET
+		 */ 
+		$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
+		$this->cms_unset_ci_session('cms_dynamic_widget');
 
         /**
 		 * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
 		 */
-        if (!isset($navigation_name)) {
-            $uriString = $this->uri->uri_string();
-            $SQL = "SELECT navigation_name FROM cms_navigation WHERE url = '" . addslashes($uriString) . "'";
-            $query = $this->db->query($SQL);
-            if ($query->num_rows() > 0) {
-                $row = $query->row();
-                $navigation_name = stripslashes($row->navigation_name);
-            }
+        if (!$dynamic_widget && !isset($navigation_name)) {
+            $navigation_name = $this->cms_navigation_name();
         }
 		
 		/**
@@ -516,11 +545,7 @@ class CMS_Controller extends MX_Controller {
 
         /**
 		 * SHOW THE PAGE IF IT IS ACCESSIBLE  *****************************************************************************
-		 */
-		 
-    	// CHECK IF IT IS WIDGET
-		$dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
-		$this->cms_unset_ci_session('cms_dynamic_widget');
+		 */    	
     	
 		
 		// GET THE THEME, TITLE & ONLY_CONTENT FROM DATABASE
