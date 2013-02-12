@@ -69,8 +69,7 @@ class Main extends CMS_Controller {
 	
 	//this is used for the real static page which doesn't has any URL in navigation management
 	public function static_page($navigation_name){
-		//it actually only trigger static_page event on CMS_Controller.view()
-		$this->view('main/static_page',NULL,$navigation_name);
+		$this->view('CMS_View',NULL,$navigation_name);
 	}
 
     public function login() {

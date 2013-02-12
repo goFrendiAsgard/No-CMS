@@ -14,7 +14,7 @@ class CMS_Controller extends MX_Controller {
 
     public function __construct() {
         parent::__construct();
-
+		
         /* Standard Libraries */
         $this->load->database();
         $this->load->helper('url');
@@ -22,7 +22,7 @@ class CMS_Controller extends MX_Controller {
         $this->load->helper('form');
         $this->load->library('form_validation');
         
-        // if there is old_url, than save it
+        // if there is old_url, then save it
         $this->load->library('session');
         $old_url = $this->session->flashdata('cms_old_url');
         if (!is_bool($old_url)) {
@@ -536,9 +536,9 @@ class CMS_Controller extends MX_Controller {
                 	$static_content = '';
                 }
 				$static_content = $this->cms_parse_keyword($static_content);
-                $data["_content"] = $static_content;
-                return $this->view('main/static_page', $data, $navigation_name, $privilege_required, 
-                	$custom_theme, $custom_layout, $return_as_string); 
+				$data['cms_content'] = $static_content;
+				$view_url = 'CMS_View';
+				 
             }            
         }
         
@@ -812,11 +812,8 @@ class CMS_Controller extends MX_Controller {
      * @desc    show variable for debugging purpose
      */
     protected final function cms_show_variable($variable){
-    	@ob_start();
-    	echo '<pre>';
-		echo var_dump($variable);
-    	echo '</pre>';
-		@ob_end_flush();
+		$data = array('cms_content' => '<pre>'.print_r($variable,TRUE).'</pre>');
+		$this->load->view('CMS_View',$data);
     }
     
     /**
@@ -825,9 +822,8 @@ class CMS_Controller extends MX_Controller {
      * @desc    you are encouraged to use this instead of echo $html
      */
     protected final function cms_show_html($html){
-		@ob_start();
-		echo $html;
-		@ob_end_flush();
+		$data = array('cms_content' => $html);
+		$this->load->view('CMS_View',$data);
     }
 	
 	/**
