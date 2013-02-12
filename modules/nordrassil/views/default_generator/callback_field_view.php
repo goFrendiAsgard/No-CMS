@@ -77,6 +77,7 @@
 <input id="<?php echo $add_button_id; ?>" class="btn" type="button" value="Add <?php echo $detail_table_caption; ?>" />
 <br />
 <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
+<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/jquery-ui-1.9.0.custom.min.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>

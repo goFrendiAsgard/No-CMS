@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="assets/style.css" />
     <link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap.min.css" />
 
-    <script type="text/javascript" src="../assets/nocms/js/jquery.js"></script>
+    <script type="text/javascript" src="../assets/nocms/js/jquery.tools.min.js"></script>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>    
     <script type="text/javascript">
         var DATABASE_CLICKED = true;
