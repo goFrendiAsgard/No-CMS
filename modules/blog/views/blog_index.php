@@ -6,6 +6,9 @@
 		margin-top: 5px;
 		margin-bottom: 10px;
 	}
+	#record_content:empty{
+		display:none;
+	}
 	.record_container{
 		margin:10px;
 	}
@@ -13,6 +16,7 @@
 		margin-top: 10px;
 	}
 	#record_content_bottom{
+		margin-top: 5px;
 		display:none;
 	}
 	img.photo_thumbnail{

@@ -17,7 +17,7 @@ class Blog extends CMS_Controller {
     	$this->cms_guard_page('blog_index');
     	$this->load->model($this->cms_module_path('gofrendi.blog').'/blog_model');
     	$data = array(
-			'allow_navigate_backend' => $this->cms_allow_navigate('blog_index'),
+			'allow_navigate_backend' => $this->cms_allow_navigate('blog_article'),
 			'backend_url' => site_url($this->cms_module_path('gofrendi.blog').'/article'),
 			'categories'=>$this->blog_model->get_available_category(),
 			'chosen_category' => $this->input->get('category'),
@@ -44,7 +44,7 @@ class Blog extends CMS_Controller {
     	$articles = $this->blog_model->get_articles($page, $limit, $category, $keyword);
     	$data = array(
     		'articles'=>$articles,
-    		'allow_navigate_backend' => $this->cms_allow_navigate('blog_index'),
+    		'allow_navigate_backend' => $this->cms_allow_navigate('blog_article'),
 			'backend_url' => site_url($this->cms_module_path('gofrendi.blog').'/article'),
     	);
     	$this->view($this->cms_module_path().'/blog_show_article',$data,'blog_index',array('only_content'=>TRUE));
@@ -122,6 +122,7 @@ class Blog extends CMS_Controller {
     	
     	$crud->callback_before_insert(array($this,'before_insert_photo'));
 		$crud->callback_column($this->unique_field_name('article_id'), array($this,'callback_column_article_id'));
+		$crud->callback_after_upload(array($this,'after_upload_photo'));
     	$crud->set_language($this->cms_language());
     	$output = $crud->render();
 		$output->article_id = $article_id;
@@ -257,6 +258,17 @@ class Blog extends CMS_Controller {
         $post_array['article_url'] = $url;
         return $post_array;
     }
+
+	public function after_upload_photo($uploader_response,$field_info, $files_to_upload){
+	    $this->load->library('image_moo');	 
+	    //Is only one file uploaded so it ok to use it with $uploader_response[0].
+	    $file_uploaded = $field_info->upload_path.'/'.$uploader_response[0]->name; 
+		$thumbnail_name = $field_info->upload_path.'/thumb_'.$uploader_response[0]->name;
+	 
+	    $this->image_moo->load($file_uploaded)->resize(800,75)->save($thumbnail_name,true);
+	 
+	    return true;
+	}
     
     public function category(){
     	$this->cms_guard_page('blog_category');
