@@ -701,8 +701,30 @@ class CMS_Controller extends MX_Controller {
 			$jquery_cdn_path = 'http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js';
 			$jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
 			if(!$this->session->userdata('cms_jquery_source')){
-				$headers = @get_headers($jquery_cdn_path);
-				if(strpos($headers[0],'200') === FALSE){					
+				$cdn_exists = NULL;
+				if(!isset($cdn_exists)){
+					$curl = @curl_init($jquery_cdn_path);
+					@curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+					@curl_setopt($curl, CURLOPT_NOBODY, TRUE);
+					$httpcode = @curl_getinfo($curl, CURLINFO_HTTP_CODE);
+					@curl_close($curl);
+					if($httpcode == 200) {
+					  	$cdn_exists = TRUE;
+					}else if(is_numeric($httpcode)){
+						$cdn_exists = FALSE;
+					}
+				}
+				if(!isset($cdn_exists)){
+					$headers = @get_headers($jquery_cdn_path);
+					if(strpos($headers[0],'200') !== FALSE){
+						$cdn_exists = TRUE;
+					}
+				}
+				if (!isset($cdn_exists)){
+					$cdn_exists = FALSE;
+				}
+				
+				if(!$cdn_exists){					
 					$this->session->set_userdata('cms_jquery_source', 'Local');
 				}else{
 					$this->session->set_userdata('cms_jquery_source', 'CDN');

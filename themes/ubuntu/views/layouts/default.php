@@ -60,7 +60,7 @@
       <div class="row-fluid">
     	<div id="layout-banner" class="well hidden-phone span12">
         	<div class="span2">
-        		<img src ="<?php echo $cms['site_logo'];?>"" /> 
+        		<img src ="<?php echo $cms['site_logo'];?>" /> 
         	</div>        	
             <div class="span10">
 	            <h1><?php echo $cms['site_name'];?></h1>
