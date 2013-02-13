@@ -408,7 +408,7 @@ class CMS_Model extends CI_Model {
 				$image_file = 'assets/nocms/images/icons/package.png';
 			}
 			$html .='<li class="well" style="width:80px!important; height:90px!important; float:left!important; list-style-type:none;">';
-			$html .='<a href="'.site_url($url).'" style="width: 100%; height: 100%; display: block;">';
+			$html .='<a href="'.$url.'" style="width: 100%; height: 100%; display: block;">';
 			if($image_file != ''){
 				$html .='<img style="max-width:32px; max-height:32px;" src="'.base_url($image_file).'" /><br /><br />';
 			}
@@ -1409,3 +1409,5 @@ class CMS_Model extends CI_Model {
 	}
     
 }
+
+class MY_Model extends CMS_Model{}

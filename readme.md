@@ -115,11 +115,10 @@ Module
 * Your module must be consist of at least 3 subdirectories (models, views, and controllers)
 * If you are not familiar with CodeIgniter MVC pattern, you should read CodeIgniter documentation first
 
-Controller
+CMS_Controller
 ----------
 * Controllers deal with every process in your module
 * Controllers must be located at your_no_cms_installation_path/modules/your_module_name/controllers
-* Every controller musth contains a class which extends CMS_Controller:
 
 ```php
    <?php
@@ -151,7 +150,64 @@ Controller
    ?>
 ```
 
-Installer Controller
+CMS_Priv_Strict_Controller (development version)
+------------------------------------------------
+* For now, this is only available in development version
+* It is inherited from CMS_Controller, so it will act as CMS_Controller (but smarter)
+* It has a very smart navigation-name-auto-detection, so you don't need to include navigation_name when call view method.
+* You don't need to call cms_guard_page anymore
+* You can use $URL_MAP to define custom 'url to navigation_name' mapping
+
+```php
+   <?php
+    class Your_Controller_Name extends CMS_Priv_Strict_Controller{
+    	/*
+    	 * URL_MAP will be used in case of you have "unregistered function"
+    	 * (e.g : you don't have any navigation name that refer to 
+    	 * 'your_module_name/your_controller_name/unregistered_function',
+    	 * but you want to make sure that the url has the same authorization as 'a_navigation_name')
+    	 */ 
+    	$URL_MAP = array(
+    		'your_module_name/your_controller_name/unregistered_function' => 'a_navigation_name',
+    	);
+    	
+    	/**
+    	 * // this gonna work too:
+    	 * $URL_MAP = array(
+    	 *	'your_module_name/your_controller_name/unregistered_function' => 
+		 * 		'your_module_name/your_controller_name/show',
+    	 * );
+    	 */
+    	
+    	/**
+    	 * This is the normal way. You can access below function by using this url: 
+    	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
+    	 */
+    	public function show(){
+   			$this->load->model('your_model_name');
+   			$data = array();
+   			$data['result'] = $this->your_model_name->get_data();
+   			$this->view('your_view_name', $data);
+   		}
+   		
+   		/**
+    	 * This is gonna be work to, even if the url is not registered. 
+    	 * You can access below function by using this url: 
+    	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/strict
+    	 */
+   		public function unregistered_function(){
+   		    $this->load->model('your_model_name'); // this will not be run if visitor not authorized
+   			$data = array();
+   			$data['result'] = $this->your_model_name->get_data();
+   			$this->view('your_view_name', $data);
+   		}
+    }
+   ?>
+``` 
+
+
+
+CMS_Module_Installer
 --------------------
 * Installer controller must be located at your_no_cms_installation_path/modules/your_module_name/controllers
 * Installer controller must be named "Install.php"
