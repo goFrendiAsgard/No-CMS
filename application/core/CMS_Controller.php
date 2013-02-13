@@ -721,6 +721,7 @@ class CMS_Controller extends MX_Controller {
 					curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
 					curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
 					curl_setopt($curl, CURLOPT_NOBODY, TRUE);
+					curl_exec($curl);
 					$httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 					curl_close($curl);
 					if($httpcode == 200) {
