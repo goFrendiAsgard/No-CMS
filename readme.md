@@ -123,7 +123,7 @@ CMS_Controller
 ```php
    <?php
     class Your_Controller_Name extends CMS_Controller{
-    	/**
+    	/*
     	 * This is the normal way. You can access below function by using this url: 
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
     	 */
@@ -134,7 +134,7 @@ CMS_Controller
    			$this->view('your_view_name', $data, 'navigation_name');
    		}
    		
-   		/**
+   		/*
     	 * To ensure that the whole function will not work if user not authorized, 
     	 * you can also use cms_guard_page function. You can access below function by using this url: 
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/strict
@@ -171,7 +171,7 @@ CMS_Priv_Strict_Controller (development version)
     		'your_module_name/your_controller_name/unregistered_function' => 'a_navigation_name'
     	);
     	
-    	/**
+    	/*
     	 * Alternatively, this gonna work too:
     	 * $URL_MAP = array(
     	 *	'your_module_name/your_controller_name/unregistered_function' => 
@@ -179,7 +179,7 @@ CMS_Priv_Strict_Controller (development version)
     	 * );
     	 */
     	
-    	/**
+    	/*
     	 * This is the normal way. You can access below function by using this url: 
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
     	 */
@@ -190,7 +190,7 @@ CMS_Priv_Strict_Controller (development version)
    			$this->view('your_view_name', $data);
    		}
    		
-   		/**
+   		/*
     	 * This is gonna be work to, even if the url is not registered. 
     	 * You can access below function by using this url: 
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/strict
