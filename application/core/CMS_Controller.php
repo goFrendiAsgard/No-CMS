@@ -43,7 +43,7 @@ class CMS_Controller extends MX_Controller {
      * @return mixed
      * @desc   if value specified, this will set CI_Session["key"], else it will return CI_session["key"] 
      */
-    private final function cms_ci_session($key, $value = NULL) {
+    private  function cms_ci_session($key, $value = NULL) {
         return $this->CMS_Model->cms_ci_session($key, $value);
     }
 
@@ -52,7 +52,7 @@ class CMS_Controller extends MX_Controller {
      * @param  string $key   
      * @desc   unset CI_session["key"] 
      */
-    private final function cms_unset_ci_session($key) {
+    private  function cms_unset_ci_session($key) {
         return $this->CMS_Model->cms_unset_ci_session($key);
     }
 
@@ -62,7 +62,7 @@ class CMS_Controller extends MX_Controller {
      * @return mixed
      * @desc   set or get CI_Session["cms_user_name"]  
      */
-    protected final function cms_user_name($user_name = NULL) {
+    protected  function cms_user_name($user_name = NULL) {
         return $this->CMS_Model->cms_user_name($user_name);
     }
 	
@@ -72,7 +72,7 @@ class CMS_Controller extends MX_Controller {
      * @return mixed
      * @desc   set or get CI_Session["cms_user_real_name"]  
      */
-    protected final function cms_user_real_name($real_name = NULL) {
+    protected  function cms_user_real_name($real_name = NULL) {
         return $this->CMS_Model->cms_user_real_name($real_name);
     }
 	
@@ -82,7 +82,7 @@ class CMS_Controller extends MX_Controller {
      * @return mixed
      * @desc   set or get CI_Session["cms_user_email"]  
      */
-    protected final function cms_user_email($email = NULL) {
+    protected  function cms_user_email($email = NULL) {
         return $this->CMS_Model->cms_user_email($email);
     }
 
@@ -91,7 +91,7 @@ class CMS_Controller extends MX_Controller {
      * @param  int $user_id
      * @desc   set or get CI_Session["cms_user_id"]
      */
-    protected final function cms_user_id($user_id = NULL) {
+    protected  function cms_user_id($user_id = NULL) {
         return $this->CMS_Model->cms_user_id($user_id);
     }
 
@@ -102,7 +102,7 @@ class CMS_Controller extends MX_Controller {
      * @desc    return navigation child if parent_id specified, else it will return root navigation
      *           the max depth of menu is depended on max_menud_depth
      */
-    private final function cms_navigations($parent_id = NULL, $max_menu_depth = NULL) {
+    private  function cms_navigations($parent_id = NULL, $max_menu_depth = NULL) {
         return $this->CMS_Model->cms_navigations($parent_id, $max_menu_depth);
     }
 
@@ -111,7 +111,7 @@ class CMS_Controller extends MX_Controller {
      * @return mixed
      * @desc   return quick links
      */
-    private final function cms_quicklinks() {
+    private  function cms_quicklinks() {
         return $this->CMS_Model->cms_quicklinks();
     }
 
@@ -120,7 +120,7 @@ class CMS_Controller extends MX_Controller {
      * @return  mixed
      * @desc    return widgets
      */
-    private final function cms_widgets() {
+    private  function cms_widgets() {
         return $this->CMS_Model->cms_widgets();
     }
     
@@ -129,7 +129,7 @@ class CMS_Controller extends MX_Controller {
      * @return  string
      * @desc    return submenu screen
      */
-    public final function cms_submenu_screen($navigation_name){
+    public  function cms_submenu_screen($navigation_name){
     	return $this->CMS_Model->cms_submenu_screen($navigation_name);
 	}
 
@@ -139,7 +139,7 @@ class CMS_Controller extends MX_Controller {
      * @return  mixed
      * @desc    return navigation path, used for layout
      */
-    private final function cms_get_navigation_path($navigation_name = NULL) {
+    private  function cms_get_navigation_path($navigation_name = NULL) {
         return $this->CMS_Model->cms_get_navigation_path($navigation_name);
     }
 
@@ -148,7 +148,7 @@ class CMS_Controller extends MX_Controller {
      * @return  mixed
      * @desc    return privileges of current user
      */
-    private final function cms_privileges() {
+    private  function cms_privileges() {
         return $this->CMS_Model->cms_privileges();
     }
 
@@ -158,7 +158,7 @@ class CMS_Controller extends MX_Controller {
      * @return  bool
      * @desc    check if user authorized to navigate into a page specified in parameter
      */
-    protected final function cms_allow_navigate($navigation_name) {
+    protected  function cms_allow_navigate($navigation_name) {
         return $this->CMS_Model->cms_allow_navigate($navigation_name);
     }
 
@@ -168,7 +168,7 @@ class CMS_Controller extends MX_Controller {
      * @return  bool
      * @desc    check if user have privilege specified in parameter
      */
-    protected final function cms_have_privilege($privilege_name) {
+    protected  function cms_have_privilege($privilege_name) {
         return $this->CMS_Model->cms_have_privilege($privilege_name);
     }
 
@@ -179,7 +179,7 @@ class CMS_Controller extends MX_Controller {
      * @return  bool
      * @desc    login with identity and password. Identity can be user_name or e-mail
      */
-    protected final function cms_do_login($identity, $password) {
+    protected  function cms_do_login($identity, $password) {
         return $this->CMS_Model->cms_do_login($identity, $password);
     }
 
@@ -187,7 +187,7 @@ class CMS_Controller extends MX_Controller {
      * @author  goFrendiAsgard
      * @desc    logout
      */
-    protected final function cms_do_logout() {
+    protected  function cms_do_logout() {
         $this->CMS_Model->cms_do_logout();
     }
 
@@ -199,7 +199,7 @@ class CMS_Controller extends MX_Controller {
      * @param   string password
      * @desc    register new user
      */
-    protected final function cms_do_register($user_name, $email, $real_name, $password) {
+    protected  function cms_do_register($user_name, $email, $real_name, $password) {
         return $this->CMS_Model->cms_do_register($user_name, $email, $real_name, $password);
     }
 
@@ -211,7 +211,7 @@ class CMS_Controller extends MX_Controller {
      * @param   string password
      * @desc    change current profile (user_name, email, real_name and password)
      */
-    protected final function cms_do_change_profile($user_name, $email, $real_name, $password=NULL) {
+    protected  function cms_do_change_profile($user_name, $email, $real_name, $password=NULL) {
         return $this->CMS_Model->cms_do_change_profile($user_name, $email, $real_name, $password);
     } 
 
@@ -221,7 +221,7 @@ class CMS_Controller extends MX_Controller {
      * @return  bool
      * @desc    checked if module installed
      */
-    protected final function cms_is_module_installed($module_name) {
+    protected  function cms_is_module_installed($module_name) {
     	return $this->CMS_Model->cms_is_module_installed($module_name);
     }
     
@@ -230,7 +230,7 @@ class CMS_Controller extends MX_Controller {
 	 * @return  mixed
      * @desc    get module list
      */
-    public final function cms_get_module_list() {
+    public  function cms_get_module_list() {
     	return $this->CMS_Model->cms_get_module_list();
     }
     
@@ -240,7 +240,7 @@ class CMS_Controller extends MX_Controller {
      * @return  string
      * @desc    get module_path (folder name) of specified module_name (name space)
      */
-    public final function cms_module_path($name=NULL){
+    public  function cms_module_path($name=NULL){
     	return $this->CMS_Model->cms_module_path($name);
     }
     
@@ -250,7 +250,7 @@ class CMS_Controller extends MX_Controller {
      * @return  string
      * @desc    get module_name (name space) of specified module_path (folder name)
      */
-    public final function cms_module_name($path){
+    public  function cms_module_name($path){
     	return $this->CMS_Model->cms_module_name($path);
     }
     
@@ -259,7 +259,7 @@ class CMS_Controller extends MX_Controller {
      * @return  mixed  
      * @desc    get layout list
      */
-    protected final function cms_get_layout_list() {
+    protected  function cms_get_layout_list() {
     	return $this->CMS_Model->cms_get_layout_list();
     }
     
@@ -271,7 +271,7 @@ class CMS_Controller extends MX_Controller {
      * @return  bool
      * @desc    generate activation code, and send email to applicant 
      */
-    protected final function cms_generate_activation_code($identity, $send_mail = FALSE, $reason='FORGOT') {
+    protected  function cms_generate_activation_code($identity, $send_mail = FALSE, $reason='FORGOT') {
     	return $this->CMS_Model->cms_generate_activation_code($identity, $send_mail, $reason);
     }
     
@@ -282,7 +282,7 @@ class CMS_Controller extends MX_Controller {
 	 * @return  bool success
      * @desc    activate user
      */
-    protected final function cms_activate_account($activation_code, $new_password=NULL) {
+    protected  function cms_activate_account($activation_code, $new_password=NULL) {
     	return $this->CMS_Model->cms_activate_account($activation_code, $new_password);
     }
     
@@ -295,7 +295,7 @@ class CMS_Controller extends MX_Controller {
      * @param   string message
      * @desc    send email 
      */
-    protected final function cms_send_email($from_address, $from_name, $to_address, $subject, $message) {
+    protected  function cms_send_email($from_address, $from_name, $to_address, $subject, $message) {
     	return $this->CMS_Model->cms_send_email($from_address, $from_name, $to_address, $subject, $message);
     }
     
@@ -305,7 +305,7 @@ class CMS_Controller extends MX_Controller {
      * @return  bool 
      * @desc    validate activation_code
      */
-    protected final function cms_valid_activation_code($activation_code) {
+    protected  function cms_valid_activation_code($activation_code) {
     	return $this->CMS_Model->cms_valid_activation_code($activation_code);
     }
     
@@ -316,7 +316,7 @@ class CMS_Controller extends MX_Controller {
      * @param   string description
      * @desc    set config variable
      */
-    protected final function cms_set_config($name, $value, $description = NULL) {
+    protected  function cms_set_config($name, $value, $description = NULL) {
     	return $this->CMS_Model->cms_set_config($name, $value, $description);
     }
     
@@ -325,7 +325,7 @@ class CMS_Controller extends MX_Controller {
      * @param   string name
      * @desc    unset configuration variable
      */
-    protected final function cms_unset_config($name) {
+    protected  function cms_unset_config($name) {
     	return $this->CMS_Model->cms_unset_config($name);
     }
     
@@ -335,7 +335,7 @@ class CMS_Controller extends MX_Controller {
      * @return  string
      * @desc    get configuration variable
      */
-    public final function cms_get_config($name, $raw=False) {
+    public  function cms_get_config($name, $raw=False) {
     	return $this->CMS_Model->cms_get_config($name, $raw);
     }
 	
@@ -345,7 +345,7 @@ class CMS_Controller extends MX_Controller {
 	 * @return	string language
 	 * @desc	set language for this session only 
 	 */
-	protected final function cms_language($language=NULL){
+	protected  function cms_language($language=NULL){
 		return $this->CMS_Model->cms_language($language);
 	}
 	
@@ -354,7 +354,7 @@ class CMS_Controller extends MX_Controller {
 	 * @return	array list of available languages
 	 * @desc	get available languages 
 	 */
-	public final function cms_language_list(){
+	public  function cms_language_list(){
         return $this->CMS_Model->cms_language_list();
     }
     
@@ -364,7 +364,7 @@ class CMS_Controller extends MX_Controller {
      * @return  string
      * @desc    get translation of key in site_language
      */
-    protected final function cms_lang($key, $module =NULL) {
+    protected  function cms_lang($key, $module =NULL) {
     	return $this->CMS_Model->cms_lang($key, $module);
     }
     
@@ -374,7 +374,7 @@ class CMS_Controller extends MX_Controller {
      * @return string
      * @desc   parse keyword like @site_url and @base_url 
      */
-    public final function cms_parse_keyword($value) {
+    public  function cms_parse_keyword($value) {
     	return $this->CMS_Model->cms_parse_keyword($value);
     }
     
@@ -384,7 +384,7 @@ class CMS_Controller extends MX_Controller {
      * @return bool
      * @desc   check if user already exists
      */
-    public final function cms_is_user_exists($username){
+    public  function cms_is_user_exists($username){
     	return $this->CMS_Model->cms_is_user_exists($username);
     }
 	
@@ -394,7 +394,7 @@ class CMS_Controller extends MX_Controller {
      * @return bool
      * @desc   guess the navigation name of an url
      */
-	private final function cms_navigation_name($url_string=NULL){
+	private  function cms_navigation_name($url_string=NULL){
 		if(!isset($url_string)){
 			$uriString = $this->uri->uri_string();
 		}		
@@ -409,12 +409,39 @@ class CMS_Controller extends MX_Controller {
 	}
 	
 	/**
+     * @author goFrendiAsgard
+     * @desc   redirect to login/main page
+     */
+	protected  function cms_redirect(){
+		$uriString = $this->uri->uri_string();                        
+        $old_url = $this->session->flashdata('old_url');            
+        if (is_bool($old_url)) {                
+            $this->session->set_flashdata('cms_old_url', $uriString);                
+        }
+        
+        if($this->cms_allow_navigate('main_login')){            	
+			redirect('main/login');
+        }else{
+        	$navigation_name = $this->cms_navigation_name($this->router->routes['default_controller']);
+			if(!isset($navigation_name)){
+				$navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'].'/index');
+			}
+			// redirect to default controller
+			if(isset($navigation_name) && $this->cms_allow_navigate($navigation_name)){
+				redirect('');
+			}else{
+				show_404();
+			}                
+        }
+	}
+	
+	/**
 	 * @author goFrendiAsgard
 	 * @param string navigation_name
 	 * @param string or array privilege_required
 	 * @desc guard a page from unauthorized access
 	 */
-	public final function cms_guard_page($navigation_name = NULL, $privilege_required = NULL){
+	public  function cms_guard_page($navigation_name = NULL, $privilege_required = NULL){
 		$privilege_required = isset($privilege_required) ? $privilege_required : array();
 		
 		// check if allowed
@@ -438,26 +465,7 @@ class CMS_Controller extends MX_Controller {
 		
 		// if not allowed then redirect
 		if(!$allowed){
-			$uriString = $this->uri->uri_string();                        
-            $old_url = $this->session->flashdata('old_url');            
-            if (is_bool($old_url)) {                
-                $this->session->set_flashdata('cms_old_url', $uriString);                
-            }
-            
-            if($this->cms_allow_navigate('main_login')){            	
-				redirect('main/login');
-            }else{
-            	$navigation_name = $this->cms_navigation_name($this->router->routes['default_controller']);
-				if(!isset($navigation_name)){
-					$navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'].'/index');
-				}
-				// redirect to default controller
-				if(isset($navigation_name) && $this->cms_allow_navigate($navigation_name)){
-					redirect('');
-				}else{
-					show_404();
-				}                
-            }
+			$this->cms_redirect();
 		}
 	}    
 
@@ -471,7 +479,7 @@ class CMS_Controller extends MX_Controller {
      * @return  string or null
      * @desc    replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
      */
-    protected final function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE) {
+    protected  function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE) {
     	    	
     	$result = NULL;
         $this->load->helper('url');
@@ -502,6 +510,8 @@ class CMS_Controller extends MX_Controller {
 		$custom_partial = isset($config['partials']) ? $config['partials'] : NULL;
 		$custom_keyword = isset($config['keyword']) ? $config['keyword'] : NULL;
 		$only_content = isset($config['only_content']) ? $config['only_content'] : NULL;
+		$always_allow = isset($config['always_allow']) ? $config['always_allow'] : FALSE;
+		$layout_suffix = isset($config['layout_suffix']) ? $config['layout_suffix'] : '';
 		
 		/** 
 		 * CHECK IF IT IS WIDGET
@@ -519,7 +529,9 @@ class CMS_Controller extends MX_Controller {
 		/**
 		 * CHECK IF THE CURRENT NAVIGATION IS ACCESSIBLE  *****************************************************************
 		 */
-        $this->cms_guard_page($navigation_name, $privilege_required);
+		if(!$always_allow){
+			$this->cms_guard_page($navigation_name, $privilege_required);
+		}        
         
         /**
 		 * CHECK IF THE PAGE IS STATIC  **********************************************************************************
@@ -632,13 +644,15 @@ class CMS_Controller extends MX_Controller {
     		}
     	}
     	
-    	// BACKEND LAYOUT (in case of user has logged in)
+    	// ADD AUTHENTICATED SUFFIX (in case of user has logged in)
     	$cms_user_id = $this->cms_user_id();
-    	if (isset($cms_user_id) && $cms_user_id) {
-    		if ($this->cms_layout_exists($theme, $layout . '_backend')) {
-    			$layout = $layout . '_backend';
-    		}
-    	}
+    	if ($layout_suffix == '' && isset($cms_user_id) && $cms_user_id) {
+    		$layout_suffix = 'authenticated';
+		}
+		
+		if ($this->cms_layout_exists($theme, $layout . '_'.$layout_suffix)) {
+			$layout = $layout . '_'.$layout_suffix;
+		}
 		
 		// PREPARE SETTINGS
     	$cms['site_name'] = $this->cms_get_config('site_name');
@@ -702,12 +716,13 @@ class CMS_Controller extends MX_Controller {
 			$jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
 			if(!$this->session->userdata('cms_jquery_source')){
 				$cdn_exists = NULL;
-				if(!isset($cdn_exists)){
-					$curl = @curl_init($jquery_cdn_path);
-					@curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-					@curl_setopt($curl, CURLOPT_NOBODY, TRUE);
-					$httpcode = @curl_getinfo($curl, CURLINFO_HTTP_CODE);
-					@curl_close($curl);
+				if(!isset($cdn_exists) && in_array  ('curl', get_loaded_extensions())){
+					$curl = curl_init($jquery_cdn_path);
+					curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+					curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+					curl_setopt($curl, CURLOPT_NOBODY, TRUE);
+					$httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+					curl_close($curl);
 					if($httpcode == 200) {
 					  	$cdn_exists = TRUE;
 					}else if(is_numeric($httpcode)){
@@ -796,11 +811,11 @@ class CMS_Controller extends MX_Controller {
         }
     }
 
-    private final function cms_layout_exists($theme, $layout) {
+    private  function cms_layout_exists($theme, $layout) {
         return is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php');
     }
     
-    private final function cms_cache($time = 5){
+    private  function cms_cache($time = 5){
         // cache
     	$this->load->driver('cache');
     	$this->output->cache($time);
@@ -814,7 +829,7 @@ class CMS_Controller extends MX_Controller {
      * @param   int options
      * @desc    show variable in json encoded form
      */
-    protected final function cms_show_json($variable, $options = 0){
+    protected  function cms_show_json($variable, $options = 0){
     	$result = '';
     	// php 5.3.0 accepts 2 parameters, while lower version only accepts 1 parameter
     	if(version_compare(PHP_VERSION, '5.3.0') >= 0){
@@ -833,7 +848,7 @@ class CMS_Controller extends MX_Controller {
      * @param   mixed variable
      * @desc    show variable for debugging purpose
      */
-    protected final function cms_show_variable($variable){
+    protected  function cms_show_variable($variable){
 		$data = array('cms_content' => '<pre>'.print_r($variable,TRUE).'</pre>');
 		$this->load->view('CMS_View',$data);
     }
@@ -843,7 +858,7 @@ class CMS_Controller extends MX_Controller {
      * @param   string html
      * @desc    you are encouraged to use this instead of echo $html
      */
-    protected final function cms_show_html($html){
+    protected  function cms_show_html($html){
 		$data = array('cms_content' => $html);
 		$this->load->view('CMS_View',$data);
     }
@@ -874,4 +889,87 @@ class CMS_Controller extends MX_Controller {
 		return $this->CMS_Model->cms_third_party_login($provider);
 	}
 
+}
+
+
+abstract class CMS_Priv_Base_Controller extends CMS_Controller{
+	public function __construct() {
+        parent::__construct();
+	}
+	
+	protected function cms_override_config($config){
+		return $config;
+	}	
+	
+	protected  function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE){
+		if (is_bool($navigation_name) && count($config)==0) {
+            $return_as_string = $navigation_name;
+            $navigation_name = NULL;
+			$config = NULL;
+        } else if (is_bool($config)) {
+            $return_as_string = $config;
+			$config = NULL;
+        }
+		if(!isset($config) || !is_array($config)){
+			$config = array();
+		}
+		$config = $this->cms_override_config($config);
+		parent::view($view_url, $data, $navigation_name, $config, $return_as_string);
+	}
+}
+
+class CMS_Priv_None_Controller extends CMS_Priv_Base_Controller{
+	protected function cms_override_config($config){
+		$config['always_allow'] = TRUE;
+		return $config;
+	}
+}
+
+class CMS_Priv_Authenticated_Controller extends CMS_Priv_Base_Controller{
+	public function __construct() {
+        parent::__construct();
+		if(!is_numeric($this->cms_user_id())){
+			$this->cms_redirect();
+		}
+	}
+	
+	protected function cms_override_config($config){
+		$config['always_allow'] = TRUE;
+		$config['layout_suffix'] = 'authenticated';
+		return $config;
+	}
+}
+
+class CMS_Priv_Unauthenticated_Controller extends CMS_Priv_Base_Controller{
+	public function __construct() {
+        parent::__construct();
+		if(is_numeric($this->cms_user_id())){
+			$this->cms_redirect();
+		}
+	}
+	
+	protected function cms_override_config($config){
+		$config['always_allow'] = TRUE;
+		return $config;
+	}
+}
+
+class CMS_Priv_DB_Controller extends CMS_Priv_Authenticated_Controller{
+	protected $MAP;
+	public function __construct() {
+        parent::__construct();
+		$uriString = $this->uri->uri_string();
+		if(isset($this->MAP[$uriString])){
+			$this->cms_guard_page($this->MAP[$uriString]);
+		}else{
+			$navigation_name = $this->cms_navigation_name($url_string=NULL);
+			$this->cms_guard_page($navigation_name);
+		}
+	}
+	
+	protected function cms_override_config($config){
+		$config['always_allow'] = TRUE;
+		$config['layout_suffix'] = 'authorized';
+		return $config;
+	}
 }

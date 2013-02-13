@@ -41,7 +41,7 @@
 			if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
 				// make text
 				if($navigation['allowed'] && $navigation['active']){
-					$text = '<a class="dropdown-toggle" href="'.site_url($navigation['url']).'">'.$navigation['title'].'</a>';
+					$text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
 				}else{
 					$text = $navigation['title'];
 				}
@@ -64,7 +64,7 @@
 			if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
 				// make text
 				if($navigation['allowed'] && $navigation['active']){
-					$text = '<a href="'.site_url($navigation['url']).'">'.$navigation['title'].'</a>';
+					$text = '<a href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
 				}else{
 					$text = '<a href="#">'.$navigation['title'].'</a>';
 				}

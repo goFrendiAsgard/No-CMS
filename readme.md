@@ -431,3 +431,4 @@ v0.6.1 (development)
 + (proposed) automatically create thumbnail for blog's photos
 + (done, tested) add cms_guard_page function for better authorization
 + (done, tested) create thumbnail automatically for blog module's photo
++ (in progress) add "admin controller" like bonfire and other CI Based framework
