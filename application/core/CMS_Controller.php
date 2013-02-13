@@ -702,10 +702,10 @@ class CMS_Controller extends MX_Controller {
 			$jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
 			if(!$this->session->userdata('cms_jquery_source')){
 				$headers = @get_headers($jquery_cdn_path);
-				if(strpos($headers[0],'200') === FALSE){
-					$this->session->set_userdata('cms_jquery_source', 'CDN');
-				}else{
+				if(strpos($headers[0],'200') === FALSE){					
 					$this->session->set_userdata('cms_jquery_source', 'Local');
+				}else{
+					$this->session->set_userdata('cms_jquery_source', 'CDN');
 				}				
 			}
 			if($this->session->userdata('cms_jquery_source') == 'CDN'){
