@@ -122,7 +122,7 @@ CMS_Controller
 
 ```php
    <?php
-    class Your_Controller_Name extends CMS_Controller{
+   class Your_Controller_Name extends CMS_Controller{
     	/*
     	 * This is the normal way. You can access below function by using this url: 
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
@@ -146,7 +146,7 @@ CMS_Controller
    			$data['result'] = $this->your_model_name->get_data();
    			$this->view('your_view_name', $data, 'navigation_name');
    		}
-    }
+   }
    ?>
 ```
 
@@ -160,7 +160,7 @@ CMS_Priv_Strict_Controller (development version)
 
 ```php
    <?php
-    class Your_Controller_Name extends CMS_Priv_Strict_Controller{
+   class Your_Controller_Name extends CMS_Priv_Strict_Controller{
     	/*
     	 * URL_MAP will be used in case of you have "unregistered function"
     	 * (e.g : you don't have any navigation name that refer to 
@@ -201,7 +201,7 @@ CMS_Priv_Strict_Controller (development version)
    			$data['result'] = $this->your_model_name->get_data();
    			$this->view('your_view_name', $data);
    		}
-    }
+   }
    ?>
 ``` 
 
