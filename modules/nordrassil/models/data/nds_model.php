@@ -320,7 +320,7 @@ class Nds_Model extends CMS_Model{
 			$db_password = $row->db_password;
 			$db_schema = $row->db_schema;
 			
-			$connection = @mysqli_connect($db_server, $db_user, $db_password, 'information_schema', $db_port);
+			$connection = @mysqli_connect($db_server, $db_user, $db_password, $db_schema, $db_port);
 			@mysqli_select_db($connection, $db_schema);
 			
 			if($connection === FALSE){

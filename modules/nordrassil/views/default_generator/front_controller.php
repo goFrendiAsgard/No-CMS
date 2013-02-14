@@ -5,7 +5,9 @@
  *
  * @author No-CMS Module Generator
  */
-class {{ controller_name }} extends CMS_Controller {
+class {{ controller_name }} extends CMS_Priv_Strict_Controller {
+	
+	protected $URL_MAP = array();
 
 	public function index(){
 		$data = array(
@@ -16,6 +18,10 @@ class {{ controller_name }} extends CMS_Controller {
     }
     
     public function get_data(){
+    	// only accept ajax request
+    	if(!$this->input->is_ajax_request()) $this->cms_redirect();
+    	// guard the page
+    	$this->cms_guard('{{ navigation_name }}');
     	// get page and keyword parameter
     	$keyword = $this->input->post('keyword');
     	$page = $this->input->post('page');
@@ -29,9 +35,7 @@ class {{ controller_name }} extends CMS_Controller {
     		'allow_navigate_backend' => $this->cms_allow_navigate('{{ backend_navigation_name }}'),
 			'backend_url' => site_url($this->cms_module_path().'/data/{{ controller_name }}/index'),
     	);
-    	if($this->cms_allow_navigate('{{ navigation_name }}')){
-    		$this->load->view($this->cms_module_path().'/front/{{ controller_name }}_partial',$data);
-    	}
+    	$this->load->view($this->cms_module_path().'/front/{{ controller_name }}_partial',$data);
 	}
     
 }

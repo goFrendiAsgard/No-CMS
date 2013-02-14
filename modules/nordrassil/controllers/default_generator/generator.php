@@ -541,7 +541,18 @@ class Generator extends CMS_Controller{
 		}
 		$insert_table = $this->nds->get_insert_table_syntax($project_id, $selected_tables); 
 		
-		$str = implode(PHP_EOL.'/*split*/'.PHP_EOL, array($create_table, $insert_table));
+		$db_arr = array();
+		foreach(explode('/*split*/',$create_table) as $item){
+			$db_arr[] = $item;
+		}
+		foreach(explode('/*split*/',$insert_table) as $item){
+			$db_arr[] = $item;
+		}
+		if(count($db_arr)>0){
+			$str = implode(PHP_EOL.'/*split*/'.PHP_EOL, $db_arr);
+		}else{
+			$str = '';
+		}		
 		$this->nds->write_file($project_path.'assets/db/install.sql', $str);
 	}
 	
