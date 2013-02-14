@@ -167,13 +167,13 @@ CMS_Priv_Strict_Controller (development version)
     	 * 'your_module_name/your_controller_name/unregistered_function',
     	 * but you want to make sure that the url has the same authorization as 'a_navigation_name')
     	 */ 
-    	$URL_MAP = array(
+    	protected $URL_MAP = array(
     		'your_module_name/your_controller_name/unregistered_function' => 'a_navigation_name'
     	);
     	
     	/*
     	 * Alternatively, this gonna work too:
-    	 * $URL_MAP = array(
+    	 * protected $URL_MAP = array(
     	 *	'your_module_name/your_controller_name/unregistered_function' => 
 		 * 		'your_module_name/your_controller_name/show',
     	 * );
