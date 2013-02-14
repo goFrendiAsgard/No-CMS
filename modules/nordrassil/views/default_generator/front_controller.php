@@ -21,7 +21,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
     	// only accept ajax request
     	if(!$this->input->is_ajax_request()) $this->cms_redirect();
     	// guard the page
-    	$this->cms_guard('{{ navigation_name }}');
+    	$this->cms_guard_page('{{ navigation_name }}');
     	// get page and keyword parameter
     	$keyword = $this->input->post('keyword');
     	$page = $this->input->post('page');
