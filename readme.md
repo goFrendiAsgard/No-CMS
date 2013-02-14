@@ -484,7 +484,8 @@ v0.6.1 (development)
 + (proposed) Make nordrassil generated code easier to be edited.
 + (done, tested) Include JQuery by default, use jquerytools CDN if possible
 + (done, tested) add google analytic configuration
-+ (proposed) automatically create thumbnail for blog's photos
++ (done, tested) automatically create thumbnail for blog's photos
 + (done, tested) add cms_guard_page function for better authorization
 + (done, tested) create thumbnail automatically for blog module's photo
-+ (in progress) add "admin controller" like bonfire and other CI Based framework
++ (almost done) add "admin controller" like bonfire and other CI Based framework
++ (proposed) automatically create thumbnail in wysiwyg, use better uploader library

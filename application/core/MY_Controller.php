@@ -941,7 +941,13 @@ class CMS_Priv_Authenticated_Controller extends CMS_Priv_Base_Controller{
 	public function __construct() {
         parent::__construct();
 		if(!is_numeric($this->cms_user_id())){
-			$this->cms_redirect();
+			if($this->input->is_ajax_request()){
+				$response = array('success'=>FALSE,'message'=>'unauthorized access');
+				$this->cms_show_json($variable);
+				die();
+			}else{
+				$this->cms_redirect();
+			}
 		}
 	}
 	
@@ -956,7 +962,13 @@ class CMS_Priv_Unauthenticated_Controller extends CMS_Priv_Base_Controller{
 	public function __construct() {
         parent::__construct();
 		if(is_numeric($this->cms_user_id())){
-			$this->cms_redirect();
+			if($this->input->is_ajax_request()){
+				$response = array('success'=>FALSE,'message'=>'unauthorized access');
+				$this->cms_show_json($variable);
+				die();
+			}else{
+				$this->cms_redirect();
+			}
 		}
 	}
 	
@@ -985,7 +997,13 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller{
 		}
 		$this->cms_guard_page($navigation_name);
 		if(!$this->ALLOW_NULL_NAVIGATION && !isset($navigation_name)){
-			$this->cms_redirect();
+			if($this->input->is_ajax_request()){
+				$response = array('success'=>FALSE,'message'=>'unauthorized access');
+				$this->cms_show_json($variable);
+				die();
+			}else{
+				$this->cms_redirect();
+			}
 		}
 		$this->navigation_name = $navigation_name;
 	}
