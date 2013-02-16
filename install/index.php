@@ -1,9 +1,9 @@
-<?php	
-	include('function.php');
-	
-	$server_name = $_SERVER["SERVER_NAME"];
-	$google_callback_url = get_callback_url('Google');
-	$foursquare_callback_url = get_callback_url('Foursquare');	
+<?php
+include('function.php');
+
+$server_name             = $_SERVER["SERVER_NAME"];
+$google_callback_url     = get_callback_url('Google');
+$foursquare_callback_url = get_callback_url('Foursquare');
 ?>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

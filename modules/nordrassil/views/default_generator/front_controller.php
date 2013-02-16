@@ -29,6 +29,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
     	if(!$page) $page = 0;
     	// get data from model
     	$this->load->model('{{ project_name }}/front/{{ controller_name }}_model');
+    	$this->{{ controller_name }}_model = new {{ controller_name }}_model();
     	$result = $this->{{ controller_name }}_model->get_data($keyword, $page);
     	$data = array(
     		'result'=>$result,

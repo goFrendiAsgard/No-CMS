@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Core functions of No-CMS
@@ -25,9 +25,9 @@ class CMS_Model extends CI_Model
         // PHP 5.3 ask for timezone, and throw a warning whenever it is not available
         // so, just give this one :)
         $timezone = @date_default_timezone_get();
-		if(!isset($timezone) || $timezone == ''){
-			$timezone = @ini_get('date.timezone');
-		}
+        if (!isset($timezone) || $timezone == '') {
+            $timezone = @ini_get('date.timezone');
+        }
         if (!isset($timezone) || $timezone == '') {
             $timezone = 'UTC';
         }

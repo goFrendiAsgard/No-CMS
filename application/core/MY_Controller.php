@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * CMS_Controller class
@@ -527,8 +527,8 @@ class CMS_Controller extends MX_Controller
      */
     protected function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE)
     {
-        $result = NULL;
-        $this->load->helper('url');
+        $result   = NULL;
+        $view_url = $this->cms_parse_keyword($view_url);
         
         /**
          * PREPARE PARAMETERS *********************************************************************************************
