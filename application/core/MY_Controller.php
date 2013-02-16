@@ -1053,7 +1053,7 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
     private $navigation_name = '';
     
     protected $URL_MAP = array();
-    protected $ALLOW_NULL_NAVIGATION = TRUE;
+    protected $ALLOW_UNKNOWN_NAVIGATION_NAME = FALSE;
     
     public function __construct()
     {
@@ -1068,7 +1068,7 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
             $navigation_name = $this->cms_navigation_name($uriString);
         }
         $this->cms_guard_page($navigation_name);
-        if (!$this->ALLOW_NULL_NAVIGATION && !isset($navigation_name)) {
+        if (!$this->ALLOW_UNKNOWN_NAVIGATION_NAME && !isset($navigation_name)) {
             if ($this->input->is_ajax_request()) {
                 $response = array(
                     'success' => FALSE,

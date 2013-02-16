@@ -412,22 +412,22 @@ class Generator extends CMS_Controller{
 		$remove_back_navigations = '';
 		$remove_front_navigations = '';
 		foreach(array_reverse($tables) as $table){
+			$table_name = $table['name'];
+			$save_table_name = underscore($table_name);
+			$navigation_name = $save_project_name.'_'.$save_table_name;
+			$front_navigation_name = $save_project_name.'_front_'.$save_table_name;
+			// back
 			if(!$table['options']['dont_make_form']){
-				$table_name = $table['name'];
-				$save_table_name = underscore($table_name);
-				$navigation_name = $save_project_name.'_'.$save_table_name;
-				$front_navigation_name = $save_project_name.'_front_'.$save_table_name;
-				// back
 				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_back_navigation',NULL,
 					'navigation_name', $navigation_name
 				);
 				$remove_back_navigations .= $str.PHP_EOL;
-				// front
-				if($table['options']['make_frontpage']){					
-					$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_front_navigation',NULL,
-						'front_navigation_name', $front_navigation_name);
-					$remove_front_navigations .= $str.PHP_EOL;
-				}
+			}
+			// front
+			if($table['options']['make_frontpage']){					
+				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_front_navigation',NULL,
+					'front_navigation_name', $front_navigation_name);
+				$remove_front_navigations .= $str.PHP_EOL;
 			}
 		}
 		$remove_navigations = $remove_front_navigations.$remove_back_navigations;
@@ -436,34 +436,34 @@ class Generator extends CMS_Controller{
 		$add_back_navigations = '';
 		$add_front_navigations = '';
 		foreach($tables as $table){
+			$table_name = $table['name'];
+			$save_table_name = underscore($table_name);
+			$table_caption = $table['caption'];
+			$navigation_name = $save_project_name.'_'.$save_table_name;	
+			$front_navigation_name = $save_project_name.'_front_'.$save_table_name;
+			$pattern = 	array(
+					'front_navigation_name',
+					'navigation_name',
+					'navigation_caption',
+					'navigation_parent_name',
+				);
+			$replacement = array(
+					$front_navigation_name,
+					$navigation_name,
+					$table_caption,
+					$save_project_name.'_index',
+				);
+			// back
 			if(!$table['options']['dont_make_form']){
-				$table_name = $table['name'];
-				$save_table_name = underscore($table_name);
-				$table_caption = $table['caption'];
-				$navigation_name = $save_project_name.'_'.$save_table_name;	
-				$front_navigation_name = $save_project_name.'_front_'.$save_table_name;
-				$pattern = 	array(
-						'front_navigation_name',
-						'navigation_name',
-						'navigation_caption',
-						'navigation_parent_name',
-					);
-				$replacement = array(
-						$front_navigation_name,
-						$navigation_name,
-						$table_caption,
-						$save_project_name.'_index',
-					);
-				// back
 				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_back_navigation',NULL,
 					$pattern, $replacement);
 				$add_back_navigations .= $str.PHP_EOL;
-				// front
-				if($table['options']['make_frontpage']){					
-					$str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_front_navigation',NULL,
-						$pattern, $replacement);
-					$add_front_navigations .= $str.PHP_EOL;
-				}
+			}
+			// front
+			if($table['options']['make_frontpage']){					
+				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_front_navigation',NULL,
+					$pattern, $replacement);
+				$add_front_navigations .= $str.PHP_EOL;
 			}
 		}
 		$add_navigations = $add_front_navigations.$add_back_navigations;
@@ -543,9 +543,11 @@ class Generator extends CMS_Controller{
 		
 		$db_arr = array();
 		foreach(explode('/*split*/',$create_table) as $item){
+			if(trim($item)=='') continue;
 			$db_arr[] = $item;
 		}
 		foreach(explode('/*split*/',$insert_table) as $item){
+			if(trim($item)=='') continue;
 			$db_arr[] = $item;
 		}
 		if(count($db_arr)>0){
