@@ -490,3 +490,4 @@ v0.6.1 (development)
 + (done, tested) add "admin controller" like bonfire and other CI Based framework
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
 + (done) delete the legacy old_gray theme
++ (done) Rename CMS_Controller into MY_Controller, put CMS_Model in MY_Model
