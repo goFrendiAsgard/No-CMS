@@ -6,13 +6,6 @@
  */
 class Blog extends CMS_Controller {
 	
-	private $article_per_page;
-	
-	public function __construct(){
-		parent::__construct();
-		$this->article_per_page = 5;
-	}
-	
     public function index($article_url=NULL){
     	$this->cms_guard_page('blog_index');
     	$this->load->model($this->cms_module_path('gofrendi.blog').'/blog_model');
@@ -92,7 +85,6 @@ class Blog extends CMS_Controller {
 		$crud->callback_column('comments',array($this,'article_callback_column_comments'));
 		$crud->callback_edit_field('comments', array($this,'article_callback_edit_field_comments'));
         $crud->callback_before_insert(array($this,'before_insert_article'));
-        $crud->callback_before_update(array($this,'before_insert_article'));
         $crud->set_relation_n_n('Categories', 'blog_category_article', 'blog_category', 'article_id', 'category_id' , 'category_name');
         $crud->set_relation('author_user_id', 'cms_user', 'real_name');
         
