@@ -8,10 +8,10 @@
 
 class CMS_Controller extends MX_Controller
 {
-    public static $PRIV_EVERYONE = 1;
-    public static $PRIV_NOT_AUTHENTICATED = 2;
-    public static $PRIV_AUTHENTICATED = 3;
-    public static $PRIV_AUTHORIZED = 4;
+    public $PRIV_EVERYONE = 1;
+    public $PRIV_NOT_AUTHENTICATED = 2;
+    public $PRIV_AUTHENTICATED = 3;
+    public $PRIV_AUTHORIZED = 4;
     
     public function __construct()
     {
@@ -1059,12 +1059,28 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
     {
         parent::__construct();
         $uriString = $this->uri->uri_string();
+        $navigation_name = NULL;
         if (isset($this->URL_MAP[$uriString])) {
-            $navigation_name = $this->URL_MAP[$uriString];
             if (!isset($navigation_name)) {
                 $navigation_name = $this->cms_navigation_name($this->URL_MAP[$uriString]);
             }
+            if (!isset($navigation_name)) {
+                $navigation_name = $this->URL_MAP[$uriString];
+            }
         } else {
+            foreach ($this->URL_MAP as $key=>$value) {
+                if($uriString == $this->cms_parse_keyword($key)){
+                    if (!isset($navigation_name)) {
+                        $navigation_name = $this->cms_navigation_name($key);
+                    }
+                    if (!isset($navigation_name)) {
+                        $navigation_name = $this->URL_MAP[$key];
+                    }
+                    break;
+                }
+            }
+        }
+        if (!isset($navigation_name)) {
             $navigation_name = $this->cms_navigation_name($uriString);
         }
         $this->cms_guard_page($navigation_name);

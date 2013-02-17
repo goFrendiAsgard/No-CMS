@@ -7,7 +7,10 @@
  */
 class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 	
-	protected $URL_MAP = array();
+	protected $URL_MAP = array(
+        '{{ module_path }}' => '{{ navigation_name }}',
+        '{{ module_path }}/{{ module_path }}' => '{{ navigation_name }}',
+	);
 
 	public function index(){
 		$data = array(
@@ -20,8 +23,6 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
     public function get_data(){
     	// only accept ajax request
     	if(!$this->input->is_ajax_request()) $this->cms_redirect();
-    	// guard the page
-    	$this->cms_guard_page('{{ navigation_name }}');
     	// get page and keyword parameter
     	$keyword = $this->input->post('keyword');
     	$page = $this->input->post('page');
