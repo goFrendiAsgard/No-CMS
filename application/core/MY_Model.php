@@ -176,7 +176,7 @@ class CMS_Model extends CI_Model
                 }
             }
             if ((!isset($row->url) || $row->url == '') && $row->is_static == 1) {
-                $url = 'main/static_page/' . $row->navigation_name;
+                $url = site_url('main/static_page/' . $row->navigation_name);
             } else {
                 if (strpos(strtoupper($row->url), 'HTTP://') !== FALSE || strpos(strtoupper($row->url), 'HTTPS://') !== FALSE) {
                     $url = $row->url;
@@ -1248,7 +1248,7 @@ class CMS_Model extends CI_Model
      * @desc return a "save" pattern which is not replace anything inside HTML tag, and 
      * anything between <textarea></textarea> and <option></option>
      */
-    protected function cms_escape_template($str)
+    public function cms_escape_template($str)
     {
         $pattern   = array();
         $pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
@@ -1269,7 +1269,7 @@ class CMS_Model extends CI_Model
      * @desc return an "unsave" pattern which is not replace anything inside HTML tag, and 
      * anything between <textarea></textarea> and <option></option>
      */
-    protected function cms_unescape_template($str)
+    public function cms_unescape_template($str)
     {
         $pattern   = array();
         $pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';

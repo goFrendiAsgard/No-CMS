@@ -63,12 +63,6 @@ Release Information
 - Please look at [github tag](https://github.com/goFrendiAsgard/No-CMS/tags)
 
 
-Changelog and New Features
-==========================
-
-- Please look at [github commit log](https://github.com/goFrendiAsgard/No-CMS/commits)
-
-
 Server Requirements
 ===================
 
@@ -333,6 +327,8 @@ Views
 	{{ site_url }}
 	{{ base_url }}
 	{{ module_path }}
+	{{ widget:slug }}
+	{{ language }}
 	{{ language:some_word }}
 	
 	{{ if_language:a_language }}
@@ -376,16 +372,15 @@ Acknowledgement
 I would like to thank all the contributors to the No-CMS project and you, the No-CMS user.
 Here are some names of considerable contributors:
 
-* goFrendiAsgard <-- It's me, I am the one who make No-CMS based on CodeIgniter and some existing plug-ins.
-* EllisLab <-- A company who make codeIgniter and make it available for free. 
-  There is no No-CMS without codeIgniter
-* wiredesignz <-- He is the one who make HMVC plugin. 
+* goFrendiAsgard <-- (It's me) Make No-CMS based on CodeIgniter and some existing plug-ins.
+* EllisLab <-- Make CodeIgniter and make it available for free. There is no No-CMS without codeIgniter
+* wiredesignz <-- Creator of HMVC plugin. 
   The plug-in he made is known widely among CodeIgniter developer. 
   It allowed me to make separation between modules
-* Phil Sturgeon <-- He is the one who make CodeIgniter-template. 
+* Phil Sturgeon <-- Creator CodeIgniter-template-library. 
   The plugin he made allowed me to make separation between themes elements
   He is a member of CodeIgniter Reactor Engineer. His pyro-CMS also inspire me a lot (although I take different approach)   
-* John Skoumbourdis <-- He is the one who make groceryCRUD. 
+* John Skoumbourdis <-- Creator of groceryCRUD. 
   It boost the development of No-CMS by provide very easy CRUD. 
   He also give me some moral support to continue the development of No-CMS.
 * Zusana Pudyastuti <-- She was my English Lecturer, A very good one who encourage me to speak English.
@@ -396,18 +391,23 @@ Here are some names of considerable contributors:
   He is the first one who discover a critical bug in the first stage of development.
 * I Komang Ari Mogi <-- He is my classmate in my graduate program. He has some experience in design. 
   That's why he can propose some fix in the very early stage of development. 
-* Ibnoe <-- The one who gives some suggestions and bug report. I don't know much about him
-* Panega <-- The one who also report a crucial bug. I don't know much about him
+* Ibnoe <-- The one who gives some suggestions and bug report.
+* Panega <-- The one who also report a crucial bug.
 * Alexandre Mota <-- The one who report a bug related to page authorization
 * Gusro <-- Find out bug related to static page. Since his report, static page has 2 versions. A dynamic page which is overwritten by static content, or pure static page without any View URL needed
 * Gangsar Swapurba <-- Discover some missleading-behavior. He made a lot of modification and found trivial but disgusting bugs of No-CMS. One of his report make me consider to provide an option to hide index.php
 * alwin4711 <-- German translation contributor
 * David Moeljadi <-- Japanese translation contributor
 * Andrew Podner <-- His one day hardwork solve problem of $this scope in anonymous function
+* David Oster <-- Greek translation contributor
+* Glenn Bennett <-- Kindly provide free hosting for http://www.getnocms.com
 * Everyone who was involved by creating issue & pull requests in github. I can't write every names there. But No-CMS can't be better without them :)
 
-Roadmap
-===============
+
+Changelog and New Features (current version: 0.6.1 RC1)
+=======================================================
+
+- For more detail information, please take look at [github commit log](https://github.com/goFrendiAsgard/No-CMS/commits)
 
 v0.5.0
 + (done, tested) add backend template as suggested by mbuurman at http://codeigniter.com/forums/viewthread/209171/P10/
@@ -491,3 +491,4 @@ v0.6.1 (development)
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
 + (done) delete the legacy old_gray theme
 + (done) Rename CMS_Controller into MY_Controller, put CMS_Model in MY_Model
++ (done) Add widget keyword

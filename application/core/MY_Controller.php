@@ -717,14 +717,15 @@ class CMS_Controller extends MX_Controller
         
         // GET WIDGET AND NAVIGATION ONLY IF NEEDED.
         // THE ONLY_CONTENT PAGE, DYNAMIC WIDGET, AND AJAX REQUESTED PAGE DOESN'T NEED THOSE
+        $this->widgets = array();
         if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
             $cms['widget']          = array();
             $cms['navigations']     = array();
             $cms['navigation_path'] = array();
         } else {
             // GET WIDGET
-            $widget        = $this->cms_widgets();
-            $cms['widget'] = $widget;
+            $this->widgets  = $this->cms_widgets();
+            $cms['widget']  = $this->widgets;
             
             // GET NAVIGATIONS
             $navigations            = $this->cms_navigations();
@@ -849,7 +850,22 @@ class CMS_Controller extends MX_Controller
             }
             
             $result = $this->template->build($view_url, $data, TRUE);
+            // parse keyword
+            //$result = $this->cms_parse_keyword($result);
+                        
+            // parse widget
+            $pattern = '/\{\{ widget:(.*?) \}\}/si';
+            // execute regex
+            $result = $this->No_CMS_Model->cms_escape_template($result);
+            $result   = preg_replace_callback($pattern, array(
+                $this,
+                'cms_preg_replace_callback_widget'
+            ), $result);
+            $result = $this->No_CMS_Model->cms_unescape_template($result);
+            
+            // parse keyword
             $result = $this->cms_parse_keyword($result);
+                      
             
             if ($return_as_string) {
                 return $result;
@@ -857,6 +873,23 @@ class CMS_Controller extends MX_Controller
                 $this->cms_show_html($result);
             }
         }
+    }
+
+    private function cms_preg_replace_callback_widget($arr){
+        $widgets  = $this->widgets;
+        $slug = $arr[1];
+        $html = "";
+        $html.= '<div id="layout_widget_slug_'.$slug.'">';
+        foreach($widgets[$slug] as $widget){                
+                $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'" class="layout_widget_container">';
+                $html.= '<h5>'.$widget['title'].'</h5>';
+                $html.= '<div class="widget_content">'.$widget['content'].'</div>';
+                $html.= '<br />';
+                $html.= '<br />';
+                $html.= '</div>';
+        }
+        $html .= '</div>';
+        return $html;
     }
     
     private function cms_layout_exists($theme, $layout)
