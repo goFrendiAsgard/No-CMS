@@ -482,13 +482,14 @@ v0.6.0
 v0.6.1 (development)
 + (proposed) Drupal's CCK like mechanism
 + (proposed) Make nordrassil generated code easier to be edited.
-+ (done, tested) Include JQuery by default, use jquerytools CDN if possible
++ (done, tested) Include JQuery by default, 
++ (cancelled) use jquerytools CDN if possible <-- using file_get_content or CURL is very slow
 + (done, tested) add google analytic configuration
 + (done, tested) automatically create thumbnail for blog's photos
 + (done, tested) add cms_guard_page function for better authorization
 + (done, tested) create thumbnail automatically for blog module's photo
 + (done, tested) add "admin controller" like bonfire and other CI Based framework
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
-+ (done) delete the legacy old_gray theme
-+ (done) Rename CMS_Controller into MY_Controller, put CMS_Model in MY_Model
-+ (done) Add widget keyword
++ (done, tested) delete the legacy old_gray theme
++ (done, tested) Rename CMS_Controller into MY_Controller, put CMS_Model in MY_Model
++ (done, tested) Add widget keyword

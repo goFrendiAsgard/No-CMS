@@ -14,9 +14,8 @@ class CMS_Controller extends MX_Controller
     public $PRIV_AUTHORIZED = 4;
     
     public function __construct()
-    {
+    {        
         parent::__construct();
-        
         /* Standard Libraries */
         $this->load->database();
         $this->load->helper('url');
@@ -526,7 +525,7 @@ class CMS_Controller extends MX_Controller
      * @desc    replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
      */
     protected function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE)
-    {
+    {        
         $result   = NULL;
         $view_url = $this->cms_parse_keyword($view_url);
         
@@ -717,7 +716,7 @@ class CMS_Controller extends MX_Controller
         
         // GET WIDGET AND NAVIGATION ONLY IF NEEDED.
         // THE ONLY_CONTENT PAGE, DYNAMIC WIDGET, AND AJAX REQUESTED PAGE DOESN'T NEED THOSE
-        $this->widgets = array();
+        $this->widgets = NULL;
         if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
             $cms['widget']          = array();
             $cms['navigations']     = array();
@@ -758,48 +757,8 @@ class CMS_Controller extends MX_Controller
                 $keyword_metadata = '<meta name="keyword" content="' . $keyword . '">';
                 $this->template->append_metadata($keyword_metadata);
             }
-            
-            // include jquery
-            $jquery_cdn_path   = 'http://cdn.jquerytools.org/1.2.7/full/jquery.tools.min.js';
-            $jquery_local_path = base_url('assets/nocms/js/jquery.tools.min.js');
-            if (!$this->session->userdata('cms_jquery_source')) {
-                $cdn_exists = NULL;
-                if (!isset($cdn_exists) && in_array('curl', get_loaded_extensions())) {
-                    $curl = curl_init($jquery_cdn_path);
-                    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-                    curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-                    curl_setopt($curl, CURLOPT_NOBODY, TRUE);
-                    curl_exec($curl);
-                    $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-                    curl_close($curl);
-                    if ($httpcode == 200) {
-                        $cdn_exists = TRUE;
-                    } else if (is_numeric($httpcode)) {
-                        $cdn_exists = FALSE;
-                    }
-                }
-                if (!isset($cdn_exists)) {
-                    $headers = @get_headers($jquery_cdn_path);
-                    if (strpos($headers[0], '200') !== FALSE) {
-                        $cdn_exists = TRUE;
-                    }
-                }
-                if (!isset($cdn_exists)) {
-                    $cdn_exists = FALSE;
-                }
-                
-                if (!$cdn_exists) {
-                    $this->session->set_userdata('cms_jquery_source', 'Local');
-                } else {
-                    $this->session->set_userdata('cms_jquery_source', 'CDN');
-                }
-            }
-            if ($this->session->userdata('cms_jquery_source') == 'CDN') {
-                $jquery_path = $jquery_cdn_path;
-            } else if ($this->session->userdata('cms_jquery_source') == 'Local') {
-                $jquery_path = $jquery_local_path;
-            }
-            
+
+            $jquery_path = base_url('assets/nocms/js/jquery.tools.min.js');            
             $this->template->append_metadata('<script type="text/javascript" src="' . $jquery_path . '"></script>');
             
             // google analytic
@@ -850,22 +809,21 @@ class CMS_Controller extends MX_Controller
             }
             
             $result = $this->template->build($view_url, $data, TRUE);
-            // parse keyword
-            //$result = $this->cms_parse_keyword($result);
                         
             // parse widget
-            $pattern = '/\{\{ widget:(.*?) \}\}/si';
-            // execute regex
-            $result = $this->No_CMS_Model->cms_escape_template($result);
-            $result   = preg_replace_callback($pattern, array(
-                $this,
-                'cms_preg_replace_callback_widget'
-            ), $result);
-            $result = $this->No_CMS_Model->cms_unescape_template($result);
+            if(is_array($this->widgets)){
+                $pattern = '/\{\{ widget:(.*?) \}\}/si';
+                // execute regex
+                $result = $this->No_CMS_Model->cms_escape_template($result);
+                $result   = preg_replace_callback($pattern, array(
+                    $this,
+                    'cms_preg_replace_callback_widget'
+                ), $result);
+                $result = $this->No_CMS_Model->cms_unescape_template($result);                
+            }         
             
             // parse keyword
-            $result = $this->cms_parse_keyword($result);
-                      
+            $result = $this->cms_parse_keyword($result);                      
             
             if ($return_as_string) {
                 return $result;
@@ -877,18 +835,20 @@ class CMS_Controller extends MX_Controller
 
     private function cms_preg_replace_callback_widget($arr){
         $widgets  = $this->widgets;
-        $slug = $arr[1];
         $html = "";
-        $html.= '<div id="layout_widget_slug_'.$slug.'">';
-        foreach($widgets[$slug] as $widget){                
-                $html.= '<div id="layout_widget_container_'.$widget['widget_name'].'" class="layout_widget_container">';
-                $html.= '<h5>'.$widget['title'].'</h5>';
-                $html.= '<div class="widget_content">'.$widget['content'].'</div>';
-                $html.= '<br />';
-                $html.= '<br />';
-                $html.= '</div>';
-        }
-        $html .= '</div>';
+        if(count($arr)>1){
+            $slug = $arr[1];        
+            $html.= '<div class="cms-widget-slug-'.$slug.'">';
+            foreach($widgets[$slug] as $widget){                
+                    $html.= '<div class="cms-widget-container">';
+                    $html.= '<h5>'.$widget['title'].'</h5>';
+                    $html.= '<div class="cms-widget-content">'.$widget['content'].'</div>';
+                    $html.= '<br />';
+                    $html.= '<br />';
+                    $html.= '</div>';
+            }
+            $html .= '</div>';
+        }        
         return $html;
     }
     

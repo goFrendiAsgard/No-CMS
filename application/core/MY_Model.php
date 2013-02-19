@@ -309,11 +309,11 @@ class CMS_Model extends CI_Model
                 $url = $row->url;
                 // content
                 $content .= '<div id="_cms_widget_' . $row->widget_id . '">';
-                $this->cms_ci_session('cms_dynamic_widget', TRUE);
+                
                 if (strpos(strtoupper($url), 'HTTP://') !== FALSE || strpos(strtoupper($url), 'HTTPS://') !== FALSE) {
-                    $response = FALSE;
+                    $response = NULL;                    
                     // use CURL    				
-                    if ($response == FALSE && in_array('curl', get_loaded_extensions())) {
+                    if (in_array('curl', get_loaded_extensions())) {
                         $ch = curl_init();
                         curl_setopt($ch, CURLOPT_URL, $url);
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
@@ -322,18 +322,19 @@ class CMS_Model extends CI_Model
                         curl_close($ch);
                     }
                     // use file get content
-                    if ($response == FALSE) {
+                    if (!isset($response)) {
                         $response = @file_get_contents($url);
                     }
                     // add the content
-                    if ($response !== FALSE) {
+                    if (isset($response)) {
                         $response = preg_replace('#(href|src|action)="([^:"]*)(?:")#', '$1="' . $url . '/$2"', $response);
                         $content .= $response;
                     }
                 } else {
+                    $this->cms_ci_session('cms_dynamic_widget', TRUE);
                     $content .= @Modules::run($url);
-                }
-                $this->cms_unset_ci_session('cms_dynamic_widget');
+                    $this->cms_unset_ci_session('cms_dynamic_widget');
+                }                
                 $content .= '</div>';
             }
             // make widget based on slug
