@@ -1180,11 +1180,19 @@ class CMS_Model extends CI_Model
         $replacement[] = $base_url;
         
         // module_path
-        $module_path = site_url($this->cms_module_path());
-        if ($module_path[strlen($module_path) - 1] != '/')
-            $module_path .= '/';
+        $module_path = $this->cms_module_path();
+        $module_site_url = site_url($module_path);
+        $module_base_url = base_url($module_path);
+        if ($module_site_url[strlen($module_site_url) - 1] != '/')
+            $module_site_url .= '/';
+        if ($module_base_url[strlen($module_base_url) - 1] != '/')
+            $module_base_url .= '/';
         $pattern[]     = '/\{\{ module_path \}\}/si';
         $replacement[] = $module_path;
+        $pattern[]     = '/\{\{ module_site_url \}\}/si';
+        $replacement[] = $module_site_url;
+        $pattern[]     = '/\{\{ module_base_url \}\}/si';
+        $replacement[] = $module_base_url;
         
         // language
         $pattern[]     = '/\{\{ language \}\}/si';

@@ -2,6 +2,8 @@
 	a[href="<?php echo site_url($cms["module_path"].'/user/delete/1');?>"],
 	a[href="<?php echo site_url($cms["module_path"].'/user/delete/'.$cms["user_id"]);?>"]{
 		visibility : hidden;
+		pointer-events: none;
+        cursor: default;
 	}
 </style>
 <?php 

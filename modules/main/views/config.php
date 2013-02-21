@@ -2,7 +2,7 @@
 	$identifier = '';
 	for($i=1; $i<=32; $i++){
 		$identifier.= 'a[href="'.site_url($cms["module_path"].'/config/delete/'.$i).'"]';
-		if($i<31){
+		if($i<32){
 			$identifier.= ',';
 		}
 	}
@@ -10,7 +10,9 @@
 <style type="text/css">
 	<?php echo $identifier;?>
 	{
-		visibility : hidden;
+		visibility:hidden;
+		pointer-events: none;
+        cursor: default;
 	}
 </style>
 <?php 

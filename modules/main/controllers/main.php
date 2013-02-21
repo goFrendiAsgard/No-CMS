@@ -457,6 +457,8 @@ class Main extends CMS_Controller
         $crud->set_table('cms_group');
         $crud->set_subject('User Group');
         
+        $crud->required_fields('group_name');
+        
         $crud->columns('group_name', 'description');
         $crud->edit_fields('group_name', 'description', 'users', 'navigations', 'privileges');
         $crud->add_fields('group_name', 'description', 'users', 'navigations', 'privileges');
@@ -505,6 +507,8 @@ class Main extends CMS_Controller
         
         $crud->set_table('cms_navigation');
         $crud->set_subject('Navigation (Page)');
+        
+        $crud->required_fields('navigation_name');
         
         $crud->columns('navigation_name', 'parent_id', 'title', 'active', 'only_content', 'is_static', 'authorization_id', 'groups');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
@@ -633,6 +637,8 @@ class Main extends CMS_Controller
         $crud->set_table('cms_quicklink');
         $crud->set_subject('Quick Link');
         
+        $crud->required_fields('navigation_id');
+        
         $crud->columns('navigation_id');
         $crud->edit_fields('navigation_id');
         $crud->add_fields('navigation_id');
@@ -680,6 +686,8 @@ class Main extends CMS_Controller
         $crud->set_table('cms_privilege');
         $crud->set_subject('Privilege');
         
+        $crud->required_fields('privilege_name');
+        
         $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name'); //, 'groups');
         
         $crud->set_relation_n_n('groups', 'cms_group_privilege', 'cms_group', 'privilege_id', 'group_id', 'group_name');
@@ -704,6 +712,8 @@ class Main extends CMS_Controller
         
         $crud->set_table('cms_widget');
         $crud->set_subject('Widget');
+        
+        $crud->required_fields('widget_name');
         
         $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'slug', 'groups');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
@@ -805,6 +815,8 @@ class Main extends CMS_Controller
         
         $crud->set_table('cms_config');
         $crud->set_subject('Configuration');
+        
+        $crud->required_fields('config_name');
         
         $crud->columns('config_name', 'value', 'description');
         $crud->edit_fields('config_name', 'value', 'description');

@@ -1,6 +1,8 @@
 <style type="text/css">
 	a[href="<?php echo site_url($cms["module_path"].'/group/delete/1');?>"]{
 		visibility : hidden;
+		pointer-events: none;
+        cursor: default;
 	}
 </style>
 <?php 
