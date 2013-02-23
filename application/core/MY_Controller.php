@@ -8,10 +8,16 @@
 
 class CMS_Controller extends MX_Controller
 {
-    public $PRIV_EVERYONE = 1;
-    public $PRIV_NOT_AUTHENTICATED = 2;
-    public $PRIV_AUTHENTICATED = 3;
-    public $PRIV_AUTHORIZED = 4;
+    public $PRIV_EVERYONE           = 1;
+    public $PRIV_NOT_AUTHENTICATED  = 2;
+    public $PRIV_AUTHENTICATED      = 3;
+    public $PRIV_AUTHORIZED         = 4;
+    
+    private $__cms_widgets          = NULL;
+    private $__cms_navigations      = NULL;
+    private $__cms_navigation_path  = NULL;
+    private $__cms_navigation_name  = NULL;
+    private $__cms_quicklinks       = NULL;
     
     public function __construct()
     {        
@@ -44,7 +50,7 @@ class CMS_Controller extends MX_Controller
      * @return mixed
      * @desc   if value specified, this will set CI_Session["key"], else it will return CI_session["key"] 
      */
-    private function cms_ci_session($key, $value = NULL)
+    public function cms_ci_session($key, $value = NULL)
     {
         return $this->No_CMS_Model->cms_ci_session($key, $value);
     }
@@ -54,7 +60,7 @@ class CMS_Controller extends MX_Controller
      * @param  string $key   
      * @desc   unset CI_session["key"] 
      */
-    private function cms_unset_ci_session($key)
+    public function cms_unset_ci_session($key)
     {
         return $this->No_CMS_Model->cms_unset_ci_session($key);
     }
@@ -109,7 +115,7 @@ class CMS_Controller extends MX_Controller
      * @desc    return navigation child if parent_id specified, else it will return root navigation
      *           the max depth of menu is depended on max_menud_depth
      */
-    private function cms_navigations($parent_id = NULL, $max_menu_depth = NULL)
+    public function cms_navigations($parent_id = NULL, $max_menu_depth = NULL)
     {
         return $this->No_CMS_Model->cms_navigations($parent_id, $max_menu_depth);
     }
@@ -119,23 +125,25 @@ class CMS_Controller extends MX_Controller
      * @return mixed
      * @desc   return quick links
      */
-    private function cms_quicklinks()
+    public function cms_quicklinks()
     {
         return $this->No_CMS_Model->cms_quicklinks();
     }
     
     /**
      * @author  goFrendiAsgard
+     * @param   slug
      * @return  mixed
      * @desc    return widgets
      */
-    private function cms_widgets()
+    public function cms_widgets($slug = NULL)
     {
-        return $this->No_CMS_Model->cms_widgets();
+        return $this->No_CMS_Model->cms_widgets($slug);
     }
     
     /**
      * @author  goFrendiAsgard
+     * @param   string navigation_name
      * @return  string
      * @desc    return submenu screen
      */
@@ -150,7 +158,7 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    return navigation path, used for layout
      */
-    private function cms_get_navigation_path($navigation_name = NULL)
+    public function cms_get_navigation_path($navigation_name = NULL)
     {
         return $this->No_CMS_Model->cms_get_navigation_path($navigation_name);
     }
@@ -160,7 +168,7 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    return privileges of current user
      */
-    private function cms_privileges()
+    public function cms_privileges()
     {
         return $this->No_CMS_Model->cms_privileges();
     }
@@ -594,7 +602,6 @@ class CMS_Controller extends MX_Controller
                 if (!$static_content) {
                     $static_content = '';
                 }
-                $static_content      = $this->cms_parse_keyword($static_content);
                 $data['cms_content'] = $static_content;
                 $view_url            = 'CMS_View';
                 
@@ -630,7 +637,7 @@ class CMS_Controller extends MX_Controller
                 if (!isset($only_content)) {
                     $only_content = ($row->only_content == 1);
                 }
-            }
+            }            
         }
         if (!isset($only_content)) {
             $only_content = TRUE;
@@ -710,7 +717,6 @@ class CMS_Controller extends MX_Controller
         $cms['site_favicon'] = $this->cms_get_config('site_favicon');
         $cms['user_id']      = $this->cms_user_id();
         $cms['user_name']    = $this->cms_user_name();
-        $cms['quicklinks']   = $this->cms_quicklinks();
         $cms['module_path']  = $this->cms_module_path();
         $cms['module_name']  = $this->cms_module_name($cms['module_path']);
         
@@ -718,19 +724,28 @@ class CMS_Controller extends MX_Controller
         // THE ONLY_CONTENT PAGE, DYNAMIC WIDGET, AND AJAX REQUESTED PAGE DOESN'T NEED THOSE
         $this->widgets = NULL;
         if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
-            $cms['widget']          = array();
+            $cms['widgets']          = array();
             $cms['navigations']     = array();
             $cms['navigation_path'] = array();
         } else {
             // GET WIDGET
-            $this->widgets  = $this->cms_widgets();
-            $cms['widget']  = $this->widgets;
+            $widgets              = $this->cms_widgets();
+            $this->__cms_widgets  = $widgets;
+            $cms['widgets']        = $widgets;
             
             // GET NAVIGATIONS
-            $navigations            = $this->cms_navigations();
-            $navigation_path        = $this->cms_get_navigation_path($navigation_name);
-            $cms['navigations']     = $navigations;
-            $cms['navigation_path'] = $navigation_path;
+            $this->__cms_navigation_name  = $navigation_name;
+            $navigations                  = $this->cms_navigations();
+            $this->__cms_navigations      = $navigations;
+            $navigation_path              = $this->cms_get_navigation_path($navigation_name);
+            $this->__cms_navigation_path  = $navigation_path;
+            $cms['navigations']           = $navigations;
+            $cms['navigation_path']       = $navigation_path;
+            
+            // GET quicklink
+            $quicklinks              = $this->cms_quicklinks();
+            $cms['quicklinks']       = $quicklinks;
+            $this->__cms_quicklinks  = $quicklinks;
         }
         
         // DEFINE $data			
@@ -809,18 +824,52 @@ class CMS_Controller extends MX_Controller
             }
             
             $result = $this->template->build($view_url, $data, TRUE);
+            $result = $this->No_CMS_Model->cms_escape_template($result);
                         
             // parse widget
-            if(is_array($this->widgets)){
-                $pattern = '/\{\{ widget:(.*?) \}\}/si';
-                // execute regex
-                $result = $this->No_CMS_Model->cms_escape_template($result);
-                $result   = preg_replace_callback($pattern, array(
-                    $this,
-                    'cms_preg_replace_callback_widget'
-                ), $result);
-                $result = $this->No_CMS_Model->cms_unescape_template($result);                
-            }         
+            $pattern  = '/\{\{ widget:(.*?) \}\}/si';
+            // execute regex
+            $result   = preg_replace_callback($pattern, array(
+                $this,
+                '__cms_preg_replace_callback_widget'
+            ), $result);
+            
+            // prepare pattern and replacement
+            $pattern     = array();
+            $replacement = array();
+            
+            // theme
+            $pattern[]     = "/\{\{ site_theme \}\}/si";
+            $replacement[] = $theme;
+            
+            $quicklink  = $this->__cms_build_quicklink();
+            $top_nav    = $this->__cms_build_top_nav_btn();
+            $left_nav   = $this->__cms_build_left_nav();
+            $nav_path   = $this->__cms_build_nav_path();
+            
+            // quick_link
+            $pattern[]     = "/\{\{ quicklink \}\}/si";
+            $replacement[] = $quicklink;
+            
+            // navigation_top
+            $pattern[]     = "/\{\{ navigation_top \}\}/si";
+            $replacement[] = $top_nav;
+            
+            // navigation_top_quicklink
+            $pattern[]     = "/\{\{ navigation_top_quicklink \}\}/si";
+            $replacement[] = $top_nav.$quicklink;
+            
+            // navigation_left
+            $pattern[]     = "/\{\{ navigation_left \}\}/si";
+            $replacement[] = $left_nav;
+            
+            // navigation_path
+            $pattern[]     = "/\{\{ navigation_path \}\}/si";
+            $replacement[] = $nav_path;
+            
+            $result = preg_replace($pattern, $replacement, $result);
+            
+            $result = $this->No_CMS_Model->cms_unescape_template($result);         
             
             // parse keyword
             $result = $this->cms_parse_keyword($result);                      
@@ -833,31 +882,156 @@ class CMS_Controller extends MX_Controller
         }
     }
 
-    private function cms_preg_replace_callback_widget($arr){
-        $widgets  = $this->widgets;
+    private function __cms_build_left_nav($navigations = NULL, $first = TRUE){
+        if(!isset($navigations)){
+            if(!isset($this->__cms_navigations)){
+                $navigations = $this->cms_navigations();
+                $this->__cms_navigations =$navigations;
+            }else{
+                $navigations = $this->__cms_navigations;
+            }
+        }        
+        if(count($navigations) == 0) return '';
+        
+        if($first){
+            $style = 'display: block; position: static; border:none; margin:0px; background-color:light-gray;';  
+        }else{
+            $style = 'background-color:light-gray;';
+        }
+        $result = '<ul  class="dropdown-menu nav nav-pills nav-stacked" style="'.$style.'">';
+        foreach($navigations as $navigation){
+            if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                // make text
+                if($navigation['allowed'] && $navigation['active']){
+                    $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
+                }else{
+                    $text = $navigation['title'];
+                }
+                
+                if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
+                    $result .= '<li class="dropdown-submenu">'.$text.$this->__cms_build_left_nav($navigation['child'], FALSE).'</li>';
+                }else{
+                    $result .= '<li>'.$text.'</li>';
+                }               
+            }   
+        }
+        $result .= '</ul>';
+        return $result;
+    }
+    
+    private function __cms_build_top_nav_btn($navigations = NULL, $caption = 'Complete Menu', $first = TRUE){
+        if(!isset($navigations)){
+            if(!isset($this->__cms_navigations)){
+                $navigations = $this->cms_navigations();
+                $this->__cms_navigations =$navigations;
+            }else{
+                $navigations = $this->__cms_navigations;
+            }
+        }        
+        if(count($navigations) == 0) return '';
+        
+        $result = '';
+        $result .= '<ul class="dropdown-menu">';
+        foreach($navigations as $navigation){
+            if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                // make text
+                if($navigation['allowed'] && $navigation['active']){
+                    $text = '<a href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
+                }else{
+                    $text = '<a href="#">'.$navigation['title'].'</a>';
+                }
+                
+                if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
+                    $result .= '<li class="dropdown-submenu">'.$text.$this->__cms_build_top_nav_btn($navigation['child'], $caption, FALSE).'</li>';
+                }else{
+                    $result .= '<li>'.$text.'</li>';
+                }               
+            }   
+        }
+        $result .= '</ul>';
+        if($first){            
+            $result = '<ul class="nav"><li class="dropdown">'.
+                '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
+                $result.
+                '</li></ul>';           
+        }
+        return $result;
+    }
+
+    private function __cms_build_quicklink(){
+        if(isset($this->__cms_quicklinks)){
+            $quicklinks = $this->__cms_quicklinks;
+        }else{
+            $quicklinks = $this->cms_quicklinks();
+        }
+        if(count($quicklinks) == 0) return '';
+        $html = '<ul class="nav">';        
+        foreach($quicklinks as $quicklink){            
+            $html.= '<li>';
+            $html.= anchor($quicklink['url'], $quicklink['title']);
+            $html.= '</li>';            
+        }
+        $html.= '</ul>';
+        return $html;
+    }
+    
+    private function __cms_build_widget($slug){
+        if(isset($this->__cms_widgets)){
+            $widgets = $this->__cms_widgets;
+        }else{
+            $widgets  = $this->cms_widgets($slug);
+        }        
+        $html = '<div class="cms-widget-slug-'.$slug.'">';
+        foreach($widgets[$slug] as $widget){                
+            $html.= '<div class="cms-widget-container">';
+            $html.= '<h5>'.$widget['title'].'</h5>';
+            $html.= '<div class="cms-widget-content">'.$widget['content'].'</div>';
+            $html.= '<br />';
+            $html.= '<br />';
+            $html.= '</div>';
+        }
+        $html .= '</div>';
+        return $html;
+    }
+    
+    private function __cms_build_nav_path(){
+        $navigation_name = '';
+        if(isset($this->__cms_navigation_path)){
+            $path = $this->__cms_navigation_path;
+        }else{
+            if(isset($this->__cms_navigation_name)){
+                $navigation_name = $this->cms_navigation_name();
+            }else{
+                $navigation_name = $this->__cms_navigation_name;
+            }
+            $path = $this->cms_get_navigation_path($navigation_name);
+        }
+        $html = "";
+        for($i=0; $i<count($path); $i++){
+            $current_path = $path[$i];
+            $html .= anchor($current_path['url'], $current_path['title']);
+            if($i<count($path)-1){
+                $html .= " >> ";
+            }
+        }
+        return $html;
+    }
+
+    private function __cms_preg_replace_callback_widget($arr){        
         $html = "";
         if(count($arr)>1){
-            $slug = $arr[1];        
-            $html.= '<div class="cms-widget-slug-'.$slug.'">';
-            foreach($widgets[$slug] as $widget){                
-                    $html.= '<div class="cms-widget-container">';
-                    $html.= '<h5>'.$widget['title'].'</h5>';
-                    $html.= '<div class="cms-widget-content">'.$widget['content'].'</div>';
-                    $html.= '<br />';
-                    $html.= '<br />';
-                    $html.= '</div>';
-            }
-            $html .= '</div>';
+            $slug = $arr[1];
+            $html = $this->__cms_build_widget($slug);
         }        
         return $html;
     }
     
-    private function cms_layout_exists($theme, $layout)
+    public function cms_layout_exists($theme, $layout)
     {
         return is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php');
     }
     
-    private function cms_cache($time = 5)
+    private function __cms_cache($time = 5)
     {
         // cache
         $this->load->driver('cache');

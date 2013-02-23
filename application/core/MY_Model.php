@@ -7,7 +7,7 @@
  */
 class CMS_Model extends CI_Model
 {
-    private $cms_model_properties;
+    private $__cms_model_properties;
     
     public function __construct()
     {
@@ -35,7 +35,7 @@ class CMS_Model extends CI_Model
         
         // accessing file is faster than accessing database
         // but I think accessing variable is faster than both of them
-        $this->cms_model_properties = array(
+        $this->__cms_model_properties = array(
             'session' => array(),
             'language_dictionary' => array(),
             'config' => array()
@@ -54,13 +54,13 @@ class CMS_Model extends CI_Model
     {
         if (isset($value)) {
             $this->session->set_userdata($key, $value);
-            $this->cms_model_properties['session'][$key] = $value;
+            $this->__cms_model_properties['session'][$key] = $value;
         }
-        // add to cms_model_properties if not exists
-        if (!isset($this->cms_model_properties['session'][$key])) {
-            $this->cms_model_properties['session'][$key] = $this->session->userdata($key);
+        // add to __cms_model_properties if not exists
+        if (!isset($this->__cms_model_properties['session'][$key])) {
+            $this->__cms_model_properties['session'][$key] = $this->session->userdata($key);
         }
-        return $this->cms_model_properties['session'][$key];
+        return $this->__cms_model_properties['session'][$key];
     }
     
     /**
@@ -71,7 +71,7 @@ class CMS_Model extends CI_Model
     public function cms_unset_ci_session($key)
     {
         $this->session->unset_userdata($key);
-        unset($this->cms_model_properties['session'][$key]);
+        unset($this->__cms_model_properties['session'][$key]);
     }
     
     /**
@@ -265,16 +265,18 @@ class CMS_Model extends CI_Model
     
     /**
      * @author  goFrendiAsgard
+     * @param   slug
      * @return  mixed
      * @desc    return widgets
      */
-    public function cms_widgets()
+    public function cms_widgets($slug = NULL)
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
+        $slug_where = isset($slug)? "slug LIKE '".addslashes($slug)."'" : "1=1";
         
         $query  = $this->db->query("SELECT 
         			widget_id, widget_name, is_static, title, 
@@ -297,7 +299,7 @@ class CMS_Model extends CI_Model
                                 )>0
                             )
                         )
-                    ) AND active=1 ORDER BY `index`");
+                    ) AND active=1 AND $slug_where ORDER BY `index`");
         $result = array();
         foreach ($query->result() as $row) {
             // generate widget content
@@ -360,6 +362,7 @@ class CMS_Model extends CI_Model
     
     /**
      * @author  goFrendiAsgard
+     * @param   string navigation_name
      * @return  string
      * @desc    return submenu screen
      */
@@ -435,7 +438,7 @@ class CMS_Model extends CI_Model
      * @return  mixed
      * @desc    return parent of navigation_name's detail, only used for get_navigation_path
      */
-    private function cms_private_get_navigation_parent($navigation_name)
+    private function __cms_get_navigation_parent($navigation_name)
     {
         if (!$navigation_name)
             return false;
@@ -465,7 +468,7 @@ class CMS_Model extends CI_Model
      * @return  mixed
      * @desc    return navigation detail, only used for get_navigation_path
      */
-    private function cms_private_get_navigation($navigation_name)
+    private function __cms_get_navigation($navigation_name)
     {
         if (!$navigation_name)
             return false;
@@ -497,9 +500,9 @@ class CMS_Model extends CI_Model
         if (!isset($navigation_name))
             return array();
         $result = array(
-            $this->cms_private_get_navigation($navigation_name)
+            $this->__cms_get_navigation($navigation_name)
         );
-        while ($parent = $this->cms_private_get_navigation_parent($navigation_name)) {
+        while ($parent = $this->__cms_get_navigation_parent($navigation_name)) {
             $result[]        = $parent;
             $navigation_name = $parent["navigation_name"];
         }
@@ -561,14 +564,14 @@ class CMS_Model extends CI_Model
      * @return  bool
      * @desc    only used in allow_navigate
      */
-    private function cms_private_allow_navigate($navigation_name, $navigations = NULL)
+    private function __cms_allow_navigate($navigation_name, $navigations = NULL)
     {
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
         for ($i = 0; $i < count($navigations); $i++) {
             if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"] == 1) {
                 return true;
-            } else if ($this->cms_private_allow_navigate($navigation_name, $navigations[$i]["child"])) {
+            } else if ($this->__cms_allow_navigate($navigation_name, $navigations[$i]["child"])) {
                 return true;
             }
         }
@@ -583,7 +586,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_allow_navigate($navigation_name)
     {
-        return $this->cms_private_allow_navigate($navigation_name);
+        return $this->__cms_allow_navigate($navigation_name);
     }
     
     /**
@@ -995,8 +998,8 @@ class CMS_Model extends CI_Model
                 $data['description'] = $description;
             $this->db->insert("cms_config", $data);
         }
-        // save as cms_model_properties too
-        $this->cms_model_properties['config'][$name] = $value;
+        // save as __cms_model_properties too
+        $this->__cms_model_properties['config'][$name] = $value;
     }
     
     /**
@@ -1021,14 +1024,18 @@ class CMS_Model extends CI_Model
     public function cms_get_config($name, $raw = FALSE)
     {
         $value = '';
-        if (!isset($this->cms_model_properties['config'][$name])) {
-            $query                                       = $this->db->query("SELECT `value` FROM cms_config WHERE
+        if (!isset($this->__cms_model_properties['config'][$name])) {
+            $query  = $this->db->query("SELECT `value` FROM cms_config WHERE
 	                    config_name = '" . addslashes($name) . "'");
-            $row                                         = $query->row();
-            $value                                       = $row->value;
-            $this->cms_model_properties['config'][$name] = $value;
+            if($query->num_rows()>0){
+                $row    = $query->row();
+                $value  = $row->value;
+            }else{
+                $value  = '';
+            }            
+            $this->__cms_model_properties['config'][$name] = $value;
         } else {
-            $value = $this->cms_model_properties['config'][$name];
+            $value = $this->__cms_model_properties['config'][$name];
         }
         
         // if raw is false, then don't parse keyword
@@ -1082,7 +1089,7 @@ class CMS_Model extends CI_Model
     public function cms_language_dictionary()
     {
         $language = $this->cms_language();
-        if (count($this->cms_model_properties['language_dictionary']) == 0) {
+        if (count($this->__cms_model_properties['language_dictionary']) == 0) {
             $lang = array();
             
             // language setting from all modules but this current module
@@ -1108,10 +1115,10 @@ class CMS_Model extends CI_Model
                 include($local_language_file);
             }
             
-            $this->cms_model_properties['language_dictionary'] = $lang;
+            $this->__cms_model_properties['language_dictionary'] = $lang;
         }
         
-        return $this->cms_model_properties['language_dictionary'];
+        return $this->__cms_model_properties['language_dictionary'];
     }
     
     /**
@@ -1179,8 +1186,9 @@ class CMS_Model extends CI_Model
         $pattern[]     = '/\{\{ base_url \}\}/si';
         $replacement[] = $base_url;
         
-        // module_path
+        // module_path & module_name
         $module_path = $this->cms_module_path();
+        $module_name = $this->cms_module_name($module_path);
         $module_site_url = site_url($module_path);
         $module_base_url = base_url($module_path);
         if ($module_site_url[strlen($module_site_url) - 1] != '/')
@@ -1193,6 +1201,8 @@ class CMS_Model extends CI_Model
         $replacement[] = $module_site_url;
         $pattern[]     = '/\{\{ module_base_url \}\}/si';
         $replacement[] = $module_base_url;
+        $pattern[]     = '/\{\{ module_name \}\}/si';
+        $replacement[] = $module_name;
         
         // language
         $pattern[]     = '/\{\{ language \}\}/si';
@@ -1206,7 +1216,7 @@ class CMS_Model extends CI_Model
         // execute regex
         $value   = preg_replace_callback($pattern, array(
             $this,
-            'cms_preg_replace_callback_lang'
+            '__cms_preg_replace_callback_lang'
         ), $value);
         
         // if language, elif		
@@ -1230,6 +1240,14 @@ class CMS_Model extends CI_Model
         $replacement = '';
         // execute regex
         $value       = preg_replace($pattern, $replacement, $value);
+        
+        // configuration
+        $pattern = '/\{\{ (.*?) \}\}/si';
+        // execute regex
+        $value   = preg_replace_callback($pattern, array(
+            $this,
+            '__cms_preg_replace_callback_config'
+        ), $value);
         
         $value = $this->cms_unescape_template($value);
         return $value;
@@ -1262,10 +1280,11 @@ class CMS_Model extends CI_Model
         $pattern   = array();
         $pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
         $pattern[] = '/(value *= *")(.*?)(")/si';
+        $pattern[] = "/(value *= *')(.*?)(')/si";
         
         $str = preg_replace_callback($pattern, array(
             $this,
-            'cms_preg_replace_callback_escape_template'
+            '__cms_preg_replace_callback_escape_template'
         ), $str);
         
         return $str;
@@ -1283,9 +1302,10 @@ class CMS_Model extends CI_Model
         $pattern   = array();
         $pattern[] = '/(<textarea[^<>]*>)(.*?)(<\/textarea>)/si';
         $pattern[] = '/(value *= *")(.*?)(")/si';
+        $pattern[] = "/(value *= *')(.*?)(')/si";
         $str       = preg_replace_callback($pattern, array(
             $this,
-            'cms_preg_replace_callback_unescape_template'
+            '__cms_preg_replace_callback_unescape_template'
         ), $str);
         
         return $str;
@@ -1297,7 +1317,7 @@ class CMS_Model extends CI_Model
      * @return string
      * @desc replace every '{{' and '}}' in $arr[1] into &#123; and &#125;
      */
-    private function cms_preg_replace_callback_unescape_template($arr)
+    private function __cms_preg_replace_callback_unescape_template($arr)
     {
         $to_replace     = array(
             '{{ ',
@@ -1316,7 +1336,7 @@ class CMS_Model extends CI_Model
      * @return string
      * @desc replace every &#123; and &#125; in $arr[1] into '{{' and '}}';
      */
-    private function cms_preg_replace_callback_escape_template($arr)
+    private function __cms_preg_replace_callback_escape_template($arr)
     {
         $to_be_replaced = array(
             '{{ ',
@@ -1335,9 +1355,19 @@ class CMS_Model extends CI_Model
      * @return string
      * @desc replace $arr[1] with respective language;
      */
-    private function cms_preg_replace_callback_lang($arr)
+    private function __cms_preg_replace_callback_lang($arr)
     {
         return $this->cms_lang($arr[1]);
+    }
+    
+    private function __cms_preg_replace_callback_config($arr)
+    {
+        $raw_config_value = $this->cms_get_config($arr[1]);
+        // avoid recursion
+        if(strpos($raw_config_value, '{{ '.$arr[1].' }}') !== FALSE){
+            $raw_config_value = str_replace('{{ '.$arr[1].' }}', ' ', $raw_config_value);
+        }
+        return $this->cms_parse_keyword($raw_config_value);
     }
     
     /**

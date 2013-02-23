@@ -317,7 +317,7 @@ Views
 	<script type="text/javascript" src="{{ base_url }}/assets/nocms/js/jquery.js"></script>	
 ```
 
-* Here is the list of those magical keywords:
+* Here is the list of those magical keywords (or also known as tag):
 
 ```
 	{{ user_id }}
@@ -492,4 +492,4 @@ v0.6.1 (development)
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
 + (done, tested) delete the legacy old_gray theme
 + (done, tested) Rename CMS_Controller into MY_Controller, put CMS_Model in MY_Model
-+ (done, tested) Add widget keyword
++ (done, tested) Add widget and navigation tag
