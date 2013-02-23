@@ -19,6 +19,8 @@ class CMS_Controller extends MX_Controller
     private $__cms_navigation_name  = NULL;
     private $__cms_quicklinks       = NULL;
     
+    protected $REFERRER = NULL;
+    
     public function __construct()
     {        
         parent::__construct();
@@ -248,9 +250,9 @@ class CMS_Controller extends MX_Controller
      * @return  bool
      * @desc    checked if module installed
      */
-    protected function cms_is_module_installed($module_name)
+    protected function cms_is_module_active($module_name)
     {
-        return $this->No_CMS_Model->cms_is_module_installed($module_name);
+        return $this->No_CMS_Model->cms_is_module_active($module_name);
     }
     
     /**
@@ -1288,19 +1290,59 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
  */
 class CMS_Module_Installer extends CMS_Controller
 {
-    protected $DEPENDENCIES = array();
-    protected $NAME = '';
+    protected $DEPENDENCIES  = array();
+    protected $NAME          = '';
+    protected $VERSION       = '0.0.0';
+    protected $DESCRIPTION   = 'Just another module';
+    protected $IS_ACTIVE     = FALSE;
+    protected $IS_OLD        = FALSE;
+    protected $OLD_VERSION   = '';
     
-    public final function index()
-    {
-        if ($this->cms_is_module_installed($this->NAME)) {
-            $this->uninstall();
+    public function __construct(){
+        parent::__construct();
+        $query = $this->db->select('version')->from('cms_module')->where('module_name', $this->NAME)->get();
+        if ($query->num_rows() == 0) {
+            $this->IS_ACTIVE = FALSE;
+            $this->IS_OLD = FALSE;
         } else {
-            $this->install();
+            $this->IS_ACTIVE = TRUE;
+            $row = $query->row();
+            $this->OLD_VERSION = $row->version;
+            if(version_compare($this->VERSION, $this->OLD_VERSION)>0){
+                $this->IS_OLD = TRUE;
+            }else{
+                $this->IS_OLD = FALSE;
+            }
         }
     }
     
-    public final function install()
+    public function status(){
+        $result = array(
+            'active'=>$this->IS_ACTIVE,
+            'old'=>$this->IS_OLD,
+            'description'=>$this->DESCRIPTION,
+            'dependencies'=>$this->DEPENDENCIES,
+            'name'=>$this->NAME,
+            'version'=>$this->VERSION,
+            'old_version'=>$this->OLD_VERSION,
+        );
+        if($this->input->is_ajax_request()){
+            $this->cms_show_json($result);
+        }else{
+            $this->cms_show_variable($result);
+        }
+    }
+    
+    public final function index()
+    {
+        if ($this->cms_is_module_active($this->NAME)) {
+            $this->deactivate();
+        } else {
+            $this->activate();
+        }
+    }
+    
+    public final function activate()
     {
         // login (in case of called from No-CMS installer)
         $silent   = $this->input->post('silent');
@@ -1310,84 +1352,186 @@ class CMS_Module_Installer extends CMS_Controller
             $this->cms_do_login($identity, $password);
         }
         
-        if ($this->cms_have_privilege('cms_install_module')) {
-            $dependencies_error = FALSE;
+        $result = array(
+            'success'      => TRUE,
+            'message'      => array(),
+            'module_name'  => $this->NAME,
+            'module_path'  => $this->cms_module_path(),
+            'dependencies' => $this->DEPENDENCIES,
+        );
+        
+        // check for error
+        if (!$this->cms_have_privilege('cms_install_module')) {
+            $result['message'][] = 'Not enough privilege';
+            $result['success']   = FALSE;
+        }else{
+            if($this->NAME == ''){
+                $result['message'][] = 'Module name is undefined';
+                $result['success']   = FALSE;
+            }
+            if($this->IS_ACTIVE){
+                $result['message'][] = 'The module is already activated';
+                $result['success']   = FALSE;
+            }
             foreach ($this->DEPENDENCIES as $dependency) {
-                if (!$this->cms_is_module_installed($dependency)) {
-                    $dependencies_error = TRUE;
+                if (!$this->cms_is_module_active($dependency)) {
+                    $result['message'][] = 'Dependency error '.br().'Please activate these module first:'.ul($this->DEPENDENCIES);
+                    $dependencies_error  = TRUE;
+                    $result['success']   = FALSE;
                     break;
                 }
             }
+        }            
             
-            $alreadyInstalled_error = $this->cms_is_module_installed($this->NAME);
-            $undefinedName_error    = $this->NAME == '';
-            
-            $error = $dependencies_error || $alreadyInstalled_error || $undefinedName_error;
-            if ($error) {
-                $data = array(
-                    'module_name' => $this->NAME,
-                    'module_path' => $this->cms_module_path(),
-                    'dependencies' => $this->DEPENDENCIES,
-                    'dependencies_error' => $dependencies_error,
-                    'alreadyInstalled_error' => $alreadyInstalled_error,
-                    'undefinedName_error' => $undefinedName_error,
-                    'success' => FALSE
-                );
-                if (!$silent) {
-                    $this->view('main/module_management_fail_install', $data, 'main_module_management');
-                } else {
-                    $this->output->set_content_type('application/json')->set_output(json_encode($data));
-                }
-            } else {
+        // try to activate
+        if($result['success']){
+            $this->db->trans_start();
+            if($this->do_activate() !== FALSE){
                 $this->register_module();
-                $this->do_install();
-                if (!$silent) {
-                    redirect('main/module_management');
-                } else {
-                    $data = array(
-                        'success' => TRUE
-                    );
-                    $this->output->set_content_type('application/json')->set_output(json_encode($data));
-                }
+                $this->db->trans_complete();
+            }else{
+                $result['success']   = FALSE;
+                $result['message'][] = 'Failed to activate module'; 
             }
         }
+        
+        $result['message'] = ul($result['message']);
+        
+        // show result
+        if($silent){
+            $this->cms_show_json($result);
+        } else if($result['success']) {
+            redirect('main/module_management');
+        } else {
+            $this->view('main/module_activation_error', $result, 'main_module_management');
+        }
     }
-    public final function uninstall()
+
+    public final function deactivate()
     {
-        if ($this->cms_have_privilege('cms_install_module')) {
-            $children                 = $this->child();
-            $dependencies_error       = count($children) != 0;
-            $alreadyUninstalled_error = !$this->cms_is_module_installed($this->NAME);
-            $undefinedName_error      = $this->NAME == '';
-            
-            $error = $dependencies_error || $alreadyUninstalled_error || $undefinedName_error;
-            
-            if ($error) {
-                $data = array(
-                    'module_name' => $this->NAME,
-                    'module_path' => $this->uri->segment(1),
-                    'dependencies' => $children,
-                    'dependencies_error' => $dependencies_error,
-                    'alreadyUninstalled_error' => $alreadyUninstalled_error,
-                    'undefinedName_error' => $undefinedName_error
-                );
-                $this->view('main/module_management_fail_uninstall', $data, 'main_module_management');
-            } else {
-                $this->unregister_module();
-                $this->do_uninstall();
-                redirect('main/module_management');
+        $result = array(
+            'success'      => TRUE,
+            'message'      => array(),
+            'module_name'  => $this->NAME,
+            'module_path'  => $this->cms_module_path(),
+            'dependencies' => array(),
+        );
+        
+        // check for error
+        if (!$this->cms_have_privilege('cms_install_module')) {
+            $result['message'][] = 'Not enough privilege';
+            $result['success']   = FALSE;
+        } else {
+            $children                = $this->child_module();
+            if ($this->NAME == '') {
+                $result['message'][] = 'Module name is undefined';
+                $result['success']   = FALSE;
             }
+            if (!$this->IS_ACTIVE) {
+                $result['message'][] = 'The module is already deactivated';
+                $result['success']   = FALSE;
+            }
+            if (count($children) != 0) {
+                $result['message'][] = 'Dependency error '.br().'Please deactivate these module first:'.ul($this->children);
+                $dependencies_error  = TRUE;
+                $result['success']   = FALSE;
+                break;
+            }
+        }
+
+        // try to deactivate
+        if($result['success']){
+            $this->db->trans_start();
+            if($this->do_deactivate() !== FALSE){
+                $this->unregister_module();
+                $this->db->trans_complete();
+            }else{
+                $result['success']   = FALSE;
+                $result['message'][] = 'Failed to deactivate module'; 
+            }            
+        }
+        
+        $result['message'] = ul($result['message']);
+        
+        if($result['success']) {
+            redirect('main/module_management');
+        } else {
+            $this->view('main/module_deactivation_error', $result, 'main_module_management');
+        }
+    }
+    
+    public final function upgrade()
+    {
+        $result = array(
+            'success'      => TRUE,
+            'message'      => array(),
+            'module_name'  => $this->NAME,
+            'module_path'  => $this->cms_module_path(),
+            'dependencies' => array(),
+        );
+        if (!$this->cms_have_privilege('cms_install_module')) {
+            $result['message'][] = 'Not enough privilege';
+            $result['success']   = FALSE;            
+        }else{
+            if ($this->NAME == '') {
+                $result['message'][] = 'Module name is undefined';
+                $result['success']   = FALSE;
+            }
+            if (!$this->IS_ACTIVE) {
+                $result['message'][] = 'The module is inactive';
+                $result['success']   = FALSE;
+            }
+        }
+        if($result['success']){
+            $this->db->trans_start();
+            if($this->do_upgrade() !== FALSE){
+                $data  = array('version' => $this->VERSION);
+                $where = array('module_name' => $this->NAME);
+                $this->db->update('cms_module', $data, $where);
+                $this->db->trans_complete();
+            }else{
+                $result['success']   = FALSE;
+                $result['message'][] = 'Failed to activate module'; 
+            }
+        }
+        
+        $result['message'] = ul($result['message']);
+        
+        if($result['success']) {
+            redirect('main/module_management');
+        } else {
+            $this->view('main/module_upgrade_error', $result, 'main_module_management');
         }
     }
     
     protected function do_install()
     {
-        //this should be overridden by module developer
+        // deprecated function, please use do_activate instead
+        return FALSE;
     }
     protected function do_uninstall()
     {
+        // deprecated function, please use do_deactivate instead
+        return FALSE;
+    }
+    
+    protected function do_activate()
+    {
+        //this should be overridden by module developer
+        return $this->do_install();
+    }
+    
+    protected function do_deactivate()
+    {
+        //this should be overridden by module developer
+        return $this->do_uninstall();
+    }
+    
+    protected function do_upgrade($old_version)
+    {
         //this should be overridden by module developer
     }
+    
     protected final function executeSQL($SQL, $separator)
     {
         $queries = explode($separator, $SQL);
@@ -1497,8 +1641,9 @@ class CMS_Module_Installer extends CMS_Controller
         //insert to cms_module
         $data = array(
             'module_name' => $this->NAME,
-            'module_path' => $this->uri->segment(1),
-            'user_id' => $this->cms_user_id()
+            'module_path' => $this->cms_module_path(),
+            'version'     => $this->VERSION,
+            'user_id'     => $this->cms_user_id()
         );
         $this->db->insert('cms_module', $data);
         
@@ -1544,7 +1689,7 @@ class CMS_Module_Installer extends CMS_Controller
         $this->db->delete('cms_module', $where);
     }
     
-    private final function child()
+    private final function child_module()
     {
         $SQL   = "SELECT module_id FROM cms_module WHERE module_name='" . addslashes($this->NAME) . "'";
         $query = $this->db->query($SQL);

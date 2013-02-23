@@ -698,7 +698,7 @@ class CMS_Model extends CI_Model
      * @return  bool
      * @desc    checked if module installed
      */
-    public function cms_is_module_installed($module_name)
+    public function cms_is_module_active($module_name)
     {
         $query = $this->db->query("SELECT module_id FROM cms_module WHERE module_name = '" . addslashes($module_name) . "'");
         if ($query->num_rows() > 0) {
@@ -741,7 +741,7 @@ class CMS_Model extends CI_Model
             $module[]    = array(
                 "module_name" => $module_name,
                 "module_path" => $directory,
-                "installed" => $module_name != "",
+                "active" => $module_name != "",
                 "controllers" => $module_controllers
             );
         }
