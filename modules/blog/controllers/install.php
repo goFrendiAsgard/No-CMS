@@ -7,15 +7,16 @@
  */
 class Install extends CMS_Module_Installer {
 	protected $DEPENDENCIES = array();
-	protected $NAME = 'gofrendi.blog';
+	protected $NAME         = 'gofrendi.blog';
+    protected $DESCRIPTION  = 'No-CMS Blog Module';
 	
     //this should be what happen when user install this module
-    protected function do_install(){
+    protected function do_activate(){
         $this->remove_all();
         $this->build_all();
     }
     //this should be what happen when user uninstall this module
-    protected function do_uninstall(){
+    protected function do_deactivate(){
     	$this->backup_database(
     			array('blog_category', 'blog_article', 'blog_category_article', 
     				'blog_comment', 'blog_photo'));

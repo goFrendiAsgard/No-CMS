@@ -189,7 +189,7 @@
 		});
 		
 		// button search click
-		$('#btn_search').keyup(function(){
+		$('#btn_search').click(function(){
 			reset_content();
 		});
 		

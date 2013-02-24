@@ -46,7 +46,7 @@ class Nds_Model extends CMS_Model{
 	// data to generate
 	public function get_project($project_id){
 		$data = FALSE;
-		$query = $this->db->select('project_id, template_id, name, db_server, db_port, db_schema, db_user, db_password')
+		$query = $this->db->select('project_id, template_id, name, db_server, db_port, db_schema, db_user, db_password, db_table_prefix')
 			->from('nds_project')
 			->where('project_id', $project_id)
 			->get();

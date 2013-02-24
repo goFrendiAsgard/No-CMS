@@ -1,27 +1,139 @@
 <?php
 class Generator extends CMS_Controller{
+    private $project_id;
+    private $project_name;
+    private $project_db_server;
+    private $project_db_schema;
+    private $project_db_port;
+    private $project_db_password;
+    private $project_db_user;
+    private $project_db_table_prefix;
+    private $project_options;
+    private $project_path;
+    private $tables;
+    private $save_project_name;
 	
 	public function __construct(){
 		parent::__construct();
+        $this->load->helper('inflector');
 		$this->load->library('nordrassil/NordrassilLib');
 		$this->nds = new NordrassilLib();
 	}
+    
+    private function strip_table_prefix($table_name){
+        if(strpos($table_name,$this->project_db_table_prefix) === 0){
+            $table_name = substr($table_name,strlen($this->project_db_table_prefix));
+        }
+        if($table_name[0]=='_'){
+            $table_name = substr($table_name,1);
+        }
+        return $table_name;
+    }
+    
+    private function array_to_quoted_string($array, $key=NULL){
+        if(isset($key)){
+            $new_array = array();
+            foreach($array as $element){
+                $new_array[] = $element[$key];
+            }
+            $array = $new_array;
+        }
+        $new_array = array();
+        foreach($array as $element){
+            $new_array[] = "'".$element."'";
+        }
+        return implode(', ', $new_array);
+    }
+    
+    private function array_to_unquoted_string($array, $key=NULL){
+        if(isset($key)){
+            $new_array = array();
+            foreach($array as $element){
+                $new_array[] = $element[$key];
+            }
+            $array = $new_array;
+        }
+        return implode(', ', $new_array);
+    }
+    
+    private function php_class_file_name($class_name, $without_extension = FALSE){
+        $file_name = underscore(humanize($class_name));
+        if(!$without_extension){
+            $file_name .= '.php';
+        }
+        return $file_name;
+    }
+    
+    private function front_navigation_name($table_name){
+        return underscore($this->project_name).'_browse_'.underscore($this->strip_table_prefix($table_name));
+    }
+    
+    private function back_navigation_name($table_name){
+        return underscore($this->project_name).'_manage_'.underscore($this->strip_table_prefix($table_name));
+    }
+    
+    private function front_controller_class_name($table_name){
+        $table_name = $this->strip_table_prefix($table_name);
+        $controller_name = 'Browse_'.str_replace(' ', '_', humanize($table_name));
+        return $controller_name;
+    }
+    private function back_controller_class_name($table_name){
+        $table_name = $this->strip_table_prefix($table_name);
+        $controller_name = 'Manage_'.str_replace(' ', '_', humanize($table_name));
+        return $controller_name;
+    }
+    private function front_model_class_name($table_name){
+        $table_name = $this->strip_table_prefix($table_name);
+        $controller_name = str_replace(' ', '_', humanize($table_name)).'_Model';
+        return $controller_name;
+    }
+    private function back_model_class_name($table_name){
+        $table_name = $this->strip_table_prefix($table_name);
+        $controller_name = str_replace(' ', '_', humanize($table_name)).'_Crud_Model';
+        return $controller_name;
+    }
+    
+    private function front_controller_file_name($table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->front_controller_class_name($table_name), $without_extension);
+    }
+    private function back_controller_file_name($table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->back_controller_class_name($table_name), $without_extension);
+    }
+    private function front_model_file_name($table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->front_model_class_name($table_name), $without_extension);
+    }
+    private function back_model_file_name($table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->back_model_class_name($table_name), $without_extension);
+    }
+    private function front_view_file_name($table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->front_controller_class_name($table_name).'_view', $without_extension);
+    }
+    private function front_view_partial_file_name($table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->front_controller_class_name($table_name).'_partial_view', $without_extension);
+    }
+    private function back_view_file_name($table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->back_controller_class_name($table_name).'_view', $without_extension);
+    }
 	
 	public function index($project_id){		
 		$projects = $this->nds->get_project($project_id);
-		$project_name = $projects['name'];
-		$project_db_server = $projects['db_server'];
-		$project_db_schema = $projects['db_schema'];
-		$project_db_port = $projects['db_port'];
-		$project_db_password = $projects['db_password'];
-		$project_db_user = $projects['db_user'];
-		$project_options = $projects['options'];
-		$tables = $projects['tables'];
+        $this->project_id = $project_id;
+		$this->project_name = $projects['name'];
+        $this->save_project_name = underscore($this->project_name);
+		$this->project_db_server = $projects['db_server'];
+		$this->project_db_schema = $projects['db_schema'];
+		$this->project_db_port = $projects['db_port'];
+		$this->project_db_password = $projects['db_password'];
+		$this->project_db_user = $projects['db_user'];
+        $this->project_db_table_prefix = $projects['db_table_prefix'];
+		$this->project_options = $projects['options'];
+		$this->tables = $projects['tables'];
+        $this->project_path = dirname(BASEPATH).'/modules/'.underscore($this->project_name).'/';
 		
 		// Check tables information (blame user before user blame us :D)
 		$success = TRUE;
 		$message = '';
-		foreach($tables as $table){
+		foreach($this->tables as $table){		    
 			$table_name = $table['name'];
 			$options = $table['options'];			
 			$columns = $table['columns'];
@@ -64,7 +176,7 @@ class Generator extends CMS_Controller{
 			}
 			if(!$primary_key_exists){
 				$one_to_many_exists = FALSE;
-				foreach($tables as $other_table){
+				foreach($this->tables as $other_table){
 					if($other_table['name'] == $table_name) continue;
 					foreach($other_table['columns'] as $other_column){
 						if($other_column['role'] == 'detail one to many' && $other_column['relation_table_name'] == $table_name){
@@ -83,15 +195,15 @@ class Generator extends CMS_Controller{
 		}
 		if($success){
 			$this->load->helper('inflector');
-			$project_path = dirname(BASEPATH).'/modules/'.underscore($project_name).'/';
+			$project_path = dirname(BASEPATH).'/modules/'.underscore($this->project_name).'/';
 			
-			$this->create_directory($project_path);
-			$this->create_install_db_file($project_id,$project_path, $tables);
-			$this->create_uninstall_db_file($project_path, $tables);
-			$this->create_installer($project_path, $tables, $project_name);
-			$this->create_main_controller_and_view($project_path, $project_name);
-			$this->create_controller_and_view($project_path, $project_name, $tables);
-			$this->create_front_controller_and_view($project_path, $project_name, $tables);
+			$this->create_directory();
+			$this->create_install_db_file();
+			$this->create_uninstall_db_file();
+			$this->create_installer();
+			$this->create_main_controller_and_view();
+			$this->create_back_controller_and_view();
+			$this->create_front_controller_and_view();
 		}
 		
 		if($this->input->is_ajax_request()){
@@ -103,11 +215,11 @@ class Generator extends CMS_Controller{
 		
 	}
 	
-	private function create_front_controller_and_view($project_path, $project_name, $tables){
+	private function create_front_controller_and_view(){
 		// filter tables, just the everything without "dont_make_form" option
 		$selected_tables = array();
-		for($i=0; $i<count($tables); $i++){
-			$table = $tables[$i];
+		for($i=0; $i<count($this->tables); $i++){
+			$table = $this->tables[$i];
 			if($table['options']['make_frontpage']){
 				$selected_tables[] = $table;
 			}
@@ -116,31 +228,44 @@ class Generator extends CMS_Controller{
 		
 		$this->load->helper('inflector');
 		// get save_project_name
-		$save_project_name = underscore($project_name);
+		$save_project_name = underscore($this->project_name);
 		foreach($tables as $table){
 			$table_name = $table['name'];
 			$table_caption = $table['caption'];
 			$save_table_name = underscore($table_name);
-			$controller_name = $save_project_name.'_'.$save_table_name;
-			$navigation_name = $save_project_name.'_front_'.$save_table_name;
-			$backend_navigation_name = $save_project_name.'_'.$save_table_name;
+			$controller_name = $this->front_controller_class_name($table_name);
+            $model_name = $this->front_model_class_name($table_name);
+			$navigation_name = $this->front_navigation_name($table_name);
+			$backend_navigation_name = $this->back_navigation_name($table_name);
 			$columns = $table['columns'];
 			
 			$pattern = array(
 				'project_name',
 				'controller_name',
+				'model_name',
 				'table_name',
 				'navigation_name',
 				'table_caption',
 				'backend_navigation_name',
+				'front_view_import_name',
+				'front_view_partial_import_name',
+				'front_model_import_name',
+				'front_controller_import_name',
+				'back_controller_import_name',
 			);
 			$replacement = array(
 				$save_project_name,
 				$controller_name,
+				$model_name,
 				$table_name,
 				$navigation_name,
 				$table_caption,
 				$backend_navigation_name,
+				underscore(humanize($this->front_view_file_name($table_name, TRUE))),
+				underscore(humanize($this->front_view_partial_file_name($table_name, TRUE))),
+				underscore(humanize($this->front_model_class_name($table_name))),
+				underscore(humanize($this->front_controller_class_name($table_name))),
+				underscore(humanize($this->back_controller_class_name($table_name))),
 			);
 			// prepare data
 			$data = array(
@@ -149,26 +274,26 @@ class Generator extends CMS_Controller{
 			);
 			// controller
 			$str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern,$replacement);
-			$this->nds->write_file($project_path.'controllers/front/'.$controller_name.'.php', $str);
+			$this->nds->write_file($this->project_path.'controllers/'.$this->front_controller_file_name($table_name), $str);
 			// model
 			$str = $this->nds->read_view('nordrassil/default_generator/front_model.php',$data,$pattern,$replacement);
-			$this->nds->write_file($project_path.'models/front/'.$controller_name.'_model.php', $str);
+			$this->nds->write_file($this->project_path.'models/'.$this->front_model_file_name($table_name), $str);
 			// main view
 			$str = $this->nds->read_view('nordrassil/default_generator/front_view.php',$data,$pattern,$replacement);
-			$this->nds->write_file($project_path.'views/front/'.$controller_name.'_index.php', $str);
+			$this->nds->write_file($this->project_path.'views/'.$this->front_view_file_name($table_name), $str);
 			// partial view
 			$str = $this->nds->read_view('nordrassil/default_generator/front_view_partial.php',$data,$pattern,$replacement);
-			$this->nds->write_file($project_path.'views/front/'.$controller_name.'_partial.php', $str);
+			$this->nds->write_file($this->project_path.'views/'.$this->front_view_partial_file_name($table_name), $str);
 		}
 		
 	}
 	
-	private function create_controller_and_view($project_path, $project_name, $tables){		
-		// filter tables, just the everything without "dont_make_form" option
-		$all_tables = $tables;
+	private function create_back_controller_and_view(){
+	    // filter tables, just the everything without "dont_make_form" option		
+		$all_tables = $this->tables;
 		$selected_tables = array();
-		for($i=0; $i<count($tables); $i++){
-			$table = $tables[$i];
+		for($i=0; $i<count($this->tables); $i++){
+			$table = $this->tables[$i];
 			if(!$table['options']['dont_make_form']){
 				$selected_tables[] = $table;
 			}
@@ -177,7 +302,7 @@ class Generator extends CMS_Controller{
 		
 		$this->load->helper('inflector');
 		// get save_project_name
-		$save_project_name = underscore($project_name);
+		$save_project_name = underscore($this->project_name);
 		foreach($tables as $table){
 			$table_name = $table['name'];
 			$table_caption = $table['caption'];
@@ -204,7 +329,7 @@ class Generator extends CMS_Controller{
 				$field_list_array[] = '\''.$column['name'].'\'';
 				// display_as
 				$display_as_array[] = $this->nds->read_view('nordrassil/default_generator/controller_partial/display_as',NULL,
-					array('field_name', 'field_caption'),
+					array('column_name', 'column_caption'),
 					array($column_name, $column_caption)
 				);
 				// set_relation
@@ -281,6 +406,7 @@ class Generator extends CMS_Controller{
 					}
 					$data = array(
 						'project_name' => $save_project_name,
+						'stripped_master_table_name' => $this->strip_table_prefix($table_name),
 						'master_table_name' => $table_name,
 						'master_column_name' => $column_name,
 						'master_primary_key_name' => $master_primary_key_name,						
@@ -307,7 +433,7 @@ class Generator extends CMS_Controller{
 					);
 					// view
 					$str = $this->nds->read_view('nordrassil/default_generator/callback_field_view', $data);
-					$this->nds->write_file($project_path.'views/data/field_'.$save_project_name.'_'.$table_name.'_'.$column_name.'.php', $str);
+					$this->nds->write_file($this->project_path.'views/field_'.underscore($this->strip_table_prefix($table_name)).'_'.underscore($column_name).'.php', $str);
 				}
 			}
 			$field_list = implode(',',$field_list_array);
@@ -326,6 +452,9 @@ class Generator extends CMS_Controller{
 				'table_name',
 				'table_caption',
 				'controller_name',
+				'model_name',
+				'model_import_name',
+				'view_import_name',
 				'field_list',
 				'display_as',
 				'set_relation',
@@ -339,10 +468,13 @@ class Generator extends CMS_Controller{
 				'detail_after_insert_or_update'
 			);
 			$replacement = array(
-				$navigation_name,
+				$this->back_navigation_name($table_name),
 				$table_name,
 				$table_caption,
-				$navigation_name,
+				$this->back_controller_class_name($table_name),
+				$this->back_model_class_name($table_name),
+				$this->back_model_file_name($table_name, TRUE),
+				$this->back_view_file_name($table_name, TRUE),
 				$field_list,
 				$display_as,
 				$set_relation,
@@ -356,27 +488,24 @@ class Generator extends CMS_Controller{
 				$detail_after_insert_or_update,
 			);
 			// controllers
-			$str = $this->nds->read_view('nordrassil/default_generator/controller.php',NULL,$pattern,$replacement);
-			$this->nds->write_file($project_path.'controllers/data/'.$navigation_name.'.php', $str);
+			$str = $this->nds->read_view('nordrassil/default_generator/back_controller.php',NULL,$pattern,$replacement);
+			$this->nds->write_file($this->project_path.'controllers/'.$this->back_controller_file_name($table_name), $str);
 			// models
-			$str = $this->nds->read_view('nordrassil/default_generator/model.php',NULL,$pattern,$replacement);
-			$this->nds->write_file($project_path.'models/data/'.$navigation_name.'_model.php', $str);
+			$str = $this->nds->read_view('nordrassil/default_generator/back_model.php',NULL,$pattern,$replacement);
+			$this->nds->write_file($this->project_path.'models/'.$this->back_model_file_name($table_name), $str);
 			// views
 			$data = array(
 				'make_frontpage'=>$table_make_frontpage,
-				'controller_name'=>$navigation_name,
+				'front_controller_import_name' => underscore(humanize($this->front_controller_class_name($table_name))),
 			);
-			$str = $this->nds->read_view('nordrassil/default_generator/view.php',$data,$pattern,$replacement);
-			$this->nds->write_file($project_path.'views/data/'.$navigation_name.'_index.php', $str);
+			$str = $this->nds->read_view('nordrassil/default_generator/back_view.php',$data,$pattern,$replacement);
+			$this->nds->write_file($this->project_path.'views/'.$this->back_view_file_name($table_name), $str);
 			
 		}
 		
 	}
 	
-	private function create_main_controller_and_view($project_path, $project_name){
-		$this->load->helper('inflector');
-		// get save_project_name
-		$save_project_name = underscore($project_name);
+	private function create_main_controller_and_view(){
 		$pattern = array(
 			'navigation_parent_name',
 			'directory',
@@ -384,74 +513,78 @@ class Generator extends CMS_Controller{
 			'project_name',
 		); 
 		$replacement = array(
-			$save_project_name.'_index',
-			$save_project_name,
-			$save_project_name,
-			$project_name,
+			underscore($this->project_name).'_index',
+			underscore($this->project_name),
+			underscore($this->project_name),
+			$this->project_name,
 		);
 		// main controller
 		$str = $this->nds->read_view('nordrassil/default_generator/main_controller', NULL, $pattern, $replacement);
-		$this->nds->write_file($project_path.'controllers/'.$save_project_name.'.php', $str);
+		$this->nds->write_file($this->project_path.'controllers/'.underscore($this->project_name).'.php', $str);
 		// main view
 		$str = $this->nds->read_view('nordrassil/default_generator/main_view', NULL, $pattern, $replacement);
-		$this->nds->write_file($project_path.'views/'.$save_project_name.'_index.php', $str);
+		$this->nds->write_file($this->project_path.'views/'.underscore($this->project_name).'_index.php', $str);
 	}
 	
-	private function create_installer($project_path, $tables, $project_name){
-		$this->load->helper('inflector');
-		// get save_project_name
-		$save_project_name = underscore($project_name);
-		$table_list_array = array();
-		// get table_list
-		foreach($tables as $table){
-			$table_list_array[] = '\''.$table['name'].'\'';
-		}
-		$table_list = implode(',',$table_list_array);
+	private function create_installer(){
+		$project_path = $this->project_path;
+        $tables = $this->tables;
+        $project_name = $this->project_name;
 		
-		//remove_navigations
+        //////////////////////////////////////////////////////////////// 
+		// REMOVE NAVIGATIONS
+		////////////////////////////////////////////////////////////////
 		$remove_back_navigations = '';
 		$remove_front_navigations = '';
 		foreach(array_reverse($tables) as $table){
 			$table_name = $table['name'];
-			$save_table_name = underscore($table_name);
-			$navigation_name = $save_project_name.'_'.$save_table_name;
-			$front_navigation_name = $save_project_name.'_front_'.$save_table_name;
+			$pattern =   array(
+                    'front_navigation_name',
+                    'back_navigation_name',
+                );
+            $replacement = array(
+                    $this->front_navigation_name($table_name),
+                    $this->back_navigation_name($table_name),
+                );
 			// back
 			if(!$table['options']['dont_make_form']){
 				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_back_navigation',NULL,
-					'navigation_name', $navigation_name
+					$pattern, $replacement
 				);
 				$remove_back_navigations .= $str.PHP_EOL;
 			}
 			// front
 			if($table['options']['make_frontpage']){					
 				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_front_navigation',NULL,
-					'front_navigation_name', $front_navigation_name);
+					$pattern, $replacement);
 				$remove_front_navigations .= $str.PHP_EOL;
 			}
 		}
 		$remove_navigations = $remove_front_navigations.$remove_back_navigations;
 				
-		//add_navigations
+		//////////////////////////////////////////////////////////////// 
+        // ADD NAVIGATIONS
+        ////////////////////////////////////////////////////////////////
 		$add_back_navigations = '';
 		$add_front_navigations = '';
 		foreach($tables as $table){
 			$table_name = $table['name'];
-			$save_table_name = underscore($table_name);
-			$table_caption = $table['caption'];
-			$navigation_name = $save_project_name.'_'.$save_table_name;	
-			$front_navigation_name = $save_project_name.'_front_'.$save_table_name;
+            $table_caption = $table['caption'];
 			$pattern = 	array(
 					'front_navigation_name',
-					'navigation_name',
-					'navigation_caption',
+					'back_navigation_name',
+					'front_controller_name',
+					'back_controller_name',
+					'table_caption',
 					'navigation_parent_name',
 				);
 			$replacement = array(
-					$front_navigation_name,
-					$navigation_name,
+					$this->front_navigation_name($table_name),
+					$this->back_navigation_name($table_name),
+					underscore(humanize($this->front_controller_class_name($table_name))),
+					underscore(humanize($this->back_controller_class_name($table_name))),
 					$table_caption,
-					$save_project_name.'_index',
+					underscore($this->project_name).'_index',
 				);
 			// back
 			if(!$table['options']['dont_make_form']){
@@ -468,60 +601,59 @@ class Generator extends CMS_Controller{
 		}
 		$add_navigations = $add_front_navigations.$add_back_navigations;
 		
+        //////////////////////////////////////////////////////////////// 
+        // CREATE INSTALLER
+        ////////////////////////////////////////////////////////////////
 		$pattern = array(
 			'namespace',
 			'table_list',
 			'navigation_parent_name',
 			'remove_navigations',
 			'add_navigations',
-			'directory',
 			'main_controller',
 			'project_name',
 			'project_caption',
 		); 
 		$replacement = array(
-			underscore($this->cms_user_name()).'.'.$save_project_name,
-			$table_list,
-			$save_project_name.'_index',
+			underscore($this->cms_user_name()).'.'.underscore($this->project_name),
+			$this->array_to_quoted_string($tables,'name'),
+			underscore($this->project_name).'_index',
 			$remove_navigations,
 			$add_navigations,
-			$project_name,
-			$save_project_name,
-			$project_name,
-			humanize($project_name),
+			underscore($this->project_name),
+			$this->project_name,
+			humanize($this->project_name),
 		);
 		$str = $this->nds->read_view('default_generator/install',NULL,$pattern, $replacement);
 		$this->nds->write_file($project_path.'controllers/install.php', $str);
 	}
 
-	private function create_directory($project_path){
+	private function create_directory(){
 		// prepare directory		
-		$this->nds->make_directory($project_path);
-		$this->nds->make_directory($project_path.'assets/');
-		$this->nds->make_directory($project_path.'assets/db/');
-		$this->nds->make_directory($project_path.'assets/languages/');
-		$this->nds->make_directory($project_path.'assets/navigation_icon/');
-		$this->nds->make_directory($project_path.'assets/scripts/');
-		$this->nds->make_directory($project_path.'assets/styles/');
-		$this->nds->make_directory($project_path.'assets/images/');
-		$this->nds->make_directory($project_path.'controllers/');
-		$this->nds->make_directory($project_path.'controllers/data/');
-		$this->nds->make_directory($project_path.'controllers/front/');
-		$this->nds->make_directory($project_path.'models/');
-		$this->nds->make_directory($project_path.'models/data');
-		$this->nds->make_directory($project_path.'models/front');
-		$this->nds->make_directory($project_path.'views/');
-		$this->nds->make_directory($project_path.'views/data');
-		$this->nds->make_directory($project_path.'views/front');
+		$this->nds->make_directory($this->project_path);
+		$this->nds->make_directory($this->project_path.'assets/');
+		$this->nds->make_directory($this->project_path.'assets/db/');
+		$this->nds->make_directory($this->project_path.'assets/languages/');
+		$this->nds->make_directory($this->project_path.'assets/navigation_icon/');
+		$this->nds->make_directory($this->project_path.'assets/scripts/');
+		$this->nds->make_directory($this->project_path.'assets/styles/');
+		$this->nds->make_directory($this->project_path.'assets/images/');
+		$this->nds->make_directory($this->project_path.'controllers/');
+		$this->nds->make_directory($this->project_path.'models/');
+		$this->nds->make_directory($this->project_path.'views/');
 		// create htaccess
 		$str = $this->nds->read_view('default_generator/htaccess');
-		$this->nds->write_file($project_path.'assets/db/.htaccess', $str);
-		$this->nds->write_file($project_path.'assets/languages/.htaccess', $str);
-		$this->nds->write_file($project_path.'controllers/.htaccess', $str);
-		$this->nds->write_file($project_path.'models/.htaccess', $str);
+		$this->nds->write_file($this->project_path.'assets/db/.htaccess', $str);
+		$this->nds->write_file($this->project_path.'assets/languages/.htaccess', $str);
+		$this->nds->write_file($this->project_path.'controllers/.htaccess', $str);
+		$this->nds->write_file($this->project_path.'models/.htaccess', $str);
+        $this->nds->write_file($this->project_path.'views/.htaccess', $str);
 	}
 
-	private function create_install_db_file($project_id, $project_path, $tables){
+	private function create_install_db_file(){
+	    $project_id = $this->project_id;
+        $project_path = $this->project_path;
+        $tables = $this->tables;
 		// create table syntax
 		$selected_tables = array();
 		for($i=0; $i<count($tables); $i++){
@@ -558,7 +690,9 @@ class Generator extends CMS_Controller{
 		$this->nds->write_file($project_path.'assets/db/install.sql', $str);
 	}
 	
-	private function create_uninstall_db_file($project_path, $tables){
+	private function create_uninstall_db_file(){
+	    $project_path = $this->project_path;
+        $tables = $this->tables;
 		$selected_tables = array();
 		for($i=0; $i<count($tables); $i++){
 			$table = $tables[$i];

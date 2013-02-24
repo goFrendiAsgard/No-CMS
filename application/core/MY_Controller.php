@@ -1293,10 +1293,11 @@ class CMS_Module_Installer extends CMS_Controller
     protected $DEPENDENCIES  = array();
     protected $NAME          = '';
     protected $VERSION       = '0.0.0';
-    protected $DESCRIPTION   = 'Just another module';
+    protected $DESCRIPTION   = 'Just another module ...';
     protected $IS_ACTIVE     = FALSE;
     protected $IS_OLD        = FALSE;
     protected $OLD_VERSION   = '';
+    protected $ERROR_MESSAGE = '';
     
     public function __construct(){
         parent::__construct();
@@ -1304,10 +1305,14 @@ class CMS_Module_Installer extends CMS_Controller
         if ($query->num_rows() == 0) {
             $this->IS_ACTIVE = FALSE;
             $this->IS_OLD = FALSE;
+            $this->OLD_VERSION = '0.0.0';
         } else {
             $this->IS_ACTIVE = TRUE;
             $row = $query->row();
             $this->OLD_VERSION = $row->version;
+            if($this->OLD_VERSION == ''){
+                $this->OLD_VERSION = '0.0.0';
+            }
             if(version_compare($this->VERSION, $this->OLD_VERSION)>0){
                 $this->IS_OLD = TRUE;
             }else{
@@ -1391,7 +1396,11 @@ class CMS_Module_Installer extends CMS_Controller
                 $this->db->trans_complete();
             }else{
                 $result['success']   = FALSE;
-                $result['message'][] = 'Failed to activate module'; 
+                if($this->ERROR_MESSAGE != ''){
+                    $result['message'][] = $this->ERROR_MESSAGE;
+                }else{
+                    $result['message'][] = 'Failed to activate module';
+                }
             }
         }
         
@@ -1447,7 +1456,11 @@ class CMS_Module_Installer extends CMS_Controller
                 $this->db->trans_complete();
             }else{
                 $result['success']   = FALSE;
-                $result['message'][] = 'Failed to deactivate module'; 
+                if($this->ERROR_MESSAGE != ''){
+                    $result['message'][] = $this->ERROR_MESSAGE;
+                }else{
+                    $result['message'][] = 'Failed to deactivate module';
+                } 
             }            
         }
         
@@ -1491,7 +1504,11 @@ class CMS_Module_Installer extends CMS_Controller
                 $this->db->trans_complete();
             }else{
                 $result['success']   = FALSE;
-                $result['message'][] = 'Failed to activate module'; 
+                if($this->ERROR_MESSAGE != ''){
+                    $result['message'][] = $this->ERROR_MESSAGE;
+                }else{
+                    $result['message'][] = 'Failed to upgrade module';
+                }
             }
         }
         
@@ -1502,6 +1519,11 @@ class CMS_Module_Installer extends CMS_Controller
         } else {
             $this->view('main/module_upgrade_error', $result, 'main_module_management');
         }
+    }
+
+    public function setting(){
+        $data['cms_content'] = '<p>Setting is not available</p>'.anchor(site_url('main/module_management'),'Back');
+        $this->view('CMS_View',$data,'main_module_management');
     }
     
     protected function do_install()
@@ -1530,9 +1552,10 @@ class CMS_Module_Installer extends CMS_Controller
     protected function do_upgrade($old_version)
     {
         //this should be overridden by module developer
+        return FALSE;
     }
     
-    protected final function executeSQL($SQL, $separator)
+    protected final function execute_SQL($SQL, $separator)
     {
         $queries = explode($separator, $SQL);
         foreach ($queries as $query) {

@@ -24,11 +24,11 @@
 &lt;?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of {{ controller_name }}_Model
+ * Description of {{ model_name }}
  *
  * @author No-CMS Module Generator
  */
-class {{ controller_name }}_Model extends  CMS_Model{
+class {{ model_name }} extends  CMS_Model{
 	
 	public function get_data($keyword, $page=0){
 		$limit = 10;

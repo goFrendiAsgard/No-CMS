@@ -71,21 +71,26 @@
 		</tr>
 	</thead>
 	<tbody>	
-		<!-- the content will be here -->
+		<!-- the data presentation be here -->
 	</tbody>	
 </table>
 <input id="<?php echo $add_button_id; ?>" class="btn" type="button" value="Add <?php echo $detail_table_caption; ?>" />
 <br />
+<!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
 <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
+
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/jquery-ui-1.9.0.custom.min.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>
 <script type="text/javascript">
 
-	/**
-	 * DATA INITIALIZATION ==================================================================================
-	 */
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// DATA INITIALIZATION
+	//
+	// * Prepare some global variables
+	//
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var DATE_FORMAT = '&lt;?php echo $date_format ?&gt;';
 	var OPTIONS = &lt;?php echo json_encode($options); ?&gt;;
 	var <?php echo $var_record_index; ?> = &lt;?php echo $record_index; ?&gt;;	 
@@ -102,14 +107,16 @@
 			'primary_key' : primary_key,
 			'data' : data,
 		});
-	}
-	// end of initialization
+	}	
 	
 	
-	
-	/**
-	 * ADD ROW FUNCTION =====================================================================================
-	 */
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// ADD ROW FUNCTION
+	//
+	// * When "Add <?php echo $detail_table_caption; ?>" clicked, this function is called without parameter.
+	// * When page loaded for the first time, this function is called with value parameter
+	//
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function <?php echo $fn_add_table_row; ?>(value){
 		
 		var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
@@ -133,7 +140,9 @@
 				$additional_class = '';
 			}
 			echo PHP_EOL;
-			echo '		/* ====== field "'.$name.'" ====== */'.PHP_EOL;
+            echo '        /////////////////////////////////////////////////////////////////////////////////////////////////////'.PHP_EOL;
+			echo '        //    FIELD "'.$name.'"'.PHP_EOL;
+            echo '        /////////////////////////////////////////////////////////////////////////////////////////////////////'.PHP_EOL;
 			echo '		var field_value = \'\''.PHP_EOL;
 			echo '		if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
 			if($data_type=='date'){
@@ -183,25 +192,36 @@
 		?>
 		
 		
-		/* ====== DELETE BUTTON ====== */
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Delete Button
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
 		component += '<td><input class="<?php echo $delete_button_class; ?> btn" record_index="'+<?php echo $var_record_index; ?>+'" primary_key="" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';
 		component += '</tr>';
 		
-		/* ====== ADD CONTENT TO TABLE ====== */
-		$('#<?php echo $table_id; ?> tbody').append(component);
-		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Add component to table
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+		$('#<?php echo $table_id; ?> tbody').append(component);		
 		mutate_input();
 		
 	} // end of ADD ROW FUNCTION
 	
 	
 	
-	/**
-	 * MAIN PROGRAM ==========================================================================================
-	 */
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Main event handling program
+    //
+    // * Initialization
+    // * <?php echo $add_button_id; ?>.click (Add row)
+    // * <?php echo $delete_button_class; ?>.click (Delete row)
+    // * <?php echo $column_input_class; ?>.change (Edit cell)
+    //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	$(document).ready(function(){
 		
-		/* ======== INITIALIZATION ======== */
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+        // INITIALIZATION
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 		<?php echo $fn_synchronize; ?>();
 		for(var i=0; i<old_data.length; i++){
 			<?php echo $fn_add_table_row; ?>(old_data[i]);
@@ -209,7 +229,9 @@
 		}
 		
 		
-		/* ======== ADD RECORD EVENT : <?php echo $add_button_id; ?>.click ======== */
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+        // <?php echo $add_button_id; ?>.click (Add row)
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 		$('#<?php echo $add_button_id; ?>').click(function(){
 			// new data
 			var data = new Object();			
@@ -235,7 +257,9 @@
 		});
 		
 		
-		/* ======== DELETE RECORD EVENT : <?php echo $delete_button_class; ?>.click ======== */
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+        // <?php echo $delete_button_class; ?>.click (Delete row)
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 		$('.<?php echo $delete_button_class ?>').live('click', function(){
 			var record_index = $(this).attr('record_index');
 			// remove the component
@@ -270,7 +294,9 @@
 		});
 				
 		
-		/* ======== UPDATE FIELD EVENT : <?php echo $column_input_class; ?>.change ======== */
+		/////////////////////////////////////////////////////////////////////////////////////////////////////
+        // <?php echo $column_input_class; ?>.change (Edit cell)
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 		$('.<?php echo $column_input_class; ?>').live('change', function(){				
 			var value = $(this).val();
 			var column_name = $(this).attr('column_name');
@@ -305,14 +331,14 @@
 		});
 		
 		
-	}); // end of MAIN PROGRAM
+	});
 	
 	
 	
 	
-	/**
-	 * GENERAL FUNCTIONS =====================================================================================
-	 */
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // General Functions
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	// synchronize data to <?php echo $real_input_id; ?>.
 	function <?php echo $fn_synchronize; ?>(){

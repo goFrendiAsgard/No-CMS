@@ -44,7 +44,7 @@
 <script type="text/javascript" src="&lt;?php echo base_url(); ?&gt;assets/nocms/js/jquery.js"></script>
 <script type="text/javascript">
 	var PAGE = 0;
-	var URL = '&lt;?php echo site_url("{{ project_name }}/front/{{ controller_name }}/get_data"); ?&gt;';
+	var URL = '&lt;?php echo site_url("{{ project_name }}/{{ front_controller_import_name }}/get_data"); ?&gt;';
 	var ALLOW_NAVIGATE_BACKEND = &lt;?php echo $allow_navigate_backend ? "true" : "false"; ?&gt;;
 	var BACKEND_URL = '&lt;?php echo $backend_url; ?&gt;';
 	var LOADING = false;
@@ -121,7 +121,7 @@
 		});
 		
 		// button search click
-		$('#btn_search').keyup(function(){
+		$('#btn_search').click(function(){
 			reset_content();
 		});
 		

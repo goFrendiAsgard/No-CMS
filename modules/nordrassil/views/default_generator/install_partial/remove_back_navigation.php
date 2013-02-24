@@ -1,1 +1,1 @@
-        $this->remove_navigation("{{ navigation_name }}");
+        $this->remove_navigation("{{ back_navigation_name }}");

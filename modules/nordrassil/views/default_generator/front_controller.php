@@ -15,9 +15,9 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 	public function index(){
 		$data = array(
 			'allow_navigate_backend' => $this->cms_allow_navigate('{{ backend_navigation_name }}'),
-			'backend_url' => site_url($this->cms_module_path().'/data/{{ controller_name }}/index'),
+			'backend_url' => site_url($this->cms_module_path().'/{{ back_controller_import_name }}/index'),
 		);
-        $this->view($this->cms_module_path().'/front/{{ controller_name }}_index',$data, '{{ navigation_name }}');
+        $this->view($this->cms_module_path().'/{{ front_view_import_name }}',$data, '{{ navigation_name }}');
     }
     
     public function get_data(){
@@ -29,15 +29,15 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
     	if(!$keyword) $keyword = '';
     	if(!$page) $page = 0;
     	// get data from model
-    	$this->load->model('{{ project_name }}/front/{{ controller_name }}_model');
-    	$this->{{ controller_name }}_model = new {{ controller_name }}_model();
-    	$result = $this->{{ controller_name }}_model->get_data($keyword, $page);
+    	$this->load->model('{{ project_name }}/{{ front_model_import_name }}');
+    	$this->{{ model_name }} = new {{ model_name }}();
+    	$result = $this->{{ model_name }}->get_data($keyword, $page);
     	$data = array(
     		'result'=>$result,
     		'allow_navigate_backend' => $this->cms_allow_navigate('{{ backend_navigation_name }}'),
-			'backend_url' => site_url($this->cms_module_path().'/data/{{ controller_name }}/index'),
+			'backend_url' => site_url($this->cms_module_path().'/{{ back_controller_import_name }}/index'),
     	);
-    	$this->load->view($this->cms_module_path().'/front/{{ controller_name }}_partial',$data);
+    	$this->load->view($this->cms_module_path().'/{{ front_view_partial_import_name }}',$data);
 	}
     
 }

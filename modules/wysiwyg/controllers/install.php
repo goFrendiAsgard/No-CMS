@@ -8,14 +8,15 @@
 class Install extends CMS_Module_Installer {
 	protected $DEPENDENCIES = array();
 	protected $NAME = 'gofrendi.noCMS.wysiwyg';
+    protected $DESCRIPTION  = 'Manage No-CMS visually, because what you see is what you get';
 	
     //this should be what happen when user install this module
-    protected function do_install(){
+    protected function do_activate(){
         $this->remove_all();
         $this->build_all();
     }
     //this should be what happen when user uninstall this module
-    protected function do_uninstall(){
+    protected function do_deactivate(){
         $this->remove_all();
     }
     

@@ -1,5 +1,5 @@
 <?php
-	$view_path = $project_name.'/data/field_'.$project_name.'_'.$master_table_name.'_'.$master_column_name;
+	$view_path = $project_name.'/field_'.underscore($stripped_master_table_name).'_'.underscore($master_column_name);
 	$detail_columns = $detail_table['columns'];
 	$detail_column_captions = array();
 	$detail_column_names = array();

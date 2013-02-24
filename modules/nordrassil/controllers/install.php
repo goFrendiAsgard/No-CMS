@@ -6,15 +6,16 @@
  */
 class Install extends CMS_Module_Installer {
     protected $DEPENDENCIES = array();
-    protected $NAME = 'gofrendi.nordrassil';
+    protected $NAME         = 'gofrendi.nordrassil';
+    protected $DESCRIPTION  = 'A very cool and easy module generator';
 
     //this should be what happen when user install this module
-    protected function do_install(){        
+    protected function do_activate(){        
         $this->remove_all();
         $this->build_all();
     }
     //this should be what happen when user uninstall this module
-    protected function do_uninstall(){
+    protected function do_deactivate(){
         $this->backup_database(array('nds_template', 'nds_template_option', 'nds_project', 'nds_project_option', 'nds_table', 'nds_table_option', 'nds_column', 'nds_column_option'));
         $this->remove_all();
     }
