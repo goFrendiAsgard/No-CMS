@@ -490,5 +490,3 @@ class nds extends CMS_Controller {
 	
     
 }
-
-?>

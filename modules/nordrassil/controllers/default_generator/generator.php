@@ -89,7 +89,7 @@ class Generator extends CMS_Controller{
     }
     private function back_model_class_name($table_name){
         $table_name = $this->strip_table_prefix($table_name);
-        $controller_name = str_replace(' ', '_', humanize($table_name)).'_Crud_Model';
+        $controller_name = str_replace(' ', '_', 'GroceryCrud_'.humanize($table_name)).'_Model';
         return $controller_name;
     }
     

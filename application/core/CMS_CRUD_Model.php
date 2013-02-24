@@ -11,7 +11,7 @@
  * @copyright Copyright (c) 2012, Jamie Rumbelow <http://jamierumbelow.net>
  */
 
-class MY_Model extends CI_Model
+class CMS_CRUD_Model extends CI_Model
 {
 
     /* --------------------------------------------------------------
