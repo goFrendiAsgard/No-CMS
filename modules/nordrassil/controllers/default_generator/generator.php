@@ -198,6 +198,7 @@ class Generator extends CMS_Controller{
 			$project_path = dirname(BASEPATH).'/modules/'.underscore($this->project_name).'/';
 			
 			$this->create_directory();
+            $this->create_config_and_helper();
 			$this->create_install_db_file();
 			$this->create_uninstall_db_file();
 			$this->create_installer();
@@ -612,6 +613,7 @@ class Generator extends CMS_Controller{
 			'add_navigations',
 			'main_controller',
 			'project_name',
+			'save_project_name',
 			'project_caption',
 		); 
 		$replacement = array(
@@ -622,11 +624,37 @@ class Generator extends CMS_Controller{
 			$add_navigations,
 			underscore($this->project_name),
 			$this->project_name,
+			underscore($this->project_name),
 			humanize($this->project_name),
 		);
-		$str = $this->nds->read_view('default_generator/install',NULL,$pattern, $replacement);
+		$str = $this->nds->read_view('default_generator/install', NULL, $pattern, $replacement);
 		$this->nds->write_file($project_path.'controllers/install.php', $str);
 	}
+
+    private function create_config_and_helper(){
+        ////////////////////////////////////////////////////////////////
+        // create config
+        ////////////////////////////////////////////////////////////////
+        $table_prefix_length = strlen($this->project_db_table_prefix);
+        if($table_prefix_length==0){
+            $stripped_table_prefix = '';
+        }else{
+            $stripped_table_prefix = ($this->project_db_table_prefix[$table_prefix_length-1] == '_') ?
+                substr($this->project_db_table_prefix, 0, $table_prefix_length-1) : $this->project_db_table_prefix;
+        }
+        $pattern = array('table_prefix');
+        $replacement = array($stripped_table_prefix);
+        $str = $this->nds->read_view('default_generator/config', NULL, $pattern, $replacement);
+        $this->nds->write_file($this->project_path.'config/config.php', $str);
+        
+        ////////////////////////////////////////////////////////////////
+        // create helper
+        ////////////////////////////////////////////////////////////////
+        $pattern = array('project_name');
+        $replacement = array(underscore($this->project_name));
+        $str = $this->nds->read_view('default_generator/module_helper', NULL, $pattern, $replacement);
+        $this->nds->write_file($this->project_path.'helpers/module_helper.php', $str);
+    }
 
 	private function create_directory(){
 		// prepare directory		
@@ -641,6 +669,9 @@ class Generator extends CMS_Controller{
 		$this->nds->make_directory($this->project_path.'controllers/');
 		$this->nds->make_directory($this->project_path.'models/');
 		$this->nds->make_directory($this->project_path.'views/');
+        $this->nds->make_directory($this->project_path.'helpers/');
+        $this->nds->make_directory($this->project_path.'libraries/');
+        $this->nds->make_directory($this->project_path.'config/');
 		// create htaccess
 		$str = $this->nds->read_view('default_generator/htaccess');
 		$this->nds->write_file($this->project_path.'assets/db/.htaccess', $str);
@@ -648,6 +679,9 @@ class Generator extends CMS_Controller{
 		$this->nds->write_file($this->project_path.'controllers/.htaccess', $str);
 		$this->nds->write_file($this->project_path.'models/.htaccess', $str);
         $this->nds->write_file($this->project_path.'views/.htaccess', $str);
+        $this->nds->write_file($this->project_path.'helpers/.htaccess', $str);
+        $this->nds->write_file($this->project_path.'libraries/.htaccess', $str);
+        $this->nds->write_file($this->project_path.'config/.htaccess', $str);
 	}
 
 	private function create_install_db_file(){

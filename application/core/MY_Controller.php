@@ -982,7 +982,8 @@ class CMS_Controller extends MX_Controller
             $widgets = $this->__cms_widgets;
         }else{
             $widgets  = $this->cms_widgets($slug);
-        }        
+        }
+        if(!isset($widgets[$slug])) return '';
         $html = '<div class="cms-widget-slug-'.$slug.'">';
         foreach($widgets[$slug] as $widget){                
             $html.= '<div class="cms-widget-container">';

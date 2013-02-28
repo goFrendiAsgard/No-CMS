@@ -21,7 +21,8 @@ class Install extends CMS_Module_Installer {
     
     // OVERRIDE THIS FUNCTION TO PROVIDE "Module Setting" FEATURE
     public function setting(){
-        parent::setting();
+        require_once(BASEPATH.'../modules/{{ save_project_name }}/helpers/module_helper.php');
+        parent::setting();        
     }
 
     // ACTIVATION
