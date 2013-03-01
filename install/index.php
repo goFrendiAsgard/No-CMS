@@ -7,6 +7,7 @@ $foursquare_callback_url = get_callback_url('Foursquare');
 ?>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install No-CMS</title>
     <link rel="stylesheet" type="text/css" href="assets/style.css" />
     <link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap.min.css" />
 
@@ -215,6 +216,13 @@ $foursquare_callback_url = get_callback_url('Foursquare');
 			               <p class="help-block">Database schema (will be created if not exists)</p>
 			           </div>
 			        </div>
+			        <div class="control-group">
+                       <label class="control-label" for="db_table_prefix">Table Prefix</label>
+                       <div class="controls">
+                           <input type="text" id="db_table_prefix" name="db_table_prefix" value="cms" class="input-xlarge input" />
+                           <p class="help-block">Database table prefix</p>
+                       </div>
+                    </div>
 			        <div>                    
 	                    <a class="btn btn-primary" href="#admin">Next Step</a>
 	                </div>

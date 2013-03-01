@@ -230,11 +230,12 @@ function is_mod_rewrite_active()
 
 function check_all($install = NULL)
 {
-    $db_server   = get_input("db_server");
-    $db_port     = get_input("db_port");
-    $db_username = get_input("db_username");
-    $db_password = get_input("db_password");
-    $db_schema   = get_input("db_schema");
+    $db_server           = get_input("db_server");
+    $db_port             = get_input("db_port");
+    $db_username         = get_input("db_username");
+    $db_password         = get_input("db_password");
+    $db_schema           = get_input("db_schema");
+    $db_table_prefix     = get_input("db_table_prefix");
     
     $adm_username        = get_secure_input("adm_username");
     $adm_email           = get_secure_input("adm_email");
@@ -242,8 +243,8 @@ function check_all($install = NULL)
     $adm_password        = get_secure_input("adm_password");
     $adm_confirmpassword = get_secure_input("adm_confirmpassword");
     
-    $hide_index       = get_secure_input("hide_index");
-    $gzip_compression = get_secure_input("gzip_compression");
+    $hide_index          = get_secure_input("hide_index");
+    $gzip_compression    = get_secure_input("gzip_compression");
     
     $auth_enable_facebook         = get_secure_input("auth_enable_facebook");
     $auth_facebook_app_id         = get_secure_input("auth_facebook_app_id");
@@ -294,17 +295,9 @@ function check_all($install = NULL)
         $success  = FALSE;
         $errors[] = "Asset cache directory (assets/caches) is not writable";
     }
-    if (!is_writable('../application/config/database.php')) {
+    if (!is_writable('../application/config')) {
         $success  = FALSE;
-        $errors[] = "application/config/database.php is not writable";
-    }
-    if (!is_writable('../application/config/routes.php')) {
-        $success  = FALSE;
-        $errors[] = "application/config/routes.php is not writable";
-    }
-    if (!is_writable('../application/config/config.php')) {
-        $success  = FALSE;
-        $errors[] = "application/config/config.php is not writable";
+        $errors[] = "application/config is not writable";
     }
     if (!is_writable('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js')) {
         $success  = FALSE;
@@ -384,18 +377,30 @@ function check_all($install = NULL)
                 mysql_select_db($db_schema, $db_connection);
             }
             
+            // cms_config
+            $cms_config = file_get_contents('./resources/cms_config.php');
+            $cms_config = replace($cms_config, array(
+                '{{ db_table_prefix }}',
+            ), array(
+                $db_table_prefix,
+            ));
+            file_put_contents('../application/config/cms_config.php', $cms_config);
+            @chmod('../application/config/cms_config.php', 0555);
+            
             // database.sql
             $sql     = file_get_contents('./resources/database.sql');
             $sql     = replace($sql, array(
                 '{{ adm_username }}',
                 '{{ adm_email }}',
                 '{{ adm_password }}',
-                '{{ adm_realname }}'
+                '{{ adm_realname }}',
+                '{{ db_table_prefix }}',
             ), array(
                 $adm_username,
                 $adm_email,
                 md5($adm_password),
-                $adm_realname
+                $adm_realname,
+                $db_table_prefix == ''? '': $db_table_prefix.'_',
             ));
             $queries = explode('/*split*/', $sql);
             foreach ($queries as $query) {
@@ -440,22 +445,16 @@ function check_all($install = NULL)
             // config.php
             $key_config     = array();
             $replace_config = array();
-            if ($gzip_compression != "") {
-                $key_config[]     = '{{ gzip }}';
-                $replace_config[] = 'TRUE';
-            } else {
-                $key_config[]     = '{{ gzip }}';
-                $replace_config[] = 'FALSE';
-            }
-            if ($hide_index !== "") {
-                $key_config[]     = '{{ index_page }}';
-                $replace_config[] = '';
-            } else {
-                $key_config[]     = '{{ index_page }}';
-                $replace_config[] = 'index.php';
-            }
             $str = file_get_contents('./resources/config.php');
-            $str = replace($str, $key_config, $replace_config);
+            $str = replace($str, array(
+                '{{ gzip }}',
+                '{{ index_page }}',
+                '{{ db_table_prefix }}'
+            ), array(
+                $gzip_compression != ''? 'TRUE' : 'FALSE',
+                $hide_index != ''? '' : 'index.php',
+                $db_table_prefix == ''? '': $db_table_prefix.'_',
+            ));
             file_put_contents('../application/config/config.php', $str);
             @chmod('../application/config/config.php', 0555);
             

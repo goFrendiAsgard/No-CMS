@@ -19,6 +19,7 @@ class CMS_Model extends CI_Model
         $this->load->helper('form');
         $this->load->library('user_agent');
         $this->load->library('session');
+        $this->load->helper('cms_helper');
         $this->load->library('form_validation');
         $this->load->database();
         
@@ -152,18 +153,18 @@ class CMS_Model extends CI_Model
                         (
                             (authorization_id = 4 AND $login) AND 
                             (
-                                (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                     OR $super_user OR
-                                (SELECT COUNT(*) FROM cms_group_navigation AS gn
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
                                     WHERE 
                                         gn.navigation_id=n.navigation_id AND
                                         gn.group_id IN 
-                                            (SELECT group_id FROM cms_group_user WHERE user_id = '" . addslashes($user_id) . "')
+                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
                                 )>0
                             )
                         )
 					) AS allowed
-                FROM cms_navigation AS n WHERE
+                FROM ".cms_table_name('main_navigation')." AS n WHERE
                     $where_is_root ORDER BY n.index");
         $result        = array();
         foreach ($query->result() as $row) {
@@ -215,8 +216,8 @@ class CMS_Model extends CI_Model
         
         $query  = $this->db->query("SELECT q.navigation_id, navigation_name, is_static, title, description, url 
                         FROM 
-                        	cms_navigation AS n,
-                        	cms_quicklink AS q 
+                        	".cms_table_name('main_navigation')." AS n,
+                        	".cms_table_name('main_quicklink')." AS q 
                         WHERE
                         	(
                         		q.navigation_id = n.navigation_id
@@ -229,13 +230,13 @@ class CMS_Model extends CI_Model
                                 (
                                     (authorization_id = 4 AND $login) AND 
                                     (
-                                        (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                             OR $super_user OR
-                                        (SELECT COUNT(*) FROM cms_group_navigation AS gn
+                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
                                             WHERE 
                                                 gn.navigation_id=n.navigation_id AND
                                                 gn.group_id IN 
-                                                    (SELECT group_id FROM cms_group_user WHERE user_id = '" . addslashes($user_id) . "')
+                                                    (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
                                         )>0
                                     )
                                 )
@@ -281,7 +282,7 @@ class CMS_Model extends CI_Model
         $query  = $this->db->query("SELECT 
         			widget_id, widget_name, is_static, title, 
         			description, url, slug, static_content 
-                FROM cms_widget AS w WHERE
+                FROM ".cms_table_name('main_widget')." AS w WHERE
                     (                        
                         (authorization_id = 1) OR
                         (authorization_id = 2 AND $not_login) OR
@@ -289,13 +290,13 @@ class CMS_Model extends CI_Model
                         (
                             (authorization_id = 4 AND $login) AND 
                             (
-                                (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                     OR $super_user OR
-                                (SELECT COUNT(*) FROM cms_group_widget AS gw
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_widget')." AS gw
                                     WHERE 
                                         gw.widget_id=w.widget_id AND
                                         gw.group_id IN 
-                                            (SELECT group_id FROM cms_group_user WHERE user_id = '" . addslashes($user_id) . "')
+                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
                                 )>0
                             )
                         )
@@ -372,7 +373,7 @@ class CMS_Model extends CI_Model
         if (!isset($navigation_name)) {
             $submenus = $this->cms_navigations(NULL, 1);
         } else {
-            $query = $this->db->select('navigation_id')->from('cms_navigation')->where('navigation_name', $navigation_name)->get();
+            $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))->where('navigation_name', $navigation_name)->get();
             if ($query->num_rows() == 0) {
                 return '';
             } else {
@@ -443,9 +444,9 @@ class CMS_Model extends CI_Model
         if (!$navigation_name)
             return false;
         $query = $this->db->query("SELECT navigation_id, navigation_name, title, description, url  
-                    FROM cms_navigation 
+                    FROM ".cms_table_name('main_navigation')."
                     WHERE navigation_id = (
-                        SELECT parent_id FROM cms_navigation
+                        SELECT parent_id FROM ".cms_table_name('main_navigation')."
                         WHERE navigation_name = '" . addslashes($navigation_name) . "'
                     )");
         if ($query->num_rows == 0)
@@ -473,7 +474,7 @@ class CMS_Model extends CI_Model
         if (!$navigation_name)
             return false;
         $query = $this->db->query("SELECT navigation_id, navigation_name, title, description, url 
-                    FROM cms_navigation 
+                    FROM ".cms_table_name('main_navigation')." 
                     WHERE navigation_name = '" . addslashes($navigation_name) . "'");
         if ($query->num_rows == 0)
             return false;
@@ -529,20 +530,20 @@ class CMS_Model extends CI_Model
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
         
         $query  = $this->db->query("SELECT privilege_name, title, description 
-                FROM cms_privilege AS p WHERE
+                FROM ".cms_table_name('main_privilege')." AS p WHERE
                     (authorization_id = 1) OR
                     (authorization_id = 2 AND $not_login) OR
                     (authorization_id = 3 AND $login) OR
                     (
                         (authorization_id = 4 AND $login AND 
                         (
-                            (SELECT COUNT(*) FROM cms_group_user AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                            (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                 OR $super_user OR
-                            (SELECT COUNT(*) FROM cms_group_privilege AS gp
+                            (SELECT COUNT(*) FROM ".cms_table_name('main_group_privilege')." AS gp
                                 WHERE 
                                     gp.privilege_id=p.privilege_id AND
                                     gp.group_id IN 
-                                        (SELECT group_id FROM cms_group_user WHERE user_id = '" . addslashes($user_id) . "')
+                                        (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
                             )>0)
                         )
                     )");
@@ -614,7 +615,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_do_login($identity, $password)
     {
-        $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM cms_user WHERE
+        $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".cms_table_name('main_user')." WHERE
                     (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
                     password = '" . md5($password) . "' AND
                     active = TRUE");
@@ -659,7 +660,7 @@ class CMS_Model extends CI_Model
             "password" => md5($password),
             "active" => !$need_activation // depend on activation needed or not
         );
-        $this->db->insert('cms_user', $data);
+        $this->db->insert(cms_table_name('main_user'), $data);
         // send activation code if needed
         if ($need_activation) {
             $this->cms_generate_activation_code($user_name, TRUE, 'SIGNUP');
@@ -689,7 +690,7 @@ class CMS_Model extends CI_Model
         $where = array(
             "user_name" => $user_name
         );
-        $this->db->update('cms_user', $data, $where);
+        $this->db->update(cms_table_name('main_user'), $data, $where);
     }
     
     /**
@@ -700,7 +701,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_is_module_active($module_name)
     {
-        $query = $this->db->query("SELECT module_id FROM cms_module WHERE module_name = '" . addslashes($module_name) . "'");
+        $query = $this->db->query("SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name = '" . addslashes($module_name) . "'");
         if ($query->num_rows() > 0) {
             return true;
         } else {
@@ -759,7 +760,7 @@ class CMS_Model extends CI_Model
         if (!isset($module_name)) {
             return $this->router->fetch_module();
         } else {
-            $SQL   = "SELECT module_path FROM cms_module WHERE module_name='" . addslashes($module_name) . "'";
+            $SQL   = "SELECT module_path FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($module_name) . "'";
             $query = $this->db->query($SQL);
             if ($query->num_rows() > 0) {
                 $row = $query->row();
@@ -778,7 +779,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_module_name($module_path)
     {
-        $SQL   = "SELECT module_name FROM cms_module WHERE module_path='" . addslashes($module_path) . "'";
+        $SQL   = "SELECT module_name FROM ".cms_table_name('main_module')." WHERE module_path='" . addslashes($module_path) . "'";
         $query = $this->db->query($SQL);
         if ($query->num_rows() > 0) {
             $row = $query->row();
@@ -829,7 +830,7 @@ class CMS_Model extends CI_Model
             $where_active = 'active = TRUE';
         }
         // generate query
-        $query = $this->db->query("SELECT user_name, real_name, user_id, email FROM cms_user WHERE
+        $query = $this->db->query("SELECT user_name, real_name, user_id, email FROM ".cms_table_name('main_user')." WHERE
                     (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
                     $where_active");
         if ($query->num_rows() > 0) {
@@ -847,7 +848,7 @@ class CMS_Model extends CI_Model
             $where = array(
                 "user_id" => $user_id
             );
-            $this->db->update('cms_user', $data, $where);
+            $this->db->update(cms_table_name('main_user'), $data, $where);
             $this->load->library('email');
             if ($send_mail) {
                 //prepare activation email to user
@@ -884,7 +885,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_activate_account($activation_code, $new_password = NULL)
     {
-        $query = $this->db->query("SELECT user_id FROM cms_user WHERE
+        $query = $this->db->query("SELECT user_id FROM ".cms_table_name('main_user')." WHERE
                     (activation_code = '" . md5($activation_code) . "')");
         if ($query->num_rows() > 0) {
             $row     = $query->row();
@@ -900,7 +901,7 @@ class CMS_Model extends CI_Model
             $where = array(
                 "user_id" => $user_id
             );
-            $this->db->update('cms_user', $data, $where);
+            $this->db->update(cms_table_name('main_user'), $data, $where);
             return TRUE;
         } else {
             return FALSE;
@@ -959,7 +960,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_valid_activation_code($activation_code)
     {
-        $query = $this->db->query("SELECT activation_code FROM cms_user WHERE
+        $query = $this->db->query("SELECT activation_code FROM ".cms_table_name('main_user')." WHERE
                     (activation_code = '" . md5($activation_code) . "') AND
                     (activation_code IS NOT NULL)");
         if ($query->num_rows() > 0)
@@ -977,7 +978,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_set_config($name, $value, $description = NULL)
     {
-        $query = $this->db->query("SELECT config_id FROM cms_config WHERE
+        $query = $this->db->query("SELECT config_id FROM ".cms_table_name('main_config')." WHERE
                     config_name = '" . addslashes($name) . "'");
         if ($query->num_rows() > 0) {
             $data = array(
@@ -988,7 +989,7 @@ class CMS_Model extends CI_Model
             $where = array(
                 "config_name" => $name
             );
-            $this->db->update("cms_config", $data, $where);
+            $this->db->update(cms_table_name('main_config'), $data, $where);
         } else {
             $data = array(
                 "value" => $value,
@@ -996,7 +997,7 @@ class CMS_Model extends CI_Model
             );
             if (isset($description))
                 $data['description'] = $description;
-            $this->db->insert("cms_config", $data);
+            $this->db->insert(cms_table_name('main_config'), $data);
         }
         // save as __cms_model_properties too
         $this->__cms_model_properties['config'][$name] = $value;
@@ -1012,7 +1013,7 @@ class CMS_Model extends CI_Model
         $where = array(
             "config_name" => $name
         );
-        $query = $this->db->delete("cms_config", $where);
+        $query = $this->db->delete(cms_table_name('main_config'), $where);
     }
     
     /**
@@ -1025,7 +1026,7 @@ class CMS_Model extends CI_Model
     {
         $value = '';
         if (!isset($this->__cms_model_properties['config'][$name])) {
-            $query  = $this->db->query("SELECT `value` FROM cms_config WHERE
+            $query  = $this->db->query("SELECT `value` FROM ".cms_table_name('main_config')." WHERE
 	                    config_name = '" . addslashes($name) . "'");
             if($query->num_rows()>0){
                 $row    = $query->row();
@@ -1261,7 +1262,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_is_user_exists($username)
     {
-        $SQL      = "SELECT user_name FROM cms_user WHERE user_name='" . addslashes($username) . "'";
+        $SQL      = "SELECT user_name FROM ".cms_table_name('main_user')." WHERE user_name='" . addslashes($username) . "'";
         $query    = $this->db->query($SQL);
         $num_rows = $query->num_rows();
         return $num_rows > 0;
@@ -1424,7 +1425,7 @@ class CMS_Model extends CI_Model
         
         
         $user_id = $this->cms_user_id();
-        $query   = $this->db->select('user_id')->from('cms_user')->where('auth_' . $provider, $identifier)->get();
+        $query   = $this->db->select('user_id')->from(cms_table_name('main_user'))->where('auth_' . $provider, $identifier)->get();
         if ($query->num_rows() > 0) { // get user_id based on auth field
             $row     = $query->row();
             $user_id = $row->user_id;
@@ -1433,7 +1434,7 @@ class CMS_Model extends CI_Model
             $third_party_display_name = $status[$provider]['firstName'];
             // if email match with the database, set $user_id		
             if ($user_id == FALSE) {
-                $query = $this->db->select('user_id')->from('cms_user')->where('email', $third_party_email)->get();
+                $query = $this->db->select('user_id')->from(cms_table_name('main_user'))->where('email', $third_party_email)->get();
                 if ($query->num_rows() > 0) {
                     $row     = $query->row();
                     $user_id = $row->user_id;
@@ -1447,16 +1448,16 @@ class CMS_Model extends CI_Model
                 $where = array(
                     'user_id' => $user_id
                 );
-                $this->db->update('cms_user', $data, $where);
+                $this->db->update(cms_table_name('main_user'), $data, $where);
             } else { // if not already login, register provider and id to the database
                 $new_user_name = $third_party_display_name;
                 
                 // ensure there is no duplicate user name
                 $duplicate = TRUE;
                 while ($duplicate) {
-                    $query = $this->db->select('user_name')->from('cms_user')->where('user_name', $new_user_name)->get();
+                    $query = $this->db->select('user_name')->from(cms_table_name('main_user'))->where('user_name', $new_user_name)->get();
                     if ($query->num_rows() > 0) {
-                        $query         = $this->db->select('user_name')->from('cms_user')->get();
+                        $query         = $this->db->select('user_name')->from(cms_table_name('main_user'))->get();
                         $user_count    = $query->num_rows();
                         $new_user_name = 'user_' . $user_count . ' (' . $new_user_name . ')';
                     } else {
@@ -1470,7 +1471,7 @@ class CMS_Model extends CI_Model
                     'email' => $third_party_email,
                     'auth_' . $provider => $identifier
                 );
-                $this->db->insert('cms_user', $data);
+                $this->db->insert(cms_table_name('main_user'), $data);
                 
                 // get user_id
                 $query = $this->db->select('user_id')->from('cms_user')->where('email', $third_party_email)->get();
@@ -1483,7 +1484,7 @@ class CMS_Model extends CI_Model
         
         
         // set cms_user_id, cms_user_name, cms_user_email, cms_user_real_name, just as when login from the normal way
-        $query = $this->db->select('user_id, user_name, email, real_name')->from('cms_user')->where('user_id', $user_id)->get();
+        $query = $this->db->select('user_id, user_name, email, real_name')->from(cms_table_name('main_user'))->where('user_id', $user_id)->get();
         if ($query->num_rows() > 0) {
             $row = $query->row();
             $this->cms_user_id($row->user_id);

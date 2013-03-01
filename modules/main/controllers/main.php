@@ -254,7 +254,7 @@ class Main extends CMS_Controller
     public function change_profile()
     {
         $this->cms_guard_page('main_change_profile');
-        $SQL   = "SELECT user_name, email, real_name FROM cms_user WHERE user_id = " . $this->cms_user_id();
+        $SQL   = "SELECT user_name, email, real_name FROM ".cms_table_name('main_user')." WHERE user_id = " . $this->cms_user_id();
         $query = $this->db->query($SQL);
         $row   = $query->row();
         
@@ -355,7 +355,7 @@ class Main extends CMS_Controller
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
         
-        $crud->set_table('cms_authorization');
+        $crud->set_table(cms_table_name('main_authorization'));
         $crud->set_subject('Authorization');
         
         $crud->columns('authorization_id', 'authorization_name', 'description');
@@ -383,7 +383,7 @@ class Main extends CMS_Controller
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
         
-        $crud->set_table('cms_user');
+        $crud->set_table(cms_table_name('main_user'));
         $crud->set_subject('User');
         
         $crud->required_fields('user_name');
@@ -395,7 +395,7 @@ class Main extends CMS_Controller
         
         $crud->display_as('user_name', 'User Name')->display_as('email', 'E mail')->display_as('real_name', 'Real Name')->display_as('active', 'Active')->display_as('groups', 'Groups');
         
-        $crud->set_relation_n_n('groups', 'cms_group_user', 'cms_group', 'user_id', 'group_id', 'group_name');
+        $crud->set_relation_n_n('groups', cms_table_name('main_group_user'), cms_table_name('main_group'), 'user_id', 'group_id', 'group_name');
         $crud->callback_before_insert(array(
             $this,
             'before_insert_user'
@@ -454,7 +454,7 @@ class Main extends CMS_Controller
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
         
-        $crud->set_table('cms_group');
+        $crud->set_table(cms_table_name('main_group'));
         $crud->set_subject('User Group');
         
         $crud->required_fields('group_name');
@@ -465,9 +465,9 @@ class Main extends CMS_Controller
         $crud->display_as('group_name', 'Group')->display_as('description', 'Description')->display_as('users', 'Users')->display_as('navigations', 'Navigations')->display_as('privileges', 'Privileges');
         
         
-        $crud->set_relation_n_n('users', 'cms_group_user', 'cms_user', 'group_id', 'user_id', 'user_name');
-        $crud->set_relation_n_n('navigations', 'cms_group_navigation', 'cms_navigation', 'group_id', 'navigation_id', 'navigation_name');
-        $crud->set_relation_n_n('privileges', 'cms_group_privilege', 'cms_privilege', 'group_id', 'privilege_id', 'privilege_name');
+        $crud->set_relation_n_n('users', cms_table_name('main_group_user'), cms_table_name('main_user'), 'group_id', 'user_id', 'user_name');
+        $crud->set_relation_n_n('navigations', cms_table_name('main_group_navigation'), cms_table_name('main_navigation'), 'group_id', 'navigation_id', 'navigation_name');
+        $crud->set_relation_n_n('privileges', cms_table_name('main_group_privilege'), cms_table_name('main_privilege'), 'group_id', 'privilege_id', 'privilege_name');
         $crud->callback_before_delete(array(
             $this,
             'before_delete_group'
@@ -487,7 +487,7 @@ class Main extends CMS_Controller
     
     public function before_delete_group($primary_key)
     {
-        $SQL   = "SELECT user_id FROM cms_group_user WHERE group_id =" . $primary_key . ";";
+        $SQL   = "SELECT user_id FROM ".cms_table_name('main_group_user')." WHERE group_id =" . $primary_key . ";";
         $query = $this->db->query($SQL);
         $count = $query->num_rows();
         
@@ -505,7 +505,7 @@ class Main extends CMS_Controller
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
         
-        $crud->set_table('cms_navigation');
+        $crud->set_table(cms_table_name('main_navigation'));
         $crud->set_subject('Navigation (Page)');
         
         $crud->required_fields('navigation_name');
@@ -529,10 +529,10 @@ class Main extends CMS_Controller
         $crud->unset_texteditor('description');
         $crud->field_type('only_content', 'true_false');
         
-        $crud->set_relation('parent_id', '`cms_navigation`', '`navigation_name`');
-        $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name');
+        $crud->set_relation('parent_id', cms_table_name('main_navigation'), '`navigation_name`');
+        $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name');
         
-        $crud->set_relation_n_n('groups', 'cms_group_navigation', 'cms_group', 'navigation_id', 'group_id', 'group_name');
+        $crud->set_relation_n_n('groups', cms_table_name('main_group_navigation'), cms_table_name('main_group'), 'navigation_id', 'group_id', 'group_name');
         
         $crud->callback_column('active', array(
             $this,
@@ -558,7 +558,7 @@ class Main extends CMS_Controller
     public function before_insert_navigation($post_array)
     {
         //get parent's navigation_id
-        $SQL   = "SELECT navigation_id FROM cms_navigation WHERE navigation_id='" . $post_array['parent_id'] . "'";
+        $SQL   = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_id='" . $post_array['parent_id'] . "'";
         $query = $this->db->query($SQL);
         $row   = $query->row();
         
@@ -570,7 +570,7 @@ class Main extends CMS_Controller
         } else {
             $whereParentId = "(parent_id IS NULL)";
         }
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `cms_navigation` WHERE $whereParentId";
+        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_navigation')."` WHERE $whereParentId";
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
@@ -588,7 +588,7 @@ class Main extends CMS_Controller
     
     public function before_delete_navigation($primary_key)
     {
-        $this->db->delete('cms_quicklink', array(
+        $this->db->delete(cms_table_name('main_quicklink'), array(
             'navigation_id' => $primary_key
         ));
     }
@@ -606,12 +606,12 @@ class Main extends CMS_Controller
     public function toggle_navigation_active($navigation_id)
     {
         if ($this->input->is_ajax_request()) {
-            $this->db->select('active')->from('cms_navigation')->where('navigation_id', $navigation_id);
+            $this->db->select('active')->from(cms_table_name('main_navigation'))->where('navigation_id', $navigation_id);
             $query = $this->db->get();
             if ($query->num_rows() > 0) {
                 $row       = $query->row();
                 $new_value = ($row->active == 0) ? 1 : 0;
-                $this->db->update('cms_navigation', array(
+                $this->db->update(cms_table_name('main_navigation'), array(
                     'active' => $new_value
                 ), array(
                     'navigation_id' => $navigation_id
@@ -634,7 +634,7 @@ class Main extends CMS_Controller
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
         
-        $crud->set_table('cms_quicklink');
+        $crud->set_table(cms_table_name('main_quicklink'));
         $crud->set_subject('Quick Link');
         
         $crud->required_fields('navigation_id');
@@ -647,7 +647,7 @@ class Main extends CMS_Controller
         
         $crud->order_by('index', 'asc');
         
-        $crud->set_relation('navigation_id', 'cms_navigation', 'navigation_name');
+        $crud->set_relation('navigation_id', cms_table_name('main_navigation'), 'navigation_name');
         
         $crud->callback_before_insert(array(
             $this,
@@ -663,7 +663,7 @@ class Main extends CMS_Controller
     
     public function before_insert_quicklink($post_array)
     {
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `cms_quicklink`";
+        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_quicklink')."`";
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
@@ -683,14 +683,14 @@ class Main extends CMS_Controller
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
         
-        $crud->set_table('cms_privilege');
+        $crud->set_table(cms_table_name('main_privilege'));
         $crud->set_subject('Privilege');
         
         $crud->required_fields('privilege_name');
         
-        $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name'); //, 'groups');
+        $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name'); //, 'groups');
         
-        $crud->set_relation_n_n('groups', 'cms_group_privilege', 'cms_group', 'privilege_id', 'group_id', 'group_name');
+        $crud->set_relation_n_n('groups', cms_table_name('main_group_privilege'), cms_table_name('main_group'), 'privilege_id', 'group_id', 'group_name');
         
         $crud->display_as('authorization_id', 'Authorization');
         
@@ -710,7 +710,7 @@ class Main extends CMS_Controller
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
         
-        $crud->set_table('cms_widget');
+        $crud->set_table(cms_table_name('main_widget'));
         $crud->set_subject('Widget');
         
         $crud->required_fields('widget_name');
@@ -727,9 +727,9 @@ class Main extends CMS_Controller
         $crud->unset_texteditor('static_content');
         $crud->unset_texteditor('description');
         
-        $crud->set_relation('authorization_id', 'cms_authorization', 'authorization_name');
+        $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name');
         
-        $crud->set_relation_n_n('groups', 'cms_group_widget', 'cms_group', 'widget_id', 'group_id', 'group_name');
+        $crud->set_relation_n_n('groups', cms_table_name('main_group_widget'), cms_table_name('main_group'), 'widget_id', 'group_id', 'group_name');
         
         $crud->callback_before_insert(array(
             $this,
@@ -755,7 +755,7 @@ class Main extends CMS_Controller
         } else {
             $whereSlug = "(slug IS NULL)";
         }
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `cms_widget` WHERE $whereSlug";
+        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_widget')."` WHERE $whereSlug";
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
@@ -785,7 +785,7 @@ class Main extends CMS_Controller
     public function toggle_widget_active($widget_id)
     {
         if ($this->input->is_ajax_request()) {
-            $this->db->select('active')->from('cms_widget')->where('widget_id', $widget_id);
+            $this->db->select('active')->from(cms_table_name('main_widget'))->where('widget_id', $widget_id);
             $query = $this->db->get();
             if ($query->num_rows() > 0) {
                 $row       = $query->row();
@@ -813,7 +813,7 @@ class Main extends CMS_Controller
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
         
-        $crud->set_table('cms_config');
+        $crud->set_table(cms_table_name('main_config'));
         $crud->set_subject('Configuration');
         
         $crud->required_fields('config_name');

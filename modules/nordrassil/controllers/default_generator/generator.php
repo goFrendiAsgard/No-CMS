@@ -198,7 +198,7 @@ class Generator extends CMS_Controller{
 			$project_path = dirname(BASEPATH).'/modules/'.underscore($this->project_name).'/';
 			
 			$this->create_directory();
-            $this->create_config_and_helper();
+            $this->create_config();
 			$this->create_install_db_file();
 			$this->create_uninstall_db_file();
 			$this->create_installer();
@@ -646,14 +646,6 @@ class Generator extends CMS_Controller{
         $replacement = array($stripped_table_prefix);
         $str = $this->nds->read_view('default_generator/config', NULL, $pattern, $replacement);
         $this->nds->write_file($this->project_path.'config/config.php', $str);
-        
-        ////////////////////////////////////////////////////////////////
-        // create helper
-        ////////////////////////////////////////////////////////////////
-        $pattern = array('project_name');
-        $replacement = array(underscore($this->project_name));
-        $str = $this->nds->read_view('default_generator/module_helper', NULL, $pattern, $replacement);
-        $this->nds->write_file($this->project_path.'helpers/module_helper.php', $str);
     }
 
 	private function create_directory(){

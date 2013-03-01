@@ -1,39 +1,35 @@
-DROP TABLE IF EXISTS `cms_config`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_config`;
 /*split*/
-DROP TABLE IF EXISTS `cms_module_dependency`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_module_dependency`;
 /*split*/
-DROP TABLE IF EXISTS `cms_module`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_module`;
 /*split*/
-DROP TABLE IF EXISTS `cms_group_privilege`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_group_privilege`;
 /*split*/
-DROP TABLE IF EXISTS `cms_group_navigation`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_group_navigation`;
 /*split*/
-DROP TABLE IF EXISTS `cms_group_widget`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_group_widget`;
 /*split*/
-DROP TABLE IF EXISTS `cms_group_user`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_group_user`;
 /*split*/
-DROP TABLE IF EXISTS `cms_group`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_group`;
 /*split*/
-DROP TABLE IF EXISTS `cms_quicklink`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_quicklink`;
 /*split*/
-DROP TABLE IF EXISTS `cms_navigation`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_navigation`;
 /*split*/
-DROP TABLE IF EXISTS `cms_widget`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_widget`;
 /*split*/
-DROP TABLE IF EXISTS `cms_privilege`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_privilege`;
 /*split*/
-DROP TABLE IF EXISTS `cms_user`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_user`;
 /*split*/
-DROP TABLE IF EXISTS `cms_authorization`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}main_authorization`;
 /*split*/
-DROP TABLE IF EXISTS `ci_sessions`;
-/*split*/
-DROP TABLE IF EXISTS `help_topic`;
-/*split*/
-DROP TABLE IF EXISTS `help_group`;
+DROP TABLE IF EXISTS `{{ db_table_prefix }}ci_sessions`;
 /*split*/
 
-CREATE TABLE `cms_authorization` (
+CREATE TABLE `{{ db_table_prefix }}main_authorization` (
   `authorization_id` tinyint(4) unsigned NOT NULL AUTO_INCREMENT,
   `authorization_name` varchar(45) DEFAULT NULL,
   `description` text,
@@ -42,7 +38,7 @@ CREATE TABLE `cms_authorization` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_group` (
+CREATE TABLE `{{ db_table_prefix }}main_group` (
   `group_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `group_name` varchar(45) NOT NULL,
   `description` text,
@@ -51,7 +47,7 @@ CREATE TABLE `cms_group` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_widget` (
+CREATE TABLE `{{ db_table_prefix }}main_widget` (
   `widget_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `widget_name` varchar(45) NOT NULL,
   `title` varchar(50) NOT NULL,
@@ -66,11 +62,11 @@ CREATE TABLE `cms_widget` (
   PRIMARY KEY (`widget_id`),
   UNIQUE KEY `widget_name` (`widget_name`),
   KEY `authorization_id` (`authorization_id`),
-  CONSTRAINT `cms_widget_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
+  CONSTRAINT `{{ db_table_prefix }}main_widget_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `{{ db_table_prefix }}main_authorization` (`authorization_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE IF NOT EXISTS `cms_navigation` (
+CREATE TABLE IF NOT EXISTS `{{ db_table_prefix }}main_navigation` (
   `navigation_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `navigation_name` varchar(45) NOT NULL,
   `parent_id` int(20) unsigned DEFAULT NULL,
@@ -90,21 +86,21 @@ CREATE TABLE IF NOT EXISTS `cms_navigation` (
   UNIQUE KEY `navigation_name` (`navigation_name`),
   KEY `parent_id` (`parent_id`),
   KEY `authorization_id` (`authorization_id`),
-  CONSTRAINT `cms_navigation_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
+  CONSTRAINT `{{ db_table_prefix }}main_navigation_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `{{ db_table_prefix }}main_authorization` (`authorization_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_quicklink` (
+CREATE TABLE `{{ db_table_prefix }}main_quicklink` (
   `quicklink_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `navigation_id` int(20) unsigned NOT NULL,
   `index` int(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`quicklink_id`),
   UNIQUE KEY `navigation_id` (`navigation_id`),
-  CONSTRAINT `cms_quicklink_ibfk_1` FOREIGN KEY (`navigation_id`) REFERENCES `cms_navigation` (`navigation_id`)
+  CONSTRAINT `{{ db_table_prefix }}main_quicklink_ibfk_1` FOREIGN KEY (`navigation_id`) REFERENCES `{{ db_table_prefix }}main_navigation` (`navigation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_privilege` (
+CREATE TABLE `{{ db_table_prefix }}main_privilege` (
   `privilege_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `privilege_name` varchar(45) NOT NULL,
   `title` varchar(45) DEFAULT NULL,
@@ -113,11 +109,11 @@ CREATE TABLE `cms_privilege` (
   PRIMARY KEY (`privilege_id`),
   UNIQUE KEY `privilege_name` (`privilege_name`),
   KEY `authorization_id` (`authorization_id`),
-  CONSTRAINT `cms_privilege_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `cms_authorization` (`authorization_id`)
+  CONSTRAINT `{{ db_table_prefix }}main_privilege_ibfk_1` FOREIGN KEY (`authorization_id`) REFERENCES `{{ db_table_prefix }}main_authorization` (`authorization_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_user` (
+CREATE TABLE `{{ db_table_prefix }}main_user` (
   `user_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_name` varchar(45) NULL,
   `email` varchar(45) NULL,
@@ -139,51 +135,51 @@ CREATE TABLE `cms_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_group_widget` (
+CREATE TABLE `{{ db_table_prefix }}main_group_widget` (
   `group_id` int(20) unsigned NOT NULL,
   `widget_id` int(20) unsigned NOT NULL,
   PRIMARY KEY (`group_id`,`widget_id`),
   KEY `widget_id` (`widget_id`),
   KEY `group_id` (`group_id`),
-  CONSTRAINT `cms_group_widget_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `cms_group` (`group_id`),
-  CONSTRAINT `cms_group_widget_ibfk_2` FOREIGN KEY (`widget_id`) REFERENCES `cms_widget` (`widget_id`)
+  CONSTRAINT `{{ db_table_prefix }}main_group_widget_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `{{ db_table_prefix }}main_group` (`group_id`),
+  CONSTRAINT `{{ db_table_prefix }}main_group_widget_ibfk_2` FOREIGN KEY (`widget_id`) REFERENCES `{{ db_table_prefix }}main_widget` (`widget_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_group_navigation` (
+CREATE TABLE `{{ db_table_prefix }}main_group_navigation` (
   `group_id` int(20) unsigned NOT NULL,
   `navigation_id` int(20) unsigned NOT NULL,
   PRIMARY KEY (`group_id`,`navigation_id`),
   KEY `navigation_id` (`navigation_id`),
   KEY `group_id` (`group_id`),
-  CONSTRAINT `cms_group_navigation_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `cms_group` (`group_id`),
-  CONSTRAINT `cms_group_navigation_ibfk_2` FOREIGN KEY (`navigation_id`) REFERENCES `cms_navigation` (`navigation_id`)
+  CONSTRAINT `{{ db_table_prefix }}main_group_navigation_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `{{ db_table_prefix }}main_group` (`group_id`),
+  CONSTRAINT `{{ db_table_prefix }}main_group_navigation_ibfk_2` FOREIGN KEY (`navigation_id`) REFERENCES `{{ db_table_prefix }}main_navigation` (`navigation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_group_privilege` (
+CREATE TABLE `{{ db_table_prefix }}main_group_privilege` (
   `group_id` int(20) unsigned NOT NULL,
   `privilege_id` int(20) unsigned NOT NULL,
   PRIMARY KEY (`privilege_id`,`group_id`),
   KEY `group_id` (`group_id`),
   KEY `privilege_id` (`privilege_id`),
-  CONSTRAINT `cms_group_privilege_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `cms_group` (`group_id`),
-  CONSTRAINT `cms_group_privilege_ibfk_2` FOREIGN KEY (`privilege_id`) REFERENCES `cms_privilege` (`privilege_id`)
+  CONSTRAINT `{{ db_table_prefix }}main_group_privilege_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `{{ db_table_prefix }}main_group` (`group_id`),
+  CONSTRAINT `{{ db_table_prefix }}main_group_privilege_ibfk_2` FOREIGN KEY (`privilege_id`) REFERENCES `{{ db_table_prefix }}main_privilege` (`privilege_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_group_user` (
+CREATE TABLE `{{ db_table_prefix }}main_group_user` (
   `group_id` int(20) unsigned NOT NULL,
   `user_id` int(20) unsigned NOT NULL,
   PRIMARY KEY (`user_id`,`group_id`),
   KEY `group_id` (`group_id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `cms_group_user_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `cms_group` (`group_id`),
-  CONSTRAINT `cms_group_user_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `cms_user` (`user_id`)
+  CONSTRAINT `{{ db_table_prefix }}main_group_user_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `{{ db_table_prefix }}main_group` (`group_id`),
+  CONSTRAINT `{{ db_table_prefix }}main_group_user_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `{{ db_table_prefix }}main_user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_module` (
+CREATE TABLE `{{ db_table_prefix }}main_module` (
   `module_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `module_name` varchar(50) NOT NULL,
   `module_path` varchar(50) NOT NULL,
@@ -191,26 +187,26 @@ CREATE TABLE `cms_module` (
   `version` varchar(50) NULL,
   PRIMARY KEY (`module_id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `cms_module_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `cms_user` (`user_id`),
+  CONSTRAINT `{{ db_table_prefix }}main_module_user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `{{ db_table_prefix }}main_user` (`user_id`),
   UNIQUE KEY `module_path` (`module_path`),
   UNIQUE KEY `module_name` (`module_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_module_dependency` (
+CREATE TABLE `{{ db_table_prefix }}main_module_dependency` (
   `module_dependency_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `parent_id` int(20) unsigned NOT NULL,
   `child_id` int(20) unsigned NOT NULL,
   PRIMARY KEY (`module_dependency_id`),
   KEY `parent_id` (`parent_id`),
   KEY `child_id` (`child_id`),
-  CONSTRAINT `cms_module_dependency_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `cms_module` (`module_id`),
-  CONSTRAINT `cms_module_dependency_ibfk_2` FOREIGN KEY (`child_id`) REFERENCES `cms_module` (`module_id`),
+  CONSTRAINT `{{ db_table_prefix }}main_module_dependency_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `{{ db_table_prefix }}main_module` (`module_id`),
+  CONSTRAINT `{{ db_table_prefix }}main_module_dependency_ibfk_2` FOREIGN KEY (`child_id`) REFERENCES `{{ db_table_prefix }}main_module` (`module_id`),
   UNIQUE KEY `module_parent_child` (`parent_id`, `child_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE `cms_config` (
+CREATE TABLE `{{ db_table_prefix }}main_config` (
   `config_id` int(20) unsigned NOT NULL AUTO_INCREMENT,
   `config_name` varchar(50) NOT NULL,
   `value` text NULL,
@@ -220,7 +216,7 @@ CREATE TABLE `cms_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*split*/
 
-CREATE TABLE IF NOT EXISTS  `ci_sessions` (
+CREATE TABLE IF NOT EXISTS  `{{ db_table_prefix }}ci_sessions` (
     `session_id` varchar(40) DEFAULT '0' NOT NULL,
     `ip_address` varchar(16) DEFAULT '0' NOT NULL,
     `user_agent` varchar(120) NOT NULL,
@@ -231,42 +227,23 @@ CREATE TABLE IF NOT EXISTS  `ci_sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;;
 /*split*/
 
-CREATE TABLE IF NOT EXISTS `help_group` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(60) NOT NULL,
-  `content` text,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-/*split*/
-
-CREATE TABLE IF NOT EXISTS `help_topic` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `group_id` int(11) NOT NULL,
-  `title` varchar(60) NOT NULL,
-  `content` text NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `group_id` (`group_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
-/*split*/
-
-INSERT INTO `cms_authorization` (`authorization_id`, `authorization_name`, `description`) VALUES
+INSERT INTO `{{ db_table_prefix }}main_authorization` (`authorization_id`, `authorization_name`, `description`) VALUES
 (1, 'Everyone', 'All visitor of the web are permitted (e.g:view blog content)'),
 (2, 'Unauthenticated', 'Only non-member visitor, they who hasn''t log in yet (e.g:view member registration page)'),
 (3, 'Authenticated', 'Only member (e.g:change password)'),
 (4, 'Authorized', 'Only member with certain privilege (depend on group)');
 /*split*/
 
-INSERT INTO `cms_group` (`group_id`, `group_name`, `description`) VALUES
+INSERT INTO `{{ db_table_prefix }}main_group` (`group_id`, `group_name`, `description`) VALUES
 (1, 'Admin', 'Every member of this group can do everything possible, but only programmer can turn the impossible into real :D'),
 (2, 'Employee', 'Just an example, employee role');
 /*split*/
 
-INSERT INTO `cms_user` (`user_id`, `user_name`, `email`, `password`, `real_name`, `active`) VALUES
+INSERT INTO `{{ db_table_prefix }}main_user` (`user_id`, `user_name`, `email`, `password`, `real_name`, `active`) VALUES
 (1, '{{ adm_username }}', '{{ adm_email }}', '{{ adm_password }}', '{{ adm_realname }}', 1);
 /*split*/
 
-INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `page_title`, `page_keyword`, `description`, `url`, `authorization_id`, `index`, `active`, `is_static`, `static_content`, `only_content`) VALUES
+INSERT INTO `{{ db_table_prefix }}main_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `title`, `page_title`, `page_keyword`, `description`, `url`, `authorization_id`, `index`, `active`, `is_static`, `static_content`, `only_content`) VALUES
 (1, 'main_login', NULL, 'Login', 'Login', NULL, 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL, 0),
 (2, 'main_forgot', NULL, 'Forgot Password', 'Forgot', NULL, 'Accidentally forgot password', 'main/forgot', 2, 3, 1, 0, NULL, 0),
 (3, 'main_logout', NULL, 'Logout', 'Logout', NULL, 'Logout for deauthentication', 'main/logout', 3, 2, 1, 0, NULL, 0),
@@ -287,16 +264,16 @@ INSERT INTO `cms_navigation` (`navigation_id`, `navigation_name`, `parent_id`, `
 (18, 'main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', NULL, 'Third Party Authentication', 'main/hauth/index', 1, 0, 1, 0, NULL, 0);
 /*split*/
 
-INSERT INTO `cms_quicklink` (`quicklink_id`, `navigation_id`, `index`) VALUES
+INSERT INTO `{{ db_table_prefix }}main_quicklink` (`quicklink_id`, `navigation_id`, `index`) VALUES
 (1, 16, 0),
 (2, 5, 1),
 (3, 2, 2),
 (4, 4, 3);
 /*split*/
 
-INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`, `slug`) VALUES
-(1, 'login', 'Login', 'Visitor need to login for authentication', 'main/widget_login', 2, 1, 0, 0, '<form action="{{ site_url }}main/login" method="post" accept-charset="utf-8"><label>Identity</label><br><input type="text" name="identity" value=""><br><label>Password</label><br><input type="password" name="password" value=""><br><input type="submit" name="login" value="Log In"></form>', 'sidebar'),
-(2, 'logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 1, 1, 'Welcome {{ user_name }}<br />\n<a href="{{ site_url }}main/logout">logout</a><br />', 'sidebar'),
+INSERT INTO `{{ db_table_prefix }}main_widget` (`widget_id`, `widget_name`, `title`, `description`, `url`, `authorization_id`, `active`, `index`, `is_static`, `static_content`, `slug`) VALUES
+(1, 'login', 'Login', 'Visitor need to login for authentication', 'main/widget_login', 2, 1, 0, 0, '<form action="{{ site_url }}main/login" method="post" accept-charset="utf-8"><label>Identity</label><br><input type="text" name="identity" value=""><br><label>Password</label><br><input type="password" name="password" value=""><br><input type="submit" name="login" value="Log In"></form>', 'sidebar, user_widget'),
+(2, 'logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 1, 1, 'Welcome {{ user_name }}<br />\n<a href="{{ site_url }}main/logout">logout</a><br />', 'sidebar, user_widget'),
 (3, 'social_plugin', 'Share This Page !!', 'Addthis', 'main/widget_social_plugin', 1, 1, 2, 1, '<!-- AddThis Button BEGIN -->\n<div class="addthis_toolbox addthis_default_style "><a class="addthis_button_preferred_1"></a> <a class="addthis_button_preferred_2"></a> <a class="addthis_button_preferred_3"></a> <a class="addthis_button_preferred_4"></a> <a class="addthis_button_preferred_5"></a> <a class="addthis_button_preferred_6"></a> <a class="addthis_button_preferred_7"></a> <a class="addthis_button_preferred_8"></a> <a class="addthis_button_preferred_9"></a> <a class="addthis_button_preferred_10"></a> <a class="addthis_button_preferred_11"></a> <a class="addthis_button_preferred_12"></a> <a class="addthis_button_preferred_13"></a> <a class="addthis_button_preferred_14"></a> <a class="addthis_button_preferred_15"></a> <a class="addthis_button_preferred_16"></a> <a class="addthis_button_compact"></a> <a class="addthis_counter addthis_bubble_style"></a></div>\n<script src="http://s7.addthis.com/js/250/addthis_widget.js?domready=1" type="text/javascript"></script>\n<!-- AddThis Button END -->', 'sidebar'),
 (4, 'google_search', 'Search', 'Search from google', '', 1, 0, 3, 1, '<!-- Google Custom Search Element -->\n<div id="cse" style="width: 100%;">Loading</div>\n<script src="http://www.google.com/jsapi" type="text/javascript"></script>\n<script type="text/javascript">// <![CDATA[\n    google.load(''search'', ''1'');\n    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(''cse'');}, true);\n// ]]></script>', 'sidebar'),
 (5, 'google_translate', 'Translate !!', '<p>The famous google translate</p>', '', 1, 0, 4, 1, '<!-- Google Translate Element -->\n<div id="google_translate_element" style="display:block"></div>\n<script>\nfunction googleTranslateElementInit() {\n  new google.translate.TranslateElement({pageLanguage: "af"}, "google_translate_element");\n};\n</script>\n<script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>\n', 'sidebar'),
@@ -306,12 +283,12 @@ INSERT INTO `cms_widget` (`widget_id`, `widget_name`, `title`, `description`, `u
 
 /*split*/
 
-INSERT INTO `cms_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES
+INSERT INTO `{{ db_table_prefix }}main_privilege` (`privilege_id`, `privilege_name`, `title`, `description`, `authorization_id`) VALUES
 (1, 'cms_install_module', 'Install Module', 'Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You''d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)\n&nbsp;', 4),
 (2, 'cms_manage_access', 'Manage Access', 'Manage access\n&nbsp;', 4);
 /*split*/
 
-INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VALUES
+INSERT INTO `{{ db_table_prefix }}main_config` (`config_id`, `config_name`, `value`, `description`) VALUES
 (1, 'site_name', 'No-CMS', 'Site title'),
 (2, 'site_slogan', 'A Free CodeIgniter Based CMS Framework', 'Site slogan'),
 (3, 'site_logo', '{{ base_url }}assets/nocms/images/No-CMS-logo.png', 'Site logo'),
@@ -346,5 +323,5 @@ INSERT INTO `cms_config` (`config_id`, `config_name`, `value`, `description`) VA
 (32, 'cms_google_analytic_property_id', '', 'Google analytics property ID (e.g: UA-30285787-1). Leave blank if you don''t want to use it.');
 /*split*/
 
-INSERT INTO `cms_group_user` (`group_id`, `user_id`) VALUES
+INSERT INTO `{{ db_table_prefix }}main_group_user` (`group_id`, `user_id`) VALUES
 (1, 1);
