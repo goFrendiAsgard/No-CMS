@@ -838,6 +838,19 @@ class Main extends CMS_Controller
             ));
         }
         
+        $crud->callback_after_insert(array(
+            $this,
+            'after_insert_config'
+        ));
+        $crud->callback_after_update(array(
+            $this,
+            'after_update_config'
+        ));
+        $crud->callback_before_delete(array(
+            $this,
+            'before_delete_config'
+        ));
+        
         $crud->set_language($this->cms_language());
         
         $output = $crud->render();
@@ -853,6 +866,29 @@ class Main extends CMS_Controller
     public function read_only_config_description($value, $row)
     {
         return '<input name="field-description" value="' . $value . '" type="hidden" />' . $value;
+    }
+    
+    public function after_insert_config($post_array, $primary_key){
+        // adjust configuration file entry
+        cms_config($post_array['config_name'], $post_array['value']);
+        return TRUE;
+    }
+    
+    public function after_update_config($post_array, $primary_key){
+        // adjust configuration file entry
+        cms_config($post_array['config_name'], $post_array['value']);
+        return TRUE;
+    }
+    
+    public function before_delete_config($primary_key){
+        $query = $this->db->select('config_name')->from(cms_table_name('main_config'))->where('config_id', $primary_key)->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $config_name = $row->config_name;
+            // delete configuration file entry
+            cms_config($config_name, '', TRUE);
+        }
+        return TRUE;
     }
     
     

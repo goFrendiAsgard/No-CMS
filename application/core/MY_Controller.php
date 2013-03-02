@@ -1561,6 +1561,10 @@ class CMS_Module_Installer extends CMS_Controller
     {
         $queries = explode($separator, $SQL);
         foreach ($queries as $query) {
+            if(trim($query) == '') continue;
+            $table_prefix = cms_module_table_prefix($this->cms_module_path());
+            $query = preg_replace('/\{\{ table_name:(.*) \}\}/si', $table_prefix==''? '$1': $table_prefix.'_'.'$1', $query);
+            $query = preg_replace('/\{\{ module_prefix \}\}/si', $this->cms_module_path(), $query);
             $this->db->query($query);
         }
     }
@@ -1620,12 +1624,12 @@ class CMS_Module_Installer extends CMS_Controller
             $where = array(
                 "navigation_id" => $navigation_id
             );
-            $this->db->delete(cms_table_name('main_quicklink'), $where);
+            $this->db->delete(cms_table_name('main_group_navigation'), $where);
             //delete cms_navigation
             $where = array(
                 "navigation_id" => $navigation_id
             );
-            $this->db->delete(cms_table_name('main_quicklink'), $where);
+            $this->db->delete(cms_table_name('main_navigation'), $where);
         }
     }
     protected final function add_privilege($privilege_name, $title, $authorization_id = 1, $parent_name = NULL, $description = NULL)
@@ -1636,7 +1640,7 @@ class CMS_Module_Installer extends CMS_Controller
             "authorization_id" => $authorization_id,
             "description" => $description
         );
-        $this->db->insert(cms_table_name('main_navigation'), $data);
+        $this->db->insert(cms_table_name('main_privilege'), $data);
     }
     protected final function remove_privilege($privilege_name)
     {

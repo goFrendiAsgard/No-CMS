@@ -999,6 +999,7 @@ class CMS_Model extends CI_Model
                 $data['description'] = $description;
             $this->db->insert(cms_table_name('main_config'), $data);
         }
+        cms_config($name, $value);
         // save as __cms_model_properties too
         $this->__cms_model_properties['config'][$name] = $value;
     }
@@ -1024,19 +1025,22 @@ class CMS_Model extends CI_Model
      */
     public function cms_get_config($name, $raw = FALSE)
     {
-        $value = '';
-        if (!isset($this->__cms_model_properties['config'][$name])) {
-            $query  = $this->db->query("SELECT `value` FROM ".cms_table_name('main_config')." WHERE
-	                    config_name = '" . addslashes($name) . "'");
-            if($query->num_rows()>0){
-                $row    = $query->row();
-                $value  = $row->value;
-            }else{
-                $value  = '';
-            }            
-            $this->__cms_model_properties['config'][$name] = $value;
-        } else {
-            $value = $this->__cms_model_properties['config'][$name];
+        $value = cms_config($name);
+        if($value === FALSE){
+            if (!isset($this->__cms_model_properties['config'][$name])) {
+                $query  = $this->db->query("SELECT `value` FROM ".cms_table_name('main_config')." WHERE
+                            config_name = '" . addslashes($name) . "'");
+                if($query->num_rows()>0){
+                    $row    = $query->row();
+                    $value  = $row->value;
+                }else{
+                    $value  = '';
+                }            
+                $this->__cms_model_properties['config'][$name] = $value;
+            } else {
+                $value = $this->__cms_model_properties['config'][$name];
+            }
+            cms_config($name, $value);
         }
         
         // if raw is false, then don't parse keyword

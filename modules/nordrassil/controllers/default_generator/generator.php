@@ -12,6 +12,8 @@ class Generator extends CMS_Controller{
     private $project_path;
     private $tables;
     private $save_project_name;
+    private $config_table_prefix;
+    private $config_module_prefix;
 	
 	public function __construct(){
 		parent::__construct();
@@ -21,8 +23,11 @@ class Generator extends CMS_Controller{
 	}
     
     private function strip_table_prefix($table_name){
-        if(strpos($table_name,$this->project_db_table_prefix) === 0){
-            $table_name = substr($table_name,strlen($this->project_db_table_prefix));
+        if(!isset($this->project_db_table_prefix) || $this->project_db_table_prefix == ''){
+            return $table_name;
+        }
+        if(strpos($table_name, $this->project_db_table_prefix) === 0){
+            $table_name = substr($table_name, strlen($this->project_db_table_prefix));
         }
         if($table_name[0]=='_'){
             $table_name = substr($table_name,1);
@@ -65,11 +70,11 @@ class Generator extends CMS_Controller{
     }
     
     private function front_navigation_name($table_name){
-        return underscore($this->project_name).'_browse_'.underscore($this->strip_table_prefix($table_name));
+        return 'cms_well_name($module_path,\'browse_'.underscore($this->strip_table_prefix($table_name)).'\')';
     }
     
     private function back_navigation_name($table_name){
-        return underscore($this->project_name).'_manage_'.underscore($this->strip_table_prefix($table_name));
+        return 'cms_well_name($module_path,\'manage_'.underscore($this->strip_table_prefix($table_name)).'\')';
     }
     
     private function front_controller_class_name($table_name){
@@ -129,6 +134,15 @@ class Generator extends CMS_Controller{
 		$this->project_options = $projects['options'];
 		$this->tables = $projects['tables'];
         $this->project_path = dirname(BASEPATH).'/modules/'.underscore($this->project_name).'/';
+        $table_prefix_length = strlen($this->project_db_table_prefix);
+        if($table_prefix_length==0){
+            $stripped_table_prefix = '';
+        }else{
+            $stripped_table_prefix = ($this->project_db_table_prefix[$table_prefix_length-1] == '_') ?
+                substr($this->project_db_table_prefix, 0, $table_prefix_length-1) : $this->project_db_table_prefix;
+        }
+        $this->config_table_prefix = $stripped_table_prefix;
+        $this->config_module_prefix = underscore($this->project_name);
 		
 		// Check tables information (blame user before user blame us :D)
 		$success = TRUE;
@@ -271,7 +285,8 @@ class Generator extends CMS_Controller{
 			// prepare data
 			$data = array(
 				'table_name' => $table_name,
-				'columns' => $columns
+				'columns' => $columns,
+				'table_prefix' => $this->project_db_table_prefix,
 			);
 			// controller
 			$str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern,$replacement);
@@ -514,7 +529,7 @@ class Generator extends CMS_Controller{
 			'project_name',
 		); 
 		$replacement = array(
-			underscore($this->project_name).'_index',
+			'cms_well_name($module_path,\'index\')',
 			underscore($this->project_name),
 			underscore($this->project_name),
 			$this->project_name,
@@ -585,7 +600,7 @@ class Generator extends CMS_Controller{
 					underscore(humanize($this->front_controller_class_name($table_name))),
 					underscore(humanize($this->back_controller_class_name($table_name))),
 					$table_caption,
-					underscore($this->project_name).'_index',
+					'cms_well_name($module_path,\'index\')',
 				);
 			// back
 			if(!$table['options']['dont_make_form']){
@@ -605,6 +620,12 @@ class Generator extends CMS_Controller{
         //////////////////////////////////////////////////////////////// 
         // CREATE INSTALLER
         ////////////////////////////////////////////////////////////////
+        $backup_table_list = array();
+        foreach($tables as $table){
+            $table_name = $table['name'];
+            $backup_table_list[] = 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($table_name).'\')';
+        }
+        $backup_table = implode(','.PHP_EOL.'            ', $backup_table_list);
 		$pattern = array(
 			'namespace',
 			'table_list',
@@ -618,8 +639,8 @@ class Generator extends CMS_Controller{
 		); 
 		$replacement = array(
 			underscore($this->cms_user_name()).'.'.underscore($this->project_name),
-			$this->array_to_quoted_string($tables,'name'),
-			underscore($this->project_name).'_index',
+			$backup_table,
+			'cms_well_name($module_path,\'index\')',
 			$remove_navigations,
 			$add_navigations,
 			underscore($this->project_name),
@@ -631,21 +652,14 @@ class Generator extends CMS_Controller{
 		$this->nds->write_file($project_path.'controllers/install.php', $str);
 	}
 
-    private function create_config_and_helper(){
+    private function create_config(){
         ////////////////////////////////////////////////////////////////
         // create config
         ////////////////////////////////////////////////////////////////
-        $table_prefix_length = strlen($this->project_db_table_prefix);
-        if($table_prefix_length==0){
-            $stripped_table_prefix = '';
-        }else{
-            $stripped_table_prefix = ($this->project_db_table_prefix[$table_prefix_length-1] == '_') ?
-                substr($this->project_db_table_prefix, 0, $table_prefix_length-1) : $this->project_db_table_prefix;
-        }
-        $pattern = array('table_prefix');
-        $replacement = array($stripped_table_prefix);
-        $str = $this->nds->read_view('default_generator/config', NULL, $pattern, $replacement);
-        $this->nds->write_file($this->project_path.'config/config.php', $str);
+        $pattern = array('table_prefix', 'module_prefix');
+        $replacement = array($this->config_table_prefix, $this->config_module_prefix);
+        $str = $this->nds->read_view('default_generator/module_config', NULL, $pattern, $replacement);
+        $this->nds->write_file($this->project_path.'config/module_config.php', $str);
     }
 
 	private function create_directory(){
@@ -688,7 +702,7 @@ class Generator extends CMS_Controller{
 				$selected_tables[] = $table;
 			}
 		}
-		$create_table = $this->nds->get_create_table_syntax($selected_tables);
+		$create_table = $this->nds->get_create_table_syntax($selected_tables);        
 		// insert table syntax
 		$selected_tables = array();
 		for($i=0; $i<count($tables); $i++){
@@ -712,7 +726,17 @@ class Generator extends CMS_Controller{
 			$str = implode(PHP_EOL.'/*split*/'.PHP_EOL, $db_arr);
 		}else{
 			$str = '';
-		}		
+		}
+        
+        $pattern = array(
+            '/CREATE TABLE `'.$this->config_table_prefix.'_([^`]*)`/si',
+            '/INSERT INTO `'.$this->config_table_prefix.'_([^`]*)`/si'
+        );
+        $replacement = array(
+            'CREATE TABLE `{{ table_name:${1} }}`',
+            'INSERT INTO `{{ table_name:${1} }}`',
+        );
+        $str = preg_replace($pattern, $replacement, $str);
 		$this->nds->write_file($project_path.'assets/db/install.sql', $str);
 	}
 	
@@ -727,6 +751,13 @@ class Generator extends CMS_Controller{
 			}
 		}
 		$str = $this->nds->get_drop_table_syntax($selected_tables);
+        $pattern = array(
+            '/DROP TABLE IF EXISTS `'.$this->config_table_prefix.'_([^`]*)`/si',
+        );
+        $replacement = array(
+            'DROP TABLE IF EXISTS `{{ table_name:${1} }}`',
+        );
+        $str = preg_replace($pattern, $replacement, $str);
 		$this->nds->write_file($project_path.'assets/db/uninstall.sql', $str);
 	}
 	

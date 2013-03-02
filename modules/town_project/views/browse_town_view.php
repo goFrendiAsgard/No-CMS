@@ -1,25 +1,4 @@
-<?php
-	$fields = array();
-	$captions = array();
-	$primary_key = '';
-	foreach($columns as $column){
-		$column_name = $column['name'];
-		$column_role = $column['role'];
-		$column_caption = $column['caption'];
-		if($column_role == 'primary'){
-			$primary_key = $column_name;
-		}else if($column_role == ''){
-			$fields[] = $column_name;
-			$captions[] = $column_caption;
-		}else if($column_role == 'lookup'){
-			$lookup_table_name = $column['lookup_table_name'];
-			$lookup_column_name = $column['lookup_column_name'];
-			$fields[] = $lookup_table_name.'_'.$lookup_column_name;
-			$captions[] = $column_caption;
-		}
-	}
-?>
-&lt;?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?&gt;
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <style type="text/css">
 	#record_content{
 		margin-top: 5px;
@@ -34,18 +13,18 @@
 </style>
 <input type="text" name="search" value="" id="input_search" class="input-medium search-query">
 <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary">
-&lt;?php 
+<?php 
 	if($allow_navigate_backend){
 		echo '<a href="'.$backend_url.'/add/" class="btn add_record">Add</a>'.PHP_EOL;
 	}
-?&gt;
+?>
 <div id="record_content"></div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
 	var PAGE = 0;
-	var URL = '&lt;?php echo site_url("{{ project_name }}/{{ front_controller_import_name }}/get_data"); ?&gt;';
-	var ALLOW_NAVIGATE_BACKEND = &lt;?php echo $allow_navigate_backend ? "true" : "false"; ?&gt;;
-	var BACKEND_URL = '&lt;?php echo $backend_url; ?&gt;';
+	var URL = '<?php echo site_url("town_project/browse_town/get_data"); ?>';
+	var ALLOW_NAVIGATE_BACKEND = <?php echo $allow_navigate_backend ? "true" : "false"; ?>;
+	var BACKEND_URL = '<?php echo $backend_url; ?>';
 	var LOADING = false;
 	var REQUEST
     var RUNNING_REQUEST = false;
@@ -54,7 +33,7 @@
 		if(typeof(async) == 'undefined'){
 			async = true;
 		}
-		$('#content-bottom').html('Load more {{ table_caption }} ...');
+		$('#content-bottom').html('Load more Town ...');
 		var keyword = $('#input_search').val();
 		// kill all previous AJAX
 		if(RUNNING_REQUEST){
@@ -74,9 +53,9 @@
 				$('#record_content').append(response);
 				
 				// show bottom contents
-				var bottom_content = 'No more {{ table_caption }} to show.';
+				var bottom_content = 'No more Town to show.';
 				if(ALLOW_NAVIGATE_BACKEND){
-					bottom_content += '&nbsp; <a href="&lt;?php echo $backend_url; ?&gt;/add/" class="add_record">Add new</a>';
+					bottom_content += '&nbsp; <a href="<?php echo $backend_url; ?>/add/" class="add_record">Add new</a>';
 				}
 				$('#record_content_bottom').html(bottom_content);
 				RUNNING_REQUEST = false;

@@ -21,7 +21,6 @@ class Install extends CMS_Module_Installer {
     
     // OVERRIDE THIS FUNCTION TO PROVIDE "Module Setting" FEATURE
     public function setting(){
-        require_once(BASEPATH.'../modules/{{ save_project_name }}/helpers/module_helper.php');
         parent::setting();        
     }
 
@@ -33,7 +32,11 @@ class Install extends CMS_Module_Installer {
     
     // DEACTIVATION
     protected function do_deactivate(){
-        $this->backup_database(array({{ table_list }}));
+        $module_path = $this->cms_module_path();
+        
+        $this->backup_database(array(
+            {{ table_list }}
+        ));        
         $this->remove_all();
     }
     
@@ -50,7 +53,7 @@ class Install extends CMS_Module_Installer {
 {{ remove_navigations }}
         
         // remove parent of all navigations
-        $this->remove_navigation("{{ navigation_parent_name }}");
+        $this->remove_navigation({{ navigation_parent_name }});
 
         // import uninstall.sql
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
@@ -63,7 +66,7 @@ class Install extends CMS_Module_Installer {
         $module_path = $this->cms_module_path();
     
         // parent of all navigations
-        $this->add_navigation("{{ navigation_parent_name }}", "{{ project_caption }}", 
+        $this->add_navigation({{ navigation_parent_name }}, "{{ project_caption }}", 
             $module_path."/{{ main_controller }}", $this->PRIV_EVERYONE);
         
         // add navigations
@@ -76,12 +79,7 @@ class Install extends CMS_Module_Installer {
     
     // IMPORT SQL FILE
     private function import_sql($file_name){
-        $sql_array = explode('/*split*/',
-                file_get_contents($file_name)                
-            );
-        foreach($sql_array as $sql){
-            $this->db->query($sql);
-        }
+        $this->execute_SQL(file_get_contents($file_name), '/*split*/');
     }
     
     // EXPORT DATABASE
