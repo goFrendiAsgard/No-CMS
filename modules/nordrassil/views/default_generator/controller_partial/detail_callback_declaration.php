@@ -25,13 +25,14 @@
 ?>
 	
 	// returned on insert and edit
-	public function callback_field_{{ field_name }}($value, $primary_key){		
+	public function callback_field_{{ field_name }}($value, $primary_key){
+	    $module_path = $this->cms_module_path();	
 		$this->config->load('grocery_crud');
         $date_format = $this->config->item('grocery_crud_date_format');
         
 		if(!isset($primary_key)) $primary_key = -1;
 		$query = $this->db->select('<?php echo implode(', ', $detail_real_column_names); ?>')
-			->from('<?php echo $detail_table_name; ?>')
+			->from(<?php echo $detail_table_name; ?>)
 			->where('<?php echo $detail_foreign_key_name; ?>', $primary_key)
 			->get();
 		$result = $query->result_array();
@@ -115,9 +116,10 @@
 	}
 	
 	// returned on view
-	public function callback_column_{{ field_name }}($value, $row){		
+	public function callback_column_{{ field_name }}($value, $row){
+	    $module_path = $this->cms_module_path();	
 		$query = $this->db->select('<?php echo implode(', ', $detail_real_column_names); ?>')
-			->from('<?php echo $detail_table_name; ?>')
+			->from(<?php echo $detail_table_name; ?>)
 			->where('<?php echo $detail_foreign_key_name; ?>', $row-><?php echo $master_primary_key_name; ?>)
 			->get();
 		$num_row = $query->num_rows();

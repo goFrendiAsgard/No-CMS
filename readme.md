@@ -494,3 +494,4 @@ v0.6.1 (development)
 + (done, tested) Rename CMS_Controller into MY_Controller, put CMS_Model in MY_Model
 + (done, tested) Add widget and navigation tag
 + (done, tested) Update module scenario
++ (done) add cms & module prefix setting

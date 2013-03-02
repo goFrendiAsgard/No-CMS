@@ -350,7 +350,7 @@ class Generator extends CMS_Controller{
 				);
 				// set_relation
 				if($column['role']=='lookup'){
-					$lookup_table_name = $column['lookup_table_name'];
+					$lookup_table_name = 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($column['lookup_table_name']).'\')';
 					$lookup_column_name = $column['lookup_column_name'];
 					$set_relation_array[] = $this->nds->read_view('nordrassil/default_generator/controller_partial/set_relation',NULL,
 						array('field_name', 'lookup_table_name', 'lookup_field_name'),
@@ -359,8 +359,8 @@ class Generator extends CMS_Controller{
 				}
 				// set_relation_n_n
 				if($column['role']=='detail many to many'){
-					$relation_table_name = $column['relation_table_name'];
-					$selection_table_name = $column['selection_table_name'];
+					$relation_table_name = 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($column['relation_table_name']).'\')';
+					$selection_table_name = 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($column['selection_table_name']).'\')';
 					$relation_table_column_name = $column['relation_table_column_name'];
 					$relation_selection_column_name = $column['relation_selection_column_name'];
 					$selection_column_name = $column['selection_column_name'];
@@ -396,12 +396,12 @@ class Generator extends CMS_Controller{
 				}
 				// detail (one to many) field
 				if($column['role']=='detail one to many'){
-					$detail_table_name = $column['relation_table_name'];
+					$detail_table_name = 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($column['relation_table_name']).'\')';
 					$detail_foreign_key_name = $column['relation_table_column_name'];
 					$detail_primary_key_name = '';
 					$detail_table = array();
 					foreach($all_tables as $detail_table_candidate){
-						if($detail_table_candidate['name'] == $detail_table_name){
+						if($detail_table_candidate['name'] == $column['relation_table_name']){
 							$detail_table = $detail_table_candidate;
 							$detail_columns = $detail_table['columns'];
 							foreach($detail_columns as $detail_column){
@@ -423,7 +423,7 @@ class Generator extends CMS_Controller{
 					$data = array(
 						'project_name' => $save_project_name,
 						'stripped_master_table_name' => $this->strip_table_prefix($table_name),
-						'master_table_name' => $table_name,
+						'master_table_name' => 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($table_name).'\')',
 						'master_column_name' => $column_name,
 						'master_primary_key_name' => $master_primary_key_name,						
 						'detail_table_name' => $detail_table_name,
@@ -485,7 +485,7 @@ class Generator extends CMS_Controller{
 			);
 			$replacement = array(
 				$this->back_navigation_name($table_name),
-				$table_name,
+				'cms_module_table_name($module_path, \''.$this->strip_table_prefix($table_name).'\')',
 				$table_caption,
 				$this->back_controller_class_name($table_name),
 				$this->back_model_class_name($table_name),

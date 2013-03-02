@@ -10,6 +10,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 	protected $URL_MAP = array();
 
 	public function index(){
+	    $module_path = $this->cms_module_path();
 		
 		// initialize groceryCRUD
         $crud = new grocery_CRUD();
@@ -22,7 +23,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
         $crud->set_language($this->cms_language());
         
         // table name
-        $crud->set_table('{{ table_name }}');
+        $crud->set_table({{ table_name }});
         
         // set subject
         $crud->set_subject('{{ table_caption }}');
@@ -74,7 +75,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 
         // render
         $output = $crud->render();        
-        $this->view($this->cms_module_path().'/{{ view_import_name }}', $output, '{{ navigation_name }}');
+        $this->view($this->cms_module_path().'/{{ view_import_name }}', $output, {{ navigation_name }});
         
     }
     
@@ -97,6 +98,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 	}
 	
 	public function before_delete($primary_key){
+	    $module_path = $this->cms_module_path();
 {{ detail_before_delete }}
 		return TRUE;
 	}
@@ -106,6 +108,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 	}
 	
 	public function after_insert_or_update($post_array, $primary_key){
+	    $module_path = $this->cms_module_path();
 {{ detail_after_insert_or_update }}		
 	}
 

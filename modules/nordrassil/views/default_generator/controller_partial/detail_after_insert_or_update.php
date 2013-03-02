@@ -49,7 +49,7 @@
 				);
 				$this->db->delete($table_name, $where);
 			}
-			$this->db->delete('<?php echo $detail_table_name; ?>', array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
+			$this->db->delete(<?php echo $detail_table_name; ?>, array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
 		}
 		// update
 		foreach($update_records as $update_record){
@@ -63,7 +63,7 @@
 				}				
 			}
 			$data['<?php echo $detail_foreign_key_name; ?>'] = $primary_key;
-			$this->db->update('<?php echo $detail_table_name; ?>', $data, array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
+			$this->db->update(<?php echo $detail_table_name; ?>, $data, array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
 			// many to many fields
 			for($i=0; $i<count($many_to_many_column_names); $i++){
 				$key = 	$many_to_many_column_names[$i];
@@ -112,7 +112,7 @@
 				}				
 			}
 			$data['<?php echo $detail_foreign_key_name; ?>'] = $primary_key;
-			$this->db->insert('<?php echo $detail_table_name; ?>', $data);
+			$this->db->insert(<?php echo $detail_table_name; ?>, $data);
 			$detail_primary_key = $this->db->insert_id();
 			// many to many fields
 			for($i=0; $i<count($many_to_many_column_names); $i++){
