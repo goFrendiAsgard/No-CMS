@@ -487,7 +487,7 @@ v0.6.1 (development)
 + (done, tested) Rename CMS_Controller into MY_Controller, put CMS_Model in MY_Model
 + (done, tested) Add widget and navigation tag
 + (done, tested) Update module scenario
-+ (done) add cms & module prefix setting
-+ (proposed) Make nordrassil generated code extends CMS_Priv_Controller
++ (done, tested) add cms & module prefix setting
++ (done, tested) Make nordrassil generated code extends CMS_Priv_Controller
 + (proposed) Create default setting for nordrassil generated code
 + (proposed) Recode all module to fullfill No-CMS new standard (table prefix & module prefix)
