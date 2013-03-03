@@ -4,7 +4,7 @@ What is No-CMS?
 No-CMS is a CMS-framework.
 
 No-CMS is a basic CMS with some default features such as user authorization, menu, module and theme management.
-It is fully customizable and extensible, you can make your own module and your own themes. 
+It is fully customizable and extensible, you can make your own module and your own themes.
 It provide freedom to make your very own CMS, which is not provided very well by any other CMS.
 
 Who is it for?
@@ -22,7 +22,7 @@ No-CMS will be good for you if you say yes for majority of these statement:
 
 No-CMS as CMS
 --------------
-No-CMS is a "less assumption" CMS. It is different from Wordpress, Drupal, Joomla, Moodle or Zencart. Those CMS are built by developers for users with some special purpose in mind (e.g: blog, news, e-learning, e-commerce). 
+No-CMS is a "less assumption" CMS. It is different from Wordpress, Drupal, Joomla, Moodle or Zencart. Those CMS are built by developers for users with some special purpose in mind (e.g: blog, news, e-learning, e-commerce).
 No-CMS is built by developer for developers, although everyone else can still use it as well. It already has some basic features such as authentication/authorization, widget and page management. You are free to use them or just get rid of them and make your custom code
 The main purpose of this CMS is to provide a good start of web application project, especially for CodeIgniter developer.
 
@@ -31,10 +31,10 @@ No-CMS as Application development framework
 No-CMS is not just another CMS. No-CMS allows you to make your own module and your own themes.
 This means that you (as developer) can make a module (e.g: forum module, FAQ module, etc) that can be used for several different project.
 
-No-CMS takes advantages of CodeIgniter as its core. 
-It provides rich set of libraries for commonly needed task, 
+No-CMS takes advantages of CodeIgniter as its core.
+It provides rich set of libraries for commonly needed task,
 as well as a simple interface and logical structure to access these libraries.
-The main advantage of CodeIgniter is you can creatively focus on your project 
+The main advantage of CodeIgniter is you can creatively focus on your project
 by minimizing the amount of code needed or a given task.
 
 No-CMS is also take advantages of several popular plugins such as
@@ -47,7 +47,7 @@ No-CMS is also take advantages of several popular plugins such as
 Out of all, No-CMS also provide some common features:
 
 * Authentication & Authorization by using group, privilege, and user management.
-  Not like other CMS, there is no backend-frontend in No-CMS. 
+  Not like other CMS, there is no backend-frontend in No-CMS.
   You have freedom to choose how different groups of users can access pages and modules differently.
 * Change Theme.
   You can change the theme easily.
@@ -118,7 +118,7 @@ CMS_Controller
    <?php
    class Your_Controller_Name extends CMS_Controller{
     	/*
-    	 * This is the normal way. You can access below function by using this url: 
+    	 * This is the normal way. You can access below function by using this url:
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
     	 */
     	public function show(){
@@ -127,10 +127,10 @@ CMS_Controller
    			$data['result'] = $this->your_model_name->get_data();
    			$this->view('your_view_name', $data, 'navigation_name');
    		}
-   		
+
    		/*
-    	 * To ensure that the whole function will not work if user not authorized, 
-    	 * you can also use cms_guard_page function. You can access below function by using this url: 
+    	 * To ensure that the whole function will not work if user not authorized,
+    	 * you can also use cms_guard_page function. You can access below function by using this url:
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/strict
     	 */
    		public function strict(){
@@ -157,24 +157,17 @@ CMS_Priv_Strict_Controller (development version)
    class Your_Controller_Name extends CMS_Priv_Strict_Controller{
     	/*
     	 * URL_MAP will be used in case of you have "unregistered function"
-    	 * (e.g : you don't have any navigation name that refer to 
+    	 * (e.g : you don't have any navigation name that refer to
     	 * 'your_module_name/your_controller_name/unregistered_function',
     	 * but you want to make sure that the url has the same authorization as 'a_navigation_name')
-    	 */ 
-    	protected $URL_MAP = array(
-    		'your_module_name/your_controller_name/unregistered_function' => 'a_navigation_name'
-    	);
-    	
-    	/*
-    	 * Alternatively, this gonna work too:
-    	 * protected $URL_MAP = array(
-    	 *	'your_module_name/your_controller_name/unregistered_function' => 
-		 * 		'your_module_name/your_controller_name/show',
-    	 * );
     	 */
-    	
+    	protected function do_override_url_map($URL_MAP){
+    	   $URL_MAP['your_module_name/your_controller_name/unregistered_function'] = 'a_navigation_name';
+    	   return $URL_MAP;
+    	}
+
     	/*
-    	 * This is the normal way. You can access below function by using this url: 
+    	 * This is the normal way. You can access below function by using this url:
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
     	 */
     	public function show(){
@@ -183,10 +176,10 @@ CMS_Priv_Strict_Controller (development version)
    			$data['result'] = $this->your_model_name->get_data();
    			$this->view('your_view_name', $data);
    		}
-   		
+
    		/*
-    	 * This is gonna be work to, even if the url is not registered. 
-    	 * You can access below function by using this url: 
+    	 * This is gonna be work to, even if the url is not registered.
+    	 * You can access below function by using this url:
     	 * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/strict
     	 */
    		public function unregistered_function(){
@@ -197,7 +190,7 @@ CMS_Priv_Strict_Controller (development version)
    		}
    }
    ?>
-``` 
+```
 
 
 
@@ -215,17 +208,17 @@ CMS_Module_Installer
 		protected $DEPENDENCIES = array('prerequisites_module_1', 'prerequisites_module_2');
 		// the module name space, please ensure this is unique for each module, adding your name as the first part is always a good idea
 		protected $NAME = 'your_name.your_module_name';
-		
+
 		// WHEN USER INSTALL THIS MODULE, THIS WILL BE EXECUTED
 		protected function do_install(){
-			// add a new navigation point to module_name/controller_name/function_name that can only be accessed by authorized user       
-	        $this->add_navigation("navigation_name", "navigation_title", "module_name/controller_name/function_name", $this->PRIV_AUTHORIZED);        
+			// add a new navigation point to module_name/controller_name/function_name that can only be accessed by authorized user
+	        $this->add_navigation("navigation_name", "navigation_title", "module_name/controller_name/function_name", $this->PRIV_AUTHORIZED);
 	        // add quicklink of that navigation (optional)
 	        $this->add_quicklink("navigation_name");
-	        // add widget that can be accessed by everyone		
+	        // add widget that can be accessed by everyone
 			$this->add_widget("widget_name", "widget_title", $this->PRIV_EVERYONE, "module_name/other_controller_name/function_name", "sidebar");
 		}
-		
+
 		// WHEN USER UNINSTALL THIS MODULE, THIS WILL BE EXECUTED
 		protected function do_uninstall(){
 			// remove the quicklink
@@ -233,7 +226,7 @@ CMS_Module_Installer
 			// remove the navigation
 	        $this->remove_navigation("navigation_name");
 	        // remove the widget
-			$this->remove_widget("widget_name");	        
+			$this->remove_widget("widget_name");
 		}
    }
    ?>
@@ -286,7 +279,7 @@ Views
     $config = array(
     	'privileges' => array('priv_1', 'priv_2'),
     	'title' => 'page_title',
-    	'keyword' => 'home page, No-CMS, cool',    	
+    	'keyword' => 'home page, No-CMS, cool',
     );
     $this->view('view_name', $data, 'navigation_code_required', $config);
 ```
@@ -297,7 +290,7 @@ Views
     $config = array(
     	'privileges' => array('priv_1', 'priv_2'),
     	'title' => 'page_title',
-    	'keyword' => 'home page, No-CMS, cool',    	
+    	'keyword' => 'home page, No-CMS, cool',
     );
     $result = $this->view('view_name', $data, 'navigation_code_required', $config, TRUE);
 ```
@@ -314,7 +307,7 @@ Views
 	{{ elif_language:indonesia }}
 		<p>Senang bertemu dengan anda, {{ user_real_name }}</p>
 	{{ end_if }}
-	<script type="text/javascript" src="{{ base_url }}/assets/nocms/js/jquery.js"></script>	
+	<script type="text/javascript" src="{{ base_url }}/assets/nocms/js/jquery.js"></script>
 ```
 
 * Here is the list of those magical keywords (or also known as tag):
@@ -330,7 +323,7 @@ Views
 	{{ widget:slug }}
 	{{ language }}
 	{{ language:some_word }}
-	
+
 	{{ if_language:a_language }}
 	   something that will be appeared for a language
 	{{ elif_language:another_language }}
@@ -342,7 +335,7 @@ Views
 Contributing
 ============
 
-It is my honor to accepts contributions of code and documentation from you. 
+It is my honor to accepts contributions of code and documentation from you.
 These contributions are made in the form
 of Issues or [Pull Requests](http://help.github.com/send-pull-requests/) on
 the [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS/) on GitHub.
@@ -374,23 +367,23 @@ Here are some names of considerable contributors:
 
 * goFrendiAsgard <-- (It's me) Make No-CMS based on CodeIgniter and some existing plug-ins.
 * EllisLab <-- Make CodeIgniter and make it available for free. There is no No-CMS without codeIgniter
-* wiredesignz <-- Creator of HMVC plugin. 
-  The plug-in he made is known widely among CodeIgniter developer. 
+* wiredesignz <-- Creator of HMVC plugin.
+  The plug-in he made is known widely among CodeIgniter developer.
   It allowed me to make separation between modules
-* Phil Sturgeon <-- Creator CodeIgniter-template-library. 
+* Phil Sturgeon <-- Creator CodeIgniter-template-library.
   The plugin he made allowed me to make separation between themes elements
-  He is a member of CodeIgniter Reactor Engineer. His pyro-CMS also inspire me a lot (although I take different approach)   
-* John Skoumbourdis <-- Creator of groceryCRUD. 
-  It boost the development of No-CMS by provide very easy CRUD. 
+  He is a member of CodeIgniter Reactor Engineer. His pyro-CMS also inspire me a lot (although I take different approach)
+* John Skoumbourdis <-- Creator of groceryCRUD.
+  It boost the development of No-CMS by provide very easy CRUD.
   He also give me some moral support to continue the development of No-CMS.
 * Zusana Pudyastuti <-- She was my English Lecturer, A very good one who encourage me to speak English.
   It is a miracle for me to write this section in English :D
 * Mukhlies Amien <-- He is one of my best friends. In this project, his role is advisor and tester.
 * Gembong Edhi Setiawan <-- He is also one of my best friends. He gives some support and feature requests.
-* Wahyu Eka Putra <-- He was my student. One of some best students in my class. 
+* Wahyu Eka Putra <-- He was my student. One of some best students in my class.
   He is the first one who discover a critical bug in the first stage of development.
-* I Komang Ari Mogi <-- He is my classmate in my graduate program. He has some experience in design. 
-  That's why he can propose some fix in the very early stage of development. 
+* I Komang Ari Mogi <-- He is my classmate in my graduate program. He has some experience in design.
+  That's why he can propose some fix in the very early stage of development.
 * Ibnoe <-- The one who gives some suggestions and bug report.
 * Panega <-- The one who also report a crucial bug.
 * Alexandre Mota <-- The one who report a bug related to page authorization
@@ -429,7 +422,7 @@ v0.5.1
 v0.5.5
 + (done, tested) add scrollbar
 + (done, tested) flexigrid should also be responsive
-+ (done, tested) use "slow slidetoggle" in help and bootstrap theme 
++ (done, tested) use "slow slidetoggle" in help and bootstrap theme
 + (done, tested) use bootstrap for installation
 + (done, tested) use database for help module
 + (done, tested) upload new module feature
@@ -482,7 +475,7 @@ v0.6.0
 v0.6.1 (development)
 + (proposed) Drupal's CCK like mechanism
 + (proposed) Make nordrassil generated code easier to be edited.
-+ (done, tested) Include JQuery by default, 
++ (done, tested) Include JQuery by default,
 + (cancelled) use jquerytools CDN if possible <-- using file_get_content or CURL is very slow
 + (done, tested) add google analytic configuration
 + (done, tested) automatically create thumbnail for blog's photos
@@ -495,3 +488,6 @@ v0.6.1 (development)
 + (done, tested) Add widget and navigation tag
 + (done, tested) Update module scenario
 + (done) add cms & module prefix setting
++ (proposed) Make nordrassil generated code extends CMS_Priv_Controller
++ (proposed) Create default setting for nordrassil generated code
++ (proposed) Recode all module to fullfill No-CMS new standard (table prefix & module prefix)
