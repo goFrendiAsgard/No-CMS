@@ -21,15 +21,32 @@
 				$detail_primary_key = $name;
 			}
 		}
-	}	
+	}
+
+    function callback_declaration_strip_table_prefix($project_db_table_prefix, $table_name){
+        if(!isset($project_db_table_prefix) || $project_db_table_prefix == ''){
+            return $table_name;
+        }
+        if(strpos($table_name, $project_db_table_prefix) === 0){
+            $table_name = substr($table_name, strlen($project_db_table_prefix));
+        }
+        if($table_name[0]=='_'){
+            $table_name = substr($table_name,1);
+        }
+        return $table_name;
+    }
+
+    function callback_declaration_well_table_name($project_db_table_prefix, $table_name){
+        return 'cms_module_table_name($module_path, \''.callback_declaration_strip_table_prefix($project_db_table_prefix, $table_name).'\')';
+    }
 ?>
-	
+
 	// returned on insert and edit
 	public function callback_field_{{ field_name }}($value, $primary_key){
-	    $module_path = $this->cms_module_path();	
+	    $module_path = $this->cms_module_path();
 		$this->config->load('grocery_crud');
         $date_format = $this->config->item('grocery_crud_date_format');
-        
+
 		if(!isset($primary_key)) $primary_key = -1;
 		$query = $this->db->select('<?php echo implode(', ', $detail_real_column_names); ?>')
 			->from(<?php echo $detail_table_name; ?>)
@@ -48,7 +65,6 @@
 		echo '		// add "'.$name.'" to $result'.PHP_EOL;
 		echo '		for($i=0; $i<count($result); $i++){'.PHP_EOL;
 		if($data_type=='varchar' && $selection_mode == 'set'){
-			//echo '			$value = explode(\',\',$result[$i][\''.$name.'\']);'.PHP_EOL;
 			echo '			$value = json_decode(\'[\'.$result[$i][\''.$name.'\'].\']\');'.PHP_EOL;
 			echo '			$result[$i][\''.$name.'\'] = $value;'.PHP_EOL;
 		}
@@ -56,7 +72,9 @@
 			$relation_table_name = $column['relation_table_name'];
 			$relation_table_column_name = $column['relation_table_column_name'];
 			$relation_selection_column_name = $column['relation_selection_column_name'];
-			echo '			$query_detail = $this->db->select(\''.$relation_selection_column_name.'\')->from(\''.$relation_table_name.'\')->where(array(\''.$relation_table_column_name.'\'=>$result[$i][\''.$detail_primary_key.'\']))->get();'.PHP_EOL;
+			echo '			$query_detail = $this->db->select(\''.$relation_selection_column_name.'\')'.PHP_EOL;
+			echo '               ->from('.callback_declaration_well_table_name($project_db_table_prefix, $relation_table_name).')'.PHP_EOL;
+			echo '               ->where(array(\''.$relation_table_column_name.'\'=>$result[$i][\''.$detail_primary_key.'\']))->get();'.PHP_EOL;
 			echo '			$value = array();'.PHP_EOL;
 			echo '			foreach($query_detail->result() as $row){'.PHP_EOL;
 			echo '				$value[] = $row->'.$relation_selection_column_name.';'.PHP_EOL;
@@ -66,9 +84,9 @@
 		echo '		}'.PHP_EOL;
 	}
 ?>
-		
+
 		// get options
-		$options = array();		
+		$options = array();
 <?php
 	for($i=0; $i<count($detail_columns); $i++){
 		$column = $detail_columns[$i];
@@ -82,17 +100,19 @@
 			echo '		$options[\''.$name.'\'] = array();'.PHP_EOL;
 			echo '		$selection_items = array('.$selection_item.');'.PHP_EOL;
 			echo '		foreach($selection_items as $item){'.PHP_EOL;
-			echo '			$options[\''.$name.'\'][] = array(\'value\' => $item, \'caption\' => $item);'.PHP_EOL;	
-			echo '		}'.PHP_EOL;	
+			echo '			$options[\''.$name.'\'][] = array(\'value\' => $item, \'caption\' => $item);'.PHP_EOL;
+			echo '		}'.PHP_EOL;
 		}
 		if($role=='lookup'){
 			$lookup_table_name = $column['lookup_table_name'];
 			$lookup_column_name = $column['lookup_column_name'];
 			$lookup_table_primary_key = $column['lookup_table_primary_key'];
 			echo '		$options[\''.$name.'\'] = array();'.PHP_EOL;
-			echo '		$query = $this->db->select(\''.$lookup_table_primary_key.','.$lookup_column_name.'\')->from(\''.$lookup_table_name.'\')->get();'.PHP_EOL;	
+			echo '		$query = $this->db->select(\''.$lookup_table_primary_key.','.$lookup_column_name.'\')'.PHP_EOL;
+			echo '           ->from('.callback_declaration_well_table_name($project_db_table_prefix, $lookup_table_name).')'.PHP_EOL;
+			echo '           ->get();'.PHP_EOL;
 			echo '		foreach($query->result() as $row){'.PHP_EOL;
-			echo '			$options[\''.$name.'\'][] = array(\'value\' => $row->'.$lookup_table_primary_key.', \'caption\' => $row->'.$lookup_column_name.');'.PHP_EOL;	
+			echo '			$options[\''.$name.'\'][] = array(\'value\' => $row->'.$lookup_table_primary_key.', \'caption\' => $row->'.$lookup_column_name.');'.PHP_EOL;
 			echo '		}'.PHP_EOL;
 		}
 		if($role=='detail many to many'){
@@ -100,13 +120,14 @@
 			$selection_column_name = $column['selection_column_name'];
 			$selection_table_primary_key = $column['selection_table_primary_key'];
 			echo '		$options[\''.$name.'\'] = array();'.PHP_EOL;
-			echo '		$query = $this->db->select(\''.$selection_table_primary_key.','.$selection_column_name.'\')->from(\''.$selection_table_name.'\')->get();'.PHP_EOL;	
+			echo '		$query = $this->db->select(\''.$selection_table_primary_key.','.$selection_column_name.'\')'.PHP_EOL;
+			echo '           ->from('.callback_declaration_well_table_name($project_db_table_prefix, $selection_table_name).')->get();'.PHP_EOL;
 			echo '		foreach($query->result() as $row){'.PHP_EOL;
-			echo '			$options[\''.$name.'\'][] = array(\'value\' => $row->'.$selection_table_primary_key.', \'caption\' => $row->'.$selection_column_name.');'.PHP_EOL;	
+			echo '			$options[\''.$name.'\'][] = array(\'value\' => $row->'.$selection_table_primary_key.', \'caption\' => $row->'.$selection_column_name.');'.PHP_EOL;
 			echo '		}'.PHP_EOL;
 		}
 	}
-?>		
+?>
 		$data = array(
 			'result' => $result,
 			'options' => $options,
@@ -114,10 +135,10 @@
 		);
 		return $this->load->view('<?php echo $view_path; ?>',$data, TRUE);
 	}
-	
+
 	// returned on view
 	public function callback_column_{{ field_name }}($value, $row){
-	    $module_path = $this->cms_module_path();	
+	    $module_path = $this->cms_module_path();
 		$query = $this->db->select('<?php echo implode(', ', $detail_real_column_names); ?>')
 			->from(<?php echo $detail_table_name; ?>)
 			->where('<?php echo $detail_foreign_key_name; ?>', $row-><?php echo $master_primary_key_name; ?>)
@@ -132,7 +153,7 @@
 			return 'No <?php echo $detail_table['caption'] ?>';
 		}
 	}
-	
+
 <?php
     /**
 	echo var_dump($project_name);

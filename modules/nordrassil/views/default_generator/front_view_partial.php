@@ -1,4 +1,17 @@
 <?php
+    function front_view_partial_strip_table_prefix($project_db_table_prefix, $table_name){
+        if(!isset($project_db_table_prefix) || $project_db_table_prefix == ''){
+            return $table_name;
+        }
+        if(strpos($table_name, $project_db_table_prefix) === 0){
+            $table_name = substr($table_name, strlen($project_db_table_prefix));
+        }
+        if($table_name[0]=='_'){
+            $table_name = substr($table_name,1);
+        }
+        return $table_name;
+    }
+
 	$fields = array();
 	$captions = array();
 	$primary_key = '';
@@ -13,6 +26,7 @@
 			$captions[] = $column_caption;
 		}else if($column_role == 'lookup'){
 			$lookup_table_name = $column['lookup_table_name'];
+            $lookup_table_name = front_view_partial_strip_table_prefix($table_prefix, $lookup_table_name);
 			$lookup_column_name = $column['lookup_column_name'];
 			$fields[] = $lookup_table_name.'_'.$lookup_column_name;
 			$captions[] = $column_caption;
@@ -25,14 +39,14 @@ $contents = '';
 for($i=0; $i<count($result); $i++){
 	$record = $result[$i];
 	$contents .= '<div id="record_'.$record-><?php echo $primary_key; ?>.'" class="record_container well">';
-	
+
 	// show columns
 <?php
 	for($i=0; $i<count($fields); $i++){
 		echo '	$contents .= \'<b>'.$captions[$i].' :</b> \'.$record->'.$fields[$i].'.\'  <br />\'; '.PHP_EOL;
 	}
 ?>
-	
+
 	// edit and delete button
 	if($allow_navigate_backend){
 		$contents .= '<div class="edit_delete_record_container">';

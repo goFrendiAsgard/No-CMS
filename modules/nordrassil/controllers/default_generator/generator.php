@@ -14,14 +14,14 @@ class Generator extends CMS_Controller{
     private $save_project_name;
     private $config_table_prefix;
     private $config_module_prefix;
-	
+
 	public function __construct(){
 		parent::__construct();
         $this->load->helper('inflector');
 		$this->load->library('nordrassil/NordrassilLib');
 		$this->nds = new NordrassilLib();
 	}
-    
+
     private function strip_table_prefix($table_name){
         if(!isset($this->project_db_table_prefix) || $this->project_db_table_prefix == ''){
             return $table_name;
@@ -34,7 +34,7 @@ class Generator extends CMS_Controller{
         }
         return $table_name;
     }
-    
+
     private function array_to_quoted_string($array, $key=NULL){
         if(isset($key)){
             $new_array = array();
@@ -49,7 +49,7 @@ class Generator extends CMS_Controller{
         }
         return implode(', ', $new_array);
     }
-    
+
     private function array_to_unquoted_string($array, $key=NULL){
         if(isset($key)){
             $new_array = array();
@@ -60,7 +60,7 @@ class Generator extends CMS_Controller{
         }
         return implode(', ', $new_array);
     }
-    
+
     private function php_class_file_name($class_name, $without_extension = FALSE){
         $file_name = underscore(humanize($class_name));
         if(!$without_extension){
@@ -68,15 +68,15 @@ class Generator extends CMS_Controller{
         }
         return $file_name;
     }
-    
+
     private function front_navigation_name($table_name){
         return 'cms_well_name($module_path,\'browse_'.underscore($this->strip_table_prefix($table_name)).'\')';
     }
-    
+
     private function back_navigation_name($table_name){
         return 'cms_well_name($module_path,\'manage_'.underscore($this->strip_table_prefix($table_name)).'\')';
     }
-    
+
     private function front_controller_class_name($table_name){
         $table_name = $this->strip_table_prefix($table_name);
         $controller_name = 'Browse_'.str_replace(' ', '_', humanize($table_name));
@@ -97,7 +97,7 @@ class Generator extends CMS_Controller{
         $controller_name = str_replace(' ', '_', 'GroceryCrud_'.humanize($table_name)).'_Model';
         return $controller_name;
     }
-    
+
     private function front_controller_file_name($table_name, $without_extension = FALSE){
         return $this->php_class_file_name($this->front_controller_class_name($table_name), $without_extension);
     }
@@ -119,8 +119,8 @@ class Generator extends CMS_Controller{
     private function back_view_file_name($table_name, $without_extension = FALSE){
         return $this->php_class_file_name($this->back_controller_class_name($table_name).'_view', $without_extension);
     }
-	
-	public function index($project_id){		
+
+	public function index($project_id){
 		$projects = $this->nds->get_project($project_id);
         $this->project_id = $project_id;
 		$this->project_name = $projects['name'];
@@ -143,20 +143,20 @@ class Generator extends CMS_Controller{
         }
         $this->config_table_prefix = $stripped_table_prefix;
         $this->config_module_prefix = underscore($this->project_name);
-		
+
 		// Check tables information (blame user before user blame us :D)
 		$success = TRUE;
 		$message = '';
-		foreach($this->tables as $table){		    
+		foreach($this->tables as $table){
 			$table_name = $table['name'];
-			$options = $table['options'];			
+			$options = $table['options'];
 			$columns = $table['columns'];
 			$dont_make_form = $options['dont_make_form'];
 			// check primary key
 			$primary_key_exists = FALSE;
 			foreach($columns as $column){
 				$column_name = $column['name'];
-								
+
 				if($column['role']=='primary' || $column['role']=='lookup' || $column['role'] == ''){
 					if($column['data_type'] == ''){
 						$success = FALSE;
@@ -180,7 +180,7 @@ class Generator extends CMS_Controller{
 					){
 						$success = FALSE;
 						$message .= $table_name.'.'.$column_name.' doesn\'t have complete information<br />'.PHP_EOL;
-					}					
+					}
 				}else if($column['role'] == 'detail one to many'){
 					if($column['relation_table_name'] == '' || $column['relation_table_column_name'] == ''){
 						$success = FALSE;
@@ -204,13 +204,13 @@ class Generator extends CMS_Controller{
 				if(!$dont_make_form || $one_to_many_exists){
 					$success = FALSE;
 					$message .= $table_name.' doesn\'t have primary key<br />'.PHP_EOL;
-				}			
-			}		
+				}
+			}
 		}
 		if($success){
 			$this->load->helper('inflector');
 			$project_path = dirname(BASEPATH).'/modules/'.underscore($this->project_name).'/';
-			
+
 			$this->create_directory();
             $this->create_config();
 			$this->create_install_db_file();
@@ -220,16 +220,16 @@ class Generator extends CMS_Controller{
 			$this->create_back_controller_and_view();
 			$this->create_front_controller_and_view();
 		}
-		
+
 		if($this->input->is_ajax_request()){
 			$response = array('success'=>$success, 'message'=>$message);
 			$this->cms_show_json($response);
 		}else{
 			$this->cms_show_variable($projects);
 		}
-		
+
 	}
-	
+
 	private function create_front_controller_and_view(){
 		// filter tables, just the everything without "dont_make_form" option
 		$selected_tables = array();
@@ -240,7 +240,7 @@ class Generator extends CMS_Controller{
 			}
 		}
 		$tables = $selected_tables;
-		
+
 		$this->load->helper('inflector');
 		// get save_project_name
 		$save_project_name = underscore($this->project_name);
@@ -253,7 +253,7 @@ class Generator extends CMS_Controller{
 			$navigation_name = $this->front_navigation_name($table_name);
 			$backend_navigation_name = $this->back_navigation_name($table_name);
 			$columns = $table['columns'];
-			
+
 			$pattern = array(
 				'project_name',
 				'controller_name',
@@ -301,11 +301,11 @@ class Generator extends CMS_Controller{
 			$str = $this->nds->read_view('nordrassil/default_generator/front_view_partial.php',$data,$pattern,$replacement);
 			$this->nds->write_file($this->project_path.'views/'.$this->front_view_partial_file_name($table_name), $str);
 		}
-		
+
 	}
-	
+
 	private function create_back_controller_and_view(){
-	    // filter tables, just the everything without "dont_make_form" option		
+	    // filter tables, just the everything without "dont_make_form" option
 		$all_tables = $this->tables;
 		$selected_tables = array();
 		for($i=0; $i<count($this->tables); $i++){
@@ -315,7 +315,7 @@ class Generator extends CMS_Controller{
 			}
 		}
 		$tables = $selected_tables;
-		
+
 		$this->load->helper('inflector');
 		// get save_project_name
 		$save_project_name = underscore($this->project_name);
@@ -396,7 +396,7 @@ class Generator extends CMS_Controller{
 				}
 				// detail (one to many) field
 				if($column['role']=='detail one to many'){
-					$detail_table_name = 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($column['relation_table_name']).'\')';
+					$detail_table_name = $column['relation_table_name'];
 					$detail_foreign_key_name = $column['relation_table_column_name'];
 					$detail_primary_key_name = '';
 					$detail_table = array();
@@ -425,11 +425,12 @@ class Generator extends CMS_Controller{
 						'stripped_master_table_name' => $this->strip_table_prefix($table_name),
 						'master_table_name' => 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($table_name).'\')',
 						'master_column_name' => $column_name,
-						'master_primary_key_name' => $master_primary_key_name,						
-						'detail_table_name' => $detail_table_name,
+						'master_primary_key_name' => $master_primary_key_name,
+						'detail_table_name' => 'cms_module_table_name($module_path, \''.$this->strip_table_prefix($detail_table_name).'\')',
 						'detail_foreign_key_name' => $detail_foreign_key_name,
-						'detail_primary_key_name' => $detail_primary_key_name,						
+						'detail_primary_key_name' => $detail_primary_key_name,
 						'detail_table' => $detail_table,
+						'project_db_table_prefix' => $this->project_db_table_prefix,
 					);
 					$detail_callback_call_array[] = $this->nds->read_view('nordrassil/default_generator/controller_partial/detail_callback_call',
 						$data,
@@ -516,18 +517,18 @@ class Generator extends CMS_Controller{
 			);
 			$str = $this->nds->read_view('nordrassil/default_generator/back_view.php',$data,$pattern,$replacement);
 			$this->nds->write_file($this->project_path.'views/'.$this->back_view_file_name($table_name), $str);
-			
+
 		}
-		
+
 	}
-	
+
 	private function create_main_controller_and_view(){
 		$pattern = array(
 			'navigation_parent_name',
 			'directory',
 			'main_controller',
 			'project_name',
-		); 
+		);
 		$replacement = array(
 			'cms_well_name($module_path,\'index\')',
 			underscore($this->project_name),
@@ -541,13 +542,13 @@ class Generator extends CMS_Controller{
 		$str = $this->nds->read_view('nordrassil/default_generator/main_view', NULL, $pattern, $replacement);
 		$this->nds->write_file($this->project_path.'views/'.underscore($this->project_name).'_index.php', $str);
 	}
-	
+
 	private function create_installer(){
 		$project_path = $this->project_path;
         $tables = $this->tables;
         $project_name = $this->project_name;
-		
-        //////////////////////////////////////////////////////////////// 
+
+        ////////////////////////////////////////////////////////////////
 		// REMOVE NAVIGATIONS
 		////////////////////////////////////////////////////////////////
 		$remove_back_navigations = '';
@@ -570,15 +571,15 @@ class Generator extends CMS_Controller{
 				$remove_back_navigations .= $str.PHP_EOL;
 			}
 			// front
-			if($table['options']['make_frontpage']){					
+			if($table['options']['make_frontpage']){
 				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_front_navigation',NULL,
 					$pattern, $replacement);
 				$remove_front_navigations .= $str.PHP_EOL;
 			}
 		}
 		$remove_navigations = $remove_front_navigations.$remove_back_navigations;
-				
-		//////////////////////////////////////////////////////////////// 
+
+		////////////////////////////////////////////////////////////////
         // ADD NAVIGATIONS
         ////////////////////////////////////////////////////////////////
 		$add_back_navigations = '';
@@ -609,15 +610,15 @@ class Generator extends CMS_Controller{
 				$add_back_navigations .= $str.PHP_EOL;
 			}
 			// front
-			if($table['options']['make_frontpage']){					
+			if($table['options']['make_frontpage']){
 				$str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_front_navigation',NULL,
 					$pattern, $replacement);
 				$add_front_navigations .= $str.PHP_EOL;
 			}
 		}
 		$add_navigations = $add_front_navigations.$add_back_navigations;
-		
-        //////////////////////////////////////////////////////////////// 
+
+        ////////////////////////////////////////////////////////////////
         // CREATE INSTALLER
         ////////////////////////////////////////////////////////////////
         $backup_table_list = array();
@@ -636,7 +637,7 @@ class Generator extends CMS_Controller{
 			'project_name',
 			'save_project_name',
 			'project_caption',
-		); 
+		);
 		$replacement = array(
 			underscore($this->cms_user_name()).'.'.underscore($this->project_name),
 			$backup_table,
@@ -663,7 +664,7 @@ class Generator extends CMS_Controller{
     }
 
 	private function create_directory(){
-		// prepare directory		
+		// prepare directory
 		$this->nds->make_directory($this->project_path);
 		$this->nds->make_directory($this->project_path.'assets/');
 		$this->nds->make_directory($this->project_path.'assets/db/');
@@ -702,7 +703,7 @@ class Generator extends CMS_Controller{
 				$selected_tables[] = $table;
 			}
 		}
-		$create_table = $this->nds->get_create_table_syntax($selected_tables);        
+		$create_table = $this->nds->get_create_table_syntax($selected_tables);
 		// insert table syntax
 		$selected_tables = array();
 		for($i=0; $i<count($tables); $i++){
@@ -711,8 +712,8 @@ class Generator extends CMS_Controller{
 				$selected_tables[] = $table;
 			}
 		}
-		$insert_table = $this->nds->get_insert_table_syntax($project_id, $selected_tables); 
-		
+		$insert_table = $this->nds->get_insert_table_syntax($project_id, $selected_tables);
+
 		$db_arr = array();
 		foreach(explode('/*split*/',$create_table) as $item){
 			if(trim($item)=='') continue;
@@ -727,7 +728,7 @@ class Generator extends CMS_Controller{
 		}else{
 			$str = '';
 		}
-        
+
         $pattern = array(
             '/CREATE TABLE `'.$this->config_table_prefix.'_([^`]*)`/si',
             '/INSERT INTO `'.$this->config_table_prefix.'_([^`]*)`/si'
@@ -739,7 +740,7 @@ class Generator extends CMS_Controller{
         $str = preg_replace($pattern, $replacement, $str);
 		$this->nds->write_file($project_path.'assets/db/install.sql', $str);
 	}
-	
+
 	private function create_uninstall_db_file(){
 	    $project_path = $this->project_path;
         $tables = $this->tables;
@@ -760,6 +761,6 @@ class Generator extends CMS_Controller{
         $str = preg_replace($pattern, $replacement, $str);
 		$this->nds->write_file($project_path.'assets/db/uninstall.sql', $str);
 	}
-	
+
 }
 ?>

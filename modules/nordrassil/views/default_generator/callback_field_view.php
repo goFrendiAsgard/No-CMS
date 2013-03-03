@@ -21,24 +21,25 @@
 		$detail_column_role[] = $role;
 		$detail_value_selection_mode[] = $value_selection_mode;
 	}
-	
+
 	$detail_table_caption = $detail_table['caption'];
-	
+
 	$delete_button_class = 'md_field_'.$master_column_name.'_delete';
 	$tr_class = 'md_field_'.$master_column_name.'_tr';
 	$add_button_id = 'md_field_'.$master_column_name.'_add';
 	$column_input_class = 'md_field_'.$master_column_name.'_col';
 	$real_input_id = 'md_real_field_'.$master_column_name.'_col';
 	$table_id = 'md_table_'.$master_column_name;
-	
+
 	$var_record_index = 'RECORD_INDEX_'.$master_column_name;
 	$var_data = 'DATA_'.$master_column_name;
 	$fn_synchronize = 'synchronize_'.$master_column_name;
-	$fn_add_table_row = 'add_table_row_'.$master_column_name;	
+	$fn_add_table_row = 'add_table_row_'.$master_column_name;
 ?>
 &lt;?php
 	$record_index = 0;
 ?&gt;
+<link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS); ?&gt;" />
 <style type="text/css">
 	/* set width of every detail input*/
 	#<?php echo $table_id; ?> .<?php echo $column_input_class ?>{
@@ -65,21 +66,21 @@
 <?php
 	foreach($detail_column_captions as $caption){
 		echo '			<th>'.$caption.'</th>'.PHP_EOL;
-	}		
+	}
 ?>
 			<th>Action</th>
 		</tr>
 	</thead>
-	<tbody>	
+	<tbody>
 		<!-- the data presentation be here -->
-	</tbody>	
+	</tbody>
 </table>
 <input id="<?php echo $add_button_id; ?>" class="btn" type="button" value="Add <?php echo $detail_table_caption; ?>" />
 <br />
 <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
 <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
 
-<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/jquery-ui-1.9.0.custom.min.js'); ?&gt;"></script>
+<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>
@@ -93,7 +94,7 @@
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var DATE_FORMAT = '&lt;?php echo $date_format ?&gt;';
 	var OPTIONS = &lt;?php echo json_encode($options); ?&gt;;
-	var <?php echo $var_record_index; ?> = &lt;?php echo $record_index; ?&gt;;	 
+	var <?php echo $var_record_index; ?> = &lt;?php echo $record_index; ?&gt;;
 	var <?php echo $var_data; ?> = {update:new Array(), insert:new Array(), delete:new Array()};
 	var old_data = &lt;?php echo json_encode($result); ?&gt;;
 	for(var i=0; i<old_data.length; i++){
@@ -101,15 +102,15 @@
 		var record_index = i;
 		var primary_key = row['<?php echo $detail_primary_key_name; ?>'];
 		var data = row;
-		delete data['<?php echo $detail_primary_key_name; ?>']; 
+		delete data['<?php echo $detail_primary_key_name; ?>'];
 		<?php echo $var_data; ?>.update.push({
 			'record_index' : record_index,
 			'primary_key' : primary_key,
 			'data' : data,
 		});
-	}	
-	
-	
+	}
+
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// ADD ROW FUNCTION
 	//
@@ -118,10 +119,10 @@
 	//
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function <?php echo $fn_add_table_row; ?>(value){
-		
+
 		var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
 		<?php
-		$date_exist = FALSE; 		
+		$date_exist = FALSE;
 		for($i=0; $i<count($detail_column_names); $i++){
 			$name = $detail_column_names[$i];
 			$caption = $detail_column_captions[$i];
@@ -135,7 +136,7 @@
 				$additional_class_array[] = 'numeric';
 			}
 			if(count($additional_class_array)>0){
-				$additional_class = ' '.implode(' ',$additional_class_array);	
+				$additional_class = ' '.implode(' ',$additional_class_array);
 			}else{
 				$additional_class = '';
 			}
@@ -149,7 +150,7 @@
 				echo '			field_value = php_date_to_js(value.'.$name.');'.PHP_EOL;
 			}else{
 				echo '			field_value = value.'.$name.';'.PHP_EOL;
-			}			
+			}
 			echo '		}'.PHP_EOL;
 			echo '		component += \'<td>\';'.PHP_EOL;
 			// create input based on role and type
@@ -161,7 +162,7 @@
 					$multiple = ' multiple = "multiple"';
 				}
 				echo '		component += \'<select id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
-					'+\'" class="'.$column_input_class.$additional_class.' chzn-select" column_name="'.$name.'" '.$multiple.'>\';'.PHP_EOL;				
+					'+\'" class="'.$column_input_class.$additional_class.' chzn-select" column_name="'.$name.'" '.$multiple.'>\';'.PHP_EOL;
 				echo '		var options = OPTIONS.'.$name.';'.PHP_EOL;
 				echo '		component += \'<option value></option>\';'.PHP_EOL;
 				echo '		for(var i=0; i<options.length; i++){'.PHP_EOL;
@@ -188,26 +189,26 @@
 				}
 			}
 			echo'		component += \'</td>\';'.PHP_EOL.PHP_EOL;
-		}		
+		}
 		?>
-		
-		
+
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Delete Button
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
 		component += '<td><input class="<?php echo $delete_button_class; ?> btn" record_index="'+<?php echo $var_record_index; ?>+'" primary_key="" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';
 		component += '</tr>';
-		
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
         // Add component to table
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-		$('#<?php echo $table_id; ?> tbody').append(component);		
+		$('#<?php echo $table_id; ?> tbody').append(component);
 		mutate_input();
-		
+
 	} // end of ADD ROW FUNCTION
-	
-	
-	
+
+
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Main event handling program
     //
@@ -218,7 +219,7 @@
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 	$(document).ready(function(){
-		
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -227,14 +228,14 @@
 			<?php echo $fn_add_table_row; ?>(old_data[i]);
 			<?php echo $var_record_index; ?>++;
 		}
-		
-		
+
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
         // <?php echo $add_button_id; ?>.click (Add row)
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 		$('#<?php echo $add_button_id; ?>').click(function(){
 			// new data
-			var data = new Object();			
+			var data = new Object();
 			<?php echo PHP_EOL;
 			foreach($detail_column_names as $name){
 				echo '			data.'.$name.' = \'\';'.PHP_EOL;
@@ -246,17 +247,17 @@
 				'primary_key' : '',
 				'data' : data,
 			});
-			
+
 			// add table's row
-			<?php echo $fn_add_table_row; ?>(data);			
+			<?php echo $fn_add_table_row; ?>(data);
 			// add <?php $var_record_index; ?> by 1
 			<?php echo $var_record_index; ?>++;
-			
+
 			// synchronize to the <?php echo $real_input_id.PHP_EOL; ?>
 			<?php echo $fn_synchronize; ?>();
 		});
-		
-		
+
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
         // <?php echo $delete_button_class; ?>.click (Delete row)
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +265,7 @@
 			var record_index = $(this).attr('record_index');
 			// remove the component
 			$('#<?php echo $tr_class ?>_'+record_index).remove();
-			
+
 			var record_index_found = false;
 			for(var i=0; i<<?php echo $var_data; ?>.insert.length; i++){
 				if(<?php echo $var_data; ?>.insert[i].record_index == record_index){
@@ -289,15 +290,15 @@
 						break;
 					}
 				}
-			}			
+			}
 			<?php echo $fn_synchronize; ?>();
 		});
-				
-		
+
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
         // <?php echo $column_input_class; ?>.change (Edit cell)
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-		$('.<?php echo $column_input_class; ?>').live('change', function(){				
+		$('.<?php echo $column_input_class; ?>').live('change', function(){
 			var value = $(this).val();
 			var column_name = $(this).attr('column_name');
 			var record_index = $(this).attr('record_index');
@@ -327,24 +328,24 @@
 					}
 				}
 			}
-			<?php echo $fn_synchronize; ?>();				
+			<?php echo $fn_synchronize; ?>();
 		});
-		
-		
+
+
 	});
-	
-	
-	
-	
+
+
+
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
     // General Functions
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	// synchronize data to <?php echo $real_input_id; ?>.
 	function <?php echo $fn_synchronize; ?>(){
 		$('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
 	}
-	
+
 	function js_datetime_to_php(js_datetime){
 		var datetime_array = js_datetime.split(' ');
 		var js_date = datetime_array[0];
@@ -359,15 +360,15 @@
 		var js_date = php_date_to_js(php_date);
 		return js_date + ' ' + time;
 	}
-	
+
 	function js_date_to_php(js_date){
 		if(typeof(js_date)=='undefined' || js_date == ''){
 			return '';
 		}
 		var date = '';
 		var month = '';
-		var year = '';	
-		var php_date = '';	
+		var year = '';
+		var php_date = '';
 		if(DATE_FORMAT == 'uk-date'){
 			var date_array = js_date.split('/')
 			day = date_array[0];
@@ -389,8 +390,8 @@
 		}
 		return php_date;
 	}
-	
-	
+
+
 	function php_date_to_js(php_date){
 		if(typeof(php_date)=='undefined' || php_date == ''){
 			return '';
@@ -409,11 +410,11 @@
 			return '';
 		}
 	}
-	
+
 	function IsNumeric(input){
 		return (input - 0) == input && input.length > 0;
 	}
-	
+
 	function mutate_input(){
 		// datepikcer-input
 		$('#<?php echo $table_id; ?> .datepicker-input').datepicker({
@@ -431,7 +432,7 @@
 		$("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true});
 		// numeric
 		$('#<?php echo $table_id; ?> .numeric').numeric();
-		$('#<?php echo $table_id; ?> .numeric').keydown(function(e){			
+		$('#<?php echo $table_id; ?> .numeric').keydown(function(e){
 			if(e.keyCode == 38)
 			{
 				if(IsNumeric($(this).val()))
@@ -456,9 +457,9 @@
 					$(this).val(new_number);
 				}
 			}
-			$(this).trigger('change');			
+			$(this).trigger('change');
 		});
-		
+
 	}
-	
+
 </script>
