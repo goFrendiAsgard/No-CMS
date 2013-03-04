@@ -12,7 +12,7 @@ $foursquare_callback_url = get_callback_url('Foursquare');
     <link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap.min.css" />
 
     <script type="text/javascript" src="../assets/nocms/js/jquery.tools.min.js"></script>
-    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>    
+    <script type="text/javascript" src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript">
         var DATABASE_CLICKED = true;
         var ADMIN_CLICKED = false;
@@ -21,16 +21,16 @@ $foursquare_callback_url = get_callback_url('Foursquare');
         var SUCCESS = false;
         var REQUEST
         var RUNNING_REQUEST = false;
-        
+
         $(document).ready(function(){
-            check_all();  
+            check_all();
             $(".input").keyup(function(event){
                 check_all();
             });
             $(".input").change(function(event){
                 check_all();
             });
-            
+
             $('a[href="#database"]').click(function(){
                 $('fieldset#admin').hide();
                 $('fieldset#preference').hide();
@@ -40,7 +40,7 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                 show_hide_button()
                 return false;
             });
-            
+
             $('a[href="#admin"]').click(function(){
             	$('fieldset#database').hide();
             	$('fieldset#preference').hide();
@@ -50,7 +50,7 @@ $foursquare_callback_url = get_callback_url('Foursquare');
             	show_hide_button();
             	return false;
             });
-            
+
             $('a[href="#preference"]').click(function(){
                 $('fieldset#database').hide();
                 $('fieldset#admin').hide();
@@ -60,7 +60,7 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                 show_hide_button();
                 return false;
             });
-            
+
             $('a[href="#authentication"]').click(function(){
                 $('fieldset#database').hide();
                 $('fieldset#admin').hide();
@@ -70,25 +70,25 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                 show_hide_button();
                 return false;
             });
-            
+
             $('#btn_install').click(function(){
             	$('#btn_install').hide();
             	$('#img_loader_install').show();
             	return true;
             });
-            
+
         });
-        
+
         function show_hide_button(){
         	if(SUCCESS && DATABASE_CLICKED && ADMIN_CLICKED && PREFERENCE_CLICKED && AUTHENTICATION_CLICKED){
                 $(".button_install").show();
-                $('.button_install').removeAttr('disabled');  
+                $('.button_install').removeAttr('disabled');
             }else{
                 $(".button_install").hide();
                 $('.button_install').attr('disabled', 'disabled');
             }
         }
-        
+
         function check_all(){
         	$('#button_install').attr('disabled', 'disabled');
         	if(RUNNING_REQUEST){
@@ -125,7 +125,7 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                     SUCCESS = response.success;
                     var warnings = response.warnings;
                     var errors = response.errors;
-                    
+
                     var message = ''
                     if(errors.length>0){
                     	message += '<b>ERRORS</b> (You should fix these in order to install No-CMS) : ';
@@ -151,13 +151,13 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                     }
                     $('#div_loader_message').hide();
                     show_hide_button();
-                    
+
                 }
             });
         }
-        
+
     </script>
-    
+
 </head>
 <body>
 <div class="container-fluid">
@@ -173,8 +173,8 @@ $foursquare_callback_url = get_callback_url('Foursquare');
 	                   <li><a href="#preference">Preferences</a></li>
 	                   <li><a href="#authentication">Third Party Authentication</a></li>
 	               </ul>
-	            </div> 
-	        </div>  	          
+	            </div>
+	        </div>
 	      </div>
 	    </div>
 	    <div class="span8">
@@ -223,11 +223,11 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">Database table prefix</p>
                        </div>
                     </div>
-			        <div>                    
+			        <div>
 	                    <a class="btn btn-primary" href="#admin">Next Step</a>
 	                </div>
 			    </fieldset>
-			    
+
 			    <fieldset id="admin">
 			        <legend>Step #2 No-CMS Administrator Settings</legend>
 			        <div class="control-group">
@@ -265,12 +265,12 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">admin's password again</p>
                        </div>
                     </div>
-                    <div>                   
+                    <div>
 	                    <a class="btn" href="#database">Back</a>
 	                    <a class="btn btn-primary" href="#preference">Next Step</a>
 	                </div>
-			    </fieldset> 
-			    
+			    </fieldset>
+
 			    <fieldset id="preference">
 			        <legend>Step #3 Preferences</legend>
 			        <div class="control-group">
@@ -289,16 +289,16 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                     </div>
                     <div>
 	                    <a class="btn" href="#admin">Back</a>
-	                    <a class="btn btn-primary" href="#authentication">Next Step</a>	                    
+	                    <a class="btn btn-primary" href="#authentication">Next Step</a>
 	                </div>
 			    </fieldset>
 			    <fieldset id="authentication">
 			        <legend>Step #4 Third Party Authentication</legend>
-			        
+
 			        <div style="text-align:right;">
-			        	<legend>Facebook <img src="./assets/icons/facebook.png"/></legend>			        	
+			        	<legend>Facebook <img src="./assets/icons/facebook.png"/></legend>
 			        </div>
-			        <div class="control-group">                       
+			        <div class="control-group">
                        <label class="control-label" for="auth_enable_facebook">Allow Facebook Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_facebook" name="auth_enable_facebook" class="input-xlarge input" value="true" />
@@ -326,12 +326,12 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <input type="text" id="auth_facebook_app_secret" name="auth_facebook_app_secret" value="" class="input-xlarge input" />
                            <p class="help-block">Facebook Application Secret</p>
                        </div>
-                    </div>                    
-                    
+                    </div>
+
                     <div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>Twitter <img src="./assets/icons/twitter.png"/></legend>			        	
+			        	<legend>Twitter <img src="./assets/icons/twitter.png"/></legend>
 			        </div>
-                    <div class="control-group">   
+                    <div class="control-group">
                        <label class="control-label" for="auth_enable_twitter">Allow Twitter Authentication</label>
                        <div class="controls">
                            <input type="checkbox" id="auth_enable_twitter" name="auth_enable_twitter" class="input-xlarge input" value="true" />
@@ -361,9 +361,9 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">Twitter Application Secret</p>
                        </div>
                     </div>
-                    
+
                     <div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>Google <img src="./assets/icons/google.png"/></legend>			        	
+			        	<legend>Google <img src="./assets/icons/google.png"/></legend>
 			        </div>
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_google">Allow Google Authentication</label>
@@ -373,8 +373,8 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            	    To Allow Google Authentication:
 								<ol>
 									<li>Go to <a target="_blank" href="https://code.google.com/apis/console/">https://code.google.com/apis/console/</a> and create a new application.</li>
-									<li>Fill out any required fields such as the application name and description.</li>									
-									<li>On the <b>"Create Client ID"</b> popup switch to advanced settings by clicking on <b>(more options)</b>.</li>									
+									<li>Fill out any required fields such as the application name and description.</li>
+									<li>On the <b>"Create Client ID"</b> popup switch to advanced settings by clicking on <b>(more options)</b>.</li>
 									<li>Provide this URL as the <b>Callback URL</b> for your application: <b><?php echo $google_callback_url; ?></b></li>
 									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
 								</ol>
@@ -395,9 +395,9 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">Google Application Secret</p>
                        </div>
                     </div>
-                    
+
 					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>Yahoo <img src="./assets/icons/yahoo.png"/></legend>			        	
+			        	<legend>Yahoo <img src="./assets/icons/yahoo.png"/></legend>
 			        </div>
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_yahoo">Allow Yahoo Authentication</label>
@@ -429,9 +429,9 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">Yahoo Application Secret</p>
                        </div>
                     </div>
-                    
+
 					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>LinkedIn <img src="./assets/icons/linkedin.png"/></legend>			        	
+			        	<legend>LinkedIn <img src="./assets/icons/linkedin.png"/></legend>
 			        </div>
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_linkedin">Allow linkedIn Authentication</label>
@@ -463,9 +463,9 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">LinkedIn Application Secret</p>
                        </div>
                     </div>
-                    
+
 					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>MySpace <img src="./assets/icons/myspace.png"/></legend>			        	
+			        	<legend>MySpace <img src="./assets/icons/myspace.png"/></legend>
 			        </div>
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_myspace">Allow MySpace Authentication</label>
@@ -496,9 +496,9 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">MySpace Application Secret</p>
                        </div>
                     </div>
-                    
+
 					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>Foursquare <img src="./assets/icons/foursquare.png"/></legend>			        	
+			        	<legend>Foursquare <img src="./assets/icons/foursquare.png"/></legend>
 			        </div>
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_foursquare">Allow Foursquare Authentication</label>
@@ -508,7 +508,7 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            	    To Allow Foursquare Authentication:
 								<ol>
 									<li>Go to <a target="_blank" href="https://www.foursquare.com/oauth/">https://www.foursquare.com/oauth/</a> and create a new application.</li>
-									<li>Fill out any required fields such as the application name and description.</li>									
+									<li>Fill out any required fields such as the application name and description.</li>
 									<li>Provide this URL as the <b>Callback URL</b> for your application: <b><?php echo $foursquare_callback_url; ?></b></li>
 									<li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
 								</ol>
@@ -529,9 +529,9 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">Foursquare Application Secret</p>
                        </div>
                     </div>
-                    
+
 					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>Windows Live <img src="./assets/icons/live.png"/></legend>			        	
+			        	<legend>Windows Live <img src="./assets/icons/live.png"/></legend>
 			        </div>
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_windows_live">Allow Windows Live Authentication</label>
@@ -562,9 +562,9 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">Windows Live Application Secret</p>
                        </div>
                     </div>
-                    
+
 					<div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>Open ID <img src="./assets/icons/openid.png"/></legend>			        	
+			        	<legend>Open ID <img src="./assets/icons/openid.png"/></legend>
 			        </div>
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_open_id">Allow Open Id Authentication</label>
@@ -573,9 +573,9 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                            <p class="help-block">Enable Open Id Authentication (No registration required for OpenID based providers)</p>
                        </div>
                     </div>
-                    
+
                     <div style="text-align:right; border-top: 1px solid #E5E5E5; margin-top: 50px;">
-			        	<legend>AOL <img src="./assets/icons/aol.png"/></legend>			        	
+			        	<legend>AOL <img src="./assets/icons/aol.png"/></legend>
 			        </div>
                     <div class="control-group">
                        <label class="control-label" for="auth_enable_aol">Allow AOL Authentication</label>
@@ -585,22 +585,22 @@ $foursquare_callback_url = get_callback_url('Foursquare');
                        </div>
                     </div>
                     <div>
-	                    <a class="btn" href="#preference">Back</a>	                    
+	                    <a class="btn" href="#preference">Back</a>
 	                </div>
 			    </fieldset>
-			    <div style="margin-top: 10px;">
-			        <input type="submit" id="btn_install" class="button_install btn btn-primary" name="Install" value="INSTALL NOW"  />
-			        <img id="img_loader_install" style="display:none;" src="./assets/ajax-loader.gif" />
-			    </div>
-			</form>    
+                <div style="margin-top: 10px;">
+                    <input type="submit" id="btn_install" class="button_install btn btn-primary btn-large" name="Install" value="INSTALL NOW"  />
+                    <img id="img_loader_install" style="display:none;" src="./assets/ajax-loader.gif" />
+                </div>
+			</form>
 	    </div>
-	    <div id="ajax_result" class="absolute">	       	    
+	    <div id="ajax_result" class="absolute">
 	       <div id="infoMessage" class="alert alert-error"></div>
 	       <div id="div_loader_message" class="span12" style="display:none;">
 	           Checking <img src="./assets/ajax-loader.gif" />
-	       </div>	       
+	       </div>
 	    </div>
-	
+
 	</div>
 </div>
 </body>

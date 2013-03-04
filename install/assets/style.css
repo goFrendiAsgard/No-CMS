@@ -1,7 +1,3 @@
-::selection{ background-color: #E13300; color: white; }
-::moz-selection{ background-color: #E13300; color: white; }
-::webkit-selection{ background-color: #E13300; color: white; }
-
 .input-xlarge{
 	height: 28px!important;
 }
@@ -59,7 +55,8 @@ p.footer{
 	right: 0px;
 	display: block;
 	left : 600px;
-    width : 400px;    
+    width : 400px;
+    z-index:100;
 }
 
 form{
@@ -71,7 +68,7 @@ form{
 .fix{
 	position:fixed!important;
 }
-.absolute{	
+.absolute{
     position: absolute!important;
 }
 .button_install{
