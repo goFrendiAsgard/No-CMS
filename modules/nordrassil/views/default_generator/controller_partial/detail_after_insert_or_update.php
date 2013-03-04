@@ -25,7 +25,14 @@
 		}
 	}
 ?>
-		// save corresponding <?php echo $detail_table_name.PHP_EOL; ?>
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//
+		// SAVE CHANGES OF <?php echo $detail_table_name.PHP_EOL; ?>
+		//  * The <?php echo $detail_table_name.PHP_EOL; ?> data in in json format.
+		//  * It can be accessed via $_POST['<?php echo $real_input_id; ?>']
+		//
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$data = json_decode($this->input->post('<?php echo $real_input_id; ?>'), TRUE);
 		$insert_records = $data['insert'];
 		$update_records = $data['update'];
@@ -36,7 +43,9 @@
 		$many_to_many_relation_tables = array(<?php echo implode(', ', $quoted_many_to_many_relation_tables); ?>);
 		$many_to_many_relation_table_columns = array(<?php echo implode(', ', $quoted_many_to_many_relation_table_columns); ?>);
 		$many_to_many_relation_selection_columns = array(<?php echo implode(', ', $quoted_many_to_many_relation_selection_columns); ?>);
-		// delete
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//  DELETED DATA
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		foreach($delete_records as $delete_record){
 			$detail_primary_key = $delete_record['primary_key'];
 			// delete many to many
@@ -52,7 +61,9 @@
 			$this->db->delete($this->cms_complete_table_name('<?php echo $detail_table_name; ?>'),
 			     array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
 		}
-		// update
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  UPDATED DATA
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		foreach($update_records as $update_record){
 			$detail_primary_key = $update_record['primary_key'];
 			$data = array();
@@ -66,7 +77,9 @@
 			$data['<?php echo $detail_foreign_key_name; ?>'] = $primary_key;
 			$this->db->update($this->cms_complete_table_name('<?php echo $detail_table_name; ?>'),
 			     $data, array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
-			// many to many fields
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// Adjust Many-to-Many Fields of Updated Data
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			for($i=0; $i<count($many_to_many_column_names); $i++){
 				$key = 	$many_to_many_column_names[$i];
 				$new_values = $update_record['data'][$key];
@@ -77,7 +90,9 @@
 					->from($table_name)
 					->where($relation_column_name, $detail_primary_key)
 					->get();
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// delete everything which is not in new_values
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				$old_values = array();
 				foreach($query->result_array() as $row){
 					$old_values = array();
@@ -91,7 +106,9 @@
 						$old_values[] = $row[$relation_selection_column_name];
 					}
 				}
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// add everything which is not in old_values but in new_values
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				foreach($new_values as $new_value){
 					if(!in_array($new_value, $old_values)){
 						$data = array(
@@ -103,7 +120,9 @@
 				}
 			}
 		}
-		// insert
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  INSERTED DATA
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		foreach($insert_records as $insert_record){
 			$data = array();
 			foreach($insert_record['data'] as $key=>$value){
@@ -116,7 +135,9 @@
 			$data['<?php echo $detail_foreign_key_name; ?>'] = $primary_key;
 			$this->db->insert($this->cms_complete_table_name('<?php echo $detail_table_name; ?>'), $data);
 			$detail_primary_key = $this->db->insert_id();
-			// many to many fields
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Adjust Many-to-Many Fields of Inserted Data
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			for($i=0; $i<count($many_to_many_column_names); $i++){
 				$key = 	$many_to_many_column_names[$i];
 				$new_values = $insert_record['data'][$key];
@@ -127,7 +148,9 @@
 					->from($table_name)
 					->where($relation_column_name, $detail_primary_key)
 					->get();
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// delete everything which is not in new_values
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				$old_values = array();
 				foreach($query->result_array() as $row){
 					$old_values = array();
@@ -141,7 +164,9 @@
 						$old_values[] = $row[$relation_selection_column_name];
 					}
 				}
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				// add everything which is not in old_values but in new_values
+				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				foreach($new_values as $new_value){
 					if(!in_array($new_value, $old_values)){
 						$data = array(

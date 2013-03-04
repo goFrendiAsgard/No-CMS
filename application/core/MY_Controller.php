@@ -1267,7 +1267,13 @@ class CMS_Module_Installer extends CMS_Controller
 
     public function __construct(){
         parent::__construct();
-        $query = $this->db->select('version')->from(cms_table_name('main_module'))->where('module_name', $this->NAME)->get();
+        $query = $this->db->select('version')
+            ->from(cms_table_name('main_module'))
+            ->where(array(
+                'module_name'=> $this->NAME,
+                'module_path'=> $this->cms_module_path(),
+              ))
+            ->get();
         if ($query->num_rows() == 0) {
             $this->IS_ACTIVE = FALSE;
             $this->IS_OLD = FALSE;
@@ -1359,7 +1365,6 @@ class CMS_Module_Installer extends CMS_Controller
             $this->db->trans_start();
             if($this->do_activate() !== FALSE){
                 $this->register_module();
-                $this->db->trans_complete();
             }else{
                 $result['success']   = FALSE;
                 if($this->ERROR_MESSAGE != ''){
@@ -1368,7 +1373,7 @@ class CMS_Module_Installer extends CMS_Controller
                     $result['message'][] = 'Failed to activate module';
                 }
             }
-            $this->db->trans_start();
+            $this->db->trans_complete();
         }
 
         $result['message'] = ul($result['message']);

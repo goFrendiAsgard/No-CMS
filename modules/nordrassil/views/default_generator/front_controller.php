@@ -20,6 +20,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 		$data = array(
 			'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('{{ backend_navigation_name }}')),
 			'backend_url' => site_url($this->cms_module_path().'/{{ back_controller_import_name }}/index'),
+			'module_path' => $this->cms_module_path(),
 		);
         $this->view($this->cms_module_path().'/{{ front_view_import_name }}',$data,
             $this->cms_complete_navigation_name('{{ navigation_name }}'));
@@ -34,7 +35,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
     	if(!$keyword) $keyword = '';
     	if(!$page) $page = 0;
     	// get data from model
-    	$this->load->model('{{ project_name }}/{{ front_model_import_name }}');
+    	$this->load->model($this->cms_module_path().'/{{ front_model_import_name }}');
     	$this->{{ model_name }} = new {{ model_name }}();
     	$result = $this->{{ model_name }}->get_data($keyword, $page);
     	$data = array(

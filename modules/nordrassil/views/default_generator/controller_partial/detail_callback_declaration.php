@@ -1,5 +1,5 @@
 <?php
-	$view_path = $project_name.'/field_'.underscore($stripped_master_table_name).'_'.underscore($master_column_name);
+	$view_name = 'field_'.underscore($stripped_master_table_name).'_'.underscore($master_column_name);
 	$detail_columns = $detail_table['columns'];
 	$detail_column_captions = array();
 	$detail_column_names = array();
@@ -116,7 +116,7 @@
 			'options' => $options,
 			'date_format' => $date_format,
 		);
-		return $this->load->view('<?php echo $view_path; ?>',$data, TRUE);
+		return $this->load->view($this->cms_module_path().'/<?php echo $view_name; ?>',$data, TRUE);
 	}
 
 	// returned on view

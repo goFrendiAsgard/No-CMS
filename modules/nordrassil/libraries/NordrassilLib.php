@@ -58,6 +58,7 @@ class NordrassilLib{
 		return file_get_contents($file_name);
 	}
 	public function write_file($file_name, $content){
+	    chmod($file_name, 0777);
 		file_put_contents($file_name, $content);
 		chmod($file_name, 0777);
 	}
@@ -70,7 +71,7 @@ class NordrassilLib{
 		if(!is_dir($directory_name)){
 			mkdir($directory_name,0777,TRUE);
 			chmod($directory_name,0777);
-		}		
+		}
 	}
 	public function read_view($view_name, $data=NULL, $pattern=NULL, $replacement=NULL){
 		$string = $this->ci->load->view($view_name,$data,True);
