@@ -5,7 +5,7 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
     $pattern = array();
     $pattern[] = '/(\$config\[(\'|")'.$key.'(\'|")\] *= *")(.*?)(";)/si';
     $pattern[] = "/(".'\$'."config\[('|\")".$key."('|\")\] *= *')(.*?)(';)/si";
-    
+
     if($delete){
         $replacement = '';
         $str = preg_replace($pattern, $replacement, $str);
@@ -18,9 +18,9 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
             $CI =& get_instance();
             $CI->config->load($config_load_alias);
             $value = $CI->config->item($key);
-            return $value; 
-        }else{        
-            $str = file_get_contents($file_name);         
+            return $value;
+        }else{
+            $str = file_get_contents($file_name);
             $replacement = '${1}'.$value.'${5}';
             $found = FALSE;
             foreach($pattern as $single_pattern){
@@ -33,15 +33,15 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
                 $str .= PHP_EOL.'$config[\''.$key.'\'] = \''.$value.'\';';
             }
             else{
-                $str = preg_replace($pattern, $replacement, $str); 
-            }        
+                $str = preg_replace($pattern, $replacement, $str);
+            }
             @chmod($file_name,0777);
             @file_put_contents($file_name, $str);
             @chmod($file_name,0555);
             return $value;
         }
     }
-    
+
 }
 
 /**
@@ -102,7 +102,7 @@ function cms_module_table_name($module_directory, $table_name){
     }
 }
 
-function cms_well_name($module_directory, $name){
+function cms_module_navigation_name($module_directory, $name){
     $module_prefix = cms_module_prefix($module_directory);
     if($module_prefix != ''){
         return $module_prefix.'_'.$name;

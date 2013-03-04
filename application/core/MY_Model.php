@@ -46,6 +46,36 @@ class CMS_Model extends CI_Model
 
     /**
      * @author goFrendiAsgard
+     * @param  string $table_name
+     * @return string
+     * @desc   return good table name
+     */
+    public function cms_complete_table_name($table_name){
+        $module_path = $this->cms_module_path();
+        if($module_path == 'main' or $module_path == ''){
+            return cms_table_name($table_name);
+        }else{
+            return cms_module_table_name($module_path, $table_name);
+        }
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @param  string $navigation_name
+     * @return string
+     * @desc   return good table name
+     */
+    public function cms_complete_navigation_name($navigation_name){
+        $module_path = $this->cms_module_path();
+        if($module_path == 'main' or $module_path == ''){
+            return $navigation_name;
+        }else{
+            return cms_module_navigation_name($module_path, $navigation_name);
+        }
+    }
+
+    /**
+     * @author goFrendiAsgard
      * @param  string $key
      * @param  mixed $value
      * @return mixed

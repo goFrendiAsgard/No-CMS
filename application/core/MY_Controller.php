@@ -44,6 +44,27 @@ class CMS_Controller extends MX_Controller
         $this->load->library('template');
 
         $this->load->model('No_CMS_Model');
+        $this->No_CMS_Model = new No_CMS_Model();
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @param  string $table_name
+     * @return string
+     * @desc   return complete table name
+     */
+    public function cms_complete_table_name($table_name){
+        return $this->No_CMS_Model->cms_complete_table_name($table_name);
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @param  string $navigation_name
+     * @return string
+     * @desc   return complete navigation name
+     */
+    public function cms_complete_navigation_name($navigation_name){
+        return $this->No_CMS_Model->cms_complete_navigation_name($navigation_name);
     }
 
     /**
@@ -1121,7 +1142,7 @@ class CMS_Controller extends MX_Controller
 }
 
 
-class CMS_Priv_Base_Controller extends CMS_Controller
+abstract class CMS_Priv_Base_Controller extends CMS_Controller
 {
     public function __construct()
     {
@@ -1154,68 +1175,6 @@ class CMS_Priv_Base_Controller extends CMS_Controller
         $navigation_name = $this->cms_override_navigation_name($navigation_name);
         $config          = $this->cms_override_config($config);
         parent::view($view_url, $data, $navigation_name, $config, $return_as_string);
-    }
-}
-
-class CMS_Priv_Bypass_Controller extends CMS_Priv_Base_Controller
-{
-    protected function cms_override_config($config)
-    {
-        $config['always_allow'] = TRUE;
-        return $config;
-    }
-}
-
-class CMS_Priv_Authenticated_Controller extends CMS_Priv_Base_Controller
-{
-    public function __construct()
-    {
-        parent::__construct();
-        if (!is_numeric($this->cms_user_id())) {
-            if ($this->input->is_ajax_request()) {
-                $response = array(
-                    'success' => FALSE,
-                    'message' => 'unauthorized access'
-                );
-                $this->cms_show_json($variable);
-                die();
-            } else {
-                $this->cms_redirect();
-            }
-        }
-    }
-
-    protected function cms_override_config($config)
-    {
-        $config['always_allow']  = TRUE;
-        $config['layout_suffix'] = 'authenticated';
-        return $config;
-    }
-}
-
-class CMS_Priv_Unauthenticated_Controller extends CMS_Priv_Base_Controller
-{
-    public function __construct()
-    {
-        parent::__construct();
-        if (is_numeric($this->cms_user_id())) {
-            if ($this->input->is_ajax_request()) {
-                $response = array(
-                    'success' => FALSE,
-                    'message' => 'unauthorized access'
-                );
-                $this->cms_show_json($variable);
-                die();
-            } else {
-                $this->cms_redirect();
-            }
-        }
-    }
-
-    protected function cms_override_config($config)
-    {
-        $config['always_allow'] = TRUE;
-        return $config;
     }
 }
 
@@ -1409,6 +1368,7 @@ class CMS_Module_Installer extends CMS_Controller
                     $result['message'][] = 'Failed to activate module';
                 }
             }
+            $this->db->trans_start();
         }
 
         $result['message'] = ul($result['message']);
@@ -1460,7 +1420,6 @@ class CMS_Module_Installer extends CMS_Controller
             $this->db->trans_start();
             if($this->do_deactivate() !== FALSE){
                 $this->unregister_module();
-                $this->db->trans_complete();
             }else{
                 $result['success']   = FALSE;
                 if($this->ERROR_MESSAGE != ''){
@@ -1469,6 +1428,7 @@ class CMS_Module_Installer extends CMS_Controller
                     $result['message'][] = 'Failed to deactivate module';
                 }
             }
+            $this->db->trans_complete();
         }
 
         $result['message'] = ul($result['message']);
@@ -1568,8 +1528,9 @@ class CMS_Module_Installer extends CMS_Controller
         foreach ($queries as $query) {
             if(trim($query) == '') continue;
             $table_prefix = cms_module_table_prefix($this->cms_module_path());
-            $query = preg_replace('/\{\{ table_name:(.*) \}\}/si', $table_prefix==''? '$1': $table_prefix.'_'.'$1', $query);
-            $query = preg_replace('/\{\{ module_prefix \}\}/si', $this->cms_module_path(), $query);
+            $module_prefix = cms_module_prefix($this->cms_module_path());
+            $query = preg_replace('/\{\{ complete_table_name:(.*) \}\}/si', $table_prefix==''? '$1': $table_prefix.'_'.'$1', $query);
+            $query = preg_replace('/\{\{ module_prefix \}\}/si', $module_prefix, $query);
             $this->db->query($query);
         }
     }

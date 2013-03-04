@@ -19,28 +19,11 @@
 			$quoted_real_column_names[] = '\''.$name.'\'';
 		}else if($role=='detail many to many'){
 			$quoted_many_to_many_column_names[] = '\''.$name.'\'';
-			$many_to_many_relation_tables[] = callback_after_insert_well_table_name($project_db_table_prefix, $detail_column['relation_table_name']);
+			$quoted_many_to_many_relation_tables[] = '\''.$detail_column['relation_stripped_table_name'].'\'';
 			$quoted_many_to_many_relation_table_columns[] = '\''.$detail_column['relation_table_column_name'].'\'';
 			$quoted_many_to_many_relation_selection_columns[] = '\''.$detail_column['relation_selection_column_name'].'\'';
 		}
 	}
-
-	function callback_after_insert_strip_table_prefix($project_db_table_prefix, $table_name){
-        if(!isset($project_db_table_prefix) || $project_db_table_prefix == ''){
-            return $table_name;
-        }
-        if(strpos($table_name, $project_db_table_prefix) === 0){
-            $table_name = substr($table_name, strlen($project_db_table_prefix));
-        }
-        if($table_name[0]=='_'){
-            $table_name = substr($table_name,1);
-        }
-        return $table_name;
-    }
-
-    function callback_after_insert_well_table_name($project_db_table_prefix, $table_name){
-        return 'cms_module_table_name($module_path, \''.callback_after_insert_strip_table_prefix($project_db_table_prefix, $table_name).'\')';
-    }
 ?>
 		// save corresponding <?php echo $detail_table_name.PHP_EOL; ?>
 		$data = json_decode($this->input->post('<?php echo $real_input_id; ?>'), TRUE);
@@ -50,7 +33,7 @@
 		$real_column_names = array(<?php echo implode(', ', $quoted_real_column_names); ?>);
 		$set_column_names = array(<?php echo implode(', ', $quoted_set_column_names); ?>);
 		$many_to_many_column_names = array(<?php echo implode(', ', $quoted_many_to_many_column_names); ?>);
-		$many_to_many_relation_tables = array(<?php echo implode(', ', $many_to_many_relation_tables); ?>);
+		$many_to_many_relation_tables = array(<?php echo implode(', ', $quoted_many_to_many_relation_tables); ?>);
 		$many_to_many_relation_table_columns = array(<?php echo implode(', ', $quoted_many_to_many_relation_table_columns); ?>);
 		$many_to_many_relation_selection_columns = array(<?php echo implode(', ', $quoted_many_to_many_relation_selection_columns); ?>);
 		// delete
@@ -58,7 +41,7 @@
 			$detail_primary_key = $delete_record['primary_key'];
 			// delete many to many
 			for($i=0; $i<count($many_to_many_column_names); $i++){
-				$table_name = $many_to_many_relation_tables[$i];
+				$table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
 				$relation_column_name = $many_to_many_relation_table_columns[$i];
 				$relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
 				$where = array(
@@ -66,7 +49,8 @@
 				);
 				$this->db->delete($table_name, $where);
 			}
-			$this->db->delete(<?php echo $detail_table_name; ?>, array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
+			$this->db->delete($this->cms_complete_table_name('<?php echo $detail_table_name; ?>'),
+			     array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
 		}
 		// update
 		foreach($update_records as $update_record){
@@ -80,12 +64,13 @@
 				}
 			}
 			$data['<?php echo $detail_foreign_key_name; ?>'] = $primary_key;
-			$this->db->update(<?php echo $detail_table_name; ?>, $data, array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
+			$this->db->update($this->cms_complete_table_name('<?php echo $detail_table_name; ?>'),
+			     $data, array('<?php echo $detail_primary_key_name; ?>'=>$detail_primary_key));
 			// many to many fields
 			for($i=0; $i<count($many_to_many_column_names); $i++){
 				$key = 	$many_to_many_column_names[$i];
 				$new_values = $update_record['data'][$key];
-				$table_name = $many_to_many_relation_tables[$i];
+				$table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
 				$relation_column_name = $many_to_many_relation_table_columns[$i];
 				$relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
 				$query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
@@ -129,13 +114,13 @@
 				}
 			}
 			$data['<?php echo $detail_foreign_key_name; ?>'] = $primary_key;
-			$this->db->insert(<?php echo $detail_table_name; ?>, $data);
+			$this->db->insert($this->cms_complete_table_name('<?php echo $detail_table_name; ?>'), $data);
 			$detail_primary_key = $this->db->insert_id();
 			// many to many fields
 			for($i=0; $i<count($many_to_many_column_names); $i++){
 				$key = 	$many_to_many_column_names[$i];
 				$new_values = $insert_record['data'][$key];
-				$table_name = $many_to_many_relation_tables[$i];
+				$table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
 				$relation_column_name = $many_to_many_relation_table_columns[$i];
 				$relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
 				$query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
