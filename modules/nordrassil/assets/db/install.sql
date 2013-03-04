@@ -78,9 +78,3 @@ CREATE TABLE `nds_column_option` (
   `column_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*split*/
-CREATE TABLE `nds_log` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `content` text NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;

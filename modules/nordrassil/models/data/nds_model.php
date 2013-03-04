@@ -293,6 +293,8 @@ class Nds_Model extends CMS_Model{
 				$column_name = $column['name'];
 				$column_type = $column['data_type'];
 				$column_size = $column['data_size'];
+                $column_value_selection_mode = $column['value_selection_mode'];
+                $column_value_selection_item = $column['value_selection_item'];
 				$role = $column['role'];
 				if($role == 'primary'){
 					if(in_array($column_type, $this->auto_increment_data_type)){
@@ -302,7 +304,9 @@ class Nds_Model extends CMS_Model{
 					}
 					$primary = '  PRIMARY KEY (`'.$column_name.'`)';
 				}else if($role == 'primary' || $role == '' || $role == 'lookup'){
-					if(in_array($column_type, $this->type_without_length)){
+				    if($column_type == 'varchar' && $column_value_selection_mode != ''){
+                        $column_array[] = '  `'.$column_name.'` '.$column_value_selection_mode.'('.$column_value_selection_item.')';
+				    }else if(in_array($column_type, $this->type_without_length)){
 						$column_array[] = '  `'.$column_name.'` '.$column_type;
 					}else{
 						if(!isset($column_size) || $column_size == ''){

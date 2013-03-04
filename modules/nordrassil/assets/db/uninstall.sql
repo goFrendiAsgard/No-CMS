@@ -12,6 +12,4 @@ DROP TABLE IF EXISTS `nds_project`;
 /*split*/
 DROP TABLE IF EXISTS `nds_template_option`; 
 /*split*/
-DROP TABLE IF EXISTS `nds_template`; 
-/*split*/
-DROP TABLE IF EXISTS `nds_log`;
+DROP TABLE IF EXISTS `nds_template`;

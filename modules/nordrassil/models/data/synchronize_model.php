@@ -8,31 +8,31 @@ class Synchronize_Model extends CMS_Model{
 	private $db_schema;
 	private $numeric_data_type = array(
 			'int','real','tinyint', 'smallint', 'mediumint',
-			'integer', 'bigint', 'float', 'double', 
+			'integer', 'bigint', 'float', 'double',
 			'decimal', 'numeric',
 		);
-	
+
 	public function synchronize($project_id){
-		// make project_id save of SQL injection		
-		$save_project_id = addslashes($project_id);		
-		
+		// make project_id save of SQL injection
+		$save_project_id = addslashes($project_id);
+
 		// delete related nds_column_option
 		$where = "column_id IN (SELECT column_id FROM nds_column, nds_table WHERE nds_column.table_id = nds_table.table_id AND project_id='$save_project_id')";
 		$this->db->delete('nds_column_option',$where);
-		
+
 		// delete related nds_column
 		$where = "table_id IN (SELECT table_id FROM nds_table WHERE project_id='$save_project_id')";
 		$this->db->delete('nds_column',$where);
-		
+
 		// delete related nds_table_option
 		$where = "table_id IN (SELECT table_id FROM nds_table WHERE project_id='$save_project_id')";
 		$this->db->delete('nds_table_option',$where);
-		
+
 		// delete from nds_table
 		$where = array('project_id'=>$project_id);
 		$this->db->delete('nds_table',$where);
-		
-		
+
+
 		// select the current nor_project
 		$query = $this->db->select('db_server, db_user, db_password, db_schema, db_port, db_table_prefix')
 			->from('nds_project')
@@ -51,24 +51,20 @@ class Synchronize_Model extends CMS_Model{
 			}
 			$this->connection = mysqli_connect($this->db_server, $this->db_user, $this->db_password, 'information_schema', $this->db_port);
 			mysqli_select_db($this->connection, 'information_schema');
-			$this->db_log('Will Create Table');
 			$this->create_table($project_id);
 			return TRUE;
 		}else{
-			$this->db_log('Error Synchronizing');
 			return FALSE;
-		}		
+		}
 	}
-	
+
 	private function create_table($project_id){
 		$this->load->helper('inflector');
 		$save_db_schema = addslashes($this->db_schema);
 		$save_db_table_prefix = addslashes($this->db_table_prefix);
 		$SQL = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA='$save_db_schema' AND TABLE_NAME like'$save_db_table_prefix%'";
-		$this->db_log($SQL);
-		$this->db_log(print_r($this->connection, True));
 		$result = mysqli_query($this->connection, $SQL);
-						
+
 		while($row = mysqli_fetch_array($result)){
 			// create caption
 			$caption = '';
@@ -96,17 +92,16 @@ class Synchronize_Model extends CMS_Model{
 			$this->create_field($table_id, $table_name);
 		}
 	}
-	
+
 	private function create_field($table_id, $table_name){
 		$this->load->helper('inflector');
 		$save_db_schema = addslashes($this->db_schema);
 		$save_table_name = addslashes($table_name);
-		$SQL = 
-			"SELECT 
-				COLUMN_NAME, DATA_TYPE, IS_NULLABLE, CHARACTER_MAXIMUM_LENGTH, 
-				NUMERIC_PRECISION, NUMERIC_SCALE, COLUMN_KEY 
+		$SQL =
+			"SELECT
+				COLUMN_NAME, DATA_TYPE, IS_NULLABLE, CHARACTER_MAXIMUM_LENGTH,
+				NUMERIC_PRECISION, NUMERIC_SCALE, COLUMN_KEY
 			FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$save_db_schema' AND TABLE_NAME='$save_table_name'";
-		$this->db_log($SQL);		
 		$result = mysqli_query($this->connection, $SQL);
 		while($row = mysqli_fetch_array($result)){
 			if($row['COLUMN_KEY'] == 'PRI'){
@@ -124,17 +119,17 @@ class Synchronize_Model extends CMS_Model{
 				$value_selection_mode = $data_type;
 				$data_type = 'varchar';
 				$length = 255;
-				
+
 				$column_sql = "SHOW COLUMNS FROM $save_db_schema.$save_table_name WHERE field ='".addslashes($row['COLUMN_NAME'])."'";
 				$column_result = mysqli_query($this->connection, $column_sql);
-				$column_row = mysqli_fetch_array($column_result);				
+				$column_row = mysqli_fetch_array($column_result);
 				$type = $column_row['Type'];
 				$matches = array();
 				if(preg_match($pattern, $type, $matches)>0){
 					$value_selection_item = $matches[1];
 				}
 			}else{
-				// get length (data_size) of the column			
+				// get length (data_size) of the column
 				if(in_array($data_type, $this->numeric_data_type)){
 					$length = $row['NUMERIC_PRECISION'];
 				}else{
@@ -142,7 +137,7 @@ class Synchronize_Model extends CMS_Model{
 				}
 				if(!isset($length)){
 					$length = 10;
-				}	
+				}
 			}
 			if($role == 'primary'){
 				$data_type = 'int';
@@ -161,12 +156,7 @@ class Synchronize_Model extends CMS_Model{
 				);
 			$this->db->insert('nds_column', $data);
 		}
-		
-	}
 
-	
-	private function db_log($content){
-		$this->db->insert('nds_log',array('content'=>$content));
 	}
 }
 ?>

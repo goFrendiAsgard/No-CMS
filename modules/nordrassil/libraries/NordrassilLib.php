@@ -58,7 +58,9 @@ class NordrassilLib{
 		return file_get_contents($file_name);
 	}
 	public function write_file($file_name, $content){
-	    chmod($file_name, 0777);
+	    if(file_exists($file_name)){
+	        chmod($file_name, 0777);
+	    }
 		file_put_contents($file_name, $content);
 		chmod($file_name, 0777);
 	}
