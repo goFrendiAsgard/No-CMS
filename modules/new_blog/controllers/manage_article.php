@@ -10,8 +10,9 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 	protected $URL_MAP = array();
 
 	public function index(){
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize groceryCRUD
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
 
@@ -28,7 +29,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud->set_subject('Article');
 
         // displayed columns on list
-        $crud->columns('article_title','article_url','date','author_user_id','content','allow_comment','categories','photos','comments');
+        $crud->columns('article_title','date','author_user_id','allow_comment','categories','photos','comments');
         // displayed columns on edit operation
         $crud->edit_fields('article_title','article_url','date','author_user_id','content','allow_comment','categories','photos','comments');
         // displayed columns on add operation
@@ -37,8 +38,8 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         // caption of each columns
         $crud->display_as('article_title','Article Title');
         $crud->display_as('article_url','Article Url');
-        $crud->display_as('date','Date');
-        $crud->display_as('author_user_id','Author User Id');
+        $crud->display_as('date','Created Date');
+        $crud->display_as('author_user_id','Author');
         $crud->display_as('content','Content');
         $crud->display_as('allow_comment','Allow Comment');
         $crud->display_as('categories','Categories');
@@ -51,7 +52,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 		// eg:
 		// 		$crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        $crud->set_relation('author_user_id', cms_table_name('main_user'), 'user_name');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// HINT: Put set relation_n_n (detail many to many) codes here
@@ -72,7 +73,10 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 		// eg:
 		// 		$crud->field_type( $field_name , $field_type, $value  );
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        $crud->field_type('author_user_id', 'hidden');
+        $crud->field_type('date', 'hidden');
+        $crud->field_type('article_url', 'hidden');
+        $crud->field_type('allow_comment', 'true_false');
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +95,9 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 		$crud->callback_column('comments',array($this, 'callback_column_comments'));
 		$crud->callback_field('comments',array($this, 'callback_field_comments'));
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // render
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
         $this->view($this->cms_module_path().'/manage_article_view', $output,
             $this->cms_complete_navigation_name('manage_article'));
@@ -99,7 +105,22 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
     }
 
     public function before_insert($post_array){
-		return TRUE;
+		$this->load->helper('url');
+        $this->load->model($this->cms_module_path().'/article_model');
+        $url = url_title($post_array['article_title']);
+        $count_url = $this->article_model->get_count_article_url($url);
+        if($count_url>0){
+            $index = $count_url;
+            while($this->article_model->get_count_article_url($url.'_'.$index)>0){
+                $index++;
+            }
+            $url .= '_'.$index;
+        }
+
+        $post_array['author_user_id'] = $this->cms_user_id();
+        $post_array['date'] = date('Y-m-d H:i:s');
+        $post_array['article_url'] = $url;
+        return $post_array;
 	}
 
 	public function after_insert($post_array, $primary_key){
@@ -135,8 +156,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
 		// SAVE CHANGES OF photo
-		//  * The photo
- data in in json format.
+		//  * The photo data in in json format.
 		//  * It can be accessed via $_POST['md_real_field_photos_col']
 		//
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,25 +167,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 		$real_column_names = array('photo_id', 'url');
 		$set_column_names = array();
 		$many_to_many_column_names = array();
-		$many_to_many_relation_tables = array(<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
-
-<h4>A PHP Error was encountered</h4>
-
-<p>Severity: Notice</p>
-<p>Message:  Undefined variable: quoted_many_to_many_relation_tables</p>
-<p>Filename: controller_partial/detail_after_insert_or_update.php</p>
-<p>Line Number: 43</p>
-
-</div><div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
-
-<h4>A PHP Error was encountered</h4>
-
-<p>Severity: Warning</p>
-<p>Message:  implode(): Invalid arguments passed</p>
-<p>Filename: controller_partial/detail_after_insert_or_update.php</p>
-<p>Line Number: 43</p>
-
-</div>);
+		$many_to_many_relation_tables = array();
 		$many_to_many_relation_table_columns = array();
 		$many_to_many_relation_selection_columns = array();
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -308,8 +310,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
 		// SAVE CHANGES OF comment
-		//  * The comment
- data in in json format.
+		//  * The comment data in in json format.
 		//  * It can be accessed via $_POST['md_real_field_comments_col']
 		//
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -320,25 +321,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 		$real_column_names = array('comment_id', 'date', 'author_user_id', 'name', 'email', 'website', 'content');
 		$set_column_names = array();
 		$many_to_many_column_names = array();
-		$many_to_many_relation_tables = array(<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
-
-<h4>A PHP Error was encountered</h4>
-
-<p>Severity: Notice</p>
-<p>Message:  Undefined variable: quoted_many_to_many_relation_tables</p>
-<p>Filename: controller_partial/detail_after_insert_or_update.php</p>
-<p>Line Number: 43</p>
-
-</div><div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
-
-<h4>A PHP Error was encountered</h4>
-
-<p>Severity: Warning</p>
-<p>Message:  implode(): Invalid arguments passed</p>
-<p>Filename: controller_partial/detail_after_insert_or_update.php</p>
-<p>Line Number: 43</p>
-
-</div>);
+		$many_to_many_relation_tables = array();
 		$many_to_many_relation_table_columns = array();
 		$many_to_many_relation_selection_columns = array();
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

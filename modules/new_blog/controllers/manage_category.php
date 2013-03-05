@@ -10,8 +10,9 @@ class Manage_Category extends CMS_Priv_Strict_Controller {
 	protected $URL_MAP = array();
 
 	public function index(){
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize groceryCRUD
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
 
@@ -33,6 +34,8 @@ class Manage_Category extends CMS_Priv_Strict_Controller {
         $crud->edit_fields('category_name','description','articles');
         // displayed columns on add operation
         $crud->add_fields('category_name','description','articles');
+        // required field
+        $crud->required_fields('category_name');
 
         // caption of each columns
         $crud->display_as('category_name','Category Name');
@@ -66,7 +69,7 @@ class Manage_Category extends CMS_Priv_Strict_Controller {
 		// eg:
 		// 		$crud->field_type( $field_name , $field_type, $value  );
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        $crud->unset_texteditor('description');
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +85,9 @@ class Manage_Category extends CMS_Priv_Strict_Controller {
 
 
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // render
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
         $this->view($this->cms_module_path().'/manage_category_view', $output,
             $this->cms_complete_navigation_name('manage_category'));

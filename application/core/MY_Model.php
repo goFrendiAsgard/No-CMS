@@ -414,6 +414,16 @@ class CMS_Model extends CI_Model
         }
 
         $html = '<ul class="thumbnails row-fluid">';
+        $module_path = $this->cms_module_path();
+        $image_directories = array();
+        if($module_path != ''){
+           $image_directories[] = "modules/$module_path/assets/navigation_icon";
+        }
+        $image_directories[] = "assets/nocms/navigation_icon";
+        foreach($this->cms_get_module_list() as $module_list){
+            $other_module_path = $module_list['module_path'];
+            $image_directories[] = "modules/$other_module_path/assets/navigation_icon";
+        }
         foreach ($submenus as $submenu) {
             $navigation_name = $submenu["navigation_name"];
             $title           = $submenu["title"];
@@ -424,37 +434,41 @@ class CMS_Model extends CI_Model
                 continue;
 
             // check image in current module
-            $module_path = $this->cms_module_path();
-            $image_file  = "modules/$module_path/assets/navigation_icon/$navigation_name.png";
-            if (!file_exists($image_file)) {
-                // check image in global
-                $image_file = "assets/nocms/navigation_icon/$navigation_name.png";
-                if (!file_exists($image_file)) {
-                    // check image in all other module
-                    $modules     = $this->cms_get_module_list();
-                    $image_found = FALSE;
-                    foreach ($modules as $module) {
-                        $module_path = $module['module_path'];
-                        if ($module_path != $this->cms_module_path()) {
-                            $image_file = "modules/$module_path/assets/navigation_icon/$navigation_name.png";
-                            if (file_exists($image_file)) {
-                                $image_found = TRUE;
-                                break;
-                            }
-                        }
-                    }
-                    if (!$image_found) {
-                        $image_file = '';
-                    }
+
+            $image_file_names = array();
+            $image_file_names[] = $navigation_name.'.png';
+            if($module_path !== '' && $module_path !== 'main'){
+                $module_prefix = cms_module_prefix($this->cms_module_path());
+                $navigation_parts = explode('_', $navigation_name);
+                if(count($navigation_parts)>0 && $navigation_parts[0] == $module_prefix){
+                    $image_file_names[] = substr($navigation_name, strlen($module_prefix)+1).'.png';
                 }
             }
-            if ($image_file == '') {
-                $image_file = 'assets/nocms/images/icons/package.png';
+            $image_file_path = '';
+            foreach($image_directories as $image_directory){
+                foreach($image_file_names as $image_file_name){
+                    $image_file_path  = $image_directory.'/'.$image_file_name;
+                    if (!file_exists($image_file_path)) {
+                        $image_file_path = '';
+                    }
+                    if ($image_file_path !== ''){
+                        break;
+                    }
+                }
+                if ($image_file_path !== ''){
+                    break;
+                }
+            }
+
+
+            // default icon
+            if ($image_file_path == '') {
+                $image_file_path = 'assets/nocms/images/icons/package.png';
             }
             $html .= '<li class="well" style="width:80px!important; height:90px!important; float:left!important; list-style-type:none;">';
             $html .= '<a href="' . $url . '" style="width: 100%; height: 100%; display: block;">';
-            if ($image_file != '') {
-                $html .= '<img style="max-width:32px; max-height:32px;" src="' . base_url($image_file) . '" /><br /><br />';
+            if ($image_file_path != '') {
+                $html .= '<img style="max-width:32px; max-height:32px;" src="' . base_url($image_file_path) . '" /><br /><br />';
             }
             $html .= $title . '</a>';
             $html .= '</li>';

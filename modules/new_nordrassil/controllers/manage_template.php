@@ -10,8 +10,9 @@ class Manage_Template extends CMS_Priv_Strict_Controller {
 	protected $URL_MAP = array();
 
 	public function index(){
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize groceryCRUD
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = new grocery_CRUD();
         $crud->unset_jquery();
 
@@ -79,7 +80,9 @@ class Manage_Template extends CMS_Priv_Strict_Controller {
 		$crud->callback_column('options',array($this, 'callback_column_options'));
 		$crud->callback_field('options',array($this, 'callback_field_options'));
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // render
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
         $this->view($this->cms_module_path().'/manage_template_view', $output,
             $this->cms_complete_navigation_name('manage_template'));
@@ -120,8 +123,7 @@ class Manage_Template extends CMS_Priv_Strict_Controller {
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
 		// SAVE CHANGES OF template_option
-		//  * The template_option
- data in in json format.
+		//  * The template_option data in in json format.
 		//  * It can be accessed via $_POST['md_real_field_options_col']
 		//
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,25 +134,7 @@ class Manage_Template extends CMS_Priv_Strict_Controller {
 		$real_column_names = array('option_id', 'name', 'description', 'option_type');
 		$set_column_names = array();
 		$many_to_many_column_names = array();
-		$many_to_many_relation_tables = array(<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
-
-<h4>A PHP Error was encountered</h4>
-
-<p>Severity: Notice</p>
-<p>Message:  Undefined variable: quoted_many_to_many_relation_tables</p>
-<p>Filename: controller_partial/detail_after_insert_or_update.php</p>
-<p>Line Number: 43</p>
-
-</div><div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
-
-<h4>A PHP Error was encountered</h4>
-
-<p>Severity: Warning</p>
-<p>Message:  implode(): Invalid arguments passed</p>
-<p>Filename: controller_partial/detail_after_insert_or_update.php</p>
-<p>Line Number: 43</p>
-
-</div>);
+		$many_to_many_relation_tables = array();
 		$many_to_many_relation_table_columns = array();
 		$many_to_many_relation_selection_columns = array();
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

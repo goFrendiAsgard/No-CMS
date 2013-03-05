@@ -77,7 +77,11 @@ function cms_table_prefix($new_prefix = NULL){
 
 function cms_module_table_prefix($module_directory, $new_prefix = NULL){
     $module_table_prefix = cms_module_config($module_directory, 'module_table_prefix', $new_prefix);
-    return cms_table_name($module_table_prefix);
+    if($module_table_prefix == ''){
+        return cms_table_prefix();
+    }else{
+        return cms_table_name($module_table_prefix);
+    }
 }
 
 function cms_module_prefix($module_directory, $new_prefix = NULL){

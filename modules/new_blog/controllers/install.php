@@ -78,8 +78,6 @@ class Install extends CMS_Module_Installer {
 
         // remove navigations
         $this->remove_navigation($this->cms_complete_navigation_name('browse_article'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_photo'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_comment'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_category'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_article'));
 
@@ -110,12 +108,6 @@ class Install extends CMS_Module_Installer {
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
             $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
-        );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_comment'), 'Manage Comment',
-            $module_path.'/manage_comment', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
-        );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_photo'), 'Manage Photo',
-            $module_path.'/manage_photo', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
 

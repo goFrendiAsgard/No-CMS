@@ -11,9 +11,9 @@
         }
         return $table_name;
     }
-    
+
     $stripped_table_name = strip_table_prefix($table_name, $table_prefix);
-    
+
 	$select_array = array();
 	$join_array = array();
 	$like_array = array();
@@ -45,12 +45,11 @@
  * @author No-CMS Module Generator
  */
 class {{ model_name }} extends  CMS_Model{
-	
+
 	public function get_data($keyword, $page=0){
-	    $module_path = $this->cms_module_path();
 		$limit = 10;
 		$query = $this->db->select('<?php echo $select; ?>')
-			->from(cms_module_table_name($module_path, '<?php echo $stripped_table_name; ?>').' as <?php echo $stripped_table_name; ?>')
+			->from($this->cms_complete_table_name('<?php echo $stripped_table_name; ?>').' as <?php echo $stripped_table_name; ?>')
 <?php
 	foreach($join_array as $join){
 		echo '			->join('.$join.')'.PHP_EOL;
@@ -61,13 +60,13 @@ class {{ model_name }} extends  CMS_Model{
 		}else{
 			echo '			->or_like('.$like_array[$i].')'.PHP_EOL;
 		}
-		
-	}	
+
+	}
 ?>
 			->limit($limit, $page*$limit)
 			->get();
 		$result = $query->result();
-		return $result;		
+		return $result;
 	}
-	
+
 }

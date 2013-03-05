@@ -1,90 +1,5 @@
-DROP TABLE IF EXISTS `nds_column_option`; 
-DROP TABLE IF EXISTS `nds_column`; 
-DROP TABLE IF EXISTS `nds_table_option`; 
-DROP TABLE IF EXISTS `nds_table`; 
-DROP TABLE IF EXISTS `nds_project_option`; 
-DROP TABLE IF EXISTS `nds_project`; 
-DROP TABLE IF EXISTS `nds_template_option`; 
-DROP TABLE IF EXISTS `nds_template`; 
-
-#
-# TABLE STRUCTURE FOR: nds_template
-#
-
-CREATE TABLE `nds_template` (
-  `template_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  `generator_path` varchar(100) NOT NULL,
-  PRIMARY KEY (`template_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
-
-INSERT INTO nds_template (`template_id`, `name`, `generator_path`) VALUES (1, 'No-CMS default Module', 'nordrassil/default_generator/generator/index');
-
-
-#
-# TABLE STRUCTURE FOR: nds_template_option
-#
-
-CREATE TABLE `nds_template_option` (
-  `option_id` int(11) NOT NULL AUTO_INCREMENT,
-  `template_id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `description` text NOT NULL,
-  `option_type` enum('project','table','column') NOT NULL,
-  PRIMARY KEY (`option_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
-
-INSERT INTO nds_template_option (`option_id`, `template_id`, `name`, `description`, `option_type`) VALUES (1, 1, 'dont_make_form', 'make form for this table', 'table');
-INSERT INTO nds_template_option (`option_id`, `template_id`, `name`, `description`, `option_type`) VALUES (2, 1, 'dont_create_table', 'don\'t create/drop table on installation', 'table');
-INSERT INTO nds_template_option (`option_id`, `template_id`, `name`, `description`, `option_type`) VALUES (3, 1, 'make_frontpage', 'Make front page for this table', 'table');
-INSERT INTO nds_template_option (`option_id`, `template_id`, `name`, `description`, `option_type`) VALUES (4, 1, 'import_data', 'Also create insert statement (e.g: for configuration table)', 'table');
-INSERT INTO nds_template_option (`option_id`, `template_id`, `name`, `description`, `option_type`) VALUES (5, 1, 'hide', 'shown', 'column');
-
-
-#
-# TABLE STRUCTURE FOR: nds_project
-#
-
-CREATE TABLE `nds_project` (
-  `project_id` int(11) NOT NULL AUTO_INCREMENT,
-  `template_id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `db_server` varchar(50) NOT NULL,
-  `db_port` varchar(50) NOT NULL,
-  `db_schema` varchar(50) NOT NULL,
-  `db_user` varchar(50) NOT NULL,
-  `db_password` varchar(50) NOT NULL,
-  `db_table_prefix` varchar(50) NOT NULL,
-  PRIMARY KEY (`project_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
-
 INSERT INTO nds_project (`project_id`, `template_id`, `name`, `db_server`, `db_port`, `db_schema`, `db_user`, `db_password`, `db_table_prefix`) VALUES (2, 1, 'new nordrassil', 'localhost', '3306', 'no_cms', 'root', 'toor', 'nds');
 INSERT INTO nds_project (`project_id`, `template_id`, `name`, `db_server`, `db_port`, `db_schema`, `db_user`, `db_password`, `db_table_prefix`) VALUES (3, 1, 'new blog', 'localhost', '3306', 'no_cms', 'root', 'toor', 'blog');
-
-
-#
-# TABLE STRUCTURE FOR: nds_project_option
-#
-
-CREATE TABLE `nds_project_option` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `project_id` int(11) NOT NULL,
-  `option_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-#
-# TABLE STRUCTURE FOR: nds_table
-#
-
-CREATE TABLE `nds_table` (
-  `table_id` int(11) NOT NULL AUTO_INCREMENT,
-  `project_id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `caption` varchar(50) NOT NULL,
-  `priority` int(11) NOT NULL,
-  PRIMARY KEY (`table_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1;
 
 INSERT INTO nds_table (`table_id`, `project_id`, `name`, `caption`, `priority`) VALUES (10, 2, 'nds_column', 'Column', 0);
 INSERT INTO nds_table (`table_id`, `project_id`, `name`, `caption`, `priority`) VALUES (11, 2, 'nds_column_option', 'Column Option', 0);
@@ -100,51 +15,12 @@ INSERT INTO nds_table (`table_id`, `project_id`, `name`, `caption`, `priority`) 
 INSERT INTO nds_table (`table_id`, `project_id`, `name`, `caption`, `priority`) VALUES (21, 3, 'blog_comment', 'Comment', 0);
 INSERT INTO nds_table (`table_id`, `project_id`, `name`, `caption`, `priority`) VALUES (22, 3, 'blog_photo', 'Photo', 0);
 
-
-#
-# TABLE STRUCTURE FOR: nds_table_option
-#
-
-CREATE TABLE `nds_table_option` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `option_id` int(11) NOT NULL,
-  `table_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
-
 INSERT INTO nds_table_option (`id`, `option_id`, `table_id`) VALUES (1, 1, 11);
 INSERT INTO nds_table_option (`id`, `option_id`, `table_id`) VALUES (2, 1, 13);
 INSERT INTO nds_table_option (`id`, `option_id`, `table_id`) VALUES (3, 1, 15);
 INSERT INTO nds_table_option (`id`, `option_id`, `table_id`) VALUES (4, 1, 17);
 INSERT INTO nds_table_option (`id`, `option_id`, `table_id`) VALUES (5, 1, 20);
 INSERT INTO nds_table_option (`id`, `option_id`, `table_id`) VALUES (6, 3, 18);
-
-
-#
-# TABLE STRUCTURE FOR: nds_column
-#
-
-CREATE TABLE `nds_column` (
-  `column_id` int(11) NOT NULL AUTO_INCREMENT,
-  `table_id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `caption` varchar(50) NOT NULL,
-  `data_type` enum('int','varchar','char','real','text','date','tinyint','smallint','mediumint','integer','bigint','float','double','decimal','numeric','datetime','timestamp','time','year','tinyblob','tinytext','blob','mediumblob','mediumtext','longblob','longtext') NOT NULL,
-  `data_size` int(11) DEFAULT NULL,
-  `role` enum('primary','lookup','detail many to many','detail one to many') NOT NULL,
-  `lookup_table_id` int(11) NOT NULL,
-  `lookup_column_id` int(11) DEFAULT NULL,
-  `relation_table_id` int(11) DEFAULT NULL,
-  `relation_table_column_id` int(11) DEFAULT NULL,
-  `relation_selection_column_id` int(11) DEFAULT NULL,
-  `relation_priority_column_id` int(11) DEFAULT NULL,
-  `selection_table_id` int(11) DEFAULT NULL,
-  `selection_column_id` int(11) DEFAULT NULL,
-  `priority` int(11) NOT NULL,
-  `value_selection_mode` enum('set','enum') DEFAULT NULL,
-  `value_selection_item` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`column_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=latin1;
 
 INSERT INTO nds_column (`column_id`, `table_id`, `name`, `caption`, `data_type`, `data_size`, `role`, `lookup_table_id`, `lookup_column_id`, `relation_table_id`, `relation_table_column_id`, `relation_selection_column_id`, `relation_priority_column_id`, `selection_table_id`, `selection_column_id`, `priority`, `value_selection_mode`, `value_selection_item`) VALUES (52, 10, 'column_id', 'Column Id', 'int', 10, 'primary', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL);
 INSERT INTO nds_column (`column_id`, `table_id`, `name`, `caption`, `data_type`, `data_size`, `role`, `lookup_table_id`, `lookup_column_id`, `relation_table_id`, `relation_table_column_id`, `relation_selection_column_id`, `relation_priority_column_id`, `selection_table_id`, `selection_column_id`, `priority`, `value_selection_mode`, `value_selection_item`) VALUES (53, 10, 'table_id', 'Table', 'int', 10, 'lookup', 14, 87, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL);
@@ -226,16 +102,3 @@ INSERT INTO nds_column (`column_id`, `table_id`, `name`, `caption`, `data_type`,
 INSERT INTO nds_column (`column_id`, `table_id`, `name`, `caption`, `data_type`, `data_size`, `role`, `lookup_table_id`, `lookup_column_id`, `relation_table_id`, `relation_table_column_id`, `relation_selection_column_id`, `relation_priority_column_id`, `selection_table_id`, `selection_column_id`, `priority`, `value_selection_mode`, `value_selection_item`) VALUES (129, 18, 'categories', 'Categories', '', NULL, 'detail many to many', 0, NULL, 20, 116, 115, NULL, 19, 113, 0, NULL, NULL);
 INSERT INTO nds_column (`column_id`, `table_id`, `name`, `caption`, `data_type`, `data_size`, `role`, `lookup_table_id`, `lookup_column_id`, `relation_table_id`, `relation_table_column_id`, `relation_selection_column_id`, `relation_priority_column_id`, `selection_table_id`, `selection_column_id`, `priority`, `value_selection_mode`, `value_selection_item`) VALUES (130, 18, 'photos', 'Photos', '', NULL, 'detail one to many', 0, NULL, 22, 126, NULL, NULL, NULL, NULL, 0, NULL, NULL);
 INSERT INTO nds_column (`column_id`, `table_id`, `name`, `caption`, `data_type`, `data_size`, `role`, `lookup_table_id`, `lookup_column_id`, `relation_table_id`, `relation_table_column_id`, `relation_selection_column_id`, `relation_priority_column_id`, `selection_table_id`, `selection_column_id`, `priority`, `value_selection_mode`, `value_selection_item`) VALUES (131, 18, 'comments', 'Comments', '', NULL, 'detail one to many', 0, NULL, 21, 118, NULL, NULL, NULL, NULL, 0, NULL, NULL);
-
-
-#
-# TABLE STRUCTURE FOR: nds_column_option
-#
-
-CREATE TABLE `nds_column_option` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `option_id` int(11) NOT NULL,
-  `column_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-

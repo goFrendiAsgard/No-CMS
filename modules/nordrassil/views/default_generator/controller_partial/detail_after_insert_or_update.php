@@ -4,7 +4,7 @@
 	$quoted_real_column_names = array(); // only column names which is primary or lookup or without role
 	$quoted_set_column_names = array(); // only column names whis is enum
 	$quoted_many_to_many_column_names = array();
-	$many_to_many_relation_tables = array();
+	$quoted_many_to_many_relation_tables = array();
 	$quoted_many_to_many_relation_table_columns = array();
 	$quoted_many_to_many_relation_selection_columns = array();
 	foreach($detail_columns as $detail_column){
@@ -29,7 +29,7 @@
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
 		// SAVE CHANGES OF <?php echo $detail_table_name.PHP_EOL; ?>
-		//  * The <?php echo $detail_table_name.PHP_EOL; ?> data in in json format.
+		//  * The <?php echo $detail_table_name; ?> data in in json format.
 		//  * It can be accessed via $_POST['<?php echo $real_input_id; ?>']
 		//
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

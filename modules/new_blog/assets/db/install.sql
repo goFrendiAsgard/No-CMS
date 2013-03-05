@@ -21,9 +21,8 @@ CREATE TABLE `{{ complete_table_name:category }}` (
 /*split*/
 
 CREATE TABLE `{{ complete_table_name:category_article }}` (
-  `category_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `article_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`article_id`)
+  `category_id` int(10),
+  `article_id` int(10)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*split*/
