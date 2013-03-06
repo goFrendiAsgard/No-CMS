@@ -430,8 +430,7 @@ class CMS_Model extends CI_Model
             $url             = $submenu["url"];
             $description     = $submenu["description"];
             $allowed         = $submenu["allowed"];
-            if (!$allowed)
-                continue;
+            if (!$allowed) continue;
 
             // check image in current module
 

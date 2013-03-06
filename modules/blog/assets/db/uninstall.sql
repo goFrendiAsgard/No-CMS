@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS `blog_photo`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:photo }}`; 
 /*split*/
-DROP TABLE IF EXISTS `blog_comment`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:comment }}`; 
 /*split*/
-DROP TABLE IF EXISTS `blog_category_article`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:category_article }}`; 
 /*split*/
-DROP TABLE IF EXISTS `blog_article`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:category }}`; 
 /*split*/
-DROP TABLE IF EXISTS `blog_category`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:article }}`; 

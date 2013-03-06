@@ -1,114 +1,159 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Description of install
+ * Installation script for new blog
  *
- * @author gofrendi
+ * @author No-CMS Module Generator
  */
 class Install extends CMS_Module_Installer {
-	protected $DEPENDENCIES = array();
-	protected $NAME         = 'gofrendi.blog';
-    protected $DESCRIPTION  = 'No-CMS Blog Module';
-	
-    //this should be what happen when user install this module
+    /////////////////////////////////////////////////////////////////////////////
+    // Default Variables
+    /////////////////////////////////////////////////////////////////////////////
+
+    protected $DEPENDENCIES = array();
+    protected $NAME         = 'admin.new_blog';
+    protected $DESCRIPTION  = 'Write articles, upload photos, allow visitors to give comments, rule the world...';
+    protected $VERSION      = '0.0.0';
+
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Default Functions
+    /////////////////////////////////////////////////////////////////////////////
+
+    // ACTIVATION
     protected function do_activate(){
         $this->remove_all();
         $this->build_all();
     }
-    //this should be what happen when user uninstall this module
+
+    // DEACTIVATION
     protected function do_deactivate(){
-    	$this->backup_database(
-    			array('blog_category', 'blog_article', 'blog_category_article', 
-    				'blog_comment', 'blog_photo'));
+        $module_path = $this->cms_module_path();
+
+        $this->backup_database(array(
+            $this->cms_complete_table_name('article'),
+            $this->cms_complete_table_name('category'),
+            $this->cms_complete_table_name('category_article'),
+            $this->cms_complete_table_name('comment'),
+            $this->cms_complete_table_name('photo')
+        ));
         $this->remove_all();
     }
-    
+
+    // UPGRADE
+    protected function do_upgrade($old_version){
+        // Add your migration logic here.
+    }
+
+    // OVERRIDE THIS FUNCTION TO PROVIDE "Module Setting" FEATURE
+    public function setting(){
+        $module_directory = $this->cms_module_path();
+        $data = array();
+        $data['IS_ACTIVE'] = $this->IS_ACTIVE;
+        $data['module_directory'] = $module_directory;
+        if(!$this->IS_ACTIVE){
+            // get setting
+            $module_table_prefix = $this->input->post('module_table_prefix');
+            $module_prefix       = $this->input->post('module_prefix');
+            // set values
+            if(isset($module_table_prefix) && $module_table_prefix !== FALSE){
+                cms_module_config($module_directory, 'module_table_prefix', $module_table_prefix);
+            }
+            if(isset($module_prefix) && $module_prefix !== FALSE){
+                cms_module_prefix($module_directory, $module_prefix);
+            }
+            // get values
+            $data['module_table_prefix'] = cms_module_config($module_directory, 'module_table_prefix');
+            $data['module_prefix']       = cms_module_prefix($module_directory);
+        }
+        $this->view($module_directory.'/install_setting', $data, 'main_module_management');
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+    // Private Functions
+    /////////////////////////////////////////////////////////////////////////////
+
+    // REMOVE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
     private function remove_all(){
-    	$module_path = $this->cms_module_path();
-        
-        $this->remove_quicklink("blog_index");        
-        
-        $this->remove_navigation("blog_comment");
-        $this->remove_navigation("blog_photo");
-        $this->remove_navigation("blog_article");
-        $this->remove_navigation("blog_category");
-        $this->remove_navigation("blog_management");
-        $this->remove_navigation("blog_index");
-		 
-		$this->remove_widget('blog_widget_newest');
+        $module_path = $this->cms_module_path();
+
+        // remove navigations
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_category'));
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_article'));
+
+
+        // remove parent of all navigations
+        $this->remove_navigation($this->cms_complete_navigation_name('index'));
 
         // import uninstall.sql
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
-        		'/assets/db/uninstall.sql');
+            '/assets/db/uninstall.sql');
+
     }
-    
+
+    // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
     private function build_all(){
         $module_path = $this->cms_module_path();
-        
-        $original_directory = 'blog';
-        $module_main_controller_url = '';
-        if($module_path != $original_directory){
-        	$module_main_controller_url = $module_path.'/'.$original_directory;
-        }else{
-        	$module_main_controller_url = $module_path;
-        }
-        
-        $this->add_navigation("blog_index","Blog", $module_main_controller_url);
-        $this->add_navigation("blog_management", "Manage Blog", $module_main_controller_url."/manage", 4);
-        $this->add_navigation("blog_category", "Manage Category", $module_main_controller_url."/category", 4, "blog_management");
-        $this->add_navigation("blog_article", "Manage Article", $module_main_controller_url."/article", 4, "blog_management");
-        $this->add_navigation("blog_photo", "Manage Photo", $module_main_controller_url."/photo", 4, "blog_management");
-        $this->add_navigation("blog_comment", "Manage Comment", $module_main_controller_url."/comment", 4, "blog_management");
-        
-        $this->add_quicklink('blog_index');
-		
-		$this->add_widget('blog_widget_newest','Article',1,$module_path.'/widget/newest','sidebar');
-        
+
+        // parent of all navigations
+        $this->add_navigation($this->cms_complete_navigation_name('index'), 'New Blog',
+            $module_path.'/blog', $this->PRIV_EVERYONE);
+
+        // add navigations
+        $this->add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',
+            $module_path.'/manage_article', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        );
+        $this->add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
+            $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        );
+
+        $this->add_quicklink($this->cms_complete_navigation_name('index'));
+
+        $this->add_widget($this->cms_complete_navigation_name('widget_newest'), 'Newest Articles',
+            $this->PRIV_EVERYONE, $module_path.'/widget/newest','sidebar');
+
+
         // import install.sql
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
-        		'/assets/db/install.sql');
+            '/assets/db/install.sql');
     }
-    
+
+    // IMPORT SQL FILE
     private function import_sql($file_name){
-    	$sql_array = explode('/*split*/',
-    			file_get_contents($file_name)
-    	);
-    	foreach($sql_array as $sql){
-    		$this->db->query($sql);
-    	}
+        $this->execute_SQL(file_get_contents($file_name), '/*split*/');
     }
-    
+
+    // EXPORT DATABASE
     private function backup_database($table_names, $limit = 100){
-    	$module_path = $this->cms_module_path();
-    
-    	$this->load->dbutil();
-    	$sql = '';
-    
-    	// create DROP TABLE syntax
-    	for($i=count($table_names)-1; $i>=0; $i--){
-    		$table_name = $table_names[$i];
-    		$sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-    	}
-    	if($sql !='')$sql.= PHP_EOL;
-    
-    	// create CREATE TABLE and INSERT syntax
-    	$prefs = array(
-    			'tables'      => $table_names,
-    			'ignore'      => array(),
-    			'format'      => 'txt',
-    			'filename'    => 'mybackup.sql',
-    			'add_drop'    => FALSE,
-    			'add_insert'  => TRUE,
-    			'newline'     => PHP_EOL
-    	);
-    	$sql.= $this->dbutil->backup($prefs);
-    
-    	//write file
-    	$file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
-    	file_put_contents(
-    			BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-    			$sql
-    	);
-    
+        $module_path = $this->cms_module_path();
+
+        $this->load->dbutil();
+        $sql = '';
+
+        // create DROP TABLE syntax
+        for($i=count($table_names)-1; $i>=0; $i--){
+            $table_name = $table_names[$i];
+            $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
+        }
+        if($sql !='')$sql.= PHP_EOL;
+
+        // create CREATE TABLE and INSERT syntax
+        $prefs = array(
+                'tables'      => $table_names,
+                'ignore'      => array(),
+                'format'      => 'txt',
+                'filename'    => 'mybackup.sql',
+                'add_drop'    => FALSE,
+                'add_insert'  => TRUE,
+                'newline'     => PHP_EOL
+              );
+        $sql.= $this->dbutil->backup($prefs);
+
+        //write file
+        $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
+        file_put_contents(
+                BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
+                $sql
+            );
+
     }
 }
