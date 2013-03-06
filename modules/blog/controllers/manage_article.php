@@ -311,8 +311,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 
     private function randomize_string($value){
         $time = date('Y:m:d H:i:s');
-        $part = substr($value,0,3);
-        return substr(md5($time+$part),0,6);
+        return substr(md5($value.$time),0,6);
     }
 
 }
