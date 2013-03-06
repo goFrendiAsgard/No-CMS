@@ -5,12 +5,12 @@
 	}
 </style>
 <?php
-	$asset = new CMS_Asset(); 
+	$asset = new CMS_Asset();
 	foreach($css_files as $file){
 		$asset->add_css($file);
-	} 
+	}
 	echo $asset->compile_css();
-	
+
 	foreach($js_files as $file){
 		$asset->add_js($file);
 	}
@@ -19,14 +19,14 @@
 	echo $asset->compile_js();
 	echo '<h4>Column</h4>';
 	if(isset($project_id)){
-		echo anchor(site_url('nordrassil/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
+		echo anchor(site_url($cms['module_path'].'/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
 		echo '&nbsp;';
-		echo anchor(site_url('nordrassil/data/nds/table/'.$project_id.'/edit/'.$table_id),'Table "<b>'.$table_name.'</b>"','class="btn btn-primary"');
+		echo anchor(site_url($cms['module_path'].'/data/nds/table/'.$project_id.'/edit/'.$table_id),'Table "<b>'.$table_name.'</b>"','class="btn btn-primary"');
 	}
 	echo $output;
 ?>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 	// if document ready, call adjust when needed
 	$(document).ready(function(){
 		// when table_id changed
@@ -37,16 +37,16 @@
 				 '<?php echo site_url($cms['module_path']); ?>'+'/data/ajax/get_restricted_table_sibling/',
 				 '<?php echo site_url($cms['module_path']); ?>'+'/data/ajax/get_restricted_table_sibling/'
 			);
-			
+
 		for(var i=0; i<affected_field_1.length; i++){
-			adjust(changing_field_1, affected_field_1[i], get_restricted_path_1[i]);	
-		}		
+			adjust(changing_field_1, affected_field_1[i], get_restricted_path_1[i]);
+		}
 		$("select#field-"+changing_field_1).change(function(){
 			for(var i=0; i<affected_field_1.length; i++){
-				adjust(changing_field_1, affected_field_1[i], get_restricted_path_1[i]);	
+				adjust(changing_field_1, affected_field_1[i], get_restricted_path_1[i]);
 			}
 		});
-		
+
 		// when lookup_table_id changed
 		var changing_field_2 = 'lookup_table_id';
 		var affected_field_2 = 'lookup_column_id';
@@ -55,7 +55,7 @@
 		$("select#field-"+changing_field_2).change(function(){
 			adjust(changing_field_2, affected_field_2, get_restricted_path_2);
 		});
-		
+
 		// when relation_table_id changed
 		var changing_field_3 = 'relation_table_id';
 		var affected_field_3 = Array('relation_table_column_id','relation_selection_column_id','relation_priority_column_id');
@@ -68,7 +68,7 @@
 				adjust(changing_field_3, affected_field_3[i], get_restricted_path_3);
 			}
 		});
-		
+
 		// when selection_table_id changed
 		var changing_field_4 = 'selection_table_id';
 		var affected_field_4 = 'selection_column_id';
@@ -77,23 +77,23 @@
 		$("select#field-"+changing_field_4).change(function(){
 			adjust(changing_field_4, affected_field_4, get_restricted_path_4);
 		});
-		
+
 		// when role changed
-		
+
 		$("select#field-role").change(function(){
 			adjust_form_by_role_and_data_type();
 		});
 		$("select#field-data_type").change(function(){
 			adjust_form_by_role_and_data_type();
 		})
-		
+
 		adjust_form_by_role_and_data_type();
-			
+
 	});
-	
+
 	function adjust_form_by_role_and_data_type(){
 		var role = $("select#field-role").val();
-		var data_type = $("select#field-data_type").val();		
+		var data_type = $("select#field-data_type").val();
 		$("#data_type_field_box").hide();
 		$("#data_size_field_box").hide();
 		$("#lookup_table_id_field_box").hide();
@@ -105,7 +105,7 @@
 		$("#selection_table_id_field_box").hide();
 		$("#selection_column_id_field_box").hide();
 		$("#value_selection_mode_field_box").hide();
-		$("#value_selection_item_field_box").hide();		
+		$("#value_selection_item_field_box").hide();
 		if(role=='' || role=='primary' || role=='lookup'){
 			$("#data_type_field_box").show();
 			$("#data_size_field_box").show();
@@ -128,7 +128,7 @@
 			$("#value_selection_mode_field_box").show();
 			$("#value_selection_item_field_box").show();
 		}
-		
+
 	}
-	
+
 </script>

@@ -10,7 +10,7 @@ class Install extends CMS_Module_Installer {
     /////////////////////////////////////////////////////////////////////////////
 
     protected $DEPENDENCIES = array();
-    protected $NAME         = 'admin.new_blog';
+    protected $NAME         = 'gofrendi.noCMS.blog';
     protected $DESCRIPTION  = 'Write articles, upload photos, allow visitors to give comments, rule the world...';
     protected $VERSION      = '0.0.0';
 
@@ -76,6 +76,12 @@ class Install extends CMS_Module_Installer {
     private function remove_all(){
         $module_path = $this->cms_module_path();
 
+        // remove widgets
+        $this->remove_widget($this->cms_complete_navigation_name('newest_article'));
+
+        // remove quicklinks
+        $this->remove_quicklink($this->cms_complete_navigation_name('index'));
+
         // remove navigations
         $this->remove_navigation($this->cms_complete_navigation_name('manage_category'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_article'));
@@ -95,7 +101,7 @@ class Install extends CMS_Module_Installer {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->add_navigation($this->cms_complete_navigation_name('index'), 'New Blog',
+        $this->add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
             $module_path.'/blog', $this->PRIV_EVERYONE);
 
         // add navigations
@@ -108,7 +114,7 @@ class Install extends CMS_Module_Installer {
 
         $this->add_quicklink($this->cms_complete_navigation_name('index'));
 
-        $this->add_widget($this->cms_complete_navigation_name('widget_newest'), 'Newest Articles',
+        $this->add_widget($this->cms_complete_navigation_name('newest_article'), 'Newest Articles',
             $this->PRIV_EVERYONE, $module_path.'/widget/newest','sidebar');
 
 

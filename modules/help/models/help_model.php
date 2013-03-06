@@ -1,19 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Help_Model extends CMS_Model{
-	
+
 	public function count_group($url){
-		$SQL = "SELECT id FROM help_group WHERE url = '".addslashes($url)."'";
+		$SQL = "SELECT id FROM ".$this->cms_complete_table_name('group')." WHERE url = '".addslashes($url)."'";
 		$query = $this->db->query($SQL);
 		return $query->num_rows();
 	}
-	
+
 	public function count_topic($url){
-		$SQL = "SELECT id FROM help_topic WHERE url = '".addslashes($url)."'";
+		$SQL = "SELECT id FROM ".$this->cms_complete_table_name('topic')." WHERE url = '".addslashes($url)."'";
 		$query = $this->db->query($SQL);
 		return $query->num_rows();
 	}
-	
+
 	public function group($url = NULL, $keyword = NULL){
 		// wheres
 		$where_url = isset($url)?
@@ -21,15 +21,15 @@ class Help_Model extends CMS_Model{
 		$where_keyword = isset($keyword)?
 			"(name LIKE '%".addslashes($keyword)."%')
 			OR (
-				SELECT count(id) FROM help_topic 
-				WHERE 
-					(title LIKE '%".addslashes($keyword)."%' OR 
+				SELECT count(id) FROM ".$this->cms_complete_table_name('topic')."
+				WHERE
+					(title LIKE '%".addslashes($keyword)."%' OR
 					content LIKE '%".addslashes($keyword)."%') AND
-					help_topic.group_id = help_group.id 
+					".$this->cms_complete_table_name('topic').".group_id = ".$this->cms_complete_table_name('group').".id
 			)>0 " : "TRUE";
-		
-		$SQL = "SELECT id, url, name, content 
-			FROM help_group 
+
+		$SQL = "SELECT id, url, name, content
+			FROM ".$this->cms_complete_table_name('group')."
 			WHERE $where_keyword AND $where_url ORDER BY id";
 		$query = $this->db->query($SQL);
 		$data = array();
@@ -46,17 +46,17 @@ class Help_Model extends CMS_Model{
 		}
 		return $data;
 	}
-	
+
 	public function topic($group_id = NULL, $keyword = NULL){
 		// wheres
 		$where_keyword = isset($keyword)?
 			"(title LIKE '%".addslashes($keyword).
-			"%' OR content LIKE '%".addslashes($keyword)."%')" : "TRUE"; 
+			"%' OR content LIKE '%".addslashes($keyword)."%')" : "TRUE";
 		$where_group_id = isset($group_id)?
 			"(group_id = '".addslashes($group_id)."')" : "TRUE";
-		
+
 		$SQL = "SELECT id, title, url
-			FROM help_topic 
+			FROM ".$this->cms_complete_table_name('topic')."
 			WHERE $where_keyword AND $where_group_id ORDER BY id";
 		$query = $this->db->query($SQL);
 		$data = array();
@@ -67,14 +67,14 @@ class Help_Model extends CMS_Model{
 					"url" => $row->url
 				);
 		}
-		return $data;		
-		
+		return $data;
+
 	}
-	
+
 	public function topic_content($url){
-	
+
 		$SQL = "SELECT id, title, content, url
-			FROM help_topic
+			FROM ".$this->cms_complete_table_name('topic')."
 			WHERE (url LIKE '".addslashes($url)."')  ORDER BY id";
 		$query = $this->db->query($SQL);
 		if($query->num_rows()>0){
@@ -93,7 +93,7 @@ class Help_Model extends CMS_Model{
 				);
 			return $data;
 		}
-	
+
 	}
-	
+
 }

@@ -1,11 +1,11 @@
-CREATE TABLE `nds_template` (
+CREATE TABLE `{{ complete_table_name:template }}` (
   `template_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `generator_path` varchar(100) NOT NULL,
   PRIMARY KEY (`template_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/
-CREATE TABLE `nds_template_option` (
+CREATE TABLE `{{ complete_table_name:template_option }}` (
   `option_id` int(11) NOT NULL AUTO_INCREMENT,
   `template_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE `nds_template_option` (
   PRIMARY KEY (`option_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/
-CREATE TABLE `nds_project` (
+CREATE TABLE `{{ complete_table_name:project }}` (
   `project_id` int(11) NOT NULL AUTO_INCREMENT,
   `template_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -27,14 +27,14 @@ CREATE TABLE `nds_project` (
   PRIMARY KEY (`project_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/
-CREATE TABLE `nds_project_option` (
+CREATE TABLE `{{ complete_table_name:project_option }}` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
   `option_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/
-CREATE TABLE `nds_table` (
+CREATE TABLE `{{ complete_table_name:table }}` (
   `table_id` int(11) NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -43,14 +43,14 @@ CREATE TABLE `nds_table` (
   PRIMARY KEY (`table_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/
-CREATE TABLE `nds_table_option` (
+CREATE TABLE `{{ complete_table_name:table_option }}` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `option_id` int(11) NOT NULL,
   `table_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/
-CREATE TABLE `nds_column` (
+CREATE TABLE `{{ complete_table_name:column }}` (
   `column_id` int(11) NOT NULL AUTO_INCREMENT,
   `table_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE `nds_column` (
   PRIMARY KEY (`column_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*split*/
-CREATE TABLE `nds_column_option` (
+CREATE TABLE `{{ complete_table_name:column_option }}` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `option_id` int(11) NOT NULL,
   `column_id` int(11) NOT NULL,

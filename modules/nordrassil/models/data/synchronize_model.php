@@ -16,26 +16,28 @@ class Synchronize_Model extends CMS_Model{
 		// make project_id save of SQL injection
 		$save_project_id = addslashes($project_id);
 
-		// delete related nds_column_option
-		$where = "column_id IN (SELECT column_id FROM nds_column, nds_table WHERE nds_column.table_id = nds_table.table_id AND project_id='$save_project_id')";
-		$this->db->delete('nds_column_option',$where);
+		// delete related column_option
+		$where = "column_id IN (SELECT column_id FROM ".$this->cms_complete_table_name('column').
+		  ", ".$this->cms_complete_table_name('table')." WHERE
+		  ".$this->cms_complete_table_name('column.table_id')." = ".$this->cms_complete_table_name('table').".table_id AND project_id='$save_project_id')";
+		$this->db->delete($this->cms_complete_table_name('column_option'),$where);
 
-		// delete related nds_column
-		$where = "table_id IN (SELECT table_id FROM nds_table WHERE project_id='$save_project_id')";
-		$this->db->delete('nds_column',$where);
+		// delete related column
+		$where = "table_id IN (SELECT table_id FROM ".$this->cms_complete_table_name('table')." WHERE project_id='$save_project_id')";
+		$this->db->delete($this->cms_complete_table_name('column'),$where);
 
-		// delete related nds_table_option
-		$where = "table_id IN (SELECT table_id FROM nds_table WHERE project_id='$save_project_id')";
-		$this->db->delete('nds_table_option',$where);
+		// delete related table_option
+		$where = "table_id IN (SELECT table_id FROM ".$this->cms_complete_table_name('table')." WHERE project_id='$save_project_id')";
+		$this->db->delete($this->cms_complete_table_name('table_option'),$where);
 
-		// delete from nds_table
+		// delete from table
 		$where = array('project_id'=>$project_id);
-		$this->db->delete('nds_table',$where);
+		$this->db->delete($this->cms_complete_table_name('table'),$where);
 
 
 		// select the current nor_project
 		$query = $this->db->select('db_server, db_user, db_password, db_schema, db_port, db_table_prefix')
-			->from('nds_project')
+			->from($this->cms_complete_table_name('project'))
 			->where(array('project_id'=>$project_id))
 			->get();
 		if($query->num_rows()>0){
@@ -85,7 +87,7 @@ class Synchronize_Model extends CMS_Model{
 					'name'=> $row['TABLE_NAME'],
 					'caption' => $caption
 				);
-			$this->db->insert('nds_table', $data);
+			$this->db->insert($this->cms_complete_table_name('table'), $data);
 			// inserting the field
 			$table_id = $this->db->insert_id();
 			$table_name = $row['TABLE_NAME'];
@@ -154,7 +156,7 @@ class Synchronize_Model extends CMS_Model{
 					'value_selection_mode'=>$value_selection_mode,
 					'value_selection_item'=>$value_selection_item,
 				);
-			$this->db->insert('nds_column', $data);
+			$this->db->insert($this->cms_complete_table_name('column'), $data);
 		}
 
 	}

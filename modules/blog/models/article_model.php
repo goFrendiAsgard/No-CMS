@@ -194,7 +194,7 @@ class Article_Model extends  CMS_Model{
 
         $SQL = "SELECT comment_id, date, author_user_id, name, email, website, content
         FROM ".$this->cms_complete_table_name('comment')."
-        WHERE article_id = '$article_id' ORDER BY `date` desc";
+        WHERE article_id = '$article_id' ORDER BY `date` asc";
         $query = $this->db->query($SQL);
 
         $data = array();

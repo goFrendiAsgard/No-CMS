@@ -8,14 +8,14 @@
 class nds extends CMS_Controller {
 
     public function template(){
-    	$this->cms_guard_page('nordrassil_template');
+    	$this->cms_guard_page($this->cms_complete_navigation_name('template'));
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Generator Template');
 
         // table name
-        $crud->set_table('nds_template');
+        $crud->set_table($this->cms_complete_table_name('template'));
 
         // displayed columns on list
         $crud->columns('name','generator_path','options','manage_options');
@@ -42,11 +42,11 @@ class nds extends CMS_Controller {
 
         // render
         $output = $crud->render();
-        $this->view($this->cms_module_path()."/data/nds_template", $output, "nordrassil_template");
+        $this->view($this->cms_module_path()."/data/nds_template", $output, $this->cms_complete_navigation_name('template'));
     }
 
 	public function callback_template_before_delete($primary_key){
-		$this->load->model('nordrassil/data/nds_model');
+		$this->load->model($this->cms_module_path().'/data/nds_model');
 		$this->nds_model->before_delete_template($primary_key);
 		return TRUE;
 	}
@@ -69,7 +69,7 @@ class nds extends CMS_Controller {
 	public function callback_edit_field_template_options($value, $primary_key){
 		$url = site_url($this->cms_module_path().'/data/nds/template_option');
 		$caption = 'Option';
-		$this->load->model('/data/nds_model');
+		$this->load->model($this->cms_module_path().'/data/nds_model');
 		$result = $this->nds_model->get_template_option_by_template($primary_key);
 		$action = $this->get_detail_action($caption, $url, $primary_key);
 		$data = $this->get_detail_data($result, $url, $primary_key, 'option_id', 'name');
@@ -77,12 +77,12 @@ class nds extends CMS_Controller {
 	}
 
     public function template_option($template_id=NULL){
-    	$this->cms_guard_page('nordrassil_template');
+    	$this->cms_guard_page($this->cms_complete_navigation_name('template'));
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
         // table name
-        $crud->set_table('nds_template_option');
+        $crud->set_table($this->cms_complete_table_name('template_option'));
 
         // displayed columns on list
         $crud->columns('template_id','name','description','option_type');
@@ -97,12 +97,12 @@ class nds extends CMS_Controller {
         $crud->display_as('description','Description');
         $crud->display_as('option_type','Option Type');
 
-		$crud->set_relation('template_id','nds_template','name');
+		$crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
 		$crud->unset_texteditor('description');
 		$crud->change_field_type('option_type', 'enum', array('project','table','column'));
 
 		if(isset($template_id) && intval($template_id)>0){
-    		$crud->where('nds_template_option.template_id', $template_id);
+    		$crud->where($this->cms_complete_table_name('template_option').'.template_id', $template_id);
     		$crud->change_field_type('template_id', 'hidden', $template_id);
     	}
 
@@ -118,11 +118,12 @@ class nds extends CMS_Controller {
 		if(isset($template_id)){
 			$output->template_id = $template_id;
 		}
-        $this->view($this->cms_module_path()."/data/nds_template_option", $output, "nordrassil_template");
+        $this->view($this->cms_module_path()."/data/nds_template_option", $output, $this->cms_complete_navigation_name('template"
+        '));
     }
 
 	public function callback_template_option_before_delete($primary_key){
-		$this->load->model('nordrassil/data/nds_model');
+		$this->load->model($this->cms_module_path().'/data/nds_model');
 		$this->nds_model->before_delete_template_option($primary_key);
 		return TRUE;
 	}
@@ -134,14 +135,14 @@ class nds extends CMS_Controller {
 	}
 
     public function project(){
-    	$this->cms_guard_page('nordrassil_project');
+    	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Project');
 
         // table name
-        $crud->set_table('nds_project');
+        $crud->set_table($this->cms_complete_table_name('project'));
 
         // displayed columns on list
         $crud->columns('template_id','name','options','tables','manage_tables');
@@ -165,8 +166,9 @@ class nds extends CMS_Controller {
 
 		$crud->field_type('db_password','password');
 
-		$crud->set_relation('template_id','nds_template','name');
-		$crud->set_relation_n_n('options','nds_project_option','nds_template_option','project_id','option_id','name');
+		$crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
+		$crud->set_relation_n_n('options',$this->cms_complete_table_name('project_option'),
+		  $this->cms_complete_table_name('template_option'),'project_id','option_id','name');
 
 		$crud->callback_after_insert(array($this, 'project_after_insert'));
 		$crud->callback_before_delete(array($this, 'callback_project_before_delete'));
@@ -181,17 +183,17 @@ class nds extends CMS_Controller {
 
         // render
         $output = $crud->render();
-        $this->view($this->cms_module_path()."/data/nds_project", $output, "nordrassil_project");
+        $this->view($this->cms_module_path()."/data/nds_project", $output, $this->cms_complete_navigation_name('project'));
     }
 
 	public function project_after_insert($post_array, $primary_key){
-		$this->load->model('data/synchronize_model');
+		$this->load->model($this->cms_module_path().'data/synchronize_model');
     	$this->synchronize_model->synchronize($primary_key);
     	return true;
 	}
 
 	public function callback_project_before_delete($primary_key){
-		$this->load->model('nordrassil/data/nds_model');
+		$this->load->model($this->cms_module_path().'/data/nds_model');
 		$this->nds_model->before_delete_project($primary_key);
 		return TRUE;
 	}
@@ -222,17 +224,17 @@ class nds extends CMS_Controller {
 	}
 
     public function table($project_id = NULL){
-    	$this->cms_guard_page('nordrassil_project');
+    	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Table');
 
         // table name
-        $crud->set_table('nds_table');
+        $crud->set_table($this->cms_complete_table_name('table'));
 
 		if(isset($project_id) && intval($project_id)>0){
-    		$crud->where('nds_table.project_id', $project_id);
+    		$crud->where($this->cms_complete_table_name('table').'.project_id', $project_id);
     		// displayed columns on list
         	$crud->columns('name','caption','priority','options','columns','manage_columns');
     	}else{
@@ -254,8 +256,9 @@ class nds extends CMS_Controller {
 		$crud->display_as('columns','Columns');
 		$crud->display_as('manage_columns','Manage Columns');
 
-        $crud->set_relation('project_id','nds_project','name');
-		$crud->set_relation_n_n('options','nds_table_option','nds_template_option','table_id','option_id','name');
+        $crud->set_relation('project_id',$this->cms_complete_table_name('project'),'name');
+		$crud->set_relation_n_n('options',$this->cms_complete_table_name('table_option'),
+		    $this->cms_complete_table_name('template_option'),'table_id','option_id','name');
 
 		if(isset($project_id) && intval($project_id)>0){
     		$crud->change_field_type('project_id', 'hidden', $project_id);
@@ -275,14 +278,14 @@ class nds extends CMS_Controller {
         $output = $crud->render();
 		if(isset($project_id) && is_numeric($project_id)){
 			$output->project_id = $project_id;
-			$this->load->model('nordrassil/data/nds_model');
+			$this->load->model($this->cms_module_path().'/data/nds_model');
 			$output->project_name = $this->nds_model->get_project_name($project_id);
 		}
-        $this->view($this->cms_module_path()."/data/nds_table", $output, "nordrassil_project");
+        $this->view($this->cms_module_path()."/data/nds_table", $output, $this->cms_complete_navigation_name('project'));
     }
 
 	public function callback_table_before_delete($primary_key){
-		$this->load->model('nordrassil/data/nds_model');
+		$this->load->model($this->cms_module_path().'/data/nds_model');
 		$this->nds_model->before_delete_table($primary_key);
 		return TRUE;
 	}
@@ -319,17 +322,17 @@ class nds extends CMS_Controller {
 	}
 
     public function column($table_id=NULL){
-    	$this->cms_guard_page('nordrassil_project');
-    	$this->load->model('nordrassil/data/nds_model');
+    	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
+    	$this->load->model($this->cms_module_path().'/data/nds_model');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Column');
 
         // table name
-        $crud->set_table('nds_column');
+        $crud->set_table($this->cms_complete_table_name('column'));
 		if(isset($table_id) && intval($table_id)>0){
-    		$crud->where('nds_column.table_id', $table_id);
+    		$crud->where($this->cms_complete_table_name('column').'.table_id', $table_id);
 			// displayed columns on list
         	$crud->columns('name','caption','role','data_type','data_size','options','priority');
     	}else{
@@ -366,18 +369,19 @@ class nds extends CMS_Controller {
 		$crud->field_type('role', 'enum', array('primary','lookup','detail many to many','detail one to many'));
 		$crud->field_type('value_selection_mode', 'enum', array('set','enum'));
 
-		$crud->set_relation('table_id','nds_table','name');
-		$crud->set_relation_n_n('options','nds_column_option','nds_template_option','column_id','option_id','name');
+		$crud->set_relation('table_id',$this->cms_complete_table_name('table'),'name');
+		$crud->set_relation_n_n('options',$this->cms_complete_table_name('column_option'),
+		  $this->cms_complete_table_name('template_option'),'column_id','option_id','name');
 
-		$crud->set_relation('lookup_table_id','nds_table','name');
-		$crud->set_relation('relation_table_id','nds_table','name');
-		$crud->set_relation('selection_table_id','nds_table','name');
+		$crud->set_relation('lookup_table_id',$this->cms_complete_table_name('table'),'name');
+		$crud->set_relation('relation_table_id',$this->cms_complete_table_name('table'),'name');
+		$crud->set_relation('selection_table_id',$this->cms_complete_table_name('table'),'name');
 
-		$crud->set_relation('lookup_column_id','nds_column','name');
-		$crud->set_relation('relation_table_column_id','nds_column','name');
-		$crud->set_relation('relation_selection_column_id','nds_column','name');
-		$crud->set_relation('relation_priority_column_id','nds_column','name');
-		$crud->set_relation('selection_column_id','nds_column','name');
+		$crud->set_relation('lookup_column_id',$this->cms_complete_table_name('column'),'name');
+		$crud->set_relation('relation_table_column_id',$this->cms_complete_table_name('column'),'name');
+		$crud->set_relation('relation_selection_column_id',$this->cms_complete_table_name('column'),'name');
+		$crud->set_relation('relation_priority_column_id',$this->cms_complete_table_name('column'),'name');
+		$crud->set_relation('selection_column_id',$this->cms_complete_table_name('column'),'name');
 
 		if(isset($table_id) && intval($table_id)>0){
     		$crud->change_field_type('table_id', 'hidden', $table_id);
@@ -393,8 +397,8 @@ class nds extends CMS_Controller {
         // render
         $output = $crud->render();
 		if(isset($table_id) && is_numeric($table_id)){
-			$this->load->model('nordrassil/data/nds_model');
-			$query = $this->db->select('project_id')->from('nds_table')->where('table_id',$table_id)->get();
+			$this->load->model($this->cms_module_path().'/data/nds_model');
+			$query = $this->db->select('project_id')->from($this->cms_complete_table_name('table'))->where('table_id',$table_id)->get();
 			$row = $query->row();
 			$project_id = $row->project_id;
 			$output->project_id = $project_id;
@@ -402,11 +406,11 @@ class nds extends CMS_Controller {
 			$output->table_id = $table_id;
 			$output->table_name = $this->nds_model->get_table_name($table_id);
 		}
-        $this->view($this->cms_module_path()."/data/nds_column", $output, "nordrassil_project");
+        $this->view($this->cms_module_path()."/data/nds_column", $output, $this->cms_complete_navigation_name('project'));
     }
 
 	public function callback_column_before_delete($primary_key){
-		$this->load->model('nordrassil/data/nds_model');
+		$this->load->model($this->cms_module_path().'/data/nds_model');
 		$this->nds_model->before_delete_column($primary_key);
 		return TRUE;
 	}

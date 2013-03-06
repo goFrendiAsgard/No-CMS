@@ -5,12 +5,12 @@
 	}
 </style>
 <?php
-	$asset = new CMS_Asset(); 
+	$asset = new CMS_Asset();
 	foreach($css_files as $file){
 		$asset->add_css($file);
-	} 
+	}
 	echo $asset->compile_css();
-	
+
 	foreach($js_files as $file){
 		$asset->add_js($file);
 	}
@@ -19,12 +19,12 @@
 	echo $asset->compile_js();
 	echo '<h4>Table</h4>';
 	if(isset($project_id)){
-		echo anchor(site_url('nordrassil/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
+		echo anchor(site_url($cms['module_path'].'/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
 	}
 	echo $output;
 ?>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 	// if document ready, call adjust when needed
 	$(document).ready(function(){
 		var changing_field = 'project_id';
@@ -33,8 +33,8 @@
 		adjust(changing_field, affected_field, get_restricted_path);
 		$("select#field-"+changing_field).change(function(){
 			adjust(changing_field, affected_field, get_restricted_path);
-		});	
+		});
 	});
-	
-	
+
+
 </script>

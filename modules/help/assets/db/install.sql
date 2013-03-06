@@ -1,4 +1,4 @@
-CREATE TABLE `help_group` (
+CREATE TABLE `{{ complete_table_name:group }}` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(60) NOT NULL,
   `url` varchar(60) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE `help_group` (
   UNIQUE KEY `url` (`url`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*split*/
-CREATE TABLE `help_topic` (
+CREATE TABLE `{{ complete_table_name:topic }}` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL,
   `title` varchar(60) NOT NULL,
@@ -18,26 +18,21 @@ CREATE TABLE `help_topic` (
   UNIQUE KEY `title` (`title`),
   UNIQUE KEY `url` (`url`),
   KEY `group_id` (`group_id`),
-  CONSTRAINT `help_topic_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `help_group` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
 
 /*split*/
-INSERT INTO `help_group`(`id`,`name`,`url`,`content`) VALUES
+INSERT INTO `{{ complete_table_name:group }}`(`id`,`name`,`url`,`content`) VALUES
   ('1', 'Basic Info', 'basic-info', 'This section contains basic info of No-CMS'),
   ('2', 'Installation', 'installation', 'This section contains installation of No-CMS'),
   ('3', 'Getting Started', 'getting-started', 'Fasten your seatbelt and get started'),
   ('4', 'More With Module', 'more-with-module', 'More advance topics about modules'),
   ('5', 'More With Theme', 'more-with-theme', 'More advance topics about theme'),
   ('6', 'Module Generator', 'module-generator', 'Make your life easier with Module Generator'),
-  ('7', 'No-CMS Advance Topic', 'no-cms-advance-topic', '<p>
-  No-CMS advance topics</p>
-'),
-  ('8', 'FAQ', 'faq', '<p>
-   Frequently Asked Questions</p>
-');
+  ('7', 'No-CMS Advance Topic', 'no-cms-advance-topic', 'No-CMS advance topics'),
+  ('8', 'FAQ', 'faq', 'Frequently Asked Questions');
 
 /*split*/
-INSERT INTO `help_topic` (`id`, `group_id`, `title`, `url`, `content`) VALUES
+INSERT INTO `{{ complete_table_name:topic }}` (`id`, `group_id`, `title`, `url`, `content`) VALUES
 (1, 1, 'Overview', 'overview', '<p>\n   No-CMS is a CMS-framework. It is a <a href="help/topic/no-cms_as_cms">CMS</a> and a <a href="help/topic/no-cms_as_framework">framework</a> in the same time. No-CMS is a basic CMS with some default features such as user authorization, menu, module and theme management. It is fully customizable and extensible, you can make your own module and your own themes. It provide freedom to make your very own CMS, which is not provided very well by any other CMS.</p>\n'),
 (2, 1, 'Who is No-CMS for', 'who-is-no-cms-for', 'No CMS will be good for you if you say yes for majority of these\nstatement:\n<ul>\n   <li>You are a web developer who use CodeIgniter framework.</li>\n   <li>You are tired of building the same things such an\n     authorization-authentication for every project.</li>\n  <li>You find that some part of your old project can be used for your\n      next project.</li>\n    <li>You are happy with CodeIgniter but you think some plug-ins and\n        features should be provided by default.</li>\n  <li>You want a simple and easy to learn framework that has 100%\n       compatibility with CodeIgniter.</li>\n  <li>You don''t want to learn too many new terms.</li>\n <li>You are familiar with HMVC plugins, and you think it is one of\n        "should be exists" feature in CodeIgniter.</li>\n   <li>You are in tight deadline, at least you need to provide the\n       prototype to your client.</li>\n</ul>'),
 (3, 1, 'No-CMS as CMS', 'no-cms-as-cms', '<p>\n  No-CMS is a good enough CMS. It is different from Wordpress, Drupal or Joomla. Those CMS are built from developers for users. No-CMS is built by developer for developers, although everyone else can still use it as well. The main purpose of this CMS is to provide a good start of web application project, especially for CodeIgniter developer.</p>\n'),

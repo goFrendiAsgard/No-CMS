@@ -1,3 +1,3 @@
-DROP TABLE IF EXISTS `help_topic`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:topic }}`; 
 /*split*/
-DROP TABLE IF EXISTS `help_group`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:group }}`; 

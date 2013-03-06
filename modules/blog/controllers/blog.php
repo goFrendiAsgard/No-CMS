@@ -5,6 +5,14 @@
  * @author No-CMS Module Generator
  */
 class Blog extends CMS_Priv_Strict_Controller {
+
+    protected function do_override_url_map($URL_MAP){
+        $module_path = $this->cms_module_path();
+        $URL_MAP[$module_path] = $this->cms_complete_navigation_name('index');
+        $URL_MAP[$module_path.'/blog'] = $this->cms_complete_navigation_name('index');
+        return $URL_MAP;
+    }
+
     public function index($article_url = NULL){
         $this->load->model($this->cms_module_path().'/article_model');
         $data = array(

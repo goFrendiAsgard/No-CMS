@@ -1,15 +1,15 @@
-DROP TABLE IF EXISTS `nds_column_option`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:column_option }}`; 
 /*split*/
-DROP TABLE IF EXISTS `nds_column`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:column }}`; 
 /*split*/
-DROP TABLE IF EXISTS `nds_table_option`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:table_option }}`; 
 /*split*/
-DROP TABLE IF EXISTS `nds_table`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:table }}`; 
 /*split*/
-DROP TABLE IF EXISTS `nds_project_option`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:project_option }}`; 
 /*split*/
-DROP TABLE IF EXISTS `nds_project`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:project }}`; 
 /*split*/
-DROP TABLE IF EXISTS `nds_template_option`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:template_option }}`; 
 /*split*/
-DROP TABLE IF EXISTS `nds_template`;
+DROP TABLE IF EXISTS `{{ complete_table_name:template }}`;
