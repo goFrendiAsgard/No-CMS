@@ -5,7 +5,7 @@
  *
  * @author theModuleGenerator
  */
-class help extends CMS_Controller {	
+class help extends CMS_Controller {
     public function index(){
     	$this->cms_guard_page('help_index');
     	$this->load->model($this->cms_module_path().'/help_model');
@@ -17,8 +17,8 @@ class help extends CMS_Controller {
     			"toc"=>$this->help_model->group(NULL, $keyword),
     		);
         $this->view($this->cms_module_path().'/help_index', $data, 'help_index');
-    } 
-    
+    }
+
     public function group($url=NULL){
     	$this->cms_guard_page('help_index');
     	$this->load->model($this->cms_module_path().'/help_model');
@@ -27,9 +27,9 @@ class help extends CMS_Controller {
     			"allow_edit_group" => $this->cms_allow_navigate('help_group'),
     			"allow_edit_topic" => $this->cms_allow_navigate('help_topic')
     		);
-        $this->view($this->cms_module_path().'/help_group', $data, 'help_index');    	
+        $this->view($this->cms_module_path().'/help_group', $data, 'help_index');
     }
-    
+
     public function topic($url=NULL){
     	$this->cms_guard_page('help_index');
     	$this->load->model($this->cms_module_path().'/help_model');
@@ -37,33 +37,33 @@ class help extends CMS_Controller {
     			"content"=>$this->help_model->topic_content($url),
     			"allow_edit_topic" => $this->cms_allow_navigate('help_topic')
     	);
-    	$this->view($this->cms_module_path().'/help_topic', $data, 'help_index');    	
+    	$this->view($this->cms_module_path().'/help_topic', $data, 'help_index');
     }
 
     public function data_group(){
     	$this->cms_guard_page('help_group');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
-        
+
         // table name
-        $crud->set_table("help_group");
-        
+        $crud->set_table($this->cms_complete_table_name('group'));
+
         // displayed columns on list
         $crud->columns('name', 'content');
         // displayed columns on edit operation
         $crud->edit_fields('name', 'content');
         // displayed columns on add operation
         $crud->add_fields('name', `url`, 'content');
-        
+
         // caption of each columns
         $crud->display_as('name','Name')
             ->display_as('content','Content');
-        
+
         $crud->change_field_type('url', 'hidden');
         $crud->callback_before_insert(array($this,'before_insert_group'));
-		
+
 		$crud->set_language($this->cms_language());
-        
+
         // render
         $output = $crud->render();
         $this->view("grocery_CRUD", $output, "help_group");
@@ -73,34 +73,34 @@ class help extends CMS_Controller {
     	$this->cms_guard_page('help_topic');
         $crud = new grocery_CRUD();
 		$crud->unset_jquery();
-        
+
         // table name
-        $crud->set_table("help_topic");
-        
+        $crud->set_table($this->cms_complete_table_name('topic'));
+
         // displayed columns on list
         $crud->columns('title', 'group_id', 'content');
         // displayed columns on edit operation
         $crud->edit_fields('title', 'group_id', 'content');
         // displayed columns on add operation
         $crud->add_fields('title', 'url', 'group_id', 'content');
-        
+
         // caption of each columns
         $crud->display_as('group_id','Group')
             ->display_as('title','Title')
             ->display_as('content','Content');
-        
+
         $crud->change_field_type('url', 'hidden');
-        $crud->set_relation('group_id', 'help_group', 'name');
-        
+        $crud->set_relation('group_id', $this->cms_complete_table_name('group'), 'name');
+
         $crud->callback_before_insert(array($this,'before_insert_topic'));
-		
+
 		$crud->set_language($this->cms_language());
-        
+
         // render
         $output = $crud->render();
         $this->view("grocery_CRUD", $output, "help_topic");
     }
-    
+
     public function before_insert_group($post_array){
     	$this->load->helper('url');
     	$this->load->model($this->cms_module_path().'/help_model');
@@ -113,11 +113,11 @@ class help extends CMS_Controller {
     		}
     		$url .= '_'.$index;
     	}
-    	
-    	$post_array['url'] = $url;    	
-    	return $post_array;    	
+
+    	$post_array['url'] = $url;
+    	return $post_array;
     }
-    
+
     public function before_insert_topic($post_array){
     	$this->load->helper('url');
     	$this->load->model($this->cms_module_path().'/help_model');
@@ -130,11 +130,11 @@ class help extends CMS_Controller {
     		}
     		$url .= '_'.$index;
     	}
-    	
-    	$post_array['url'] = $url;    	
-    	return $post_array; 
+
+    	$post_array['url'] = $url;
+    	return $post_array;
     }
 
 
-    
+
 }

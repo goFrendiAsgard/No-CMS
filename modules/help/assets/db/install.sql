@@ -17,7 +17,7 @@ CREATE TABLE `{{ complete_table_name:topic }}` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `title` (`title`),
   UNIQUE KEY `url` (`url`),
-  KEY `group_id` (`group_id`),
+  KEY `group_id` (`group_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
 
 /*split*/

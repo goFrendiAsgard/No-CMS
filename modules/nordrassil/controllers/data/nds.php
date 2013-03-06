@@ -118,8 +118,7 @@ class nds extends CMS_Controller {
 		if(isset($template_id)){
 			$output->template_id = $template_id;
 		}
-        $this->view($this->cms_module_path()."/data/nds_template_option", $output, $this->cms_complete_navigation_name('template"
-        '));
+        $this->view($this->cms_module_path()."/data/nds_template_option", $output, $this->cms_complete_navigation_name('template'));
     }
 
 	public function callback_template_option_before_delete($primary_key){
@@ -187,7 +186,7 @@ class nds extends CMS_Controller {
     }
 
 	public function project_after_insert($post_array, $primary_key){
-		$this->load->model($this->cms_module_path().'data/synchronize_model');
+		$this->load->model($this->cms_module_path().'/data/synchronize_model');
     	$this->synchronize_model->synchronize($primary_key);
     	return true;
 	}

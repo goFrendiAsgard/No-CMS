@@ -489,5 +489,5 @@ v0.6.1 (development)
 + (done, tested) Update module scenario
 + (done, tested) add cms & module prefix setting
 + (done, tested) Make nordrassil generated code extends CMS_Priv_Controller
-+ (proposed) Create default setting for nordrassil generated code
-+ (proposed) Recode all module to fullfill No-CMS new standard (table prefix & module prefix)
++ (done, tested) Create default setting for nordrassil generated code
++ (done) Recode all module to fullfill No-CMS new standard (table prefix & module prefix)

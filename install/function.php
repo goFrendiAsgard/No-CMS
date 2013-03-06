@@ -27,13 +27,13 @@ function get_current_url()
     } else {
         $protocol = 'http://';
     }
-    
+
     $url = $protocol . $_SERVER['HTTP_HOST'];
-    
+
     // use port if non default
     $url .= isset($_SERVER['SERVER_PORT']) && (($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443)) ? ':' . $_SERVER['SERVER_PORT'] : '';
     $url .= $_SERVER['PHP_SELF'];
-    
+
     // return current url
     return $url;
 }
@@ -96,7 +96,7 @@ function check_db($server, $port, $username, $password, $schema)
         "error_message" => "",
         "warning_message" => ""
     );
-    
+
     $connection = @mysql_connect($server . ':' . $port, $username, $password);
     if (!$connection) {
         $return["success"] = false;
@@ -110,7 +110,7 @@ function check_db($server, $port, $username, $password, $schema)
             $return["error_message"] .= "Your database doesn't support Innodb";
         }
     }
-    
+
     if ($return["success"]) {
         if ($schema == '') {
             $return["error_message"] = 'Database Schema is empty';
@@ -136,12 +136,12 @@ function check_db($server, $port, $username, $password, $schema)
                         $return["success"]       = false;
                     }
                 }
-                
+
             }
         }
-        
+
     }
-    
+
     return $return;
 }
 
@@ -236,16 +236,16 @@ function check_all($install = NULL)
     $db_password         = get_input("db_password");
     $db_schema           = get_input("db_schema");
     $db_table_prefix     = get_input("db_table_prefix");
-    
+
     $adm_username        = get_secure_input("adm_username");
     $adm_email           = get_secure_input("adm_email");
     $adm_realname        = get_secure_input("adm_realname");
     $adm_password        = get_secure_input("adm_password");
     $adm_confirmpassword = get_secure_input("adm_confirmpassword");
-    
+
     $hide_index          = get_secure_input("hide_index");
     $gzip_compression    = get_secure_input("gzip_compression");
-    
+
     $auth_enable_facebook         = get_secure_input("auth_enable_facebook");
     $auth_facebook_app_id         = get_secure_input("auth_facebook_app_id");
     $auth_facebook_app_secret     = get_secure_input("auth_facebook_app_secret");
@@ -272,13 +272,13 @@ function check_all($install = NULL)
     $auth_windows_live_app_secret = get_secure_input("auth_windows_live_app_secret");
     $auth_enable_open_id          = get_secure_input("auth_enable_open_id");
     $auth_enable_aol              = get_secure_input("auth_enable_aol");
-    
+
     // Main program
-    
+
     $success  = true;
     $errors   = array();
     $warnings = array();
-    
+
     // database
     $result = check_db($db_server, $db_port, $db_username, $db_password, $db_schema);
     if (!$result['success']) {
@@ -325,7 +325,7 @@ function check_all($install = NULL)
             $errors[] = "mod_rewrite is not enabled";
         }
     }
-    
+
     // admin password
     if ($adm_password == "") {
         $success  = FALSE;
@@ -335,7 +335,7 @@ function check_all($install = NULL)
         $success  = FALSE;
         $errors[] = "Admin's password confirmation doesn't match";
     }
-    
+
     // third party authentication
     if ($auth_enable_facebook !== "" || $auth_enable_twitter !== "" || $auth_enable_google !== "" || $auth_enable_yahoo !== "" || $auth_enable_linkedin !== "" || $auth_enable_myspace !== "" || $auth_enable_foursquare !== "" || $auth_enable_windows_live !== "" || $auth_enable_open_id !== "" || $auth_enable_aol !== "") {
         // curl
@@ -354,7 +354,7 @@ function check_all($install = NULL)
             $errors[] = "application/logs/hybridauth.log is not writable";
         }
     }
-    
+
     // if not installed, than just return the warnings, errors and success
     if (!isset($install)) {
         $data = array(
@@ -363,11 +363,11 @@ function check_all($install = NULL)
             "warnings" => $warnings
         );
         return $data;
-    } else { // installation			
+    } else { // installation
         if (!$success) { // redirect if not success
             return false;
         } else { // perform installation
-            
+
             // connection
             $db_connection = mysql_connect($db_server . ':' . $db_port, $db_username, $db_password);
             $db_exists     = mysql_select_db($db_schema, $db_connection);
@@ -376,9 +376,9 @@ function check_all($install = NULL)
                 exec_sql($query, $db_connection);
                 mysql_select_db($db_schema, $db_connection);
             }
-            
+
             // cms_config
-            $cms_config = file_get_contents('./resources/cms_config.php');
+            $cms_config = file_get_contents('./resources/cms_config.php.txt');
             $cms_config = replace($cms_config, array(
                 '{{ db_table_prefix }}',
             ), array(
@@ -386,9 +386,9 @@ function check_all($install = NULL)
             ));
             file_put_contents('../application/config/cms_config.php', $cms_config);
             @chmod('../application/config/cms_config.php', 0555);
-            
+
             // database.sql
-            $sql     = file_get_contents('./resources/database.sql');
+            $sql     = file_get_contents('./resources/database.sql.txt');
             $sql     = replace($sql, array(
                 '{{ adm_username }}',
                 '{{ adm_email }}',
@@ -406,9 +406,9 @@ function check_all($install = NULL)
             foreach ($queries as $query) {
                 exec_sql($query, $db_connection);
             }
-            
+
             // database.php
-            $str = file_get_contents('./resources/database.php');
+            $str = file_get_contents('./resources/database.php.txt');
             $str = replace($str, array(
                 '{{ db_server }}',
                 '{{ db_port }}',
@@ -424,14 +424,14 @@ function check_all($install = NULL)
             ));
             file_put_contents('../application/config/database.php', $str);
             @chmod('../application/config/database.php', 0555);
-            
+
             // routes.php
-            $str = file_get_contents('./resources/routes.php');
+            $str = file_get_contents('./resources/routes.php.txt');
             file_put_contents('../application/config/routes.php', $str);
             @chmod('../application/config/routes.php', 0555);
-            
+
             // jquery.ckeditor.config.js
-            $str       = file_get_contents('./resources/jquery.ckeditor.config.js');
+            $str       = file_get_contents('./resources/jquery.ckeditor.config.js.txt');
             $base_path = get_base_url();
             $str       = replace($str, array(
                 '{{ base_path }}'
@@ -440,12 +440,12 @@ function check_all($install = NULL)
             ));
             file_put_contents('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js', $str);
             @chmod('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js', 0555);
-            
-            
+
+
             // config.php
             $key_config     = array();
             $replace_config = array();
-            $str = file_get_contents('./resources/config.php');
+            $str = file_get_contents('./resources/config.php.txt');
             $str = replace($str, array(
                 '{{ gzip }}',
                 '{{ index_page }}',
@@ -457,10 +457,10 @@ function check_all($install = NULL)
             ));
             file_put_contents('../application/config/config.php', $str);
             @chmod('../application/config/config.php', 0555);
-            
+
             // .htaccess
             if ($hide_index !== "") {
-                $str = file_get_contents('./resources/htaccess');
+                $str = file_get_contents('./resources/htaccess.txt');
                 $str = replace($str, array(
                     '{{ base_path }}'
                 ), array(
@@ -482,7 +482,7 @@ function check_all($install = NULL)
                 file_put_contents('../.htaccess', $str);
                 @chmod('../.htaccess', 0555);
             }
-            
+
             // hybridauthlib.php
             if ($auth_enable_facebook !== "" || $auth_enable_twitter !== "" || $auth_enable_google !== "" || $auth_enable_yahoo !== "" || $auth_enable_linkedin !== "" || $auth_enable_myspace !== "" || $auth_enable_foursquare !== "" || $auth_enable_windows_live !== "" || $auth_enable_open_id !== "" || $auth_enable_aol !== "") {
                 $key_config     = array(
@@ -521,8 +521,8 @@ function check_all($install = NULL)
                     $auth_windows_live_app_id,
                     $auth_windows_live_app_secret
                 );
-                
-                
+
+
                 if ($auth_enable_facebook != "") {
                     $key_config[]     = '{{ facebook_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -530,7 +530,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ facebook_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_twitter != "") {
                     $key_config[]     = '{{ twitter_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -538,7 +538,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ twitter_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_google != "") {
                     $key_config[]     = '{{ google_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -546,7 +546,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ google_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_yahoo != "") {
                     $key_config[]     = '{{ yahoo_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -554,7 +554,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ yahoo_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_linkedin != "") {
                     $key_config[]     = '{{ linkedin_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -562,7 +562,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ linkedin_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_myspace != "") {
                     $key_config[]     = '{{ myspace_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -570,7 +570,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ myspace_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_foursquare != "") {
                     $key_config[]     = '{{ foursquare_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -578,7 +578,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ foursquare_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_windows_live != "") {
                     $key_config[]     = '{{ windows_live_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -586,7 +586,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ windows_live_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_open_id != "") {
                     $key_config[]     = '{{ open_id_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -594,7 +594,7 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ open_id_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
+
                 if ($auth_enable_aol != "") {
                     $key_config[]     = '{{ aol_enabled }}';
                     $replace_config[] = 'TRUE';
@@ -602,20 +602,20 @@ function check_all($install = NULL)
                     $key_config[]     = '{{ aol_enabled }}';
                     $replace_config[] = 'FALSE';
                 }
-                
-                $str = file_get_contents('./resources/hybridauthlib.php');
+
+                $str = file_get_contents('./resources/hybridauthlib.php.txt');
                 $str = replace($str, $key_config, $replace_config);
                 file_put_contents('../application/config/hybridauthlib.php', $str);
                 @chmod('../application/config/config.php', 0555);
             }
-            
+
             // put htaccess in install directory
             file_put_contents('.htaccess', 'Deny from all');
             @chmod('.htaccess', 0555);
             return true;
         }
-        
-        
+
+
     }
 }
 ?>
