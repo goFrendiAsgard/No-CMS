@@ -397,8 +397,8 @@ Here are some names of considerable contributors:
 * Everyone who was involved by creating issue & pull requests in github. I can't write every names there. But No-CMS can't be better without them :)
 
 
-Changelog and New Features (current version: 0.6.1 RC2)
-=======================================================
+Changelog and New Features (current version: 0.6.1 stable, 2013-03-07)
+======================================================================
 
 - For more detail information, please take look at [github commit log](https://github.com/goFrendiAsgard/No-CMS/commits)
 
@@ -472,9 +472,7 @@ v0.6.0
 + (done, tested) change view mechanism
 + (done, tested) per page keyword and per page title
 
-v0.6.1 (development)
-+ (proposed) Drupal's CCK like mechanism
-+ (proposed) Make nordrassil generated code easier to be edited.
+v0.6.1
 + (done, tested) Include JQuery by default,
 + (cancelled) use jquerytools CDN if possible <-- using file_get_content or CURL is very slow
 + (done, tested) add google analytic configuration
@@ -482,7 +480,6 @@ v0.6.1 (development)
 + (done, tested) add cms_guard_page function for better authorization
 + (done, tested) create thumbnail automatically for blog module's photo
 + (done, tested) add "admin controller" like bonfire and other CI Based framework
-+ (proposed) automatically create thumbnail in wysiwyg, use better uploader library
 + (done, tested) delete the legacy old_gray theme
 + (done, tested) Rename CMS_Controller into MY_Controller, put CMS_Model in MY_Model
 + (done, tested) Add widget and navigation tag
@@ -490,4 +487,9 @@ v0.6.1 (development)
 + (done, tested) add cms & module prefix setting
 + (done, tested) Make nordrassil generated code extends CMS_Priv_Controller
 + (done, tested) Create default setting for nordrassil generated code
-+ (done) Recode all module to fullfill No-CMS new standard (table prefix & module prefix)
++ (done, tested) Recode all module to fullfill No-CMS new standard (table prefix & module prefix)
+
+v0.6.2
++ (proposed) Drupal's CCK like mechanism
++ (proposed) Make nordrassil generated code easier to be edited.
++ (proposed) automatically create thumbnail in wysiwyg, use better uploader library
