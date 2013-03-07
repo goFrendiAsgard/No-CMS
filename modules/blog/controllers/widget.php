@@ -16,4 +16,10 @@ class Widget extends CMS_Controller {
     			NULL, NULL);
 		$this->view($this->cms_module_path().'/widget_newest', $data);
 	}
+
+    public function category(){
+        $data = array();
+        $data['categories'] = $this->article_model->get_available_category();
+        $this->view($this->cms_module_path().'/widget_category', $data);
+    }
 }

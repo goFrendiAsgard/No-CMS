@@ -1,15 +1,15 @@
 <head>
-	<?php 
+	<?php
 	include('function.php');
 	$result = check_all();
 	if(!$result['success']){
-		header('location:index.html');
+		header('location:index.php');
 	}
-	
+
 	$site_url = '../';
 	if(!isset($_POST['hide_index'])){
 		$site_url .= 'index.php/';
-	} 
+	}
 	$adm_username = '';
 	if(isset($_POST['adm_username'])){
 		$adm_username = $_POST['adm_username'];
@@ -21,7 +21,7 @@
 	?>
 	<link rel="stylesheet" type="text/css" href="assets/style.css"></link>
 	<link rel="stylesheet" type="text/css" href="../assets/bootstrap/css/bootstrap.min.css" />
-	
+
 	<style type="text/css">
 		div#if_error{
 			display: none;
@@ -34,11 +34,11 @@
 	<script src="../assets/bootstrap/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			
+
 			if($('#php_error').html()!=""){
 				$('div#if_error').show();
 				$('div#if_no_error').hide();
-			}else{				
+			}else{
 				$('div#php_error').hide();
 				$('div#if_error').hide();
 				var modules =  ['wysiwyg', 'nordrassil', 'blog'];
@@ -59,7 +59,7 @@
 						'success': function(response){
 								if(!response['success']){
 									console.log('error installing '+response['module_path']);
-								}							
+								}
 							},
 						'error': function(response){
 								console.log('error send request');
@@ -73,34 +73,34 @@
 							}
 					});
 				}
-								
+
 			}
 		});
 		function install_module(){
-			
+
 		}
 	</script>
 </head>
-<body>			
+<body>
 	<div id="container-fluid">
 		<div class="row-fluid">
 			<div class="navbar navbar-fixed-top">
 		      <div class="navbar-inner">
 		        <div class="container-fluid">
 		            <a class="brand" href="#">Installation finished</a>
-		        </div>  	          
+		        </div>
 		      </div>
 		    </div>
-		    
+
 		    <div id="installation_process" class="well span9">
 		    	Installing Modules &nbsp; <img id="img_loader" src="./assets/ajax-loader.gif" />
 		    </div>
-		    
+
 			<div id="if_no_error" class="well span9">
 				<p><strong>Installation succeed !!!</strong><br />
 				You still have some little (but important) things to do:
 				</p>
-				<ol>    
+				<ol>
 				    <li><strong>Delete your installation folder or make it inaccessible</strong><br />
 				        Why? Because anyone can change database setting and admin user easily.
 				        Quiet easy, just as easy as what you have done
@@ -116,9 +116,9 @@
 				    </li>
 				</ol>
 			</div>
-			
+
 			<div id="if_error" class="well span9">
-				<p><strong>Unfortunately, there are some error occurred</strong><br /> 
+				<p><strong>Unfortunately, there are some error occurred</strong><br />
 				Here are some suggestions:
 				</p>
 				<ol>
@@ -143,17 +143,17 @@
 								<ul>
 									<li><b>Username : </b>admin</li>
 									<li><b>Password : </b>admin</li>
-								</ul>										
+								</ul>
 							</li>
 						</ol>
 					</li>
 					<li>If manual installation doesn't work, you can ask in forum, open an issue in github, or put comment in No-CMS blog</li>
 				</ol>
-				<div id="php_error" class="message"><?php				    
+				<div id="php_error" class="message"><?php
 				    check_all(true);
 				?></div>
 			</div>
-		
+
 			<p class="well span9">
 			    CodeIgniter forum member can visit  No-CMS thread here:  <a href="http://codeigniter.com/forums/viewthread/209171/">http://codeigniter.com/forums/viewthread/209171/</a><br />
 			    Github user can visit No-CMS repo:  <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />

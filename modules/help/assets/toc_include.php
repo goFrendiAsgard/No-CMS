@@ -1,7 +1,7 @@
 <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/nocms/js/jquery_snippet/jquery.snippet.css';?>" />
 <style type="text/css">
     div#toc, div.toggle_toc{
-        background-color :white;                 
+        background-color :white;
         -moz-box-shadow:    inset 0 0 10px #000000;
         -webkit-box-shadow: inset 0 0 10px #000000;
         box-shadow:         inset 0 0 10px #000000;
@@ -31,19 +31,19 @@
 	var REQUEST = "";
     $(document).ready(function(){
         get_toc();
-        
+
         $(".toggle_toc").click(function(){
             $("#toc").slideToggle('slow');
             return false;
-        }); 
+        });
 
         $("#btn_search").click(get_toc);
         $("#keyword").keyup(get_toc);
-                
+
         $("pre.phpSnippet").snippet(
             "php",{
                 style:"ide-eclipse",
-                clipboard:"<?php echo base_url().'assets/jquery_snippet/ZeroClipboard.swf';?>",
+                clipboard:"<?php echo base_url().'assets/nocms/js/jquery_snippet/ZeroClipboard.swf';?>",
                 showNum:false}
         );
 
@@ -60,18 +60,18 @@
         if(REQUEST_EXISTS){
         	REQUEST.abort();
         }
-        REQUEST_EXISTS = true;        
+        REQUEST_EXISTS = true;
         REQUEST = $.ajax({
         	type : 'POST',
         	data : {
-            	"keyword" : $("#keyword").val(),	
+            	"keyword" : $("#keyword").val(),
             },
             url : '<?php echo site_url($cms['module_path']).'?_only_content=true';?>',
             success : function(response){
                 $("#toc_content").html(response);
                 REQUEST_EXISTS = false;
                 $("#img_ajax_loader").hide();
-            }            
+            }
         });
     }
 </script>

@@ -291,13 +291,29 @@ function check_all($install = NULL)
         $warnings[] = $result['warning_message'];
     }
     // writable
+    if (!is_writable('../')) {
+        $success  = FALSE;
+        $errors[] = 'No-CMS directory is not writable';
+    }
     if (!is_writable('../assets/caches')) {
         $success  = FALSE;
         $errors[] = "Asset cache directory (assets/caches) is not writable";
     }
-    if (!is_writable('../application/config')) {
+    if (!is_writable('../application/config/config.php')) {
         $success  = FALSE;
-        $errors[] = "application/config is not writable";
+        $errors[] = "application/config/config.php is not writable";
+    }
+    if (!is_writable('../application/config/cms_config.php')) {
+        $success  = FALSE;
+        $errors[] = "application/config/cms_config.php is not writable";
+    }
+    if (!is_writable('../application/config/database.php')) {
+        $success  = FALSE;
+        $errors[] = "application/config/database.php is not writable";
+    }
+    if (!is_writable('../application/config/hybridauthlib.php')) {
+        $success  = FALSE;
+        $errors[] = "application/config/hybridauthlib.php is not writable";
     }
     if (!is_writable('../assets/grocery_crud/js/jquery_plugins/config/jquery.ckeditor.config.js')) {
         $success  = FALSE;
