@@ -503,7 +503,6 @@ class Main extends CMS_Controller
     {
         $this->cms_guard_page('main_navigation_management');
         $crud = new grocery_CRUD();
-        $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_navigation'));
         $crud->set_subject('Navigation (Page)');
