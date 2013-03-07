@@ -224,8 +224,8 @@
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 		<?php echo $fn_synchronize; ?>();
-		for(var i=0; i<?php echo $var_data; ?>.update.length; i++){
-			<?php echo $fn_add_table_row; ?>(?php echo $var_data; ?>.update[i].data);
+		for(var i=0; i<<?php echo $var_data; ?>.update.length; i++){
+			<?php echo $fn_add_table_row; ?>(<?php echo $var_data; ?>.update[i].data);
 			<?php echo $var_record_index; ?>++;
 		}
 
