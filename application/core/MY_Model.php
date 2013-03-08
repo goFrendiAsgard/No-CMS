@@ -1525,7 +1525,7 @@ class CMS_Model extends CI_Model
                 $this->db->insert(cms_table_name('main_user'), $data);
 
                 // get user_id
-                $query = $this->db->select('user_id')->from('cms_user')->where('email', $third_party_email)->get();
+                $query = $this->db->select('user_id')->from(cms_table_name('main_user'))->where('email', $third_party_email)->get();
                 if ($query->num_rows() > 0) {
                     $row     = $query->row();
                     $user_id = $row->user_id;
