@@ -3,7 +3,9 @@ foreach($articles as $article){
     echo anchor(site_url($cms['module_path'].'/blog/index/'.$article['article_url']),
                 '<h2>'.$article['title'].'</h2>');
     echo '('.$article['author'].', '.$article['date'].')';
-    echo '<p>'.$article['content'].'</p>';
+    echo '<div>';
+    echo $article['content'];
+    echo '</div>';
 
     foreach($article['photos'] as $photo){
         echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/'.$photo['url']).'">';

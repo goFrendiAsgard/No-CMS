@@ -4,7 +4,7 @@
 <style type="text/css">
 	#record_content{
 		margin-top: 5px;
-		margin-bottom: 10px;
+		margin-bottom: 20px;
 	}
     #record_content:empty{
         display:none;
@@ -42,6 +42,9 @@
     div.row-odd{
         background-color: #DDDDFF;
     }
+    div.edit_delete_record_container{
+        margin-bottom:45px;
+    }
 </style>
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 
@@ -69,12 +72,17 @@
         if(isset($article) && $article !== FALSE){
             echo '<h2>'.$article['title'].'</h2>'.br();
             echo '('.$article['author'].', '.$article['date'].')';
-            echo '<p>'.$article['content'].'</p>';
+            echo '<div>';
+            echo $article['content'];
+            echo '</div>';
+
+            echo '<div>';
             foreach($article['photos'] as $photo){
                 echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/'.$photo['url']).'">';
                 echo '<img class="photo_thumbnail" src="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/'.$photo['url']).'" />';
                 echo '</a>';
             }
+            echo '</div>';
             // edit and delete button
             if($allow_navigate_backend){
                 echo '<div class="edit_delete_record_container">';
