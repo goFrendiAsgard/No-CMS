@@ -816,26 +816,26 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_config'));
         $crud->set_subject('Configuration');
 
-        $crud->required_fields('config_name');
+
 
         $crud->columns('config_name', 'value', 'description');
         $crud->edit_fields('config_name', 'value', 'description');
         $crud->add_fields('config_name', 'value', 'description');
 
-        $crud->display_as('config_name', 'Configuration Key')->display_as('value', 'Configuration Value')->display_as('description', 'Description');
+        $crud->display_as('config_name', 'Configuration Key')
+            ->display_as('value', 'Configuration Value')
+            ->display_as('description', 'Description');
 
         $crud->unset_texteditor('description');
         $crud->unset_texteditor('value');
 
-        if ($crud->getState() == 'edit') {
-            $crud->callback_edit_field('config_name', array(
-                $this,
-                'read_only_config_name'
-            ));
-            $crud->callback_edit_field('description', array(
-                $this,
-                'read_only_config_description'
-            ));
+        $operation = $crud->getState();
+        if ( $operation == 'edit' || $operation == 'update' || $operation == 'update_validation') {
+            $crud->field_type('config_name', 'readonly');
+            $crud->field_type('description', 'readonly');
+        }else if( $operation == 'add' || $operation == 'insert' || $operation == 'insert_validation'){
+            //$crud->set_rules('config_name', 'Configuration Key', 'required');
+            $crud->required_fields('config_name');
         }
 
         $crud->callback_after_insert(array(
@@ -858,16 +858,6 @@ class Main extends CMS_Controller
         $this->view('main/config', $output, 'main_config_management');
     }
 
-    public function read_only_config_name($value, $row)
-    {
-        return '<input name="field-config_name" value="' . $value . '" type="hidden" />' . $value;
-    }
-
-    public function read_only_config_description($value, $row)
-    {
-        return '<input name="field-description" value="' . $value . '" type="hidden" />' . $value;
-    }
-
     public function after_insert_config($post_array, $primary_key){
         // adjust configuration file entry
         cms_config($post_array['config_name'], $post_array['value']);
@@ -876,7 +866,7 @@ class Main extends CMS_Controller
 
     public function after_update_config($post_array, $primary_key){
         // adjust configuration file entry
-        cms_config($post_array['config_name'], $post_array['value']);
+        //cms_config($post_array['config_name'], $post_array['value']);
         return TRUE;
     }
 

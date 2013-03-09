@@ -394,10 +394,11 @@ Here are some names of considerable contributors:
 * Andrew Podner <-- His one day hardwork solve problem of $this scope in anonymous function
 * David Oster <-- Greek translation contributor
 * Glenn Bennett <-- Kindly provide free hosting for http://www.getnocms.com
+* Abu Tuffah Bayashoot <-- Find bug on configuration management at v0.6.1, and propose solution
 * Everyone who was involved by creating issue & pull requests in github. I can't write every names there. But No-CMS can't be better without them :)
 
 
-Changelog and New Features (current version: 0.6.1 stable, 2013-03-07)
+Changelog and New Features (current version: 0.6.1 stable, 2013-03-09)
 ======================================================================
 
 - For more detail information, please take look at [github commit log](https://github.com/goFrendiAsgard/No-CMS/commits)
