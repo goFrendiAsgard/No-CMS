@@ -23,6 +23,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             'chosen_category' => $this->input->get('category'),
             'keyword' => $this->input->get('keyword'),
             'module_path' => $this->cms_module_path(),
+            'is_user_login' => $this->cms_user_id()>0,
         );
         // add comment
         $article_id = $this->input->post('article_id', TRUE);

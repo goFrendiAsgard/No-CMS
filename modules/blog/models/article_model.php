@@ -199,12 +199,14 @@ class Article_Model extends  CMS_Model{
 
         $data = array();
         foreach($query->result() as $row){
-
-            if(isset($row->author_user_id)){
-                $SQL_user = "SELECT real_name FROM ".cms_table_name('main_user')." WHERE user_id = ".$row->author_user_id;
-                $query_user = $this->db->query($SQL_user);
+            $user_id = $row->author_user_id;
+            if(isset($user_id) && $user_id>0){
+                $query_user = $this->db->select('real_name, user_name')
+                    ->from(cms_table_name('main_user'))
+                    ->where('user_id', $user_id)
+                    ->get();
                 $row_user = $query_user->row();
-                $name = $row_user->real_name;
+                $name = trim($row_user->real_name)==''? $row_user->user_name: $row_user->real_name;
             }else{
                 $name = $row->name;
             }

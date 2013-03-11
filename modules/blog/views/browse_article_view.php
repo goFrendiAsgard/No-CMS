@@ -116,10 +116,12 @@
                 echo '<b>Add Comments </b>'.br().br();
                 echo form_open();
                 echo form_hidden('article_id', $article['id']);
-                echo form_label('Name :').br();
-                echo form_input('name').br();
-                echo form_label('Email :').br();
-                echo form_input('email').br();
+                if(!$is_user_login){
+                    echo form_label('Name :').br();
+                    echo form_input('name').br();
+                    echo form_label('Email :').br();
+                    echo form_input('email').br();
+                }
                 echo form_label('Website :').br();
                 echo form_input('website').br();
                 echo form_label('Comment :').br();

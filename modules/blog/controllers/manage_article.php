@@ -280,6 +280,25 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 			->get();
 		$result = $query->result_array();
 
+        $search = array('<', '>');
+        $replace = array('&lt;', '&gt;');
+
+        for($i=0; $i<count($result); $i++){
+            $row = $result[$i];
+            $user_id = $row['author_user_id'];
+            if($user_id>0){
+                $query_user = $this->db->select('real_name, email')
+                    ->from(cms_table_name('main_user'))
+                    ->where('user_id', $user_id)
+                    ->get();
+                $row_user = $query_user->row();
+                $result[$i]['name'] = $row_user->real_name;
+                $result[$i]['email'] = $row_user->email;
+            }
+            $result[$i]['content'] = str_replace($search, $replace, $result[$i]['content']);
+            $result[$i]['website'] = prep_url($result[$i]['website']);
+        }
+
 		// get options
 		$options = array();
 		$data = array(
