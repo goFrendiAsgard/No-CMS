@@ -996,6 +996,7 @@ class CMS_Model extends CI_Model
         $this->email->message($message);
 
         $success = $this->email->send();
+        log_message('debug', $this->email->print_debugger());
         return $success;
     }
 
