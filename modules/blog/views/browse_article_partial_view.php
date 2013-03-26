@@ -16,9 +16,17 @@ foreach($articles as $article){
     $(".photo_'.$article['id'].'").colorbox({rel:"photo_'.$article['id'].'", transition:"none", width:"75%", height:"75%", slideshow:true});
     </script>';
 
+    $comment_count = $article['comment_count'];
+    $comment_count_caption = '';
+    switch($comment_count){
+        case 0  : $comment_count_caption = '';break;
+        case 1  : $comment_count_caption = ' (1 comment)'; break;
+        default : $comment_count_caption = ' ('.$comment_count.' comments)';
+    }
+
     echo '<div class="edit_delete_record_container">';
     echo anchor($cms['module_path'].'/blog/index/'.$article['article_url'],
-                'read more', array("class"=>"btn btn-primary"));
+                'read more'.$comment_count_caption, array("class"=>"btn btn-primary"));
     if($allow_navigate_backend){
         echo '&nbsp;';
         echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';

@@ -1,8 +1,8 @@
 <?php
 	$real_input_id = 'md_real_field_'.$master_column_name.'_col';
-	$detail_columns = $detail_table['columns'];
-	$quoted_real_column_names = array(); // only column names which is primary or lookup or without role
-	$quoted_set_column_names = array(); // only column names whis is enum
+    $detail_columns = $detail_table['columns'];
+    $quoted_real_column_names = array(); // only column names which is primary or lookup or without role
+    $quoted_set_column_names = array(); // only column names which is enum
 	$quoted_many_to_many_column_names = array();
 	$quoted_many_to_many_relation_tables = array();
 	$quoted_many_to_many_relation_table_columns = array();

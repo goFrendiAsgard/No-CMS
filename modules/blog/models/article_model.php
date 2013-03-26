@@ -10,7 +10,14 @@ class Article_Model extends  CMS_Model{
 
 	public function get_data($keyword, $page=0){
 		$limit = 10;
-		$query = $this->db->select('article.article_id, article.article_title, article.article_url, article.date, article.author_user_id, article.content, article.allow_comment')
+		$query = $this->db->select('article.article_id, article.article_title,
+		      article.article_url, article.date, article.author_user_id,
+		      article.content, article.allow_comment,
+    		      (
+        		      SELECT COUNT(comment_id) FROM '.$this->cms_complete_table_name('comment').'
+                      WHERE article_id = article.article_id
+                  ) as comment_count
+		      ')
 			->from($this->cms_complete_table_name('article').' as article')
 			->like('article.article_title', $keyword)
 			->or_like('article.article_url', $keyword)
@@ -122,7 +129,11 @@ class Article_Model extends  CMS_Model{
         $SQL = "
             SELECT
                 article_id, article_title, article_url, content, date, allow_comment,
-                real_name AS author
+                real_name AS author,
+                (
+                  SELECT COUNT(comment_id) FROM ".$this->cms_complete_table_name('comment')."
+                  WHERE article_id = ".$this->cms_complete_table_name('article').".article_id
+                ) as comment_count
             FROM ".$this->cms_complete_table_name('article')."
             LEFT JOIN ".cms_table_name('main_user').
                 " ON (".cms_table_name('main_user').".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
@@ -144,6 +155,7 @@ class Article_Model extends  CMS_Model{
                     "content" => $this->cms_parse_keyword($content),
                     "author" => $row->author,
                     "date" => $row->date,
+                    "comment_count" => $row->comment_count,
                     "photos" => $this->get_photos($row->article_id)
             );
         }
