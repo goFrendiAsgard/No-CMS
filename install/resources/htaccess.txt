@@ -1,5 +1,5 @@
 <IfModule mod_rewrite.c>
-    Options +FollowSymLinks -Indexes
+    # Options +FollowSymLinks -Indexes
     RewriteEngine On
     RewriteBase {{ base_path }}
 
@@ -28,7 +28,7 @@
     # cache.appcache needs re-requests in FF 3.6 (thx Remy ~Introducing HTML5)
     ExpiresByType text/cache-manifest       "access plus 0 seconds"
 
-    # your document html 
+    # your document html
     ExpiresByType text/html                 "access plus 0 seconds"
 
     # data
@@ -40,7 +40,7 @@
     ExpiresByType application/rss+xml       "access plus 1 hour"
 
     # favicon (cannot be renamed)
-    ExpiresByType image/x-icon              "access plus 1 week" 
+    ExpiresByType image/x-icon              "access plus 1 week"
 
     # media: images, video, audio
     ExpiresByType image/gif                 "access plus 1 month"
@@ -69,21 +69,6 @@
 
 </IfModule>
 
-<IfModule mod_headers.c>
-    FileETag None
-</IfModule>
-
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/xhtml text/html text/plain text/xml text/javascript application/x-javascript text/css
-</IfModule>
-
-<IfModule mod_php5.c>
-  php_value output_handler none
-  php_flag register_globals off
-  php_flag safe_mode off
-</IfModule>
-<IfModule mod_php4.c>
-  php_value output_handler none
-  php_flag register_globals off
-  php_flag safe_mode off
 </IfModule>
