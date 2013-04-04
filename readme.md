@@ -398,7 +398,7 @@ Here are some names of considerable contributors:
 * Everyone who was involved by creating issue & pull requests in github. I can't write every names there. But No-CMS can't be better without them :)
 
 
-Changelog and New Features (current version: 0.6.1 stable, 2013-03-11)
+Changelog and New Features (current version: 0.6.1 stable, 2013-04-04)
 ======================================================================
 
 - For more detail information, please take look at [github commit log](https://github.com/goFrendiAsgard/No-CMS/commits)
@@ -489,6 +489,7 @@ v0.6.1
 + (done, tested) Make nordrassil generated code extends CMS_Priv_Controller
 + (done, tested) Create default setting for nordrassil generated code
 + (done, tested) Recode all module to fullfill No-CMS new standard (table prefix & module prefix)
++ (done, tested) Fix nordrassil bug when table prefix is empty
 
 v0.6.2
 + (proposed) Drupal's CCK like mechanism

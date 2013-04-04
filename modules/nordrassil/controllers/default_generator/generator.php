@@ -709,11 +709,18 @@ class Generator extends CMS_Controller{
 		}else{
 			$str = '';
 		}
-
-        $pattern = array(
-            '/CREATE TABLE `'.$this->config_table_prefix.'_([^`]*)`/si',
-            '/INSERT INTO `'.$this->config_table_prefix.'_([^`]*)`/si'
-        );
+        // define pattern
+        if($this->config_table_prefix == ''){
+            $pattern = array(
+                '/CREATE TABLE `([^`]*)`/si',
+                '/INSERT INTO `([^`]*)`/si'
+            );
+        }else{
+            $pattern = array(
+                '/CREATE TABLE `'.$this->config_table_prefix.'_([^`]*)`/si',
+                '/INSERT INTO `'.$this->config_table_prefix.'_([^`]*)`/si'
+            );
+        }
         $replacement = array(
             'CREATE TABLE `{{ complete_table_name:${1} }}`',
             'INSERT INTO `{{ complete_table_name:${1} }}`',
@@ -733,9 +740,16 @@ class Generator extends CMS_Controller{
 			}
 		}
 		$str = $this->nds->get_drop_table_syntax($selected_tables);
-        $pattern = array(
-            '/DROP TABLE IF EXISTS `'.$this->config_table_prefix.'_([^`]*)`/si',
-        );
+        // define pattern
+        if($this->config_table_prefix == ''){
+            $pattern = array(
+                '/DROP TABLE IF EXISTS `([^`]*)`/si',
+            );
+        }else{
+            $pattern = array(
+                '/DROP TABLE IF EXISTS `'.$this->config_table_prefix.'_([^`]*)`/si',
+            );
+        }
         $replacement = array(
             'DROP TABLE IF EXISTS `{{ complete_table_name:${1} }}`',
         );

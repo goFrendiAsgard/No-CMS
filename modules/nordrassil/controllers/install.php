@@ -81,6 +81,10 @@ class Install extends CMS_Module_Installer {
 		);
 		$this->nordrassillib->install_template($template_name, $generator_path,
 			$project_options, $table_options, $column_options);
+
+        // import example.sql
+        $this->import_sql(BASEPATH.'../modules/'.$module_path.
+            '/assets/db/example.sql');
     }
 
     // IMPORT SQL FILE
