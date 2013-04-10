@@ -336,13 +336,129 @@ Views
 Tutorial 01: Navigations & Pages
 ================================
 
+A website is actually collection of web-pages. Making a page is a very crucial feature in every common-used CMS.
+
+No-CMS allow you to make your own page:
+
+* Login to No-CMS with your admin user.
+* Open `Complete Menu | CMS Management | Navigation Management` or `CMS Management | Navigation Management`
+* Add a new page by clicking `Add Navigation (Page)`
+* Set `Navigation Code` into `new_page`
+* Set `Navigation Title` into `Go to My Page`
+* Set `Page Title` into `My First Page`
+* Set `Static` into `active`
+* Set `Static Content` into `Hello World !!!`
+* Set `Authorization` into `Everyone`
+* Click `Save and Go Back to List`
+
+You can access your new page by clicking `Complete Menu | Go to My Page`.
+This new page can be accessed by `Everyone`. No-CMS has several authorization type:
+* Everyone
+* Unauthenticated
+* Authenticated
+* Authorized
+
+Let's add another page as sub-page:
+
+* Open `Complete Menu | CMS Management | Navigation Management` or `CMS Management | Navigation Management`
+* Add a new page by clicking `Add Navigation (Page)`
+* Set `Navigation Code` into `new_subpage`
+* Set `Parent` into `new_page` (Navigation Code of our previous page)
+* Set `Navigation Title` into `Go to My Subpage`
+* Set `Page Title` into `My Second Page`
+* Set `Static` into `active`
+* Set `Static Content` into `Great, you made it !!!`
+* Set `Authorization` into `Everyone`
+* Click `Save and Go Back to List`
+
+You can access this page by clicking `Complete Menu | Go to My Page | Go to My Subpage`
+
+As you application grow, some frequently accessed page might be burried down in the navigation hierarchy.
+No-CMS has `quick link` to solve such a problem.
+
+Now let's make a quick link:
+
+* Open `Complete Menu | CMS Management | Quick Link Management` or `CMS Management | Quick Link Management`
+* Add new quick link by clicking `Add Quick Link`
+* Set `Navigation Code` into `new_subpage`
+* Click `Save and Go Back to List`
+
+Now, you can access `new_subpage` directly.
+
+
 Tutorial 02: Widgets
 ====================
 
-Tutorial 03: Modules
+Widgets are part of the website that always appear in all pages.
+No-CMS has several built-in widgets.
+
+Let's add new widget
+* Open `Complete Menu | CMS Management | Widget Management` or `CMS Management | Widget Management`. There is already several built-in widgets
+* Add new widget by clicking `Add Widget`
+* Set `Widget Code` into `fb_badge`
+* Set `Static` into `active`
+* Set `Static Content` into
+```html
+    <!-- Facebook Badge START -->
+    <a href="https://www.facebook.com/goFrendiAsgard" target="_TOP"
+        style="font-family: &quot;lucida grande&quot;,tahoma,verdana,arial,sans-serif; font-size: 11px; font-variant: normal; font-style: normal; font-weight: normal; color: #3B5998; text-decoration: none;"
+        title="Go Frendi Asgard">Go Frendi Asgard
+    </a><br/>
+    <a href="https://www.facebook.com/goFrendiAsgard" target="_TOP"
+        title="Go Frendi Asgard">
+        <img src="https://badge.facebook.com/badge/696121596.3142.1524306206.png" style="border: 0px;" />
+    </a><br/>
+    <a href="https://www.facebook.com/badges/" target="_TOP"
+        style="font-family: &quot;lucida grande&quot;,tahoma,verdana,arial,sans-serif; font-size: 11px; font-variant: normal; font-style: normal; font-weight: normal; color: #3B5998; text-decoration: none;"
+        title="Make your own badge!">Create Your Badge
+    </a>
+    <!-- Facebook Badge END -->
+```
+* Set Slug into `sidebar`
+* Click `Save and Go Back to List`
+
+Now look at the right side of your site. There should be a my facebook badge.
+
+You can put this widget everywhere.
+For example, open up `/themes/neutral/views/layouts/default.php` and put `{{ widget_name:fb_badge }}`
+The changes in themes will be applied globally in all of your page.
+
+You can put a single widget by using `{{ widget_name:your_widget_name }}`.
+You can also put a group of widgets by using `{{ widget_slug:your_widget_slug }}`.
+You can even put widget as part of your page by editing your page static content.
+
+Tutorial 03: Themes
+===================
+
+You can change No-CMS theme by accessing `Complete Menu | CMS Management | Change Theme` or `CMS Management | Change Theme`.
+
+To set per-page theme, you can access `Complete Menu | Page Management` and set `Default Theme`
+
+Themes are located at `/themes/` folder. With such a structure:
+```
+    /themes
+        |--- [your_theme]
+                |--- /assets
+                |       |--- /default                       (consists of js, css, images etc)
+                |       |--- /[other_layout]                (optional)
+                |
+                |--- /views
+                        |--- /layouts
+                        |       |--- default.php            (here is the main UI script)
+                        |       |--- [other_layout].php     (optional)
+                        |
+                        |--- /partials
+                                |--- /default
+                                |--- /other_layout
+```
+For more information about themes, please refer to the documentation provided.
+
+Tutorial 04: Modules
 ====================
 
-Tutorial 04: Module Generator (Nordrassil)
+Modules are your custom code
+
+Tutorial 05: Module Generator (Nordrassil)
 ==========================================
 
 Contributing
@@ -491,7 +607,7 @@ v0.6.1
 + (cancelled) use jquerytools CDN if possible <-- using file_get_content or CURL is very slow
 + (done, tested) add google analytic configuration
 + (done, tested) automatically create thumbnail for blog's photos
-+ (done, tested) add cms_guard_page function for better authorization
++ (done, tested) add `cms_guard_page` function for better authorization
 + (done, tested) create thumbnail automatically for blog module's photo
 + (done, tested) add "admin controller" like bonfire and other CI Based framework
 + (done, tested) delete the legacy old_gray theme
@@ -508,3 +624,7 @@ v0.6.2
 + (proposed) Drupal's CCK like mechanism
 + (proposed) Make nordrassil generated code easier to be edited.
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
++ (done, tested) `{{ widget:slug }}`, `{{ quicklink }}`, `{{ navigation_top }}`, `{{ navigation_top_quicklink }}`, and `{{ navigation_left }}` tag is deprecated.
++ (done, tested) `$cms` is deprecated, and can be fully replaced by using tags.
++ (done, tested) `{{ widget_name:widget_code }}` and `{{ widget_slug:slug }}`
++ (done, tested) quicklink, navigation_top, and navigation_left are now widgets and can be called as needed by using tag.
