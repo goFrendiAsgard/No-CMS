@@ -43,7 +43,7 @@
                 <img src ="{{ site_logo }}" style="max-height:20px; max-width:20px;" />
             </a>
             <div class="nav-collapse in collapse" id="main-menu">
-                {{ navigation_top_quicklink }}
+                {{ widget_name:top_navigation }}
             </div>
         </div>
       </div>

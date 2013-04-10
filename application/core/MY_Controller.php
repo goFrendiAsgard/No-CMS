@@ -157,12 +157,13 @@ class CMS_Controller extends MX_Controller
     /**
      * @author  goFrendiAsgard
      * @param   slug
+     * @param   widget_name
      * @return  mixed
      * @desc    return widgets
      */
-    public function cms_widgets($slug = NULL)
+    public function cms_widgets($slug = NULL, $widget_name = NULL)
     {
-        return $this->No_CMS_Model->cms_widgets($slug);
+        return $this->No_CMS_Model->cms_widgets($slug, $widget_name);
     }
 
     /**
@@ -465,7 +466,10 @@ class CMS_Controller extends MX_Controller
     protected function cms_navigation_name($url_string = NULL)
     {
         if (!isset($url_string)) {
-            $uriString = $this->uri->uri_string();
+            $url_string = $this->uri->ruri_string();
+            if(strlen($url_string)>0 && $url_string[0]){
+                $url_string = substr($url_string, 1);
+            }
         }
         $SQL             = "SELECT navigation_name
         	FROM ".cms_table_name('main_navigation')."
@@ -858,6 +862,22 @@ class CMS_Controller extends MX_Controller
                 '__cms_preg_replace_callback_widget'
             ), $result);
 
+            // parse widget by name
+            $pattern  = '/\{\{ widget_name:(.*?) \}\}/si';
+            // execute regex
+            $result   = preg_replace_callback($pattern, array(
+                $this,
+                '__cms_preg_replace_callback_widget_by_name'
+            ), $result);
+
+            // parse widget by slug
+            $pattern  = '/\{\{ widget_slug:(.*?) \}\}/si';
+            // execute regex
+            $result   = preg_replace_callback($pattern, array(
+                $this,
+                '__cms_preg_replace_callback_widget_by_slug'
+            ), $result);
+
             // prepare pattern and replacement
             $pattern     = array();
             $replacement = array();
@@ -999,23 +1019,29 @@ class CMS_Controller extends MX_Controller
         return $html;
     }
 
-    private function __cms_build_widget($slug){
-        if(isset($this->__cms_widgets)){
-            $widgets = $this->__cms_widgets;
-        }else{
-            $widgets  = $this->cms_widgets($slug);
+    private function __cms_build_widget($slug=NULL, $widget_name=NULL){
+        $widgets  = $this->cms_widgets($slug, $widget_name);
+        $html = '';
+        if(isset($widget_name)){
+            foreach($widgets as $slug_widgets){
+                if(count($slug_widgets)>0){
+                    $widget = $slug_widgets[0];
+                    $html = $widget['content'];
+                    break;
+                }
+            }
+        }else if(isset($slug)){
+            $html = '<div class="cms-widget-slug-'.$slug.'">';
+            foreach($widgets[$slug] as $widget){
+                $html.= '<div class="cms-widget-container">';
+                $html.= '<h5>'.$widget['title'].'</h5>';
+                $html.= '<div class="cms-widget-content">'.$widget['content'].'</div>';
+                $html.= '<br />';
+                $html.= '<br />';
+                $html.= '</div>';
+            }
+            $html .= '</div>';
         }
-        if(!isset($widgets[$slug])) return '';
-        $html = '<div class="cms-widget-slug-'.$slug.'">';
-        foreach($widgets[$slug] as $widget){
-            $html.= '<div class="cms-widget-container">';
-            $html.= '<h5>'.$widget['title'].'</h5>';
-            $html.= '<div class="cms-widget-content">'.$widget['content'].'</div>';
-            $html.= '<br />';
-            $html.= '<br />';
-            $html.= '</div>';
-        }
-        $html .= '</div>';
         return $html;
     }
 
@@ -1047,6 +1073,24 @@ class CMS_Controller extends MX_Controller
         if(count($arr)>1){
             $slug = $arr[1];
             $html = $this->__cms_build_widget($slug);
+        }
+        return $html;
+    }
+
+    private function __cms_preg_replace_callback_widget_by_name($arr){
+        $html = "";
+        if(count($arr)>1){
+            $widget_name = $arr[1];
+            $html = $this->__cms_build_widget(NULL, $widget_name);
+        }
+        return $html;
+    }
+
+    private function __cms_preg_replace_callback_widget_by_slug($arr){
+        $html = "";
+        if(count($arr)>1){
+            $slug = $arr[1];
+            $html = $this->__cms_build_widget($slug, NULL);
         }
         return $html;
     }

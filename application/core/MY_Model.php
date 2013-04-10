@@ -44,6 +44,10 @@ class CMS_Model extends CI_Model
 
     }
 
+    public function __destruct(){
+        @$this->session->unset_userdata('cms_dynamic_widget');
+    }
+
     /**
      * @author goFrendiAsgard
      * @param  string $table_name
@@ -297,21 +301,25 @@ class CMS_Model extends CI_Model
     /**
      * @author  goFrendiAsgard
      * @param   slug
+     * @param   widget_name
      * @return  mixed
      * @desc    return widgets
      */
-    public function cms_widgets($slug = NULL)
+    public function cms_widgets($slug = NULL, $widget_name=NULL)
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
-        $slug_where = isset($slug)? "slug LIKE '".addslashes($slug)."'" : "1=1";
+        $slug_where = isset($slug)?
+            "((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%'))" :
+            "1=1";
+        $widget_name_where = isset($widget_name)? "widget_name LIKE '".addslashes($widget_name)."'" : "1=1";
 
-        $query  = $this->db->query("SELECT
-        			widget_id, widget_name, is_static, title,
-        			description, url, slug, static_content
+        $SQL = "SELECT
+                    widget_id, widget_name, is_static, title,
+                    description, url, slug, static_content
                 FROM ".cms_table_name('main_widget')." AS w WHERE
                     (
                         (authorization_id = 1) OR
@@ -330,7 +338,8 @@ class CMS_Model extends CI_Model
                                 )>0
                             )
                         )
-                    ) AND active=1 AND $slug_where ORDER BY `index`");
+                    ) AND active=1 AND $slug_where AND $widget_name_where ORDER BY `index`";
+        $query  = $this->db->query($SQL);
         $result = array();
         foreach ($query->result() as $row) {
             // generate widget content

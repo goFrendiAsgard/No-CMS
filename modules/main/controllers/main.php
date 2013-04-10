@@ -302,28 +302,13 @@ class Main extends CMS_Controller
         redirect('main/index');
     }
 
-    public function widget_logout()
-    {
-        $data = array(
-            "user_name" => $this->cms_user_name(),
-            "welcome_lang" => $this->cms_lang('Welcome'),
-            "logout_lang" => $this->cms_lang('Logout')
-        );
-        $this->view('main/widget_logout', $data);
-    }
-
-    public function widget_login()
-    {
-        $this->login();
-    }
-
     public function index()
     {
         $this->cms_guard_page('main_index');
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen(NULL)
         );
-        $this->view('main/index', $data, 'main_index');
+        $this->view('main/index', $data);//, 'main_index');
     }
 
     public function management()
@@ -881,5 +866,110 @@ class Main extends CMS_Controller
         return TRUE;
     }
 
+    public function widget_logout()
+    {
+        $data = array(
+            "user_name" => $this->cms_user_name(),
+            "welcome_lang" => $this->cms_lang('Welcome'),
+            "logout_lang" => $this->cms_lang('Logout')
+        );
+        $this->view('main/widget_logout', $data);
+    }
+
+    public function widget_login()
+    {
+        $this->login();
+    }
+
+    public function widget_left_nav($first = TRUE, $navigations = NULL){
+        if(!isset($navigations)){
+            $navigations = $this->cms_navigations();
+        }
+
+        if(count($navigations) == 0) return '';
+
+        if($first){
+            $style = 'display: block; position: static; border:none; margin:0px; background-color:light-gray;';
+        }else{
+            $style = 'background-color:light-gray;';
+        }
+        $result = '<ul  class="dropdown-menu nav nav-pills nav-stacked" style="'.$style.'">';
+        foreach($navigations as $navigation){
+            if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                // make text
+                if($navigation['allowed'] && $navigation['active']){
+                    $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
+                }else{
+                    $text = $navigation['title'];
+                }
+
+                if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
+                    $result .= '<li class="dropdown-submenu">'.$text.$this->widget_left_nav(FALSE, $navigation['child']).'</li>';
+                }else{
+                    $result .= '<li>'.$text.'</li>';
+                }
+            }
+        }
+        $result .= '</ul>';
+        // show up
+        if($first){
+            $this->cms_show_html($result);
+        }else{
+            return $result;
+        }
+    }
+
+    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $navigations = NULL){
+        if(!isset($navigations)){
+            $navigations = $this->cms_navigations();
+        }
+        if(count($navigations) == 0) return '';
+
+        $result = '';
+        $result .= '<ul class="dropdown-menu">';
+        foreach($navigations as $navigation){
+            if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                // make text
+                if($navigation['allowed'] && $navigation['active']){
+                    $text = '<a href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
+                }else{
+                    $text = '<a href="#">'.$navigation['title'].'</a>';
+                }
+
+                if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
+                    $result .= '<li class="dropdown-submenu">'.$text.$this->widget_top_nav($caption, FALSE, $navigation['child']).'</li>';
+                }else{
+                    $result .= '<li>'.$text.'</li>';
+                }
+            }
+        }
+        $result .= '</ul>';
+        if($first){
+            $result = '<ul class="nav"><li class="dropdown">'.
+                '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
+                $result.
+                '</li></ul>';
+        }
+        // show up
+        if($first){
+            $this->cms_show_html($result);
+            $this->widget_quicklink();
+        }else{
+            return $result;
+        }
+    }
+
+    private function widget_quicklink(){
+        $quicklinks = $this->cms_quicklinks();
+        if(count($quicklinks) == 0) return '';
+        $html = '<ul class="nav">';
+        foreach($quicklinks as $quicklink){
+            $html.= '<li>';
+            $html.= anchor($quicklink['url'], $quicklink['title']);
+            $html.= '</li>';
+        }
+        $html.= '</ul>';
+        $this->cms_show_html($html);
+    }
 
 }

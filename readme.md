@@ -304,7 +304,7 @@ Views
 		<p>Nice to meet you, {{ user_real_name }}</p>
 	{{ elif_language:japanese }}
 		<p>始めまして, {{ user_real_name }}　さん</p>
-	{{ elif_language:indonesia }}
+	{{ elif_language:indonesian }}
 		<p>Senang bertemu dengan anda, {{ user_real_name }}</p>
 	{{ end_if }}
 	<script type="text/javascript" src="{{ base_url }}/assets/nocms/js/jquery.js"></script>
@@ -332,6 +332,19 @@ Views
 		something that will be appeared for another case
 	{{ end_if }}
 ```
+
+Tutorial 01: Navigations & Pages
+================================
+
+Tutorial 02: Widgets
+====================
+
+Tutorial 03: Modules
+====================
+
+Tutorial 04: Module Generator (Nordrassil)
+==========================================
+
 Contributing
 ============
 

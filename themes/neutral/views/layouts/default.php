@@ -43,7 +43,7 @@
 				<img src ="{{ site_logo }}" style="max-height:20px; max-width:20px;" />
 			</a>
 			<div class="nav-collapse in collapse" id="main-menu">
-				{{ navigation_top_quicklink }}
+				{{ widget_name:top_navigation }}
 			</div>
         </div>
       </div>
@@ -66,8 +66,8 @@
             <div class="clear"></div>
         </div><!--/#layout-content-->
         <div id="layout-widget" class="span2">
-            <h4>WIDGET</h4><hr />{{ widget:sidebar }}
-            <h4>ADVERTISEMENT</h4><hr />{{ widget:advertisement }}
+            <h4>WIDGET</h4><hr />{{ widget_slug:sidebar }}
+            <h4>ADVERTISEMENT</h4><hr />{{ widget_slug:advertisement }}
         </div><!--/#layout-widget-->
       </div><!--/row-->
       <hr>
