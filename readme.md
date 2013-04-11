@@ -464,19 +464,19 @@ Let's start to make a new module:
     /modules
         |--- /new_module
                 |--- /controllers
-                |       |--- new_module.php
+                |       |--- pokemon.php
                 |       |--- install.php
                 |
                 |--- /models
                 |       |--- pokemon.php
                 |
                 |--- /views
-                        |--- new_module_index.php
+                        |--- pokemon_index.php
 ```
 
 Make a controller
 -----------------
-Modify your `/modules/new_module/controllers/new_module.php` into this:
+Modify your `/modules/new_module/controllers/pokemon.php` into this:
 ```php
     <?php
     class Pokemon extends CMS_Controller{
@@ -509,6 +509,42 @@ Please take a look at CodeIgniter & HMVC user guide and tutorials if you are not
 
 Make a view
 -----------
+It is better to separate your presentation from your controller. Therefore we should have a view.
+
+Now edit your `/modules/new_module/controllers/pokemon.php` into this:
+```php
+    <?php
+    class Pokemon extends CMS_Controller{
+
+        function show(){
+            $pokemon_list = array('pikachu',
+                'bulbasur', 'charmender',
+                'squirtle', 'caterpie',
+                'articuno', 'ekans', 'koffing'
+            );
+            $data['pokemon_list'] = $pokemon_list;
+            $data['name'] = 'goFrendi';
+            $this->view('new_module/pokemon_index',
+                $data, 'main_index');
+        }
+
+    }
+```
+
+And modify your `/modules/new_module/views/pokemon_index.php` into this:
+```php
+    <?php echo "Welcome, ".$name; ?>
+    <ul>
+        <?php
+        foreach($pokemon_list as $pokemon){
+            echo '<li>'.$pokemon.'</li>';
+        }
+        ?>
+    </ul>
+```
+
+The controller is now handling `$data` to `new_module/views/pokemon_index` and show the page with `main_index` privilege.
+In `pokemon_index.php`, every key on `$data` are become new variables (in this case `$data['name']` become `$name` and `$data['pokemon_list']` become `$pokemon_list`).
 
 Make a model
 ------------
