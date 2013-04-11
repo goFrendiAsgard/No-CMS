@@ -456,7 +456,23 @@ For more information about themes, please refer to the documentation provided.
 Tutorial 04: Modules
 ====================
 
-Modules are your custom code
+No-CMS use HMVC (Hierarchical Model-View-Controller) architecture.
+Each module consists of MVC triad.
+
+Let's start to make a new module:
+```
+    /modules
+        |--- /new_module
+                |--- /controllers
+                |       |--- new_module.php
+                |       |--- install.php
+                |
+                |--- /models
+                |       |--- pokemon.php
+                |
+                |--- /views
+                        |--- new_module_index.php
+```
 
 Tutorial 05: Module Generator (Nordrassil)
 ==========================================
