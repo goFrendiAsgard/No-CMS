@@ -474,6 +474,53 @@ Let's start to make a new module:
                         |--- new_module_index.php
 ```
 
+Make a controller
+-----------------
+Modify your `/modules/new_module/controllers/new_module.php` into this:
+```php
+    <?php
+    class Pokemon extends CMS_Controller{
+
+        function show(){
+            echo '<ul>
+                    <li>pikachu</li>
+                    <li>charmender</li>
+                    <li>bulbasur</li>
+                    <li>squirtle</li>
+                </ul>';
+        }
+
+    }
+```
+Now, you have a controller in `/modules/new_module/controllers/pokemon.php`.
+A controller should extend `CMS_Controller`, `CMS_Priv_Strict_Controller`, or `CI_Controller` and should has the same name as the file.
+Since your file name is `pokemon.php`, your controller class name should be `Pokemon`.
+In the `Pokemon` Controller, you have a function called `show` that return a bunch of html.
+
+Now open up your browser and access this page: `http://localhost/No-CMS_directory/new_module/pokemon/tampil`.
+You will see a page contains some pokemons.
+
+Notice that since No-CMS is based on CodeIgniter, the url doesn't imply directory structure.
+Basically, this is the general rule:
+````
+    http://server:port/No-CMS_directory/module_name/controller_name/function_name/parameter_1/parameter_2
+````
+Please take a look at CodeIgniter & HMVC user guide and tutorials if you are not familiar with this.
+
+Make a view
+-----------
+
+Make a model
+------------
+
+Register the page
+-----------------
+
+Make module installable
+-----------------------
+
+
+
 Tutorial 05: Module Generator (Nordrassil)
 ==========================================
 
