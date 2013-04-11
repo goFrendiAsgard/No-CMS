@@ -30,16 +30,16 @@ class Install extends CMS_Module_Installer {
         $module_path = $this->cms_module_path();
 
         $this->backup_database(array(
-            $this->cms_complete_table_name('citizen'),
-            $this->cms_complete_table_name('job'),
-            $this->cms_complete_table_name('hobby'),
-            $this->cms_complete_table_name('country'),
-            $this->cms_complete_table_name('commodity'),
-            $this->cms_complete_table_name('city_tourism'),
-            $this->cms_complete_table_name('city_commodity'),
-            $this->cms_complete_table_name('city'),
-            $this->cms_complete_table_name('citizen_hobby'),
-            $this->cms_complete_table_name('tourism')
+            $this->cms_complete_table_name('twn_citizen'),
+            $this->cms_complete_table_name('twn_job'),
+            $this->cms_complete_table_name('twn_hobby'),
+            $this->cms_complete_table_name('twn_country'),
+            $this->cms_complete_table_name('twn_commodity'),
+            $this->cms_complete_table_name('twn_city_tourism'),
+            $this->cms_complete_table_name('twn_city_commodity'),
+            $this->cms_complete_table_name('twn_city'),
+            $this->cms_complete_table_name('twn_citizen_hobby'),
+            $this->cms_complete_table_name('twn_tourism')
         ));
         $this->remove_all();
     }
@@ -82,13 +82,13 @@ class Install extends CMS_Module_Installer {
         $module_path = $this->cms_module_path();
 
         // remove navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('browse_city'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_tourism'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_city'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_commodity'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_country'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_hobby'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_job'));
+        $this->remove_navigation($this->cms_complete_navigation_name('browse_twn_city'));
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_twn_tourism'));
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_twn_city'));
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_twn_commodity'));
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_twn_country'));
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_twn_hobby'));
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_twn_job'));
 
 
         // remove parent of all navigations
@@ -109,26 +109,26 @@ class Install extends CMS_Module_Installer {
             $module_path.'/example', $this->PRIV_EVERYONE);
 
         // add navigations
-        $this->add_navigation($this->cms_complete_navigation_name('browse_city'), 'Browse City',
-            $module_path.'/browse_city', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
+        $this->add_navigation($this->cms_complete_navigation_name('browse_twn_city'), 'Browse City',
+            $module_path.'/browse_twn_city', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_job'), 'Manage Job',
-            $module_path.'/manage_job', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->add_navigation($this->cms_complete_navigation_name('manage_twn_job'), 'Manage Job',
+            $module_path.'/manage_twn_job', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_hobby'), 'Manage Hobby',
-            $module_path.'/manage_hobby', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->add_navigation($this->cms_complete_navigation_name('manage_twn_hobby'), 'Manage Hobby',
+            $module_path.'/manage_twn_hobby', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_country'), 'Manage Country',
-            $module_path.'/manage_country', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->add_navigation($this->cms_complete_navigation_name('manage_twn_country'), 'Manage Country',
+            $module_path.'/manage_twn_country', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_commodity'), 'Manage Commodity',
-            $module_path.'/manage_commodity', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->add_navigation($this->cms_complete_navigation_name('manage_twn_commodity'), 'Manage Commodity',
+            $module_path.'/manage_twn_commodity', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_city'), 'Manage City',
-            $module_path.'/manage_city', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->add_navigation($this->cms_complete_navigation_name('manage_twn_city'), 'Manage City',
+            $module_path.'/manage_twn_city', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_tourism'), 'Manage Tourism',
-            $module_path.'/manage_tourism', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->add_navigation($this->cms_complete_navigation_name('manage_twn_tourism'), 'Manage Tourism',
+            $module_path.'/manage_twn_tourism', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
 

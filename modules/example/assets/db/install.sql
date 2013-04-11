@@ -1,4 +1,4 @@
-CREATE TABLE `{{ complete_table_name:citizen }}` (
+CREATE TABLE `{{ complete_table_name:twn_citizen }}` (
   `citizen_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `city_id` int(10),
   `name` varchar(50),
@@ -9,7 +9,7 @@ CREATE TABLE `{{ complete_table_name:citizen }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:job }}` (
+CREATE TABLE `{{ complete_table_name:twn_job }}` (
   `job_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20),
   PRIMARY KEY (`job_id`)
@@ -17,7 +17,7 @@ CREATE TABLE `{{ complete_table_name:job }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:hobby }}` (
+CREATE TABLE `{{ complete_table_name:twn_hobby }}` (
   `hobby_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20),
   PRIMARY KEY (`hobby_id`)
@@ -25,7 +25,7 @@ CREATE TABLE `{{ complete_table_name:hobby }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:country }}` (
+CREATE TABLE `{{ complete_table_name:twn_country }}` (
   `country_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20),
   PRIMARY KEY (`country_id`)
@@ -33,7 +33,7 @@ CREATE TABLE `{{ complete_table_name:country }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:commodity }}` (
+CREATE TABLE `{{ complete_table_name:twn_commodity }}` (
   `commodity_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20),
   PRIMARY KEY (`commodity_id`)
@@ -41,7 +41,7 @@ CREATE TABLE `{{ complete_table_name:commodity }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:city_tourism }}` (
+CREATE TABLE `{{ complete_table_name:twn_city_tourism }}` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `city_id` int(10),
   `tourism_id` int(10),
@@ -50,7 +50,7 @@ CREATE TABLE `{{ complete_table_name:city_tourism }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:city_commodity }}` (
+CREATE TABLE `{{ complete_table_name:twn_city_commodity }}` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `city_id` int(10),
   `commodity_id` int(10),
@@ -60,7 +60,7 @@ CREATE TABLE `{{ complete_table_name:city_commodity }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:city }}` (
+CREATE TABLE `{{ complete_table_name:twn_city }}` (
   `city_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `country_id` int(10),
   `name` varchar(20),
@@ -69,7 +69,7 @@ CREATE TABLE `{{ complete_table_name:city }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:citizen_hobby }}` (
+CREATE TABLE `{{ complete_table_name:twn_citizen_hobby }}` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `citizen_id` int(10),
   `hobby_id` int(10),
@@ -78,7 +78,7 @@ CREATE TABLE `{{ complete_table_name:citizen_hobby }}` (
 
 /*split*/
 
-CREATE TABLE `{{ complete_table_name:tourism }}` (
+CREATE TABLE `{{ complete_table_name:twn_tourism }}` (
   `tourism_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20),
   PRIMARY KEY (`tourism_id`)

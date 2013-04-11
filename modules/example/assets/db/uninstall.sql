@@ -1,19 +1,19 @@
-DROP TABLE IF EXISTS `{{ complete_table_name:tourism }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_tourism }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:citizen_hobby }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_citizen_hobby }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:city }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_city }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:city_commodity }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_city_commodity }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:city_tourism }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_city_tourism }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:commodity }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_commodity }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:country }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_country }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:hobby }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_hobby }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:job }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_job }}`; 
 /*split*/
-DROP TABLE IF EXISTS `{{ complete_table_name:citizen }}`; 
+DROP TABLE IF EXISTS `{{ complete_table_name:twn_citizen }}`; 

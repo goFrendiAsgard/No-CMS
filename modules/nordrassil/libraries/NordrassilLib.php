@@ -59,10 +59,10 @@ class NordrassilLib{
 	}
 	public function write_file($file_name, $content){
 	    if(file_exists($file_name)){
-	        chmod($file_name, 0777);
+	        @chmod($file_name, 0777);
 	    }
 		file_put_contents($file_name, $content);
-		chmod($file_name, 0777);
+		@chmod($file_name, 0777);
 	}
 	public function copy_file_and_replace($source_file_name, $destination_file_name, $pattern, $replacement){
 		$string = file_get_contents($source_file_name);
@@ -72,7 +72,7 @@ class NordrassilLib{
 	public function make_directory($directory_name){
 		if(!is_dir($directory_name)){
 			mkdir($directory_name,0777,TRUE);
-			chmod($directory_name,0777);
+			@chmod($directory_name,0777);
 		}
 	}
 	public function read_view($view_name, $data=NULL, $pattern=NULL, $replacement=NULL){

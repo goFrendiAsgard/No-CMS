@@ -27,3 +27,4 @@ local.properties
 
 assets/caches/*.js
 assets/caches/*.css
+modules/new_module
