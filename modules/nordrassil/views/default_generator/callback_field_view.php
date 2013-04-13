@@ -334,7 +334,20 @@
 
 	});
 
-
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// reset field on save
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	$(document).ajaxSuccess(function(event, xhr, settings) {
+        response = $.parseJSON(xhr.responseText);
+        // nanti bukan insert_validation, tapi insert
+        if ( settings.url == "&lt;?php echo $insert_url; ?&gt;"  &&
+            response.success == true
+        ) {
+            DATA_citizen = {update:new Array(), insert:new Array(), delete:new Array()};
+            $('#md_table_<?php echo $master_column_name; ?> tr').not(':first').remove();
+                synchronize_citizen();
+        }
+    });
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////

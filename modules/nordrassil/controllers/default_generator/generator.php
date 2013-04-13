@@ -438,7 +438,7 @@ class Generator extends CMS_Controller{
 			$detail_callback_declaration = implode(PHP_EOL, $detail_callback_declaration_array);
 			$detail_before_delete = implode(PHP_EOL, $detail_before_delete_array);
 			$detail_after_insert_or_update = implode(PHP_EOL, $detail_after_insert_or_update_array);
-			// create pattern & replacment
+			// create pattern & replacement
 			$pattern = array(
 				'navigation_name',
 				'table_name',

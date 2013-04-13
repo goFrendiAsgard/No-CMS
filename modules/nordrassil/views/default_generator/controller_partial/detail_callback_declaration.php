@@ -115,6 +115,7 @@
 			'result' => $result,
 			'options' => $options,
 			'date_format' => $date_format,
+			'insert_url' => site_url($this->cms_module_path()).'/manage_<?php echo underscore($stripped_master_table_name) ?>/index/insert',
 		);
 		return $this->load->view($this->cms_module_path().'/<?php echo $view_name; ?>',$data, TRUE);
 	}

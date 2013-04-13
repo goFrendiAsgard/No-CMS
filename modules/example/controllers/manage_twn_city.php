@@ -331,6 +331,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 			'result' => $result,
 			'options' => $options,
 			'date_format' => $date_format,
+			'insert_url' => site_url($this->cms_module_path()).'/manage_twn_city/index/insert',
 		);
 		return $this->load->view($this->cms_module_path().'/field_twn_city_citizen',$data, TRUE);
 	}
