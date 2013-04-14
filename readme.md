@@ -163,6 +163,7 @@ Let's add new widget
 * Set `Widget Code` into `fb_badge`
 * Set `Static` into `active`
 * Set `Static Content` into
+
 ```html
     <!-- Facebook Badge START -->
     <a href="https://www.facebook.com/goFrendiAsgard" target="_TOP"
