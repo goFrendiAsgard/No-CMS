@@ -5,7 +5,7 @@
 		$("#wysiwyg_show").colorbox({
 			width:"95%",
 			height:"95%",
-			href: "<?php echo site_url($cms["module_path"]."/main?_only_content=true");?>",
+			href: "<?php echo site_url("{{ module_path }}/main?_only_content=true");?>",
 		});
 	});
 </script>

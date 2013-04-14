@@ -773,4 +773,5 @@ v0.6.2
 + (done, tested) quicklink, navigation_top, and navigation_left are now widgets and can be called as needed by using tag.
 + (done, tested) fix Nordrassil generation bug
 + (done, tested) static page
-+ (done) fix nordrassil generated code on insert without goback to list
++ (done, tested) fix nordrassil generated code on insert without goback to list
++ (done, tested) fix invalid `{{ module_path }}` tag

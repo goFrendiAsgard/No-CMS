@@ -44,7 +44,8 @@ class CMS_Controller extends MX_Controller
         $this->load->library('template');
 
         $this->load->model('No_CMS_Model');
-        $this->No_CMS_Model = new No_CMS_Model();
+        // just for autocompletion, never run
+        if(false) $this->No_CMS_Model = new No_CMS_Model();
     }
 
     /**
@@ -294,9 +295,9 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    get module_path (folder name) of specified module_name (name space)
      */
-    public function cms_module_path($name = NULL)
+    public function cms_module_path($module_name = NULL)
     {
-        return $this->No_CMS_Model->cms_module_path($name);
+        return $this->No_CMS_Model->cms_module_path($module_name);
     }
 
     /**
@@ -738,50 +739,6 @@ class CMS_Controller extends MX_Controller
             $layout = $layout . '_' . $layout_suffix;
         }
 
-        // PREPARE SETTINGS
-        $cms['site_name']    = $this->cms_get_config('site_name');
-        $cms['site_slogan']  = $this->cms_get_config('site_slogan');
-        $cms['site_footer']  = $this->cms_get_config('site_footer');
-        $cms['site_theme']   = $theme;
-        $cms['site_logo']    = $this->cms_get_config('site_logo');
-        $cms['site_favicon'] = $this->cms_get_config('site_favicon');
-        $cms['user_id']      = $this->cms_user_id();
-        $cms['user_name']    = $this->cms_user_name();
-        $cms['module_path']  = $this->cms_module_path();
-        $cms['module_name']  = $this->cms_module_name($cms['module_path']);
-
-        // GET WIDGET AND NAVIGATION ONLY IF NEEDED.
-        // THE ONLY_CONTENT PAGE, DYNAMIC WIDGET, AND AJAX REQUESTED PAGE DOESN'T NEED THOSE
-        $this->widgets = NULL;
-        if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
-            $cms['widgets']          = array();
-            $cms['navigations']     = array();
-            $cms['navigation_path'] = array();
-        } else {
-            // GET WIDGET
-            $widgets              = $this->cms_widgets();
-            $this->__cms_widgets  = $widgets;
-            $cms['widgets']        = $widgets;
-
-            // GET NAVIGATIONS
-            $this->__cms_navigation_name  = $navigation_name;
-            $navigations                  = $this->cms_navigations();
-            $this->__cms_navigations      = $navigations;
-            $navigation_path              = $this->cms_get_navigation_path($navigation_name);
-            $this->__cms_navigation_path  = $navigation_path;
-            $cms['navigations']           = $navigations;
-            $cms['navigation_path']       = $navigation_path;
-
-            // GET quicklink
-            $quicklinks              = $this->cms_quicklinks();
-            $cms['quicklinks']       = $quicklinks;
-            $this->__cms_quicklinks  = $quicklinks;
-        }
-
-        // DEFINE $data
-        $data['cms'] = $cms;
-
-
         // IT'S SHOW TIME
         if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
             $result = $this->load->view($view_url, $data, TRUE);
@@ -854,6 +811,9 @@ class CMS_Controller extends MX_Controller
             }
 
             $result = $this->template->build($view_url, $data, TRUE);
+            // parse keyword
+            $result = $this->cms_parse_keyword($result);
+
             $result = $this->No_CMS_Model->cms_escape_template($result);
 
             // parse widget
@@ -888,26 +848,26 @@ class CMS_Controller extends MX_Controller
             $pattern[]     = "/\{\{ site_theme \}\}/si";
             $replacement[] = $theme;
 
-            $quicklink  = $this->__cms_build_quicklink();
-            $top_nav    = $this->__cms_build_top_nav_btn();
-            $left_nav   = $this->__cms_build_left_nav();
+            // $quicklink  = $this->__cms_build_quicklink();
+            // $top_nav    = $this->__cms_build_top_nav_btn();
+            // $left_nav   = $this->__cms_build_left_nav();
             $nav_path   = $this->__cms_build_nav_path();
 
             // quick_link
-            $pattern[]     = "/\{\{ quicklink \}\}/si";
-            $replacement[] = $quicklink;
+            // $pattern[]     = "/\{\{ quicklink \}\}/si";
+            // $replacement[] = $quicklink;
 
             // navigation_top
-            $pattern[]     = "/\{\{ navigation_top \}\}/si";
-            $replacement[] = $top_nav;
+            // $pattern[]     = "/\{\{ navigation_top \}\}/si";
+            // $replacement[] = $top_nav;
 
             // navigation_top_quicklink
-            $pattern[]     = "/\{\{ navigation_top_quicklink \}\}/si";
-            $replacement[] = $top_nav.$quicklink;
+            // $pattern[]     = "/\{\{ navigation_top_quicklink \}\}/si";
+            // $replacement[] = $top_nav.$quicklink;
 
             // navigation_left
-            $pattern[]     = "/\{\{ navigation_left \}\}/si";
-            $replacement[] = $left_nav;
+            // $pattern[]     = "/\{\{ navigation_left \}\}/si";
+            // $replacement[] = $left_nav;
 
             // navigation_path
             $pattern[]     = "/\{\{ navigation_path \}\}/si";
@@ -917,8 +877,6 @@ class CMS_Controller extends MX_Controller
 
             $result = $this->No_CMS_Model->cms_unescape_template($result);
 
-            // parse keyword
-            $result = $this->cms_parse_keyword($result);
 
             if ($return_as_string) {
                 return $result;
@@ -1032,7 +990,7 @@ class CMS_Controller extends MX_Controller
                     break;
                 }
             }
-        }else if(isset($slug)){
+        }else if(isset($slug) && isset($widgets[$slug])){
             $html = '<div class="cms-widget-slug-'.$slug.'">';
             foreach($widgets[$slug] as $widget){
                 $html.= '<div class="cms-widget-container">';

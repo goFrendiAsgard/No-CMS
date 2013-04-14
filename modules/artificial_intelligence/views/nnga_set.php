@@ -1,4 +1,4 @@
-<style type="text/css"> 
+<style type="text/css">
     div.form{
         width:390px;
         float:left;
@@ -19,7 +19,7 @@
     }
 </style>
 
-<?php echo form_open($cms['module_path'].'/nnga/set/'.$identifier);?>
+<?php echo form_open('{{ module_path }}/nnga/set/'.$identifier);?>
 <div class="form">
 <?php
     echo form_label('Learning Rate');

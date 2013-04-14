@@ -78,8 +78,8 @@
 
             echo '<div>';
             foreach($article['photos'] as $photo){
-                echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/'.$photo['url']).'">';
-                echo '<img class="photo_thumbnail" src="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/'.$photo['url']).'" />';
+                echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
+                echo '<img class="photo_thumbnail" src="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'" />';
                 echo '</a>';
             }
             echo '</div>';

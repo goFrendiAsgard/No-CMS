@@ -13,13 +13,13 @@
     <!-- Le styles -->
     <?php
         $asset = new CMS_Asset();
-        $asset->add_themes_css('style.css', $cms['site_theme'], 'default');
-        $asset->add_themes_css('bootstrap.min.css', $cms['site_theme'], 'default');
-        $asset->add_themes_css('bootstrap-responsive.min.css', $cms['site_theme'], 'default');
+        $asset->add_themes_css('style.css', '{{ site_theme }}', 'default');
+        $asset->add_themes_css('bootstrap.min.css', '{{ site_theme }}', 'default');
+        $asset->add_themes_css('bootstrap-responsive.min.css', '{{ site_theme }}', 'default');
         echo $asset->compile_css();
 
         $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
-        $asset->add_themes_js('script.js', $cms['site_theme'], 'default');
+        $asset->add_themes_js('script.js', '{{ site_theme }}', 'default');
         echo $asset->compile_js(TRUE);
     ?>
 

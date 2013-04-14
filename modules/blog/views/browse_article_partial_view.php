@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 foreach($articles as $article){
-    echo anchor(site_url($cms['module_path'].'/blog/index/'.$article['article_url']),
+    echo anchor(site_url('{{ module_path }}/blog/index/'.$article['article_url']),
                 '<h2>'.$article['title'].'</h2>');
     echo '('.$article['author'].', '.$article['date'].')';
     echo '<div>';
@@ -8,8 +8,8 @@ foreach($articles as $article){
     echo '</div>';
 
     foreach($article['photos'] as $photo){
-        echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/'.$photo['url']).'">';
-        echo '<img class="photo_thumbnail" src="'.base_url('modules/'.$cms['module_path'].'/assets/uploads/thumb_'.$photo['url']).'" />';
+        echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
+        echo '<img class="photo_thumbnail" src="'.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).'" />';
         echo '</a>';
     }
     echo '<script type="text/javascript">
@@ -25,7 +25,7 @@ foreach($articles as $article){
     }
 
     echo '<div class="edit_delete_record_container">';
-    echo anchor($cms['module_path'].'/blog/index/'.$article['article_url'],
+    echo anchor('{{ module_path }}/blog/index/'.$article['article_url'],
                 'read more'.$comment_count_caption, array("class"=>"btn btn-primary"));
     if($allow_navigate_backend){
         echo '&nbsp;';

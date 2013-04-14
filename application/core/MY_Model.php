@@ -391,7 +391,7 @@ class CMS_Model extends CI_Model
                     "widget_name" => $row->widget_name,
                     "title" => $this->cms_lang($row->title),
                     "description" => $row->description,
-                    "content" => $content
+                    "content" => $this->cms_parse_keyword($content)
                 );
             }
 
@@ -1090,10 +1090,10 @@ class CMS_Model extends CI_Model
                 if($query->num_rows()>0){
                     $row    = $query->row();
                     $value  = $row->value;
+                    $this->__cms_model_properties['config'][$name] = $value;
                 }else{
-                    $value  = '';
+                    $value  = NULL;
                 }
-                $this->__cms_model_properties['config'][$name] = $value;
             } else {
                 $value = $this->__cms_model_properties['config'][$name];
             }
@@ -1101,7 +1101,7 @@ class CMS_Model extends CI_Model
         }
 
         // if raw is false, then don't parse keyword
-        if (!$raw) {
+        if (!$raw && isset($value)) {
             $value = $this->cms_parse_keyword($value);
         }
         return $value;
@@ -1209,7 +1209,7 @@ class CMS_Model extends CI_Model
      * @author goFrendiAsgard
      * @param  string value
      * @return string
-     * @desc   parse keyword like {{ site_url  }} , {{ base_url }} , {{ user_name }} , {{ module_path }} and {{ language }}
+     * @desc   parse keyword like {{ site_url  }} , {{ base_url }} , {{ user_name }} , {{ language }}
      */
     public function cms_parse_keyword($value)
     {
@@ -1311,7 +1311,6 @@ class CMS_Model extends CI_Model
             '__cms_preg_replace_callback_config'
         ), $value);
 
-        $value = $this->cms_unescape_template($value);
         return $value;
     }
 
@@ -1425,11 +1424,16 @@ class CMS_Model extends CI_Model
     private function __cms_preg_replace_callback_config($arr)
     {
         $raw_config_value = $this->cms_get_config($arr[1]);
-        // avoid recursion
-        if(strpos($raw_config_value, '{{ '.$arr[1].' }}') !== FALSE){
-            $raw_config_value = str_replace('{{ '.$arr[1].' }}', ' ', $raw_config_value);
+        if(isset($raw_config_value)){
+            // avoid recursion
+            if(strpos($raw_config_value, '{{ '.$arr[1].' }}') !== FALSE){
+                $raw_config_value = str_replace('{{ '.$arr[1].' }}', ' ', $raw_config_value);
+            }
+            return $this->cms_parse_keyword($raw_config_value);
+        }else{
+            return '{{ '.$arr[1].' }}';
         }
-        return $this->cms_parse_keyword($raw_config_value);
+
     }
 
     /**
