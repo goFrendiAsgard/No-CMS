@@ -340,7 +340,8 @@
 	$(document).ajaxSuccess(function(event, xhr, settings) {
         response = $.parseJSON(xhr.responseText);
         // nanti bukan insert_validation, tapi insert
-        if ( settings.url == "&lt;?php echo $insert_url; ?&gt;"  &&
+        //if ( settings.url == "&lt;?php echo $insert_url; ?&gt;"  &&
+        if (settings.url == "{{ module_site_url }}manage_<?php echo underscore($stripped_master_table_name) ?>/index/insert" &&
             response.success == true
         ) {
             DATA_citizen = {update:new Array(), insert:new Array(), delete:new Array()};
