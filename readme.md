@@ -60,7 +60,7 @@ In short, if you are familiar with CodeIgniter, No-CMS is a good kickstart to ma
 Release Information
 ===================
 
-- Please look at [github tag](https://github.com/goFrendiAsgard/No-CMS/tags)
+- v0.6.2 stable, Apr 16, 2013
 
 
 Server Requirements
@@ -72,30 +72,16 @@ Server Requirements
 Documentation
 =============
 
-The full documentation and developer guide is still under progress and can be found once you have install No-CMS
+The full documentation is available in pdf format, and can be found once you download No-CMS
 
-Installation
-------------
+Tutorial 00: Installation
+-------------------------
 
 * Download No-CMS from [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS) on GitHub
 * Copy and extract it on your web server directory (You might want to try it locally via xampp, in this case, your server directory is c:\xampp\htdocs)
 * Access the url (If you use xampp in your local computer, the url should be http://localhost/No-CMS)
 * Click "Install Now"
 * Fill any information needed (including your administrator password)
-
-CMS Management
---------------
-
-* To manage your CMS you should first login.
-* Open CMS Management, there are a lot of things you can do
-* Navigation management can be used to manage menu
-* User, group, and privilege management are used to manage authorization
-* You can change the theme via Change Theme
-* You can install new module via Module Management
-* You can manage your widgets via Widget Management
-* The most important (and a bit dangerous) is Configuration Management. Here you can
-  change the site header, slogan, and copyright. Some configuration should be handled with care.
-  A mistake to configure this part can make your web-site inaccessible
 
 
 Tutorial 01: Navigations & Pages
@@ -487,6 +473,49 @@ After register the page, now change your controller a bit:
     }
 ```
 
+By using `CMS_Priv_Strict_Controller` you do not need to define `navigation_code` when calling `$this->view()`.
+
+__Note:__ If you want your url to have the same privilege as other url in the same controller, you can override
+```php
+   <?php
+   class Your_Controller_Name extends CMS_Priv_Strict_Controller{
+        /*
+         * URL_MAP will be used in case of you have "unregistered function"
+         * (e.g : you don't have any navigation name that refer to
+         * 'your_module_name/your_controller_name/unregistered_function',
+         * but you want to make sure that the url has the same authorization as 'a_navigation_name')
+         */
+        protected function do_override_url_map($URL_MAP){
+           $URL_MAP['your_module_name/your_controller_name/unregistered_function'] = 'a_navigation_name';
+           return $URL_MAP;
+        }
+
+        /*
+         * This is the normal way. You can access below function by using this url:
+         * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/show
+         */
+        public function show(){
+            $this->load->model('your_model_name');
+            $data = array();
+            $data['result'] = $this->your_model_name->get_data();
+            $this->view('your_view_name', $data);
+        }
+
+        /*
+         * This is gonna be work to, even if the url is not registered.
+         * You can access below function by using this url:
+         * http://your_domain.com/No-CMS_installation_folder/your_module_name/your_controller_name/strict
+         */
+        public function unregistered_function(){
+            $this->load->model('your_model_name'); // this will not be run if visitor not authorized
+            $data = array();
+            $data['result'] = $this->your_model_name->get_data();
+            $this->view('your_view_name', $data);
+        }
+   }
+   ?>
+```
+
 
 Make module installable
 -----------------------
@@ -765,9 +794,7 @@ v0.6.1
 + (done, tested) Fix nordrassil bug when table prefix is empty
 
 v0.6.2
-+ (proposed) Drupal's CCK like mechanism
-+ (proposed) Make nordrassil generated code easier to be edited.
-+ (proposed) automatically create thumbnail in wysiwyg, use better uploader library
++ (cancelled) Drupal's CCK like mechanism <-- It is impossible to build such a feature with groceryCRUD
 + (done, tested) `{{ widget:slug }}`, `{{ quicklink }}`, `{{ navigation_top }}`, `{{ navigation_top_quicklink }}`, and `{{ navigation_left }}` tag is deprecated.
 + (done, tested) `$cms` is deprecated, and can be fully replaced by using tags.
 + (done, tested) `{{ widget_name:widget_code }}` and `{{ widget_slug:slug }}`
@@ -776,3 +803,6 @@ v0.6.2
 + (done, tested) static page
 + (done, tested) fix nordrassil generated code on insert without goback to list
 + (done, tested) fix invalid `{{ module_path }}` tag
+
+v0.6.3
++ (proposed) automatically create thumbnail in wysiwyg, use better uploader library

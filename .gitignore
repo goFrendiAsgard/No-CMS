@@ -27,4 +27,10 @@ local.properties
 
 assets/caches/*.js
 assets/caches/*.css
+modules/.git
+
+# my private modules
+modules/gis
+modules/typing_defense
+modules/academic
 modules/new_module
