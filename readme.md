@@ -104,10 +104,10 @@ No-CMS allow you to make your own page:
 
 You can access your new page by clicking `Complete Menu | Go to My Page`.
 This new page can be accessed by `Everyone`. No-CMS has several authorization type:
-* Everyone
-* Unauthenticated
-* Authenticated
-* Authorized
+* __Everyone__: Can be accessed by all visitor.
+* __Unauthenticated__: Can only be accessed by not currently login visitor.
+* __Authenticated__: Can only be accessed by already login visitor
+* __Authorized__: Can only be accessed by already login visitor who is also member of certain `group`
 
 Let's add another page as sub-page:
 
