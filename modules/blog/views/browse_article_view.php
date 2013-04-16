@@ -116,6 +116,7 @@
                 echo '<b>Add Comments </b>'.br().br();
                 echo form_open();
                 echo form_hidden('article_id', $article['id']);
+                echo form_hidden('secret_code', $secret_code);
                 if(!$is_user_login){
                     echo form_label('Name :').br();
                     echo form_input('name').br();

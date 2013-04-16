@@ -13,8 +13,38 @@ class Blog extends CMS_Priv_Strict_Controller {
         return $URL_MAP;
     }
 
+    private function __random_string($length=10){
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        $size = strlen( $chars );
+        $str = '';
+        for( $i = 0; $i < $length; $i++ ){
+            $str .= $chars[ rand( 0, $size - 1 ) ];
+        }
+        return $str;
+    }
+
     public function index($article_url = NULL){
         $this->load->model($this->cms_module_path().'/article_model');
+
+        // add comment
+        $article_id = $this->input->post('article_id', TRUE);
+        $name = $this->input->post('name', TRUE);
+        $email = $this->input->post('email', TRUE);
+        $website = $this->input->post('website', TRUE);
+        $content = $this->input->post('content', TRUE);
+        $secret_code = $this->input->post('secret_code', TRUE);
+        if($content){
+            $previous_secret_code = $this->session->flashdata('secret_code');
+            if($secret_code === $previous_secret_code){
+                $this->article_model->add_comment($article_id, $name, $email, $website, $content);
+            }
+        }
+
+        // generate new secret code
+        $secret_code = $this->__random_string();
+        $this->session->set_flashdata('secret_code', $secret_code);
+
         $data = array(
             'submenu_screen' => $this->cms_submenu_screen($this->cms_complete_navigation_name('index')),
             'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article')),
@@ -24,16 +54,9 @@ class Blog extends CMS_Priv_Strict_Controller {
             'keyword' => $this->input->get('keyword'),
             'module_path' => $this->cms_module_path(),
             'is_user_login' => $this->cms_user_id()>0,
+            'secret_code' => $secret_code,
         );
-        // add comment
-        $article_id = $this->input->post('article_id', TRUE);
-        $name = $this->input->post('name', TRUE);
-        $email = $this->input->post('email', TRUE);
-        $website = $this->input->post('website', TRUE);
-        $content = $this->input->post('content', TRUE);
-        if($content){
-            $this->article_model->add_comment($article_id, $name, $email, $website, $content);
-        }
+
 
         if(isset($article_url)){
             $data['article'] = $this->article_model->get_single_article($article_url);

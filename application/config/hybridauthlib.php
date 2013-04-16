@@ -12,58 +12,56 @@
 $config =
 	array(
 		// set on "base_url" the relative url that point to HybridAuth Endpoint
-		'base_url' => '/main/hauth/endpoint',
-		
-		'proxy' => '',
+		'base_url' => '/hauth/endpoint',
 
 		"providers" => array (
 			// openid providers
 			"OpenID" => array (
-				"enabled" => FALSE
+				"enabled" => false
 			),
 
 			"Yahoo" => array (
-				"enabled" => FALSE,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
 			"AOL"  => array (
-				"enabled" => FALSE
+				"enabled" => false
 			),
 
 			"Google" => array (
-				"enabled" => FALSE,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
 			"Facebook" => array (
-				"enabled" => TRUE,
-				"keys"    => array ( "id" => "528252883865751", "secret" => "8c12c30a60301758916234aa761d919e" ),
+				"enabled" => false,
+				"keys"    => array ( "id" => "", "secret" => "" ),
 			),
 
 			"Twitter" => array (
-				"enabled" => TRUE,
-				"keys"    => array ( "key" => "IyBxxOyJXHGzkg9yNAHErA", "secret" => "xXwrRiTHXFTGnaDxjywMLxOMrwOHvReBsTjWgDFxJs" )
+				"enabled" => false,
+				"keys"    => array ( "key" => "", "secret" => "" )
 			),
 
 			// windows live
 			"Live" => array (
-				"enabled" => FALSE,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" )
 			),
 
 			"MySpace" => array (
-				"enabled" => FALSE,
+				"enabled" => false,
 				"keys"    => array ( "key" => "", "secret" => "" )
 			),
 
 			"LinkedIn" => array (
-				"enabled" => FALSE,
+				"enabled" => false,
 				"keys"    => array ( "key" => "", "secret" => "" )
 			),
 
 			"Foursquare" => array (
-				"enabled" => FALSE,
+				"enabled" => false,
 				"keys"    => array ( "id" => "", "secret" => "" )
 			),
 		),
