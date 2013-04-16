@@ -75,7 +75,7 @@ Documentation
 The full documentation is available in pdf format, and can be found once you download No-CMS
 
 Tutorial 00: Installation
--------------------------
+=========================
 
 * Download No-CMS from [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS) on GitHub
 * Copy and extract it on your web server directory (You might want to try it locally via xampp, in this case, your server directory is c:\xampp\htdocs)
