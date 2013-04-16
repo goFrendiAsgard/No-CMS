@@ -628,7 +628,7 @@ class Main extends CMS_Controller
         $crud->edit_fields('navigation_id');
         $crud->add_fields('navigation_id');
 
-        $crud->display_as('navigation_id', 'Navigation Name');
+        $crud->display_as('navigation_id', 'Navigation Code');
 
         $crud->order_by('index', 'asc');
 
