@@ -14,8 +14,7 @@
     <?php
         $asset = new CMS_Asset();
         $asset->add_themes_css('style.css', '{{ site_theme }}', 'default');
-        $asset->add_themes_css('bootstrap.min.css', '{{ site_theme }}', 'default');
-        $asset->add_themes_css('bootstrap-responsive.min.css', '{{ site_theme }}', 'default');
+        $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
         echo $asset->compile_css();
 
         $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
