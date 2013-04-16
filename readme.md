@@ -700,8 +700,8 @@ Here are some names of considerable contributors:
 * Everyone who was involved by creating issue & pull requests in github. I can't write every names there. But No-CMS can't be better without them :)
 
 
-Changelog and New Features (current version: 0.6.1 stable, 2013-04-04)
-======================================================================
+Changelog and New Features
+==========================
 
 - For more detail information, please take look at [github commit log](https://github.com/goFrendiAsgard/No-CMS/commits)
 
