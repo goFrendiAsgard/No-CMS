@@ -847,29 +847,7 @@ class CMS_Controller extends MX_Controller
             // theme
             $pattern[]     = "/\{\{ site_theme \}\}/si";
             $replacement[] = $theme;
-
-            // $quicklink  = $this->__cms_build_quicklink();
-            // $top_nav    = $this->__cms_build_top_nav_btn();
-            // $left_nav   = $this->__cms_build_left_nav();
-            $nav_path   = $this->__cms_build_nav_path();
-
-            // quick_link
-            // $pattern[]     = "/\{\{ quicklink \}\}/si";
-            // $replacement[] = $quicklink;
-
-            // navigation_top
-            // $pattern[]     = "/\{\{ navigation_top \}\}/si";
-            // $replacement[] = $top_nav;
-
-            // navigation_top_quicklink
-            // $pattern[]     = "/\{\{ navigation_top_quicklink \}\}/si";
-            // $replacement[] = $top_nav.$quicklink;
-
-            // navigation_left
-            // $pattern[]     = "/\{\{ navigation_left \}\}/si";
-            // $replacement[] = $left_nav;
-
-            // navigation_path
+            $nav_path   = $this->__cms_build_nav_path($navigation_name);
             $pattern[]     = "/\{\{ navigation_path \}\}/si";
             $replacement[] = $nav_path;
 
@@ -1005,18 +983,8 @@ class CMS_Controller extends MX_Controller
         return $html;
     }
 
-    private function __cms_build_nav_path(){
-        $navigation_name = '';
-        if(isset($this->__cms_navigation_path)){
-            $path = $this->__cms_navigation_path;
-        }else{
-            if(isset($this->__cms_navigation_name)){
-                $navigation_name = $this->cms_navigation_name();
-            }else{
-                $navigation_name = $this->__cms_navigation_name;
-            }
-            $path = $this->cms_get_navigation_path($navigation_name);
-        }
+    private function __cms_build_nav_path($navigation_name){
+        $path = $this->cms_get_navigation_path($navigation_name);
         $html = "";
         for($i=0; $i<count($path); $i++){
             $current_path = $path[$i];
