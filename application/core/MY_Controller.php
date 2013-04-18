@@ -845,7 +845,7 @@ class CMS_Controller extends MX_Controller
             $replacement = array();
 
             // theme
-            $pattern[]     = "/\{\{ site_theme \}\}/si";
+            $pattern[]     = "/\{\{ used_theme \}\}/si";
             $replacement[] = $theme;
             $nav_path   = $this->__cms_build_nav_path($navigation_name);
             $pattern[]     = "/\{\{ navigation_path \}\}/si";

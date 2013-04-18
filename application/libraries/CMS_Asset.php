@@ -130,7 +130,7 @@ class CMS_Asset
             }
         }
         $md5_name  = md5($long_name);
-        $file_name = BASEPATH . '../assets/caches/' . $md5_name . '.' . $extension;
+        $file_name = FCPATH . 'assets/caches/' . $md5_name . '.' . $extension;
         $file_url  = base_url('assets/caches/' . $md5_name . '.' . $extension);
         if (!file_exists($file_name)) {
             if (file_exists($file_name))
@@ -140,7 +140,7 @@ class CMS_Asset
                 if (isset($resource['path'])) {
                     $path = $resource['path'];
                     if (strpos($path, base_url()) == 0) {
-                        $path = BASEPATH . '..' . substr($path, strlen(base_url()) - 1);
+                        $path = FCPATH. substr($path, strlen(base_url()));
                     }
                     $content = file_get_contents($path);
                 } else {
