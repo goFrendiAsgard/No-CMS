@@ -28,13 +28,20 @@ class Blog extends CMS_Priv_Strict_Controller {
         $this->load->model($this->cms_module_path().'/article_model');
 
         // add comment
+        // TODO: add scenario as in http://stackoverflow.com/a/10948623/755319
+        // or call "Kay Nine" :)
         $article_id = $this->input->post('article_id', TRUE);
-        $name = $this->input->post('name', TRUE);
-        $email = $this->input->post('email', TRUE);
-        $website = $this->input->post('website', TRUE);
-        $content = $this->input->post('content', TRUE);
+        $name = $this->input->post('xname', TRUE);
+        $email = $this->input->post('xemail', TRUE);
+        $website = $this->input->post('xwebsite', TRUE);
+        $content = $this->input->post('xcontent', TRUE);
         $secret_code = $this->input->post('secret_code', TRUE);
-        if($content){
+        // the honey_pot, every fake input should be empty
+        $honey_pot_pass = (strlen($this->input->post('name', ''))==0) &&
+            (strlen($this->input->post('email', ''))==0) &&
+            (strlen($this->input->post('website', ''))==0) &&
+            (strlen($this->input->post('content', ''))==0);
+        if($content && $honey_pot_pass){
             $previous_secret_code = $this->session->flashdata('secret_code');
             if($secret_code === $previous_secret_code){
                 $this->article_model->add_comment($article_id, $name, $email, $website, $content);

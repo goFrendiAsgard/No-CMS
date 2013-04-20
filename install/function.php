@@ -97,50 +97,57 @@ function check_db($server, $port, $username, $password, $schema)
         "warning_message" => ""
     );
 
-    $connection = @mysql_connect($server . ':' . $port, $username, $password);
-    if (!$connection) {
-        $return["success"] = false;
-        $return["error_message"] .= "Cannot connect to database";
-    } else {
-        $result = @mysql_query('SHOW VARIABLES LIKE \'have_innodb\';', $connection);
-        $row    = mysql_fetch_array($result);
-        $innodb = $row['Value'];
-        if (!$innodb) {
+    if(!function_exists('mysql_connect')){
+        $return['success'] = false;
+        $return['error_message'] = 'mysql_connect is not defined, please install php-mysql driver';
+    }else{
+        $connection = @mysql_connect($server . ':' . $port, $username, $password);
+        if (!$connection) {
             $return["success"] = false;
-            $return["error_message"] .= "Your database doesn't support Innodb";
-        }
-    }
-
-    if ($return["success"]) {
-        if ($schema == '') {
-            $return["error_message"] = 'Database Schema is empty';
-            $return["success"]       = false;
+            $return["error_message"] .= "Cannot connect to database";
         } else {
-            $db_exists = @mysql_select_db($schema, $connection);
-            if (!$db_exists) {
-                $SQL    = "show grants for `$username`@`$server`;";
-                $result = @mysql_query($SQL, $connection);
-                if ($result === false) {
-                    $return["error_message"] = 'Cannot check database privilege';
-                    $return["success"]       = false;
-                } else {
-                    $privilege_exists = false;
-                    while ($row = mysql_fetch_row($result)) {
-                        if ((strpos($row[0], 'ALL PRIVILEGES') > -1 || strpos($row[0], 'CREATE,') > -1) && strpos($row[0], 'ON *.*')) {
-                            $privilege_exists = true;
-                            break;
-                        }
-                    }
-                    if (!$privilege_exists) {
-                        $return["error_message"] = 'No create database privilege, please select the already exists one';
-                        $return["success"]       = false;
-                    }
-                }
-
+            $result = @mysql_query('SHOW VARIABLES LIKE \'have_innodb\';', $connection);
+            $row    = mysql_fetch_array($result);
+            $innodb = $row['Value'];
+            if (!$innodb) {
+                $return["success"] = false;
+                $return["error_message"] .= "Your database doesn't support Innodb";
             }
         }
 
+        if ($return["success"]) {
+            if ($schema == '') {
+                $return["error_message"] = 'Database Schema is empty';
+                $return["success"]       = false;
+            } else {
+                $db_exists = @mysql_select_db($schema, $connection);
+                if (!$db_exists) {
+                    $SQL    = "show grants for `$username`@`$server`;";
+                    $result = @mysql_query($SQL, $connection);
+                    if ($result === false) {
+                        $return["error_message"] = 'Cannot check database privilege';
+                        $return["success"]       = false;
+                    } else {
+                        $privilege_exists = false;
+                        while ($row = mysql_fetch_row($result)) {
+                            if ((strpos($row[0], 'ALL PRIVILEGES') > -1 || strpos($row[0], 'CREATE,') > -1) && strpos($row[0], 'ON *.*')) {
+                                $privilege_exists = true;
+                                break;
+                            }
+                        }
+                        if (!$privilege_exists) {
+                            $return["error_message"] = 'No create database privilege, please select the already exists one';
+                            $return["success"]       = false;
+                        }
+                    }
+
+                }
+            }
+
+        }
     }
+
+
 
     return $return;
 }

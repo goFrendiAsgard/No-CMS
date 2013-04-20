@@ -2,6 +2,9 @@
 <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/nocms/js/colorbox/colorbox.css';?>"></link>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?>" />
 <style type="text/css">
+    .comment_normal{
+        display:none!important;
+    }
 	#record_content{
 		margin-top: 5px;
 		margin-bottom: 20px;
@@ -116,17 +119,21 @@
                 echo '<b>Add Comments </b>'.br().br();
                 echo form_open();
                 echo form_hidden('article_id', $article['id']);
-                echo form_hidden('secret_code', $secret_code);
+                echo form_input(array('name'=>'secret_code', 'value'=>$secret_code, 'class'=>'comment_normal'));
+                echo form_input(array('name'=>'name', 'value'=>'', 'class'=>'comment_normal'));
+                echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'comment_normal'));
+                echo form_input(array('name'=>'website', 'value'=>'', 'class'=>'comment_normal'));
+                echo form_input(array('name'=>'content', 'value'=>'', 'class'=>'comment_normal'));
                 if(!$is_user_login){
                     echo form_label('Name :').br();
-                    echo form_input('name').br();
+                    echo form_input('xname').br();
                     echo form_label('Email :').br();
-                    echo form_input('email').br();
+                    echo form_input('xemail').br();
                 }
                 echo form_label('Website :').br();
-                echo form_input('website').br();
+                echo form_input('xwebsite').br();
                 echo form_label('Comment :').br();
-                echo form_textarea('content').br();
+                echo form_textarea('xcontent').br();
                 echo form_submit('submit', 'Comment');
                 echo form_close();
             }
