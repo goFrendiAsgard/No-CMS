@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 foreach($articles as $article){
+    echo '<div id="record_'.$article['id'].'">';
     echo anchor(site_url('{{ module_path }}/blog/index/'.$article['article_url']),
                 '<h2>'.$article['title'].'</h2>');
     echo '('.$article['author'].', '.$article['date'].')';
@@ -34,5 +35,6 @@ foreach($articles as $article){
         echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
 
     }
+    echo '</div>';
     echo '</div>';
 }
