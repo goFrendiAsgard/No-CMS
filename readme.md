@@ -655,6 +655,10 @@ Request, which is done by "Forking" the main repository and committing to your
 own copy. This will require you to use the version control system called Git.
 To use github, you should first read [Github help](http://help.github.com/)
 
+Another simple way to contribute is by sending some donation
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YDES6RTA9QJQL)
+
+
 License
 =======
 
@@ -804,6 +808,8 @@ v0.6.2
 + (done, tested) fix nordrassil generated code on insert without goback to list
 + (done, tested) fix invalid `{{ module_path }}` tag
 + (done, tested) fix theme bug
++ (done, tested) fix AJAX delete feature on blog module
++ (done, tested) add donation button
 
 v0.6.3
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
