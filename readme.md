@@ -60,7 +60,7 @@ In short, if you are familiar with CodeIgniter, No-CMS is a good kickstart to ma
 Release Information
 ===================
 
-- v0.6.2 stable, Apr 18, 2013
+- v0.6.2 stable, May, 05, 2013
 
 
 Server Requirements
