@@ -60,7 +60,7 @@ In short, if you are familiar with CodeIgniter, No-CMS is a good kickstart to ma
 Release Information
 ===================
 
-- v0.6.2 stable, May, 05, 2013
+- v0.6.2 stable, May, 08, 2013
 
 
 Server Requirements
@@ -359,7 +359,8 @@ A bit more about view
     {{ site_url }}
     {{ base_url }}
     {{ module_path }}
-    {{ widget:slug }}
+    {{ widget_slug:slug }}
+    {{ widget_name:widget_name }}
     {{ language }}
     {{ language:some_word }}
 
@@ -671,7 +672,7 @@ Acknowledgement
 I would like to thank all the contributors to the No-CMS project and you, the No-CMS user.
 Here are some names of considerable contributors:
 
-* goFrendiAsgard <-- (It's me) Make No-CMS based on CodeIgniter and some existing plug-ins.
+* goFrendiAsgard <-- (It is me) Make No-CMS based on CodeIgniter and some existing plug-ins.
 * EllisLab <-- Make CodeIgniter and make it available for free. There is no No-CMS without codeIgniter
 * wiredesignz <-- Creator of HMVC plugin.
   The plug-in he made is known widely among CodeIgniter developer.
@@ -689,7 +690,7 @@ Here are some names of considerable contributors:
 * Wahyu Eka Putra <-- He was my student. One of some best students in my class.
   He is the first one who discover a critical bug in the first stage of development.
 * I Komang Ari Mogi <-- He is my classmate in my graduate program. He has some experience in design.
-  That's why he can propose some fix in the very early stage of development.
+  That is why he can propose some fix in the very early stage of development.
 * Ibnoe <-- The one who gives some suggestions and bug report.
 * Panega <-- The one who also report a crucial bug.
 * Alexandre Mota <-- The one who report a bug related to page authorization
@@ -701,7 +702,8 @@ Here are some names of considerable contributors:
 * David Oster <-- Greek translation contributor
 * Glenn Bennett <-- Kindly provide free hosting for http://www.getnocms.com
 * Abu Tuffah Bayashoot <-- Find bug on configuration management at v0.6.1, and propose solution
-* Everyone who was involved by creating issue & pull requests in github. I can't write every names there. But No-CMS can't be better without them :)
+* Ann Low <-- Spain translation contributor
+* Everyone who was involved by creating issue & pull requests in github. I cannot write every names there. But No-CMS can't be better without them :)
 
 
 Changelog and New Features
