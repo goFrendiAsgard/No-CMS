@@ -325,7 +325,7 @@ class Main extends CMS_Controller
         $this->cms_guard_page('main_language');
         if (isset($language)) {
             $this->cms_language($language);
-            $this->index();
+            redirect('main/index');
         } else {
             $data = array(
                 "language_list" => $this->cms_language_list()

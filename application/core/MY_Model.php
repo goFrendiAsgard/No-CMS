@@ -13,16 +13,6 @@ class CMS_Model extends CI_Model
     {
         parent::__construct();
 
-        // load helpers and libraries
-        $this->load->helper('url');
-        $this->load->helper('html');
-        $this->load->helper('form');
-        $this->load->library('user_agent');
-        $this->load->library('session');
-        $this->load->helper('cms_helper');
-        $this->load->library('form_validation');
-        $this->load->database();
-
         // PHP 5.3 ask for timezone, and throw a warning whenever it is not available
         // so, just give this one :)
         $timezone = @date_default_timezone_get();
@@ -33,6 +23,16 @@ class CMS_Model extends CI_Model
             $timezone = 'UTC';
         }
         date_default_timezone_set($timezone);
+
+        // load helpers and libraries
+        $this->load->helper('url');
+        $this->load->helper('html');
+        $this->load->helper('form');
+        $this->load->library('user_agent');
+        $this->load->library('session');
+        $this->load->helper('cms_helper');
+        $this->load->library('form_validation');
+        $this->load->database();
 
         // accessing file is faster than accessing database
         // but I think accessing variable is faster than both of them

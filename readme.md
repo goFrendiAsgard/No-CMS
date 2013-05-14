@@ -60,7 +60,7 @@ In short, if you are familiar with CodeIgniter, No-CMS is a good kickstart to ma
 Release Information
 ===================
 
-- v0.6.2 stable, May, 08, 2013
+- v0.6.2 stable, May, 14, 2013
 
 
 Server Requirements
@@ -349,7 +349,7 @@ A bit more about view
     <script type="text/javascript" src="{{ base_url }}/assets/nocms/js/jquery.js"></script>
 ```
 
-* Here is the list of those magical keywords (or also known as tag):
+* Here is the list of those magical keywords (or also known as tag). Read the documentation for complete list:
 
 ```
     {{ user_id }}
@@ -812,6 +812,7 @@ v0.6.2
 + (done, tested) fix theme bug
 + (done, tested) fix AJAX delete feature on blog module
 + (done, tested) add donation button
++ (done, tested) bugfix: immediately apply language changes when user change language without login
 
 v0.6.3
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library

@@ -24,6 +24,9 @@ class CMS_Controller extends MX_Controller
     public function __construct()
     {
         parent::__construct();
+
+        $this->load->model('No_CMS_Model');
+
         /* Standard Libraries */
         $this->load->database();
         $this->load->helper('url');
@@ -43,7 +46,6 @@ class CMS_Controller extends MX_Controller
         $this->load->library('grocery_CRUD');
         $this->load->library('template');
 
-        $this->load->model('No_CMS_Model');
         // just for autocompletion, never run
         if(false) $this->No_CMS_Model = new No_CMS_Model();
     }
