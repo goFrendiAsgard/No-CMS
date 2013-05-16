@@ -60,7 +60,7 @@ In short, if you are familiar with CodeIgniter, No-CMS is a good kickstart to ma
 Release Information
 ===================
 
-- v0.6.2 stable, May, 14, 2013
+- v0.6.2 stable, May, 16, 2013
 
 
 Server Requirements
@@ -814,6 +814,7 @@ v0.6.2
 + (done, tested) add donation button
 + (done, tested) bugfix: immediately apply language changes when user change language without login
 + (done, tested) bugfix: Editing configuration doesn't change `config/cms_config.php` automatically
++ (done, tested) bugfix: nordrassil generated script shown weird when using one-to-many detail without any "chosen" component in master table
 
 v0.6.3
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library

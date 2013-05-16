@@ -40,6 +40,7 @@
 	$record_index = 0;
 ?&gt;
 <link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS); ?&gt;" />
+<link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?&gt;" />
 <style type="text/css">
 	/* set width of every detail input*/
 	#<?php echo $table_id; ?> .<?php echo $column_input_class ?>{
