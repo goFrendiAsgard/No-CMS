@@ -851,7 +851,12 @@ class Main extends CMS_Controller
 
     public function after_update_config($post_array, $primary_key){
         // adjust configuration file entry
-        //cms_config($post_array['config_name'], $post_array['value']);
+        $query = $this->db->select('config_name')->from(cms_table_name('main_config'))->where('config_id', $primary_key)->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $config_name = $row->config_name;
+            cms_config($config_name, $post_array['value']);
+        }
         return TRUE;
     }
 

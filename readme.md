@@ -813,6 +813,7 @@ v0.6.2
 + (done, tested) fix AJAX delete feature on blog module
 + (done, tested) add donation button
 + (done, tested) bugfix: immediately apply language changes when user change language without login
++ (done, tested) bugfix: Editing configuration doesn't change `config/cms_config.php` automatically
 
 v0.6.3
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
