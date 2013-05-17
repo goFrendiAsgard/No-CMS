@@ -964,17 +964,44 @@ class Main extends CMS_Controller
         }
     }
 
-    private function widget_quicklink(){
-        $quicklinks = $this->cms_quicklinks();
+    private function widget_quicklink($quicklinks = NULL, $as_dropdown = FALSE, $return = FALSE){
+        if(!isset($quicklinks)){
+            $quicklinks = $this->cms_quicklinks();
+        }
         if(count($quicklinks) == 0) return '';
-        $html = '<ul class="nav">';
+        $html = '';
+        if($as_dropdown){
+            $html.= '<ul class="dropdown-menu">';
+        }else{
+            $html.= '<ul class="nav">';
+        }
+
+
         foreach($quicklinks as $quicklink){
-            $html.= '<li>';
-            $html.= anchor($quicklink['url'], $quicklink['title']);
-            $html.= '</li>';
+            if(count($quicklink['child'])==0){
+                $html.= '<li>';
+                $html.= anchor($quicklink['url'], $quicklink['title']);
+                $html.= '</li>';
+            }else{
+                $html.= '<li class="dropdown">';
+                $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
+                    '<span onclick="window.location = \''.$quicklink['url'].'\'">'.$quicklink['title'].'</span>'.
+                    '<span class="caret"></span></a>';
+                $html.= $this->widget_quicklink($quicklink['child'],TRUE,TRUE);
+                /*
+                $html.= '<ul class="dropdown-menu">';
+                $html.= '<li><a href="facebook.com">Fb</a></li>';
+                $html.= '</ul>';
+                 */
+                $html.= '</li>';
+            }
         }
         $html.= '</ul>';
-        $this->cms_show_html($html);
+        if($return){
+            return $html;
+        }else{
+            $this->cms_show_html($html);
+        }
     }
 
 }

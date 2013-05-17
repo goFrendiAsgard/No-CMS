@@ -168,7 +168,7 @@ class CMS_Model extends CI_Model
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
         //get max_menu_depth from configuration
-        if (!isset($parent_id)) {
+        if (!isset($max_menu_depth)) {
             $max_menu_depth = $this->cms_get_config('max_menu_depth');
         }
 
@@ -277,6 +277,15 @@ class CMS_Model extends CI_Model
                             ) ORDER BY q.index");
         $result = array();
         foreach ($query->result() as $row) {
+            $all_children   = $this->cms_navigations($row->navigation_id);
+            $children       = array();
+            foreach ($all_children as $child) {
+                if ($child['allowed']) {
+                    unset($child['allowed']);
+                    unset($child['have_allowed_children']);
+                    $children[] = $child;
+                }
+            }
             if ((!isset($row->url) || $row->url == '') && $row->is_static == 1) {
                 $url = 'main/static_page/' . $row->navigation_name;
             } else {
@@ -292,7 +301,8 @@ class CMS_Model extends CI_Model
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "url" => $url,
-                "is_static" => $row->is_static
+                "is_static" => $row->is_static,
+                "child" => $children,
             );
         }
         return $result;
