@@ -15,7 +15,7 @@
         if(REQUEST_EXISTS){
         	REQUEST.abort();
         }
-        REQUEST_EXISTS = true;        
+        REQUEST_EXISTS = true;
         REQUEST = $.ajax({
             "url" : "check_registration",
             "type" : "POST",
@@ -24,54 +24,55 @@
             "success" : function(data){
             	if(!data.exists && user_name!='' && password!='' && password==confirm_password){
                     $('input[name="register"]').show();
-                    $('input[name="register"]').removeAttr('disabled');                    
+                    $('input[name="register"]').removeAttr('disabled');
                 }else{
                     $('input[name="register"]').hide();
                     $('input[name="register"]').attr('disabled', 'disabled');
                 }
-                
+
             	// get message from server + local check
                 var message = '';
                 if(data.message!=''){
                     message += data.message+'<br />';
                 }
                 if(password == ''){
-                    message += 'Password is empty<br />';
+                    message += '{{ language:lang_cp_pw_empty }}<br />';
                 }
                 if(password != confirm_password){
-                    message += 'Confirm password doesn\'t match';
+                    message += '{{ language:lang_cp_pw_no_match }}';
                 }
-                
+
                 if(message != $('#message').html()){
-                    $('#message').html(message);                    
+                    $('#message').html(message);
                 }
                 REQUEST_EXISTS = false;
                 $("#img_ajax_loader").hide();
             }
         });
     }
-    
+
     $(document).ready(function(){
         check_user_exists();
         $('input').keyup(function(){
             check_user_exists();
         });
     })
-</script> 
+</script>
 
+<h3>{{ language:lang_reg_title }}</h3>
 <?php
     echo form_open('main/register');
-    echo form_label('User Name').br();
+    echo form_label('{{ language:lang_cp_user_name }}').br();
     echo form_input('user_name', $user_name).br();
-    echo form_label('E mail').br();
+    echo form_label('{{ language:lang_cp_email }}').br();
     echo form_input('email', $email).br();
-    echo form_label('Real Name').br();
+    echo form_label('{{ language:lang_cp_real_name }}').br();
     echo form_input('real_name', $real_name).br();
-    echo form_label('Password').br();
+    echo form_label('{{ language:lang_cp_new_pw }}').br();
     echo form_password('password').br();
-    echo form_label('Confirm Password').br();
-    echo form_password('confirm_password').br();    
-    echo form_submit('register', 'Register');
+    echo form_label('{{ language:lang_cp_new_pw_again }}').br();
+    echo form_password('confirm_password').br();
+    echo form_submit('register', $this->No_CMS_Model->cms_lang('lang_reg_submit'), 'class="btn btn-primary"');
     echo form_close();
     echo br();
 ?>
