@@ -87,8 +87,8 @@ class Main extends CMS_Controller
         $password = $this->input->post('password');
 
         //set validation rule
-        $this->form_validation->set_rules('identity', 'Identity', 'required|xss_clean');
-        $this->form_validation->set_rules('password', 'Password', 'required|xss_clean');
+        $this->form_validation->set_rules('identity', $this->cms_lang('lang_login_identity'), 'required|xss_clean');
+        $this->form_validation->set_rules('password', $this->cms_lang('lang_login_password'), 'required|xss_clean');
 
         if ($this->form_validation->run()) {
             if ($this->cms_do_login($identity, $password)) {
@@ -108,7 +108,7 @@ class Main extends CMS_Controller
                 //view login again
                 $data = array(
                     "identity" => $identity,
-                    "message" => 'Error: Login Failed',
+                    "message" => '<div class="alert alert-error">' . $this->cms_lang('lang_login_failed') . '</div>',
                     "providers" => $this->cms_third_party_providers()
                 );
                 $this->view('main/login', $data, 'main_login');
@@ -120,9 +120,10 @@ class Main extends CMS_Controller
             }
 
             //view login again
+            $errs = $this->form_validation->error_string(' ', '<br />');
             $data = array(
                 "identity" => $identity,
-                "message" => '',
+                "message" => (!empty($errs) ? '<div class="alert alert-error">'.$errs.'</div>' : ''),
                 "providers" => $this->cms_third_party_providers()
             );
             $this->view('main/login', $data, 'main_login');
@@ -142,8 +143,8 @@ class Main extends CMS_Controller
             //get user input
             $password = $this->input->post('password');
             //set validation rule
-            $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[confirm_password]');
-            $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
+            $this->form_validation->set_rules('password', $this->cms_lang('lang_fcp_new'), 'required|xss_clean|matches[confirm_password]');
+            $this->form_validation->set_rules('confirm_password', $this->cms_lang('lang_fcp_new_again'), 'required|xss_clean');
 
             if ($this->form_validation->run()) {
                 if ($this->cms_valid_activation_code($activation_code)) {
@@ -163,7 +164,7 @@ class Main extends CMS_Controller
             $identity = $this->input->post('identity');
 
             //set validation rule
-            $this->form_validation->set_rules('identity', 'Identity', 'required|xss_clean');
+            $this->form_validation->set_rules('identity', $this->cms_lang('lang_ffi_identity'), 'required|xss_clean');
 
             if ($this->form_validation->run()) {
                 if ($this->cms_generate_activation_code($identity, TRUE, 'FORGOT')) {
@@ -194,11 +195,11 @@ class Main extends CMS_Controller
         $confirm_password = $this->input->post('confirm_password');
 
         //set validation rule
-        $this->form_validation->set_rules('user_name', 'User Name', 'required|xss_clean');
-        $this->form_validation->set_rules('email', 'E mail', 'required|xss_clean|valid_email');
-        $this->form_validation->set_rules('real_name', 'Real Name', 'required|xss_clean');
-        $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[confirm_password]');
-        $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
+        $this->form_validation->set_rules('user_name', $this->cms_lang('lang_cp_user_name'), 'required|xss_clean');
+        $this->form_validation->set_rules('email', $this->cms_lang('lang_cp_email'), 'required|xss_clean|valid_email');
+        $this->form_validation->set_rules('real_name', $this->cms_lang('lang_cp_real_name'), 'required|xss_clean');
+        $this->form_validation->set_rules('password', $this->cms_lang('lang_cp_new_pw'), 'required|xss_clean|matches[confirm_password]');
+        $this->form_validation->set_rules('confirm_password', $this->cms_lang('lang_cp_new_pw_again'), 'required|xss_clean');
 
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
             $this->cms_do_register($user_name, $email, $real_name, $password);
@@ -277,11 +278,11 @@ class Main extends CMS_Controller
             $real_name = $row->real_name;
 
         //set validation rule
-        $this->form_validation->set_rules('user_name', 'User Name', 'required|xss_clean');
-        $this->form_validation->set_rules('email', 'E mail', 'required|xss_clean|valid_email');
-        $this->form_validation->set_rules('real_name', 'Real Name', 'required|xss_clean');
-        $this->form_validation->set_rules('password', 'Password', 'xss_clean|matches[confirm_password]');
-        $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'xss_clean');
+        $this->form_validation->set_rules('user_name', $this->cms_lang('lang_cp_user_name'), 'required|xss_clean');
+        $this->form_validation->set_rules('email', $this->cms_lang('lang_cp_email'), 'required|xss_clean|valid_email');
+        $this->form_validation->set_rules('real_name', $this->cms_lang('lang_cp_real_name'), 'required|xss_clean');
+        $this->form_validation->set_rules('password', $this->cms_lang('lang_cp_new_pw'), 'xss_clean|matches[confirm_password]');
+        $this->form_validation->set_rules('confirm_password', $this->cms_lang('lang_cp_new_pw_again'), 'xss_clean');
 
         if ($this->form_validation->run()) {
             $this->cms_do_change_profile($user_name, $email, $real_name, $password);
@@ -325,7 +326,7 @@ class Main extends CMS_Controller
         $this->cms_guard_page('main_language');
         if (isset($language)) {
             $this->cms_language($language);
-            redirect('main/index');
+            $this->index();
         } else {
             $data = array(
                 "language_list" => $this->cms_language_list()
@@ -369,7 +370,7 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_user'));
-        $crud->set_subject('User');
+        $crud->set_subject($this->cms_lang('lang_gc_user'));
 
         $crud->required_fields('user_name');
 
@@ -378,7 +379,7 @@ class Main extends CMS_Controller
         $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups');
         $crud->field_type('active', 'true_false');
 
-        $crud->display_as('user_name', 'User Name')->display_as('email', 'E mail')->display_as('real_name', 'Real Name')->display_as('active', 'Active')->display_as('groups', 'Groups');
+        $crud->display_as('user_name', $this->cms_lang('lang_cp_user_name'))->display_as('email', $this->cms_lang('lang_cp_email'))->display_as('real_name', $this->cms_lang('lang_cp_real_name'))->display_as('active', $this->cms_lang('lang_gc_active'))->display_as('groups', $this->cms_lang('lang_gc_groups'));
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_user'), cms_table_name('main_group'), 'user_id', 'group_id', 'group_name');
         $crud->callback_before_insert(array(
@@ -401,7 +402,7 @@ class Main extends CMS_Controller
             }
         }
 
-        $crud->set_lang_string('delete_error_message', 'You cannot delete super admin user or your own account');
+        $crud->set_lang_string('delete_error_message', $this->cms_lang('lang_gc_can_not_delete_admin'));
 
         $crud->set_language($this->cms_language());
 
@@ -413,7 +414,7 @@ class Main extends CMS_Controller
     public function read_only_user_active($value, $row)
     {
         $input   = '<input name="active" value="' . $value . '" type="hidden" />';
-        $caption = $value == 0 ? 'Inactive' : 'Active';
+        $caption = $value == 0 ? $this->cms_lang('lang_gc_inactive') : $this->cms_lang('lang_gc_active');
         return $input . $caption;
     }
 
@@ -440,14 +441,14 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_group'));
-        $crud->set_subject('User Group');
+        $crud->set_subject($this->cms_lang('lang_gc_user_group'));
 
         $crud->required_fields('group_name');
 
         $crud->columns('group_name', 'description');
         $crud->edit_fields('group_name', 'description', 'users', 'navigations', 'privileges');
         $crud->add_fields('group_name', 'description', 'users', 'navigations', 'privileges');
-        $crud->display_as('group_name', 'Group')->display_as('description', 'Description')->display_as('users', 'Users')->display_as('navigations', 'Navigations')->display_as('privileges', 'Privileges');
+        $crud->display_as('group_name', $this->cms_lang('lang_gc_group'))->display_as('description', $this->cms_lang('lang_gc_description'))->display_as('users', $this->cms_lang('lang_gc_users'))->display_as('navigations', $this->cms_lang('lang_gc_navigations'))->display_as('privileges', $this->cms_lang('lang_gc_privileges'));
 
 
         $crud->set_relation_n_n('users', cms_table_name('main_group_user'), cms_table_name('main_user'), 'group_id', 'user_id', 'user_name');
@@ -461,7 +462,7 @@ class Main extends CMS_Controller
         $crud->unset_texteditor('description');
 
 
-        $crud->set_lang_string('delete_error_message', 'You cannot delete Admin group or group which is not empty, please empty the group first');
+        $crud->set_lang_string('delete_error_message', $this->cms_lang('lang_gc_can_not_delete_admin_group'));
 
         $crud->set_language($this->cms_language());
 
@@ -491,7 +492,7 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_navigation'));
-        $crud->set_subject('Navigation (Page)');
+        $crud->set_subject($this->cms_lang('lang_gc_add_navigation'));
 
         $crud->required_fields('navigation_name');
 
@@ -507,7 +508,7 @@ class Main extends CMS_Controller
             $theme_path[] = $theme['path'];
         }
         $crud->field_type('default_theme', 'enum', $theme_path);
-        $crud->display_as('navigation_name', 'Navigation Code')->display_as('is_root', 'Is Root')->display_as('parent_id', 'Parent')->display_as('title', 'Navigation Title (What visitor see)')->display_as('page_title', 'Page Title')->display_as('page_keyword', 'Page Keyword (Comma Separated)')->display_as('description', 'Description')->display_as('url', 'URL (Where is it point to)')->display_as('active', 'Active')->display_as('is_static', 'Static')->display_as('static_content', 'Static Content')->display_as('authorization_id', 'Authorization')->display_as('groups', 'Groups')->display_as('only_content', 'Only show content')->display_as('default_theme', 'Default Theme');
+        $crud->display_as('navigation_name', $this->cms_lang('lang_gc_navigation_code'))->display_as('is_root', $this->cms_lang('lang_gc_is_root'))->display_as('parent_id', $this->cms_lang('lang_gc_parent'))->display_as('title', $this->cms_lang('lang_gc_navigation_title'))->display_as('page_title', $this->cms_lang('lang_gc_page_title'))->display_as('page_keyword', $this->cms_lang('lang_gc_page_keyword'))->display_as('description', $this->cms_lang('lang_gc_description'))->display_as('url', $this->cms_lang('lang_gc_url'))->display_as('active', $this->cms_lang('lang_gc_active'))->display_as('is_static', $this->cms_lang('lang_gc_static'))->display_as('static_content', $this->cms_lang('lang_gc_static_content'))->display_as('authorization_id', $this->cms_lang('lang_gc_authorization'))->display_as('groups', $this->cms_lang('lang_gc_groups'))->display_as('only_content', $this->cms_lang('lang_gc_only_content'))->display_as('default_theme', $this->cms_lang('lang_gc_default_theme'));
 
         $crud->order_by('parent_id, index', 'asc');
 
@@ -582,9 +583,9 @@ class Main extends CMS_Controller
     {
         $target = site_url($this->cms_module_path() . '/toggle_navigation_active/' . $row->navigation_id);
         if ($value == 0) {
-            return '<span target="' . $target . '" class="navigation_active">Inactive</span>';
+            return '<span target="' . $target . '" class="navigation_active">' . $this->cms_lang('lang_gc_inactive') . '</span>';
         } else {
-            return '<span target="' . $target . '" class="navigation_active">Active</span>';
+            return '<span target="' . $target . '" class="navigation_active">' . $this->cms_lang('lang_gc_active') .'</span>';
         }
     }
 
@@ -620,7 +621,7 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_quicklink'));
-        $crud->set_subject('Quick Link');
+        $crud->set_subject($this->cms_lang('lang_gc_quick_link'));
 
         $crud->required_fields('navigation_id');
 
@@ -628,7 +629,7 @@ class Main extends CMS_Controller
         $crud->edit_fields('navigation_id');
         $crud->add_fields('navigation_id');
 
-        $crud->display_as('navigation_id', 'Navigation Code');
+        $crud->display_as('navigation_id', $this->cms_lang('lang_gc_navigation_code'));
 
         $crud->order_by('index', 'asc');
 
@@ -669,7 +670,7 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_privilege'));
-        $crud->set_subject('Privilege');
+        $crud->set_subject($this->cms_lang('lang_gc_add_privilege'));
 
         $crud->required_fields('privilege_name');
 
@@ -677,7 +678,7 @@ class Main extends CMS_Controller
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_privilege'), cms_table_name('main_group'), 'privilege_id', 'group_id', 'group_name');
 
-        $crud->display_as('authorization_id', 'Authorization');
+        $crud->display_as('authorization_id', $this->cms_lang('lang_gc_authorization'));
 
         $crud->unset_texteditor('description');
 
@@ -696,7 +697,7 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_widget'));
-        $crud->set_subject('Widget');
+        $crud->set_subject($this->cms_lang('lang_gc_widget'));
 
         $crud->required_fields('widget_name');
 
@@ -707,7 +708,7 @@ class Main extends CMS_Controller
         $crud->field_type('is_static', 'true_false');
         $crud->field_type('index', 'integer');
 
-        $crud->display_as('widget_name', 'Widget Code')->display_as('title', 'Title (What visitor see)')->display_as('active', 'Active')->display_as('description', 'Description')->display_as('url', 'URL (Where is it point to)')->display_as('index', 'Order')->display_as('is_static', 'Static')->display_as('static_content', 'Static Content')->display_as('slug', 'Slug')->display_as('authorization_id', 'Authorization')->display_as('groups', 'Groups');
+        $crud->display_as('widget_name', $this->cms_lang('lang_gc_widget_code'))->display_as('title', $this->cms_lang('lang_gc_widget_title'))->display_as('active', $this->cms_lang('lang_gc_active'))->display_as('description', $this->cms_lang('lang_gc_description'))->display_as('url', $this->cms_lang('lang_gc_url'))->display_as('index', $this->cms_lang('lang_gc_order'))->display_as('is_static', $this->cms_lang('lang_gc_static'))->display_as('static_content', $this->cms_lang('lang_gc_static_content'))->display_as('slug', $this->cms_lang('lang_gc_widget_slug'))->display_as('authorization_id', $this->cms_lang('lang_gc_authorization'))->display_as('groups', $this->cms_lang('lang_gc_groups'));
 
         $crud->unset_texteditor('static_content');
         $crud->unset_texteditor('description');
@@ -799,7 +800,7 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_config'));
-        $crud->set_subject('Configuration');
+        $crud->set_subject($this->cms_lang('lang_gc_configuration'));
 
 
 
@@ -807,9 +808,9 @@ class Main extends CMS_Controller
         $crud->edit_fields('config_name', 'value', 'description');
         $crud->add_fields('config_name', 'value', 'description');
 
-        $crud->display_as('config_name', 'Configuration Key')
-            ->display_as('value', 'Configuration Value')
-            ->display_as('description', 'Description');
+        $crud->display_as('config_name', $this->cms_lang('lang_gc_configuration_key'))
+            ->display_as('value', $this->cms_lang('lang_gc_configuration_value'))
+            ->display_as('description', $this->cms_lang('lang_gc_description'));
 
         $crud->unset_texteditor('description');
         $crud->unset_texteditor('value');
