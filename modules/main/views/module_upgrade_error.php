@@ -4,10 +4,10 @@
         display:none;
     }
 </style>
-<h4>Installation Failed</h4>
+<h4>{{ language:lang_mae_install_failed }}</h4>
 <div id="message" class="alert alert-error"><?php
-		echo 'Cannot upgrade "<em>'.$module_name.'</em>" on "'.$module_path.'" ';
-	    echo anchor('main/module_management','Back');
+		echo '{{ language:lang_mue_cannot_upgrade }} "<em>'.$module_name.'</em>" - "'.$module_path.'" ';
+	    echo anchor('main/module_management','{{ language:lang_mae_back }}');
 	    echo br();
 	    echo $message;
 	?></div>
