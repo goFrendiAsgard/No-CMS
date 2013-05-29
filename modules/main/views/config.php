@@ -15,6 +15,7 @@
         cursor: default;
 	}
 </style>
+<h3>{{ language:Configuration Management }}</h3>
 <?php
 	$asset = new CMS_Asset();
 	foreach($css_files as $file){
