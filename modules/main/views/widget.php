@@ -1,3 +1,4 @@
+<h3>{{ language:Widget Management }}</h3>
 <?php 
 	$asset = new CMS_Asset();
 	$asset->add_module_css('styles/widget.css', 'main'); 

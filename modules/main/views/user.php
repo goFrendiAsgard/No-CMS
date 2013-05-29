@@ -6,6 +6,7 @@
         cursor: default;
 	}
 </style>
+<h3>{{ language:User Management }}</h3>
 <?php
 	$asset = new CMS_Asset();
 	foreach($css_files as $file){

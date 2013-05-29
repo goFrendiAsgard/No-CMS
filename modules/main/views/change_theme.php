@@ -13,23 +13,23 @@
 		display:none;
 	}
 </style>
-<h3>Change Theme</h3>
+<h3>{{ language:Change Theme }}</h3>
 <?php
 	echo '<ul class="thumbnails row-fluid">';
     foreach($themes as $theme){
         $str_status = $theme['used']?'used':'not used';
         echo '<li class=" well module-management-container change-theme-container" style="width:150px!important; height:120px!important; float:left!important; list-style-type:none;">';
         if(!$theme['used']){
-        	echo '<a href="'.site_url('main/change_theme/'.$theme['path']).'">Use ';
+        	echo '<a href="'.site_url('main/change_theme/'.$theme['path']).'">{{ language:lang_ct_use }} ';
         }else{
-        	echo 'Currently use ';
+        	echo '{{ language:lang_ct_current }} ';
         }
-        echo '<b><i>'.$theme['path'].'</i></b> theme<br /><br />';
+        echo '<b><i>'.$theme['path'].'</i></b> {{ language:lang_ct_theme }}<br /><br />';
         $image_path = base_url('themes/'.$theme['path'].'/preview.png');
         if(@file_get_contents($image_path,0,NULL,0,1)){
         	echo '<img src="'.$image_path.'" />';
         }else{
-        	echo 'No Preview';
+        	echo '{{ language:lang_ct_no_preview }}';
         }
         if(!$theme['used']) echo '</a>';
         echo '</li>';
@@ -38,7 +38,7 @@
     echo '<div style="clear:both"></div>';
 	if($upload['uploading'] && !$upload['success']){    	
     	echo '<div id="message" class="alert alert-error">';
-    	echo '<b>Error:</b> '.$upload['message'];
+    	echo '<b>{{ language:lang_ct_error }}</b> '.$upload['message'];
     	echo '</div>';
     }
 ?>
@@ -46,6 +46,6 @@
 	<form action="<?php echo site_url('main/change_theme');?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
 		<input type="file" name="userfile" size="20" />	
 		<br /><br />		
-		<input name="upload" class="btn btn-primary" type="submit" value="Upload New Theme" />		
+		<input name="upload" class="btn btn-primary" type="submit" value="{{ language:lang_ct_upload_new }}" />		
 	</form>
 </div>

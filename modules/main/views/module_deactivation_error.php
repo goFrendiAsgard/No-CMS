@@ -4,10 +4,10 @@
         display:none;
     }
 </style>
-<h4>Uninstallation Failed</h4>
+<h4>{{ language:lang_mde_uninstall_failed }}</h4>
 <div id="message" class="alert alert-error"><?php
-		echo 'Cannot deactivate "<em>'.$module_name.'</em>" on "'.$module_path.'" ';
-	    echo anchor('main/module_management','Back');
+		echo '{{ language:lang_mde_cannot_deactivate }} "<em>'.$module_name.'</em>" - "'.$module_path.'" ';
+	    echo anchor('main/module_management','{{ language:lang_mae_back }}');
         echo br();
         echo $message;
 	?></div>

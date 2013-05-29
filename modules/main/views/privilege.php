@@ -1,3 +1,4 @@
+<h3>{{ language:Privilege Management }}</h3>
 <?php 
 	$asset = new CMS_Asset();
 	foreach($css_files as $file){
