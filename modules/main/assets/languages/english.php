@@ -105,7 +105,3 @@ $lang['lang_gc_widget_slug'] = 'Slug';
 $lang['lang_gc_configuration'] = 'Configuration';
 $lang['lang_gc_configuration_key'] = 'Configuration Key';
 $lang['lang_gc_configuration_value'] = 'Configuration Value';
-
-// {{ language: }}
-// $this->No_CMS_Model->cms_lang('')
-// class="btn btn-primary"
