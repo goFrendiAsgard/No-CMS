@@ -180,7 +180,7 @@ class CMS_Model extends CI_Model
 
         $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
         $query         = $this->db->query("SELECT navigation_id, navigation_name, is_static, title, description, url, active,
-                	(
+                    (
                         (authorization_id = 1) OR
                         (authorization_id = 2 AND $not_login) OR
                         (authorization_id = 3 AND $login) OR
@@ -197,7 +197,7 @@ class CMS_Model extends CI_Model
                                 )>0
                             )
                         )
-					) AS allowed
+                    ) AS allowed
                 FROM ".cms_table_name('main_navigation')." AS n WHERE
                     $where_is_root ORDER BY n.index");
         $result        = array();
@@ -250,13 +250,13 @@ class CMS_Model extends CI_Model
 
         $query  = $this->db->query("SELECT q.navigation_id, navigation_name, is_static, title, description, url
                         FROM
-                        	".cms_table_name('main_navigation')." AS n,
-                        	".cms_table_name('main_quicklink')." AS q
+                            ".cms_table_name('main_navigation')." AS n,
+                            ".cms_table_name('main_quicklink')." AS q
                         WHERE
-                        	(
-                        		q.navigation_id = n.navigation_id
-                        	)
-                        	AND
+                            (
+                                q.navigation_id = n.navigation_id
+                            )
+                            AND
                             (
                                 (authorization_id = 1) OR
                                 (authorization_id = 2 AND $not_login) OR
@@ -785,6 +785,7 @@ class CMS_Model extends CI_Model
     {
         $this->load->helper('directory');
         $directories = directory_map('modules', 1);
+        sort($directories);
         $module      = array();
         foreach ($directories as $directory) {
             if (!is_dir('modules/' . $directory))
@@ -883,7 +884,7 @@ class CMS_Model extends CI_Model
     /**
      * @author  goFrendiAsgard
      * @param   string identity
-     * @param	bool send_mail
+     * @param    bool send_mail
      * @param   string reason (FORGOT, SIGNUP)
      * @return  bool
      * @desc    generate activation code, and send email to applicant
@@ -1115,13 +1116,13 @@ class CMS_Model extends CI_Model
             $value = $this->cms_parse_keyword($value);
         }
         return $value;
-    }
+}
 
     /**
-     * @author	goFrendiAsgard
-     * @param	string language
-     * @return	string language
-     * @desc	set language for this session only
+     * @author    goFrendiAsgard
+     * @param    string language
+     * @return    string language
+     * @desc    set language for this session only
      */
     public function cms_language($language = NULL)
     {
@@ -1139,17 +1140,36 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author	goFrendiAsgard
-     * @return	array list of available languages
-     * @desc	get available languages
+     * @author    goFrendiAsgard
+     * @return    array list of available languages
+     * @desc    get available languages
      */
     public function cms_language_list()
     {
         $this->load->helper('file');
-        $result = get_filenames('assets/nocms/languages');
-        for ($i = 0; $i < count($result); $i++) {
-            $result[$i] = str_ireplace('.php', '', $result[$i]);
+        $result = array();
+        $language_list = get_filenames('assets/nocms/languages');
+        foreach ($language_list as $language){
+            if(preg_match('/\.php$/i', $language)){
+                $result[] = str_ireplace('.php', '', $language);
+            }
         }
+        $module_list = $this->cms_get_module_list();
+        $module_list[] = array('module_path'=>'main');
+        foreach ($module_list as $module){
+            $directory = $module['module_path'];
+            $module_language_list = get_filenames('modules/'.$directory.'/assets/languages');
+            if($module_language_list === FALSE) continue;
+            foreach($module_language_list as $module_language){
+                if(preg_match('/\.php$/i', $module_language)){
+                    $module_language = str_ireplace('.php', '', $module_language);
+                    if(!in_array($module_language, $result)){
+                        $result[] = $module_language;
+                    }
+                }
+            }
+        }
+        sort($result);
         return $result;
     }
 

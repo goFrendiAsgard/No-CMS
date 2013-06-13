@@ -1,74 +1,74 @@
 <?php
 // forgot_fill_identity.php
-$lang['Identity'] = 'Identity';
-$lang['Send activation code to my email'] = 'Send activation code to my email';
+$lang['Identity'] = 'Identitas';
+$lang['Send activation code to my email'] = 'Kirimkan kode aktivasi ke email saya';
 
 // forgot_change_password.php
-$lang['New Password'] = 'New Password';
-$lang['New Password (again)'] = 'New Password (again)';
-$lang['Change'] = 'Change';
+$lang['New Password'] = 'Kata sandi baru';
+$lang['New Password (again)'] = 'Kata sandi baru (lagi)';
+$lang['Change'] = 'Ubah';
 
 // change_profile.php
-$lang['Password is empty'] = 'Password is empty';
-$lang['Confirm password doesn\'t match'] = 'Confirm password doesn\'t match';
-$lang['User Name'] = 'User Name';
+$lang['Password is empty'] = 'Kata sandi kosong';
+$lang['Confirm password doesn\'t match'] = 'Konfirmasi password tidak sesuai';
+$lang['User Name'] = 'Nama Pengguna';
 $lang['Email'] = 'Email';
-$lang['Real Name'] = 'Real Name';
-$lang['Change Password'] = 'Change Password';
-$lang['Password'] = 'Password';
-$lang['Confirm Password'] = 'Confirm Password';
-$lang['Change Profile'] = 'Change Profile';
+$lang['Real Name'] = 'Nama Asli';
+$lang['Change Password'] = 'Ubah Kata Sandi';
+$lang['Password'] = 'Kata Sandi';
+$lang['Confirm Password'] = 'Konfirmasi Kata Sandi';
+$lang['Change Profile'] = 'Ubah Profil';
 
 // change_theme.php
-$lang['Use'] = 'Use';
-$lang['Currently use'] = 'Currently use';
-$lang['theme'] = 'theme';
-$lang['No Preview'] = 'No Preview.';
+$lang['Use'] = 'Gunakan';
+$lang['Currently use'] = 'Sedang menggunakan';
+$lang['theme'] = 'Tema';
+$lang['No Preview'] = 'Tidak Ada Tampilan';
 $lang['Error'] = 'Error';
-$lang['Upload New Theme'] = 'Upload New Theme';
+$lang['Upload New Theme'] = 'Unggah Tema Baru';
 
 // login.php
-$lang['User Name'] = 'User Name';
-$lang['Password'] = 'Password';
-$lang['Register'] = 'Register';
-$lang['Or Login with'] = 'Or Login with';
-$lang['Login'] = 'Login';
-$lang['Login Failed'] = 'Login Failed!';
+$lang['User Name'] = 'Nama Pengguna';
+$lang['Password'] = 'Kata Sandi';
+$lang['Register'] = 'Daftar';
+$lang['Or Log In with'] = 'Atau Login dengan';
+$lang['Log In'] = 'Login';
+$lang['Login Failed'] = 'Login Gagal!';
 
 // module_activation_error.php
-$lang['Installation Failed'] = 'Installation Failed';
-$lang['Cannot activate'] = 'Cannot activate';
-$lang['Back'] = 'Back';
+$lang['Installation Failed'] = 'Instalasi Gagal';
+$lang['Cannot activate'] = 'Tidak dapat mengaktifkan';
+$lang['Back'] = 'Kembali';
 
 // module_deactivation_error.php
-$lang['Uninstallation Failed'] = 'Uninstallation Failed';
-$lang['Cannot deactivate'] = 'Cannot deactivate';
+$lang['Uninstallation Failed'] = 'Uninstalasi Gagal';
+$lang['Cannot deactivate'] = 'Tidak dapat menonaktifkan';
 
 // module_management.php
-$lang['Activate'] = 'Activate';
+$lang['Activate'] = 'Aktifkan';
 $lang['Upgrade'] = 'Upgrade';
-$lang['Deactivate'] = 'Deactivate';
-$lang['Settings'] = 'Settings';
-$lang['Need Upgrade'] = 'Need Upgrade';
-$lang['Active'] = 'Active';
-$lang['Inactive'] = 'Inactive';
-$lang['Registered Version'] = 'Registered Version';
-$lang['Current Version'] = 'Current Version';
+$lang['Deactivate'] = 'Nonaktifkan';
+$lang['Settings'] = 'Pengaturan';
+$lang['Need Upgrade'] = 'Butuh Upgrade';
+$lang['Active'] = 'Aktif';
+$lang['Inactive'] = 'Tidak Aktif';
+$lang['Registered Version'] = 'Versi Terregistrasi';
+$lang['Current Version'] = 'Versi Saat Ini';
 $lang['Status'] = 'Status';
 $lang['Error'] = 'Error';
-$lang['Upload New Module'] = 'Upload New Module';
+$lang['Upload New Module'] = 'Unggah Module Baru';
 
 // module_upgrade_error.php
-$lang['Cannot upgrade'] = 'Cannot upgrade';
+$lang['Cannot upgrade'] = 'Tidak bisa upgrade';
 
 // register.php (most is shared with change_profile.php)
-$lang['New User Registration'] = 'New User Registration';
+$lang['New User Registration'] = 'Registrasi Pengguna Baru';
 $lang['Register'] = 'Register';
 
 
 // rest, grocery crud related (add button, column titles)
-$lang['Active'] = 'Active';
-$lang['Inactive'] = 'Inactive';
+$lang['Active'] = 'Aktif';
+$lang['Inactive'] = 'Nonaktif';
 $lang['Groups'] = 'Groups';
 $lang['User'] = 'User';
 $lang['Authorization'] = 'Authorization';

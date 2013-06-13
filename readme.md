@@ -203,7 +203,39 @@ Themes are located at `/themes/` folder. With such a structure:
                                 |--- /default
                                 |--- /other_layout
 ```
-For more information about themes, please refer to the documentation provided.
+In your `default.php`, you can several variables:
+
+* `$template['body']` : This variable contains your page content.
+* `$template['title']` : This variable contains your page title
+* `$template['metadata']` : This variable contains everything including JQuery, meta keyword, and language information
+* `$template['partials']['header']` : Including `/views/partials/default/header.php`.
+
+You can also use several tags such as:
+* `{{ site_logo }}` : Your logo path
+* `{{ site_slogan }}` : Slogan
+* `{{ site_footer }}` : Your footer
+* `{{ widget_name:top_navigation }}` : A widget contains bootstrap styled top navigation
+* `{{ widget_name:left_navigation }}` : A widget contains bootstrap styled top navigation
+* And many others, see documentation for more information
+
+Here is a very simple example of `default.php`:
+```php
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><?php echo $template['title']; ?></title>
+        <?php echo $template['metadata']; ?>
+    </head>
+    <body>
+        <h1><img src=”{{ site_logo }}” /><?php echo $template['title']; ?></h1>
+        <div class="nav-collapse in collapse" id="main-menu" style="height: auto; ">
+            {{ widget_name:top_navigation }}
+        </div>
+        <?php echo $template['body']; ?>
+    </body>
+    <footer>{{ site_footer }}</footer>
+</html>
+```
 
 Tutorial 04: Modules
 ====================
@@ -631,9 +663,22 @@ Tutorial 05: Module Generator (Nordrassil)
 ==========================================
 
 * Go to `CMS Management | Module Generator`
-* Make a new project. (You can make a project based on database)
-* Edit tables and columns of your project
+* Make a new project. (You can make a project based on already exists database)
+* Edit or make tables and columns for your project
 * Click generate, and it is.
+* Go to `CMS Management | Module Management`, activate your module
+
+Tutorial 06: Migration
+======================
+
+In case of you want to No-CMS into the newest version, you can safely overwrite everything except:
+* `/application/config/` directory
+* `/modules/` directory
+* `/.htaccess` file
+
+In case of you test No-CMS in local computer and want to upload it into public server, you need to change these parts:
+* `RewriteBase` in `/.htaccess`.
+* Database configuration in `/application/config/database.php`
 
 Contributing
 ============
@@ -818,3 +863,4 @@ v0.6.2
 
 v0.6.3
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
++ (done, tested) make language and module list sorted
