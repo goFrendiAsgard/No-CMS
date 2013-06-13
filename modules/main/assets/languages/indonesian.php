@@ -21,8 +21,8 @@ $lang['Change Profile'] = 'Ubah Profil';
 
 // change_theme.php
 $lang['Use'] = 'Gunakan';
-$lang['Currently use'] = 'Sedang menggunakan';
-$lang['theme'] = 'Tema';
+$lang['Currently use theme'] = 'Sedang menggunakan tema';
+$lang['Use theme'] = 'Gunakan tema';
 $lang['No Preview'] = 'Tidak Ada Tampilan';
 $lang['Error'] = 'Error';
 $lang['Upload New Theme'] = 'Unggah Tema Baru';
@@ -31,9 +31,9 @@ $lang['Upload New Theme'] = 'Unggah Tema Baru';
 $lang['User Name'] = 'Nama Pengguna';
 $lang['Password'] = 'Kata Sandi';
 $lang['Register'] = 'Daftar';
-$lang['Or Log In with'] = 'Atau Login dengan';
-$lang['Log In'] = 'Login';
-$lang['Login Failed'] = 'Login Gagal!';
+$lang['Or Login with'] = 'Atau Masuk dengan';
+$lang['Login'] = 'Masuk';
+$lang['Login Failed'] = 'Gagal Masuk!';
 
 // module_activation_error.php
 $lang['Installation Failed'] = 'Instalasi Gagal';
@@ -63,7 +63,7 @@ $lang['Cannot upgrade'] = 'Tidak bisa upgrade';
 
 // register.php (most is shared with change_profile.php)
 $lang['New User Registration'] = 'Registrasi Pengguna Baru';
-$lang['Register'] = 'Register';
+$lang['Register'] = 'Daftar';
 
 
 // rest, grocery crud related (add button, column titles)

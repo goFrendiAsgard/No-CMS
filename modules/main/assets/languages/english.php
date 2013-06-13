@@ -21,8 +21,8 @@ $lang['Change Profile'] = 'Change Profile';
 
 // change_theme.php
 $lang['Use'] = 'Use';
-$lang['Currently use'] = 'Currently use';
-$lang['theme'] = 'theme';
+$lang['Currently use theme'] = 'Currently use theme';
+$lang['Use theme'] = 'Use theme';
 $lang['No Preview'] = 'No Preview.';
 $lang['Error'] = 'Error';
 $lang['Upload New Theme'] = 'Upload New Theme';

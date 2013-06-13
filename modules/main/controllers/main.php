@@ -65,6 +65,7 @@ class Main extends CMS_Controller
             redirect('main/change_theme');
         } else {
             $data['themes'] = $this->cms_get_layout_list();
+            $data['upload_new_theme_caption'] = $this->cms_lang('Upload New Theme');
             $this->view('main/change_theme', $data, 'main_change_theme');
         }
     }
@@ -108,8 +109,10 @@ class Main extends CMS_Controller
                 //view login again
                 $data = array(
                     "identity" => $identity,
-                    "message" => 'Error: Login Failed',
-                    "providers" => $this->cms_third_party_providers()
+                    "message" => '{{ language:Error }}: {{ language:Login Failed }}',
+                    "providers" => $this->cms_third_party_providers(),
+                    "login_caption" => $this->cms_lang("Login"),
+                    "register_caption" => $this->cms_lang("Register"),
                 );
                 $this->view('main/login', $data, 'main_login');
             }
@@ -123,7 +126,9 @@ class Main extends CMS_Controller
             $data = array(
                 "identity" => $identity,
                 "message" => '',
-                "providers" => $this->cms_third_party_providers()
+                "providers" => $this->cms_third_party_providers(),
+                "login_caption" => $this->cms_lang("Login"),
+                "register_caption" => $this->cms_lang("Register"),
             );
             $this->view('main/login', $data, 'main_login');
         }

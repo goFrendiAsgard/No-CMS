@@ -684,6 +684,13 @@ RewriteBase should be `/` if you put No-CMS in top public directory (eg: * If yo
 
 RewriteBase should be `/your_folder` if you put No-CMS inside a directory in your public directory (eg: * If your web address is http://some_domain.com/portal/, then you should edit RewriteBase into `RewriteBase /portal/`)
 
+Tutorial 07: Translation
+========================
+
+To make additional language translation, you can copy `/assets/nocms/languages/english.php` to `/assets/nocms/languages/your_language.php`.
+
+Beside that, No-CMS also support per-module translation. Go to `modules/assets/languages/` directory and make your translation file.
+
 Contributing
 ============
 
