@@ -50,6 +50,7 @@ class Main extends CMS_Controller
 
         // show the view
         $data['modules'] = $this->cms_get_module_list();
+        $data['upload_new_module_caption'] = $this->cms_lang('Upload New Module');
         $this->view('main/module_management', $data, 'main_module_management');
     }
 
@@ -215,7 +216,8 @@ class Main extends CMS_Controller
             $data = array(
                 "user_name" => $user_name,
                 "email" => $email,
-                "real_name" => $real_name
+                "real_name" => $real_name,
+                "register_caption" => $this->cms_lang('Register'),
             );
             $this->view('main/register', $data, 'main_register');
         }

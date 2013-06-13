@@ -1233,7 +1233,7 @@ class CMS_Module_Installer extends CMS_Controller
     protected $DEPENDENCIES  = array();
     protected $NAME          = '';
     protected $VERSION       = '0.0.0';
-    protected $DESCRIPTION   = 'Just another module ...';
+    protected $DESCRIPTION   = NULL;
     protected $IS_ACTIVE     = FALSE;
     protected $IS_OLD        = FALSE;
     protected $OLD_VERSION   = '';
@@ -1268,6 +1268,9 @@ class CMS_Module_Installer extends CMS_Controller
     }
 
     public function status(){
+        if(!isset($this->DESCRIPTION)){
+            $this->DESCRIPTION = $this->cms_lang('Just another module');
+        }
         $result = array(
             'active'=>$this->IS_ACTIVE,
             'old'=>$this->IS_OLD,

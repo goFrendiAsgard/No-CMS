@@ -56,6 +56,7 @@ $lang['Registered Version'] = 'Registered Version';
 $lang['Current Version'] = 'Current Version';
 $lang['Status'] = 'Status';
 $lang['Error'] = 'Error';
+$lang['Just another module'] = 'Just another module';
 $lang['Upload New Module'] = 'Upload New Module';
 
 // module_upgrade_error.php

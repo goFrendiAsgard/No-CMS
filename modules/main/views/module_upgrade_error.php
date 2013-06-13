@@ -6,8 +6,8 @@
 </style>
 <h4>Installation Failed</h4>
 <div id="message" class="alert alert-error"><?php
-		echo 'Cannot upgrade "<em>'.$module_name.'</em>" on "'.$module_path.'" ';
-	    echo anchor('main/module_management','Back');
+		echo '{{ language:Cannot upgrade }} "<em>'.$module_name.'</em>" ("'.$module_path.'") ';
+	    echo anchor('main/module_management','{{ language:Back }}');
 	    echo br();
 	    echo $message;
 	?></div>

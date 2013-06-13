@@ -1195,6 +1195,11 @@ class CMS_Model extends CI_Model
                     }
                 }
             }
+            // nocms main module language setting override previous language setting
+            $language_file = "modules/main/assets/languages/$language.php";
+            if (file_exists($language_file)) {
+                include($language_file);
+            }
             // global nocms language setting override previous language setting
             $language_file = "assets/nocms/languages/$language.php";
             if (file_exists($language_file)) {
@@ -1224,7 +1229,6 @@ class CMS_Model extends CI_Model
         $language = $this->cms_language();
 
         $dictionary = $this->cms_language_dictionary();
-
         // get the language
         if (isset($dictionary[$key])) {
             return $dictionary[$key];

@@ -52,11 +52,12 @@ $lang['Settings'] = 'Pengaturan';
 $lang['Need Upgrade'] = 'Butuh Upgrade';
 $lang['Active'] = 'Aktif';
 $lang['Inactive'] = 'Tidak Aktif';
-$lang['Registered Version'] = 'Versi Terregistrasi';
+$lang['Registered Version'] = 'Versi Terdaftar';
 $lang['Current Version'] = 'Versi Saat Ini';
 $lang['Status'] = 'Status';
 $lang['Error'] = 'Error';
-$lang['Upload New Module'] = 'Unggah Module Baru';
+$lang['Just another module'] = 'Hanya sebuah modul';
+$lang['Upload New Module'] = 'Unggah Modul Baru';
 
 // module_upgrade_error.php
 $lang['Cannot upgrade'] = 'Tidak bisa upgrade';
