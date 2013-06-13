@@ -170,13 +170,15 @@ class Main extends CMS_Controller
                     redirect('main/index');
                 } else {
                     $data = array(
-                        "identity" => $identity
+                        "identity" => $identity,
+                        "send_activation_code_caption"=> $this->cms_lang('Send activation code to my email'),
                     );
                     $this->view('main/forgot_fill_identity', $data, 'main_forgot');
                 }
             } else {
                 $data = array(
-                    "identity" => $identity
+                    "identity" => $identity,
+                    "send_activation_code_caption"=> $this->cms_lang('Send activation code to my email'),
                 );
                 $this->view('main/forgot_fill_identity', $data, 'main_forgot');
             }
