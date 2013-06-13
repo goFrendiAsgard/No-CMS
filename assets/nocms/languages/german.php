@@ -2,10 +2,12 @@
 $lang['language_alias'] = 'de';
 $lang['Home'] = 'Startseite';
 $lang['Language'] = 'Sprache';
+$lang['Third Party Authentication'] = 'Third Party Authentication';
 $lang['Login'] = 'Anmelden';
 $lang['Logout'] = 'Abmelden';
 $lang['Forgot Password'] = 'Kennwort vergessen';
 $lang['Register'] = 'Registrieren';
+$lang['No-CMS User Guide'] = 'No-CMS Benutzerhandbuch';
 $lang['Change Profile'] = 'Profil ändern';
 $lang['CMS Management'] = 'CMS Verwaltung';
 $lang['Group Management'] = 'Gruppen Verwaltung';

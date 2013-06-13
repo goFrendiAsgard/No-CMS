@@ -2,6 +2,7 @@
 $lang['language_alias'] = 'jp';
 $lang['Home'] = 'ホーム';
 $lang['Language'] = '言語';
+$lang['Third Party Authentication'] = 'Third Party Authentication';
 $lang['Login'] = 'ログイン';
 $lang['Logout'] = 'ログアウト';
 $lang['Forgot Password'] = 'パスワード忘れた';

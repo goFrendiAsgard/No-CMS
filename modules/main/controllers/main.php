@@ -154,7 +154,8 @@ class Main extends CMS_Controller
                 }
             } else {
                 $data = array(
-                    "activation_code" => $activation_code
+                    "activation_code" => $activation_code,
+                    "change_caption" => $this->cms_lang('Change'),
                 );
                 $this->view('main/forgot_change_password', $data, 'main_forgot');
             }
