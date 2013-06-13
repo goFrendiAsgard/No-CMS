@@ -290,7 +290,8 @@ class Main extends CMS_Controller
             $data = array(
                 "user_name" => $user_name,
                 "email" => $email,
-                "real_name" => $real_name
+                "real_name" => $real_name,
+                "change_profile_caption" => $this->cms_lang('Change Profile'),
             );
             $this->view('main/change_profile', $data, 'main_change_profile');
         }
