@@ -511,7 +511,7 @@ class CMS_Model extends CI_Model
                         SELECT parent_id FROM ".cms_table_name('main_navigation')."
                         WHERE navigation_name = '" . addslashes($navigation_name) . "'
                     )");
-        if ($query->num_rows == 0)
+        if ($query->num_rows() == 0)
             return false;
         else {
             foreach ($query->result() as $row) {
@@ -538,7 +538,7 @@ class CMS_Model extends CI_Model
         $query = $this->db->query("SELECT navigation_id, navigation_name, title, description, url
                     FROM ".cms_table_name('main_navigation')."
                     WHERE navigation_name = '" . addslashes($navigation_name) . "'");
-        if ($query->num_rows == 0)
+        if ($query->num_rows() == 0)
             return false;
         else {
             foreach ($query->result() as $row) {

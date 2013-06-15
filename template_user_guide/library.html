@@ -73,7 +73,7 @@ Documentation
 	<pre>$this->template->set('foo', $bar);</pre>
 
 	<p><b>Usage</b></p>
-	<pre>$this->template->build('welcome_message', array('message' => 'Hi there!');</pre>
+	<pre>$this->template->build('welcome_message', array('message' => 'Hi there!'));</pre>
 	<br />
 
 	<a name="prepend_metadata"></a>
@@ -87,7 +87,7 @@ Documentation
 
 	<p><b>Usage</b></p>
 	<pre>
-		$this->template->prepend_metadata('&lt;script src="/js/jquery.js">&lt;/script>);
+		$this->template->prepend_metadata('&lt;script src="/js/jquery.js">&lt;/script>');
 	</pre>
 	<br />
 
@@ -181,6 +181,21 @@ Documentation
 	// views/welcome_message
 	->build('welcome_message');</pre>
 	<br />
+
+	<a name="load_view"></a>
+	<h2>load_view()</h2>
+	<p>Load views from theme paths if they exist.</p>
+
+	<p><strong>Parameters</strong></p>
+	<ol>
+		<li><var>$view</var>- string REQUIRED - Name of the view to be loaded.</li>
+		<li><var>$data</var> - array/object OPTIONAL - assign some extra data for this view.</li>
+	</ol>
+
+	<p><strong>Return</strong></p>
+	<ul>
+		<li>string. The contents of the rendered view.</li>
+	</ul>
 
 	<a name="build"></a>
 	<h2>build()</h2>

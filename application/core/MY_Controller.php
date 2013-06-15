@@ -469,10 +469,7 @@ class CMS_Controller extends MX_Controller
     protected function cms_navigation_name($url_string = NULL)
     {
         if (!isset($url_string)) {
-            $url_string = $this->uri->ruri_string();
-            if(strlen($url_string)>0 && $url_string[0]){
-                $url_string = substr($url_string, 1);
-            }
+            $url_string = $this->uri->uri_string();
         }
         $SQL             = "SELECT navigation_name
         	FROM ".cms_table_name('main_navigation')."
@@ -608,7 +605,7 @@ class CMS_Controller extends MX_Controller
         /**
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
          */
-        if (!$dynamic_widget && !isset($navigation_name)) {
+        if ((!isset($dynamic_widget) || !$dynamic_widget) && !isset($navigation_name)) {
             $navigation_name = $this->cms_navigation_name();
         }
 

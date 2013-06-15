@@ -319,7 +319,7 @@ class Main extends CMS_Controller
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen(NULL)
         );
-        $this->view('main/index', $data);//, 'main_index');
+        $this->view('main/index', $data, 'main_index');
     }
 
     public function management()
