@@ -8,9 +8,24 @@ class Examples extends CI_Controller {
 
 		$this->load->database();
 		$this->load->helper('url');
-
-		$this->load->library('grocery_CRUD');
 	}
+
+    public function new_crud(){
+        $db_driver = $this->db->platform();
+        $model_name = 'grocery_crud_model_'.$db_driver;
+        $model_alias = 'm'.substr(md5(rand()), 0, rand(4,15) );
+
+        unset($this->{$model_name});
+        $this->load->library('grocery_CRUD');
+        $crud = new Grocery_CRUD();
+        if (file_exists(APPPATH.'/models/'.$model_name.'.php')){
+            $this->load->model('grocery_crud_model');
+            $this->load->model('grocery_crud_generic_model');
+            $this->load->model($model_name,$model_alias);
+            $crud->basic_model = $this->{$model_alias};
+        }
+        return $crud;
+    }
 
 	public function _example_output($output = null)
 	{
@@ -19,7 +34,7 @@ class Examples extends CI_Controller {
 
 	public function offices()
 	{
-		$output = $this->grocery_crud->render();
+		$output = $this->crud->render();
 
 		$this->_example_output($output);
 	}
@@ -32,7 +47,7 @@ class Examples extends CI_Controller {
 	public function offices_management()
 	{
 		try{
-			$crud = new grocery_CRUD();
+			$crud = $this->new_crud();
 
 			$crud->set_theme('datatables');
 			$crud->set_table('offices');
@@ -51,7 +66,7 @@ class Examples extends CI_Controller {
 
 	public function employees_management()
 	{
-			$crud = new grocery_CRUD();
+			$crud = $this->new_crud();
 
 			$crud->set_theme('datatables');
 			$crud->set_table('employees');
@@ -70,7 +85,7 @@ class Examples extends CI_Controller {
 
 	public function customers_management()
 	{
-			$crud = new grocery_CRUD();
+			$crud = $this->new_crud();
 
 			$crud->set_table('customers');
 			$crud->columns('customerName','contactLastName','phone','city','country','salesRepEmployeeNumber','creditLimit');
@@ -87,7 +102,7 @@ class Examples extends CI_Controller {
 
 	public function orders_management()
 	{
-			$crud = new grocery_CRUD();
+			$crud = $this->new_crud();
 
 			$crud->set_relation('customerNumber','customers','{contactLastName} {contactFirstName}');
 			$crud->display_as('customerNumber','Customer');
@@ -103,7 +118,7 @@ class Examples extends CI_Controller {
 
 	public function products_management()
 	{
-			$crud = new grocery_CRUD();
+			$crud = $this->new_crud();
 
 			$crud->set_table('products');
 			$crud->set_subject('Product');
@@ -122,7 +137,7 @@ class Examples extends CI_Controller {
 
 	public function film_management()
 	{
-		$crud = new grocery_CRUD();
+		$crud = $this->new_crud();
 
 		$crud->set_table('film');
 		$crud->set_relation_n_n('actors', 'film_actor', 'actor', 'film_id', 'actor_id', 'fullname','priority');
@@ -139,7 +154,7 @@ class Examples extends CI_Controller {
 	public function film_management_twitter_bootstrap()
 	{
 		try{
-			$crud = new grocery_CRUD();
+			$crud = $this->new_crud();
 
 			$crud->set_theme('twitter-bootstrap');
 			$crud->set_table('film');
@@ -182,7 +197,7 @@ class Examples extends CI_Controller {
 
 	public function offices_management2()
 	{
-		$crud = new grocery_CRUD();
+		$crud = $this->new_crud();
 		$crud->set_table('offices');
 		$crud->set_subject('Office');
 
@@ -199,17 +214,17 @@ class Examples extends CI_Controller {
 
 	public function employees_management2()
 	{
-		$crud = new grocery_CRUD();
+		$crud = $this->new_crud();
 
-		$crud->set_theme('datatables');
-		$crud->set_table('employees');
-		$crud->set_relation('officeCode','offices','city');
-		$crud->display_as('officeCode','Office City');
-		$crud->set_subject('Employee');
+        $crud->set_theme('datatables');
+        $crud->set_table('employees');
+        $crud->set_relation('officeCode','offices','city');
+        $crud->display_as('officeCode','Office City');
+        $crud->set_subject('Employee');
 
-		$crud->required_fields('lastName');
+        $crud->required_fields('lastName');
 
-		$crud->set_field_upload('file_url','assets/uploads/files');
+        $crud->set_field_upload('file_url','assets/uploads/files');
 
 		$crud->set_crud_url_path(site_url(strtolower(__CLASS__."/".__FUNCTION__)),site_url(strtolower(__CLASS__."/multigrids")));
 
@@ -225,15 +240,15 @@ class Examples extends CI_Controller {
 	public function customers_management2()
 	{
 
-		$crud = new grocery_CRUD();
+		$crud = $this->new_crud();
 
 		$crud->set_table('customers');
-		$crud->columns('customerName','contactLastName','phone','city','country','salesRepEmployeeNumber','creditLimit');
-		$crud->display_as('salesRepEmployeeNumber','from Employeer')
-			 ->display_as('customerName','Name')
-			 ->display_as('contactLastName','Last Name');
-		$crud->set_subject('Customer');
-		$crud->set_relation('salesRepEmployeeNumber','employees','lastName');
+        $crud->columns('customerName','contactLastName','phone','city','country','salesRepEmployeeNumber','creditLimit');
+        $crud->display_as('salesRepEmployeeNumber','from Employeer')
+             ->display_as('customerName','Name')
+             ->display_as('contactLastName','Last Name');
+        $crud->set_subject('Customer');
+        $crud->set_relation('salesRepEmployeeNumber','employees','lastName');
 
 		$crud->set_crud_url_path(site_url(strtolower(__CLASS__."/".__FUNCTION__)),site_url(strtolower(__CLASS__."/multigrids")));
 
