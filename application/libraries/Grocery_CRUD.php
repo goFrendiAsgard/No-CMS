@@ -4819,7 +4819,6 @@ class Grocery_CRUD extends grocery_CRUD_States
 	}
 }
 
-
 if(defined('CI_VERSION'))
 {
 	$ci = &get_instance();

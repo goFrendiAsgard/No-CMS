@@ -2,6 +2,7 @@
 class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 
     public $ESCAPE_CHAR = '"';
+    public $CAPABLE_CONCAT = TRUE;
 
     public function __construct(){
         parent::__construct();
@@ -11,6 +12,53 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
         if($first_char !== 't'){
             $this->ESCAPE_CHAR = $first_char;
         }
+    }
+
+    public function protect_identifiers($value)
+    {
+        return $this->db->protect_identifiers($value);
+    }
+
+    // rather than mess around with this everytime, it is better to build a function for this.
+    public function build_concat_from_template($template, $prefix_replacement='', $suffix_replacement='', $as=NULL){
+        if($this->CAPABLE_CONCAT){
+            // if CONCAT is possible in the current driver
+            $concat_str =
+                "CONCAT('".
+                str_replace(
+                    array(
+                        "{",
+                        "}"
+                    ),
+                    array(
+                        "',COALESCE(".$prefix_replacement,
+                        $suffix_replacement.", ''),'"
+                    ),
+                    str_replace("'","\\'",$template)
+                ).
+                "')";
+
+        }else{
+            // if CONCAT is impossible in the current driver, use || instead
+            $concat_str =
+                "('".
+                str_replace(
+                    array(
+                        "{",
+                        "}"
+                    ),
+                    array(
+                        "' || COALESCE(".$replacement,
+                        ", '') || '"
+                    ),
+                    str_replace("'","\\'",$template)
+                ).
+                "')";
+        }
+        if(isset($as)){
+            $concat_str .= " as ".$as;
+        }
+
     }
 
     function get_list()
@@ -32,7 +80,13 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 				if(strstr($related_field_title,'{'))
 				{
 					$related_field_title = str_replace(" ","&nbsp;",$related_field_title);
-    				$select .= ", CONCAT('".str_replace(array('{','}'),array("',COALESCE(".$this->protect_identifiers($unique_join_name).".".$this->ESCAPE_CHAR, $this->ESCAPE_CHAR.", ''),'"),str_replace("'","\\'",$related_field_title))."') as ".$this->protect_identifiers($unique_field_name);
+                    $select .= ", ".$this->build_concat_from_template(
+                            $related_field_title,
+                            $this->protect_identifiers($unique_join_name).".".$this->ESCAPE_CHAR,
+                            $this->ESCAPE_CHAR,
+                            $this->protect_identifiers($unique_field_name)
+                        );
+    				//$select .= ", CONCAT('".str_replace(array('{','}'),array("',COALESCE(".$this->protect_identifiers($unique_join_name).".".$this->ESCAPE_CHAR, $this->ESCAPE_CHAR.", ''),'"),str_replace("'","\\'",$related_field_title))."') as ".$this->protect_identifiers($unique_field_name);
 				}
     			else
     			{
@@ -73,7 +127,8 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 	    	if($use_template)
 	    	{
 	    		$title_field_selection_table = str_replace(" ", "&nbsp;", $title_field_selection_table);
-	    		$field .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'",$title_field_selection_table))."')";
+                $field .= $this->build_concat_from_template($this->protect_identifiers($title_field_selection_table));
+	    		//$field .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'",$this->protect_identifiers($title_field_selection_table)))."')";
 	    	}
 	    	else
 	    	{
@@ -81,10 +136,9 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 	    	}
 
     		//Sorry Codeigniter but you cannot help me with the subquery!
-    		$select .= ", (SELECT GROUP_CONCAT(DISTINCT ".$this->protect_identifiers($field).") FROM ".$this->protect_identifiers($selection_table)
-    			." LEFT JOIN ".$this->protect_identifiers($relation_table)." ON ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_selection_table)." = ".$this->protect_identifiers($selection_table.".".$primary_key_selection_table)
-    			." WHERE ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table)." = ".$this->protect_identifiers($this->table_name.".".$this_table_primary_key)." GROUP BY ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table).") AS ".$this->protect_identifiers($field_name);
-    	}
+    		$select .= ", ".
+    		  $this->build_relation_n_n_subquery($field, $selection_table, $relation_table, $primary_key_alias_to_selection_table, $primary_key_selection_table, $primary_key_alias_to_this_table, $field_name);
+        }
 
     	return $select;
     }
@@ -103,7 +157,6 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
     	}
 
     	return $this->db->count_all_results($this->table_name);
-
     }
 
     function join_relation($field_name , $related_table , $related_field_title)
@@ -113,7 +166,7 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 		if($related_primary_key !== false)
 		{
 			$unique_name = $this->_unique_join_name($field_name);
-			$this->db->join( $this->protect_identifiers($related_table).' as '.$this->protect_identifiers($unique_name) , $this->protect_identifiers($unique_name.'.'.$related_primary_key).' = '. $this->protect_identifiers($this->table_name.'.'.$field_name),'left');
+			$this->build_db_join_relation($related_table, $unique_name, $related_primary_key, $field_name);
 
 			$this->relation[$field_name] = array($field_name , $related_table , $related_field_title);
 
@@ -130,12 +183,18 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 
     	$related_primary_key = $this->get_primary_key($related_table);
 
-    	$select = "$related_table.$related_primary_key, ";
+    	$select = $this->protect_identifiers($related_table).'.'.$this->protect_identifiers($related_primary_key).', ';
 
     	if(strstr($related_field_title,'{'))
     	{
     		$related_field_title = str_replace(" ", "&nbsp;", $related_field_title);
-    		$select .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'", $this->protect_identifiers($related_field_title)))."') as ".$this->protect_identifiers($field_name_hash);
+            $select .= $this->build_concat_from_template(
+                    $related_field_title,
+                    $this->ESCAPE_CHAR,
+                    $this->ESCAPE_CHAR,
+                    $this->protect_identifiers($field_name_hash)
+                );
+    		//$select .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(".$this->ESCAPE_CHAR , $this->ESCAPE_CHAR.", ''),'"),str_replace("'","\\'", $related_field_title))."') as ".$this->protect_identifiers($field_name_hash);
     	}
     	else
     	{
@@ -178,7 +237,13 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
     	if($use_template)
     	{
     		$related_field_title = str_replace(" ", "&nbsp;", $related_field_title);
-    		$select .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'",$related_field_title))."') as $field_name_hash";
+            $select .= $this->build_concat_from_template(
+                    $related_field_title,
+                    $this->ESCAPE_CHAR,
+                    $this->ESCAPE_CHAR,
+                    $this->protect_identifiers($field_name_hash)
+                );
+    		//$select .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'",$related_field_title))."') as $field_name_hash";
     	}
     	else
     	{
@@ -226,7 +291,13 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
     	if($use_template)
     	{
     		$related_field_title = str_replace(" ", "&nbsp;", $related_field_title);
-    		$select .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'",$related_field_title))."') as $field_name_hash";
+            $select .= $this->build_concat_from_template(
+                    $related_field_title,
+                    $this->ESCAPE_CHAR,
+                    $this->ESCAPE_CHAR,
+                    $this->protect_identifiers($field_name_hash)
+                );
+    		//$select .= "CONCAT('".str_replace(array('{','}'),array("',COALESCE(",", ''),'"),str_replace("'","\\'",$related_field_title))."') as $field_name_hash";
     	}
     	else
     	{
@@ -256,7 +327,7 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
     function get_field_types_basic_table()
     {
     	$db_field_types = array();
-        foreach($this->db->field_data($this->table_name) as $db_field_type)
+        foreach($this->get_field_types($this->table_name) as $db_field_type)
     	{
     	    $db_type = $db_field_type->type;
             $length = $db_field_type->max_length;
@@ -266,13 +337,53 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
             $db_field_types[$db_field_type->name]['db_extra'] = '';
     	}
 
-    	$results = $this->db->field_data($this->table_name);
+    	$results = $this->get_field_types($this->table_name);
     	foreach($results as $num => $row)
     	{
     		$row = (array)$row;
     		$results[$num] = (object)( array_merge($row, $db_field_types[$row['name']])  );
     	}
     	return $results;
+    }
+
+    function get_field_types($table_name)
+    {
+        $results = $this->db->field_data($table_name);
+        // some driver doesn't provide primary_key information
+        foreach($results as $num => $row)
+        {
+            $row = (array)$row;
+            if(!array_key_exists('primary_key', $row)){
+                $results[$num]->primary_key = 0;
+            }
+        }
+        return $results;
+    }
+
+    function db_insert($post_array)
+    {
+        $insert = $this->db->insert($this->table_name,$post_array);
+        if($insert)
+        {
+            $primary_key = $this->get_primary_key();
+            // if user already define a value for the primary key, then just return it
+            // postgresql use LASTVAL() to retrieve insert_id which would cause an error if the sequence is not used.
+            if(array_key_exists($primary_key, $post_array)){
+                return $post_array[$primary_key];
+            }
+            return $this->db->insert_id();
+        }
+        return false;
+    }
+
+    function build_db_join_relation($related_table, $unique_name, $related_primary_key, $field_name){
+        $this->db->join($this->protect_identifiers($related_table).' as '.$this->protect_identifiers($unique_name) , $this->protect_identifiers($unique_name.'.'.$related_primary_key).' = '. $this->protect_identifiers($this->table_name.'.'.$field_name),'left');
+    }
+
+    function build_relation_n_n_subquery($field, $selection_table, $relation_table, $primary_key_alias_to_selection_table, $primary_key_selection_table, $primary_key_alias_to_this_table, $field_name){
+        return "(SELECT GROUP_CONCAT(DISTINCT ".$this->protect_identifiers($field).") FROM ".$this->protect_identifiers($selection_table)
+                    ." LEFT JOIN ".$this->protect_identifiers($relation_table)." ON ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_selection_table)." = ".$this->protect_identifiers($selection_table.".".$primary_key_selection_table)
+                    ." WHERE ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table)." = ".$this->protect_identifiers($this->table_name.".".$this_table_primary_key)." GROUP BY ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table).") AS ".$this->protect_identifiers($field_name);
     }
 
     function db_delete($primary_key_value)
@@ -304,68 +415,14 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
         return FALSE;
     }
 
-    function get_primary_key($table_name = null)
+    function get_edit_values($primary_key_value)
     {
-    	if($table_name == null)
-    	{
-    		if(isset($this->primary_keys[$this->table_name]))
-    		{
-    			return $this->primary_keys[$this->table_name];
-    		}
-
-	    	if(empty($this->primary_key))
-	    	{
-		    	$fields = $this->get_field_types_basic_table();
-
-                $primary_key = FALSE;
-                foreach($fields as $field)
-                {
-                    if(isset($field->primary_key) && $field->primary_key == 1)
-                    {
-                        $primary_key = $field->name;
-                        break;
-                    }
-                }
-
-                return $primary_key;
-	    	}
-	    	else
-	    	{
-	    		return $this->primary_key;
-	    	}
-    	}
-    	else
-    	{
-    		if(isset($this->primary_keys[$table_name]))
-    		{
-    			return $this->primary_keys[$table_name];
-    		}
-
-	    	$fields = $this->get_field_types($table_name);
-
-            $primary_key = FALSE;
-	    	foreach($fields as $field)
-	    	{
-	    		if(isset($field->primary_key) && $field->primary_key == 1)
-	    		{
-	    			$primary_key = $field->name;
-                    break;
-	    		}
-	    	}
-
-	    	return $primary_key;
-    	}
-
-    }
-
-    function escape_str($value)
-    {
-    	return $this->db->escape_str($value);
-    }
-
-    function protect_identifiers($value)
-    {
-        return $this->db->protect_identifiers($value);
+        $result = parent::get_edit_values($primary_key_value);
+        // some driver like postgresql doesn't return string
+        foreach($result as $key => $value) {
+            $result->$key = (string)$value;
+        }
+        return $result;
     }
 
 }
