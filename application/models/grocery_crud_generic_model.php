@@ -68,6 +68,8 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 
         $select = $this->protect_identifiers("{$this->table_name}").".*";
 
+        // this variable is used to save table.column info since postgresql doesn't support "AS 'table.column'" syntax
+        $additional_fields = array();
     	//set_relation special queries
     	if(!empty($this->relation))
     	{
@@ -93,8 +95,12 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
     				$select .= ', ' . $this->protect_identifiers($unique_join_name. '.'. $related_field_title).' AS '. $this->protect_identifiers($unique_field_name);
     			}
 
-    			if($this->field_exists($related_field_title))
-    				$select .= ', '.$this->protect_identifiers($this->table_name. '.'. $related_field_title).' AS '.$this->protect_identifiers($this->table_name. '.'. $related_field_title);
+    			if($this->field_exists($related_field_title)){
+    			    $additional_fields[$this->table_name. '.'. $related_field_title] = $related_field_title;
+    			    // this syntax doesn't work on postgresql
+                    //$select .= ', '.$this->protect_identifiers($this->table_name. '.'. $related_field_title).' AS \''.$this->table_name. '.'. $related_field_title.'\'';
+                }
+
     		}
     	}
 
@@ -107,6 +113,13 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
     	$this->db->select($select, false);
 
     	$results = $this->db->get($this->table_name)->result();
+
+        // add information from additional_fields
+        for($i=0; $i<count($results); $i++){
+            foreach($additional_fields as $alias=>$real_field){
+                $results[$i]->{$alias} = $results[$i]->{$real_field};
+            }
+        }
 
     	return $results;
     }
@@ -383,7 +396,7 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
     function build_relation_n_n_subquery($field, $selection_table, $relation_table, $primary_key_alias_to_selection_table, $primary_key_selection_table, $primary_key_alias_to_this_table, $field_name){
         return "(SELECT GROUP_CONCAT(DISTINCT ".$this->protect_identifiers($field).") FROM ".$this->protect_identifiers($selection_table)
                     ." LEFT JOIN ".$this->protect_identifiers($relation_table)." ON ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_selection_table)." = ".$this->protect_identifiers($selection_table.".".$primary_key_selection_table)
-                    ." WHERE ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table)." = ".$this->protect_identifiers($this->table_name.".".$this_table_primary_key)." GROUP BY ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table).") AS ".$this->protect_identifiers($field_name);
+                    ." WHERE ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table)." = ".$this->protect_identifiers($this->table_name.".".$this->get_primary_key($this->table_name))." GROUP BY ".$this->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table).") AS ".$this->protect_identifiers($field_name);
     }
 
     function db_delete($primary_key_value)

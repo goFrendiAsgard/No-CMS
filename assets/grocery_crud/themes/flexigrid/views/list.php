@@ -1,7 +1,7 @@
-<?php 
+<?php
 
 	$column_width = (int)(80/count($columns));
-	
+
 	if(!empty($list)){
 ?><div class="bDiv" >
 		<table cellspacing="0" cellpadding="0" border="0" id="flex1">
@@ -9,7 +9,7 @@
 			<tr class='hDiv'>
 				<?php foreach($columns as $column){?>
 				<th width='<?php echo $column_width?>%'>
-					<div class="text-left field-sorting <?php if(isset($order_by[0]) &&  $column->field_name == $order_by[0]){?><?php echo $order_by[1]?><?php }?>" 
+					<div class="text-left field-sorting <?php if(isset($order_by[0]) &&  $column->field_name == $order_by[0]){?><?php echo $order_by[1]?><?php }?>"
 						rel='<?php echo $column->field_name?>'>
 						<?php echo $column->display_as?>
 					</div>
@@ -23,9 +23,9 @@
 				</th>
 				<?php }?>
 			</tr>
-		</thead>		
+		</thead>
 		<tbody>
-<?php foreach($list as $num_row => $row){ ?>        
+<?php foreach($list as $num_row => $row){ ?>
 		<tr  <?php if($num_row % 2 == 1){?>class="erow"<?php }?>>
 			<?php foreach($columns as $column){?>
 			<td width='<?php echo $column_width?>%' class='<?php if(isset($order_by[0]) &&  $column->field_name == $order_by[0]){?>sorted<?php }?>'>
@@ -34,7 +34,7 @@
 			<?php }?>
 			<?php if(!$unset_delete || !$unset_edit || !empty($actions)){?>
 			<td align="left" width='20%'>
-				<div class='tools'>				
+				<div class='tools'>
 					<?php if(!$unset_delete){?>
                     	<a href='<?php echo $row->delete_url?>' title='<?php echo $this->l('list_delete')?> <?php echo $subject?>' class="delete-row" >
                     			<span class='delete-icon'></span>
@@ -43,26 +43,26 @@
                     <?php if(!$unset_edit){?>
 						<a href='<?php echo $row->edit_url?>' title='<?php echo $this->l('list_edit')?> <?php echo $subject?>' class="edit_button"><span class='edit-icon'></span></a>
 					<?php }?>
-					<?php 
+					<?php
 					if(!empty($row->action_urls)){
-						foreach($row->action_urls as $action_unique_id => $action_url){ 
+						foreach($row->action_urls as $action_unique_id => $action_url){
 							$action = $actions[$action_unique_id];
 					?>
-							<a href="<?php echo $action_url; ?>" class="<?php echo $action->css_class; ?> crud-action" title="<?php echo $action->label?>"><?php 
+							<a href="<?php echo $action_url; ?>" class="<?php echo $action->css_class; ?> crud-action" title="<?php echo $action->label?>"><?php
 								if(!empty($action->image_url))
 								{
-									?><img src="<?php echo $action->image_url; ?>" alt="<?php echo $action->label?>" /><?php 	
+									?><img src="<?php echo $action->image_url; ?>" alt="<?php echo $action->label?>" /><?php
 								}
-							?></a>		
+							?></a>
 					<?php }
 					}
-					?>					
+					?>
                     <div class='clear'></div>
 				</div>
 			</td>
 			<?php }?>
 		</tr>
-<?php } ?>        
+<?php } ?>
 		</tbody>
 		</table>
 	</div>
@@ -71,4 +71,4 @@
 	&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $this->l('list_no_items'); ?>
 	<br/>
 	<br/>
-<?php }?>	
+<?php }?>

@@ -348,7 +348,7 @@ class Main extends CMS_Controller
     // AUTHORIZATION ===========================================================
     public function authorization()
     {
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_authorization'));
@@ -376,7 +376,7 @@ class Main extends CMS_Controller
     public function user()
     {
         $this->cms_guard_page('main_user_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_user'));
@@ -451,7 +451,7 @@ class Main extends CMS_Controller
     public function group()
     {
         $this->cms_guard_page('main_group_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_group'));
@@ -506,7 +506,7 @@ class Main extends CMS_Controller
     public function navigation()
     {
         $this->cms_guard_page('main_navigation_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_navigation'));
@@ -547,7 +547,7 @@ class Main extends CMS_Controller
         $crud->unset_texteditor('description');
         $crud->field_type('only_content', 'true_false');
 
-        $crud->set_relation('parent_id', cms_table_name('main_navigation'), '`navigation_name`');
+        $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
         $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name');
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_navigation'), cms_table_name('main_group'), 'navigation_id', 'group_id', 'group_name');
@@ -588,7 +588,7 @@ class Main extends CMS_Controller
         } else {
             $whereParentId = "(parent_id IS NULL)";
         }
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_navigation')."` WHERE $whereParentId";
+        $SQL   = "SELECT max(".$this->db->protect_identifiers('index').")+1 AS newIndex FROM ".cms_table_name('main_navigation')." WHERE $whereParentId";
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
@@ -649,7 +649,7 @@ class Main extends CMS_Controller
     public function quicklink()
     {
         $this->cms_guard_page('main_quicklink_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_quicklink'));
@@ -698,7 +698,7 @@ class Main extends CMS_Controller
     public function privilege()
     {
         $this->cms_guard_page('main_privilege_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_privilege'));
@@ -733,7 +733,7 @@ class Main extends CMS_Controller
     public function widget()
     {
         $this->cms_guard_page('main_widget_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_widget'));
@@ -846,7 +846,7 @@ class Main extends CMS_Controller
     public function config()
     {
         $this->cms_guard_page('main_config_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_config'));

@@ -57,7 +57,7 @@ class grocery_crud_model_PDO extends grocery_CRUD_Generic_Model{
                 'cast('.$this->protect_identifiers($unique_name.'.'.$related_primary_key).' as character varying) = cast('. $this->protect_identifiers($this->table_name.'.'.$field_name).' as character varying)', 'left', FALSE);
 
         }else{
-            parent::db_join_relation($related_table, $unique_name, $related_primary_key, $table_name, $field_name);
+            parent::build_db_join_relation($related_table, $unique_name, $related_primary_key, $field_name);
         }
     }
 

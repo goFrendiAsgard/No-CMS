@@ -58,6 +58,10 @@ class Install_Model extends CI_Model{
             'sqlite' => '',
         );
 
+    public function __construct(){
+        parent::__construct();
+    }
+
     protected function build_dsn(){
         if($this->db_port == ''){
             $this->db_port = $this->DEFAULT_PORT[$this->db_protocol];
@@ -107,50 +111,60 @@ class Install_Model extends CI_Model{
         }
     }
 
-    public function check_connection(){
+    public function check_installation(){
         $success = TRUE;
         $error_list = array();
         $warning_list = array();
         $db = $this->load_database();
+        // database connection
         if($db === FALSE){
             $success =  FALSE;
             $error_list[] = 'Cannot connect using provided database setting';
         }
-        return array(
-                'success' => $success,
-                'error_list' => $error_list,
-                'warning_list' => $warning_list,
-            );
-    }
-
-    public function check_writable_file(){
-        $success = TRUE;
-        $error_list = array();
-        $warning_list = array();
+        // No-CMS directory
         if (!is_writable(FCPATH)) {
             $success  = FALSE;
-            $error_list[] = 'No-CMS directory is not writable';
+            $error_list[] = FCPATH.' is not writable';
         }
+        // assets/caches
         if (!is_writable(FCPATH.'assets/caches')) {
             $success  = FALSE;
             $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
         }
+        // application/config/config.php
         if (!is_writable(APPPATH.'config/config.php')) {
             $success  = FALSE;
             $error_list[] = APPPATH."config/config.php is not writable";
         }
+        // application/config/cms_config.php
         if (!is_writable(APPPATH.'config/cms_config.php')) {
             $success  = FALSE;
             $error_list[] = APPPATH."config/cms_config.php is not writable";
         }
+        // application/config/database.php
         if (!is_writable(APPPATH.'config/database.php')) {
             $success  = FALSE;
             $error_list[] = APPPATH."config/database.php is not writable";
         }
-        if (!is_writable(APPPATH.'config/hybridauthlib.php')) {
-            $success  = FALSE;
-            $error_list[] = APPPATH."config/hybridauthlib.php is not writable";
+        // third party authentication activated
+        if ($auth_enable_facebook !== "" || $auth_enable_twitter !== "" || $auth_enable_google !== "" || $auth_enable_yahoo !== "" || $auth_enable_linkedin !== "" || $auth_enable_myspace !== "" || $auth_enable_foursquare !== "" || $auth_enable_windows_live !== "" || $auth_enable_open_id !== "" || $auth_enable_aol !== "") {
+            // curl
+            if (!in_array('curl', get_loaded_extensions())) {
+                $success  = FALSE;
+                $errors[] = 'Third party authentication require php-curl, but it is not enabled';
+            }
+            // hybridauthlib configuration file
+            if (!is_writable(APPPATH.'config/hybridauthlib.php')) {
+                $success  = FALSE;
+                $error_list[] = APPPATH."config/hybridauthlib.php is not writable";
+            }
+            // hybridauthlib log file
+            if (!is_writable(APPPATH.'logs/hybridauth.log')) {
+                $success  = FALSE;
+                $errors[] = APPPATH."logs/hybridauth.log is not writable";
+            }
         }
+        // log directory
         if (!is_writable(APPPATH.'logs')) {
             $success  = FALSE;
             $error_list[] = APPPATH."logs is not writable";
@@ -559,7 +573,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_navigation('main_widget_management', 4, 'Widget Management', 'Widget Management', NULL, 'Manage Widgets', 'main/widget', 4, 4, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_quicklink_management', 4, 'Quick Link Management', 'Quick Link Management', NULL, 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_config_management', 4, 'Configuration Management', 'Configuration Management', NULL, 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL, 0);
-        $sql_list[] = $this->insert_navigation('main_index', NULL, 'Home', 'Home', NULL, 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h3>\n  Welcome {{ user_name }}</h3>\n<p>\n This is the home page. You have several options to modify this page.</p>\n<ul>\n    <li>\n      <b>Using static page</b>\n      <p>\n           You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/16">Navigation Management</a><br />\n           This is the most recommended way to do.</p>\n   </li>\n <li>\n      <b>Redirect default controller</b>\n        <p>\n           You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />\n            <code>/application/config/routes.php</code>, around line 41.<br />\n            Please make sure that your default controller is valid.<br />\n         This is recommended if you also want your own page to be a default homepage.</p>\n  </li>\n <li>\n      <b>Using dynamic page and edit the view manually</b>\n      <p>\n           You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/16">Navigation Management</a><br />\n          and edit the corresponding view on <code>/modules/main/index.php</code></p>\n   </li>\n</ul>\n<hr />\n<p>\n <b>Any other question? : </b><br />\n   CodeIgniter forum member can visit No-CMS thread here: <a href="http://codeigniter.com/forums/viewthread/209171/">http://codeigniter.com/forums/viewthread/209171/</a><br />\n  Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />\n    While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />\n  In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />\n That&#39;s all. Start your new adventure with No-CMS !!!</p>\n', 0);
+        $sql_list[] = $this->insert_navigation('main_index', NULL, 'Home', 'Home', NULL, 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h3>'.PHP_EOL.'  Welcome {{ user_name }}</h3>'.PHP_EOL.'<p>'.PHP_EOL.' This is the home page. You have several options to modify this page.</p>'.PHP_EOL.'<ul>'.PHP_EOL.'    <li>'.PHP_EOL.'      <b>Using static page</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/16">Navigation Management</a><br />'.PHP_EOL.'           This is the most recommended way to do.</p>'.PHP_EOL.'   </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Redirect default controller</b>'.PHP_EOL.'        <p>'.PHP_EOL.'           You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />'.PHP_EOL.'            <code>/application/config/routes.php</code>, around line 41.<br />'.PHP_EOL.'            Please make sure that your default controller is valid.<br />'.PHP_EOL.'         This is recommended if you also want your own page to be a default homepage.</p>'.PHP_EOL.'  </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Using dynamic page and edit the view manually</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/16">Navigation Management</a><br />'.PHP_EOL.'          and edit the corresponding view on <code>/modules/main/index.php</code></p>'.PHP_EOL.'   </li>'.PHP_EOL.'</ul>'.PHP_EOL.'<hr />'.PHP_EOL.'<p>'.PHP_EOL.' <b>Any other question? : </b><br />'.PHP_EOL.'   CodeIgniter forum member can visit No-CMS thread here: <a href="http://codeigniter.com/forums/viewthread/209171/">http://codeigniter.com/forums/viewthread/209171/</a><br />'.PHP_EOL.'  Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />'.PHP_EOL.'    While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />'.PHP_EOL.'  In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />'.PHP_EOL.' That&#39;s all. Start your new adventure with No-CMS !!!</p>'.PHP_EOL.'', 0);
         $sql_list[] = $this->insert_navigation('main_language', NULL, 'Language', 'Language', NULL, 'Choose the language', 'main/language', 1, 0, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', NULL, 'Third Party Authentication', 'main/hauth/index', 1, 0, 1, 0, NULL, 0);
         // quicklink
@@ -572,16 +586,16 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_widget('top_navigation', 'Top Navigation', '', 'main/widget_top_nav', 1, 1, 1, 0, NULL, NULL);
         $sql_list[] = $this->insert_widget('quicklink', 'Quicklinks', '', 'main/widget_quicklink', 1, 1, 1, 0, NULL, NULL);
         $sql_list[] = $this->insert_widget('login', 'Login', 'Visitor need to login for authentication', 'main/widget_login', 2, 1, 0, 0, '<form action="{{ site_url }}main/login" method="post" accept-charset="utf-8"><label>Identity</label><br><input type="text" name="identity" value=""><br><label>Password</label><br><input type="password" name="password" value=""><br><input type="submit" name="login" value="Log In"></form>', 'sidebar, user_widget');
-        $sql_list[] = $this->insert_widget('logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 1, 1, '{{ language:Welcome }} {{ user_name }}<br />\n<a href="{{ site_url }}main/logout">{{ language:Logout }}</a><br />', 'sidebar, user_widget');
-        $sql_list[] = $this->insert_widget('social_plugin', 'Share This Page !!', 'Addthis', 'main/widget_social_plugin', 1, 1, 2, 1, '<!-- AddThis Button BEGIN -->\n<div class="addthis_toolbox addthis_default_style "><a class="addthis_button_preferred_1"></a> <a class="addthis_button_preferred_2"></a> <a class="addthis_button_preferred_3"></a> <a class="addthis_button_preferred_4"></a> <a class="addthis_button_preferred_5"></a> <a class="addthis_button_preferred_6"></a> <a class="addthis_button_preferred_7"></a> <a class="addthis_button_preferred_8"></a> <a class="addthis_button_preferred_9"></a> <a class="addthis_button_preferred_10"></a> <a class="addthis_button_preferred_11"></a> <a class="addthis_button_preferred_12"></a> <a class="addthis_button_preferred_13"></a> <a class="addthis_button_preferred_14"></a> <a class="addthis_button_preferred_15"></a> <a class="addthis_button_preferred_16"></a> <a class="addthis_button_compact"></a> <a class="addthis_counter addthis_bubble_style"></a></div>\n<script src="http://s7.addthis.com/js/250/addthis_widget.js?domready=1" type="text/javascript"></script>\n<!-- AddThis Button END -->', 'sidebar');
-        $sql_list[] = $this->insert_widget('google_search', 'Search', 'Search from google', '', 1, 0, 3, 1, '<!-- Google Custom Search Element -->\n<div id="cse" style="width: 100%;">Loading</div>\n<script src="http://www.google.com/jsapi" type="text/javascript"></script>\n<script type="text/javascript">// <![CDATA[\n    google.load(\'search\', \'1\');\n    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(\'cse\');}, true);\n// ]]></script>', 'sidebar');
-        $sql_list[] = $this->insert_widget('google_translate', 'Translate !!', '<p>The famous google translate</p>', '', 1, 0, 4, 1, '<!-- Google Translate Element -->\n<div id="google_translate_element" style="display:block"></div>\n<script>\nfunction googleTranslateElementInit() {\n  new google.translate.TranslateElement({pageLanguage: "af"}, "google_translate_element");\n};\n</script>\n<script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>\n', 'sidebar');
-        $sql_list[] = $this->insert_widget('calendar', 'Calendar', 'Indonesian Calendar', '', 1, 0, 5, 1, '<!-------Do not change below this line------->\n<div align="center" height="200px">\n    <iframe align="center" src="http://www.calendarlabs.com/calendars/web-content/calendar.php?cid=1001&uid=162232623&c=22&l=en&cbg=C3D9FF&cfg=000000&hfg=000000&hfg1=000000&ct=1&cb=1&cbc=2275FF&cf=verdana&cp=bottom&sw=0&hp=t&ib=0&ibc=&i=" width="170" height="155" marginwidth=0 marginheight=0 frameborder=no scrolling=no allowtransparency=\'true\'>\n    Loading...\n    </iframe>\n    <div align="center" style="width:140px;font-size:10px;color:#666;">\n        Powered by <a  href="http://www.calendarlabs.com/" target="_blank" style="font-size:10px;text-decoration:none;color:#666;">Calendar</a> Labs\n    </div>\n</div>\n\n<!-------Do not change above this line------->', 'sidebar');
-        $sql_list[] = $this->insert_widget('google_map', 'Map', 'google map', '', 1, 0, 6, 1, '<!-- Google Maps Element Code -->\n<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:150px;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>', 'sidebar');
-        $sql_list[] = $this->insert_widget('donate_nocms', 'Donate No-CMS', 'No-CMS Donation', NULL, 1, 1, 7, 1, '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">\n<input type="hidden" name="cmd" value="_s-xclick">\n<input type="hidden" name="hosted_button_id" value="YDES6RTA9QJQL">\n<input type="image" src="{{ base_url }}assets/nocms/images/donation.png" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" width="165px" height="auto" style="width:165px!important;" />\n<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">\n</form>', 'advertisement');
+        $sql_list[] = $this->insert_widget('logout', 'User Info', 'Logout', 'main/widget_logout', 3, 1, 1, 1, '{{ language:Welcome }} {{ user_name }}<br />'.PHP_EOL.'<a href="{{ site_url }}main/logout">{{ language:Logout }}</a><br />', 'sidebar, user_widget');
+        $sql_list[] = $this->insert_widget('social_plugin', 'Share This Page !!', 'Addthis', 'main/widget_social_plugin', 1, 1, 2, 1, '<!-- AddThis Button BEGIN -->'.PHP_EOL.'<div class="addthis_toolbox addthis_default_style "><a class="addthis_button_preferred_1"></a> <a class="addthis_button_preferred_2"></a> <a class="addthis_button_preferred_3"></a> <a class="addthis_button_preferred_4"></a> <a class="addthis_button_preferred_5"></a> <a class="addthis_button_preferred_6"></a> <a class="addthis_button_preferred_7"></a> <a class="addthis_button_preferred_8"></a> <a class="addthis_button_preferred_9"></a> <a class="addthis_button_preferred_10"></a> <a class="addthis_button_preferred_11"></a> <a class="addthis_button_preferred_12"></a> <a class="addthis_button_preferred_13"></a> <a class="addthis_button_preferred_14"></a> <a class="addthis_button_preferred_15"></a> <a class="addthis_button_preferred_16"></a> <a class="addthis_button_compact"></a> <a class="addthis_counter addthis_bubble_style"></a></div>'.PHP_EOL.'<script src="http://s7.addthis.com/js/250/addthis_widget.js?domready=1" type="text/javascript"></script>'.PHP_EOL.'<!-- AddThis Button END -->', 'sidebar');
+        $sql_list[] = $this->insert_widget('google_search', 'Search', 'Search from google', '', 1, 0, 3, 1, '<!-- Google Custom Search Element -->'.PHP_EOL.'<div id="cse" style="width: 100%;">Loading</div>'.PHP_EOL.'<script src="http://www.google.com/jsapi" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">// <![CDATA['.PHP_EOL.'    google.load(\'search\', \'1\');'.PHP_EOL.'    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(\'cse\');}, true);'.PHP_EOL.'// ]]></script>', 'sidebar');
+        $sql_list[] = $this->insert_widget('google_translate', 'Translate !!', '<p>The famous google translate</p>', '', 1, 0, 4, 1, '<!-- Google Translate Element -->'.PHP_EOL.'<div id="google_translate_element" style="display:block"></div>'.PHP_EOL.'<script>'.PHP_EOL.'function googleTranslateElementInit() {'.PHP_EOL.'  new google.translate.TranslateElement({pageLanguage: "af"}, "google_translate_element");'.PHP_EOL.'};'.PHP_EOL.'</script>'.PHP_EOL.'<script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>'.PHP_EOL.'', 'sidebar');
+        $sql_list[] = $this->insert_widget('calendar', 'Calendar', 'Indonesian Calendar', '', 1, 0, 5, 1, '<!-------Do not change below this line------->'.PHP_EOL.'<div align="center" height="200px">'.PHP_EOL.'    <iframe align="center" src="http://www.calendarlabs.com/calendars/web-content/calendar.php?cid=1001&uid=162232623&c=22&l=en&cbg=C3D9FF&cfg=000000&hfg=000000&hfg1=000000&ct=1&cb=1&cbc=2275FF&cf=verdana&cp=bottom&sw=0&hp=t&ib=0&ibc=&i=" width="170" height="155" marginwidth=0 marginheight=0 frameborder=no scrolling=no allowtransparency=\'true\'>'.PHP_EOL.'    Loading...'.PHP_EOL.'    </iframe>'.PHP_EOL.'    <div align="center" style="width:140px;font-size:10px;color:#666;">'.PHP_EOL.'        Powered by <a  href="http://www.calendarlabs.com/" target="_blank" style="font-size:10px;text-decoration:none;color:#666;">Calendar</a> Labs'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.''.PHP_EOL.'<!-------Do not change above this line------->', 'sidebar');
+        $sql_list[] = $this->insert_widget('google_map', 'Map', 'google map', '', 1, 0, 6, 1, '<!-- Google Maps Element Code -->'.PHP_EOL.'<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:150px;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>', 'sidebar');
+        $sql_list[] = $this->insert_widget('donate_nocms', 'Donate No-CMS', 'No-CMS Donation', NULL, 1, 1, 7, 1, '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">'.PHP_EOL.'<input type="hidden" name="cmd" value="_s-xclick">'.PHP_EOL.'<input type="hidden" name="hosted_button_id" value="YDES6RTA9QJQL">'.PHP_EOL.'<input type="image" src="{{ base_url }}assets/nocms/images/donation.png" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" width="165px" height="auto" style="width:165px!important;" />'.PHP_EOL.'<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">'.PHP_EOL.'</form>', 'advertisement');
         // privilege
-        $sql_list[] = $this->insert_privilege('cms_install_module', 'Install Module', 'Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You\'d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)\n&nbsp;', 4);
-        $sql_list[] = $this->insert_privilege('cms_manage_access', 'Manage Access', 'Manage access\n&nbsp;', 4);
+        $sql_list[] = $this->insert_privilege('cms_install_module', 'Install Module', 'Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You\'d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)'.PHP_EOL.'&nbsp;', 4);
+        $sql_list[] = $this->insert_privilege('cms_manage_access', 'Manage Access', 'Manage access'.PHP_EOL.'&nbsp;', 4);
         // config
         $sql_list[] = $this->insert_config('site_name', 'No-CMS', 'Site title');
         $sql_list[] = $this->insert_config('site_slogan', 'A Free CodeIgniter Based CMS Framework', 'Site slogan');
@@ -650,20 +664,116 @@ class Install_Model extends CI_Model{
 
     }
 
-    protected function change_config($file_name, $key, $value, $key_prefix = '\$config\[', $key_suffix = '\]'){
+    protected function change_config($file_name, $key, $value, $key_prefix = '$config[',
+    $key_suffix = ']', $value_prefix = "'", $value_suffix = "';",  $equal_sign = '='){
         if(!file_exists($file_name)) return FALSE;
-        $pattern = array();
-        $pattern[] = '/('.$key_prefix.'(\'|")'.$key.'(\'|")'.$key_suffix.' *= *")(.*?)(";)/si';
-        $pattern[] = "/(".$key_prefix."('|\")".$key."('|\")".$key_suffix." *= *')(.*?)(';)/si";
+        $key = preg_quote($key);
+        $key_prefix = preg_quote($key_prefix);
+        $key_suffix = preg_quote($key_suffix);
+        $value_prefix = preg_quote($value_prefix);
+        $value_suffix = preg_quote($value_suffix);
+        $equal_sign = preg_quote($equal_sign);
+        $pattern = '/( *'.$key_prefix.$key.$key_suffix.' *'.$equal_sign.' *'.$value_prefix.')(.*?)('.$value_suffix.')/si';
+        $replacement = '${1}'.$value.'${3}';
 
         $str = file_get_contents($file_name);
-        $replacement = '${1}'.$value.'${5}';
+        $awal = $str;
         $str = preg_replace($pattern, $replacement, $str);
+        /*
+        echo '<pre>';
+        var_dump($pattern);
+        var_dump($replacement);
+        var_dump($awal);
+        var_dump($str);
+        echo '</pre>';
+         */
+
         @chmod($file_name,0777);
         @file_put_contents($file_name, $str);
     }
 
     public function build_configuration(){
+        // database config
+        $file_name = APPPATH.'config/database.php';
+        $key_prefix = "'";
+        $key_suffix = "'";
+        $value_prefix = "'";
+        $value_suffix = "',";
+        $equal_sign = '=>';
+
+        $this->change_config($file_name, "dsn", $this->build_dsn(), $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "hostname", $this->db_host, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "database", $this->db_name, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "username", $this->db_username, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "password", $this->db_password, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "dbdriver", "pdo", $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+
+        // cms_config
+        $file_name = APPPATH.'config/cms_config.php';
+        $key_prefix = '$config[\'';
+        $key_suffix = "']";
+        $value_prefix = "'";
+        $value_suffix = "';";
+        $equal_sign = '=';
+
+        $this->change_config($file_name, "cms_table_prefix", $this->db_table_prefix, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+
+        // config
+        $file_name = APPPATH.'config/config.php';
+        $key_prefix = '$config[\'';
+        $key_suffix = "']";
+        $value_prefix = "'";
+        $value_suffix = "';";
+        $equal_sign = '=';
+
+        $index_page = $this->hide_index?'':'index.php';
+        $this->change_config($file_name, "index_page", $index_page, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "encryption_key", 'namidanoregret', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "sess_table_name", $this->db_prefix.'_ci_sessions', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $compress_output = $this->gzip_compression?'TRUE':'FALSE';
+        $this->change_config($file_name, "compress_output", $compress_output, $key_prefix, $key_suffix, '', ';', $equal_sign);
+
+        // routes
+        $file_name = APPPATH.'config/routes.php';
+        $key_prefix = '$routes[\'';
+        $key_suffix = "']";
+        $value_prefix = "'";
+        $value_suffix = "';";
+        $equal_sign = '=';
+
+        $this->change_config($file_name, "default_controller", 'main', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+
+        // hybridauth
+        $file_name = APPPATH.'config/hybridauthlib.php';
+        $key_prefix = '$';
+        $key_suffix = "";
+        $value_prefix = "";
+        $value_suffix = ";";
+        $equal_sign = '=';
+
+        $val = $this->auth_enable_facebook?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_facebook", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_twitter?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_twitter", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_google?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_google", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_yahoo?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_yahoo", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_linkedin?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_linkedin", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_myspace?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_myspace", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_windows_live?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_windows_live", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_foursquare?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_foursquare", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_open_id?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_open_id", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_aol?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_aol", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+
+        // TODO: complete hybridauth & .htaccess replacement
+
 
     }
 

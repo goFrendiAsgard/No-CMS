@@ -163,6 +163,7 @@ class CMS_Model extends CI_Model
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
+        $user_id    = $user_id == ''?0:$user_id;
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
@@ -193,7 +194,7 @@ class CMS_Model extends CI_Model
                                     WHERE
                                         gn.navigation_id=n.navigation_id AND
                                         gn.group_id IN
-                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
+                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
                                 )>0
                             )
                         )
@@ -244,6 +245,7 @@ class CMS_Model extends CI_Model
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
+        $user_id    = $user_id == ''?0:$user_id;
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
@@ -264,13 +266,13 @@ class CMS_Model extends CI_Model
                                 (
                                     (authorization_id = 4 AND $login) AND
                                     (
-                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id =" . addslashes($user_id) . ")>0
                                             OR $super_user OR
                                         (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
                                             WHERE
                                                 gn.navigation_id=n.navigation_id AND
                                                 gn.group_id IN
-                                                    (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
+                                                    (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
                                         )>0
                                     )
                                 )
@@ -319,6 +321,7 @@ class CMS_Model extends CI_Model
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
+        $user_id    = $user_id==''?0:$user_id;
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
@@ -344,11 +347,11 @@ class CMS_Model extends CI_Model
                                     WHERE
                                         gw.widget_id=w.widget_id AND
                                         gw.group_id IN
-                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
+                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
                                 )>0
                             )
                         )
-                    ) AND active=1 AND $slug_where AND $widget_name_where ORDER BY `index`";
+                    ) AND active=1 AND $slug_where AND $widget_name_where ORDER BY ".$this->db->protect_identifiers('index');
         $query  = $this->db->query($SQL);
         $result = array();
         foreach ($query->result() as $row) {
@@ -684,7 +687,7 @@ class CMS_Model extends CI_Model
         $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".cms_table_name('main_user')." WHERE
                     (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
                     password = '" . md5($password) . "' AND
-                    active = TRUE");
+                    active = 1");
         foreach ($query->result() as $row) {
             $this->cms_user_name($row->user_name);
             $this->cms_user_id($row->user_id);
@@ -1096,7 +1099,7 @@ class CMS_Model extends CI_Model
         $value = cms_config($name);
         if($value === FALSE){
             if (!isset($this->__cms_model_properties['config'][$name])) {
-                $query  = $this->db->query("SELECT `value` FROM ".cms_table_name('main_config')." WHERE
+                $query  = $this->db->query("SELECT ".$this->db->protect_identifiers('value')." FROM ".cms_table_name('main_config')." WHERE
                             config_name = '" . addslashes($name) . "'");
                 if($query->num_rows()>0){
                     $row    = $query->row();
@@ -1597,6 +1600,6 @@ class CMS_Model extends CI_Model
 
 }
 
-class MY_Model extends CMS_Model
+class MY_Model extends CI_Model
 {
 }
