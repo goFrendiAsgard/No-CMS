@@ -1043,7 +1043,7 @@ class Main extends CMS_Controller
                     $html.= '</li>';
                 }else{
                     $html.= '<li class="dropdown-submenu">';
-                    $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
+                    $html.= '<a href="'.$quicklink['url'].'">'.
                         '<span>'.$quicklink['title'].'</span>';
                     $html.= $this->widget_quicklink($quicklink['child'],TRUE,TRUE);
                     $html.= '</li>';

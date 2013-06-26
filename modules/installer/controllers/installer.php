@@ -15,7 +15,7 @@ class Installer extends CI_Controller{
         $this->install_model->db_port = '5432';
         $this->install_model->db_username = 'root';
         $this->install_model->db_password = 'toor';
-        $this->install_model->db_table_prefix = 'cms';
+        $this->install_model->db_table_prefix = 'coba';
         $this->install_model->build_database();
         //$this->install_model->build_configuration();
     }
