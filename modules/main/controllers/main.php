@@ -1037,8 +1037,8 @@ class Main extends CMS_Controller
                 if(!$return){
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
-                        '<span onclick="window.location = \''.$quicklink['url'].'\'">'.$quicklink['title'].'</span>'.
-                        '<span class="caret"></span></a>';
+                        '<span onclick="if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;window.location = \''.$quicklink['url'].'\'">'.$quicklink['title'].'</span>'.
+                        '&nbsp;<span class="caret"></span></a>';
                     $html.= $this->widget_quicklink($quicklink['child'],TRUE,TRUE);
                     $html.= '</li>';
                 }else{

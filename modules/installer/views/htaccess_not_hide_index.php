@@ -1,22 +1,20 @@
-<IfModule mod_rewrite.c>
-    # Options +FollowSymLinks -Indexes
-    RewriteEngine On
-    RewriteBase <?php echo $rewrite_base; ?> # the rewrite base
-
-    #Checks to see if the user is attempting to access a valid file,
-    #such as an image or css document, if this isn't true it sends the
-    #request to index.php
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php/$1 [L,QSA]
-</IfModule>
-
 <IfModule !mod_rewrite.c>
     # If we don't have mod_rewrite installed, all 404's
     # can be sent to index.php, and everything works as normal.
     # Submitted by: ElliotHaughin
 
     ErrorDocument 404 /index.php
+</IfModule>
+
+<IfModule mod_php5.c>
+   php_value output_handler none
+   php_flag register_globals off
+   php_flag safe_mode off
+</IfModule>
+<IfModule mod_php4.c>
+   php_value output_handler none
+   php_flag register_globals off
+   php_flag safe_mode off
 </IfModule>
 
 <IfModule mod_expires.c>
