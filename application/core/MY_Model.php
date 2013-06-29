@@ -628,32 +628,20 @@ class CMS_Model extends CI_Model
      * @param   string navigation_name
      * @param   mixed navigations
      * @return  bool
-     * @desc    only used in cms_allow_navigate
+     * @desc    check if user authorized to navigate into a page specified in parameter
      */
-    private function __cms_allow_navigate($navigation_name, $navigations = NULL)
+    public function cms_allow_navigate($navigation_name, $navigations = NULL)
     {
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
         for ($i = 0; $i < count($navigations); $i++) {
             if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"] == 1) {
                 return true;
-            } else if ($this->__cms_allow_navigate($navigation_name, $navigations[$i]["child"])) {
+            } else if ($this->cms_allow_navigate($navigation_name, $navigations[$i]["child"])) {
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param   string navigation_name
-     * @return  bool
-     * @desc    check if user authorized to navigate into a page specified in parameter
-     */
-    public function cms_allow_navigate($navigation_name)
-    {
-        if($this->cms_user_id()==1) return TRUE;
-        else return $this->__cms_allow_navigate($navigation_name);
     }
 
     /**

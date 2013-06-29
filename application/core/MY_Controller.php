@@ -540,7 +540,6 @@ class CMS_Controller extends MX_Controller
     public function cms_guard_page($navigation_name = NULL, $privilege_required = NULL)
     {
         $privilege_required = isset($privilege_required) ? $privilege_required : array();
-
         // check if allowed
         if (!isset($navigation_name) || $this->cms_allow_navigate($navigation_name)) {
             if (!isset($privilege_required)) {
