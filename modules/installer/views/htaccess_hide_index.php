@@ -1,7 +1,7 @@
 <IfModule mod_rewrite.c>
     # Options +FollowSymLinks -Indexes
     RewriteEngine On
-    RewriteBase <?php echo $rewrite_base; ?> # the rewrite base
+    RewriteBase <?php echo $rewrite_base; ?>
 
     #Checks to see if the user is attempting to access a valid file,
     #such as an image or css document, if this isn't true it sends the

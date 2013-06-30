@@ -13,6 +13,7 @@ class Install_Model extends CI_Model{
     public $admin_user_name = 'admin';
     public $admin_real_name = 'Rina Suzuki';
     public $admin_password  = 'admin';
+    public $admin_confirm_password = 'admin';
 
     public $hide_index       = FALSE;
     public $gzip_compression = FALSE;
@@ -77,9 +78,9 @@ class Install_Model extends CI_Model{
         return $dsn;
     }
 
-    protected function load_database(){
+    protected function build_db_config(){
         $dsn = $this->build_dsn();
-        $db_config = array(
+        return array(
             'dsn' => $dsn,
             'hostname' => $this->db_host,
             'username' => $this->db_username,
@@ -100,14 +101,43 @@ class Install_Model extends CI_Model{
             'stricton' => FALSE,
             'failover' => array()
         );
+    }
+
+    protected function load_database(){
+        $db_config = $this->build_db_config();
         $db = $this->load->database($db_config, TRUE);
+
+        $success = TRUE;
         if($db->conn_id === FALSE){
-            return FALSE;
-        }else{
+            $success = FALSE;
+            // if it is MySQL, try to make database
+            if($this->db_protocol=='mysql'){
+                // try to not use db_name
+                $db_name = $this->db_name;
+                $this->db_name = '';
+                $db_config = $this->build_db_config();
+                $db = $this->load->database($db_config, TRUE);
+                if($db->conn_id !== FALSE){
+                    // try to make the database
+                    $result = $db->query('CREATE DATABASE ' . $db_name . ' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;');
+                }
+                $this->db_name = $db_name;
+                $db_config = $this->build_db_config();
+                $db = $this->load->database($db_config, TRUE);
+                if($db->conn_id !== FALSE){
+                    $success = TRUE;
+                }
+            }
+        }
+
+        // return value
+        if($success){
             $this->db = $db;
             $this->dbutil = $this->load->dbutil($db, TRUE);
             $this->dbforge = $this->load->dbforge($db, TRUE);
             return $db;
+        }else{
+            return FALSE;
         }
     }
 
@@ -121,15 +151,34 @@ class Install_Model extends CI_Model{
             $success =  FALSE;
             $error_list[] = 'Cannot connect using provided database setting';
         }
+        if($this->db_name=='' && $this->db_protocol != 'sqlite'){
+            $success = FALSE;
+            $error_list[] = 'Database schema cannot be empty';
+        }
+        if($this->admin_user_name==''){
+            $success = FALSE;
+            $error_list[] = 'Admin user name cannot be empty';
+        }
+        if($this->admin_real_name==''){
+            $success = FALSE;
+            $error_list[] = 'Admin real name cannot be empty';
+        }
+        if($this->admin_password==''){
+            $success = FALSE;
+            $error_list[] = 'Admin password is empty';
+        }else if ($this->admin_password != $this->admin_confirm_password){
+            $success = FALSE;
+            $error_list[] = 'Admin password confirmation doesn\'t match';
+        }
         // No-CMS directory
-        if (!is_writable(FCPATH)) {
+        if (!is_writable(APPPATH.'..')) {
             $success  = FALSE;
-            $error_list[] = FCPATH.' is not writable';
+            $error_list[] = APPATH.'.. is not writable';
         }
         // assets/caches
-        if (!is_writable(FCPATH.'assets/caches')) {
+        if (!is_writable(APPPATH.'../assets/caches')) {
             $success  = FALSE;
-            $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
+            $error_list[] = "Asset cache directory (".APPATH."../assets/caches) is not writable";
         }
         // application/config/config.php
         if (!is_writable(APPPATH.'config/config.php')) {
@@ -147,11 +196,99 @@ class Install_Model extends CI_Model{
             $error_list[] = APPPATH."config/database.php is not writable";
         }
         // third party authentication activated
-        if ($auth_enable_facebook !== "" || $auth_enable_twitter !== "" || $auth_enable_google !== "" || $auth_enable_yahoo !== "" || $auth_enable_linkedin !== "" || $auth_enable_myspace !== "" || $auth_enable_foursquare !== "" || $auth_enable_windows_live !== "" || $auth_enable_open_id !== "" || $auth_enable_aol !== "") {
+        if ($this->auth_enable_facebook !== "" || $this->auth_enable_twitter !== "" || $this->auth_enable_google !== "" || $this->auth_enable_yahoo !== "" || $this->auth_enable_linkedin !== "" || $this->auth_enable_myspace !== "" || $this->auth_enable_foursquare !== "" || $this->auth_enable_windows_live !== "" || $this->auth_enable_open_id !== "" || $this->auth_enable_aol !== "") {
             // curl
             if (!in_array('curl', get_loaded_extensions())) {
                 $success  = FALSE;
-                $errors[] = 'Third party authentication require php-curl, but it is not enabled';
+                $error_list[] = 'Third party authentication require php-curl, but it is not enabled';
+            }
+            // facebook
+            if($this->auth_enable_facebook){
+                if($this->auth_facebook_app_id == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Facebook application id cannot be empty';
+                }
+                if($this->auth_facebook_app_secret == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Facebook application secret cannot be empty';
+                }
+            }
+            // twitter
+            if($this->auth_enable_twitter){
+                if($this->auth_twitter_app_key == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Twitter application key cannot be empty';
+                }
+                if($this->auth_twitter_app_secret == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Twitter application secret cannot be empty';
+                }
+            }
+            // google
+            if($this->auth_enable_google){
+                if($this->auth_google_app_id == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Google application id cannot be empty';
+                }
+                if($this->auth_google_app_secret == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Google application secret cannot be empty';
+                }
+            }
+            // yahoo
+            if($this->auth_enable_yahoo){
+                if($this->auth_yahoo_app_id == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Yahoo application id cannot be empty';
+                }
+                if($this->auth_yahoo_app_secret == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Yahoo application secret cannot be empty';
+                }
+            }
+            // linkedin
+            if($this->auth_enable_linkedin){
+                if($this->auth_linkedin_app_key == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Linkedin application key cannot be empty';
+                }
+                if($this->auth_linkedin_app_secret == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Linkedin application secret cannot be empty';
+                }
+            }
+            // myspace
+            if($this->auth_enable_myspace){
+                if($this->auth_myspace_app_key == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Myspace application key cannot be empty';
+                }
+                if($this->auth_myspace_app_secret == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Myspace application secret cannot be empty';
+                }
+            }
+            // foursquare
+            if($this->auth_enable_foursquare){
+                if($this->auth_foursquare_app_id == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Foursquare application id cannot be empty';
+                }
+                if($this->auth_foursquare_app_secret == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Foursquare application secret cannot be empty';
+                }
+            }
+            // windows_live
+            if($this->auth_enable_windows_live){
+                if($this->auth_windows_live_app_id == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Windows Live application id cannot be empty';
+                }
+                if($this->auth_windows_live_app_secret == ''){
+                    $success = FALSE;
+                    $error_list[] = 'Windows Live application secret cannot be empty';
+                }
             }
             // hybridauthlib configuration file
             if (!is_writable(APPPATH.'config/hybridauthlib.php')) {
@@ -161,13 +298,70 @@ class Install_Model extends CI_Model{
             // hybridauthlib log file
             if (!is_writable(APPPATH.'logs/hybridauth.log')) {
                 $success  = FALSE;
-                $errors[] = APPPATH."logs/hybridauth.log is not writable";
+                $error_list[] = APPPATH."logs/hybridauth.log is not writable";
+            }
+        }
+        // hide index: mod_rewrite should be active, but there is no way to absolutely determine this
+        if($this->hide_index){
+            $mod_rewrite = FALSE;
+            if (function_exists('apache_get_modules')) {
+                $modules = apache_get_modules();
+                if (in_array('mod_rewrite', $modules)) {
+                    $mod_rewrite = TRUE;
+                }
+            }
+            if (!$mod_rewrite && isset($_SERVER["HTTP_MOD_REWRITE"])) {
+                if (strtoupper($_SERVER["HTTP_MOD_REWRITE"]) == "ON") {
+                    $mod_rewrite = TRUE;
+                }
+            }
+            if (!$mod_rewrite) {
+                if (strtoupper(getenv('HTTP_MOD_REWRITE')) == "ON") {
+                    $mod_rewrite = TRUE;
+                }
+            }
+            if (!$mod_rewrite && in_array('curl', get_loaded_extensions())) {
+                file_put_contents(get_test_path('.htaccess'), $htaccess_content);
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, get_test_url('test_mod_rewrite'));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                $response = curl_exec($ch);
+                curl_close($ch);
+                unlink(get_test_path('.htaccess'));
+                if ($response == 'ok') {
+                    $mod_rewrite = TRUE;
+                }
+            }
+            /* TODO: apply this if possible
+                if (!$mod_rewrite) {
+                    $htaccess_content = '<IfModule mod_rewrite.c>' . PHP_EOL;
+                    $htaccess_content .= '   Options +FollowSymLinks -Indexes' . PHP_EOL;
+                    $htaccess_content .= '   RewriteEngine On' . PHP_EOL;
+                    $htaccess_content .= '   RewriteBase ' . get_test_rewrite_base() . PHP_EOL;
+                    $htaccess_content .= '   # fake rule to verify if mod rewriting works (if there are unbearable restrictions..)' . PHP_EOL;
+                    $htaccess_content .= '   RewriteRule ^test_mod_rewrite$    test.php' . PHP_EOL;
+                    $htaccess_content .= '</IfModule>';
+                    file_put_contents(get_test_path('.htaccess'), $htaccess_content);
+                    $response = @file_get_contents(get_test_url('test_mod_rewrite'));
+                    unlink(get_test_path('.htaccess'));
+                    if ($response == 'ok') {
+                        $mod_rewrite = TRUE;
+                    }
+                }
+             */
+            if(!$mod_rewrite){
+                $warning_list = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
             }
         }
         // log directory
         if (!is_writable(APPPATH.'logs')) {
             $success  = FALSE;
             $error_list[] = APPPATH."logs is not writable";
+        }
+        // installer controller
+        if (!is_writable(APPPATH.'../modules/installer/controllers/installer.php')) {
+            $success  = FALSE;
+            $error_list[] = APPPATH."../modules/installer/controllers/installer.php is not writable";
         }
         return array(
                 'success' => $success,
@@ -197,13 +391,13 @@ class Install_Model extends CI_Model{
         // define frequently used types
         $type_primary_key = array(
                 'type' => 'INT',
-                'constraint' => 5,
+                'constraint' => 10,
                 'unsigned' => TRUE,
                 'auto_increment' => TRUE
             );
         $type_int = array(
             'type' => 'INT',
-            'constraint' => 5,
+            'constraint' => 10,
             'unsigned' => TRUE
         );
         $type_foreign_key = array(
@@ -272,6 +466,21 @@ class Install_Model extends CI_Model{
         $type_varchar_large_strict = array(
                 'type' => 'VARCHAR',
                 'constraint' => '100',
+                'null' => FALSE,
+            );
+        $type_user_agent = array(
+                'type' => 'VARCHAR',
+                'constraint' => '120',
+                'null' => FALSE,
+            );
+        $type_user_agent = array(
+                'type' => 'VARCHAR',
+                'constraint' => '120',
+                'null' => FALSE,
+            );
+        $type_ip_address = array(
+                'type' => 'VARCHAR',
+                'constraint' => '16',
                 'null' => FALSE,
             );
 
@@ -430,8 +639,8 @@ class Install_Model extends CI_Model{
         // CI SESSION
         $fields = array(
                 'session_id' => $type_varchar_small_strict,
-                'ip_address' => $type_varchar_small_strict,
-                'user_agent' => $type_varchar_small_strict,
+                'ip_address' => $type_ip_address,
+                'user_agent' => $type_user_agent,
                 'last_activity' => $type_int,
                 'user_data' => $type_text,
             );
@@ -679,14 +888,6 @@ class Install_Model extends CI_Model{
         $str = file_get_contents($file_name);
         $awal = $str;
         $str = preg_replace($pattern, $replacement, $str);
-        /*
-        echo '<pre>';
-        var_dump($pattern);
-        var_dump($replacement);
-        var_dump($awal);
-        var_dump($str);
-        echo '</pre>';
-         */
 
         @chmod($file_name,0777);
         @file_put_contents($file_name, $str);
@@ -729,13 +930,16 @@ class Install_Model extends CI_Model{
         $index_page = $this->hide_index?'':'index.php';
         $this->change_config($file_name, "index_page", $index_page, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "encryption_key", 'namidanoregret', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "sess_table_name", $this->db_prefix.'_ci_sessions', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "sess_table_name", $this->db_table_prefix.'_ci_sessions', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $value_prefix = "";
+        $value_suffix = ";";
         $compress_output = $this->gzip_compression?'TRUE':'FALSE';
-        $this->change_config($file_name, "compress_output", $compress_output, $key_prefix, $key_suffix, '', ';', $equal_sign);
+        $this->change_config($file_name, "compress_output", $compress_output, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "sess_use_database", 'TRUE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
         // routes
         $file_name = APPPATH.'config/routes.php';
-        $key_prefix = '$routes[\'';
+        $key_prefix = '$route[\'';
         $key_suffix = "']";
         $value_prefix = "'";
         $value_suffix = "';";
@@ -750,7 +954,6 @@ class Install_Model extends CI_Model{
         $value_prefix = "";
         $value_suffix = ";";
         $equal_sign = '=';
-
         $val = $this->auth_enable_facebook?'TRUE':'FALSE';
         $this->change_config($file_name, "auth_enable_facebook", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $val = $this->auth_enable_twitter?'TRUE':'FALSE';
@@ -764,17 +967,56 @@ class Install_Model extends CI_Model{
         $val = $this->auth_enable_myspace?'TRUE':'FALSE';
         $this->change_config($file_name, "auth_enable_myspace", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $val = $this->auth_enable_windows_live?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_foursquare", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_windows_live?'TRUE':'FALSE';
         $this->change_config($file_name, "auth_enable_windows_live", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $val = $this->auth_enable_foursquare?'TRUE':'FALSE';
         $this->change_config($file_name, "auth_enable_foursquare", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $val = $this->auth_enable_open_id?'TRUE':'FALSE';
-        $this->change_config($file_name, "auth_enable_open_id", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $val = $this->auth_enable_aol?'TRUE':'FALSE';
         $this->change_config($file_name, "auth_enable_aol", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $val = $this->auth_enable_open_id?'TRUE':'FALSE';
+        $this->change_config($file_name, "auth_enable_open_id", $val, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
-        // TODO: complete hybridauth & .htaccess replacement
+        $value_prefix = "'";
+        $value_suffix = "';";
+        $this->change_config($file_name, "auth_facebook_app_id", $this->auth_facebook_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_facebook_app_secret", $this->auth_facebook_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_twitter_app_key", $this->auth_twitter_app_key, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_twitter_app_secret", $this->auth_twitter_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_google_app_id", $this->auth_google_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_google_app_secret", $this->auth_google_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_yahoo_app_id", $this->auth_yahoo_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_yahoo_app_secret", $this->auth_yahoo_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_linkedin_app_key", $this->auth_linkedin_app_key, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_linkedin_app_secret", $this->auth_linkedin_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_myspace_app_key", $this->auth_myspace_app_key, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_myspace_app_secret", $this->auth_myspace_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_windows_live_app_id", $this->auth_windows_live_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_windows_live_app_secret", $this->auth_windows_live_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_foursquare_app_id", $this->auth_foursquare_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "auth_foursquare_app_secret", $this->auth_foursquare_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
 
+        // make htaccess
+        $rewrite_base = str_replace('index.php', '',$_SERVER['SCRIPT_NAME']);
+        $data = array('rewrite_base'=>$rewrite_base);
+        if($this->hide_index){
+            $view_name = 'installer/htaccess_hide_index';
+        }else{
+            $view_name = 'installer/htaccess_not_hide_index';
+        }
+        $htaccess_content = $this->load->view($view_name, $data, TRUE);
+        file_put_contents(APPPATH.'../.htaccess', $htaccess_content);
+    }
+
+    public function disable_installer(){
+        $file_name = APPPATH.'../modules/installer/controllers/installer.php';
+        $key_prefix = 'public $';
+        $key_suffix = "";
+        $value_prefix = "";
+        $value_suffix = ";";
+        $equal_sign = '=';
+        $this->change_config($file_name, "ALLOW_INSTALL", 'FALSE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
     }
 
 }

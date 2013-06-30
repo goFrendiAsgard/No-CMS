@@ -39,7 +39,7 @@
 				<code>application/controllers/welcome.php</code>
 
 				<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="user_guide/">CodeIgniter User Guide</a>.</p>
-		        <p> You can <a class="btn btn-primary" href="<?php echo base_url(); ?>install/"><b>install No-CMS</b></a> anytime you are ready to</p>
+		        <p> You can <a class="btn btn-primary" href="<?php echo site_url('installer/index'); ?>"><b>install No-CMS</b></a> anytime you are ready to</p>
 			</div>
 
 			<p class="footer well row-fluid span11">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
