@@ -876,3 +876,5 @@ v0.6.3
 + (proposed) automatically create thumbnail in wysiwyg, use better uploader library
 + (done, tested) make language and module list sorted
 + (in progress) support PDO, use groceryCRUD that support PDO, use CodeIgniter 3.0
++ (done) new installer that will also support PDO
++ (proposed) make nordrassil generated code also support PDO

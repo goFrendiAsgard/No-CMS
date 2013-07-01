@@ -810,7 +810,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_config('site_slogan', 'A Free CodeIgniter Based CMS Framework', 'Site slogan');
         $sql_list[] = $this->insert_config('site_logo', '{{ base_url }}assets/nocms/images/No-CMS-logo.png', 'Site logo');
         $sql_list[] = $this->insert_config('site_favicon', '{{ base_url }}assets/nocms/images/No-CMS-favicon.png', 'Site favicon');
-        $sql_list[] = $this->insert_config('site_footer', 'goFrendiAsgard &copy; 2011', 'Site footer');
+        $sql_list[] = $this->insert_config('site_footer', 'Powered by No-CMS &copy; 2013', 'Site footer');
         $sql_list[] = $this->insert_config('site_theme', 'neutral', 'Site theme');
         $sql_list[] = $this->insert_config('site_language', 'english', 'Site language');
         $sql_list[] = $this->insert_config('max_menu_depth', '5', 'Depth of menu recursive');

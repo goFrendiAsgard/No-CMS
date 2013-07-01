@@ -480,7 +480,7 @@
                     <div id="div-success-message" class="alert alert-block alert-success">
                         <strong>GREAT !!!</strong>, you can now install No-CMS without worrying anything.
                     </div>
-                    <input type="submit" id="btn-install" class="btn btn-primary btn-large" name="Install" value="INSTALL NOW"  />
+                    <input type="submit" id="btn-install" class="btn btn-primary btn-large" name="Install" disabled="disabled" value="INSTALL NOW"  />
                     <img id="img-loader" src="<?php echo base_url('modules/installer/assets/ajax-loader.gif'); ?>" />
                 </div>
             </div>
@@ -616,8 +616,10 @@
                     // show/hide button
                     if(SUCCESS){
                         $('#btn-install').show();
+                        $("#btn-install").removeAttr('disabled');
                     }else{
                         $('#btn-install').hide();
+                        $("#btn-install").attr('disabled','disabled');
                     }
 
                 }

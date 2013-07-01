@@ -26,13 +26,14 @@
             </div>
           </div>
         </div>
-        <div class="span11">
+        <div class="span11 well">
             <?php
                 if($success){
-                   echo '<a href="'.site_url().'" id="btn-continue" class="btn btn-primary btn-large">Continue</a>';
-                   echo '<img id="img-loader" src="'.base_url('modules/installer/assets/ajax-loader.gif').'" />';
+                    echo '<span id="span-message">Installing modules ... &nbsp;</span>';
+                    echo '<img id="img-loader" src="'.base_url('modules/installer/assets/ajax-loader.gif').'" />';
+                    echo '<a href="'.site_url().'" id="btn-continue" class="btn btn-primary btn-large">Continue</a>';
                 }else{
-                   echo '<div id="div-error-message" class="alert alert-block alert-error">
+                    echo '<div id="div-error-message" class="alert alert-block alert-error">
                             <strong>ERROR: </strong>Installation Failed.
                             <a href="'.site_url('installer').'" class="btn btn-primary btn-large">Go Back</a>
                         </div>';
@@ -72,6 +73,7 @@
                             if(done == modules.length){
                                 $('#btn-continue').show();
                                 $('#img-loader').hide();
+                                $('#span-message').hide();
                             }
                         }
                 });
