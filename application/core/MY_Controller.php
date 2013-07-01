@@ -1277,6 +1277,7 @@ class CMS_Module_Installer extends CMS_Controller
                 $this->IS_OLD = FALSE;
             }
         }
+        $this->load->dbforge();
     }
 
     public function status(){
@@ -1546,8 +1547,10 @@ class CMS_Module_Installer extends CMS_Controller
             }
             $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_navigation')."` WHERE $whereParentId";
             $query = $this->db->query($SQL);
-            $row   = $query->row();
-            $index = $row->newIndex;
+            if ($query->num_rows() > 0) {
+                $row   = $query->row();
+                $index = $row->newIndex;
+            }
             if (!isset($index))
                 $index = 0;
         }
@@ -1572,8 +1575,10 @@ class CMS_Module_Installer extends CMS_Controller
         //get navigation_id
         $SQL           = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_name='" . addslashes($navigation_name) . "'";
         $query         = $this->db->query($SQL);
-        $row           = $query->row();
-        $navigation_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+        if ($query->num_rows() > 0) {
+            $row           = $query->row();
+            $navigation_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+        }
 
         if (isset($navigation_id)) {
             //delete quicklink
@@ -1640,21 +1645,25 @@ class CMS_Module_Installer extends CMS_Controller
         //get current cms_module_id as child_id
         $SQL      = "SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($this->NAME) . "'";
         $query    = $this->db->query($SQL);
-        $row      = $query->row();
-        $child_id = $row->module_id;
+        if ($query->num_rows() > 0) {
+            $row      = $query->row();
+            $child_id = $row->module_id;
+        }
 
         //get parent_id
         if (isset($child_id)) {
             foreach ($this->DEPENDENCIES as $dependency) {
                 $SQL       = "SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($dependency) . "'";
                 $query     = $this->db->query($SQL);
-                $row       = $query->row();
-                $parent_id = $row->module_id;
-                $data      = array(
-                    "parent_id" => $parent_id,
-                    "child_id" => $child_id
-                );
-                $this->db->insert(cms_table_name('main_module_dependency'), $data);
+                if ($query->num_rows() > 0) {
+                    $row       = $query->row();
+                    $parent_id = $row->module_id;
+                    $data      = array(
+                        "parent_id" => $parent_id,
+                        "child_id" => $child_id
+                    );
+                    $this->db->insert(cms_table_name('main_module_dependency'), $data);
+                }
 
             }
         }
@@ -1665,26 +1674,28 @@ class CMS_Module_Installer extends CMS_Controller
         //get current cms_module_id as child_id
         $SQL      = "SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($this->NAME) . "'";
         $query    = $this->db->query($SQL);
-        $row      = $query->row();
-        $child_id = $row->module_id;
+        if ($query->num_rows() > 0) {
+            $row      = $query->row();
+            $child_id = $row->module_id;
 
-        $where = array(
-            'child_id' => $child_id
-        );
-        $this->db->delete(cms_table_name('main_module_dependency'), $where);
+            $where = array(
+                'child_id' => $child_id
+            );
+            $this->db->delete(cms_table_name('main_module_dependency'), $where);
 
-        $where = array(
-            'module_path' => $this->cms_module_path()
-        );
-        $this->db->delete(cms_table_name('main_module'), $where);
+            $where = array(
+                'module_path' => $this->cms_module_path()
+            );
+            $this->db->delete(cms_table_name('main_module'), $where);
+        }
     }
 
     private final function child_module()
     {
         $SQL   = "SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($this->NAME) . "'";
         $query = $this->db->query($SQL);
-        $row   = $query->row();
         if ($query->num_rows() > 0) {
+            $row   = $query->row();
             $parent_id = $row->module_id;
 
             $SQL    = "
@@ -1720,8 +1731,10 @@ class CMS_Module_Installer extends CMS_Controller
             }
             $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_widget')."` WHERE $whereSlug";
             $query = $this->db->query($SQL);
-            $row   = $query->row();
-            $index = $row->newIndex;
+            if ($query->num_rows() > 0) {
+                $row   = $query->row();
+                $index = $row->newIndex;
+            }
 
             if (!isset($index))
                 $index = 0;
@@ -1742,7 +1755,7 @@ class CMS_Module_Installer extends CMS_Controller
     {
         $SQL       = "SELECT widget_id FROM ".cms_table_name('main_widget')." WHERE widget_name='" . addslashes($widget_name) . "'";
         $query     = $this->db->query($SQL);
-        if($query->row_count()>0){
+        if($query->num_rows()>0){
             $row       = $query->row();
             $widget_id = $row->widget_id;
 
