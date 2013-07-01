@@ -391,13 +391,13 @@ class Install_Model extends CI_Model{
         // define frequently used types
         $type_primary_key = array(
                 'type' => 'INT',
-                'constraint' => 10,
+                'constraint' => 20,
                 'unsigned' => TRUE,
                 'auto_increment' => TRUE
             );
         $type_int = array(
             'type' => 'INT',
-            'constraint' => 10,
+            'constraint' => 20,
             'unsigned' => TRUE
         );
         $type_foreign_key = array(

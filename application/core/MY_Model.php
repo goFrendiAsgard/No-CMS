@@ -29,7 +29,7 @@ class CMS_Model extends CI_Model
         $this->load->helper('html');
         $this->load->helper('form');
         $this->load->library('user_agent');
-        $this->load->library('session');
+        $this->load->driver('session');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
         $this->load->database();
@@ -779,6 +779,7 @@ class CMS_Model extends CI_Model
         sort($directories);
         $module      = array();
         foreach ($directories as $directory) {
+            $directory = str_replace('/','',$directory);
             if (!is_dir('modules/' . $directory))
                 continue;
 

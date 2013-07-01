@@ -36,7 +36,7 @@ class CMS_Controller extends MX_Controller
         $this->load->library('form_validation');
 
         // if there is old_url, then save it
-        $this->load->library('session');
+        $this->load->driver('session');
         $old_url = $this->session->flashdata('cms_old_url');
         if (!is_bool($old_url)) {
             $this->session->keep_flashdata('cms_old_url');
@@ -1559,7 +1559,8 @@ class CMS_Module_Installer extends CMS_Controller
             "url" => $url,
             "authorization_id" => $authorization_id,
             "index" => $index,
-            "description" => $description
+            "description" => $description,
+            "active"=>1,
         );
         if (isset($parent_id)) {
             $data['parent_id'] = $parent_id;
@@ -1741,21 +1742,25 @@ class CMS_Module_Installer extends CMS_Controller
     {
         $SQL       = "SELECT widget_id FROM ".cms_table_name('main_widget')." WHERE widget_name='" . addslashes($widget_name) . "'";
         $query     = $this->db->query($SQL);
-        $row       = $query->row();
-        $widget_id = $row->widget_id;
+        if($query->row_count()>0){
+            $row       = $query->row();
+            $widget_id = $row->widget_id;
 
-        if (isset($widget_id)) {
-            //delete cms_group_privilege
-            $where = array(
-                "widget_id" => $widget_id
-            );
-            $this->db->delete(cms_table_name('main_group_widget'), $where);
-            //delete cms_privilege
-            $where = array(
-                "widget_id" => $widget_id
-            );
-            $this->db->delete(cms_table_name('main_widget'), $where);
+            if (isset($widget_id)) {
+                //delete cms_group_privilege
+                $where = array(
+                    "widget_id" => $widget_id
+                );
+                $this->db->delete(cms_table_name('main_group_widget'), $where);
+                //delete cms_privilege
+                $where = array(
+                    "widget_id" => $widget_id
+                );
+                $this->db->delete(cms_table_name('main_widget'), $where);
+            }
+
         }
+
     }
 
     protected final function add_quicklink($navigation_name)

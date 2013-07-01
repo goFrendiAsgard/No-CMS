@@ -30,10 +30,10 @@
         	echo '<img class="logo" src="'.base_url('assets/nocms/images/icons/package.png').'" />';
         }
         echo '  <br />';
-        echo '  <a id="module_'.$i.'_activate" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'install/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
-        echo '  <a id="module_'.$i.'_upgrade" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'install/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
-        echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger btn-mini disabled" href="'.site_url($module['module_path'].'install/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
-        echo '  <a id="module_'.$i.'_setting" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'install/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
+        echo '  <a id="module_'.$i.'_activate" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'/install/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
+        echo '  <a id="module_'.$i.'_upgrade" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'/install/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
+        echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger btn-mini disabled" href="'.site_url($module['module_path'].'/install/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
+        echo '  <a id="module_'.$i.'_setting" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'/install/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
         echo '</div>';
         echo '<div class="span8">';
         echo '  <br />';
