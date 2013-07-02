@@ -12,6 +12,9 @@
         #btn-continue{
             display:none;
         }
+        #span-finish-message{
+            display:none;
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css'); ?>" />
     <script type="text/javascript" src="<?php echo base_url('assets/nocms/js/jquery.tools.min.js'); ?>"></script>
@@ -29,8 +32,9 @@
         <div class="span11 well">
             <?php
                 if($success){
-                    echo '<span id="span-message">Installing modules ... &nbsp;</span>';
+                    echo '<span id="span-process-message">Installing modules ... &nbsp;</span>';
                     echo '<img id="img-loader" src="'.base_url('modules/installer/assets/ajax-loader.gif').'" />';
+                    echo '<span id="span-finish-message">Installation completed &nbsp;</span>';
                     echo '<a href="'.site_url().'" id="btn-continue" class="btn btn-primary btn-large">Continue</a>';
                 }else{
                     echo '<div id="div-error-message" class="alert alert-block alert-error">
@@ -73,7 +77,8 @@
                             if(done == modules.length){
                                 $('#btn-continue').show();
                                 $('#img-loader').hide();
-                                $('#span-message').hide();
+                                $('#span-process-message').hide();
+                                $('#span-finish-message').show();
                             }
                         }
                 });

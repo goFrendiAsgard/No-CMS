@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Web Page Caching &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Profiling Your Application" href="profiling.html" />
+	    <link rel="prev" title="Error Handling" href="errors.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa80810c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Web Page Caching</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="web-page-caching">
+<h1>Web Page Caching<a class="headerlink" href="#web-page-caching" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter lets you cache your pages in order to achieve maximum
+performance.</p>
+<p>Although CodeIgniter is quite fast, the amount of dynamic information
+you display in your pages will correlate directly to the server
+resources, memory, and processing cycles utilized, which affect your
+page load speeds. By caching your pages, since they are saved in their
+fully rendered state, you can achieve performance that nears that of
+static web pages.</p>
+<div class="section" id="how-does-caching-work">
+<h2>How Does Caching Work?<a class="headerlink" href="#how-does-caching-work" title="Permalink to this headline">¶</a></h2>
+<p>Caching can be enabled on a per-page basis, and you can set the length
+of time that a page should remain cached before being refreshed. When a
+page is loaded for the first time, the cache file will be written to
+your application/cache folder. On subsequent page loads the cache file
+will be retrieved and sent to the requesting user&#8217;s browser. If it has
+expired, it will be deleted and refreshed before being sent to the
+browser.</p>
+</div>
+<div class="section" id="enabling-caching">
+<h2>Enabling Caching<a class="headerlink" href="#enabling-caching" title="Permalink to this headline">¶</a></h2>
+<p>To enable caching, put the following tag in any of your controller
+methods:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">cache</span><span class="p">(</span><span class="nv">$n</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where <tt class="docutils literal"><span class="pre">$n</span></tt> is the number of <strong>minutes</strong> you wish the page to remain
+cached between refreshes.</p>
+<p>The above tag can go anywhere within a method. It is not affected by
+the order that it appears, so place it wherever it seems most logical to
+you. Once the tag is in place, your pages will begin being cached.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Because of the way CodeIgniter stores content for output,
+caching will only work if you are generating display for your
+controller with a <a class="reference internal" href="views.html"><em>view</em></a>.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Before the cache files can be written you must set the file
+permissions on your <em>application/cache/</em> directory such that
+it is writable.</p>
+</div>
+</div>
+<div class="section" id="deleting-caches">
+<h2>Deleting Caches<a class="headerlink" href="#deleting-caches" title="Permalink to this headline">¶</a></h2>
+<p>If you no longer wish to cache a file you can remove the caching tag and
+it will no longer be refreshed when it expires.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Removing the tag will not delete the cache immediately. It will
+have to expire normally.</p>
+</div>
+<p>If you need to manually delete the cache, you can use the <tt class="docutils literal"><span class="pre">delete_cache()</span></tt>
+method:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Deletes cache for the currently requested URI</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">delete_cache</span><span class="p">();</span>
+
+<span class="c1">// Deletes cache for /foo/bar</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">delete_cache</span><span class="p">(</span><span class="s1">&#39;/foo/bar&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

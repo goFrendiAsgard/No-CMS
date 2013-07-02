@@ -1,0 +1,477 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Upgrading from 2.1.3 to 3.0.0 &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Installation Instructions" href="index.html" />
+	    <link rel="next" title="Upgrading From Beta 1.0 to Beta 1.1" href="upgrade_b11.html" />
+	    <link rel="prev" title="Upgrading from 2.1.2 to 2.1.3" href="upgrade_213.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb387304>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Installation Instructions</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Upgrading from 2.1.3 to 3.0.0</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="upgrading-from-2-1-3-to-3-0-0">
+<h1>Upgrading from 2.1.3 to 3.0.0<a class="headerlink" href="#upgrading-from-2-1-3-to-3-0-0" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These upgrade notes are for a version that is yet to be released.</p>
+</div>
+<p>Before performing an update you should take your site offline by replacing the index.php file with a static one.</p>
+<div class="section" id="step-1-update-your-codeigniter-files">
+<h2>Step 1: Update your CodeIgniter files<a class="headerlink" href="#step-1-update-your-codeigniter-files" title="Permalink to this headline">¶</a></h2>
+<p>Replace all files and directories in your &#8220;system&#8221; folder and replace
+your index.php file. If any modifications were made to your index.php
+they will need to be made fresh in this new one.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have any custom developed files in these folders please
+make copies of them first.</p>
+</div>
+</div>
+<div class="section" id="step-2-replace-config-mimes-php">
+<h2>Step 2: Replace config/mimes.php<a class="headerlink" href="#step-2-replace-config-mimes-php" title="Permalink to this headline">¶</a></h2>
+<p>This config file has been updated to contain more user mime-types, please copy
+it to _application/config/mimes.php*.</p>
+</div>
+<div class="section" id="step-3-remove-autoload-core-from-your-config-autoload-php">
+<h2>Step 3: Remove $autoload[&#8216;core&#8217;] from your config/autoload.php<a class="headerlink" href="#step-3-remove-autoload-core-from-your-config-autoload-php" title="Permalink to this headline">¶</a></h2>
+<p>Use of the <tt class="docutils literal"><span class="pre">$autoload['core']</span></tt> config array has been deprecated as of CodeIgniter 1.4.1 and is now removed.
+Move any entries that you might have listed there to <tt class="docutils literal"><span class="pre">$autoload['libraries']</span></tt> instead.</p>
+</div>
+<div class="section" id="step-4-move-your-log-class-overrides-or-extensions">
+<h2>Step 4: Move your Log class overrides or extensions<a class="headerlink" href="#step-4-move-your-log-class-overrides-or-extensions" title="Permalink to this headline">¶</a></h2>
+<p>The Log Class is considered as a &#8220;core&#8221; class and is now located in the
+<strong>system/core/</strong> directory. Therefore, in order for your Log class overrides
+or extensions to work, you need to move them to <strong>application/core/</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">application</span><span class="o">/</span><span class="nx">libraries</span><span class="o">/</span><span class="nx">Log</span><span class="o">.</span><span class="nx">php</span> <span class="o">-&gt;</span> <span class="na">application</span><span class="o">/</span><span class="nx">core</span><span class="o">/</span><span class="nx">Log</span><span class="o">.</span><span class="nx">php</span>
+<span class="nx">application</span><span class="o">/</span><span class="nx">libraries</span><span class="o">/</span><span class="nx">MY_Log</span><span class="o">.</span><span class="nx">php</span> <span class="o">-&gt;</span> <span class="na">application</span><span class="o">/</span><span class="nx">core</span><span class="o">/</span><span class="nx">MY_log</span><span class="o">.</span><span class="nx">php</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-5-convert-your-session-usage-from-library-to-driver">
+<h2>Step 5: Convert your Session usage from library to driver<a class="headerlink" href="#step-5-convert-your-session-usage-from-library-to-driver" title="Permalink to this headline">¶</a></h2>
+<p>When you load (or autoload) the Session library, you must now load it as a driver instead of a library. This means
+calling <tt class="docutils literal"><span class="pre">$this-&gt;load-&gt;driver('session')</span></tt> instead of <tt class="docutils literal"><span class="pre">$this-&gt;load-&gt;library('session')</span></tt> and/or listing &#8216;session&#8217;
+in <tt class="docutils literal"><span class="pre">$autoload['drivers']</span></tt> instead of <tt class="docutils literal"><span class="pre">$autoload['libraries']</span></tt>.</p>
+<p>With the change from a single Session Library to the new Session Driver, two new config items have been added:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">$config['sess_driver']</span></tt> selects which driver to initially load. Options are:</dt>
+<dd><ul class="first last simple">
+<li>&#8216;cookie&#8217; (the default) for classic CodeIgniter cookie-based sessions</li>
+<li>&#8216;native&#8217; for native PHP Session support</li>
+<li>the name of a custom driver you have provided (see <a class="reference internal" href="../libraries/sessions.html"><em>Session Driver</em></a> for more info)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">$config['sess_valid_drivers']</span></tt> provides an array of additional custom drivers to make available for loading</p>
+</li>
+</ul>
+</div></blockquote>
+<p>As the new Session Driver library loads the classic Cookie driver by default and always makes &#8216;cookie&#8217; and &#8216;native&#8217;
+available as valid drivers, neither of these configuration items are required. However, it is recommended that you
+add them for clarity and ease of configuration in the future.</p>
+<p>If you have written a Session extension, you must move it into a &#8216;Session&#8217; sub-directory of &#8216;libraries&#8217;, following the
+standard for Drivers. Also beware that some functions which are not part of the external Session API have moved into
+the drivers, so your extension may have to be broken down into separate library and driver class extensions.</p>
+</div>
+<div class="section" id="step-6-update-your-config-database-php">
+<h2>Step 6: Update your config/database.php<a class="headerlink" href="#step-6-update-your-config-database-php" title="Permalink to this headline">¶</a></h2>
+<p>Due to 3.0.0&#8217;s renaming of Active Record to Query Builder, inside your <cite>config/database.php</cite>, you will
+need to rename the <cite>$active_record</cite> variable to <cite>$query_builder</cite></p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$active_group</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">;</span>
+<span class="c1">// $active_record = TRUE;</span>
+<span class="nv">$query_builder</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-7-move-your-errors-folder">
+<h2>Step 7: Move your errors folder<a class="headerlink" href="#step-7-move-your-errors-folder" title="Permalink to this headline">¶</a></h2>
+<p>In version 3.0.0, the errors folder has been moved from _application/errors* to _application/views/errors*.</p>
+</div>
+<div class="section" id="step-8-update-your-config-routes-php-containing-any">
+<h2>Step 8: Update your config/routes.php containing (:any)<a class="headerlink" href="#step-8-update-your-config-routes-php-containing-any" title="Permalink to this headline">¶</a></h2>
+<p>Historically, CodeIgniter has always provided the <strong>:any</strong> wildcard in routing,
+with the intention of providing a way to match any character <strong>within</strong> an URI segment.</p>
+<p>However, the <strong>:any</strong> wildcard is actually just an alias for a regular expression
+and used to be executed in that manner as <strong>.+</strong>. This is considered a bug, as it
+also matches the / (forward slash) character, which is the URI segment delimiter
+and that was never the intention. In CodeIgniter 3, the <strong>:any</strong> wildcard will now
+represent <strong>[^/]+</strong>, so that it will not match a forward slash.</p>
+<p>There are certainly many developers that have utilized this bug as an actual feature.
+If you&#8217;re one of them and want to match a forward slash, please use the <strong>.+</strong>
+regular expression:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="p">(</span><span class="o">.+</span><span class="p">)</span>    <span class="c1">// matches ANYTHING</span>
+<span class="p">(</span><span class="o">:</span><span class="nx">any</span><span class="p">)</span>  <span class="c1">// matches any character, except for &#39;/&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-9-update-your-libraries-file-names">
+<h2>Step 9: Update your libraries&#8217; file names<a class="headerlink" href="#step-9-update-your-libraries-file-names" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter 3.0 only allows library file names to be named in a <em>ucfirst</em> manner
+(meaning that the first letter of the class name must be a capital). For example,
+if you have the following library file:</p>
+<blockquote>
+<div>application/libraries/mylibrary.php</div></blockquote>
+<p>... then you&#8217;ll have to rename it to:</p>
+<blockquote>
+<div>application/libraries/Mylibrary.php</div></blockquote>
+<p>The same goes for driver libraries and extensions and/or overrides of CodeIgniter&#8217;s
+own libraries and core classes.</p>
+<blockquote>
+<div>application/libraries/MY_email.php
+application/core/MY_log.php</div></blockquote>
+<p>The above files should respectively be renamed to the following:</p>
+<blockquote>
+<div>application/libraries/MY_Email.php
+application/core/MY_Log.php</div></blockquote>
+</div>
+<div class="section" id="step-10-check-the-calls-to-array-helper-s-element-and-elements-functions">
+<h2>Step 10: Check the calls to Array Helper&#8217;s element() and elements() functions<a class="headerlink" href="#step-10-check-the-calls-to-array-helper-s-element-and-elements-functions" title="Permalink to this headline">¶</a></h2>
+<p>The default return value of these functions, when the required elements
+don&#8217;t exist, has been changed from FALSE to NULL.</p>
+</div>
+<div class="section" id="step-11-check-the-calls-to-directory-helper-s-directory-map-function">
+<h2>Step 11: Check the calls to Directory Helper&#8217;s directory_map() function<a class="headerlink" href="#step-11-check-the-calls-to-directory-helper-s-directory-map-function" title="Permalink to this headline">¶</a></h2>
+<p>In the resulting array, directories now end with a trailing directory
+separator (i.e. a slash, usually).</p>
+</div>
+<div class="section" id="step-12-update-usage-of-database-forge-s-drop-table-method">
+<h2>Step 12: Update usage of Database Forge&#8217;s drop_table() method<a class="headerlink" href="#step-12-update-usage-of-database-forge-s-drop-table-method" title="Permalink to this headline">¶</a></h2>
+<p>Up until now, <tt class="docutils literal"><span class="pre">drop_table()</span></tt> added an IF EXISTS clause by default or it didn&#8217;t work
+at all with some drivers. In CodeIgniter 3.0, the IF EXISTS condition is no longer added
+by default and has an optional second parameter that allows that instead and is set to
+FALSE by default.</p>
+<p>If your application relies on IF EXISTS, you&#8217;ll have to change its usage.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Now produces just DROP TABLE `table_name`</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbforge</span><span class="o">-&gt;</span><span class="na">drop_table</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">);</span>
+
+<span class="c1">// Produces DROP TABLE IF EXISTS `table_name`</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbforge</span><span class="o">-&gt;</span><span class="na">drop_table</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The given example users MySQL-specific syntax, but it should work across
+all drivers with the exception of ODBC.</p>
+</div>
+</div>
+<div class="section" id="step-13-change-usage-of-email-library-with-multiple-emails">
+<h2>Step 13: Change usage of Email library with multiple emails<a class="headerlink" href="#step-13-change-usage-of-email-library-with-multiple-emails" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../libraries/email.html"><em>Email Library</em></a> will automatically clear the
+set parameters after successfully sending emails. To override this behaviour,
+pass FALSE as the first parameter in the <tt class="docutils literal"><span class="pre">send()</span></tt> method:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">FALSE</span><span class="p">))</span>
+<span class="p">{</span>
+        <span class="c1">// Parameters won&#39;t be cleared</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-14-update-your-form-validation-language-lines">
+<h2>Step 14: Update your Form_validation language lines<a class="headerlink" href="#step-14-update-your-form-validation-language-lines" title="Permalink to this headline">¶</a></h2>
+<p>Two improvements have been made to the <a class="reference internal" href="../libraries/form_validation.html"><em>Form Validation Library</em></a>&#8216;s <a class="reference internal" href="../libraries/language.html"><em>language</em></a>
+files and error messages format:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><a class="reference internal" href="../libraries/language.html"><em>Language Library</em></a> line keys now must be
+prefixed with <strong>form_validation_</strong> in order to avoid collisions:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Old</span>
+<span class="nv">$lang</span><span class="p">[</span><span class="s1">&#39;rule&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="c1">// New</span>
+<span class="nv">$lang</span><span class="p">[</span><span class="s1">&#39;form_validation_rule&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">The error messages format has been changed to use named parameters, to
+allow more flexibility than what <cite>sprintf()</cite> offers:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Old</span>
+<span class="s1">&#39;The %s field does not match the %s field.&#39;</span>
+
+<span class="c1">// New</span>
+<span class="s1">&#39;The {field} field does not match the {param} field.&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The old formatting still works, but the non-prefixed line keys
+are DEPRECATED and scheduled for removal in CodeIgniter 3.1+.
+Therefore you&#8217;re encouraged to update its usage sooner rather than
+later.</p>
+</div>
+</div>
+<div class="section" id="step-15-remove-usage-of-previously-deprecated-functionalities">
+<h2>Step 15: Remove usage of (previously) deprecated functionalities<a class="headerlink" href="#step-15-remove-usage-of-previously-deprecated-functionalities" title="Permalink to this headline">¶</a></h2>
+<p>In addition to the <tt class="docutils literal"><span class="pre">$autoload['core']</span></tt> configuration setting, there&#8217;s a
+number of other functionalities that have been removed in CodeIgniter 3.0.0:</p>
+<div class="section" id="the-sha1-library">
+<h3>The SHA1 library<a class="headerlink" href="#the-sha1-library" title="Permalink to this headline">¶</a></h3>
+<p>The previously deprecated SHA1 library has been removed, alter your code to use PHP&#8217;s native
+<tt class="docutils literal"><span class="pre">sha1()</span></tt> function to generate a SHA1 hash.</p>
+<p>Additionally, the <tt class="docutils literal"><span class="pre">sha1()</span></tt> method in the <a class="reference internal" href="../libraries/encryption.html"><em>Encryption Library</em></a> has been removed.</p>
+</div>
+<div class="section" id="the-ext-constant">
+<h3>The EXT constant<a class="headerlink" href="#the-ext-constant" title="Permalink to this headline">¶</a></h3>
+<p>Usage of the <tt class="docutils literal"><span class="pre">EXT</span></tt> constant has been deprecated since dropping support for PHP 4. There&#8217;s no
+longer a need to maintain different filename extensions and in this new CodeIgniter version,
+the <tt class="docutils literal"><span class="pre">EXT</span></tt> constant has been removed. Use just &#8216;.php&#8217; instead.</p>
+</div>
+<div class="section" id="smiley-helper-js-insert-smiley">
+<h3>Smiley helper js_insert_smiley()<a class="headerlink" href="#smiley-helper-js-insert-smiley" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../helpers/smiley_helper.html"><em>Smiley Helper</em></a> function <tt class="docutils literal"><span class="pre">js_insert_smiley()</span></tt> has been deprecated
+since CodeIgniter 1.7.2 and is now removed. You&#8217;ll need to switch to <tt class="docutils literal"><span class="pre">smiley_js()</span></tt> instead.</p>
+</div>
+<div class="section" id="security-helper-do-hash">
+<h3>Security helper do_hash()<a class="headerlink" href="#security-helper-do-hash" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../helpers/security_helper.html"><em>Security Helper</em></a> function <tt class="docutils literal"><span class="pre">do_hash()</span></tt> is now just an alias for
+PHP&#8217;s native <tt class="docutils literal"><span class="pre">hash()</span></tt> function. It is deprecated and scheduled for removal in CodeIgniter 3.1+.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is still available, but you&#8217;re strongly encouraged to remove its usage sooner
+rather than later.</p>
+</div>
+</div>
+<div class="section" id="file-helper-read-file">
+<h3>File helper read_file()<a class="headerlink" href="#file-helper-read-file" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../helpers/file_helper.html"><em>File Helper</em></a> function <tt class="docutils literal"><span class="pre">read_file()</span></tt> is now just an alias for
+PHP&#8217;s native <tt class="docutils literal"><span class="pre">file_get_contents()</span></tt> function. It is deprecated and scheduled for removal in
+CodeIgniter 3.1+.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is still available, but you&#8217;re strongly encouraged to remove its usage sooner
+rather than later.</p>
+</div>
+</div>
+<div class="section" id="string-helper-repeater">
+<h3>String helper repeater()<a class="headerlink" href="#string-helper-repeater" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../helpers/string_helper.html"><em>String Helper</em></a> function <tt class="xref php php-func docutils literal"><span class="pre">repeater()</span></tt> is now just an alias for
+PHP&#8217;s native <tt class="docutils literal"><span class="pre">str_repeat()</span></tt> function. It is deprecated and scheduled for removal in CodeIgniter 3.1+.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is still available, but you&#8217;re strongly encouraged to remove its usage sooner
+rather than later.</p>
+</div>
+</div>
+<div class="section" id="string-helper-trim-slashes">
+<h3>String helper trim_slashes()<a class="headerlink" href="#string-helper-trim-slashes" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../helpers/string_helper.html"><em>String Helper</em></a> function <a class="reference internal" href="../helpers/string_helper.html#trim_slashes" title="trim_slashes"><tt class="xref php php-func docutils literal"><span class="pre">trim_slashes()</span></tt></a> is now just an alias
+for PHP&#8217;s native <tt class="docutils literal"><span class="pre">trim()</span></tt> function (with a slash passed as its second argument). It is deprecated and
+scheduled for removal in CodeIgniter 3.1+.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is still available, but you&#8217;re strongly encouraged to remove its usage sooner
+rather than later.</p>
+</div>
+</div>
+<div class="section" id="email-helper-functions">
+<h3>Email helper functions<a class="headerlink" href="#email-helper-functions" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../helpers/email_helper.html"><em>Email Helper</em></a> only has two functions</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../helpers/email_helper.html#valid_email" title="valid_email"><tt class="xref php php-func docutils literal"><span class="pre">valid_email()</span></tt></a></li>
+<li><a class="reference internal" href="../helpers/email_helper.html#send_email" title="send_email"><tt class="xref php php-func docutils literal"><span class="pre">send_email()</span></tt></a></li>
+</ul>
+</div></blockquote>
+<p>Both of them are now aliases for PHP&#8217;s native <tt class="docutils literal"><span class="pre">filter_var()</span></tt> and <tt class="docutils literal"><span class="pre">mail()</span></tt> functions, respectively.
+Therefore the <a class="reference internal" href="../helpers/email_helper.html"><em>Email Helper</em></a> altogether is being deprecated and
+is scheduled for removal in CodeIgniter 3.1+.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These functions are still available, but you&#8217;re strongly encouraged to remove their usage
+sooner rather than later.</p>
+</div>
+</div>
+<div class="section" id="date-helper-standard-date">
+<h3>Date helper standard_date()<a class="headerlink" href="#date-helper-standard-date" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="../helpers/date_helper.html"><em>Date Helper</em></a> function <tt class="docutils literal"><span class="pre">standard_date()</span></tt> is being deprecated due
+to the availability of native PHP <a class="reference external" href="http://www.php.net/manual/en/class.datetime.php#datetime.constants.types">constants</a>,
+which when combined with <tt class="docutils literal"><span class="pre">date()</span></tt> provide the same functionality. Furthermore, they have the
+exact same names as the ones supported by <tt class="docutils literal"><span class="pre">standard_date()</span></tt>. Here are examples of how to replace
+its usage:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Old way</span>
+<span class="nx">standard_date</span><span class="p">();</span> <span class="c1">// defaults to standard_date(&#39;DATE_RFC822&#39;, now());</span>
+
+<span class="c1">// Replacement</span>
+<span class="nb">date</span><span class="p">(</span><span class="nx">DATE_RFC822</span><span class="p">,</span> <span class="nx">now</span><span class="p">());</span>
+
+<span class="c1">// Old way</span>
+<span class="nx">standard_date</span><span class="p">(</span><span class="s1">&#39;DATE_ATOM&#39;</span><span class="p">,</span> <span class="nv">$time</span><span class="p">);</span>
+
+<span class="c1">// Replacement</span>
+<span class="nb">date</span><span class="p">(</span><span class="nx">DATE_ATOM</span><span class="p">,</span> <span class="nv">$time</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is still available, but you&#8217;re strongly encouraged to remove its usage sooner
+rather than later as it is scheduled for removal in CodeIgniter 3.1+.</p>
+</div>
+</div>
+<div class="section" id="pagination-library-anchor-class-setting">
+<h3>Pagination library &#8216;anchor_class&#8217; setting<a class="headerlink" href="#pagination-library-anchor-class-setting" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="../libraries/pagination.html"><em>Pagination Library</em></a> now supports adding pretty much any HTML
+attribute to your anchors via the &#8216;attributes&#8217; configuration setting. This includes passing the
+&#8216;class&#8217; attribute and using the separate &#8216;anchor_class&#8217; setting no longer makes sense.
+As a result of that, the &#8216;anchor_class&#8217; setting is now deprecated and scheduled for removal in
+CodeIgniter 3.1+.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This setting is still available, but you&#8217;re strongly encouraged to remove its usage sooner
+rather than later.</p>
+</div>
+</div>
+<div class="section" id="string-helper-random-string-types-unique-and-encrypt">
+<h3>String helper random_string() types &#8216;unique&#8217; and &#8216;encrypt&#8217;<a class="headerlink" href="#string-helper-random-string-types-unique-and-encrypt" title="Permalink to this headline">¶</a></h3>
+<p>When using the <a class="reference internal" href="../helpers/string_helper.html"><em>String Helper</em></a> function <a class="reference internal" href="../helpers/string_helper.html#random_string" title="random_string"><tt class="xref php php-func docutils literal"><span class="pre">random_string()</span></tt></a>,
+you should no longer pass the <strong>unique</strong> and <strong>encrypt</strong> randomization types. They are only
+aliases for <strong>md5</strong> and <strong>sha1</strong> respectively and are now deprecated and scheduled for removal
+in CodeIgniter 3.1+.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These options are still available, but you&#8217;re strongly encouraged to remove their usage
+sooner rather than later.</p>
+</div>
+</div>
+<div class="section" id="url-helper-url-title-separators-dash-and-underscore">
+<h3>URL helper url_title() separators &#8216;dash&#8217; and &#8216;underscore&#8217;<a class="headerlink" href="#url-helper-url-title-separators-dash-and-underscore" title="Permalink to this headline">¶</a></h3>
+<p>When using the <a class="reference internal" href="../helpers/url_helper.html"><em>URL Helper</em></a> function <a class="reference internal" href="../helpers/url_helper.html#url_title" title="url_title"><tt class="xref php php-func docutils literal"><span class="pre">url_title()</span></tt></a>, you
+should no longer pass <strong>dash</strong> or <strong>underscore</strong> as the word separator. This function will
+now accept any character and you should just pass the chosen character directly, so you
+should write &#8216;-&#8216; instead of &#8216;dash&#8217; and &#8216;_&#8217; instead of &#8216;underscore&#8217;.</p>
+<p><strong>dash</strong> and <strong>underscore</strong> now act as aliases and are deprecated and scheduled for removal
+in CodeIgniter 3.1+.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These options are still available, but you&#8217;re strongly encouraged to remove their usage
+sooner rather than later.</p>
+</div>
+</div>
+<div class="section" id="database-forge-method-add-column-with-an-after-clause">
+<h3>Database Forge method add_column() with an AFTER clause<a class="headerlink" href="#database-forge-method-add-column-with-an-after-clause" title="Permalink to this headline">¶</a></h3>
+<p>If you have used the <strong>third parameter</strong> for <a class="reference internal" href="../database/forge.html"><em>Database Forge</em></a> method
+<tt class="docutils literal"><span class="pre">add_column()</span></tt> to add a field for an AFTER clause, then you should change its usage.</p>
+<p>That third parameter has been deprecated and scheduled for removal in CodeIgniter 3.1+.</p>
+<p>You should now put AFTER clause field names in the field definition array instead:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Old usage:</span>
+<span class="nv">$field</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;new_field&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbforge</span><span class="o">-&gt;</span><span class="na">add_column</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">,</span> <span class="nv">$field</span><span class="p">,</span> <span class="s1">&#39;another_field&#39;</span><span class="p">);</span>
+
+<span class="c1">// New usage:</span>
+<span class="nv">$field</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;new_field&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span> <span class="s1">&#39;after&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;another_field&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbforge</span><span class="o">-&gt;</span><span class="na">add_column</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">,</span> <span class="nv">$field</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The parameter is still available, but you&#8217;re strongly encouraged to remove its usage
+sooner rather than later.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is for MySQL and CUBRID databases only! Other drivers don&#8217;t support this
+clause and will silently ignore it.</p>
+</div>
+</div>
+<div class="section" id="uri-routing-methods-fetch-directory-fetch-class-fetch-method">
+<h3>URI Routing methods fetch_directory(), fetch_class(), fetch_method()<a class="headerlink" href="#uri-routing-methods-fetch-directory-fetch-class-fetch-method" title="Permalink to this headline">¶</a></h3>
+<p>With properties <tt class="docutils literal"><span class="pre">CI_Router::$directory</span></tt>, <tt class="docutils literal"><span class="pre">CI_Router::$class</span></tt> and <tt class="docutils literal"><span class="pre">CI_Router::$method</span></tt>
+being public and their respective <tt class="docutils literal"><span class="pre">fetch_*()</span></tt> no longer doing anything else to just return
+the properties - it doesn&#8217;t make sense to keep them.</p>
+<p>Those are all internal, undocumented methods, but we&#8217;ve opted to deprecate them for now
+in order to maintain backwards-compatibility just in case. If some of you have utilized them,
+then you can now just access the properties instead:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">router</span><span class="o">-&gt;</span><span class="na">directory</span><span class="p">;</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">router</span><span class="o">-&gt;</span><span class="na">class</span><span class="p">;</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">router</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Those methods are still available, but you&#8217;re strongly encouraged to remove their usage
+sooner rather than later.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

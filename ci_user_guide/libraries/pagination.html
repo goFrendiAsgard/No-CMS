@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Pagination Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Template Parser Class" href="parser.html" />
+	    <link rel="prev" title="Output Class" href="output.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xabf041c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Pagination Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="pagination-class">
+<h1>Pagination Class<a class="headerlink" href="#pagination-class" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter&#8217;s Pagination class is very easy to use, and it is 100%
+customizable, either dynamically or via stored preferences.</p>
+<p>If you are not familiar with the term &#8220;pagination&#8221;, it refers to links
+that allows you to navigate from page to page, like this:</p>
+<div class="highlight-ci"><pre>« First  &lt; 1 2 3 4 5 &gt;  Last »</pre>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Here is a simple example showing how to create pagination in one of your
+<a class="reference internal" href="../general/controllers.html"><em>controller</em></a> functions:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;pagination&#39;</span><span class="p">);</span>
+
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;base_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;http://example.com/index.php/test/page/&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;total_rows&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;per_page&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pagination</span><span class="o">-&gt;</span><span class="na">initialize</span><span class="p">(</span><span class="nv">$config</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pagination</span><span class="o">-&gt;</span><span class="na">create_links</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="section" id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h3>
+<p>The $config array contains your configuration variables. It is passed to
+the $this-&gt;pagination-&gt;initialize function as shown above. Although
+there are some twenty items you can configure, at minimum you need the
+three shown. Here is a description of what those items represent:</p>
+<ul class="simple">
+<li><strong>base_url</strong> This is the full URL to the controller class/function
+containing your pagination. In the example above, it is pointing to a
+controller called &#8220;Test&#8221; and a function called &#8220;page&#8221;. Keep in mind
+that you can <a class="reference internal" href="../general/routing.html"><em>re-route your URI</em></a> if you
+need a different structure.</li>
+<li><strong>total_rows</strong> This number represents the total rows in the result
+set you are creating pagination for. Typically this number will be
+the total rows that your database query returned.</li>
+<li><strong>per_page</strong> The number of items you intend to show per page. In the
+above example, you would be showing 20 items per page.</li>
+</ul>
+<p>The create_links() function returns an empty string when there is no
+pagination to show.</p>
+</div>
+<div class="section" id="setting-preferences-in-a-config-file">
+<h3>Setting preferences in a config file<a class="headerlink" href="#setting-preferences-in-a-config-file" title="Permalink to this headline">¶</a></h3>
+<p>If you prefer not to set preferences using the above method, you can
+instead put them into a config file. Simply create a new file called
+pagination.php, add the $config array in that file. Then save the file
+in: config/pagination.php and it will be used automatically. You will
+NOT need to use the $this-&gt;pagination-&gt;initialize function if you save
+your preferences in a config file.</p>
+</div>
+</div>
+<div class="section" id="customizing-the-pagination">
+<h2>Customizing the Pagination<a class="headerlink" href="#customizing-the-pagination" title="Permalink to this headline">¶</a></h2>
+<p>The following is a list of all the preferences you can pass to the
+initialization function to tailor the display.</p>
+<div class="section" id="config-uri-segment-3">
+<h3>$config[&#8216;uri_segment&#8217;] = 3;<a class="headerlink" href="#config-uri-segment-3" title="Permalink to this headline">¶</a></h3>
+<p>The pagination function automatically determines which segment of your
+URI contains the page number. If you need something different you can
+specify it.</p>
+</div>
+<div class="section" id="config-num-links-2">
+<h3>$config[&#8216;num_links&#8217;] = 2;<a class="headerlink" href="#config-num-links-2" title="Permalink to this headline">¶</a></h3>
+<p>The number of &#8220;digit&#8221; links you would like before and after the selected
+page number. For example, the number 2 will place two digits on either
+side, as in the example links at the very top of this page.</p>
+</div>
+<div class="section" id="config-use-page-numbers-true">
+<h3>$config[&#8216;use_page_numbers&#8217;] = TRUE;<a class="headerlink" href="#config-use-page-numbers-true" title="Permalink to this headline">¶</a></h3>
+<p>By default, the URI segment will use the starting index for the items
+you are paginating. If you prefer to show the the actual page number,
+set this to TRUE.</p>
+</div>
+<div class="section" id="config-page-query-string-true">
+<h3>$config[&#8216;page_query_string&#8217;] = TRUE;<a class="headerlink" href="#config-page-query-string-true" title="Permalink to this headline">¶</a></h3>
+<p>By default, the pagination library assume you are using <a class="reference internal" href="../general/urls.html"><em>URI
+Segments</em></a>, and constructs your links something
+like</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">http</span><span class="o">://</span><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">test</span><span class="o">/</span><span class="nx">page</span><span class="o">/</span><span class="mi">20</span>
+</pre></div>
+</div>
+<p>If you have $config[&#8216;enable_query_strings&#8217;] set to TRUE your links
+will automatically be re-written using Query Strings. This option can
+also be explictly set. Using $config[&#8216;page_query_string&#8217;] set to TRUE,
+the pagination link will become.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">http</span><span class="o">://</span><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">?</span><span class="nx">c</span><span class="o">=</span><span class="nx">test</span><span class="o">&amp;</span><span class="nx">m</span><span class="o">=</span><span class="nx">page</span><span class="o">&amp;</span><span class="nx">per_page</span><span class="o">=</span><span class="mi">20</span>
+</pre></div>
+</div>
+<p>Note that &#8220;per_page&#8221; is the default query string passed, however can be
+configured using $config[&#8216;query_string_segment&#8217;] = &#8216;your_string&#8217;</p>
+</div>
+<div class="section" id="config-reuse-query-string-false">
+<h3>$config[&#8216;reuse_query_string&#8217;] = FALSE;<a class="headerlink" href="#config-reuse-query-string-false" title="Permalink to this headline">¶</a></h3>
+<p>By default your Query String arguments (nothing to do with other
+query string options) will be ignored. Setting this config to
+TRUE will add existing query string arguments back into the
+URL after the URI segment and before the suffix</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">http</span><span class="o">://</span><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">test</span><span class="o">/</span><span class="nx">page</span><span class="o">/</span><span class="mi">20</span><span class="o">?</span><span class="nx">query</span><span class="o">=</span><span class="nx">search</span><span class="o">%</span><span class="nx">term</span>
+</pre></div>
+</div>
+<p>This helps you mix together normal <a class="reference internal" href="../general/urls.html"><em>URI Segments</em></a>
+as well as query string arguments, which until 3.0 was not possible.</p>
+</div>
+<div class="section" id="config-prefix">
+<h3>$config[&#8216;prefix&#8217;] = &#8216;&#8217;;<a class="headerlink" href="#config-prefix" title="Permalink to this headline">¶</a></h3>
+<p>A custom prefix added to the path. The prefix value will be right before
+the offset segment.</p>
+</div>
+<div class="section" id="config-suffix">
+<h3>$config[&#8216;suffix&#8217;] = &#8216;&#8217;;<a class="headerlink" href="#config-suffix" title="Permalink to this headline">¶</a></h3>
+<p>A custom suffix added to the path. The sufix value will be right after
+the offset segment.</p>
+</div>
+</div>
+<div class="section" id="adding-enclosing-markup">
+<h2>Adding Enclosing Markup<a class="headerlink" href="#adding-enclosing-markup" title="Permalink to this headline">¶</a></h2>
+<p>If you would like to surround the entire pagination with some markup you
+can do it with these two prefs:</p>
+<div class="section" id="config-full-tag-open-p">
+<h3>$config[&#8216;full_tag_open&#8217;] = &#8216;&lt;p&gt;&#8217;;<a class="headerlink" href="#config-full-tag-open-p" title="Permalink to this headline">¶</a></h3>
+<p>The opening tag placed on the left side of the entire result.</p>
+</div>
+<div class="section" id="config-full-tag-close-p">
+<h3>$config[&#8216;full_tag_close&#8217;] = &#8216;&lt;/p&gt;&#8217;;<a class="headerlink" href="#config-full-tag-close-p" title="Permalink to this headline">¶</a></h3>
+<p>The closing tag placed on the right side of the entire result.</p>
+</div>
+</div>
+<div class="section" id="customizing-the-first-link">
+<h2>Customizing the First Link<a class="headerlink" href="#customizing-the-first-link" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="config-first-link-first">
+<h3>$config[&#8216;first_link&#8217;] = &#8216;First&#8217;;<a class="headerlink" href="#config-first-link-first" title="Permalink to this headline">¶</a></h3>
+<p>The text you would like shown in the &#8220;first&#8221; link on the left. If you do
+not want this link rendered, you can set its value to FALSE.</p>
+</div>
+<div class="section" id="config-first-tag-open-div">
+<h3>$config[&#8216;first_tag_open&#8217;] = &#8216;&lt;div&gt;&#8217;;<a class="headerlink" href="#config-first-tag-open-div" title="Permalink to this headline">¶</a></h3>
+<p>The opening tag for the &#8220;first&#8221; link.</p>
+</div>
+<div class="section" id="config-first-tag-close-div">
+<h3>$config[&#8216;first_tag_close&#8217;] = &#8216;&lt;/div&gt;&#8217;;<a class="headerlink" href="#config-first-tag-close-div" title="Permalink to this headline">¶</a></h3>
+<p>The closing tag for the &#8220;first&#8221; link.</p>
+</div>
+</div>
+<div class="section" id="customizing-the-last-link">
+<h2>Customizing the Last Link<a class="headerlink" href="#customizing-the-last-link" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="config-last-link-last">
+<h3>$config[&#8216;last_link&#8217;] = &#8216;Last&#8217;;<a class="headerlink" href="#config-last-link-last" title="Permalink to this headline">¶</a></h3>
+<p>The text you would like shown in the &#8220;last&#8221; link on the right. If you do
+not want this link rendered, you can set its value to FALSE.</p>
+</div>
+<div class="section" id="config-last-tag-open-div">
+<h3>$config[&#8216;last_tag_open&#8217;] = &#8216;&lt;div&gt;&#8217;;<a class="headerlink" href="#config-last-tag-open-div" title="Permalink to this headline">¶</a></h3>
+<p>The opening tag for the &#8220;last&#8221; link.</p>
+</div>
+<div class="section" id="config-last-tag-close-div">
+<h3>$config[&#8216;last_tag_close&#8217;] = &#8216;&lt;/div&gt;&#8217;;<a class="headerlink" href="#config-last-tag-close-div" title="Permalink to this headline">¶</a></h3>
+<p>The closing tag for the &#8220;last&#8221; link.</p>
+</div>
+</div>
+<div class="section" id="customizing-the-next-link">
+<h2>Customizing the &#8220;Next&#8221; Link<a class="headerlink" href="#customizing-the-next-link" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="config-next-link-gt">
+<h3>$config[&#8216;next_link&#8217;] = &#8216;&amp;gt;&#8217;;<a class="headerlink" href="#config-next-link-gt" title="Permalink to this headline">¶</a></h3>
+<p>The text you would like shown in the &#8220;next&#8221; page link. If you do not
+want this link rendered, you can set its value to FALSE.</p>
+</div>
+<div class="section" id="config-next-tag-open-div">
+<h3>$config[&#8216;next_tag_open&#8217;] = &#8216;&lt;div&gt;&#8217;;<a class="headerlink" href="#config-next-tag-open-div" title="Permalink to this headline">¶</a></h3>
+<p>The opening tag for the &#8220;next&#8221; link.</p>
+</div>
+<div class="section" id="config-next-tag-close-div">
+<h3>$config[&#8216;next_tag_close&#8217;] = &#8216;&lt;/div&gt;&#8217;;<a class="headerlink" href="#config-next-tag-close-div" title="Permalink to this headline">¶</a></h3>
+<p>The closing tag for the &#8220;next&#8221; link.</p>
+</div>
+</div>
+<div class="section" id="customizing-the-previous-link">
+<h2>Customizing the &#8220;Previous&#8221; Link<a class="headerlink" href="#customizing-the-previous-link" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="config-prev-link-lt">
+<h3>$config[&#8216;prev_link&#8217;] = &#8216;&amp;lt;&#8217;;<a class="headerlink" href="#config-prev-link-lt" title="Permalink to this headline">¶</a></h3>
+<p>The text you would like shown in the &#8220;previous&#8221; page link. If you do not
+want this link rendered, you can set its value to FALSE.</p>
+</div>
+<div class="section" id="config-prev-tag-open-div">
+<h3>$config[&#8216;prev_tag_open&#8217;] = &#8216;&lt;div&gt;&#8217;;<a class="headerlink" href="#config-prev-tag-open-div" title="Permalink to this headline">¶</a></h3>
+<p>The opening tag for the &#8220;previous&#8221; link.</p>
+</div>
+<div class="section" id="config-prev-tag-close-div">
+<h3>$config[&#8216;prev_tag_close&#8217;] = &#8216;&lt;/div&gt;&#8217;;<a class="headerlink" href="#config-prev-tag-close-div" title="Permalink to this headline">¶</a></h3>
+<p>The closing tag for the &#8220;previous&#8221; link.</p>
+</div>
+</div>
+<div class="section" id="customizing-the-current-page-link">
+<h2>Customizing the &#8220;Current Page&#8221; Link<a class="headerlink" href="#customizing-the-current-page-link" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="config-cur-tag-open-b">
+<h3>$config[&#8216;cur_tag_open&#8217;] = &#8216;&lt;b&gt;&#8217;;<a class="headerlink" href="#config-cur-tag-open-b" title="Permalink to this headline">¶</a></h3>
+<p>The opening tag for the &#8220;current&#8221; link.</p>
+</div>
+<div class="section" id="config-cur-tag-close-b">
+<h3>$config[&#8216;cur_tag_close&#8217;] = &#8216;&lt;/b&gt;&#8217;;<a class="headerlink" href="#config-cur-tag-close-b" title="Permalink to this headline">¶</a></h3>
+<p>The closing tag for the &#8220;current&#8221; link.</p>
+</div>
+</div>
+<div class="section" id="customizing-the-digit-link">
+<h2>Customizing the &#8220;Digit&#8221; Link<a class="headerlink" href="#customizing-the-digit-link" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="config-num-tag-open-div">
+<h3>$config[&#8216;num_tag_open&#8217;] = &#8216;&lt;div&gt;&#8217;;<a class="headerlink" href="#config-num-tag-open-div" title="Permalink to this headline">¶</a></h3>
+<p>The opening tag for the &#8220;digit&#8221; link.</p>
+</div>
+<div class="section" id="config-num-tag-close-div">
+<h3>$config[&#8216;num_tag_close&#8217;] = &#8216;&lt;/div&gt;&#8217;;<a class="headerlink" href="#config-num-tag-close-div" title="Permalink to this headline">¶</a></h3>
+<p>The closing tag for the &#8220;digit&#8221; link.</p>
+</div>
+</div>
+<div class="section" id="hiding-the-pages">
+<h2>Hiding the Pages<a class="headerlink" href="#hiding-the-pages" title="Permalink to this headline">¶</a></h2>
+<p>If you wanted to not list the specific pages (for example, you only want
+&#8220;next&#8221; and &#8220;previous&#8221; links), you can suppress their rendering by
+adding:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;display_pages&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="adding-attributes-to-anchors">
+<h2>Adding attributes to anchors<a class="headerlink" href="#adding-attributes-to-anchors" title="Permalink to this headline">¶</a></h2>
+<p>If you want to add an extra attribute to be added to every link rendered
+by the pagination class, you can set them as key/value pairs in the
+&#8220;attributes&#8221; config</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Produces: class=&quot;myclass&quot;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;attributes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;myclass&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Usage of the old method of setting classes via &#8220;anchor_class&#8221;
+is deprecated.</p>
+</div>
+</div>
+<div class="section" id="disabling-the-rel-attribute">
+<h2>Disabling the &#8220;rel&#8221; attribute<a class="headerlink" href="#disabling-the-rel-attribute" title="Permalink to this headline">¶</a></h2>
+<p>By default the rel attribute is dynamically generated and appended to
+the appropriate anchors. If for some reason you want to turn it off,
+you can pass boolean FALSE as a regular attribute</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;attributes&#39;</span><span class="p">][</span><span class="s1">&#39;rel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

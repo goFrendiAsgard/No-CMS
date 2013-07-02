@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Query Helper Functions &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="The Database Class" href="index.html" />
+	    <link rel="next" title="Query Builder Class" href="query_builder.html" />
+	    <link rel="prev" title="Generating Query Results" href="results.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa48b3ac>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">The Database Class</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Query Helper Functions</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="query-helper-functions">
+<h1>Query Helper Functions<a class="headerlink" href="#query-helper-functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="this-db-insert-id">
+<h2>$this-&gt;db-&gt;insert_id()<a class="headerlink" href="#this-db-insert-id" title="Permalink to this headline">¶</a></h2>
+<p>The insert ID number when performing database inserts.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If using the PDO driver with PostgreSQL, or using the Interbase
+driver, this function requires a $name parameter, which specifies the
+appropriate sequence to check for the insert id.</p>
+</div>
+</div>
+<div class="section" id="this-db-affected-rows">
+<h2>$this-&gt;db-&gt;affected_rows()<a class="headerlink" href="#this-db-affected-rows" title="Permalink to this headline">¶</a></h2>
+<p>Displays the number of affected rows, when doing &#8220;write&#8221; type queries
+(insert, update, etc.).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In MySQL &#8220;DELETE FROM TABLE&#8221; returns 0 affected rows. The database
+class has a small hack that allows it to return the correct number of
+affected rows. By default this hack is enabled but it can be turned off
+in the database driver file.</p>
+</div>
+</div>
+<div class="section" id="this-db-count-all">
+<h2>$this-&gt;db-&gt;count_all();<a class="headerlink" href="#this-db-count-all" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to determine the number of rows in a particular table.
+Submit the table name in the first parameter. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">count_all</span><span class="p">(</span><span class="s1">&#39;my_table&#39;</span><span class="p">);</span>
+
+<span class="c1">// Produces an integer, like 25</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-db-platform">
+<h2>$this-&gt;db-&gt;platform()<a class="headerlink" href="#this-db-platform" title="Permalink to this headline">¶</a></h2>
+<p>Outputs the database platform you are running (MySQL, MS SQL, Postgres,
+etc...):</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">platform</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-db-version">
+<h2>$this-&gt;db-&gt;version()<a class="headerlink" href="#this-db-version" title="Permalink to this headline">¶</a></h2>
+<p>Outputs the database version you are running:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">version</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-db-last-query">
+<h2>$this-&gt;db-&gt;last_query();<a class="headerlink" href="#this-db-last-query" title="Permalink to this headline">¶</a></h2>
+<p>Returns the last query that was run (the query string, not the result).
+Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$str</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">last_query</span><span class="p">();</span>
+
+<span class="c1">// Produces:  SELECT * FROM sometable....</span>
+</pre></div>
+</div>
+<p>The following two functions help simplify the process of writing
+database INSERTs and UPDATEs.</p>
+</div>
+<div class="section" id="this-db-insert-string">
+<h2>$this-&gt;db-&gt;insert_string();<a class="headerlink" href="#this-db-insert-string" title="Permalink to this headline">¶</a></h2>
+<p>This function simplifies the process of writing database inserts. It
+returns a correctly formatted SQL insert string. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$name</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="nv">$email</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span> <span class="o">=&gt;</span> <span class="nv">$url</span><span class="p">);</span>
+
+<span class="nv">$str</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">insert_string</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The first parameter is the table name, the second is an associative
+array with the data to be inserted. The above example produces:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">INSERT</span> <span class="nx">INTO</span> <span class="nx">table_name</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">email</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span> <span class="nx">VALUES</span> <span class="p">(</span><span class="s1">&#39;Rick&#39;</span><span class="p">,</span> <span class="s1">&#39;rick@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;example.com&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Values are automatically escaped, producing safer queries.</p>
+</div>
+</div>
+<div class="section" id="this-db-update-string">
+<h2>$this-&gt;db-&gt;update_string();<a class="headerlink" href="#this-db-update-string" title="Permalink to this headline">¶</a></h2>
+<p>This function simplifies the process of writing database updates. It
+returns a correctly formatted SQL update string. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="nv">$name</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="nv">$email</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span> <span class="o">=&gt;</span> <span class="nv">$url</span><span class="p">);</span>
+
+<span class="nv">$where</span> <span class="o">=</span> <span class="s2">&quot;author_id = 1 AND status = &#39;active&#39;&quot;</span><span class="p">;</span>
+
+<span class="nv">$str</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">update_string</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">,</span> <span class="nv">$where</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The first parameter is the table name, the second is an associative
+array with the data to be updated, and the third parameter is the
+&#8220;where&#8221; clause. The above example produces:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">UPDATE</span> <span class="nx">table_name</span> <span class="nx">SET</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;Rick&#39;</span><span class="p">,</span> <span class="nx">email</span> <span class="o">=</span> <span class="s1">&#39;rick@example.com&#39;</span><span class="p">,</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span> <span class="nx">WHERE</span> <span class="nx">author_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">AND</span> <span class="nx">status</span> <span class="o">=</span> <span class="s1">&#39;active&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Values are automatically escaped, producing safer queries.</p>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

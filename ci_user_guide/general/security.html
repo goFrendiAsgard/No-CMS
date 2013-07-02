@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Security &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="PHP Style Guide" href="styleguide.html" />
+	    <link rel="prev" title="Alternate PHP Syntax for View Files" href="alternative_php.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa48b304>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Security</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="security">
+<h1>Security<a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h1>
+<p>This page describes some &#8220;best practices&#8221; regarding web security, and
+details CodeIgniter&#8217;s internal security features.</p>
+<div class="section" id="uri-security">
+<h2>URI Security<a class="headerlink" href="#uri-security" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter is fairly restrictive regarding which characters it allows
+in your URI strings in order to help minimize the possibility that
+malicious data can be passed to your application. URIs may only contain
+the following:</p>
+<ul class="simple">
+<li>Alpha-numeric text (latin characters only)</li>
+<li>Tilde: ~</li>
+<li>Percent sign: %</li>
+<li>Period: .</li>
+<li>Colon: :</li>
+<li>Underscore: _</li>
+<li>Dash: -</li>
+<li>Space</li>
+</ul>
+</div>
+<div class="section" id="register-globals">
+<h2>Register_globals<a class="headerlink" href="#register-globals" title="Permalink to this headline">¶</a></h2>
+<p>During system initialization all global variables are unset, except
+those found in the <tt class="docutils literal"><span class="pre">$_GET</span></tt>, <tt class="docutils literal"><span class="pre">$_POST</span></tt>, and <tt class="docutils literal"><span class="pre">$_COOKIE</span></tt> arrays.
+The unsetting routine is effectively the same as
+<em>register_globals = off</em>.</p>
+</div>
+<div class="section" id="display-errors">
+<h2>display_errors<a class="headerlink" href="#display-errors" title="Permalink to this headline">¶</a></h2>
+<p>In production environments, it is typically desirable to &#8220;disable&#8221; PHP&#8217;s
+error reporting by setting the internal <em>display_errors</em> flag to a value
+of 0. This disables native PHP errors from being rendered as output,
+which may potentially contain sensitive information.</p>
+<p>Setting CodeIgniter&#8217;s <strong>ENVIRONMENT</strong> constant in index.php to a value of
+<strong>&#8216;production&#8217;</strong> will turn off these errors. In development mode, it is
+recommended that a value of &#8216;development&#8217; is used. More information
+about differentiating between environments can be found on the
+<a class="reference internal" href="environments.html"><em>Handling Environments</em></a> page.</p>
+</div>
+<div class="section" id="magic-quotes-runtime">
+<h2>magic_quotes_runtime<a class="headerlink" href="#magic-quotes-runtime" title="Permalink to this headline">¶</a></h2>
+<p>The <em>magic_quotes_runtime</em> directive is turned off during system
+initialization so that you don&#8217;t have to remove slashes when retrieving
+data from your database.</p>
+<div class="section" id="best-practices">
+<h3>Best Practices<a class="headerlink" href="#best-practices" title="Permalink to this headline">¶</a></h3>
+<p>Before accepting any data into your application, whether it be POST data
+from a form submission, COOKIE data, URI data, XML-RPC data, or even
+data from the SERVER array, you are encouraged to practice this three
+step approach:</p>
+<ol class="arabic simple">
+<li>Filter the data as if it were tainted.</li>
+<li>Validate the data to ensure it conforms to the correct type, length,
+size, etc. (sometimes this step can replace step one)</li>
+<li>Escape the data before submitting it into your database.</li>
+</ol>
+<p>CodeIgniter provides the following functions to assist in this process:</p>
+</div>
+</div>
+<div class="section" id="xss-filtering">
+<h2>XSS Filtering<a class="headerlink" href="#xss-filtering" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter comes with a Cross Site Scripting filter. This filter
+looks for commonly used techniques to embed malicious JavaScript into
+your data, or other types of code that attempt to hijack cookies or
+do other malicious things. The XSS Filter is described
+<a class="reference internal" href="../libraries/security.html"><em>here</em></a>.</p>
+</div>
+<div class="section" id="validate-the-data">
+<h2>Validate the data<a class="headerlink" href="#validate-the-data" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter has a <a class="reference internal" href="../libraries/form_validation.html"><em>Form Validation Library</em></a> that assists you in
+validating, filtering, and prepping your data.</p>
+</div>
+<div class="section" id="escape-all-data-before-database-insertion">
+<h2>Escape all data before database insertion<a class="headerlink" href="#escape-all-data-before-database-insertion" title="Permalink to this headline">¶</a></h2>
+<p>Never insert information into your database without escaping it.
+Please see the section that discusses <a class="reference internal" href="../database/queries.html"><em>database queries</em></a> for more information.</p>
+</div>
+<div class="section" id="hide-your-files">
+<h2>Hide your files<a class="headerlink" href="#hide-your-files" title="Permalink to this headline">¶</a></h2>
+<p>Another good security practice is to only leave your <em>index.php</em>
+and &#8220;assets&#8221; (e.g. .js, css and image files) under your server&#8217;s
+<em>webroot</em> directory (most commonly named &#8220;htdocs/&#8221;). These are
+the only files that you would need to be accessible from the web.</p>
+<p>Allowing your visitors to see anything else would potentially
+allow them to access sensitive data, execute scripts, etc.</p>
+<p>If you&#8217;re not allowed to do that, you can try using a .htaccess
+file to restrict access to those resources.</p>
+<p>CodeIgniter will have an index.html file in all of its
+directories in an attempt to hide some of this data, but have
+it in mind that this is not enough to prevent a serious
+attacker.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

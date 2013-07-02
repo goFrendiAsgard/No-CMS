@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Benchmarking Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Caching Driver" href="caching.html" />
+	    <link rel="prev" title="Libraries" href="index.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3b4614>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Benchmarking Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="benchmarking-class">
+<h1><a class="toc-backref" href="#id1">Benchmarking Class</a><a class="headerlink" href="#benchmarking-class" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter has a Benchmarking class that is always active, enabling the
+time difference between any two marked points to be calculated.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This class is initialized automatically by the system so there
+is no need to do it manually.</p>
+</div>
+<p>In addition, the benchmark is always started the moment the framework is
+invoked, and ended by the output class right before sending the final
+view to the browser, enabling a very accurate timing of the entire
+system execution to be shown.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#benchmarking-class" id="id1">Benchmarking Class</a><ul>
+<li><a class="reference internal" href="#using-the-benchmark-class" id="id2">Using the Benchmark Class</a></li>
+<li><a class="reference internal" href="#profiling-your-benchmark-points" id="id3">Profiling Your Benchmark Points</a></li>
+<li><a class="reference internal" href="#displaying-total-execution-time" id="id4">Displaying Total Execution Time</a></li>
+<li><a class="reference internal" href="#displaying-memory-consumption" id="id5">Displaying Memory Consumption</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="using-the-benchmark-class">
+<h2><a class="toc-backref" href="#id2">Using the Benchmark Class</a><a class="headerlink" href="#using-the-benchmark-class" title="Permalink to this headline">¶</a></h2>
+<p>The Benchmark class can be used within your
+<a class="reference internal" href="../general/controllers.html"><em>controllers</em></a>,
+<a class="reference internal" href="../general/views.html"><em>views</em></a>, or your <a class="reference internal" href="../general/models.html"><em>models</em></a>.
+The process for usage is this:</p>
+<ol class="arabic simple">
+<li>Mark a start point</li>
+<li>Mark an end point</li>
+<li>Run the &#8220;elapsed time&#8221; function to view the results</li>
+</ol>
+<p>Here&#8217;s an example using real code:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;code_start&#39;</span><span class="p">);</span>
+
+<span class="c1">// Some code happens here</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;code_end&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">elapsed_time</span><span class="p">(</span><span class="s1">&#39;code_start&#39;</span><span class="p">,</span> <span class="s1">&#39;code_end&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The words &#8220;code_start&#8221; and &#8220;code_end&#8221; are arbitrary. They
+are simply words used to set two markers. You can use any words you
+want, and you can set multiple sets of markers. Consider this example:</p>
+<div class="last highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;dog&#39;</span><span class="p">);</span>
+
+<span class="c1">// Some code happens here</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;cat&#39;</span><span class="p">);</span>
+
+<span class="c1">// More code happens here</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;bird&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">elapsed_time</span><span class="p">(</span><span class="s1">&#39;dog&#39;</span><span class="p">,</span> <span class="s1">&#39;cat&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">elapsed_time</span><span class="p">(</span><span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="s1">&#39;bird&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">elapsed_time</span><span class="p">(</span><span class="s1">&#39;dog&#39;</span><span class="p">,</span> <span class="s1">&#39;bird&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="profiling-your-benchmark-points">
+<h2><a class="toc-backref" href="#id3">Profiling Your Benchmark Points</a><a class="headerlink" href="#profiling-your-benchmark-points" title="Permalink to this headline">¶</a></h2>
+<p>If you want your benchmark data to be available to the
+<a class="reference internal" href="../general/profiling.html"><em>Profiler</em></a> all of your marked points must
+be set up in pairs, and each mark point name must end with _start and
+_end. Each pair of points must otherwise be named identically. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;my_mark_start&#39;</span><span class="p">);</span>
+
+<span class="c1">// Some code happens here...</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;my_mark_end&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;another_mark_start&#39;</span><span class="p">);</span>
+
+<span class="c1">// Some more code happens here...</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">mark</span><span class="p">(</span><span class="s1">&#39;another_mark_end&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Please read the <a class="reference internal" href="../general/profiling.html"><em>Profiler page</em></a> for more
+information.</p>
+</div>
+<div class="section" id="displaying-total-execution-time">
+<h2><a class="toc-backref" href="#id4">Displaying Total Execution Time</a><a class="headerlink" href="#displaying-total-execution-time" title="Permalink to this headline">¶</a></h2>
+<p>If you would like to display the total elapsed time from the moment
+CodeIgniter starts to the moment the final output is sent to the
+browser, simply place this in one of your view templates:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">elapsed_time</span><span class="p">();</span><span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<p>You&#8217;ll notice that it&#8217;s the same function used in the examples above to
+calculate the time between two point, except you are <strong>not</strong> using any
+parameters. When the parameters are absent, CodeIgniter does not stop
+the benchmark until right before the final output is sent to the
+browser. It doesn&#8217;t matter where you use the function call, the timer
+will continue to run until the very end.</p>
+<p>An alternate way to show your elapsed time in your view files is to use
+this pseudo-variable, if you prefer not to use the pure PHP:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="p">{</span><span class="nx">elapsed_time</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you want to benchmark anything within your controller
+functions you must set your own start/end points.</p>
+</div>
+</div>
+<div class="section" id="displaying-memory-consumption">
+<h2><a class="toc-backref" href="#id5">Displaying Memory Consumption</a><a class="headerlink" href="#displaying-memory-consumption" title="Permalink to this headline">¶</a></h2>
+<p>If your PHP installation is configured with &#8211;enable-memory-limit, you
+can display the amount of memory consumed by the entire system using the
+following code in one of your view file:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">benchmark</span><span class="o">-&gt;</span><span class="na">memory_usage</span><span class="p">();</span><span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function can only be used in your view files. The consumption
+will reflect the total memory used by the entire app.</p>
+</div>
+<p>An alternate way to show your memory usage in your view files is to use
+this pseudo-variable, if you prefer not to use the pure PHP:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="p">{</span><span class="nx">memory_usage</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

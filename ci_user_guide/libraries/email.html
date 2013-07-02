@@ -1,0 +1,480 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Email Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Encryption Class" href="encryption.html" />
+	    <link rel="prev" title="Config Class" href="config.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3f795c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Email Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="email-class">
+<h1>Email Class<a class="headerlink" href="#email-class" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter&#8217;s robust Email Class supports the following features:</p>
+<ul class="simple">
+<li>Multiple Protocols: Mail, Sendmail, and SMTP</li>
+<li>TLS and SSL Encryption for SMTP</li>
+<li>Multiple recipients</li>
+<li>CC and BCCs</li>
+<li>HTML or Plaintext email</li>
+<li>Attachments</li>
+<li>Word wrapping</li>
+<li>Priorities</li>
+<li>BCC Batch Mode, enabling large email lists to be broken into small
+BCC batches.</li>
+<li>Email Debugging tools</li>
+</ul>
+<div class="section" id="sending-email">
+<h2>Sending Email<a class="headerlink" href="#sending-email" title="Permalink to this headline">¶</a></h2>
+<p>Sending email is not only simple, but you can configure it on the fly or
+set your preferences in a config file.</p>
+<p>Here is a basic example demonstrating how you might send email. Note:
+This example assumes you are sending the email from one of your
+<a class="reference internal" href="../general/controllers.html"><em>controllers</em></a>.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;your@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;Your Name&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;someone@example.com&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">cc</span><span class="p">(</span><span class="s1">&#39;another@another-example.com&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">bcc</span><span class="p">(</span><span class="s1">&#39;them@their-example.com&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">subject</span><span class="p">(</span><span class="s1">&#39;Email Test&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">(</span><span class="s1">&#39;Testing the email class.&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-email-preferences">
+<h2>Setting Email Preferences<a class="headerlink" href="#setting-email-preferences" title="Permalink to this headline">¶</a></h2>
+<p>There are 21 different preferences available to tailor how your email
+messages are sent. You can either set them manually as described here,
+or automatically via preferences stored in your config file, described
+below:</p>
+<p>Preferences are set by passing an array of preference values to the
+email initialize method. Here is an example of how you might set some
+preferences:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;protocol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sendmail&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;mailpath&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;/usr/sbin/sendmail&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;charset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;iso-8859-1&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;wordwrap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">initialize</span><span class="p">(</span><span class="nv">$config</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Most of the preferences have default values that will be used
+if you do not set them.</p>
+</div>
+<div class="section" id="setting-email-preferences-in-a-config-file">
+<h3>Setting Email Preferences in a Config File<a class="headerlink" href="#setting-email-preferences-in-a-config-file" title="Permalink to this headline">¶</a></h3>
+<p>If you prefer not to set preferences using the above method, you can
+instead put them into a config file. Simply create a new file called the
+email.php, add the $config array in that file. Then save the file at
+config/email.php and it will be used automatically. You will NOT need to
+use the <tt class="docutils literal"><span class="pre">$this-&gt;email-&gt;initialize()</span></tt> method if you save your
+preferences in a config file.</p>
+</div>
+</div>
+<div class="section" id="email-preferences">
+<h2>Email Preferences<a class="headerlink" href="#email-preferences" title="Permalink to this headline">¶</a></h2>
+<p>The following is a list of all the preferences that can be set when
+sending email.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="16%" />
+<col width="20%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Preference</th>
+<th class="head">Default Value</th>
+<th class="head">Options</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>useragent</strong></td>
+<td>CodeIgniter</td>
+<td>None</td>
+<td>The &#8220;user agent&#8221;.</td>
+</tr>
+<tr class="row-odd"><td><strong>protocol</strong></td>
+<td>mail</td>
+<td>mail, sendmail, or smtp</td>
+<td>The mail sending protocol.</td>
+</tr>
+<tr class="row-even"><td><strong>mailpath</strong></td>
+<td>/usr/sbin/sendmail</td>
+<td>None</td>
+<td>The server path to Sendmail.</td>
+</tr>
+<tr class="row-odd"><td><strong>smtp_host</strong></td>
+<td>No Default</td>
+<td>None</td>
+<td>SMTP Server Address.</td>
+</tr>
+<tr class="row-even"><td><strong>smtp_user</strong></td>
+<td>No Default</td>
+<td>None</td>
+<td>SMTP Username.</td>
+</tr>
+<tr class="row-odd"><td><strong>smtp_pass</strong></td>
+<td>No Default</td>
+<td>None</td>
+<td>SMTP Password.</td>
+</tr>
+<tr class="row-even"><td><strong>smtp_port</strong></td>
+<td>25</td>
+<td>None</td>
+<td>SMTP Port.</td>
+</tr>
+<tr class="row-odd"><td><strong>smtp_timeout</strong></td>
+<td>5</td>
+<td>None</td>
+<td>SMTP Timeout (in seconds).</td>
+</tr>
+<tr class="row-even"><td><strong>smtp_keepalive</strong></td>
+<td>FALSE</td>
+<td>TRUE or FALSE (boolean)</td>
+<td>Enable persistent SMTP connections.</td>
+</tr>
+<tr class="row-odd"><td><strong>smtp_crypto</strong></td>
+<td>No Default</td>
+<td>tls or ssl</td>
+<td>SMTP Encryption</td>
+</tr>
+<tr class="row-even"><td><strong>wordwrap</strong></td>
+<td>TRUE</td>
+<td>TRUE or FALSE (boolean)</td>
+<td>Enable word-wrap.</td>
+</tr>
+<tr class="row-odd"><td><strong>wrapchars</strong></td>
+<td>76</td>
+<td>&nbsp;</td>
+<td>Character count to wrap at.</td>
+</tr>
+<tr class="row-even"><td><strong>mailtype</strong></td>
+<td>text</td>
+<td>text or html</td>
+<td>Type of mail. If you send HTML email you must send it as a complete web
+page. Make sure you don&#8217;t have any relative links or relative image
+paths otherwise they will not work.</td>
+</tr>
+<tr class="row-odd"><td><strong>charset</strong></td>
+<td><tt class="docutils literal"><span class="pre">$config['charset']</span></tt></td>
+<td>&nbsp;</td>
+<td>Character set (utf-8, iso-8859-1, etc.).</td>
+</tr>
+<tr class="row-even"><td><strong>validate</strong></td>
+<td>FALSE</td>
+<td>TRUE or FALSE (boolean)</td>
+<td>Whether to validate the email address.</td>
+</tr>
+<tr class="row-odd"><td><strong>priority</strong></td>
+<td>3</td>
+<td>1, 2, 3, 4, 5</td>
+<td>Email Priority. 1 = highest. 5 = lowest. 3 = normal.</td>
+</tr>
+<tr class="row-even"><td><strong>crlf</strong></td>
+<td>\n</td>
+<td>&#8220;\r\n&#8221; or &#8220;\n&#8221; or &#8220;\r&#8221;</td>
+<td>Newline character. (Use &#8220;\r\n&#8221; to comply with RFC 822).</td>
+</tr>
+<tr class="row-odd"><td><strong>newline</strong></td>
+<td>\n</td>
+<td>&#8220;\r\n&#8221; or &#8220;\n&#8221; or &#8220;\r&#8221;</td>
+<td>Newline character. (Use &#8220;\r\n&#8221; to comply with RFC 822).</td>
+</tr>
+<tr class="row-even"><td><strong>bcc_batch_mode</strong></td>
+<td>FALSE</td>
+<td>TRUE or FALSE (boolean)</td>
+<td>Enable BCC Batch Mode.</td>
+</tr>
+<tr class="row-odd"><td><strong>bcc_batch_size</strong></td>
+<td>200</td>
+<td>None</td>
+<td>Number of emails in each BCC batch.</td>
+</tr>
+<tr class="row-even"><td><strong>dsn</strong></td>
+<td>FALSE</td>
+<td>TRUE or FALSE (boolean)</td>
+<td>Enable notify message from server</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="email-methods-reference">
+<h2>Email Methods Reference<a class="headerlink" href="#email-methods-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="this-email-from">
+<h3>$this-&gt;email-&gt;from()<a class="headerlink" href="#this-email-from" title="Permalink to this headline">¶</a></h3>
+<p>Sets the email address and name of the person sending the email:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;you@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;Your Name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can also set a Return-Path, to help redirect undelivered mail:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;you@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;Your Name&#39;</span><span class="p">,</span> <span class="s1">&#39;returned_emails@example.com&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Return-Path can&#8217;t be used if you&#8217;ve configured
+&#8216;smtp&#8217; as your protocol.</p>
+</div>
+</div>
+<div class="section" id="this-email-reply-to">
+<h3>$this-&gt;email-&gt;reply_to()<a class="headerlink" href="#this-email-reply-to" title="Permalink to this headline">¶</a></h3>
+<p>Sets the reply-to address. If the information is not provided the
+information in the &#8220;from&#8221; method is used. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">reply_to</span><span class="p">(</span><span class="s1">&#39;you@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;Your Name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-email-to">
+<h3>$this-&gt;email-&gt;to()<a class="headerlink" href="#this-email-to" title="Permalink to this headline">¶</a></h3>
+<p>Sets the email address(s) of the recipient(s). Can be a single email, a
+comma-delimited list or an array:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;someone@example.com&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="s1">&#39;one@example.com, two@example.com, three@example.com&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$list</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;one@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;two@example.com&#39;</span><span class="p">,</span> <span class="s1">&#39;three@example.com&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$list</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-email-cc">
+<h3>$this-&gt;email-&gt;cc()<a class="headerlink" href="#this-email-cc" title="Permalink to this headline">¶</a></h3>
+<p>Sets the CC email address(s). Just like the &#8220;to&#8221;, can be a single email,
+a comma-delimited list or an array.</p>
+</div>
+<div class="section" id="this-email-bcc">
+<h3>$this-&gt;email-&gt;bcc()<a class="headerlink" href="#this-email-bcc" title="Permalink to this headline">¶</a></h3>
+<p>Sets the BCC email address(s). Just like the &#8220;to&#8221;, can be a single
+email, a comma-delimited list or an array.</p>
+</div>
+<div class="section" id="this-email-subject">
+<h3>$this-&gt;email-&gt;subject()<a class="headerlink" href="#this-email-subject" title="Permalink to this headline">¶</a></h3>
+<p>Sets the email subject:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">subject</span><span class="p">(</span><span class="s1">&#39;This is my subject&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-email-message">
+<h3>$this-&gt;email-&gt;message()<a class="headerlink" href="#this-email-message" title="Permalink to this headline">¶</a></h3>
+<p>Sets the email message body:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">(</span><span class="s1">&#39;This is my message&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-email-set-alt-message">
+<h3>$this-&gt;email-&gt;set_alt_message()<a class="headerlink" href="#this-email-set-alt-message" title="Permalink to this headline">¶</a></h3>
+<p>Sets the alternative email message body:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">set_alt_message</span><span class="p">(</span><span class="s1">&#39;This is the alternative message&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This is an optional message string which can be used if you send HTML
+formatted email. It lets you specify an alternative message with no HTML
+formatting which is added to the header string for people who do not
+accept HTML email. If you do not set your own message CodeIgniter will
+extract the message from your HTML email and strip the tags.</p>
+</div>
+<div class="section" id="this-email-set-header">
+<h3>$this-&gt;email-&gt;set_header()<a class="headerlink" href="#this-email-set-header" title="Permalink to this headline">¶</a></h3>
+<p>Appends additional headers to the e-mail:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">set_header</span><span class="p">(</span><span class="s1">&#39;Header1&#39;</span><span class="p">,</span> <span class="s1">&#39;Value1&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">set_header</span><span class="p">(</span><span class="s1">&#39;Header2&#39;</span><span class="p">,</span> <span class="s1">&#39;Value2&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-email-clear">
+<h3>$this-&gt;email-&gt;clear()<a class="headerlink" href="#this-email-clear" title="Permalink to this headline">¶</a></h3>
+<p>Initializes all the email variables to an empty state. This method is
+intended for use if you run the email sending method in a loop,
+permitting the data to be reset between cycles.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">foreach</span> <span class="p">(</span><span class="nv">$list</span> <span class="k">as</span> <span class="nv">$name</span> <span class="o">=&gt;</span> <span class="nv">$address</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">clear</span><span class="p">();</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">to</span><span class="p">(</span><span class="nv">$address</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">from</span><span class="p">(</span><span class="s1">&#39;your@example.com&#39;</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">subject</span><span class="p">(</span><span class="s1">&#39;Here is your info &#39;</span><span class="o">.</span><span class="nv">$name</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">(</span><span class="s1">&#39;Hi &#39;</span><span class="o">.</span><span class="nv">$name</span><span class="o">.</span><span class="s1">&#39; Here is the info you requested.&#39;</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If you set the parameter to TRUE any attachments will be cleared as
+well:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">clear</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-email-send">
+<h3>$this-&gt;email-&gt;send()<a class="headerlink" href="#this-email-send" title="Permalink to this headline">¶</a></h3>
+<p>The Email sending method. Returns boolean TRUE or FALSE based on
+success or failure, enabling it to be used conditionally:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">())</span>
+<span class="p">{</span>
+        <span class="c1">// Generate error</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This method will automatically clear all parameters if the request was
+successful. To stop this behaviour pass FALSE:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">FALSE</span><span class="p">))</span>
+<span class="p">{</span>
+        <span class="c1">// Parameters won&#39;t be cleared</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In order to use the <tt class="docutils literal"><span class="pre">print_debugger()</span></tt> method, you need
+to avoid clearing the email parameters.</p>
+</div>
+</div>
+<div class="section" id="this-email-attach">
+<h3>$this-&gt;email-&gt;attach()<a class="headerlink" href="#this-email-attach" title="Permalink to this headline">¶</a></h3>
+<p>Enables you to send an attachment. Put the file path/name in the first
+parameter. Note: Use a file path, not a URL. For multiple attachments
+use the method multiple times. For example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="s1">&#39;/path/to/photo1.jpg&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="s1">&#39;/path/to/photo2.jpg&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="s1">&#39;/path/to/photo3.jpg&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To use the default disposition (attachment), leave the second parameter blank,
+otherwise use a custom disposition:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="s1">&#39;image.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;inline&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you&#8217;d like to use a custom file name, you can use the third paramater:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="s1">&#39;filename.pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="s1">&#39;report.pdf&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you need to use a buffer string instead of a real - physical - file you can
+use the first parameter as buffer, the third parameter as file name and the fourth
+parameter as mime-type:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">attach</span><span class="p">(</span><span class="nv">$buffer</span><span class="p">,</span> <span class="s1">&#39;attachment&#39;</span><span class="p">,</span> <span class="s1">&#39;report.pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;application/pdf&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-email-print-debugger">
+<h3>$this-&gt;email-&gt;print_debugger()<a class="headerlink" href="#this-email-print-debugger" title="Permalink to this headline">¶</a></h3>
+<p>Returns a string containing any server messages, the email headers, and
+the email messsage. Useful for debugging.</p>
+<p>You can optionally specify which parts of the message should be printed.
+Valid options are: <strong>headers</strong>, <strong>subject</strong>, <strong>body</strong>.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// You need to pass FALSE while sending in order for the email data</span>
+<span class="c1">// to not be cleared - if that happens, print_debugger() would have</span>
+<span class="c1">// nothing to output.</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="k">FALSE</span><span class="p">);</span>
+
+<span class="c1">// Will only print the email headers, excluding the message subject and body</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="o">-&gt;</span><span class="na">print_debugger</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;headers&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">By default, all of the raw data will be printed.</p>
+</div>
+</div>
+</div>
+<div class="section" id="overriding-word-wrapping">
+<h2>Overriding Word Wrapping<a class="headerlink" href="#overriding-word-wrapping" title="Permalink to this headline">¶</a></h2>
+<p>If you have word wrapping enabled (recommended to comply with RFC 822)
+and you have a very long link in your email it can get wrapped too,
+causing it to become un-clickable by the person receiving it.
+CodeIgniter lets you manually override word wrapping within part of your
+message like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">The</span> <span class="nx">text</span> <span class="nx">of</span> <span class="nx">your</span> <span class="nx">email</span> <span class="nx">that</span>
+<span class="nx">gets</span> <span class="nx">wrapped</span> <span class="nx">normally</span><span class="o">.</span>
+
+<span class="p">{</span><span class="nx">unwrap</span><span class="p">}</span><span class="nx">http</span><span class="o">://</span><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">a_long_link_that_should_not_be_wrapped</span><span class="o">.</span><span class="nx">html</span><span class="p">{</span><span class="o">/</span><span class="nx">unwrap</span><span class="p">}</span>
+
+<span class="nx">More</span> <span class="nx">text</span> <span class="nx">that</span> <span class="nx">will</span> <span class="nx">be</span>
+<span class="nx">wrapped</span> <span class="nx">normally</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Place the item you do not want word-wrapped between: {unwrap} {/unwrap}</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

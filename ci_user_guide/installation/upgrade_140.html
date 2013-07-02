@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Upgrading from 1.3.3 to 1.4.0 &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Installation Instructions" href="index.html" />
+	    <link rel="next" title="Upgrading from 1.4.0 to 1.4.1" href="upgrade_141.html" />
+	    <link rel="prev" title="Upgrading from 1.3.2 to 1.3.3" href="upgrade_133.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb38795c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Installation Instructions</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Upgrading from 1.3.3 to 1.4.0</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="upgrading-from-1-3-3-to-1-4-0">
+<h1>Upgrading from 1.3.3 to 1.4.0<a class="headerlink" href="#upgrading-from-1-3-3-to-1-4-0" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The instructions on this page assume you are running version
+1.3.3. If you have not upgraded to that version please do so first.</p>
+</div>
+<p>Before performing an update you should take your site offline by
+replacing the index.php file with a static one.</p>
+<div class="section" id="step-1-update-your-codeigniter-files">
+<h2>Step 1: Update your CodeIgniter files<a class="headerlink" href="#step-1-update-your-codeigniter-files" title="Permalink to this headline">¶</a></h2>
+<p>Replace the following directories in your &#8220;system&#8221; folder with the new
+versions:</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have any custom developed files in these folders please
+make copies of them first.</p>
+</div>
+<ul class="simple">
+<li>application/config/<strong>hooks.php</strong></li>
+<li>application/config/<strong>mimes.php</strong></li>
+<li>codeigniter</li>
+<li>drivers</li>
+<li>helpers</li>
+<li>init</li>
+<li>language</li>
+<li>libraries</li>
+<li>scaffolding</li>
+</ul>
+</div>
+<div class="section" id="step-2-update-your-config-php-file">
+<h2>Step 2: Update your config.php file<a class="headerlink" href="#step-2-update-your-config-php-file" title="Permalink to this headline">¶</a></h2>
+<p>Open your application/config/config.php file and add these new items:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">|--------------------------------------------------------------------------</span>
+<span class="cm">| Enable/Disable System Hooks</span>
+<span class="cm">|--------------------------------------------------------------------------</span>
+<span class="cm">|</span>
+<span class="cm">| If you would like to use the &quot;hooks&quot; feature you must enable it by</span>
+<span class="cm">| setting this variable to TRUE (boolean).  See the user guide for details.</span>
+<span class="cm">|</span>
+<span class="cm">*/</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;enable_hooks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>
+
+
+<span class="cm">/*</span>
+<span class="cm">|--------------------------------------------------------------------------</span>
+<span class="cm">| Allowed URL Characters</span>
+<span class="cm">|--------------------------------------------------------------------------</span>
+<span class="cm">|</span>
+<span class="cm">| This lets you specify which characters are permitted within your URLs.</span>
+<span class="cm">| When someone tries to submit a URL with disallowed characters they will</span>
+<span class="cm">| get a warning message.</span>
+<span class="cm">|</span>
+<span class="cm">| As a security measure you are STRONGLY encouraged to restrict URLs to</span>
+<span class="cm">| as few characters as possible.  By default only these are allowed: a-z 0-9~%.:_-</span>
+<span class="cm">|</span>
+<span class="cm">| Leave blank to allow all characters -- but only if you are insane.</span>
+<span class="cm">|</span>
+<span class="cm">| DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!</span>
+<span class="cm">|</span>
+<span class="cm">*/</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;permitted_uri_chars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;a-z 0-9~%.:_-&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-3-update-your-user-guide">
+<h2>Step 3: Update your user guide<a class="headerlink" href="#step-3-update-your-user-guide" title="Permalink to this headline">¶</a></h2>
+<p>Please also replace your local copy of the user guide with the new
+version.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

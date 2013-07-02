@@ -65,7 +65,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <p>The corresponding controller for this page is found at:</p>
                 <code>application/controllers/welcome.php</code>
 
-                <p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="http://docs.gotux.net/ci3guide/index.html">CodeIgniter User Guide</a>.</p>
+                <p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="<?php echo base_url('ci_user_guide') ?>">CodeIgniter User Guide</a>.</p>
                 <p> You can <a class="btn btn-primary" href="<?php echo site_url('installer/index'); ?>"><b>install No-CMS</b></a> anytime you are ready to</p>
             </div>
 

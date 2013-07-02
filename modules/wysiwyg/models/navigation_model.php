@@ -4,8 +4,9 @@ class Navigation_Model extends CMS_Model{
 
     public function get_all_navigation(){
         $result = array();
-        $SQL = "SELECT navigation_id, navigation_name, title FROM ".$this->cms_complete_table_name('main_navigation');
-        $query = $this->db->query($SQL);
+        $this->db->select('navigation_id, navigation_name, title')
+            ->from($this->complete_table_name('main_navigation'));
+        $query = $this->db->get();
         foreach($query->result() as $row){
             $result[] = array(
                 "id" =>$row->navigation_id,

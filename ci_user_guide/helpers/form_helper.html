@@ -1,0 +1,1156 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Form Helper &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Helpers" href="index.html" />
+	    <link rel="next" title="HTML Helper" href="html_helper.html" />
+	    <link rel="prev" title="File Helper" href="file_helper.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3b4f44>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Helpers</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Form Helper</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="form-helper">
+<h1><a class="toc-backref" href="#id1">Form Helper</a><a class="headerlink" href="#form-helper" title="Permalink to this headline">¶</a></h1>
+<p>The Form Helper file contains functions that assist in working with
+forms.</p>
+<div class="contents topic" id="page-contents">
+<p class="topic-title first">Page Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#form-helper" id="id1">Form Helper</a><ul>
+<li><a class="reference internal" href="#loading-this-helper" id="id2">Loading this Helper</a></li>
+<li><a class="reference internal" href="#form-open" id="id3">form_open()</a><ul>
+<li><a class="reference internal" href="#adding-attributes" id="id4">Adding Attributes</a></li>
+<li><a class="reference internal" href="#adding-hidden-input-fields" id="id5">Adding Hidden Input Fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#form-open-multipart" id="id6">form_open_multipart()</a></li>
+<li><a class="reference internal" href="#form-hidden" id="id7">form_hidden()</a></li>
+<li><a class="reference internal" href="#form-input" id="id8">form_input()</a></li>
+<li><a class="reference internal" href="#form-password" id="id9">form_password()</a></li>
+<li><a class="reference internal" href="#form-upload" id="id10">form_upload()</a></li>
+<li><a class="reference internal" href="#form-textarea" id="id11">form_textarea()</a></li>
+<li><a class="reference internal" href="#form-dropdown" id="id12">form_dropdown()</a></li>
+<li><a class="reference internal" href="#form-multiselect" id="id13">form_multiselect()</a></li>
+<li><a class="reference internal" href="#form-fieldset" id="id14">form_fieldset()</a></li>
+<li><a class="reference internal" href="#form-fieldset-close" id="id15">form_fieldset_close()</a></li>
+<li><a class="reference internal" href="#form-checkbox" id="id16">form_checkbox()</a></li>
+<li><a class="reference internal" href="#form-radio" id="id17">form_radio()</a></li>
+<li><a class="reference internal" href="#form-label" id="id18">form_label()</a></li>
+<li><a class="reference internal" href="#form-submit" id="id19">form_submit()</a></li>
+<li><a class="reference internal" href="#form-reset" id="id20">form_reset()</a></li>
+<li><a class="reference internal" href="#form-button" id="id21">form_button()</a></li>
+<li><a class="reference internal" href="#form-close" id="id22">form_close()</a></li>
+<li><a class="reference internal" href="#form-prep" id="id23">form_prep()</a></li>
+<li><a class="reference internal" href="#set-value" id="id24">set_value()</a></li>
+<li><a class="reference internal" href="#set-select" id="id25">set_select()</a></li>
+<li><a class="reference internal" href="#set-checkbox" id="id26">set_checkbox()</a></li>
+<li><a class="reference internal" href="#set-radio" id="id27">set_radio()</a></li>
+<li><a class="reference internal" href="#form-error" id="id28">form_error()</a></li>
+<li><a class="reference internal" href="#validation-errors" id="id29">validation_errors()</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="loading-this-helper">
+<h2><a class="toc-backref" href="#id2">Loading this Helper</a><a class="headerlink" href="#loading-this-helper" title="Permalink to this headline">¶</a></h2>
+<p>This helper is loaded using the following code:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The following functions are available:</p>
+</div>
+<div class="section" id="form-open">
+<h2><a class="toc-backref" href="#id3">form_open()</a><a class="headerlink" href="#form-open" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_open">
+<tt class="descname">form_open</tt><big>(</big><em>$action = ''</em>, <em>$attributes = ''</em>, <em>$hidden = array()</em><big>)</big><a class="headerlink" href="#form_open" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$action</strong> (<em>string</em>) &#8211; Form action/target URI string</li>
+<li><strong>$attributes</strong> (<em>string</em>) &#8211; HTML attributes</li>
+<li><strong>$hidden</strong> (<em>array</em>) &#8211; An array of hidden fields&#8217; definitions</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Creates an opening form tag with a base URL <strong>built from your config preferences</strong>.
+It will optionally let you add form attributes and hidden input fields, and
+will always add the <cite>accept-charset</cite> attribute based on the charset value in your
+config file.</p>
+<p>The main benefit of using this tag rather than hard coding your own HTML is that
+it permits your site to be more portable in the event your URLs ever change.</p>
+<p>Here&#8217;s a simple example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">form_open</span><span class="p">(</span><span class="s1">&#39;email/send&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above example would create a form that points to your base URL plus the
+&#8220;email/send&#8221; URI segments, like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">form</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span> <span class="nx">accept</span><span class="o">-</span><span class="nx">charset</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;http://example.com/index.php/email/send&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="adding-attributes">
+<h3><a class="toc-backref" href="#id4">Adding Attributes</a><a class="headerlink" href="#adding-attributes" title="Permalink to this headline">¶</a></h3>
+<p>Attributes can be added by passing an associative array to the second
+parameter, like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$attributes</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;myform&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nx">form_open</span><span class="p">(</span><span class="s1">&#39;email/send&#39;</span><span class="p">,</span> <span class="nv">$attributes</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above example would create a form similar to this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">form</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span> <span class="nx">accept</span><span class="o">-</span><span class="nx">charset</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;http://example.com/index.php/email/send&quot;</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&quot;email&quot;</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;myform&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="adding-hidden-input-fields">
+<h3><a class="toc-backref" href="#id5">Adding Hidden Input Fields</a><a class="headerlink" href="#adding-hidden-input-fields" title="Permalink to this headline">¶</a></h3>
+<p>Hidden fields can be added by passing an associative array to the
+third parameter, like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$hidden</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Joe&#39;</span><span class="p">,</span> <span class="s1">&#39;member_id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;234&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nx">form_open</span><span class="p">(</span><span class="s1">&#39;email/send&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$hidden</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above example would create a form similar to this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">form</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span> <span class="nx">accept</span><span class="o">-</span><span class="nx">charset</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;http://example.com/index.php/email/send&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;hidden&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;username&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;Joe&quot;</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;hidden&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;member_id&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;234&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="form-open-multipart">
+<h2><a class="toc-backref" href="#id6">form_open_multipart()</a><a class="headerlink" href="#form-open-multipart" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_open_multipart">
+<tt class="descname">form_open_multipart</tt><big>(</big><em>$action = ''</em>, <em>$attributes = array()</em>, <em>$hidden = array()</em><big>)</big><a class="headerlink" href="#form_open_multipart" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$action</strong> (<em>string</em>) &#8211; Form action/target URI string</li>
+<li><strong>$attributes</strong> (<em>string</em>) &#8211; HTML attributes</li>
+<li><strong>$hidden</strong> (<em>array</em>) &#8211; An array of hidden fields&#8217; definitions</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function is absolutely identical to <a class="reference internal" href="#form_open" title="form_open"><tt class="xref php php-func docutils literal"><span class="pre">form_open()</span></tt></a> above,
+except that it adds a <em>multipart</em> attribute, which is necessary if you
+would like to use the form to upload files with.</p>
+</div>
+<div class="section" id="form-hidden">
+<h2><a class="toc-backref" href="#id7">form_hidden()</a><a class="headerlink" href="#form-hidden" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_hidden">
+<tt class="descname">form_hidden</tt><big>(</big><em>$name</em>, <em>$value = ''</em><big>)</big><a class="headerlink" href="#form_hidden" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$name</strong> (<em>string</em>) &#8211; Field name</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Field value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you generate hidden input fields. You can either submit a
+name/value string to create one field:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">form_hidden</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;johndoe&#39;</span><span class="p">);</span>
+<span class="c1">// Would produce: &lt;input type=&quot;hidden&quot; name=&quot;username&quot; value=&quot;johndoe&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>... or you can submit an associative array to create multiple fields:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;name&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;url&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">form_hidden</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Would produce:</span>
+<span class="cm">        &lt;input type=&quot;hidden&quot; name=&quot;name&quot; value=&quot;John Doe&quot; /&gt;</span>
+<span class="cm">        &lt;input type=&quot;hidden&quot; name=&quot;email&quot; value=&quot;john@example.com&quot; /&gt;</span>
+<span class="cm">        &lt;input type=&quot;hidden&quot; name=&quot;url&quot; value=&quot;http://example.com&quot; /&gt;</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>You can also pass an associative array to the value field:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;name&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;John Doe&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;url&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">form_hidden</span><span class="p">(</span><span class="s1">&#39;my_array&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Would produce:</span>
+
+<span class="cm">        &lt;input type=&quot;hidden&quot; name=&quot;my_array[name]&quot; value=&quot;John Doe&quot; /&gt;</span>
+<span class="cm">        &lt;input type=&quot;hidden&quot; name=&quot;my_array[email]&quot; value=&quot;john@example.com&quot; /&gt;</span>
+<span class="cm">        &lt;input type=&quot;hidden&quot; name=&quot;my_array[url]&quot; value=&quot;http://example.com&quot; /&gt;</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>If you want to create hidden input fields with extra attributes:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;type&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;hidden&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;id&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;hiddenemail&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;value&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;john@example.com&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;hiddenemail&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">form_input</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Would produce:</span>
+
+<span class="cm">        &lt;input type=&quot;hidden&quot; name=&quot;email&quot; value=&quot;john@example.com&quot; id=&quot;hiddenemail&quot; class=&quot;hiddenemail&quot; /&gt;</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-input">
+<h2><a class="toc-backref" href="#id8">form_input()</a><a class="headerlink" href="#form-input" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_input">
+<tt class="descname">form_input</tt><big>(</big><em>$data = ''</em>, <em>$value = ''</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_input" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>array</em>) &#8211; Field attributes data</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Field value</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you generate a standard text input field. You can minimally pass
+the field name and value in the first and second parameter:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">form_input</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;johndoe&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Or you can pass an associative array containing any data you wish your
+form to contain:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;name&#39;</span>          <span class="o">=&gt;</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;id&#39;</span>            <span class="o">=&gt;</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;value&#39;</span>         <span class="o">=&gt;</span> <span class="s1">&#39;johndoe&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;maxlength&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;100&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;size&#39;</span>          <span class="o">=&gt;</span> <span class="s1">&#39;50&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;style&#39;</span>         <span class="o">=&gt;</span> <span class="s1">&#39;width:50%&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">form_input</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Would produce:</span>
+
+<span class="cm">        &lt;input type=&quot;text&quot; name=&quot;username&quot; value=&quot;johndoe&quot; id=&quot;username&quot; maxlength=&quot;100&quot; size=&quot;50&quot; style=&quot;width:50%&quot;  /&gt;</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>If you would like your form to contain some additional data, like
+JavaScript, you can pass it as a string in the third parameter:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$js</span> <span class="o">=</span> <span class="s1">&#39;onClick=&quot;some_function()&quot;&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">form_input</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;johndoe&#39;</span><span class="p">,</span> <span class="nv">$js</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-password">
+<h2><a class="toc-backref" href="#id9">form_password()</a><a class="headerlink" href="#form-password" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_password">
+<tt class="descname">form_password</tt><big>(</big><em>$data = ''</em>, <em>$value = ''</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_password" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>array</em>) &#8211; Field attributes data</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Field value</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function is identical in all respects to the <a class="reference internal" href="#form_input" title="form_input"><tt class="xref php php-func docutils literal"><span class="pre">form_input()</span></tt></a>
+function above except that it uses the &#8220;password&#8221; input type.</p>
+</div>
+<div class="section" id="form-upload">
+<h2><a class="toc-backref" href="#id10">form_upload()</a><a class="headerlink" href="#form-upload" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_upload">
+<tt class="descname">form_upload</tt><big>(</big><em>$data = ''</em>, <em>$value = ''</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_upload" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>array</em>) &#8211; Field attributes data</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Field value</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function is identical in all respects to the <a class="reference internal" href="#form_input" title="form_input"><tt class="xref php php-func docutils literal"><span class="pre">form_input()</span></tt></a>
+function above except that it uses the &#8220;file&#8221; input type, allowing it to
+be used to upload files.</p>
+</div>
+<div class="section" id="form-textarea">
+<h2><a class="toc-backref" href="#id11">form_textarea()</a><a class="headerlink" href="#form-textarea" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_textarea">
+<tt class="descname">form_textarea</tt><big>(</big><em>$data = ''</em>, <em>$value = ''</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_textarea" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>array</em>) &#8211; Field attributes data</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Field value</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function is identical in all respects to the <a class="reference internal" href="#form_input" title="form_input"><tt class="xref php php-func docutils literal"><span class="pre">form_input()</span></tt></a>
+function above except that it generates a &#8220;textarea&#8221; type.</p>
+</div>
+<div class="section" id="form-dropdown">
+<h2><a class="toc-backref" href="#id12">form_dropdown()</a><a class="headerlink" href="#form-dropdown" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_dropdown">
+<tt class="descname">form_dropdown</tt><big>(</big><em>$name = ''</em>, <em>$options = array()</em>, <em>$selected = array()</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_dropdown" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$name</strong> (<em>string</em>) &#8211; Field name</li>
+<li><strong>$options</strong> (<em>array</em>) &#8211; An associative array of options to be listed</li>
+<li><strong>$selected</strong> (<em>array</em>) &#8211; List of fields to mark with the <em>selected</em> attribute</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you create a standard drop-down field. The first parameter will
+contain the name of the field, the second parameter will contain an
+associative array of options, and the third parameter will contain the
+value you wish to be selected. You can also pass an array of multiple
+items through the third parameter, and CodeIgniter will create a
+multiple select for you.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;small&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;Small Shirt&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;med&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;Medium Shirt&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;large&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;Large Shirt&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;xlarge&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Extra Large Shirt&#39;</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="nv">$shirts_on_sale</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;small&#39;</span><span class="p">,</span> <span class="s1">&#39;large&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nx">form_dropdown</span><span class="p">(</span><span class="s1">&#39;shirts&#39;</span><span class="p">,</span> <span class="nv">$options</span><span class="p">,</span> <span class="s1">&#39;large&#39;</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Would produce:</span>
+
+<span class="cm">        &lt;select name=&quot;shirts&quot;&gt;</span>
+<span class="cm">                &lt;option value=&quot;small&quot;&gt;Small Shirt&lt;/option&gt;</span>
+<span class="cm">                &lt;option value=&quot;med&quot;&gt;Medium  Shirt&lt;/option&gt;</span>
+<span class="cm">                &lt;option value=&quot;large&quot; selected=&quot;selected&quot;&gt;Large Shirt&lt;/option&gt;</span>
+<span class="cm">                &lt;option value=&quot;xlarge&quot;&gt;Extra Large Shirt&lt;/option&gt;</span>
+<span class="cm">        &lt;/select&gt;</span>
+<span class="cm">*/</span>
+
+<span class="k">echo</span> <span class="nx">form_dropdown</span><span class="p">(</span><span class="s1">&#39;shirts&#39;</span><span class="p">,</span> <span class="nv">$options</span><span class="p">,</span> <span class="nv">$shirts_on_sale</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Would produce:</span>
+
+<span class="cm">        &lt;select name=&quot;shirts&quot; multiple=&quot;multiple&quot;&gt;</span>
+<span class="cm">                &lt;option value=&quot;small&quot; selected=&quot;selected&quot;&gt;Small Shirt&lt;/option&gt;</span>
+<span class="cm">                &lt;option value=&quot;med&quot;&gt;Medium  Shirt&lt;/option&gt;</span>
+<span class="cm">                &lt;option value=&quot;large&quot; selected=&quot;selected&quot;&gt;Large Shirt&lt;/option&gt;</span>
+<span class="cm">                &lt;option value=&quot;xlarge&quot;&gt;Extra Large Shirt&lt;/option&gt;</span>
+<span class="cm">        &lt;/select&gt;</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>If you would like the opening &lt;select&gt; to contain additional data, like
+an id attribute or JavaScript, you can pass it as a string in the fourth
+parameter:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$js</span> <span class="o">=</span> <span class="s1">&#39;id=&quot;shirts&quot; onChange=&quot;some_function();&quot;&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">form_dropdown</span><span class="p">(</span><span class="s1">&#39;shirts&#39;</span><span class="p">,</span> <span class="nv">$options</span><span class="p">,</span> <span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="nv">$js</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If the array passed as <tt class="docutils literal"><span class="pre">$options</span></tt> is a multidimensional array, then
+<tt class="docutils literal"><span class="pre">form_dropdown()</span></tt> will produce an &lt;optgroup&gt; with the array key as the
+label.</p>
+</div>
+<div class="section" id="form-multiselect">
+<h2><a class="toc-backref" href="#id13">form_multiselect()</a><a class="headerlink" href="#form-multiselect" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_multiselect">
+<tt class="descname">form_multiselect</tt><big>(</big><em>$name = ''</em>, <em>$options = array()</em>, <em>$selected = array()</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_multiselect" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$name</strong> (<em>string</em>) &#8211; Field name</li>
+<li><strong>$options</strong> (<em>array</em>) &#8211; An associative array of options to be listed</li>
+<li><strong>$selected</strong> (<em>array</em>) &#8211; List of fields to mark with the <em>selected</em> attribute</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you create a standard multiselect field. The first parameter will
+contain the name of the field, the second parameter will contain an
+associative array of options, and the third parameter will contain the
+value or values you wish to be selected.</p>
+<p>The parameter usage is identical to using <a class="reference internal" href="#form_dropdown" title="form_dropdown"><tt class="xref php php-func docutils literal"><span class="pre">form_dropdown()</span></tt></a> above,
+except of course that the name of the field will need to use POST array
+syntax, e.g. foo[].</p>
+</div>
+<div class="section" id="form-fieldset">
+<h2><a class="toc-backref" href="#id14">form_fieldset()</a><a class="headerlink" href="#form-fieldset" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_fieldset">
+<tt class="descname">form_fieldset</tt><big>(</big><em>$legend_text = ''</em>, <em>$attributes = array()</em><big>)</big><a class="headerlink" href="#form_fieldset" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$legend_text</strong> (<em>string</em>) &#8211; Text to put in the &lt;legend&gt; tag</li>
+<li><strong>$attributes</strong> (<em>array</em>) &#8211; Attributes to be set on the &lt;fieldset&gt; tag</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you generate fieldset/legend fields.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">form_fieldset</span><span class="p">(</span><span class="s1">&#39;Address Information&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="s2">&quot;&lt;p&gt;fieldset content here&lt;/p&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">form_fieldset_close</span><span class="p">();</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Produces:</span>
+
+<span class="cm">                &lt;fieldset&gt;</span>
+<span class="cm">                        &lt;legend&gt;Address Information&lt;/legend&gt;</span>
+<span class="cm">                                &lt;p&gt;form content here&lt;/p&gt;</span>
+<span class="cm">                &lt;/fieldset&gt;</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+<p>Similar to other functions, you can submit an associative array in the
+second parameter if you prefer to set additional attributes:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$attributes</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;id&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;address_info&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;address_info&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">form_fieldset</span><span class="p">(</span><span class="s1">&#39;Address Information&#39;</span><span class="p">,</span> <span class="nv">$attributes</span><span class="p">);</span>
+<span class="k">echo</span> <span class="s2">&quot;&lt;p&gt;fieldset content here&lt;/p&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">form_fieldset_close</span><span class="p">();</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Produces:</span>
+
+<span class="cm">        &lt;fieldset id=&quot;address_info&quot; class=&quot;address_info&quot;&gt;</span>
+<span class="cm">                &lt;legend&gt;Address Information&lt;/legend&gt;</span>
+<span class="cm">                &lt;p&gt;form content here&lt;/p&gt;</span>
+<span class="cm">        &lt;/fieldset&gt;</span>
+<span class="cm">*/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-fieldset-close">
+<h2><a class="toc-backref" href="#id15">form_fieldset_close()</a><a class="headerlink" href="#form-fieldset-close" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_fieldset_close">
+<tt class="descname">form_fieldset_close</tt><big>(</big><em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_fieldset_close" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Anything to append after the closing tag, <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Produces a closing &lt;/fieldset&gt; tag. The only advantage to using this
+function is it permits you to pass data to it which will be added below
+the tag. For example</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$string</span> <span class="o">=</span> <span class="s1">&#39;&lt;/div&gt;&lt;/div&gt;&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">form_fieldset_close</span><span class="p">(</span><span class="nv">$string</span><span class="p">);</span>
+<span class="c1">// Would produce: &lt;/fieldset&gt;&lt;/div&gt;&lt;/div&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-checkbox">
+<h2><a class="toc-backref" href="#id16">form_checkbox()</a><a class="headerlink" href="#form-checkbox" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_checkbox">
+<tt class="descname">form_checkbox</tt><big>(</big><em>$data = ''</em>, <em>$value = ''</em>, <em>$checked = FALSE</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_checkbox" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>array</em>) &#8211; Field attributes data</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Field value</li>
+<li><strong>$checked</strong> (<em>bool</em>) &#8211; Whether to mark the checkbox as being <em>checked</em></li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you generate a checkbox field. Simple example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">form_checkbox</span><span class="p">(</span><span class="s1">&#39;newsletter&#39;</span><span class="p">,</span> <span class="s1">&#39;accept&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+<span class="c1">// Would produce:  &lt;input type=&quot;checkbox&quot; name=&quot;newsletter&quot; value=&quot;accept&quot; checked=&quot;checked&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>The third parameter contains a boolean TRUE/FALSE to determine whether
+the box should be checked or not.</p>
+<p>Similar to the other form functions in this helper, you can also pass an
+array of attributes to the function</p>
+<div class="highlight-ci"><pre>$data = array(
+        'name'    =&gt; 'newsletter',
+        'id'      =&gt; 'newsletter',
+        'value'   =&gt; 'accept',
+        'checked' =&gt; TRUE,
+        'style'   =&gt; 'margin:10px'
+);
+
+echo form_checkbox($data);
+// Would produce: &lt;input type="checkbox" name="newsletter" id="newsletter" value="accept" checked="checked" style="margin:10px" /&gt;</pre>
+</div>
+<p>Also as with other functions, if you would like the tag to contain
+additional data like JavaScript, you can pass it as a string in the
+fourth parameter:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$js</span> <span class="o">=</span> <span class="s1">&#39;onClick=&quot;some_function()&quot;&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">form_checkbox</span><span class="p">(</span><span class="s1">&#39;newsletter&#39;</span><span class="p">,</span> <span class="s1">&#39;accept&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">,</span> <span class="nv">$js</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-radio">
+<h2><a class="toc-backref" href="#id17">form_radio()</a><a class="headerlink" href="#form-radio" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_radio">
+<tt class="descname">form_radio</tt><big>(</big><em>$data = ''</em>, <em>$value = ''</em>, <em>$checked = FALSE</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_radio" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>array</em>) &#8211; Field attributes data</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Field value</li>
+<li><strong>$checked</strong> (<em>bool</em>) &#8211; Whether to mark the radio button as being <em>checked</em></li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function is identical in all respects to the <a class="reference internal" href="#form_checkbox" title="form_checkbox"><tt class="xref php php-func docutils literal"><span class="pre">form_checkbox()</span></tt></a>
+function above except that it uses the &#8220;radio&#8221; input type.</p>
+</div>
+<div class="section" id="form-label">
+<h2><a class="toc-backref" href="#id18">form_label()</a><a class="headerlink" href="#form-label" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_label">
+<tt class="descname">form_label</tt><big>(</big><em>$label_text = ''</em>, <em>$id = ''</em>, <em>$attributes = array()</em><big>)</big><a class="headerlink" href="#form_label" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$label_text</strong> (<em>string</em>) &#8211; Text to put in the &lt;label&gt; tag</li>
+<li><strong>$id</strong> (<em>string</em>) &#8211; ID of the form element that we&#8217;re making a label for</li>
+<li><strong>$attributes</strong> (<em>string</em>) &#8211; HTML attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you generate a &lt;label&gt;. Simple example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">form_label</span><span class="p">(</span><span class="s1">&#39;What is your Name&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">);</span>
+<span class="c1">// Would produce:  &lt;label for=&quot;username&quot;&gt;What is your Name&lt;/label&gt;</span>
+</pre></div>
+</div>
+<p>Similar to other functions, you can submit an associative array in the
+third parameter if you prefer to set additional attributes.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$attributes</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mycustomclass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;style&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;color: #000;&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">form_label</span><span class="p">(</span><span class="s1">&#39;What is your Name&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="nv">$attributes</span><span class="p">);</span>
+<span class="c1">// Would produce:  &lt;label for=&quot;username&quot; class=&quot;mycustomclass&quot; style=&quot;color: #000;&quot;&gt;What is your Name&lt;/label&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-submit">
+<h2><a class="toc-backref" href="#id19">form_submit()</a><a class="headerlink" href="#form-submit" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_submit">
+<tt class="descname">form_submit</tt><big>(</big><em>$data = ''</em>, <em>$value = ''</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_submit" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>string</em>) &#8211; Button name</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Button value</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you generate a standard submit button. Simple example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">form_submit</span><span class="p">(</span><span class="s1">&#39;mysubmit&#39;</span><span class="p">,</span> <span class="s1">&#39;Submit Post!&#39;</span><span class="p">);</span>
+<span class="c1">// Would produce:  &lt;input type=&quot;submit&quot; name=&quot;mysubmit&quot; value=&quot;Submit Post!&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>Similar to other functions, you can submit an associative array in the
+first parameter if you prefer to set your own attributes. The third
+parameter lets you add extra data to your form, like JavaScript.</p>
+</div>
+<div class="section" id="form-reset">
+<h2><a class="toc-backref" href="#id20">form_reset()</a><a class="headerlink" href="#form-reset" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_reset">
+<tt class="descname">form_reset</tt><big>(</big><em>$data = ''</em>, <em>$value = ''</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_reset" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>string</em>) &#8211; Button name</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Button value</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you generate a standard reset button. Use is identical to
+<a class="reference internal" href="#form_submit" title="form_submit"><tt class="xref php php-func docutils literal"><span class="pre">form_submit()</span></tt></a>.</p>
+</div>
+<div class="section" id="form-button">
+<h2><a class="toc-backref" href="#id21">form_button()</a><a class="headerlink" href="#form-button" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_button">
+<tt class="descname">form_button</tt><big>(</big><em>$data = ''</em>, <em>$content = ''</em>, <em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_button" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>string</em>) &#8211; Button name</li>
+<li><strong>$content</strong> (<em>string</em>) &#8211; Button label</li>
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Extra attributes to be added to the tag <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you generate a standard button element. You can minimally pass the
+button name and content in the first and second parameter:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">form_button</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;content&#39;</span><span class="p">);</span>
+<span class="c1">// Would produce: &lt;button name=&quot;name&quot; type=&quot;button&quot;&gt;Content&lt;/button&gt;</span>
+</pre></div>
+</div>
+<p>Or you can pass an associative array containing any data you wish your
+form to contain:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;name&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;button&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;id&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;button&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;value&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;type&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;reset&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Reset&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">form_button</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+<span class="c1">// Would produce: &lt;button name=&quot;button&quot; id=&quot;button&quot; value=&quot;true&quot; type=&quot;reset&quot;&gt;Reset&lt;/button&gt;</span>
+</pre></div>
+</div>
+<p>If you would like your form to contain some additional data, like
+JavaScript, you can pass it as a string in the third parameter:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$js</span> <span class="o">=</span> <span class="s1">&#39;onClick=&quot;some_function()&quot;&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">form_button</span><span class="p">(</span><span class="s1">&#39;mybutton&#39;</span><span class="p">,</span> <span class="s1">&#39;Click Me&#39;</span><span class="p">,</span> <span class="nv">$js</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-close">
+<h2><a class="toc-backref" href="#id22">form_close()</a><a class="headerlink" href="#form-close" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_close">
+<tt class="descname">form_close</tt><big>(</big><em>$extra = ''</em><big>)</big><a class="headerlink" href="#form_close" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$extra</strong> (<em>string</em>) &#8211; Anything to append after the closing tag, <em>as is</em></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Produces a closing &lt;/form&gt; tag. The only advantage to using this
+function is it permits you to pass data to it which will be added below
+the tag. For example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$string</span> <span class="o">=</span> <span class="s1">&#39;&lt;/div&gt;&lt;/div&gt;&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nx">form_close</span><span class="p">(</span><span class="nv">$string</span><span class="p">);</span>
+<span class="c1">// Would produce:  &lt;/form&gt; &lt;/div&gt;&lt;/div&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="form-prep">
+<h2><a class="toc-backref" href="#id23">form_prep()</a><a class="headerlink" href="#form-prep" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_prep">
+<tt class="descname">form_prep</tt><big>(</big><em>$str = ''</em>, <em>$is_textarea = FALSE</em><big>)</big><a class="headerlink" href="#form_prep" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$str</strong> (<em>string</em>) &#8211; Value to escape</li>
+<li><strong>$is_textarea</strong> (<em>bool</em>) &#8211; Whether we&#8217;re preparing for &lt;textarea&gt; or a regular input tag</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Allows you to safely use HTML and characters such as quotes within form
+elements without breaking out of the form.</p>
+<p>Consider this example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$string</span> <span class="o">=</span> <span class="s1">&#39;Here is a string containing &quot;quoted&quot; text.&#39;</span><span class="p">;</span>
+<span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;myform&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">$string</span><span class="s2">&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>Since the above string contains a set of quotes it will cause the form
+to break. The <tt class="docutils literal"><span class="pre">form_prep()</span></tt> function converts HTML so that it can be used
+safely:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;myform&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;&lt;?php echo form_prep(</span><span class="si">$string</span><span class="s2">); ?&gt;&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you use any of the form helper functions listed in this page the form
+values will be prepped automatically, so there is no need to call this
+function. Use it only if you are creating your own form elements.</p>
+</div>
+</div>
+<div class="section" id="set-value">
+<h2><a class="toc-backref" href="#id24">set_value()</a><a class="headerlink" href="#set-value" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="set_value">
+<tt class="descname">set_value</tt><big>(</big><em>$field = ''</em>, <em>$default = ''</em>, <em>$is_textarea = FALSE</em><big>)</big><a class="headerlink" href="#set_value" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$field</strong> (<em>string</em>) &#8211; Field name</li>
+<li><strong>$default</strong> (<em>string</em>) &#8211; Default value</li>
+<li><strong>$is_textarea</strong> (<em>bool</em>) &#8211; Whether we&#8217;re setting &lt;textarea&gt; content</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Permits you to set the value of an input form or textarea. You must
+supply the field name via the first parameter of the function. The
+second (optional) parameter allows you to set a default value for the
+form.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;quantity&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;&lt;?=set_value(&#39;quantity&#39;, &#39;0&#39;);?&gt;&quot;</span> <span class="nx">size</span><span class="o">=</span><span class="s2">&quot;50&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>The above form will show &#8220;0&#8221; when loaded for the first time.</p>
+</div>
+<div class="section" id="set-select">
+<h2><a class="toc-backref" href="#id25">set_select()</a><a class="headerlink" href="#set-select" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="set_select">
+<tt class="descname">set_select</tt><big>(</big><em>$field = ''</em>, <em>$value = ''</em>, <em>$default = FALSE</em><big>)</big><a class="headerlink" href="#set_select" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$field</strong> (<em>string</em>) &#8211; Field name</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Value to check for</li>
+<li><strong>$default</strong> (<em>string</em>) &#8211; Whether the value is also a default one</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>If you use a &lt;select&gt; menu, this function permits you to display the
+menu item that was selected.</p>
+<p>The first parameter must contain the name of the select menu, the second
+parameter must contain the value of each item, and the third (optional)
+parameter lets you set an item as the default (use boolean TRUE/FALSE).</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">select</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;myselect&quot;</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">option</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;one&quot;</span> <span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span>  <span class="nx">set_select</span><span class="p">(</span><span class="s1">&#39;myselect&#39;</span><span class="p">,</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span> <span class="cp">?&gt;</span> &gt;One<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;two&quot;</span> <span class="cp">&lt;?php</span> <span class="k">echo</span>  <span class="nx">set_select</span><span class="p">(</span><span class="s1">&#39;myselect&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span> <span class="nt">&gt;</span>Two<span class="nt">&lt;/option&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">&quot;three&quot;</span> <span class="cp">&lt;?php</span> <span class="k">echo</span>  <span class="nx">set_select</span><span class="p">(</span><span class="s1">&#39;myselect&#39;</span><span class="p">,</span> <span class="s1">&#39;three&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span> <span class="nt">&gt;</span>Three<span class="nt">&lt;/option&gt;</span>
+<span class="nt">&lt;/select&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-checkbox">
+<h2><a class="toc-backref" href="#id26">set_checkbox()</a><a class="headerlink" href="#set-checkbox" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="set_checkbox">
+<tt class="descname">set_checkbox</tt><big>(</big><em>$field = ''</em>, <em>$value = ''</em>, <em>$default = FALSE</em><big>)</big><a class="headerlink" href="#set_checkbox" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$field</strong> (<em>string</em>) &#8211; Field name</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Value to check for</li>
+<li><strong>$default</strong> (<em>string</em>) &#8211; Whether the value is also a default one</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Permits you to display a checkbox in the state it was submitted.</p>
+<p>The first parameter must contain the name of the checkbox, the second
+parameter must contain its value, and the third (optional) parameter
+lets you set an item as the default (use boolean TRUE/FALSE).</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;checkbox&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;mycheck&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;1&quot;</span> <span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nx">set_checkbox</span><span class="p">(</span><span class="s1">&#39;mycheck&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span> /&gt;
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">name=</span><span class="s">&quot;mycheck&quot;</span> <span class="na">value=</span><span class="s">&quot;2&quot;</span> <span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nx">set_checkbox</span><span class="p">(</span><span class="s1">&#39;mycheck&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-radio">
+<h2><a class="toc-backref" href="#id27">set_radio()</a><a class="headerlink" href="#set-radio" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="set_radio">
+<tt class="descname">set_radio</tt><big>(</big><em>$field = ''</em>, <em>$value = ''</em>, <em>$default = FALSE</em><big>)</big><a class="headerlink" href="#set_radio" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$field</strong> (<em>string</em>) &#8211; Field name</li>
+<li><strong>$value</strong> (<em>string</em>) &#8211; Value to check for</li>
+<li><strong>$default</strong> (<em>string</em>) &#8211; Whether the value is also a default one</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Permits you to display radio buttons in the state they were submitted.
+This function is identical to the <a class="reference internal" href="#set_checkbox" title="set_checkbox"><tt class="xref php php-func docutils literal"><span class="pre">set_checkbox()</span></tt></a> function above.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&quot;radio&quot;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&quot;myradio&quot;</span> <span class="nx">value</span><span class="o">=</span><span class="s2">&quot;1&quot;</span> <span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span>  <span class="nx">set_radio</span><span class="p">(</span><span class="s1">&#39;myradio&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span> <span class="cp">?&gt;</span> /&gt;
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;radio&quot;</span> <span class="na">name=</span><span class="s">&quot;myradio&quot;</span> <span class="na">value=</span><span class="s">&quot;2&quot;</span> <span class="cp">&lt;?php</span> <span class="k">echo</span>  <span class="nx">set_radio</span><span class="p">(</span><span class="s1">&#39;myradio&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are using the Form Validation class, you must always specify
+a rule for your field, even if empty, in order for the <tt class="docutils literal"><span class="pre">set_*()</span></tt>
+functions to work. This is because if a Form Validation object is
+defined, the control for <tt class="docutils literal"><span class="pre">set_*()</span></tt> is handed over to a method of the
+class instead of the generic helper function.</p>
+</div>
+</div>
+<div class="section" id="form-error">
+<h2><a class="toc-backref" href="#id28">form_error()</a><a class="headerlink" href="#form-error" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="form_error">
+<tt class="descname">form_error</tt><big>(</big><em>$field = ''</em>, <em>$prefix = ''</em>, <em>$suffix = ''</em><big>)</big><a class="headerlink" href="#form_error" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$field</strong> (<em>string</em>) &#8211; Field name</li>
+<li><strong>$prefix</strong> (<em>string</em>) &#8211; Error opening tag</li>
+<li><strong>$suffix</strong> (<em>string</em>) &#8211; Error closing tag</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Returns a validation error message from the <a class="reference internal" href="../libraries/form_validation.html"><em>Form Validation Library</em></a>, associated with the specified field name.
+You can optionally specify opening and closing tag(s) to put around the error
+message.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Assuming that the &#39;username&#39; field value was incorrect:</span>
+<span class="k">echo</span> <span class="nx">form_error</span><span class="p">(</span><span class="s1">&#39;myfield&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;div class=&quot;error&quot;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;/div&gt;&#39;</span><span class="p">);</span>
+
+<span class="c1">// Would produce: &lt;div class=&quot;error&quot;&gt;Error message associated with the &quot;username&quot; field.&lt;/div&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="validation-errors">
+<h2><a class="toc-backref" href="#id29">validation_errors()</a><a class="headerlink" href="#validation-errors" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="validation_errors">
+<tt class="descname">validation_errors</tt><big>(</big><em>$prefix = ''</em>, <em>$suffix = ''</em><big>)</big><a class="headerlink" href="#validation_errors" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$prefix</strong> (<em>string</em>) &#8211; Error opening tag</li>
+<li><strong>$suffix</strong> (<em>string</em>) &#8211; Error closing tag</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Similarly to the <a class="reference internal" href="#form_error" title="form_error"><tt class="xref php php-func docutils literal"><span class="pre">form_error()</span></tt></a> function, returns all validation
+error messages produced by the <a class="reference internal" href="../libraries/form_validation.html"><em>Form Validation Library</em></a>, with optional opening and closing tags
+around each of the messages.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">validation_errors</span><span class="p">(</span><span class="s1">&#39;&lt;span class=&quot;error&quot;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;/span&gt;&#39;</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm">        Would produce, e.g.:</span>
+
+<span class="cm">        &lt;span class=&quot;error&quot;&gt;The &quot;email&quot; field doesn&#39;t contain a valid e-mail address!&lt;/span&gt;</span>
+<span class="cm">        &lt;span class=&quot;error&quot;&gt;The &quot;password&quot; field doesn&#39;t match the &quot;repeat_password&quot; field!&lt;/span&gt;</span>
+
+<span class="cm"> */</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

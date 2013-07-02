@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Upgrading from 1.7.2 to 2.0.0 &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Installation Instructions" href="index.html" />
+	    <link rel="next" title="Upgrading from 2.0.0 to 2.0.1" href="upgrade_201.html" />
+	    <link rel="prev" title="Upgrading from 1.7.1 to 1.7.2" href="upgrade_172.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xabf0144>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Installation Instructions</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Upgrading from 1.7.2 to 2.0.0</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="upgrading-from-1-7-2-to-2-0-0">
+<h1>Upgrading from 1.7.2 to 2.0.0<a class="headerlink" href="#upgrading-from-1-7-2-to-2-0-0" title="Permalink to this headline">¶</a></h1>
+<p>Before performing an update you should take your site offline by
+replacing the index.php file with a static one.</p>
+<div class="section" id="update-instructions">
+<h2>Update Instructions<a class="headerlink" href="#update-instructions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="step-1-update-your-codeigniter-files">
+<h3>Step 1: Update your CodeIgniter files<a class="headerlink" href="#step-1-update-your-codeigniter-files" title="Permalink to this headline">¶</a></h3>
+<p>Replace all files and directories in your &#8220;system&#8221; folder <strong>except</strong>
+your application folder.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have any custom developed files in these folders please
+make copies of them first.</p>
+</div>
+</div>
+<div class="section" id="step-2-adjust-get-dir-file-info-where-necessary">
+<h3>Step 2: Adjust get_dir_file_info() where necessary<a class="headerlink" href="#step-2-adjust-get-dir-file-info-where-necessary" title="Permalink to this headline">¶</a></h3>
+<p>Version 2.0.0 brings a non-backwards compatible change to
+get_dir_file_info() in the <a class="reference internal" href="../helpers/file_helper.html"><em>File
+Helper</em></a>. Non-backwards compatible changes
+are extremely rare in CodeIgniter, but this one we feel was warranted
+due to how easy it was to create serious server performance issues. If
+you <em>need</em> recursiveness where you are using this helper function,
+change such instances, setting the second parameter, $top_level_only
+to FALSE:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">get_dir_file_info</span><span class="p">(</span><span class="s1">&#39;/path/to/directory&#39;</span><span class="p">,</span> <span class="k">FALSE</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-3-convert-your-plugins-to-helpers">
+<h3>Step 3: Convert your Plugins to Helpers<a class="headerlink" href="#step-3-convert-your-plugins-to-helpers" title="Permalink to this headline">¶</a></h3>
+<p>2.0.0 gets rid of the &#8220;Plugin&#8221; system as their functionality was
+identical to Helpers, but non-extensible. You will need to rename your
+plugin files from filename_pi.php to filename_helper.php, move them to
+your helpers folder, and change all instances of:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">plugin</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>to</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-4-update-stored-encrypted-data">
+<h3>Step 4: Update stored encrypted data<a class="headerlink" href="#step-4-update-stored-encrypted-data" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If your application does not use the Encryption library, does
+not store Encrypted data permanently, or is on an environment that does
+not support Mcrypt, you may skip this step.</p>
+</div>
+<p>The Encryption library has had a number of improvements, some for
+encryption strength and some for performance, that has an unavoidable
+consequence of making it no longer possible to decode encrypted data
+produced by the original version of this library. To help with the
+transition, a new method has been added, encode_from_legacy() that
+will decode the data with the original algorithm and return a re-encoded
+string using the improved methods. This will enable you to easily
+replace stale encrypted data with fresh in your applications, either on
+the fly or en masse.</p>
+<p>Please read <a class="reference external" href="../libraries/encryption.html#legacy">how to use this
+method</a> in the Encryption library
+documentation.</p>
+</div>
+<div class="section" id="step-5-remove-loading-calls-for-the-compatibility-helper">
+<h3>Step 5: Remove loading calls for the compatibility helper.<a class="headerlink" href="#step-5-remove-loading-calls-for-the-compatibility-helper" title="Permalink to this headline">¶</a></h3>
+<p>The compatibility helper has been removed from the CodeIgniter core. All
+methods in it should be natively available in supported PHP versions.</p>
+</div>
+<div class="section" id="step-6-update-class-extension">
+<h3>Step 6: Update Class extension<a class="headerlink" href="#step-6-update-class-extension" title="Permalink to this headline">¶</a></h3>
+<p>All core classes are now prefixed with CI_. Update Models and
+Controllers to extend CI_Model and CI_Controller, respectively.</p>
+</div>
+<div class="section" id="step-7-update-parent-constructor-calls">
+<h3>Step 7: Update Parent Constructor calls<a class="headerlink" href="#step-7-update-parent-constructor-calls" title="Permalink to this headline">¶</a></h3>
+<p>All native CodeIgniter classes now use the PHP 5 __construct()
+convention. Please update extended libraries to call
+parent::__construct().</p>
+</div>
+<div class="section" id="step-8-move-any-core-extensions-to-application-core">
+<h3>Step 8: Move any core extensions to application/core<a class="headerlink" href="#step-8-move-any-core-extensions-to-application-core" title="Permalink to this headline">¶</a></h3>
+<p>Any extensions to core classes (e.g. MY_Controller.php) in your
+application/libraries folder must be moved to the new
+application/core folder.</p>
+</div>
+<div class="section" id="step-9-update-your-user-guide">
+<h3>Step 9: Update your user guide<a class="headerlink" href="#step-9-update-your-user-guide" title="Permalink to this headline">¶</a></h3>
+<p>Please replace your local copy of the user guide with the new version,
+including the image files.</p>
+</div>
+</div>
+<div class="section" id="update-notes">
+<h2>Update Notes<a class="headerlink" href="#update-notes" title="Permalink to this headline">¶</a></h2>
+<p>Please refer to the <a class="reference internal" href="../changelog.html#changelog"><em>2.0.0 Change Log</em></a> for full
+details, but here are some of the larger changes that are more likely to
+impact your code:</p>
+<ul class="simple">
+<li>CodeIgniter now requires PHP 5.2.4.</li>
+<li>Scaffolding has been removed.</li>
+<li>The CAPTCHA plugin in now a <a class="reference internal" href="../helpers/captcha_helper.html"><em>helper</em></a>.</li>
+<li>The JavaScript calendar plugin was removed.</li>
+<li>The <em>system/cache</em> and <em>system/logs</em> directories are now in the application
+directory.</li>
+<li>The Validation class has been removed.  Please see the
+<a class="reference internal" href="../libraries/form_validation.html"><em>Form Validation library</em></a></li>
+<li>&#8220;default&#8221; is now a reserved name.</li>
+<li>The xss_clean() function has moved to the <a class="reference internal" href="../libraries/security.html"><em>Security Class</em></a>.</li>
+<li>do_xss_clean() now returns FALSE if the uploaded file fails XSS checks.</li>
+<li>The <a class="reference internal" href="../libraries/sessions.html"><em>Session Class</em></a> requires now the use of an
+encryption key set in the config file.</li>
+<li>The following deprecated Active Record functions have been removed:
+<tt class="docutils literal"><span class="pre">orwhere</span></tt>, <tt class="docutils literal"><span class="pre">orlike</span></tt>, <tt class="docutils literal"><span class="pre">groupby</span></tt>, <tt class="docutils literal"><span class="pre">orhaving</span></tt>, <tt class="docutils literal"><span class="pre">orderby</span></tt>,
+<tt class="docutils literal"><span class="pre">getwhere</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">_drop_database()</span></tt> and <tt class="docutils literal"><span class="pre">_create_database()</span></tt> functions have been removed
+from the db utility drivers.</li>
+<li>The <tt class="docutils literal"><span class="pre">dohash()</span></tt> function of the <a class="reference internal" href="../helpers/security_helper.html"><em>Security helper</em></a>
+has been renamed to <tt class="docutils literal"><span class="pre">do_hash()</span></tt> for naming consistency.</li>
+</ul>
+<div class="section" id="the-config-folder">
+<h3>The config folder<a class="headerlink" href="#the-config-folder" title="Permalink to this headline">¶</a></h3>
+<p>The following files have been changed:</p>
+<ul class="simple">
+<li>config.php</li>
+<li>database.php</li>
+<li>mimes.php</li>
+<li>routes.php</li>
+<li>user_agents.php</li>
+</ul>
+<p>The following files have been added:</p>
+<ul class="simple">
+<li>foreign_chars.php</li>
+<li>profiler.php</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>
