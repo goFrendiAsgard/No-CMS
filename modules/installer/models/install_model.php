@@ -625,7 +625,7 @@ class Install_Model extends CI_Model{
                 'module_id' => $type_foreign_key_not_null,
                 'parent_id' => $type_foreign_key_not_null,
             );
-        $sql_list[] = $this->create_table('main_group_user',$fields);
+        $sql_list[] = $this->create_table('main_module_dependency',$fields);
 
         // CONFIG
         $fields = array(

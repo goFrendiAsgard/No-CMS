@@ -200,7 +200,6 @@ class Article_Model extends  CMS_Model{
     }
 
     public function get_comments($article_id){
-        date_default_timezone_set('UTC');
         $search = array('<', '>');
         $replace = array('&lt;', '&gt;');
 
