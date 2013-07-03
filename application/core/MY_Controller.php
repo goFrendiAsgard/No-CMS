@@ -1679,7 +1679,7 @@ class CMS_Module_Installer extends CMS_Controller
             $child_id = $row->module_id;
 
             $where = array(
-                'child_id' => $child_id
+                'module_id' => $child_id
             );
             $this->db->delete(cms_table_name('main_module_dependency'), $where);
 
@@ -1704,7 +1704,7 @@ class CMS_Module_Installer extends CMS_Controller
 	                ".cms_table_name('main_module_dependency').",
 	                ".cms_table_name('main_module')."
 	            WHERE
-	                module_id = child_id AND
+	                ".cms_table_name('main_module').".module_id = ".cms_table_name('main_module_dependency').".module_id AND
 	                parent_id=" . $parent_id;
             $query  = $this->db->query($SQL);
             $result = array();
