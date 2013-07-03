@@ -629,37 +629,39 @@ class Main extends CMS_Controller
             $this->db->protect_identifiers('index')."<".$this_index;
         $query = $this->db->query($SQL);
         $row   = $query->row();
-        $neighbor_index = intval($row->index);
+        if(is_int($row->index)){
+            $neighbor_index = intval($row->index);
 
-        // update neighbor
-        $data = array('index'=>$this_index);
-        $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
-        $this->db->update(cms_table_name('main_navigation'),$data, $where);
-        // update current row
-        $data = array('index'=>$neighbor_index);
-        $where = array('navigation_id'=>$this_navigation_id);
-        $this->db->update(cms_table_name('main_navigation'),$data, $where);
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('navigation_id'=>$this_navigation_id);
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
 
-        //re-index all
-        $query = $this->db->select('parent_id, index, navigation_id')
-            ->from(cms_table_name('main_navigation'))
-            ->where($whereParentId)
-            ->get();
+            //re-index all
+            $query = $this->db->select('parent_id, index, navigation_id')
+                ->from(cms_table_name('main_navigation'))
+                ->where($whereParentId)
+                ->get();
 
-        //re-index all
-        $query = $this->db->select('navigation_id,index')
-            ->from(cms_table_name('main_navigation'))
-            ->where($whereParentId)
-            ->order_by('index')
-            ->get();
-        $index = 0;
-        foreach($query->result() as $row){
-            if($index != $row->index){
-                $where = array('navigation_id'=>$row->navigation_id);
-                $data = array('index'=>$index);
-                $this->db->update(cms_table_name('main_navigation'), $data, $where);
+            //re-index all
+            $query = $this->db->select('navigation_id,index')
+                ->from(cms_table_name('main_navigation'))
+                ->where($whereParentId)
+                ->order_by('index')
+                ->get();
+            $index = 0;
+            foreach($query->result() as $row){
+                if($index != $row->index){
+                    $where = array('navigation_id'=>$row->navigation_id);
+                    $data = array('index'=>$index);
+                    $this->db->update(cms_table_name('main_navigation'), $data, $where);
+                }
+                $index += 1;
             }
-            $index += 1;
         }
 
         // redirect
@@ -691,31 +693,39 @@ class Main extends CMS_Controller
             $this->db->protect_identifiers('index').">".$this_index;
         $query = $this->db->query($SQL);
         $row   = $query->row();
-        $neighbor_index = intval($row->index);
+        if(is_int($row->index)){
+            $neighbor_index = intval($row->index);
 
-        // update neighbor
-        $data = array('index'=>$this_index);
-        $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
-        $this->db->update(cms_table_name('main_navigation'),$data, $where);
-        // update current row
-        $data = array('index'=>$neighbor_index);
-        $where = array('navigation_id'=>$this_navigation_id);
-        $this->db->update(cms_table_name('main_navigation'),$data, $where);
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('navigation_id'=>$this_navigation_id);
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
 
-        //re-index all
-        $query = $this->db->select('navigation_id,index')
-            ->from(cms_table_name('main_navigation'))
-            ->where($whereParentId)
-            ->order_by('index')
-            ->get();
-        $index = 0;
-        foreach($query->result() as $row){
-            if($index != $row->index){
-                $where = array('navigation_id'=>$row->navigation_id);
-                $data = array('index'=>$index);
-                $this->db->update(cms_table_name('main_navigation'), $data, $where);
+            //re-index all
+            $query = $this->db->select('parent_id, index, navigation_id')
+                ->from(cms_table_name('main_navigation'))
+                ->where($whereParentId)
+                ->get();
+
+            //re-index all
+            $query = $this->db->select('navigation_id,index')
+                ->from(cms_table_name('main_navigation'))
+                ->where($whereParentId)
+                ->order_by('index')
+                ->get();
+            $index = 0;
+            foreach($query->result() as $row){
+                if($index != $row->index){
+                    $where = array('navigation_id'=>$row->navigation_id);
+                    $data = array('index'=>$index);
+                    $this->db->update(cms_table_name('main_navigation'), $data, $where);
+                }
+                $index += 1;
             }
-            $index += 1;
         }
 
         // redirect
