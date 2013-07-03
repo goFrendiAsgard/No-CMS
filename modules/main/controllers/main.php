@@ -503,10 +503,11 @@ class Main extends CMS_Controller
     }
 
     // NAVIGATION ==============================================================
-    public function navigation()
+    public function navigation($parent_id=NULL)
     {
         $this->cms_guard_page('main_navigation_management');
         $crud = $this->new_crud();
+
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_navigation'));
@@ -514,7 +515,7 @@ class Main extends CMS_Controller
 
         $crud->required_fields('navigation_name');
 
-        $crud->columns('navigation_name', 'parent_id', 'title', 'active', 'only_content', 'is_static', 'authorization_id', 'groups');
+        $crud->columns('navigation_name', 'navigation_child', 'title', 'active', 'is_static', 'authorization_id', 'groups');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
         $crud->add_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
@@ -528,6 +529,7 @@ class Main extends CMS_Controller
         $crud->field_type('default_theme', 'enum', $theme_path);
         $crud->display_as('navigation_name', $this->cms_lang('Navigation Code'))
             ->display_as('is_root', $this->cms_lang('Is Root'))
+            ->display_as('navigation_child', $this->cms_lang('Children'))
             ->display_as('parent_id', $this->cms_lang('Parent'))
             ->display_as('title', $this->cms_lang('Navigation Title (What visitor see)'))
             ->display_as('page_title', $this->cms_lang('Page Title'))
@@ -552,9 +554,21 @@ class Main extends CMS_Controller
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_navigation'), cms_table_name('main_group'), 'navigation_id', 'group_id', 'group_name');
 
+        if(isset($parent_id) && intval($parent_id)>0){
+            $crud->where(cms_table_name('main_navigation').'.parent_id', $parent_id);
+            $crud->change_field_type('parent_id', 'hidden', $parent_id);
+        }else{
+            $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
+        }
+
         $crud->callback_column('active', array(
             $this,
             'column_navigation_active'
+        ));
+
+        $crud->callback_column('navigation_child', array(
+            $this,
+            'column_navigation_child'
         ));
 
         $crud->callback_before_insert(array(
@@ -569,6 +583,20 @@ class Main extends CMS_Controller
         $crud->set_language($this->cms_language());
 
         $output = $crud->render();
+
+        $navigation_path = array();
+        if(isset($parent_id) && intval($parent_id)>0){
+            $this->db->select('navigation_name')
+                ->from(cms_table_name('main_navigation'))
+                ->where('navigation_id', $parent_id);
+            $query = $this->db->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $navigation_name = $row->navigation_name;
+                $navigation_path = $this->cms_get_navigation_path($navigation_name);
+            }
+        }
+        $output->navigation_path = $navigation_path;
 
         $this->view('main/navigation', $output, 'main_navigation_management');
     }
@@ -619,6 +647,27 @@ class Main extends CMS_Controller
         } else {
             return '<span target="' . $target . '" class="navigation_active">Active</span>';
         }
+    }
+
+    public function column_navigation_child($value, $row)
+    {
+        $html = '';
+        $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('parent_id', $row->navigation_id);
+        $query = $this->db->get();
+        $child_count = $query->num_rows();
+        if($child_count<=0){
+            $html .= $this->cms_lang('No Child');
+        }else{
+            $html .= '<a href="'.site_url($this->cms_module_path().'/navigation/'.$row->navigation_id).'">'.
+                $this->cms_lang('Manage Children')
+                .'</a>';
+        }
+        $html .= '&nbsp;|&nbsp;<a href="'.site_url($this->cms_module_path().'/navigation/'.$row->navigation_id).'/add">'.
+            $this->cms_lang('Add Child')
+            .'</a>';
+        return $html;
     }
 
     public function toggle_navigation_active($navigation_id)

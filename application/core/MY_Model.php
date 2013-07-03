@@ -519,6 +519,7 @@ class CMS_Model extends CI_Model
         else {
             foreach ($query->result() as $row) {
                 return array(
+                    "navigation_id" => $row->navigation_id,
                     "navigation_name" => $row->navigation_name,
                     "title" => $this->cms_lang($row->title),
                     "description" => $row->description,
@@ -546,6 +547,7 @@ class CMS_Model extends CI_Model
         else {
             foreach ($query->result() as $row) {
                 return array(
+                    "navigation_id" => $row->navigation_id,
                     "navigation_name" => $row->navigation_name,
                     "title" => $this->cms_lang($row->title),
                     "description" => $row->description,

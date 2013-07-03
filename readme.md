@@ -879,3 +879,4 @@ v0.6.5
 + (done) new installer that will also support PDO
 + (proposed) make nordrassil generated code also support PDO
 + (proposed) change all default module to use dbforge on installation
++ (done, tested) make navigation management more intuitive

@@ -132,37 +132,13 @@ class Install extends CMS_Module_Installer {
 
         // article
         $fields = array(
-                'article_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                        'auto_increment' => TRUE
-                ),
-                'article_title' => array(
-                        'type' => 'VARCHAR',
-                        'constraint' => '100',
-                ),
-                'article_url' => array(
-                        'type' => 'VARCHAR',
-                        'constraint' => '100',
-                ),
-                'date' => array(
-                        'type' =>'DATETIME',
-                ),
-                'author_user_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                ),
-                'content' => array(
-                        'type' => 'TEXT',
-                        'null' => TRUE,
-                ),
-                'allow_comment' => array(
-                        'type' => 'INT',
-                        'constraint' => 5,
-                        'unsigned' => TRUE,
-                ),
+                'article_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+                'article_title' => $this->TYPE_VARCHAR_100_NULL,
+                'article_url' => $this->TYPE_VARCHAR_100_NULL,
+                'date' => $this->TYPE_DATETIME_NULL,
+                'author_user_id' => $this->TYPE_INT_UNSIGNED_NULL,
+                'content' => $this->TYPE_TEXT,
+                'allow_comment' => $this->TYPE_INT_UNSIGNED_NULL,
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('article_id', TRUE);
@@ -170,20 +146,9 @@ class Install extends CMS_Module_Installer {
 
         // category
         $fields = array(
-                'category_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                        'auto_increment' => TRUE
-                ),
-                'category_name' => array(
-                        'type' => 'VARCHAR',
-                        'constraint' => '50',
-                ),
-                'description' => array(
-                        'type' => 'TEXT',
-                        'null' => TRUE,
-                ),
+                'category_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+                'category_name' => $this->TYPE_VARCHAR_50_NULL,
+                'description' => $this->TYPE_TEXT,
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('category_id', TRUE);
@@ -191,22 +156,9 @@ class Install extends CMS_Module_Installer {
 
         // category_article
         $fields = array(
-                'category_article_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                        'auto_increment' => TRUE
-                ),
-                'category_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                ),
-                'article_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                ),
+                'category_article_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+                'category_id' => $this->TYPE_INT_UNSIGNED_NULL,
+                'article_id' => $this->TYPE_INT_UNSIGNED_NULL,
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('category_article_id', TRUE);
@@ -214,41 +166,14 @@ class Install extends CMS_Module_Installer {
 
         // comment
         $fields = array(
-                'comment_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                        'auto_increment' => TRUE
-                ),
-                'article_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                ),
-                'date' => array(
-                        'type' =>'DATETIME',
-                ),
-                'author_user_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                ),
-                'name' => array(
-                        'type' => 'VARCHAR',
-                        'constraint' => '50',
-                ),
-                'email' => array(
-                        'type' => 'VARCHAR',
-                        'constraint' => '50',
-                ),
-                'website' => array(
-                        'type' => 'VARCHAR',
-                        'constraint' => '50',
-                ),
-                'content' => array(
-                        'type' => 'TEXT',
-                        'null' => TRUE,
-                ),
+                'comment_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+                'article_id' => $this->TYPE_INT_UNSIGNED_NULL,
+                'date' => $this->TYPE_DATETIME_NULL,
+                'author_user_id' => $this->TYPE_INT_UNSIGNED_NULL,
+                'name' => $this->TYPE_VARCHAR_50_NULL,
+                'email' => $this->TYPE_VARCHAR_50_NULL,
+                'website' => $this->TYPE_VARCHAR_50_NULL,
+                'content' => $this->TYPE_TEXT,
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('comment_id', TRUE);
@@ -256,12 +181,7 @@ class Install extends CMS_Module_Installer {
 
         // photo
         $fields = array(
-                'photo_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                        'auto_increment' => TRUE
-                ),
+                'photo_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
                 'article_id' => array(
                         'type' => 'INT',
                         'constraint' => 10,

@@ -1251,6 +1251,136 @@ class CMS_Module_Installer extends CMS_Controller
     protected $OLD_VERSION   = '';
     protected $ERROR_MESSAGE = '';
 
+    protected $TYPE_INT_UNSIGNED_AUTO_INCREMENT = array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+                'auto_increment' => TRUE,
+        );
+    protected $TYPE_INT_UNSIGNED_NOTNULL = array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+                'null' => FALSE,
+        );
+    protected $TYPE_INT_SIGNED_NOTNULL = array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'null' => FALSE,
+        );
+    protected $TYPE_INT_UNSIGNED_NULL = array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+        );
+    protected $TYPE_INT_SIGNED_NULL = array(
+                'type' => 'INT',
+                'constraint' => 20,
+        );
+    protected $TYPE_DATETIME_NOTNULL = array(
+                'type' => 'DATETIME',
+                'null' => FALSE,
+        );
+    protected $TYPE_DATE_NOTNULL = array(
+                'type' => 'DATE',
+                'null' => FALSE,
+        );
+    protected $TYPE_DATETIME_NULL = array(
+                'type' => 'DATETIME',
+        );
+    protected $TYPE_DATE_NULL = array(
+                'type' => 'DATE',
+        );
+    protected $TYPE_FLOAT_NOTNULL = array(
+                'type' => 'FLOAT',
+                'null' => FALSE,
+        );
+    protected $TYPE_DOUBLE_NOTNULL = array(
+                'type' => 'DOUBLE',
+                'null' => FALSE,
+        );
+    protected $TYPE_FLOAT_NULL = array(
+                'type' => 'FLOAT',
+        );
+    protected $TYPE_DOUBLE_NULL = array(
+                'type' => 'DOUBLE',
+        );
+    protected $TYPE_TEXT = array(
+                'type' => 'TEXT',
+        );
+    protected $TYPE_VARCHAR_5_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 5,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_10_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 10,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_20_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 20,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_50_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 50,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_100_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_150_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 150,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_200_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 200,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_250_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 250,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_5_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 5,
+        );
+    protected $TYPE_VARCHAR_10_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 10,
+        );
+    protected $TYPE_VARCHAR_20_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 20,
+        );
+    protected $TYPE_VARCHAR_50_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 50,
+        );
+    protected $TYPE_VARCHAR_100_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+        );
+    protected $TYPE_VARCHAR_150_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 150,
+        );
+    protected $TYPE_VARCHAR_200_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 200,
+        );
+    protected $TYPE_VARCHAR_250_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 250,
+        );
+
     public function __construct(){
         parent::__construct();
         $query = $this->db->select('version')
@@ -1660,7 +1790,7 @@ class CMS_Module_Installer extends CMS_Controller
                     $parent_id = $row->module_id;
                     $data      = array(
                         "parent_id" => $parent_id,
-                        "child_id" => $child_id
+                        "module_id" => $child_id
                     );
                     $this->db->insert(cms_table_name('main_module_dependency'), $data);
                 }
