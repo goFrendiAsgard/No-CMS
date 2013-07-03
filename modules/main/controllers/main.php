@@ -556,10 +556,17 @@ class Main extends CMS_Controller
 
         if(isset($parent_id) && intval($parent_id)>0){
             $crud->where(cms_table_name('main_navigation').'.parent_id', $parent_id);
-            $crud->change_field_type('parent_id', 'hidden', $parent_id);
+            $state = $crud->getState();
+            if($state == 'add'){
+                $crud->change_field_type('parent_id', 'hidden', $parent_id);
+            }
         }else{
             $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
         }
+        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
+            site_url($this->cms_module_path().'/action_navigation_move_up').'/');
+        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
+            site_url($this->cms_module_path().'/action_navigation_move_down').'/');
 
         $crud->callback_column('active', array(
             $this,
@@ -599,6 +606,124 @@ class Main extends CMS_Controller
         $output->navigation_path = $navigation_path;
 
         $this->view('main/navigation', $output, 'main_navigation_management');
+    }
+
+    public function action_navigation_move_up($primary_key){
+        $query = $this->db->select('parent_id, index, navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $parent_id = $row->parent_id;
+        $this_index = $row->index;
+        $this_navigation_id = $row->navigation_id;
+        // select
+        if (isset($parent_id)) {
+            $whereParentId = "(parent_id = $parent_id)";
+        } else {
+            $whereParentId = "(parent_id IS NULL)";
+        }
+        $SQL   = "
+            SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_navigation')." WHERE $whereParentId AND ".
+            $this->db->protect_identifiers('index')."<".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        $neighbor_index = intval($row->index);
+
+        // update neighbor
+        $data = array('index'=>$this_index);
+        $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+        $this->db->update(cms_table_name('main_navigation'),$data, $where);
+        // update current row
+        $data = array('index'=>$neighbor_index);
+        $where = array('navigation_id'=>$this_navigation_id);
+        $this->db->update(cms_table_name('main_navigation'),$data, $where);
+
+        //re-index all
+        $query = $this->db->select('parent_id, index, navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where($whereParentId)
+            ->get();
+
+        //re-index all
+        $query = $this->db->select('navigation_id,index')
+            ->from(cms_table_name('main_navigation'))
+            ->where($whereParentId)
+            ->order_by('index')
+            ->get();
+        $index = 0;
+        foreach($query->result() as $row){
+            if($index != $row->index){
+                $where = array('navigation_id'=>$row->navigation_id);
+                $data = array('index'=>$index);
+                $this->db->update(cms_table_name('main_navigation'), $data, $where);
+            }
+            $index += 1;
+        }
+
+        // redirect
+        if(isset($parent_id)){
+            redirect('main/navigation/'.$parent_id.'#record_'.$this_navigation_id);
+        }else{
+            redirect('main/navigation'.'#record_'.$this_navigation_id);
+        }
+    }
+
+    public function action_navigation_move_down($primary_key){
+        $query = $this->db->select('parent_id, index, navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $parent_id = $row->parent_id;
+        $this_index = $row->index;
+        $this_navigation_id = $row->navigation_id;
+        // select
+        if (isset($parent_id)) {
+            $whereParentId = "(parent_id = $parent_id)";
+        } else {
+            $whereParentId = "(parent_id IS NULL)";
+        }
+        $SQL   = "
+            SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_navigation')." WHERE $whereParentId AND ".
+            $this->db->protect_identifiers('index').">".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        $neighbor_index = intval($row->index);
+
+        // update neighbor
+        $data = array('index'=>$this_index);
+        $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+        $this->db->update(cms_table_name('main_navigation'),$data, $where);
+        // update current row
+        $data = array('index'=>$neighbor_index);
+        $where = array('navigation_id'=>$this_navigation_id);
+        $this->db->update(cms_table_name('main_navigation'),$data, $where);
+
+        //re-index all
+        $query = $this->db->select('navigation_id,index')
+            ->from(cms_table_name('main_navigation'))
+            ->where($whereParentId)
+            ->order_by('index')
+            ->get();
+        $index = 0;
+        foreach($query->result() as $row){
+            if($index != $row->index){
+                $where = array('navigation_id'=>$row->navigation_id);
+                $data = array('index'=>$index);
+                $this->db->update(cms_table_name('main_navigation'), $data, $where);
+            }
+            $index += 1;
+        }
+
+        // redirect
+        if(isset($parent_id)){
+            redirect('main/navigation/'.$parent_id.'#record_'.$this_navigation_id);
+        }else{
+            redirect('main/navigation'.'#record_'.$this_navigation_id);
+        }
     }
 
     public function before_insert_navigation($post_array)
@@ -651,7 +776,7 @@ class Main extends CMS_Controller
 
     public function column_navigation_child($value, $row)
     {
-        $html = '';
+        $html = '<a name="record_'.$row->navigation_id.'">&nbsp;</a>';
         $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
             ->where('parent_id', $row->navigation_id);
