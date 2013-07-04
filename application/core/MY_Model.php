@@ -776,14 +776,15 @@ class CMS_Model extends CI_Model
      */
     public function cms_do_move_up_quicklink($navigation_id){
         // re-index all
-        $this->__cms_reindex_widget();
+        $this->__cms_reindex_quicklink();
         // get the index again
-        $query = $this->db->select('index')
+        $query = $this->db->select('quicklink_id, index')
             ->from(cms_table_name('main_quicklink'))
             ->where('navigation_id', $navigation_id)
             ->get();
         $row = $query->row();
         $this_index = $row->index;
+        $this_quicklink_id = $row->quicklink_id;
         $SQL   = "
             SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
             FROM ".cms_table_name('main_quicklink')." WHERE ".
@@ -800,7 +801,7 @@ class CMS_Model extends CI_Model
 
             // update current row
             $data = array('index'=>$neighbor_index);
-            $where = array('widget_id'=>$this_widget_id);
+            $where = array('quicklink_id'=>$this_quicklink_id);
             $this->db->update(cms_table_name('main_quicklink'),$data, $where);
         }
     }
@@ -812,14 +813,15 @@ class CMS_Model extends CI_Model
      */
     public function cms_do_move_down_quicklink($navigation_id){
         // re-index all
-        $this->__cms_reindex_widget();
+        $this->__cms_reindex_quicklink();
         // get the index again
-        $query = $this->db->select('index')
+        $query = $this->db->select('quicklink_id, index')
             ->from(cms_table_name('main_quicklink'))
             ->where('navigation_id', $navigation_id)
             ->get();
         $row = $query->row();
         $this_index = $row->index;
+        $this_quicklink_id = $row->quicklink_id;
         $SQL   = "
             SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
             FROM ".cms_table_name('main_quicklink')." WHERE ".
@@ -836,7 +838,7 @@ class CMS_Model extends CI_Model
 
             // update current row
             $data = array('index'=>$neighbor_index);
-            $where = array('widget_id'=>$this_widget_id);
+            $where = array('quicklink_id'=>$this_quicklink_id);
             $this->db->update(cms_table_name('main_quicklink'),$data, $where);
         }
     }

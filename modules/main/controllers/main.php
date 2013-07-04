@@ -7,6 +7,11 @@
  */
 class Main extends CMS_Controller
 {
+    private function unique_field_name($field_name)
+    {
+        return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
+    }
+
     protected function upload($upload_path, $input_file_name = 'userfile', $submit_name = 'upload')
     {
         $data = array(
@@ -668,7 +673,7 @@ class Main extends CMS_Controller
         $row   = $query->row();
         $index = $row->newIndex;
         if (!isset($index))
-            $index = 0;
+            $index = 1;
 
         $post_array['index'] = $index;
 
@@ -770,6 +775,16 @@ class Main extends CMS_Controller
             'before_insert_quicklink'
         ));
 
+        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
+            site_url($this->cms_module_path().'/action_quicklink_move_up').'/');
+        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
+            site_url($this->cms_module_path().'/action_quicklink_move_down').'/');
+
+        $crud->callback_column($this->unique_field_name('navigation_id'), array(
+            $this,
+            'column_quicklink_navigation_id'
+        ));
+
         $crud->set_language($this->cms_language());
 
         $output = $crud->render();
@@ -779,17 +794,54 @@ class Main extends CMS_Controller
 
     public function before_insert_quicklink($post_array)
     {
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_quicklink')."`";
+        $SQL   = "SELECT max(".$this->db->protect_identifiers(index).")+1 AS newIndex FROM ".cms_table_name('main_quicklink');
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
 
         if (!isset($index))
-            $index = 0;
+            $index = 1;
 
         $post_array['index'] = $index;
 
         return $post_array;
+    }
+
+    public function column_quicklink_navigation_id($value, $row)
+    {
+        $html = '<a name="record_'.$row->quicklink_id.'">&nbsp;</a>';
+        $html .= $value;
+        return $html;
+    }
+
+    public function action_quicklink_move_up($primary_key){
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_quicklink'))
+            ->where('quicklink_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $navigation_id = $row->navigation_id;
+
+        // move up
+        $this->cms_do_move_up_quicklink($navigation_id);
+
+        // redirect
+        redirect('main/quicklink'.'#record_'.$primary_key);
+    }
+
+    public function action_quicklink_move_down($primary_key){
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_quicklink'))
+            ->where('quicklink_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $navigation_id = $row->navigation_id;
+
+        // move up
+        $this->cms_do_move_down_quicklink($navigation_id);
+
+        // redirect
+        redirect('main/quicklink'.'#record_'.$primary_key);
     }
 
     // PRIVILEGE ===============================================================
@@ -891,18 +943,13 @@ class Main extends CMS_Controller
 
     public function before_insert_widget($post_array)
     {
-        if (isset($post_array['slug'])) {
-            $whereSlug = "(slug = '" . $post_array['slug'] . "')";
-        } else {
-            $whereSlug = "(slug IS NULL)";
-        }
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_widget')."` WHERE $whereSlug";
+        $SQL   = "SELECT max(".$this->db->protect_identifiers(index).")+1 AS newIndex FROM ".cms_table_name('main_widget');
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
 
         if (!isset($index))
-            $index = 0;
+            $index = 1;
 
         $post_array['index'] = $index;
 
