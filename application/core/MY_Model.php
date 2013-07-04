@@ -702,6 +702,333 @@ class CMS_Model extends CI_Model
 
     /**
      * @author  goFrendiAsgard
+     * @param   string parent
+     * @desc    re-arange index of navigation with certain parent_id
+     */
+    private function __cms_reindex_navigation($parent_id=NULL){
+        if (isset($parent_id)) {
+            $whereParentId = "(parent_id = $parent_id)";
+        } else {
+            $whereParentId = "(parent_id IS NULL)";
+        }
+        $query = $this->db->select('navigation_id,index')
+            ->from(cms_table_name('main_navigation'))
+            ->where($whereParentId)
+            ->order_by('index')
+            ->get();
+        $index = 1;
+        foreach($query->result() as $row){
+            if($index != $row->index){
+                $where = array('navigation_id'=>$row->navigation_id);
+                $data = array('index'=>$index);
+                $this->db->update(cms_table_name('main_navigation'), $data, $where);
+            }
+            $index += 1;
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string parent
+     * @desc    re-arange index of widget
+     */
+    private function __cms_reindex_widget(){
+        $query = $this->db->select('widget_id,index')
+            ->from(cms_table_name('main_widget'))
+            ->order_by('index')
+            ->get();
+        $index = 1;
+        foreach($query->result() as $row){
+            if($index != $row->index){
+                $where = array('widget_id'=>$row->widget_id);
+                $data = array('index'=>$index);
+                $this->db->update(cms_table_name('main_widget'), $data, $where);
+            }
+            $index += 1;
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string parent
+     * @desc    re-arange index of quicklink
+     */
+    private function __cms_reindex_quicklink(){
+        $query = $this->db->select('quicklink_id,index')
+            ->from(cms_table_name('main_quicklink'))
+            ->order_by('index')
+            ->get();
+        $index = 1;
+        foreach($query->result() as $row){
+            if($index != $row->index){
+                $where = array('quicklink_id'=>$row->quicklink_id);
+                $data = array('index'=>$index);
+                $this->db->update(cms_table_name('main_quicklink'), $data, $where);
+            }
+            $index += 1;
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   int navigation id
+     * @desc    move quicklink up
+     */
+    public function cms_do_move_up_quicklink($navigation_id){
+        // re-index all
+        $this->__cms_reindex_widget();
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_quicklink'))
+            ->where('navigation_id', $navigation_id)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        $SQL   = "
+            SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_quicklink')." WHERE ".
+            $this->db->protect_identifiers('index')."<".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_quicklink'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('widget_id'=>$this_widget_id);
+            $this->db->update(cms_table_name('main_quicklink'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   int navigation id
+     * @desc    move quicklink down
+     */
+    public function cms_do_move_down_quicklink($navigation_id){
+        // re-index all
+        $this->__cms_reindex_widget();
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_quicklink'))
+            ->where('navigation_id', $navigation_id)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        $SQL   = "
+            SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_quicklink')." WHERE ".
+            $this->db->protect_identifiers('index').">".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_quicklink'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('widget_id'=>$this_widget_id);
+            $this->db->update(cms_table_name('main_quicklink'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string widget_name
+     * @desc    move widget up
+     */
+    public function cms_do_move_up_widget($widget_name){
+        // get current navigation info
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        $row = $query->row();
+        $this_widget_id = $row->widget_id;
+        // re-index all
+        $this->__cms_reindex_widget();
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        $SQL   = "
+            SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_widget')." WHERE ".
+            $this->db->protect_identifiers('index')."<".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_widget'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('widget_id'=>$this_widget_id);
+            $this->db->update(cms_table_name('main_widget'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string widget_name
+     * @desc    move widget down
+     */
+    public function cms_do_move_down_widget($widget_name){
+        // get current navigation info
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        $row = $query->row();
+        $this_widget_id = $row->widget_id;
+        // re-index all
+        $this->__cms_reindex_widget();
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        $SQL   = "
+            SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_widget')." WHERE ".
+            $this->db->protect_identifiers('index').">".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_widget'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('widget_id'=>$this_widget_id);
+            $this->db->update(cms_table_name('main_widget'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @desc    move navigation up
+     */
+    public function cms_do_move_up_navigation($navigation_name){
+        // get current navigation info
+        $query = $this->db->select('parent_id, navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        $row = $query->row();
+        $parent_id = $row->parent_id;
+        $this_navigation_id = $row->navigation_id;
+        // re-index all
+        $this->__cms_reindex_navigation($parent_id);
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        // select
+        if (isset($parent_id)) {
+            $whereParentId = "(parent_id = $parent_id)";
+        } else {
+            $whereParentId = "(parent_id IS NULL)";
+        }
+        $SQL   = "
+            SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_navigation')." WHERE $whereParentId AND ".
+            $this->db->protect_identifiers('index')."<".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('navigation_id'=>$this_navigation_id);
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @desc    move navigation down
+     */
+    public function cms_do_move_down_navigation($navigation_name){
+        // get current navigation info
+        $query = $this->db->select('parent_id, navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        $row = $query->row();
+        $parent_id = $row->parent_id;
+        $this_navigation_id = $row->navigation_id;
+        // re-index all
+        $this->__cms_reindex_navigation($parent_id);
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        // select
+        if (isset($parent_id)) {
+            $whereParentId = "(parent_id = $parent_id)";
+        } else {
+            $whereParentId = "(parent_id IS NULL)";
+        }
+        $SQL   = "
+            SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_navigation')." WHERE $whereParentId AND ".
+            $this->db->protect_identifiers('index').">".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('navigation_id'=>$this_navigation_id);
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+        }
+
+    }
+
+    /**
+     * @author  goFrendiAsgard
      * @param   string user_name
      * @param   string email
      * @param   string real_name

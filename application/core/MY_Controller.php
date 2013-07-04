@@ -153,6 +153,60 @@ class CMS_Controller extends MX_Controller
 
     /**
      * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @desc    move navigation up
+     */
+    public function cms_do_move_up_navigation($navigation_name){
+        $this->No_CMS_Model->cms_do_move_up_navigation($navigation_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @desc    move navigation down
+     */
+    public function cms_do_move_down_navigation($navigation_name){
+        $this->No_CMS_Model->cms_do_move_down_navigation($navigation_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string widget_name
+     * @desc    move widget up
+     */
+    public function cms_do_move_up_widget($widget_name){
+        $this->No_CMS_Model->cms_do_move_up_widget($widget_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string widget_name
+     * @desc    move widget down
+     */
+    public function cms_do_move_down_widget($widget_name){
+        $this->No_CMS_Model->cms_do_move_down_widget($widget_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   int navigation id
+     * @desc    move quicklink up
+     */
+    public function cms_do_move_up_quicklink($navigation_id){
+        $this->No_CMS_Model->cms_do_move_up_quicklink($navigation_id);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   int navigation id
+     * @desc    move quicklink down
+     */
+    public function cms_do_move_down_quicklink($navigation_id){
+        $this->No_CMS_Model->cms_do_move_down_quicklink($navigation_id);
+    }
+
+    /**
+     * @author  goFrendiAsgard
      * @param   int parent_id
      * @param   int max_menu_depth
      * @desc    return navigation child if parent_id specified, else it will return root navigation

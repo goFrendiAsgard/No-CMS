@@ -609,130 +609,42 @@ class Main extends CMS_Controller
     }
 
     public function action_navigation_move_up($primary_key){
-        $query = $this->db->select('parent_id, index, navigation_id')
+        $query = $this->db->select('navigation_name, parent_id')
             ->from(cms_table_name('main_navigation'))
             ->where('navigation_id', $primary_key)
             ->get();
         $row = $query->row();
+        $navigation_name = $row->navigation_name;
         $parent_id = $row->parent_id;
-        $this_index = $row->index;
-        $this_navigation_id = $row->navigation_id;
-        // select
-        if (isset($parent_id)) {
-            $whereParentId = "(parent_id = $parent_id)";
-        } else {
-            $whereParentId = "(parent_id IS NULL)";
-        }
-        $SQL   = "
-            SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
-            FROM ".cms_table_name('main_navigation')." WHERE $whereParentId AND ".
-            $this->db->protect_identifiers('index')."<".$this_index;
-        $query = $this->db->query($SQL);
-        $row   = $query->row();
-        if(is_int($row->index)){
-            $neighbor_index = intval($row->index);
 
-            // update neighbor
-            $data = array('index'=>$this_index);
-            $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
-            $this->db->update(cms_table_name('main_navigation'),$data, $where);
-            // update current row
-            $data = array('index'=>$neighbor_index);
-            $where = array('navigation_id'=>$this_navigation_id);
-            $this->db->update(cms_table_name('main_navigation'),$data, $where);
-
-            //re-index all
-            $query = $this->db->select('parent_id, index, navigation_id')
-                ->from(cms_table_name('main_navigation'))
-                ->where($whereParentId)
-                ->get();
-
-            //re-index all
-            $query = $this->db->select('navigation_id,index')
-                ->from(cms_table_name('main_navigation'))
-                ->where($whereParentId)
-                ->order_by('index')
-                ->get();
-            $index = 0;
-            foreach($query->result() as $row){
-                if($index != $row->index){
-                    $where = array('navigation_id'=>$row->navigation_id);
-                    $data = array('index'=>$index);
-                    $this->db->update(cms_table_name('main_navigation'), $data, $where);
-                }
-                $index += 1;
-            }
-        }
+        // move up
+        $this->cms_do_move_up_navigation($navigation_name);
 
         // redirect
         if(isset($parent_id)){
-            redirect('main/navigation/'.$parent_id.'#record_'.$this_navigation_id);
+            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key);
         }else{
-            redirect('main/navigation'.'#record_'.$this_navigation_id);
+            redirect('main/navigation'.'#record_'.$primary_key);
         }
     }
 
     public function action_navigation_move_down($primary_key){
-        $query = $this->db->select('parent_id, index, navigation_id')
+        $query = $this->db->select('navigation_name, parent_id')
             ->from(cms_table_name('main_navigation'))
             ->where('navigation_id', $primary_key)
             ->get();
         $row = $query->row();
+        $navigation_name = $row->navigation_name;
         $parent_id = $row->parent_id;
-        $this_index = $row->index;
-        $this_navigation_id = $row->navigation_id;
-        // select
-        if (isset($parent_id)) {
-            $whereParentId = "(parent_id = $parent_id)";
-        } else {
-            $whereParentId = "(parent_id IS NULL)";
-        }
-        $SQL   = "
-            SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
-            FROM ".cms_table_name('main_navigation')." WHERE $whereParentId AND ".
-            $this->db->protect_identifiers('index').">".$this_index;
-        $query = $this->db->query($SQL);
-        $row   = $query->row();
-        if(is_int($row->index)){
-            $neighbor_index = intval($row->index);
 
-            // update neighbor
-            $data = array('index'=>$this_index);
-            $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
-            $this->db->update(cms_table_name('main_navigation'),$data, $where);
-            // update current row
-            $data = array('index'=>$neighbor_index);
-            $where = array('navigation_id'=>$this_navigation_id);
-            $this->db->update(cms_table_name('main_navigation'),$data, $where);
-
-            //re-index all
-            $query = $this->db->select('parent_id, index, navigation_id')
-                ->from(cms_table_name('main_navigation'))
-                ->where($whereParentId)
-                ->get();
-
-            //re-index all
-            $query = $this->db->select('navigation_id,index')
-                ->from(cms_table_name('main_navigation'))
-                ->where($whereParentId)
-                ->order_by('index')
-                ->get();
-            $index = 0;
-            foreach($query->result() as $row){
-                if($index != $row->index){
-                    $where = array('navigation_id'=>$row->navigation_id);
-                    $data = array('index'=>$index);
-                    $this->db->update(cms_table_name('main_navigation'), $data, $where);
-                }
-                $index += 1;
-            }
-        }
+        // move down
+        $this->cms_do_move_down_navigation($navigation_name);
 
         // redirect
         if(isset($parent_id)){
-            redirect('main/navigation/'.$parent_id.'#record_'.$this_navigation_id);
+            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key);
         }else{
-            redirect('main/navigation'.'#record_'.$this_navigation_id);
+            redirect('main/navigation'.'#record_'.$primary_key);
         }
     }
 
@@ -776,17 +688,19 @@ class Main extends CMS_Controller
 
     public function column_navigation_active($value, $row)
     {
+        $html = '<a name="record_'.$row->navigation_id.'">&nbsp;</a>';
         $target = site_url($this->cms_module_path() . '/toggle_navigation_active/' . $row->navigation_id);
         if ($value == 0) {
-            return '<span target="' . $target . '" class="navigation_active">Inactive</span>';
+            $html .= '<span target="' . $target . '" class="navigation_active">Inactive</span>';
         } else {
-            return '<span target="' . $target . '" class="navigation_active">Active</span>';
+            $html .= '<span target="' . $target . '" class="navigation_active">Active</span>';
         }
+        return $html;
     }
 
     public function column_navigation_child($value, $row)
     {
-        $html = '<a name="record_'.$row->navigation_id.'">&nbsp;</a>';
+        $html = '';
         $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
             ->where('parent_id', $row->navigation_id);
@@ -925,7 +839,7 @@ class Main extends CMS_Controller
 
         $crud->required_fields('widget_name');
 
-        $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'slug', 'groups');
+        $crud->columns('widget_name', 'title', 'active', 'is_static', 'authorization_id', 'slug', 'groups');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
@@ -944,6 +858,8 @@ class Main extends CMS_Controller
             ->display_as('authorization_id', $this->cms_lang('Authorization'))
             ->display_as('groups', $this->cms_lang('Groups'));
 
+        $crud->order_by('index, slug', 'asc');
+
         $crud->unset_texteditor('static_content');
         $crud->unset_texteditor('description');
 
@@ -955,6 +871,11 @@ class Main extends CMS_Controller
             $this,
             'before_insert_widget'
         ));
+
+        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
+            site_url($this->cms_module_path().'/action_widget_move_up').'/');
+        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
+            site_url($this->cms_module_path().'/action_widget_move_down').'/');
 
         $crud->callback_column('active', array(
             $this,
@@ -994,12 +915,14 @@ class Main extends CMS_Controller
 
     public function column_widget_active($value, $row)
     {
+        $html = '<a name="record_'.$row->widget_id.'">&nbsp;</a>';
         $target = site_url($this->cms_module_path() . '/toggle_widget_active/' . $row->widget_id);
         if ($value == 0) {
-            return '<span target="' . $target . '" class="widget_active">Inactive</span>';
+            $html.= '<span target="' . $target . '" class="widget_active">Inactive</span>';
         } else {
-            return '<span target="' . $target . '" class="widget_active">Active</span>';
+            $html.= '<span target="' . $target . '" class="widget_active">Active</span>';
         }
+        return $html;
     }
 
     public function toggle_widget_active($widget_id)
@@ -1024,6 +947,36 @@ class Main extends CMS_Controller
                 ));
             }
         }
+    }
+
+    public function action_widget_move_up($primary_key){
+        $query = $this->db->select('widget_name')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $widget_name = $row->widget_name;
+
+        // move up
+        $this->cms_do_move_up_widget($widget_name);
+
+        // redirect
+        redirect('main/widget'.'#record_'.$primary_key);
+    }
+
+    public function action_widget_move_down($primary_key){
+        $query = $this->db->select('widget_name')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $widget_name = $row->widget_name;
+
+        // move up
+        $this->cms_do_move_down_widget($widget_name);
+
+        // redirect
+        redirect('main/widget'.'#record_'.$primary_key);
     }
 
     // CONFIG ==================================================================
@@ -1159,58 +1112,68 @@ class Main extends CMS_Controller
         }
     }
 
-    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $navigations = NULL){
-        if(!isset($navigations)){
-            $navigations = $this->cms_navigations();
-        }
-        if(count($navigations) == 0) return '';
-
+    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $no_complete_menu=FALSE, $no_quicklink=FALSE, $navigations = NULL){
         $result = '';
-        $result .= '<ul class="dropdown-menu">';
-        foreach($navigations as $navigation){
-            if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
-                // make text
-                if($navigation['allowed'] && $navigation['active']){
-                    $text = '<a href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
-                }else{
-                    $text = '<a href="#">'.$navigation['title'].'</a>';
-                }
 
-                if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
-                    $result .= '<li class="dropdown-submenu">'.$text.$this->widget_top_nav($caption, FALSE, $navigation['child']).'</li>';
-                }else{
-                    $result .= '<li>'.$text.'</li>';
+        if(!$no_complete_menu){
+            if(!isset($navigations)){
+                $navigations = $this->cms_navigations();
+            }
+            if(count($navigations) == 0) return '';
+
+
+            $result .= '<ul class="dropdown-menu">';
+            foreach($navigations as $navigation){
+                if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                    // make text
+                    if($navigation['allowed'] && $navigation['active']){
+                        $text = '<a href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
+                    }else{
+                        $text = '<a href="#">'.$navigation['title'].'</a>';
+                    }
+
+                    if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
+                        $result .= '<li class="dropdown-submenu">'.
+                            $text.$this->widget_top_nav($caption, FALSE, $no_complete_menu, $no_quicklink, $navigation['child']).'</li>';
+                    }else{
+                        $result .= '<li>'.$text.'</li>';
+                    }
                 }
             }
+            $result .= '</ul>';
         }
-        $result .= '</ul>';
-        if($first){
-            $result = '<ul class="nav"><li class="dropdown">'.
-                '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
-                $result.
-                '</li></ul>';
-        }
+
         // show up
         if($first){
+            if(!$no_complete_menu){
+                $result = '<li class="dropdown">'.
+                    '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
+                    $result.'</li>';
+            }
+            if(!$no_quicklink){
+                $result .= $this->build_quicklink();
+            }
+            $result = '<ul class="nav">'.$result.'</ul>';
             $this->cms_show_html($result);
-            $this->widget_quicklink();
         }else{
             return $result;
         }
     }
 
-    private function widget_quicklink($quicklinks = NULL, $as_dropdown = FALSE, $return = FALSE){
+    public function widget_top_nav_no_quicklink($caption = 'Complete Menu'){
+        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, NULL);
+    }
+
+    public function widget_quicklink(){
+        $this->widget_top_nav('', TRUE, TRUE, FALSE, NULL);
+    }
+
+    private function build_quicklink($quicklinks = NULL,$first = TRUE){
         if(!isset($quicklinks)){
             $quicklinks = $this->cms_quicklinks();
         }
         if(count($quicklinks) == 0) return '';
         $html = '';
-        if($as_dropdown){
-            $html.= '<ul class="dropdown-menu">';
-        }else{
-            $html.= '<ul class="nav">';
-        }
-
 
         foreach($quicklinks as $quicklink){
             if(count($quicklink['child'])==0){
@@ -1218,28 +1181,27 @@ class Main extends CMS_Controller
                 $html.= anchor($quicklink['url'], $quicklink['title']);
                 $html.= '</li>';
             }else{
-                if(!$return){
+                if($first){
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                         '<span onclick="if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;window.location = \''.$quicklink['url'].'\'">'.$quicklink['title'].'</span>'.
                         '&nbsp;<span class="caret"></span></a>';
-                    $html.= $this->widget_quicklink($quicklink['child'],TRUE,TRUE);
+                    $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{
                     $html.= '<li class="dropdown-submenu">';
                     $html.= '<a href="'.$quicklink['url'].'">'.
-                        '<span>'.$quicklink['title'].'</span>';
-                    $html.= $this->widget_quicklink($quicklink['child'],TRUE,TRUE);
+                        '<span>'.$quicklink['title'].'</span></a>';
+                    $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }
             }
         }
-        $html.= '</ul>';
-        if($return){
-            return $html;
-        }else{
-            $this->cms_show_html($html);
+
+        if(!$first){
+            $html = '<ul class="dropdown-menu">'.$html.'</ul>';
         }
+        return $html;
     }
 
 }
