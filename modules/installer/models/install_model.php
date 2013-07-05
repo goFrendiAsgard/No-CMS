@@ -173,12 +173,12 @@ class Install_Model extends CI_Model{
         // No-CMS directory
         if (!is_writable(APPPATH.'..')) {
             $success  = FALSE;
-            $error_list[] = APPATH.'.. is not writable';
+            $error_list[] = APPPATH.'.. is not writable';
         }
         // assets/caches
         if (!is_writable(APPPATH.'../assets/caches')) {
             $success  = FALSE;
-            $error_list[] = "Asset cache directory (".APPATH."../assets/caches) is not writable";
+            $error_list[] = "Asset cache directory (".APPPATH."../assets/caches) is not writable";
         }
         // application/config/config.php
         if (!is_writable(APPPATH.'config/config.php')) {

@@ -32,23 +32,7 @@
     <link rel="shortcut icon" href="{{ site_favicon }}">
   </head>
   <body>
-    <div class="navbar navbar-fixed-top navbar-inverse">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-            <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <a class="brand" href="#">
-                <img src ="{{ site_logo }}" style="max-height:20px; max-width:20px;" />
-            </a>
-            <div class="nav-collapse in collapse" id="main-menu">
-                {{ widget_name:top_navigation }}
-            </div>
-        </div>
-      </div>
-    </div>
+    {{ widget_name:top_navigation }}
 
     <div class="container">
       <div class="row-fluid">
