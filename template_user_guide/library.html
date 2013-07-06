@@ -52,20 +52,20 @@ Documentation
 
 	<h2>Method Reference</h2>
 
-	<a name="title"></a>
+	<a name="title">&nbsp;</a>
 	<h2>title()</h2>
 	<p>Set the title of the page.</p>
 
 	<p><strong>Parameters</strong></p>
 	<ol>
-		<li><var>$title1</var> - string REQUIRED - send as many parameters as you like, they will be imploded with <var>$config['title_separator']</var> to create a single string, which can be called with <kbd>$template['title'];</kdb> in your layouts.</li>
+		<li><var>$title1</var> - string REQUIRED - send as many parameters as you like, they will be imploded with <var>$config['title_separator']</var> to create a single string, which can be called with <kbd>$template['title'];</kbd> in your layouts.</li>
 	</ol>
 
 	<p><b>Usage</b></p>
 	<pre>$this->template->title('Blog', $article->title);</pre>
 	<br />
 
-	<a name="set"></a>
+	<a name="set">&nbsp;</a>
 	<h2>set()</h2>
 	<p>Set data using a chainable method. Provide two strings or an array of data.</p>
 
@@ -76,7 +76,7 @@ Documentation
 	<pre>$this->template->build('welcome_message', array('message' => 'Hi there!'));</pre>
 	<br />
 
-	<a name="prepend_metadata"></a>
+	<a name="prepend_metadata">&nbsp;</a>
 	<h2>prepend_metadata()</h2>
 	<p>Add a line to the start of the <var>$template['metadata']</var> string.</p>
 
@@ -87,11 +87,11 @@ Documentation
 
 	<p><b>Usage</b></p>
 	<pre>
-		$this->template->prepend_metadata('&lt;script src="/js/jquery.js">&lt;/script>');
+		$this->template->prepend_metadata('&lt; script src="/js/jquery.js">&lt;/script>');
 	</pre>
 	<br />
 
-	<a name="append_metadata"></a>
+	<a name="append_metadata">&nbsp;</a>
 	<h2>append_metadata()</h2>
 	<p>Add a line to the end of the <var>$template['metadata']</var> string.</p>
 
@@ -102,11 +102,11 @@ Documentation
 
 	<p><b>Usage</b></p>
 	<pre>
-		$this->template->append_metadata('&lt;script src="/js/jquery.flot.js">&lt;/script>');
+		$this->template->append_metadata('&lt; script src="/js/jquery.flot.js">&lt;/script>');
 	</pre>
 	<br />
 
-	<a name="set_layout"></a>
+	<a name="set_layout">&nbsp;</a>
 	<h2>set_layout()</h2>
 	<p>All <a href="layouts.html">Layout</a> files should be in the layout folder and by default will be <var>application/views/layouts/default.php</var>, but this can be changed.</p>
 
@@ -123,7 +123,7 @@ Documentation
 	</pre>
 	<br />
 
-	<a name="set_theme"></a>
+	<a name="set_theme">&nbsp;</a>
 	<h2>set_theme()</h2>
 	<p>Will override the theme set in <var>$config['theme']</var>.</p>
 
@@ -132,7 +132,7 @@ Documentation
 		<li><var>$theme</var> - string REQUIRED - name of the theme.</li>
 	</ol>
 
-	<a name="set_partial"></a>
+	<a name="set_partial">&nbsp;</a>
 	<h2>set_partial()</h2>
 	<p>Set <a href="partials.html">Partials</a> from view files.</p>
 
@@ -157,7 +157,7 @@ Documentation
 	->build('welcome_message');</pre>
 	<br />
 
-	<a name="inject_partial"></a>
+	<a name="inject_partial">&nbsp;</a>
 	<h2>inject_partial()</h2>
 	<p>Inject a chunk of HTML as a <a href="partials.html">Partial</a>.</p>
 
