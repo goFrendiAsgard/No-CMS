@@ -1189,19 +1189,21 @@ class CMS_Model extends CI_Model
     {
         $this->load->helper('directory');
         $directories = directory_map('themes', 1);
-        $module      = array();
+        sort($directories);
+        $themes      = array();
         foreach ($directories as $directory) {
+            $directory = str_replace('/','',$directory);
             if (!is_dir('themes/' . $directory))
                 continue;
 
             $layout_name = $directory;
 
-            $module[] = array(
+            $themes[] = array(
                 "path" => $directory,
                 "used" => $this->cms_get_config('site_theme') == $layout_name
             );
         }
-        return $module;
+        return $themes;
     }
 
     /**
