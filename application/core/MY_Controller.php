@@ -692,7 +692,7 @@ class CMS_Controller extends MX_Controller
         if (isset($navigation_name) && !isset($data['_content'])) {
             $SQL   = "SELECT static_content FROM ".cms_table_name('main_navigation').
                 " WHERE is_static=1 AND navigation_name='".addslashes($navigation_name)."'
-                  AND (url='' OR navigation_name='".addslashes($this->cms_navigation_name())."')";
+                  AND (url iS NULL OR url='' OR navigation_name='".addslashes($this->cms_navigation_name())."')";
             $query = $this->db->query($SQL);
             if ($query->num_rows() > 0) {
                 $row            = $query->row();
@@ -810,12 +810,6 @@ class CMS_Controller extends MX_Controller
         // IT'S SHOW TIME
         if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
             $result = $this->load->view($view_url, $data, TRUE);
-            $result = $this->cms_parse_keyword($result);
-            if ($return_as_string) {
-                return $result;
-            } else {
-                $this->cms_show_html($result);
-            }
         } else {
             // set theme, layout and title
             $this->template->title($title);
@@ -878,58 +872,81 @@ class CMS_Controller extends MX_Controller
                 }
             }
 
-            $result = $this->template->build($view_url, $data, TRUE);
-            // parse keyword
-            $result = $this->cms_parse_keyword($result);
+            $result = $this->template->build($view_url, $data, TRUE); 
+        }
 
-            $result = $this->No_CMS_Model->cms_escape_template($result);
+        // parse keyword
+        $result = $this->cms_parse_keyword($result);
 
+        // parse widgets used_theme & navigation_path
+        $result = $this->__cms_parse_widget_theme_path($result, $theme, $navigation_name);
+
+        if ($return_as_string) {
+            return $result;
+        } else {
+            $this->cms_show_html($result);
+        }
+    }
+
+    private function __cms_parse_widget_theme_path($html, $theme, $navigation_name, $recursive_level = 5){
+        if(strpos($html, '{{ ') !== FALSE){
+            $html = $this->No_CMS_Model->cms_escape_template($html);
+    
             // parse widget
-            $pattern  = '/\{\{ widget:(.*?) \}\}/si';
-            // execute regex
-            $result   = preg_replace_callback($pattern, array(
-                $this,
-                '__cms_preg_replace_callback_widget'
-            ), $result);
-
+            if(strpos($html, '{{ ') !== FALSE){
+                $pattern  = '/\{\{ widget:(.*?) \}\}/si';
+                // execute regex
+                $html   = preg_replace_callback($pattern, array(
+                    $this,
+                    '__cms_preg_replace_callback_widget'
+                ), $html);
+            }
+    
             // parse widget by name
-            $pattern  = '/\{\{ widget_name:(.*?) \}\}/si';
-            // execute regex
-            $result   = preg_replace_callback($pattern, array(
-                $this,
-                '__cms_preg_replace_callback_widget_by_name'
-            ), $result);
-
+            if(strpos($html, '{{ ') !== FALSE){
+                $pattern  = '/\{\{ widget_name:(.*?) \}\}/si';
+                // execute regex
+                $html   = preg_replace_callback($pattern, array(
+                    $this,
+                    '__cms_preg_replace_callback_widget_by_name'
+                ), $html);
+            }
+    
             // parse widget by slug
-            $pattern  = '/\{\{ widget_slug:(.*?) \}\}/si';
-            // execute regex
-            $result   = preg_replace_callback($pattern, array(
-                $this,
-                '__cms_preg_replace_callback_widget_by_slug'
-            ), $result);
-
-            // prepare pattern and replacement
-            $pattern     = array();
-            $replacement = array();
-
-            // theme
-            $pattern[]     = "/\{\{ used_theme \}\}/si";
-            $replacement[] = $theme;
-            $nav_path   = $this->__cms_build_nav_path($navigation_name);
-            $pattern[]     = "/\{\{ navigation_path \}\}/si";
-            $replacement[] = $nav_path;
-
-            $result = preg_replace($pattern, $replacement, $result);
-
-            $result = $this->No_CMS_Model->cms_unescape_template($result);
-
-
-            if ($return_as_string) {
-                return $result;
-            } else {
-                $this->cms_show_html($result);
+            if(strpos($html, '{{ ') !== FALSE){
+                $pattern  = '/\{\{ widget_slug:(.*?) \}\}/si';
+                // execute regex
+                $html   = preg_replace_callback($pattern, array(
+                    $this,
+                    '__cms_preg_replace_callback_widget_by_slug'
+                ), $html);
+            }
+    
+            // prepare pattern and replacement for theme and path
+            if(strpos($html, '{{ ') !== FALSE){
+                $pattern     = array();
+                $replacement = array();
+        
+                // theme
+                $pattern[]     = "/\{\{ used_theme \}\}/si";
+                $replacement[] = $theme;
+                $nav_path   = $this->__cms_build_nav_path($navigation_name);
+                $pattern[]     = "/\{\{ navigation_path \}\}/si";
+                $replacement[] = $nav_path;
+        
+                $html = preg_replace($pattern, $replacement, $html);
+        
+                $html = $this->No_CMS_Model->cms_unescape_template($html); 
+            }
+            
+            $recursive_level --;
+            // recursively search widget inside widget
+            if(strpos($html, '{{ ') !== FALSE && $recursive_level>0){
+                $html = $this->__cms_parse_widget_theme_path($html, $theme, $navigation_name, $recursive_level);
             }
         }
+        
+        return $html;
     }
 
     private function __cms_build_left_nav($navigations = NULL, $first = TRUE){

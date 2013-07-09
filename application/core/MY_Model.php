@@ -1573,102 +1573,113 @@ class CMS_Model extends CI_Model
     public function cms_parse_keyword($value)
     {
         $value = $this->cms_escape_template($value);
-
-        $pattern     = array();
-        $replacement = array();
-
-        // user_name
-        $pattern[]     = "/\{\{ user_id \}\}/si";
-        $replacement[] = $this->cms_user_id();
-
-        // user_name
-        $pattern[]     = "/\{\{ user_name \}\}/si";
-        $replacement[] = $this->cms_user_name();
-
-        // user_real_name
-        $pattern[]     = "/\{\{ user_real_name \}\}/si";
-        $replacement[] = $this->cms_user_real_name();
-
-        // user_email
-        $pattern[]     = "/\{\{ user_email \}\}/si";
-        $replacement[] = $this->cms_user_email();
-
-        // site_url
-        $site_url = site_url();
-        if ($site_url[strlen($site_url) - 1] != '/')
-            $site_url .= '/';
-        $pattern[]     = '/\{\{ site_url \}\}/si';
-        $replacement[] = $site_url;
-
-        // base_url
-        $base_url = base_url();
-        if ($base_url[strlen($base_url) - 1] != '/')
-            $base_url .= '/';
-        $pattern[]     = '/\{\{ base_url \}\}/si';
-        $replacement[] = $base_url;
-
-        // module_path & module_name
-        $module_path = $this->cms_module_path();
-        $module_name = $this->cms_module_name($module_path);
-        $module_site_url = site_url($module_path);
-        $module_base_url = base_url($module_path);
-        if ($module_site_url[strlen($module_site_url) - 1] != '/')
-            $module_site_url .= '/';
-        if ($module_base_url[strlen($module_base_url) - 1] != '/')
-            $module_base_url .= '/';
-        $pattern[]     = '/\{\{ module_path \}\}/si';
-        $replacement[] = $module_path;
-        $pattern[]     = '/\{\{ module_site_url \}\}/si';
-        $replacement[] = $module_site_url;
-        $pattern[]     = '/\{\{ module_base_url \}\}/si';
-        $replacement[] = $module_base_url;
-        $pattern[]     = '/\{\{ module_name \}\}/si';
-        $replacement[] = $module_name;
-
-        // language
-        $pattern[]     = '/\{\{ language \}\}/si';
-        $replacement[] = $this->cms_language();
-
-        // execute regex
-        $value = preg_replace($pattern, $replacement, $value);
-
+        
+        if(strpos($value, '{{ ') !== FALSE){
+    
+            $pattern     = array();
+            $replacement = array();
+    
+            // user_name
+            $pattern[]     = "/\{\{ user_id \}\}/si";
+            $replacement[] = $this->cms_user_id();
+    
+            // user_name
+            $pattern[]     = "/\{\{ user_name \}\}/si";
+            $replacement[] = $this->cms_user_name();
+    
+            // user_real_name
+            $pattern[]     = "/\{\{ user_real_name \}\}/si";
+            $replacement[] = $this->cms_user_real_name();
+    
+            // user_email
+            $pattern[]     = "/\{\{ user_email \}\}/si";
+            $replacement[] = $this->cms_user_email();
+    
+            // site_url
+            $site_url = site_url();
+            if ($site_url[strlen($site_url) - 1] != '/')
+                $site_url .= '/';
+            $pattern[]     = '/\{\{ site_url \}\}/si';
+            $replacement[] = $site_url;
+    
+            // base_url
+            $base_url = base_url();
+            if ($base_url[strlen($base_url) - 1] != '/')
+                $base_url .= '/';
+            $pattern[]     = '/\{\{ base_url \}\}/si';
+            $replacement[] = $base_url;
+    
+            // module_path & module_name
+            $module_path = $this->cms_module_path();
+            $module_name = $this->cms_module_name($module_path);
+            $module_site_url = site_url($module_path);
+            $module_base_url = base_url($module_path);
+            if ($module_site_url[strlen($module_site_url) - 1] != '/')
+                $module_site_url .= '/';
+            if ($module_base_url[strlen($module_base_url) - 1] != '/')
+                $module_base_url .= '/';
+            $pattern[]     = '/\{\{ module_path \}\}/si';
+            $replacement[] = $module_path;
+            $pattern[]     = '/\{\{ module_site_url \}\}/si';
+            $replacement[] = $module_site_url;
+            $pattern[]     = '/\{\{ module_base_url \}\}/si';
+            $replacement[] = $module_base_url;
+            $pattern[]     = '/\{\{ module_name \}\}/si';
+            $replacement[] = $module_name;
+    
+            // language
+            $pattern[]     = '/\{\{ language \}\}/si';
+            $replacement[] = $this->cms_language();
+    
+            // execute regex
+            $value = preg_replace($pattern, $replacement, $value);
+        }       
+        
         // translate language
-        $pattern = '/\{\{ language:(.*?) \}\}/si';
-        // execute regex
-        $value   = preg_replace_callback($pattern, array(
-            $this,
-            '__cms_preg_replace_callback_lang'
-        ), $value);
+        if(strpos($value, '{{ ') !== FALSE){
+            $pattern = '/\{\{ language:(.*?) \}\}/si';
+            // execute regex
+            $value   = preg_replace_callback($pattern, array(
+                $this,
+                '__cms_preg_replace_callback_lang'
+            ), $value);
+        }
 
         // if language, elif
-        $language    = $this->cms_language();
-        $pattern     = array();
-        $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ end_if \}\}/si";
-        $replacement = '$1';
-        // execute regex
-        $value       = preg_replace($pattern, $replacement, $value);
+        if(strpos($value, '{{ ') !== FALSE){
+            $language    = $this->cms_language();
+            $pattern     = array();
+            $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ end_if \}\}/si";
+            $replacement = '$1';
+            // execute regex
+            $value       = preg_replace($pattern, $replacement, $value);
+        }
 
         // clear un-translated language
-        $pattern     = array();
-        $pattern     = "/\{\{ if_language:.*?\{\{ end_if \}\}/s";
-        $replacement = '';
-        // execute regex
-        $value       = preg_replace($pattern, $replacement, $value);
+        if(strpos($value, '{{ ') !== FALSE){
+            $pattern     = array();
+            $pattern     = "/\{\{ if_language:.*?\{\{ end_if \}\}/s";
+            $replacement = '';
+            // execute regex
+            $value       = preg_replace($pattern, $replacement, $value);
+        }
 
         // configuration
-        $pattern = '/\{\{ (.*?) \}\}/si';
-        // execute regex
-        $value   = preg_replace_callback($pattern, array(
-            $this,
-            '__cms_preg_replace_callback_config'
-        ), $value);
+        if(strpos($value, '{{ ') !== FALSE){
+            $pattern = '/\{\{ (.*?) \}\}/si';
+            // execute regex
+            $value   = preg_replace_callback($pattern, array(
+                $this,
+                '__cms_preg_replace_callback_config'
+            ), $value);
+        }
 
         return $value;
     }
