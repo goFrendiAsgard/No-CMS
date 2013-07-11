@@ -46,8 +46,7 @@
         </div>        
     	<div id="layout-content" class="span9">
     		<div class="span11">{{ navigation_path }}</div><hr />
-    		<div class="span3">{{ widget_name:left_navigation }}</div>
-    		<div class="span9"><?php echo $template['body'];?></div>
+    		<div class="span11"><?php echo $template['body'];?></div>
         </div><!--/#layout-content-->
         <div id="layout-widget" class="span3">
             {{ widget_slug:sidebar }}

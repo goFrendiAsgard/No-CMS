@@ -19,16 +19,17 @@
     ErrorDocument 404 /index.php
 </IfModule>
 
-<IfModule mod_php5.c>
-   php_value output_handler none
-   php_flag register_globals off
-   php_flag safe_mode off
-</IfModule>
-<IfModule mod_php4.c>
-   php_value output_handler none
-   php_flag register_globals off
-   php_flag safe_mode off
-</IfModule>
+# These doesn't always work
+#<IfModule mod_php5.c>
+#   php_value output_handler none
+#   php_flag register_globals off
+#   php_flag safe_mode off
+#</IfModule>
+#<IfModule mod_php4.c>
+#   php_value output_handler none
+#   php_flag register_globals off
+#   php_flag safe_mode off
+#</IfModule>
 
 <IfModule mod_expires.c>
     ExpiresActive on
