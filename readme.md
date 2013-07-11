@@ -881,3 +881,4 @@ v0.6.5
 + (proposed) change all default module to use dbforge on installation
 + (done, tested) make navigation management more intuitive
 + (done, tested) allowing widget inside widget
++ (proposed) move to anywhere.

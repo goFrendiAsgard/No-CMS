@@ -196,7 +196,7 @@ class Install_Model extends CI_Model{
             $error_list[] = APPPATH."config/database.php is not writable";
         }
         // third party authentication activated
-        if ($this->auth_enable_facebook !== "" || $this->auth_enable_twitter !== "" || $this->auth_enable_google !== "" || $this->auth_enable_yahoo !== "" || $this->auth_enable_linkedin !== "" || $this->auth_enable_myspace !== "" || $this->auth_enable_foursquare !== "" || $this->auth_enable_windows_live !== "" || $this->auth_enable_open_id !== "" || $this->auth_enable_aol !== "") {
+        if ($this->auth_enable_facebook || $this->auth_enable_twitter || $this->auth_enable_google || $this->auth_enable_yahoo || $this->auth_enable_linkedin || $this->auth_enable_myspace || $this->auth_enable_foursquare || $this->auth_enable_windows_live || $this->auth_enable_open_id || $this->auth_enable_aol ) {
             // curl
             if (!in_array('curl', get_loaded_extensions())) {
                 $success  = FALSE;
@@ -350,7 +350,7 @@ class Install_Model extends CI_Model{
                 }
              */
             if(!$mod_rewrite){
-                $warning_list = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
+                $warning_list[] = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
             }
         }
         // log directory

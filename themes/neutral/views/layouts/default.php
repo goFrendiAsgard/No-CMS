@@ -43,15 +43,15 @@
 	            <h1>{{ site_name }}</h1>
 	            <p>{{ site_slogan }}</p>
             </div>
-        </div>
+        </div>        
     	<div id="layout-content" class="span9">
-    		<div>{{ navigation_path }}</div><hr />
-            <?php echo $template['body'];?>
-            <div class="clear"></div>
+    		<div class="span11">{{ navigation_path }}</div><hr />
+    		<div class="span3">{{ widget_name:left_navigation }}</div>
+    		<div class="span9"><?php echo $template['body'];?></div>
         </div><!--/#layout-content-->
-        <div id="layout-widget" class="span2">
-            <h4>WIDGET</h4><hr />{{ widget_slug:sidebar }}
-            <h4>ADVERTISEMENT</h4><hr />{{ widget_slug:advertisement }}
+        <div id="layout-widget" class="span3">
+            {{ widget_slug:sidebar }}
+            <hr />{{ widget_slug:advertisement }}
         </div><!--/#layout-widget-->
       </div><!--/row-->
       <hr>

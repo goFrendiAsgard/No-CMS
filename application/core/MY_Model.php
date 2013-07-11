@@ -250,7 +250,7 @@ class CMS_Model extends CI_Model
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
-        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, is_static, title, description, url
+        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, is_static, title, description, url, active
                         FROM
                             ".cms_table_name('main_navigation')." AS n,
                             ".cms_table_name('main_quicklink')." AS q
@@ -305,6 +305,7 @@ class CMS_Model extends CI_Model
                 "url" => $url,
                 "is_static" => $row->is_static,
                 "child" => $children,
+                "active" => $row->active,
             );
         }
         return $result;
@@ -326,7 +327,7 @@ class CMS_Model extends CI_Model
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
         $slug_where = isset($slug)?
-            "((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%'))" :
+            "(((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%')) AND active=1)" :
             "1=1";
         $widget_name_where = isset($widget_name)? "widget_name LIKE '".addslashes($widget_name)."'" : "1=1";
 
@@ -351,7 +352,7 @@ class CMS_Model extends CI_Model
                                 )>0
                             )
                         )
-                    ) AND active=1 AND $slug_where AND $widget_name_where ORDER BY ".$this->db->protect_identifiers('index');
+                    ) AND $slug_where AND $widget_name_where ORDER BY ".$this->db->protect_identifiers('index');
         $query  = $this->db->query($SQL);
         $result = array();
         foreach ($query->result() as $row) {
@@ -363,7 +364,11 @@ class CMS_Model extends CI_Model
                 // url
                 $url = $row->url;
                 // content
-                $content .= '<div id="_cms_widget_' . $row->widget_id . '">';
+                if($slug){
+                    $content .= '<div id="_cms_widget_' . $row->widget_id . '">';
+                }else{
+                    $content .= '<span id="_cms_widget_' . $row->widget_id . '">';
+                }
 
                 if (strpos(strtoupper($url), 'HTTP://') !== FALSE || strpos(strtoupper($url), 'HTTPS://') !== FALSE) {
                     $response = NULL;
@@ -390,7 +395,11 @@ class CMS_Model extends CI_Model
                     $content .= @Modules::run($url);
                     $this->cms_unset_ci_session('cms_dynamic_widget');
                 }
-                $content .= '</div>';
+                if($slug){
+                    $content .= '</div>';
+                }else{
+                    $content .= '</span>';
+                }
             }
             // make widget based on slug
             $slugs = explode(',', $row->slug);

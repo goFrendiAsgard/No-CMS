@@ -520,7 +520,7 @@ class Main extends CMS_Controller
 
         $crud->required_fields('navigation_name');
 
-        $crud->columns('navigation_name', 'navigation_child', 'title', 'active', 'is_static', 'authorization_id', 'groups');
+        $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
         $crud->add_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
@@ -856,7 +856,7 @@ class Main extends CMS_Controller
 
         $crud->required_fields('privilege_name');
 
-        $crud->columns('privilege_name','title','description','authorization_id','groups');
+        $crud->columns('privilege_name','title','description');
         $crud->edit_fields('privilege_name','title','description','authorization_id','groups');
         $crud->add_fields('privilege_name','title','description','authorization_id','groups');
 
@@ -891,7 +891,7 @@ class Main extends CMS_Controller
 
         $crud->required_fields('widget_name');
 
-        $crud->columns('widget_name', 'title', 'active', 'is_static', 'authorization_id', 'slug', 'groups');
+        $crud->columns('widget_name', 'title', 'active', 'slug');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
@@ -1036,9 +1036,7 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_config'));
         $crud->set_subject($this->cms_lang('Configuration'));
 
-
-
-        $crud->columns('config_name', 'value', 'description');
+        $crud->columns('config_name', 'value');
         $crud->edit_fields('config_name', 'value', 'description');
         $crud->add_fields('config_name', 'value', 'description');
 
@@ -1240,6 +1238,11 @@ class Main extends CMS_Controller
         $html = '';
 
         foreach($quicklinks as $quicklink){
+        	// if navigation is not active then skip it
+        	if(!$quicklink['active']){
+        		continue;
+        	}
+			// create li based on child availability
             if(count($quicklink['child'])==0){
                 $html.= '<li>';
                 $html.= anchor($quicklink['url'], $quicklink['title']);
