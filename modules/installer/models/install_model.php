@@ -381,7 +381,10 @@ class Install_Model extends CI_Model{
         if(isset($primary_key)){
             $this->dbforge->add_key($primary_key, TRUE);
         }
-        $this->db_no_error = $this->dbforge->create_table($this->db_table_prefix.'_'.$table_name) && $this->db_no_error;
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->dbforge->create_table($table_name) && $this->db_no_error;
         return $this->db->last_query();
     }
 

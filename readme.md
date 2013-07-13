@@ -759,6 +759,8 @@ Here are some names of considerable contributors:
 * Glenn Bennett <-- Kindly provide free hosting for http://www.getnocms.com
 * Abu Tuffah Bayashoot <-- Find bug on configuration management at v0.6.1, and propose solution
 * Ann Low <-- Spain translation contributor
+* shakespam <-- nordrassil null field fix
+* heruprambadi <-- reporting several bugs, in 0.6.5 development version
 * Everyone who was involved by creating issue & pull requests in github. I cannot write every names there. But No-CMS can't be better without them :)
 
 
