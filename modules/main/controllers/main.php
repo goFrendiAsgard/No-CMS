@@ -1199,7 +1199,7 @@ class Main extends CMS_Controller
                 $result .= $this->build_quicklink();
             }
             $result = '
-            <div class="navbar navbar-fixed-top navbar-inverse">
+            <div class="navbar navbar-fixed-top">
               <div class="navbar-inner">
                 <div class="container-fluid">
                     <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">

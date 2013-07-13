@@ -31,31 +31,27 @@
     <link rel="shortcut icon" href="{{ site_favicon }}">
   </head>
   <body>
-    {{ widget_name:top_navigation }}
-
+    {{ widget_name:section_top_fix }}
     <div class="container">
       <div class="row-fluid">
-    	<div id="layout-banner" class="well hidden-phone span12">
-        	<div class="span2">
-        		<img src ="{{ site_logo }}" />
-        	</div>
-            <div class="span10">
-	            <h1>{{ site_name }}</h1>
-	            <p>{{ site_slogan }}</p>
-            </div>
-        </div>        
-    	<div id="layout-content" class="span9">
-    		<div class="span11">{{ navigation_path }}</div><hr />
-    		<div class="span11"><?php echo $template['body'];?></div>
-        </div><!--/#layout-content-->
-        <div id="layout-widget" class="span3">
-            {{ widget_slug:sidebar }}
-            <hr />{{ widget_slug:advertisement }}
-        </div><!--/#layout-widget-->
+        <div id="__section-banner" class="well hidden-phone span12">
+    	{{ widget_name:section_banner }}
+    	</div>
+    	<div>     
+        	<div id="__section-left-and-content" class="span9">
+        		<div>{{ navigation_path }}</div><hr />
+        		<div>
+            		<div id="__section-left" class="span3">{{ widget_name:section_left }}</div>
+            		<div id="__section-content" class="span9"><?php echo $template['body'];?></div>
+        		</div>
+            </div><!--/#layout-content-->
+            <div id="__section-right" class="span3">
+                {{ widget_name:section_right }}
+            </div><!--/#layout-widget-->
+        </div>
       </div><!--/row-->
       <hr>
-      <footer>{{ site_footer }}</footer>
+      <footer>{{ widget_name:section_bottom }}</footer>
     </div><!--/.fluid-container-->
-
   </body>
 </html>
