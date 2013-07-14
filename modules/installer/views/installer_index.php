@@ -10,14 +10,17 @@
             height: 28px!important;
         }
         #div-error-warning-message{
-            position:fixed;
-            width:inherit;
+            position:static;
         }
         #btn-install, #img-loader, #div-error-message, #div-warning-message, #div-success-message{
             display:none;
         }
         .btn-next{
             padding-right:10px;
+        }
+        #div-body{
+            margin-left:10px;
+            margin-right:10px;
         }
     </style>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css'); ?>" />
@@ -33,7 +36,7 @@
             </div>
           </div>
         </div>
-        <div class="span11 tabbable well"> <!-- Only required for left/right tabs -->
+        <div id="div-body" class="tabbable well"> <!-- Only required for left/right tabs -->
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab1" data-toggle="tab">Database Setting</a></li>
                 <li><a href="#tab2" data-toggle="tab">CMS Setting</a></li>
@@ -48,7 +51,7 @@
                 <li><a href="#tab11" data-toggle="tab">OpenID & AOL</a></li>
             </ul>
             <form class="form-horizontal" action="<?php echo site_url('installer/install'); ?>" method="post" accept-charset="utf-8">
-            <div class="span7 well">
+            <div class="span8 well">
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab1">
                             <h2>Database Setting</h2>
@@ -467,7 +470,7 @@
                     </div>
                 </div>
             </div>
-            <div class="span4">
+            <div id="div-right-pane" class="span4">
                 <div id="div-error-warning-message">
                     <div id="div-error-message" class="alert alert-block alert-error">
                         <strong>ERRORS:</strong>
@@ -479,9 +482,11 @@
                     </div>
                     <div id="div-success-message" class="alert alert-block alert-success">
                         <strong>GREAT !!!</strong>, you can now install No-CMS without worrying anything.
-                    </div>
-                    <input type="submit" id="btn-install" class="btn btn-primary btn-large" name="Install" disabled="disabled" value="INSTALL NOW"  />
-                    <img id="img-loader" src="<?php echo base_url('modules/installer/assets/ajax-loader.gif'); ?>" />
+                        <div style="margin-top:20px;">
+                            <input type="submit" id="btn-install" class="btn btn-primary btn-large" name="Install" disabled="disabled" value="INSTALL NOW"  />
+                            <img id="img-loader" src="<?php echo base_url('modules/installer/assets/ajax-loader.gif'); ?>" />
+                        </div>
+                    </div>                    
                 </div>
             </div>
             </form>
@@ -499,8 +504,21 @@
             var real_name_index = Math.floor((Math.random()*4));
             var real_name = real_name_list[real_name_index];
             $('#admin_real_name').val(real_name);
+            $('#div-error-warning-message').append('<img style="width:100%; opacity:0.4;" src="<?php echo base_url('modules/installer/assets'); ?>/'+real_name+'.jpg" />');
+            // magic :)
+            $(document).on('scroll', function(){
+                if ($('#div-error-warning-message')[0].offsetTop < ($(document).scrollTop()+60)){
+                    $('#div-error-warning-message').css({position: "fixed", top:60});
+                }else{
+                    $('#div-error-warning-message').css({position: "static", top: 0});
+                }
+                $('#div-error-warning-message').width($('#div-body').width()*0.3);
+            });
             // check things
             check();
+        });
+        $(window).resize(function() {
+            $('#div-error-warning-message').width($('#div-body').width()*0.3);
         });
         $("input, select").change(function(){
             check();
