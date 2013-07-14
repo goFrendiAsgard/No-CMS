@@ -1,21 +1,34 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed'); 
 
-    $option_widget = '';
+    $option_tag = '';
     $selected = 'selected';
     foreach($normal_widget_list as $widget){
-        if($widget['widget_id']<6) continue;
         $widget_name = $widget['widget_name'];
-        $option_widget .= '<option '.$selected.' value="'.$widget_name.'">'.$widget_name.'</option>';
+        $option_tag .= '<option '.$selected.' value="{{ widget_name:'.$widget_name.' }}">widget : '.$widget_name.'</option>';
         $selected = '';
     }
+    foreach($config_list as $config){
+        $config_name = $config['config_name'];
+        $option_tag .= '<option value="{{ '.$config_name.' }}">configuration : '.$config_name.'</option>';
+        $selected = '';
+    }
+    
+    $asset = new CMS_Asset();
+    $asset->add_cms_css('grocery_crud/css/jquery_plugins/chosen/chosen.css');
+    $asset->add_cms_css('grocery_crud/themes/flexigrid/css/flexigrid.css');
+    echo $asset->compile_css();
+
+    $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
+    $asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
+    echo $asset->compile_js();
 ?>
 <style type="text/css">
     .text-area-section{
         resize: none;
         white-space: nowrap; 
         overflow: auto;
-        min-width: 500px!important;
-        min-height: 100px!important;
+        min-width: 385px!important;
+        min-height: 75px!important;
         margin-top: 10px!important;
     }
 </style>
@@ -33,10 +46,10 @@
                    <label class="control-label" for="section_top_nav">Top Navigation Section</label>
                    <div class="controls">
                        <div class="div-normal-widget">
-                           <select><?php echo $option_widget; ?></select> <a class="btn-widget-add btn btn-primary" href="#">Add Widget</a>
+                           <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
                        <textarea id="section_top_nav" name="section_top_nav" class="text-area-section"><?php echo $section_widget_list['section_top_fix']['static_content']; ?></textarea>                       
-                       <p class="help-block">Top Navigation Section</p>
+                       <p class="help-block">HTML &amp; tags of top navigation section</p>
                    </div>
                 </div>
                 
@@ -44,10 +57,10 @@
                    <label class="control-label" for="section_banner">Banner Section</label>
                    <div class="controls">
                        <div class="div-normal-widget">
-                           <select><?php echo $option_widget; ?></select> <a class="btn-widget-add btn btn-primary" href="#">Add Widget</a>
+                           <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
                        <textarea id="section_banner" name="section_banner" class="text-area-section"><?php echo $section_widget_list['section_banner']['static_content']; ?></textarea>                       
-                       <p class="help-block">Banner Section</p>
+                       <p class="help-block">HTML &amp; tags of banner section</p>
                    </div>
                 </div>
                 
@@ -55,10 +68,10 @@
                    <label class="control-label" for="section_left">Left Section</label>
                    <div class="controls">
                        <div class="div-normal-widget">
-                           <select><?php echo $option_widget; ?></select> <a class="btn-widget-add btn btn-primary" href="#">Add Widget</a>
+                           <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
                        <textarea id="section_left" name="section_left" class="text-area-section"><?php echo $section_widget_list['section_left']['static_content']; ?></textarea>                       
-                       <p class="help-block">Banner Section</p>
+                       <p class="help-block">HTML &amp; tags of left Section</p>
                    </div>
                 </div>
                 
@@ -66,10 +79,10 @@
                    <label class="control-label" for="section_right">Right Section</label>
                    <div class="controls">
                        <div class="div-normal-widget">
-                           <select><?php echo $option_widget; ?></select> <a class="btn-widget-add btn btn-primary" href="#">Add Widget</a>
+                           <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
                        <textarea id="section_right" name="section_right" class="text-area-section"><?php echo $section_widget_list['section_right']['static_content']; ?></textarea>                       
-                       <p class="help-block">right Section</p>
+                       <p class="help-block">HTML &amp; tags of right section</p>
                    </div>
                 </div>
                 
@@ -77,10 +90,10 @@
                    <label class="control-label" for="section_bottom">Bottom Section</label>
                    <div class="controls">
                        <div class="div-normal-widget">
-                           <select><?php echo $option_widget; ?></select> <a class="btn-widget-add btn btn-primary" href="#">Add Widget</a>
+                           <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
                        <textarea id="section_bottom" name="section_bottom" class="text-area-section"><?php echo $section_widget_list['section_bottom']['static_content']; ?></textarea>                       
-                       <p class="help-block">bottom Section</p>
+                       <p class="help-block">HTML &amp; tags of bottom section</p>
                    </div>
                 </div>
                          
@@ -122,12 +135,11 @@
     });
     
     // 
-    $('.btn-widget-add').click(function(){
+    $('.btn-tag-add').click(function(){
         var select_component = $(this).parent().children('select');
         var text_area_component = $(this).parent().parent().children('.text-area-section');
-        var selected_widget = select_component.val();
-        //text_area_component.val(text_area_component.val() + "{{ "+"widget_name"+":"+selected_widget+" }}");
-        text_area_component.insertAtCaret("{{ "+"widget_name"+":"+selected_widget+" }}");
+        var selected_item = select_component.val();
+        text_area_component.insertAtCaret(selected_item);
         return false;
     })
 </script>
