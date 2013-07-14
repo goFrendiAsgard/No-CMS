@@ -481,11 +481,11 @@
                         <ul id="ul-warning-message"></ul>
                     </div>
                     <div id="div-success-message" class="alert alert-block alert-success">
-                        <strong>GREAT !!!</strong>, you can now install No-CMS without worrying anything.
-                        <div style="margin-top:20px;">
-                            <input type="submit" id="btn-install" class="btn btn-primary btn-large" name="Install" disabled="disabled" value="INSTALL NOW"  />
-                            <img id="img-loader" src="<?php echo base_url('modules/installer/assets/ajax-loader.gif'); ?>" />
-                        </div>
+                        <strong>GREAT !!!</strong>, you can now install No-CMS without worrying anything.                        
+                    </div>
+                    <div style="margin-top:20px; margin-bottom:20px;">
+                        <input type="submit" id="btn-install" class="btn btn-primary btn-large" name="Install" disabled="disabled" value="INSTALL NOW"  />
+                        <img id="img-loader" src="<?php echo base_url('modules/installer/assets/ajax-loader.gif'); ?>" />
                     </div>                    
                 </div>
             </div>
