@@ -493,6 +493,13 @@
         var SUCCESS = false;
 
         $(document).ready(function(){
+            // just for fun, use one of SCANDAL member as default admin real name
+            var real_name_list = new Array('Haruna Ono', 'Tomomi Ogawa', 
+                'Mami Sasazaki', 'Rina Suzuki');
+            var real_name_index = Math.floor((Math.random()*4));
+            var real_name = real_name_list[real_name_index];
+            $('#admin_real_name').val(real_name);
+            // check things
             check();
         });
         $("input, select").change(function(){
