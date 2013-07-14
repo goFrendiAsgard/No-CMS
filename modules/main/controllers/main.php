@@ -56,7 +56,7 @@ class Main extends CMS_Controller
         // show the view
         $data['modules'] = $this->cms_get_module_list();
         $data['upload_new_module_caption'] = $this->cms_lang('Upload New Module');
-        $this->view('main/module_management', $data, 'main_module_management');
+        $this->view('main/main_module_management', $data, 'main_module_management');
     }
 
     public function change_theme($theme = NULL)
@@ -68,11 +68,11 @@ class Main extends CMS_Controller
         // show the view
         if (isset($theme)) {
             $this->cms_set_config('site_theme', $theme);
-            redirect('main/change_theme');
+            redirect('main/main_change_theme');
         } else {
             $data['themes'] = $this->cms_get_layout_list();
             $data['upload_new_theme_caption'] = $this->cms_lang('Upload New Theme');
-            $this->view('main/change_theme', $data, 'main_change_theme');
+            $this->view('main/main_change_theme', $data, 'main_change_theme');
         }
     }
 
@@ -120,7 +120,7 @@ class Main extends CMS_Controller
                     "login_caption" => $this->cms_lang("Login"),
                     "register_caption" => $this->cms_lang("Register"),
                 );
-                $this->view('main/login', $data, 'main_login');
+                $this->view('main/main_login', $data, 'main_login');
             }
         } else {
             //save the old_url again
@@ -136,7 +136,7 @@ class Main extends CMS_Controller
                 "login_caption" => $this->cms_lang("Login"),
                 "register_caption" => $this->cms_lang("Register"),
             );
-            $this->view('main/login', $data, 'main_login');
+            $this->view('main/main_login', $data, 'main_login');
         }
     }
 
@@ -168,7 +168,7 @@ class Main extends CMS_Controller
                     "activation_code" => $activation_code,
                     "change_caption" => $this->cms_lang('Change'),
                 );
-                $this->view('main/forgot_change_password', $data, 'main_forgot');
+                $this->view('main/main_forgot_change_password', $data, 'main_forgot');
             }
         } else {
             //get user input
@@ -185,14 +185,14 @@ class Main extends CMS_Controller
                         "identity" => $identity,
                         "send_activation_code_caption"=> $this->cms_lang('Send activation code to my email'),
                     );
-                    $this->view('main/forgot_fill_identity', $data, 'main_forgot');
+                    $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
                 }
             } else {
                 $data = array(
                     "identity" => $identity,
                     "send_activation_code_caption"=> $this->cms_lang('Send activation code to my email'),
                 );
-                $this->view('main/forgot_fill_identity', $data, 'main_forgot');
+                $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
             }
         }
     }
@@ -224,7 +224,7 @@ class Main extends CMS_Controller
                 "real_name" => $real_name,
                 "register_caption" => $this->cms_lang('Register'),
             );
-            $this->view('main/register', $data, 'main_register');
+            $this->view('main/main_register', $data, 'main_register');
         }
     }
 
@@ -308,7 +308,7 @@ class Main extends CMS_Controller
                 "real_name" => $real_name,
                 "change_profile_caption" => $this->cms_lang('Change Profile'),
             );
-            $this->view('main/change_profile', $data, 'main_change_profile');
+            $this->view('main/main_change_profile', $data, 'main_change_profile');
         }
     }
 
@@ -324,7 +324,7 @@ class Main extends CMS_Controller
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen(NULL)
         );
-        $this->view('main/index', $data, 'main_index');
+        $this->view('main/main_index', $data, 'main_index');
     }
 
     public function management()
@@ -333,7 +333,7 @@ class Main extends CMS_Controller
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen('main_management')
         );
-        $this->view('main/management', $data, 'main_management');
+        $this->view('main/main_management', $data, 'main_management');
     }
 
     public function language($language = NULL)
@@ -346,7 +346,7 @@ class Main extends CMS_Controller
             $data = array(
                 "language_list" => $this->cms_language_list()
             );
-            $this->view('main/language', $data, 'main_language');
+            $this->view('main/main_language', $data, 'main_language');
         }
     }
 
@@ -427,7 +427,7 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/user', $output, 'main_user_management');
+        $this->view('main/main_user', $output, 'main_user_management');
     }
 
     public function read_only_user_active($value, $row)
@@ -491,7 +491,7 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/group', $output, 'main_group_management');
+        $this->view('main/main_group', $output, 'main_group_management');
     }
 
     public function before_delete_group($primary_key)
@@ -610,7 +610,7 @@ class Main extends CMS_Controller
         }
         $output->navigation_path = $navigation_path;
 
-        $this->view('main/navigation', $output, 'main_navigation_management');
+        $this->view('main/main_navigation', $output, 'main_navigation_management');
     }
 
     public function action_navigation_move_up($primary_key){
@@ -876,7 +876,7 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/privilege', $output, 'main_privilege_management');
+        $this->view('main/main_privilege', $output, 'main_privilege_management');
     }
 
     // WIDGET ==================================================================
@@ -938,7 +938,7 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/widget', $output, 'main_widget_management');
+        $this->view('main/main_widget', $output, 'main_widget_management');
     }
 
     public function before_insert_widget($post_array)
@@ -1073,7 +1073,7 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/config', $output, 'main_config_management');
+        $this->view('main/main_config', $output, 'main_config_management');
     }
 
     public function after_insert_config($post_array, $primary_key){
@@ -1111,7 +1111,7 @@ class Main extends CMS_Controller
             "welcome_lang" => $this->cms_lang('Welcome'),
             "logout_lang" => $this->cms_lang('Logout')
         );
-        $this->view('main/widget_logout', $data);
+        $this->view('main/main_widget_logout', $data);
     }
 
     public function widget_login()

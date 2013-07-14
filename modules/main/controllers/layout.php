@@ -9,6 +9,6 @@ class Layout extends CMS_Controller{
     }
 
     public function index(){
-        $this->view('layout_index', NULL, 'main_index');
+        $this->view('layout_index', NULL, 'main_layout');
     }
 }
