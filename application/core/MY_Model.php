@@ -1115,18 +1115,18 @@ class CMS_Model extends CI_Model
     public function cms_get_module_list()
     {
         $this->load->helper('directory');
-        $directories = directory_map('modules', 1);
+        $directories = directory_map(APPPATH.'../modules', 1);
         sort($directories);
         $module      = array();
         foreach ($directories as $directory) {
             $directory = str_replace('/','',$directory);
-            if (!is_dir('modules/' . $directory))
+            if (!is_dir(APPPATH.'../modules/' . $directory))
                 continue;
 
-            if (!file_exists('modules/' . $directory . '/controllers/install.php'))
+            if (!file_exists(APPPATH.'../modules/' . $directory . '/controllers/install.php'))
                 continue;
 
-            $files              = directory_map('modules/' . $directory . '/controllers', 1);
+            $files              = directory_map(APPPATH.'../modules/' . $directory . '/controllers', 1);
             $module_controllers = array();
             foreach ($files as $file) {
                 $filename_array = explode('.', $file);
@@ -1482,7 +1482,7 @@ class CMS_Model extends CI_Model
     {
         $this->load->helper('file');
         $result = array();
-        $language_list = get_filenames('assets/nocms/languages');
+        $language_list = get_filenames(APPPATH.'../assets/nocms/languages');
         foreach ($language_list as $language){
             if(preg_match('/\.php$/i', $language)){
                 $result[] = str_ireplace('.php', '', $language);
@@ -1492,7 +1492,7 @@ class CMS_Model extends CI_Model
         $module_list[] = array('module_path'=>'main');
         foreach ($module_list as $module){
             $directory = $module['module_path'];
-            $module_language_list = get_filenames('modules/'.$directory.'/assets/languages');
+            $module_language_list = get_filenames(APPPATH.'../modules/'.$directory.'/assets/languages');
             if($module_language_list === FALSE) continue;
             foreach($module_language_list as $module_language){
                 if(preg_match('/\.php$/i', $module_language)){
@@ -1523,25 +1523,25 @@ class CMS_Model extends CI_Model
             foreach ($modules as $module) {
                 $module_path = $module['module_path'];
                 if ($module_path != $this->cms_module_path()) {
-                    $local_language_file = "modules/$module_path/assets/languages/$language.php";
+                    $local_language_file = APPPATH."../modules/$module_path/assets/languages/$language.php";
                     if (file_exists($local_language_file)) {
                         include($local_language_file);
                     }
                 }
             }
             // nocms main module language setting override previous language setting
-            $language_file = "modules/main/assets/languages/$language.php";
+            $language_file = APPPATH."../modules/main/assets/languages/$language.php";
             if (file_exists($language_file)) {
                 include($language_file);
             }
             // global nocms language setting override previous language setting
-            $language_file = "assets/nocms/languages/$language.php";
+            $language_file = APPPATH."../assets/nocms/languages/$language.php";
             if (file_exists($language_file)) {
                 include($language_file);
             }
             // language setting from current module
             $module_path         = $this->cms_module_path();
-            $local_language_file = "modules/$module_path/assets/languages/$language.php";
+            $local_language_file = APPPATH."../modules/$module_path/assets/languages/$language.php";
             if (file_exists($local_language_file)) {
                 include($local_language_file);
             }
