@@ -883,4 +883,6 @@ v0.6.5
 + (proposed) change all default module to use dbforge on installation
 + (done, tested) make navigation management more intuitive
 + (done, tested) allowing widget inside widget
-+ (proposed) move to anywhere.
++ (proposed) Navigation: move to anywhere.
++ (done, tested) remove WYSIWYG, use layout management instead.
++ (done, tested) use APPPATH to fetch language & modules in case of the user move index.php. Thanks to Petr Valenta
