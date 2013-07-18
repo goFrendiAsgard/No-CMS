@@ -111,6 +111,8 @@ class Install extends CMS_Module_Installer {
 
         $this->load->dbutil();
         $sql = '';
+        
+        /* (doesn't work with PDO)
 
         // create DROP TABLE syntax
         for($i=count($table_names)-1; $i>=0; $i--){
@@ -119,7 +121,8 @@ class Install extends CMS_Module_Installer {
         }
         if($sql !='')$sql.= PHP_EOL;
 
-        // create CREATE TABLE and INSERT syntax
+        // create CREATE TABLE and INSERT syntax 
+        
         $prefs = array(
                 'tables'      => $table_names,
                 'ignore'      => array(),
@@ -129,7 +132,7 @@ class Install extends CMS_Module_Installer {
                 'add_insert'  => TRUE,
                 'newline'     => PHP_EOL
               );
-        $sql.= $this->dbutil->backup($prefs);
+        $sql.= $this->dbutil->backup($prefs);        
 
         //write file
         $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
@@ -137,6 +140,7 @@ class Install extends CMS_Module_Installer {
                 BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
                 $sql
             );
+        */
 
     }
 }

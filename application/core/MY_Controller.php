@@ -691,8 +691,8 @@ class CMS_Controller extends MX_Controller
         $data = (array) $data;
         if (isset($navigation_name) && !isset($data['_content'])) {
             $SQL   = "SELECT static_content FROM ".cms_table_name('main_navigation').
-                " WHERE is_static=1 AND navigation_name='".addslashes($navigation_name)."'
-                  AND (url iS NULL OR url='' OR navigation_name='".addslashes($this->cms_navigation_name())."')";
+                " WHERE is_static=1 AND ((navigation_name='".addslashes($navigation_name)."')
+                  OR (url IS NULL OR url='' OR navigation_name='".addslashes($this->cms_navigation_name())."'))";
             $query = $this->db->query($SQL);
             if ($query->num_rows() > 0) {
                 $row            = $query->row();
