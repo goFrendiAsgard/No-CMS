@@ -28,10 +28,11 @@ class Install extends CMS_Module_Installer {
     // DEACTIVATION
     protected function do_deactivate(){
         $module_path = $this->cms_module_path();
-
+	/* This doesn't work with PDO
         $this->backup_database(array(
             {{ table_list }}
         ));
+	*/
         $this->remove_all();
     }
 
@@ -108,11 +109,12 @@ class Install extends CMS_Module_Installer {
     // EXPORT DATABASE
     private function backup_database($table_names, $limit = 100){
         $module_path = $this->cms_module_path();
+	/* this doesn't work with PDO
 
         $this->load->dbutil();
         $sql = '';
         
-        /* (doesn't work with PDO)
+        
 
         // create DROP TABLE syntax
         for($i=count($table_names)-1; $i>=0; $i--){
