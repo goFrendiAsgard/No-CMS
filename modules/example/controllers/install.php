@@ -242,7 +242,8 @@ class Install extends CMS_Module_Installer {
         // twn_tourism
         $fields = array(
             'tourism_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE)
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
+            'type'=> array("type"=>'enum', "constraint"=>array("natural","synthesis"), "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('tourism_id', TRUE);

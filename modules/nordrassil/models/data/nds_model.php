@@ -302,7 +302,7 @@ class Nds_Model extends CMS_Model{
                     $composed_type = '$this->TYPE_INT_UNSIGNED_AUTO_INCREMENT';
                 }else{
                     if($column_type == 'varchar' && $column_value_selection_mode != ''){ // SET and ENUM
-                        //$column_array[] = '  `'.$column_name.'` '.$column_value_selection_mode.'('.$column_value_selection_item.')';
+                        $composed_type = 'array("type"=>\''.$column_value_selection_mode.'\', "constraint"=>array('.$column_value_selection_item.'), "null"=>TRUE)';
                     }else if(in_array($column_type, $this->type_without_length)){ // column without length
                         $composed_type = 'array("type"=>\''.$column_type.'\', "null"=>TRUE)';
                     }else{ // normal column

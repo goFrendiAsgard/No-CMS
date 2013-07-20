@@ -16,17 +16,7 @@ class Install extends CMS_Module_Installer {
     }
     //this should be what happen when user uninstall this module
     protected function do_deactivate(){
-        $this->backup_database(array(
-            $this->cms_complete_table_name('template'),
-            $this->cms_complete_table_name('template_option'),
-            $this->cms_complete_table_name('project'),
-            $this->cms_complete_table_name('project_option'),
-            $this->cms_complete_table_name('table'),
-            $this->cms_complete_table_name('table_option'),
-            $this->cms_complete_table_name('column'),
-            $this->cms_complete_table_name('column_option')
-        ));
-        $this->remove_all();
+        $this->remove_all();        
     }
 
     private function remove_all(){
@@ -39,9 +29,15 @@ class Install extends CMS_Module_Installer {
         // remove parent of all navigations
         $this->remove_navigation($this->cms_complete_navigation_name('index'));
 
-        // import uninstall.sql
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/uninstall.sql');
+         // drop tables
+        $this->dbforge->drop_table($this->cms_complete_table_name('column_option'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('column'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('table_option'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('table'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('project_option'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('project'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('template_option'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('template'), TRUE);
 
     }
 
@@ -61,9 +57,112 @@ class Install extends CMS_Module_Installer {
         );
 
 
-        // import install.sql
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/install.sql');
+        // create tables
+        // template
+        $fields = array(
+            'template_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'generator_path'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('template_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('template'));
+
+        // template_option
+        $fields = array(
+            'option_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'template_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'description'=> array("type"=>'text', "null"=>TRUE),
+            'option_type'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('option_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('template_option'));
+
+        // project
+        $fields = array(
+            'project_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'template_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'db_server'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'db_port'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'db_schema'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'db_user'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'db_password'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'db_table_prefix'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('project_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('project'));
+
+        // project_option
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'project_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'option_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('project_option'));
+
+        // table
+        $fields = array(
+            'table_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'project_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'caption'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'priority'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('table_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('table'));
+
+        // table_option
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'option_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'table_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('table_option'));
+
+        // column
+        $fields = array(
+            'column_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'table_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'caption'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'data_type'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'data_size'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'role'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'lookup_table_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'lookup_column_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'relation_table_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'relation_table_column_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'relation_selection_column_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'relation_priority_column_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'selection_table_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'selection_column_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'priority'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'value_selection_mode'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'value_selection_item'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('column_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('column'));
+
+        // column_option
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'option_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'column_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('column_option'));
+
 
 		// install template
 		$this->load->library($module_path.'/NordrassilLib');
@@ -81,49 +180,11 @@ class Install extends CMS_Module_Installer {
 		);
 		$this->nordrassillib->install_template($template_name, $generator_path,
 			$project_options, $table_options, $column_options);
-
-        // import example.sql
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/example.sql');
     }
 
     // IMPORT SQL FILE
     private function import_sql($file_name){
         $this->execute_SQL(file_get_contents($file_name), '/*split*/');
-    }
-
-    private function backup_database($table_names, $limit = 100){
-        $module_path = $this->cms_module_path();
-
-        $this->load->dbutil();
-        $sql = '';
-
-        // create DROP TABLE syntax
-        for($i=count($table_names)-1; $i>=0; $i--){
-            $table_name = $table_names[$i];
-            $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-        }
-        if($sql !='')$sql.= PHP_EOL;
-
-        // create CREATE TABLE and INSERT syntax
-        $prefs = array(
-                'tables'      => $table_names,
-                'ignore'      => array(),
-                'format'      => 'txt',
-                'filename'    => 'mybackup.sql',
-                'add_drop'    => FALSE,
-                'add_insert'  => TRUE,
-                'newline'     => PHP_EOL
-              );
-        $sql.= $this->dbutil->backup($prefs);
-
-        //write file
-        $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
-        file_put_contents(
-                BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-                $sql
-            );
-
     }
 }
 

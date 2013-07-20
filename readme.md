@@ -879,8 +879,8 @@ v0.6.5
 + (done, tested) make language and module list sorted
 + (in progress) support PDO, use groceryCRUD that support PDO, use CodeIgniter 3.0
 + (done, tested) new installer that will also support PDO
-+ (in progress) make nordrassil generated code also support PDO <-- ENUM & SET is still not supported
-+ (in progress) change all default module to use dbforge on installation <-- the nordrassil itself is still in MySQL
++ (in progress) make nordrassil generated code also support PDO <-- Need to check enum and set
++ (done) change all default module to use dbforge on installation
 + (done, tested) make navigation management more intuitive
 + (done, tested) allowing widget inside widget
 + (proposed) Navigation: move to anywhere.

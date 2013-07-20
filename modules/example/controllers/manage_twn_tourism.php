@@ -29,14 +29,15 @@ class Manage_Twn_Tourism extends CMS_Priv_Strict_Controller {
         $crud->set_subject('Tourism');
 
         // displayed columns on list
-        $crud->columns('name');
+        $crud->columns('name','type');
         // displayed columns on edit operation
-        $crud->edit_fields('name');
+        $crud->edit_fields('name','type');
         // displayed columns on add operation
-        $crud->add_fields('name');
+        $crud->add_fields('name','type');
 
         // caption of each columns
         $crud->display_as('name','Name');
+        $crud->display_as('type','Type');
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// HINT: Put set relation (lookup) codes here
@@ -61,7 +62,7 @@ class Manage_Twn_Tourism extends CMS_Priv_Strict_Controller {
 		// eg:
 		// 		$crud->field_type( $field_name , $field_type, $value  );
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+		$crud->field_type('type', 'enum', array("natural","synthesis"));
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

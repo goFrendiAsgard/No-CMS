@@ -27,15 +27,6 @@ class Install extends CMS_Module_Installer {
 
     // DEACTIVATION
     protected function do_deactivate(){
-        $module_path = $this->cms_module_path();
-
-        $this->backup_database(array(
-            $this->cms_complete_table_name('article'),
-            $this->cms_complete_table_name('category'),
-            $this->cms_complete_table_name('category_article'),
-            $this->cms_complete_table_name('comment'),
-            $this->cms_complete_table_name('photo')
-        ));
         $this->remove_all();
     }
 
@@ -237,10 +228,6 @@ class Install extends CMS_Module_Installer {
         $data = array('article_id'=>1, 'author_user_id'=>1, 'date'=>'2013-03-25 09:53:16', 'content'=>'Great comment for great article');
         $this->db->insert($table_name, $data);
 
-        /*
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/install.sql');
-         */
     }
 
     // IMPORT SQL FILE
@@ -248,41 +235,4 @@ class Install extends CMS_Module_Installer {
         $this->execute_SQL(file_get_contents($file_name), '/*split*/');
     }
 
-    // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){
-        /*
-        $module_path = $this->cms_module_path();
-
-        $this->load->dbutil();
-        $sql = '';
-
-        // create DROP TABLE syntax
-        for($i=count($table_names)-1; $i>=0; $i--){
-            $table_name = $table_names[$i];
-            $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-        }
-        if($sql !='')$sql.= PHP_EOL;
-
-        // create CREATE TABLE and INSERT syntax
-        $prefs = array(
-                'tables'      => $table_names,
-                'ignore'      => array(),
-                'format'      => 'txt',
-                'filename'    => 'mybackup.sql',
-                'add_drop'    => FALSE,
-                'add_insert'  => TRUE,
-                'newline'     => PHP_EOL
-              );
-        $sql.= $this->dbutil->backup($prefs);
-
-        //write file
-        $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
-        file_put_contents(
-                BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-                $sql
-            );
-         * 
-         */
-
-    }
 }
