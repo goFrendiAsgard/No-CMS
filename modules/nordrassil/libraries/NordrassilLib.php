@@ -17,6 +17,12 @@ class NordrassilLib{
 	public function get_create_table_syntax($tables){
 		return $this->ci->nds_model->get_create_table_syntax($tables);
 	}
+    public function get_drop_table_forge($tables){
+        return $this->ci->nds_model->get_drop_table_forge($tables);
+    }
+    public function get_create_table_forge($tables){
+        return $this->ci->nds_model->get_create_table_forge($tables);
+    }
 	public function get_drop_table_syntax($tables){
 		return $this->ci->nds_model->get_drop_table_syntax($tables);
 	}

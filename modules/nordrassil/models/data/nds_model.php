@@ -253,7 +253,7 @@ class Nds_Model extends CMS_Model{
 		if($query->num_rows()<=0) return FALSE;
 		$row = $query->row();
 		$template_id = $row->template_id;
-		$this->add_option($template_id, 'projecct', $project_options);
+		$this->add_option($template_id, 'project', $project_options);
 		$this->add_option($template_id, 'table', $table_options);
 		$this->add_option($template_id, 'column', $column_options);
 		return TRUE;
@@ -279,6 +279,68 @@ class Nds_Model extends CMS_Model{
 			$this->db->insert($this->cms_complete_table_name('template_option'),$data);
 		}
 	}
+    
+    public function get_create_table_forge($tables){
+        $php = array();
+        foreach($tables as $table){            
+            $table_name = $table['stripped_name'];
+            $columns = $table['columns'];
+            $primary_key_name = NULL;
+            $field_list = array();
+            foreach($columns as $column){
+                $column_name = $column['name'];
+                $column_type = $column['data_type'];
+                $column_size = $column['data_size'];
+                $column_value_selection_mode = $column['value_selection_mode'];
+                $column_value_selection_item = $column['value_selection_item'];
+                if($column['role'] == 'primary'){
+                    $primary_key_name = $column_name;
+                    
+                }
+                $composed_type = '$this->TYPE_VARCHAR_50_NULL';
+                if($column['role'] == 'primary'){
+                    $composed_type = '$this->TYPE_INT_UNSIGNED_AUTO_INCREMENT';
+                }else{
+                    if($column_type == 'varchar' && $column_value_selection_mode != ''){ // SET and ENUM
+                        //$column_array[] = '  `'.$column_name.'` '.$column_value_selection_mode.'('.$column_value_selection_item.')';
+                    }else if(in_array($column_type, $this->type_without_length)){ // column without length
+                        $composed_type = 'array("type"=>\''.$column_type.'\', "null"=>TRUE)';
+                    }else{ // normal column
+                        if(!isset($column_size) || $column_size == ''){
+                            $column_size = 11;
+                        }
+                        if(!in_array($column_type, $this->available_data_type)){
+                            $column_type = $this->detault_data_type;
+                            $column_size = 255;
+                        }
+                        $composed_type = 'array("type"=>\''.$column_type.'\', "constraint"=>'.$column_size.', "null"=>TRUE)';
+                    }
+                    
+                }
+                $field_list[] = "'$column_name'". '=> '.$composed_type;
+            }
+            $create_forge  = '// '.$table_name.PHP_EOL;
+            $create_forge .= '        $fields = array('.PHP_EOL.'            '.implode(','.PHP_EOL.'            ', $field_list).PHP_EOL.'        );'.PHP_EOL;
+            $create_forge .= '        $this->dbforge->add_field($fields);'.PHP_EOL;
+            if(isset($primary_key_name)){
+                $create_forge .= '        $this->dbforge->add_key(\''.$primary_key_name.'\', TRUE);'.PHP_EOL;    
+            }
+            $create_forge .= '        $this->dbforge->create_table($this->cms_complete_table_name(\''.$table_name.'\'));'.PHP_EOL;
+            
+            $php[] = $create_forge;
+        }
+        return implode(PHP_EOL.'        ',$php);
+    }
+    
+    public function get_drop_table_forge($tables){
+        $php = array();
+        foreach($tables as $table){
+            $table_name = $table['stripped_name'];
+            $php[] = '$this->dbforge->drop_table($this->cms_complete_table_name(\''.$table_name.'\'), TRUE);';
+        }
+        $php = array_reverse($php);
+        return implode(PHP_EOL.'        ',$php);
+    }
 
 	public function get_create_table_syntax($tables){
 

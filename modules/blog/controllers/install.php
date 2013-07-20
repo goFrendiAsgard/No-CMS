@@ -250,6 +250,7 @@ class Install extends CMS_Module_Installer {
 
     // EXPORT DATABASE
     private function backup_database($table_names, $limit = 100){
+        /*
         $module_path = $this->cms_module_path();
 
         $this->load->dbutil();
@@ -280,6 +281,8 @@ class Install extends CMS_Module_Installer {
                 BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
                 $sql
             );
+         * 
+         */
 
     }
 }

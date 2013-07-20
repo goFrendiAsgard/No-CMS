@@ -42,8 +42,8 @@
             <div id="__section-left-and-content" class="span9">
                 <div>{{ navigation_path }}</div><hr />
                 <div>
-                    <div id="__section-left" class="span3">{{ widget_name:section_left }}</div>
-                    <div id="__section-content" class="span9"><?php echo $template['body'];?></div>
+                    <div id="__section-left" class="hidden">{{ widget_name:section_left }}</div>
+                    <div id="__section-content" class="span12"><?php echo $template['body'];?></div>
                 </div>
             </div><!--/#layout-content-->
             <div id="__section-right" class="span3">

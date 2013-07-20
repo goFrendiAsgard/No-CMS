@@ -9,9 +9,12 @@ $(document).ready(function(){
     });
     // if section-left is empty, remove it
     if($.trim($('#__section-left').html()) == ''){
-        $('#__section-left').remove();
-        $('#__section-content').removeClass('span9');
-        $('#__section-content').addClass('span12');
+        $('#__section-left').remove();        
+    }else{
+        $('#__section-content').removeClass('span12');
+        $('#__section-content').addClass('span9');
+        $('#__section-left').removeClass('hidden');
+        $('#__section-left').addClass('span3');
     }
     // if section-right is empty, remove it
     if($.trim($('#__section-right').html()) == ''){

@@ -27,12 +27,11 @@ class Install extends CMS_Module_Installer {
 
     // DEACTIVATION
     protected function do_deactivate(){
-        $module_path = $this->cms_module_path();
-	/* This doesn't work with PDO
+	    /* This doesn't work with PDO
         $this->backup_database(array(
             {{ table_list }}
         ));
-	*/
+	    */
         $this->remove_all();
     }
 
@@ -78,11 +77,15 @@ class Install extends CMS_Module_Installer {
 
         // remove parent of all navigations
         $this->remove_navigation($this->cms_complete_navigation_name('{{ navigation_parent_name }}'));
-
-        // import uninstall.sql
+        
+        // drop tables
+        {{ drop_table_forge }}
+        
+        /*
+        // import uninstall.sql (this is only works for MySQL)
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
             '/assets/db/uninstall.sql');
-
+        */
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -95,10 +98,15 @@ class Install extends CMS_Module_Installer {
 
         // add navigations
 {{ add_navigations }}
-
-        // import install.sql
+        
+        // create tables
+        {{ create_table_forge }}
+        
+        /*
+        // import install.sql (this only works for MySQL)
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
             '/assets/db/install.sql');
+        */
     }
 
     // IMPORT SQL FILE
@@ -108,9 +116,11 @@ class Install extends CMS_Module_Installer {
 
     // EXPORT DATABASE
     private function backup_database($table_names, $limit = 100){
+        
+	    /* this doesn't work with PDO
+	     
+	    
         $module_path = $this->cms_module_path();
-	/* this doesn't work with PDO
-
         $this->load->dbutil();
         $sql = '';
         

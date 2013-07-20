@@ -875,12 +875,12 @@ v0.6.2
 + (done, tested) bugfix: nordrassil generated script shown weird when using one-to-many detail without any "chosen" component in master table
 
 v0.6.5
-+ (proposed) automatically create thumbnail in wysiwyg, use better uploader library
++ (cancelled) automatically create thumbnail in wysiwyg, use better uploader library <-- there is no more WYSIWYG
 + (done, tested) make language and module list sorted
 + (in progress) support PDO, use groceryCRUD that support PDO, use CodeIgniter 3.0
-+ (done) new installer that will also support PDO
-+ (proposed) make nordrassil generated code also support PDO
-+ (proposed) change all default module to use dbforge on installation
++ (done, tested) new installer that will also support PDO
++ (in progress) make nordrassil generated code also support PDO <-- ENUM & SET is still not supported
++ (in progress) change all default module to use dbforge on installation <-- the nordrassil itself is still in MySQL
 + (done, tested) make navigation management more intuitive
 + (done, tested) allowing widget inside widget
 + (proposed) Navigation: move to anywhere.

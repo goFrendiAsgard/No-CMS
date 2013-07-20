@@ -1119,7 +1119,7 @@ class CMS_Model extends CI_Model
         sort($directories);
         $module      = array();
         foreach ($directories as $directory) {
-            $directory = str_replace('/','',$directory);
+            $directory = str_replace(array('/','\\'),'',$directory);
             if (!is_dir(APPPATH.'../modules/' . $directory))
                 continue;
 
@@ -1201,7 +1201,7 @@ class CMS_Model extends CI_Model
         sort($directories);
         $themes      = array();
         foreach ($directories as $directory) {
-            $directory = str_replace('/','',$directory);
+            $directory = str_replace(array('/','\\'),'',$directory);
             if (!is_dir('themes/' . $directory))
                 continue;
 
