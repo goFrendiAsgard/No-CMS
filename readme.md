@@ -3,7 +3,8 @@ What is No-CMS?
 
 No-CMS is a CMS-framework.
 
-No-CMS is a basic CMS with some default features such as user authorization, menu, module and theme management.
+No-CMS is a basic and "less-assumption" CMS with some default features such as user authorization (including third party authentication), 
+menu, module and theme management.
 It is fully customizable and extensible, you can make your own module and your own themes.
 It provide freedom to make your very own CMS, which is not provided very well by any other CMS.
 
@@ -20,47 +21,26 @@ No-CMS will be good for you if you say yes for majority of these statement:
 * You are familiar with HMVC plugins, and you think it is one of "should be exists" feature in CodeIgniter.
 * You are in tight deadline, at least you need to provide the prototype to your client.
 
-No-CMS as CMS
---------------
-No-CMS is a "less assumption" CMS. It is different from Wordpress, Drupal, Joomla, Moodle or Zencart. Those CMS are built by developers for users with some special purpose in mind (e.g: blog, news, e-learning, e-commerce).
-No-CMS is built by developer for developers, although everyone else can still use it as well. It already has some basic features such as authentication/authorization, widget and page management. You are free to use them or just get rid of them and make your custom code
-The main purpose of this CMS is to provide a good start of web application project, especially for CodeIgniter developer.
-
-No-CMS as Application development framework
+Battery Included
 --------------------------------------------
-No-CMS is not just another CMS. No-CMS allows you to make your own module and your own themes.
-This means that you (as developer) can make a module (e.g: forum module, FAQ module, etc) that can be used for several different project.
-
-No-CMS takes advantages of CodeIgniter as its core.
-It provides rich set of libraries for commonly needed task,
-as well as a simple interface and logical structure to access these libraries.
-The main advantage of CodeIgniter is you can creatively focus on your project
-by minimizing the amount of code needed or a given task.
-
-No-CMS is also take advantages of several popular plugins such as
+No-CMS come with several battery included:
 
 * HMVC, to make fully modular separation
 * Phil Sturgeon's Template, to make customizable themes
 * groceryCRUD, to build CRUD application in a minute
 * HybridAuth, to provide third party authentication (e.g: facebook, twitter, openID etc)
-
-Out of all, No-CMS also provide some common features:
-
-* Authentication & Authorization by using group, privilege, and user management.
-  Not like other CMS, there is no backend-frontend in No-CMS.
-  You have freedom to choose how different groups of users can access pages and modules differently.
-* Change Theme.
-  You can change the theme easily.
-* Install/Un-install Module
-  You can install/un-install module easily.
-
-In short, if you are familiar with CodeIgniter, No-CMS is a good kickstart to make your web application
+* Widget system
+* Navigation system
+* Module system
+* Custom Theme system
+* Custom language
+* tagging system
 
 
 Release Information
 ===================
 
-- v0.6.2 stable, May, 16, 2013
+- v0.6.5 development, July, 22, 2013
 
 
 Server Requirements
