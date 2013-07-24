@@ -866,3 +866,4 @@ v0.6.5
 + (proposed) Navigation: move to anywhere.
 + (done, tested) remove WYSIWYG, use layout management instead.
 + (done, tested) use APPPATH to fetch language & modules in case of the user move index.php. Thanks to Petr Valenta
++ (proposed) there is an infinite redirection potential in cms_redirect if combined with dynamic widget

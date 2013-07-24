@@ -795,7 +795,7 @@ class Main extends CMS_Controller
 
     public function before_insert_quicklink($post_array)
     {
-        $SQL   = "SELECT max(".$this->db->protect_identifiers('index').")+1 AS newIndex FROM ".cms_table_name('main_quicklink');
+        $SQL   = "SELECT max(".$this->db->protect_identifiers(index).")+1 AS newIndex FROM ".cms_table_name('main_quicklink');
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;

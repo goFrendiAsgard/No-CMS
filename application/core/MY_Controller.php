@@ -12,6 +12,8 @@ class CMS_Controller extends MX_Controller
     public $PRIV_NOT_AUTHENTICATED  = 2;
     public $PRIV_AUTHENTICATED      = 3;
     public $PRIV_AUTHORIZED         = 4;
+    
+    protected $__cms_dynamic_widget = FALSE;
 
     private $__cms_widgets          = NULL;
     private $__cms_navigations      = NULL;
@@ -42,6 +44,9 @@ class CMS_Controller extends MX_Controller
             $this->session->keep_flashdata('cms_old_url');
         }
         /* ------------------ */
+        
+        $this->__cms_dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
+        $this->cms_unset_ci_session('cms_dynamic_widget');
 
         $this->load->library('grocery_CRUD');
         $this->load->library('template');
@@ -666,15 +671,9 @@ class CMS_Controller extends MX_Controller
         $layout_suffix      = isset($config['layout_suffix']) ? $config['layout_suffix'] : '';
 
         /**
-         * CHECK IF IT IS WIDGET
-         */
-        $dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
-        $this->cms_unset_ci_session('cms_dynamic_widget');
-
-        /**
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
          */
-        if ((!isset($dynamic_widget) || !$dynamic_widget) && !isset($navigation_name)) {
+        if ($this->__cms_dynamic_widget && !isset($navigation_name)) {
             $navigation_name = $this->cms_navigation_name();
         }
 
@@ -806,8 +805,8 @@ class CMS_Controller extends MX_Controller
             $layout = $layout . '_' . $layout_suffix;
         }
 
-        // IT'S SHOW TIME
-        if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
+        // IT'S SHOW TIME        
+        if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            
             $result = $this->load->view($view_url, $data, TRUE);
         } else {
             // set theme, layout and title
@@ -879,7 +878,7 @@ class CMS_Controller extends MX_Controller
 
         // parse widgets used_theme & navigation_path
         $result = $this->__cms_parse_widget_theme_path($result, $theme, $navigation_name);
-
+        
         if ($return_as_string) {
             return $result;
         } else {
@@ -1271,7 +1270,7 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
             $navigation_name = $this->cms_navigation_name($uriString);
         }
         $this->cms_guard_page($navigation_name);
-        if (!$this->ALLOW_UNKNOWN_NAVIGATION_NAME && !isset($navigation_name)) {
+        if (!$this->__cms_dynamic_widget && !$this->ALLOW_UNKNOWN_NAVIGATION_NAME && !isset($navigation_name)) {
             if ($this->input->is_ajax_request()) {
                 $response = array(
                     'success' => FALSE,
@@ -1280,7 +1279,7 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
                 $this->cms_show_json($variable);
                 die();
             } else {
-                $this->cms_redirect();
+                //$this->cms_redirect();
             }
         }
         $this->navigation_name = $navigation_name;

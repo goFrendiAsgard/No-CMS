@@ -369,7 +369,6 @@ class CMS_Model extends CI_Model
                 }else{
                     $content .= '<span id="_cms_widget_' . $row->widget_id . '">';
                 }
-
                 if (strpos(strtoupper($url), 'HTTP://') !== FALSE || strpos(strtoupper($url), 'HTTPS://') !== FALSE) {
                     $response = NULL;
                     // use CURL
@@ -395,6 +394,7 @@ class CMS_Model extends CI_Model
                     $content .= @Modules::run($url);
                     $this->cms_unset_ci_session('cms_dynamic_widget');
                 }
+                
                 if($slug){
                     $content .= '</div>';
                 }else{
