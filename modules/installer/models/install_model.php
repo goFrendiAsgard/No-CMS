@@ -384,6 +384,8 @@ class Install_Model extends CI_Model{
         if(!trim($this->db_table_prefix) == ''){
             $table_name = $this->db_table_prefix.'_'.$table_name;
         }
+        log_message('error', $this->db_table_prefix);
+        log_message('error', $table_name);
         $this->db_no_error = $this->dbforge->create_table($table_name) && $this->db_no_error;
         return $this->db->last_query();
     }
@@ -657,7 +659,11 @@ class Install_Model extends CI_Model{
                 'authorization_name' => $authorization_name,
                 'description' => $description,
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_authorization', $array) && $this->db_no_error;
+        $table_name = 'main_authorization';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -666,7 +672,11 @@ class Install_Model extends CI_Model{
                 'group_name' => $group_name,
                 'description' => $description,
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_group', $array) && $this->db_no_error;
+        $table_name = 'main_group';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -677,7 +687,11 @@ class Install_Model extends CI_Model{
                 'password'=> md5($this->admin_password),
                 'real_name' => $this->admin_real_name
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_user', $array) && $this->db_no_error;
+        $table_name = 'main_user';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -697,7 +711,11 @@ class Install_Model extends CI_Model{
                 'static_content' => $static_content,
                 'only_content' => $only_content
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_navigation', $array) && $this->db_no_error;
+        $table_name = 'main_navigation';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -706,7 +724,11 @@ class Install_Model extends CI_Model{
                 'navigation_id' => $navigation_id,
                 'index' => $index,
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_quicklink', $array) && $this->db_no_error;
+        $table_name = 'main_quicklink';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -723,7 +745,11 @@ class Install_Model extends CI_Model{
                 'static_content' => $static_content,
                 'slug' => $slug
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_widget', $array) && $this->db_no_error;
+        $table_name = 'main_widget';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -734,7 +760,11 @@ class Install_Model extends CI_Model{
                 'description' => $description,
                 'authorization_id' => $authorization_id
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_privilege', $array) && $this->db_no_error;
+        $table_name = 'main_privilege';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -744,7 +774,11 @@ class Install_Model extends CI_Model{
                 'value' => $value,
                 'description' => $description
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_config', $array) && $this->db_no_error;
+        $table_name = 'main_config';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -753,7 +787,11 @@ class Install_Model extends CI_Model{
                 'group_id' => 1,
                 'user_id' => 1,
             );
-        $this->db_no_error = $this->db->insert($this->db_table_prefix.'_main_group_user', $array) && $this->db_no_error;
+        $table_name = 'main_group_user';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->db_no_error = $this->db->insert($table_name, $array) && $this->db_no_error;
         return $this->db->last_query();
     }
 
@@ -864,7 +902,10 @@ class Install_Model extends CI_Model{
             $error_list[] = 'Cannot connect to the database with the provided configuration';
         }else{
             foreach($this->table_drop_list as $table_name){
-                $this->dbforge->drop_table($this->db_table_prefix.'_'.$table_name);
+                if(!trim($this->db_table_prefix) == ''){
+                    $table_name = $this->db_table_prefix.'_'.$table_name;
+                }
+                $this->dbforge->drop_table($table_name);
             }
             $create_table_sql_list = $this->create_all_table();
             $insert_sql_list = $this->insert_all_data();
@@ -939,7 +980,11 @@ class Install_Model extends CI_Model{
         $index_page = $this->hide_index?'':'index.php';
         $this->change_config($file_name, "index_page", $index_page, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "encryption_key", 'namidanoregret', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "sess_table_name", $this->db_table_prefix.'_ci_sessions', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $table_name = 'ci_sessions';
+        if(!trim($this->db_table_prefix) == ''){
+            $table_name = $this->db_table_prefix.'_'.$table_name;
+        }
+        $this->change_config($file_name, "sess_table_name", $table_name, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $value_prefix = "";
         $value_suffix = ";";
         $compress_output = $this->gzip_compression?'TRUE':'FALSE';
