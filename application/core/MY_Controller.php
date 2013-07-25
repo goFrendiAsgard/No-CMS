@@ -34,6 +34,7 @@ class CMS_Controller extends MX_Controller
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
+        $this->load->helper('string');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
 
@@ -43,10 +44,10 @@ class CMS_Controller extends MX_Controller
         if (!is_bool($old_url)) {
             $this->session->keep_flashdata('cms_old_url');
         }
-        /* ------------------ */
-        
-        $this->__cms_dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
-        $this->cms_unset_ci_session('cms_dynamic_widget');
+        // get dynamic widget status
+        if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
+            $this->__cms_dynamic_widget = TRUE;
+        }
 
         $this->load->library('grocery_CRUD');
         $this->load->library('template');
@@ -573,7 +574,7 @@ class CMS_Controller extends MX_Controller
         if (is_bool($old_url)) {
             $this->session->set_flashdata('cms_old_url', $uriString);
         }
-
+        
         if ($this->cms_allow_navigate('main_login') && ($uriString != 'main/login')) {
             redirect('main/login');
         } else {
@@ -582,11 +583,13 @@ class CMS_Controller extends MX_Controller
                 $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'] . '/index');
             }
             // redirect to default controller
-            if (isset($navigation_name) && $this->cms_allow_navigate($navigation_name) && ($uriString != '')) {
+            if (isset($navigation_name) && $this->cms_allow_navigate($navigation_name) && 
+            ($uriString != '') && ($uriString != $this->router->routes['default_controller']) &&
+            ($uriString != $this->router->routes['default_controller'].'/index')) {
                 redirect('');
             } else {
                 show_404();
-            }
+            }            
         }
     }
 
@@ -638,7 +641,17 @@ class CMS_Controller extends MX_Controller
     {
         $result   = NULL;
         $view_url = $this->cms_parse_keyword($view_url);
-
+        
+        /**
+         * PREPARE PARAMETERS *********************************************************************************************
+         */
+        // get dynamic widget status 
+        // (this is necessary since sometime the function called directly without run the constructor, i.e: when using Modules::run)
+        if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
+            $this->__cms_dynamic_widget = TRUE;
+        }
+        $this->cms_unset_ci_session('cms_dynamic_widget');
+        
         /**
          * PREPARE PARAMETERS *********************************************************************************************
          */
@@ -673,7 +686,7 @@ class CMS_Controller extends MX_Controller
         /**
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
          */
-        if ($this->__cms_dynamic_widget && !isset($navigation_name)) {
+        if (!isset($navigation_name)) {
             $navigation_name = $this->cms_navigation_name();
         }
 
@@ -1279,7 +1292,7 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
                 $this->cms_show_json($variable);
                 die();
             } else {
-                //$this->cms_redirect();
+                $this->cms_redirect();
             }
         }
         $this->navigation_name = $navigation_name;

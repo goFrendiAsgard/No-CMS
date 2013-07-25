@@ -319,8 +319,8 @@ class Main extends CMS_Controller
     }
 
     public function index()
-    {
-        $this->cms_guard_page('main_index');
+    {        
+        //$this->cms_guard_page('main_index');
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen(NULL)
         );

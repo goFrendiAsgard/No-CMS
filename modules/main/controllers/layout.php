@@ -13,22 +13,20 @@ class Layout extends CMS_Controller{
     }
 
     public function index(){
-        if(count($_FILES)>0){
-            // save the uploaded files
-            if(isset($_FILES['site_logo'])){
-                $site_logo = $_FILES['site_logo'];
-                if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != ''){
-                    move_uploaded_file($site_logo['tmp_name'], BASEPATH.'../assets/nocms/images/custom_logo/'.$site_logo['name']);
-                    $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.$site_logo['name']);
-                }
+        // save the uploaded files
+        if(isset($_FILES['site_logo'])){
+            $site_logo = $_FILES['site_logo'];
+            if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != ''){
+                move_uploaded_file($site_logo['tmp_name'], BASEPATH.'../assets/nocms/images/custom_logo/'.$site_logo['name']);
+                $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.$site_logo['name']);
             }
-            if(isset($_FILES['site_favicon'])){
-                $site_favicon = $_FILES['site_favicon'];
-                if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != ''){
-                    move_uploaded_file($site_favicon['tmp_name'], BASEPATH.'../assets/nocms/images/custom_favicon/'.$site_favicon['name']);
-                    $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.$site_favicon['name']);
-                }
-            }            
+        }
+        if(isset($_FILES['site_favicon'])){
+            $site_favicon = $_FILES['site_favicon'];
+            if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != ''){
+                move_uploaded_file($site_favicon['tmp_name'], BASEPATH.'../assets/nocms/images/custom_favicon/'.$site_favicon['name']);
+                $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.$site_favicon['name']);
+            }
         }
         if(count($_POST)>0){
             // save the section widgets
@@ -42,7 +40,12 @@ class Layout extends CMS_Controller{
             $this->cms_set_config('site_slogan', $this->input->post('site_slogan'));
             $this->cms_set_config('site_footer', $this->input->post('site_footer'));
             $this->cms_set_config('site_language', $this->input->post('site_language'));
+            $this->cms_language($this->input->post('site_language'));
             
+        }
+        // redirection
+        if(count($_POST)>0 || isset($_FILES['site_logo']) || isset($_FILES['site_favicon'])){
+            redirect('main/layout/index');
         }
         // widgets
         $query = $this->db->select('widget_id, widget_name, static_content')->from(cms_table_name('main_widget'))->get();

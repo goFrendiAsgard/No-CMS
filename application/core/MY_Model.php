@@ -28,6 +28,7 @@ class CMS_Model extends CI_Model
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
+        $this->load->helper('string');
         $this->load->library('user_agent');
         $this->load->driver('session');
         $this->load->helper('cms_helper');
@@ -188,7 +189,7 @@ class CMS_Model extends CI_Model
                         (
                             (authorization_id = 4 AND $login) AND
                             (
-                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id =" . addslashes($user_id) . ")>0
                                     OR $super_user OR
                                 (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
                                     WHERE
@@ -322,7 +323,7 @@ class CMS_Model extends CI_Model
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
-        $user_id    = $user_id==''?0:$user_id;
+        $user_id    = !isset($user_id)||is_null($user_id)?0:$user_id;
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
@@ -390,8 +391,15 @@ class CMS_Model extends CI_Model
                         $content .= $response;
                     }
                 } else {
+                    // TODO: something wrong with this
+                    $url = trim_slashes($url);
+                    $url_partial = explode('/',$url);
                     $this->cms_ci_session('cms_dynamic_widget', TRUE);
-                    $content .= @Modules::run($url);
+                    $response = @Modules::run($url);
+                    if(strlen($response) == 0){
+                        $response = @Modules::run($url.'/index');
+                    }
+                    $content .= $response;
                     $this->cms_unset_ci_session('cms_dynamic_widget');
                 }
                 
@@ -418,7 +426,6 @@ class CMS_Model extends CI_Model
             }
 
         }
-
         return $result;
     }
 
@@ -601,6 +608,7 @@ class CMS_Model extends CI_Model
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
+        $user_id    = !isset($user_id)||is_null($user_id)?0:$user_id;
         $not_login  = !isset($user_name) ? "TRUE" : "FALSE";
         $login      = isset($user_name) ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
@@ -1869,6 +1877,7 @@ class CMS_Model extends CI_Model
 
 
         $user_id = $this->cms_user_id();
+        $user_id    = !isset($user_id)||is_null($user_id)?0:$user_id;
         $query   = $this->db->select('user_id')->from(cms_table_name('main_user'))->where('auth_' . $provider, $identifier)->get();
         if ($query->num_rows() > 0) { // get user_id based on auth field
             $row     = $query->row();
