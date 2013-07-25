@@ -574,7 +574,7 @@ class CMS_Controller extends MX_Controller
             $this->session->set_flashdata('cms_old_url', $uriString);
         }
 
-        if ($this->cms_allow_navigate('main_login')) {
+        if ($this->cms_allow_navigate('main_login') && ($uriString != 'main/login')) {
             redirect('main/login');
         } else {
             $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller']);
@@ -582,7 +582,7 @@ class CMS_Controller extends MX_Controller
                 $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'] . '/index');
             }
             // redirect to default controller
-            if (isset($navigation_name) && $this->cms_allow_navigate($navigation_name)) {
+            if (isset($navigation_name) && $this->cms_allow_navigate($navigation_name) && ($uriString != '')) {
                 redirect('');
             } else {
                 show_404();
