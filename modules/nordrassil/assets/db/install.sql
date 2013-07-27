@@ -57,7 +57,7 @@ CREATE TABLE `{{ complete_table_name:column }}` (
   `caption` varchar(50) NOT NULL,
   `data_type` varchar(50) NOT NULL,
   `data_size` int(11) NULL,
-  `role` varchar(50) NOT NULL,
+  `role` varchar(50) NULL,
   `lookup_table_id` int(11) NULL,
   `lookup_column_id` int(11) NULL,
   `relation_table_id` int(11) NULL,
