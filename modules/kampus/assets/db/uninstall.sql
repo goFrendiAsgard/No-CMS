@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS `{{ complete_table_name:mahasiswa }}`; 

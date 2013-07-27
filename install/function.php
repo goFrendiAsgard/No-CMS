@@ -106,6 +106,7 @@ function check_db($server, $port, $username, $password, $schema)
             $return["success"] = false;
             $return["error_message"] .= "Cannot connect to database";
         } else {
+            /*
             $result = @mysql_query('SHOW VARIABLES LIKE \'have_innodb\';', $connection);
             $row    = mysql_fetch_array($result);
             $innodb = $row['Value'];
@@ -113,6 +114,7 @@ function check_db($server, $port, $username, $password, $schema)
                 $return["success"] = false;
                 $return["error_message"] .= "Your database doesn't support Innodb";
             }
+             */
         }
 
         if ($return["success"]) {
