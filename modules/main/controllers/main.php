@@ -518,8 +518,7 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_navigation'));
         $crud->set_subject($this->cms_lang('Navigation (Page)'));
 
-        $crud->required_fields('navigation_name');
-	$crud->required_fields('title');
+        $crud->required_fields('navigation_name', 'title');
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
@@ -891,7 +890,6 @@ class Main extends CMS_Controller
         $crud->set_subject($this->cms_lang('Widget'));
 
         $crud->required_fields('widget_name');
-	$crud->required_fields('title');
 
         $crud->columns('widget_name', 'title', 'active', 'slug');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
