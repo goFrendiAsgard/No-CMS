@@ -35,7 +35,7 @@
     {{ widget_name:section_top_fix }}
     <div class="container">
       <div class="row-fluid">
-        <div id="__section-banner" class="well hidden-phone span12">
+        <div id="__section-banner">
         {{ widget_name:section_banner }}
         </div>
         <div>     

@@ -28,7 +28,7 @@ footer{
 	padding: 10px;
 }
 
-#__section-banner{
+#__section-banner>div{
     /* IE10 */ 
     background-image: -ms-linear-gradient(top left, black 0%, gray 100%);
     
