@@ -12,9 +12,9 @@
 
     <!-- Le styles -->
     <?php
-	    $asset = new CMS_Asset();
-	    $asset->add_themes_css('style.css', '{{ site_theme }}', 'default');
+	    $asset = new CMS_Asset();	    
 	    $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
+        $asset->add_themes_css('style.css', '{{ site_theme }}', 'default');
 	    echo $asset->compile_css();
 
 	    $asset->add_cms_js("bootstrap/js/bootstrap.min.js");

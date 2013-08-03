@@ -21,7 +21,7 @@ No-CMS will be good for you if you say yes for majority of these statement:
 * You are familiar with HMVC plugins, and you think it is one of "should be exists" feature in CodeIgniter.
 * You are in tight deadline, at least you need to provide the prototype to your client.
 
-Battery Included
+Batteries Included
 --------------------------------------------
 No-CMS come with several battery included:
 
@@ -40,7 +40,7 @@ No-CMS come with several battery included:
 Release Information
 ===================
 
-- v0.6.5 development, July, 22, 2013
+- v0.6.5 development, August, 03, 2013
 
 
 Server Requirements
@@ -860,10 +860,10 @@ v0.6.5
 + (in progress) support PDO, use groceryCRUD that support PDO, use CodeIgniter 3.0
 + (done, tested) new installer that will also support PDO
 + (in progress) make nordrassil generated code also support PDO <-- Need to check enum and set
-+ (done) change all default module to use dbforge on installation
++ (done, tested) change all default module to use dbforge on installation
 + (done, tested) make navigation management more intuitive
 + (done, tested) allowing widget inside widget
 + (proposed) Navigation: move to anywhere.
 + (done, tested) remove WYSIWYG, use layout management instead.
 + (done, tested) use APPPATH to fetch language & modules in case of the user move index.php. Thanks to Petr Valenta
-+ (done) there is an infinite redirection potential in cms_redirect if combined with dynamic widget
++ (done, tested) fix infinite redirection potential in cms_redirect if combined with dynamic widget

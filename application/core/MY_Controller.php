@@ -686,8 +686,10 @@ class CMS_Controller extends MX_Controller
         /**
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
          */
+        $navigation_name_provided = TRUE;
         if (!isset($navigation_name)) {
             $navigation_name = $this->cms_navigation_name();
+            $navigation_name_provided = FALSE;
         }
 
         /**
@@ -701,10 +703,11 @@ class CMS_Controller extends MX_Controller
          * CHECK IF THE PAGE IS STATIC  **********************************************************************************
          */
         $data = (array) $data;
-        if (isset($navigation_name) && !isset($data['_content'])) {
-            $SQL   = "SELECT static_content FROM ".cms_table_name('main_navigation').
-                " WHERE is_static=1 AND (navigation_name='".addslashes($navigation_name)."')";
-            $query = $this->db->query($SQL);
+        if ($navigation_name_provided && !isset($data['_content'])) {
+            $query = $this->db->select('static_content')
+                ->from(cms_table_name('main_navigation'))
+                ->where(array('is_static'=>1, 'navigation_name'=>$navigation_name))
+                ->get();
             if ($query->num_rows() > 0) {
                 $row            = $query->row();
                 $static_content = $row->static_content;
@@ -732,8 +735,10 @@ class CMS_Controller extends MX_Controller
         $page_title    = NULL;
         $page_keyword  = NULL;
         if (isset($navigation_name)) {
-            $SQL   = "SELECT title, page_title, page_keyword, default_theme, only_content FROM ".cms_table_name('main_navigation')." WHERE navigation_name = '" . addslashes($navigation_name) . "'";
-            $query = $this->db->query($SQL);
+            $query = $this->db->select('title, page_title, page_keyword, default_theme, only_content')
+                ->from(cms_table_name('main_navigation'))
+                ->where(array('navigation_name'=>$navigation_name))
+                ->get();
             // get default_theme, and default_title of this page
             if ($query->num_rows() > 0) {
                 $row           = $query->row();
