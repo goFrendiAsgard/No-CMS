@@ -734,7 +734,7 @@ class CMS_Controller extends MX_Controller
         $default_theme = NULL;
         $page_title    = NULL;
         $page_keyword  = NULL;
-        if (isset($navigation_name)) {
+        if ($navigation_name_provided) {
             $query = $this->db->select('title, page_title, page_keyword, default_theme, only_content')
                 ->from(cms_table_name('main_navigation'))
                 ->where(array('navigation_name'=>$navigation_name))

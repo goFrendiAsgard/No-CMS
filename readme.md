@@ -867,3 +867,5 @@ v0.6.5
 + (done, tested) remove WYSIWYG, use layout management instead.
 + (done, tested) use APPPATH to fetch language & modules in case of the user move index.php. Thanks to Petr Valenta
 + (done, tested) fix infinite redirection potential in cms_redirect if combined with dynamic widget
++ (proposed) rename `widget.php` at blog & static_accessories to avoid conflict
++ (done, tested) use AJAX when load widget via `Modules::run` failed

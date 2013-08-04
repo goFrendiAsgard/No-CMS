@@ -50,7 +50,7 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
-            var modules =  ['nordrassil', 'blog'];
+            var modules =  ['nordrassil', 'blog', 'static_accessories'];
             var done = 0;
             for(var i=0; i<modules.length; i++){
                 var module = modules[i];

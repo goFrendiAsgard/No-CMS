@@ -55,12 +55,11 @@ class Modules
 	**/
 	public static function run($module) {
 		
-		$method = 'index';		
+		$method = 'index';
 		if(($pos = strrpos($module, '/')) != FALSE) {
 			$method = substr($module, $pos + 1);		
 			$module = substr($module, 0, $pos);
-		}		
-
+		}
 		if($class = self::load($module)) {
 			
 			if (method_exists($class, $method))	{
@@ -69,6 +68,8 @@ class Modules
 				$output = call_user_func_array(array($class, $method), array_slice($args, 1));
 				$buffer = ob_get_clean();
 				return ($output !== NULL) ? $output : $buffer;
+			}else{
+			    log_message('error', print_r($module,TRUE));
 			}
 		}
 		
