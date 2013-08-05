@@ -114,9 +114,9 @@ class Install extends CMS_Module_Installer {
         $this->add_quicklink($this->cms_complete_navigation_name('index'));
 
         $this->add_widget($this->cms_complete_navigation_name('newest_article'), 'Newest Articles',
-            $this->PRIV_EVERYONE, $module_path.'/widget/newest','sidebar');
+            $this->PRIV_EVERYONE, $module_path.'/blog_widget/newest','sidebar');
         $this->add_widget($this->cms_complete_navigation_name('article_category'), 'Categories',
-            $this->PRIV_EVERYONE, $module_path.'/widget/category','sidebar');
+            $this->PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
 
 
         // import install.sql

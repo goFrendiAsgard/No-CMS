@@ -120,11 +120,11 @@ class Install extends CMS_Module_Installer {
         );
         
         $this->add_widget($this->cms_complete_navigation_name('slideshow'), 'Slide Show',
-            $this->PRIV_EVERYONE, $module_path.'/widget/slide');
+            $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/slide');
         $this->add_widget($this->cms_complete_navigation_name('tab'), 'Tabbed Content',
-            $this->PRIV_EVERYONE, $module_path.'/widget/tab');
+            $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/tab');
         $this->add_widget($this->cms_complete_navigation_name('visitor_count'), 'Visitor Count',
-            $this->PRIV_EVERYONE, $module_path.'/widget/visitor_counter');
+            $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/visitor_counter');
 
         
         // create tables

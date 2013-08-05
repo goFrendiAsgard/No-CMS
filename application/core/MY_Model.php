@@ -368,7 +368,7 @@ class CMS_Model extends CI_Model
                 if($slug){
                     $content .= '<div id="__cms_widget_' . $row->widget_id . '">';
                 }else{
-                    $content .= '<span id="__cms_widget_' . $row->widget_id . '">';
+                    $content .= '<span id="__cms_widget_' . $row->widget_id . '" style="padding:0px; margin:0px;">';
                 }
                 if (strpos(strtoupper($url), 'HTTP://') !== FALSE || strpos(strtoupper($url), 'HTTPS://') !== FALSE) {
                     $response = NULL;

@@ -3,7 +3,7 @@
  *
  * @author gofrendi
  */
-class Widget extends CMS_Controller {
+class Blog_Widget extends CMS_Controller {
 
 	public function __construct(){
 		parent::__construct();

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Widget extends CMS_Controller {
+class Static_Accessories_Widget extends CMS_Controller {
     public function slide(){
         $this->load->model('slide_model');
         $data['slide_list'] = $this->slide_model->get();
