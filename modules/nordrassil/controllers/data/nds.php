@@ -9,7 +9,7 @@ class nds extends CMS_Controller {
 
     public function template(){
     	$this->cms_guard_page($this->cms_complete_navigation_name('template'));
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Generator Template');
@@ -78,7 +78,7 @@ class nds extends CMS_Controller {
 
     public function template_option($template_id=NULL){
     	$this->cms_guard_page($this->cms_complete_navigation_name('template'));
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
         // table name
@@ -135,7 +135,7 @@ class nds extends CMS_Controller {
 
     public function project(){
     	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Project');
@@ -224,7 +224,7 @@ class nds extends CMS_Controller {
 
     public function table($project_id = NULL){
     	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Table');
@@ -323,7 +323,7 @@ class nds extends CMS_Controller {
     public function column($table_id=NULL){
     	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
     	$this->load->model($this->cms_module_path().'/data/nds_model');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Column');

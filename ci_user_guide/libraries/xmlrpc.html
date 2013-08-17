@@ -1,0 +1,576 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>XML-RPC and XML-RPC Server Classes &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Zip Encoding Class" href="zip.html" />
+	    <link rel="prev" title="User Agent Class" href="user_agent.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3875a4>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>XML-RPC and XML-RPC Server Classes</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="xml-rpc-and-xml-rpc-server-classes">
+<h1>XML-RPC and XML-RPC Server Classes<a class="headerlink" href="#xml-rpc-and-xml-rpc-server-classes" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter&#8217;s XML-RPC classes permit you to send requests to another
+server, or set up your own XML-RPC server to receive requests.</p>
+<div class="section" id="what-is-xml-rpc">
+<h2>What is XML-RPC?<a class="headerlink" href="#what-is-xml-rpc" title="Permalink to this headline">¶</a></h2>
+<p>Quite simply it is a way for two computers to communicate over the
+internet using XML. One computer, which we will call the client, sends
+an XML-RPC <strong>request</strong> to another computer, which we will call the
+server. Once the server receives and processes the request it will send
+back a <strong>response</strong> to the client.</p>
+<p>For example, using the MetaWeblog API, an XML-RPC Client (usually a
+desktop publishing tool) will send a request to an XML-RPC Server
+running on your site. This request might be a new weblog entry being
+sent for publication, or it could be a request for an existing entry for
+editing. When the XML-RPC Server receives this request it will examine
+it to determine which class/method should be called to process the
+request. Once processed, the server will then send back a response
+message.</p>
+<p>For detailed specifications, you can visit the
+<a class="reference external" href="http://www.xmlrpc.com/">XML-RPC</a> site.</p>
+<div class="section" id="initializing-the-class">
+<h3>Initializing the Class<a class="headerlink" href="#initializing-the-class" title="Permalink to this headline">¶</a></h3>
+<p>Like most other classes in CodeIgniter, the XML-RPC and XML-RPCS classes
+are initialized in your controller using the $this-&gt;load-&gt;library
+function:</p>
+<p>To load the XML-RPC class you will use:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpc&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once loaded, the xml-rpc library object will be available using:
+$this-&gt;xmlrpc</p>
+<p>To load the XML-RPC Server class you will use:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpc&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpcs&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once loaded, the xml-rpcs library object will be available using:
+$this-&gt;xmlrpcs</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When using the XML-RPC Server class you must load BOTH the
+XML-RPC class and the XML-RPC Server class.</p>
+</div>
+</div>
+<div class="section" id="sending-xml-rpc-requests">
+<h3>Sending XML-RPC Requests<a class="headerlink" href="#sending-xml-rpc-requests" title="Permalink to this headline">¶</a></h3>
+<p>To send a request to an XML-RPC server you must specify the following
+information:</p>
+<ul class="simple">
+<li>The URL of the server</li>
+<li>The method on the server you wish to call</li>
+<li>The <em>request</em> data (explained below).</li>
+</ul>
+<p>Here is a basic example that sends a simple Weblogs.com ping to the
+<a class="reference external" href="http://pingomatic.com/">Ping-o-Matic</a></p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpc&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">server</span><span class="p">(</span><span class="s1">&#39;http://rpc.pingomatic.com/&#39;</span><span class="p">,</span> <span class="mi">80</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">(</span><span class="s1">&#39;weblogUpdates.ping&#39;</span><span class="p">);</span>
+
+<span class="nv">$request</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;My Photoblog&#39;</span><span class="p">,</span> <span class="s1">&#39;http://www.my-site.com/photoblog/&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">request</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">send_request</span><span class="p">())</span>
+<span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">display_error</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="explanation">
+<h4>Explanation<a class="headerlink" href="#explanation" title="Permalink to this headline">¶</a></h4>
+<p>The above code initializes the XML-RPC class, sets the server URL and
+method to be called (weblogUpdates.ping). The request (in this case, the
+title and URL of your site) is placed into an array for transportation,
+and compiled using the request() function. Lastly, the full request is
+sent. If the send_request() method returns false we will display the
+error message sent back from the XML-RPC Server.</p>
+</div>
+</div>
+<div class="section" id="anatomy-of-a-request">
+<h3>Anatomy of a Request<a class="headerlink" href="#anatomy-of-a-request" title="Permalink to this headline">¶</a></h3>
+<p>An XML-RPC request is simply the data you are sending to the XML-RPC
+server. Each piece of data in a request is referred to as a request
+parameter. The above example has two parameters: The URL and title of
+your site. When the XML-RPC server receives your request, it will look
+for parameters it requires.</p>
+<p>Request parameters must be placed into an array for transportation, and
+each parameter can be one of seven data types (strings, numbers, dates,
+etc.). If your parameters are something other than strings you will have
+to include the data type in the request array.</p>
+<p>Here is an example of a simple array with three parameters:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$request</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="s1">&#39;Doe&#39;</span><span class="p">,</span> <span class="s1">&#39;www.some-site.com&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">request</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you use data types other than strings, or if you have several
+different data types, you will place each parameter into its own array,
+with the data type in the second position:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$request</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+                   <span class="k">array</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                   <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Doe&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                   <span class="k">array</span><span class="p">(</span><span class="k">FALSE</span><span class="p">,</span> <span class="s1">&#39;boolean&#39;</span><span class="p">),</span>
+                   <span class="k">array</span><span class="p">(</span><span class="mi">12345</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">)</span>
+                 <span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">request</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The <a class="reference external" href="#datatypes">Data Types</a> section below has a full list of data
+types.
+Creating an XML-RPC Server
+==========================</p>
+<p>An XML-RPC Server acts as a traffic cop of sorts, waiting for incoming
+requests and redirecting them to the appropriate functions for
+processing.</p>
+<p>To create your own XML-RPC server involves initializing the XML-RPC
+Server class in your controller where you expect the incoming request to
+appear, then setting up an array with mapping instructions so that
+incoming requests can be sent to the appropriate class and method for
+processing.</p>
+<p>Here is an example to illustrate:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpc&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpcs&#39;</span><span class="p">);</span>
+
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;functions&#39;</span><span class="p">][</span><span class="s1">&#39;new_post&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;My_blog.new_entry&#39;</span><span class="p">),</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;functions&#39;</span><span class="p">][</span><span class="s1">&#39;update_post&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;My_blog.update_entry&#39;</span><span class="p">);</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="p">;</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpcs</span><span class="o">-&gt;</span><span class="na">initialize</span><span class="p">(</span><span class="nv">$config</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpcs</span><span class="o">-&gt;</span><span class="na">serve</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>The above example contains an array specifying two method requests that
+the Server allows. The allowed methods are on the left side of the
+array. When either of those are received, they will be mapped to the
+class and method on the right.</p>
+<p>The &#8216;object&#8217; key is a special key that you pass an instantiated class
+object with, which is necessary when the method you are mapping to is
+not part of the CodeIgniter super object.</p>
+<p>In other words, if an XML-RPC Client sends a request for the new_post
+method, your server will load the My_blog class and call the new_entry
+function. If the request is for the update_post method, your server
+will load the My_blog class and call the update_entry function.</p>
+<p>The function names in the above example are arbitrary. You&#8217;ll decide
+what they should be called on your server, or if you are using
+standardized APIs, like the Blogger or MetaWeblog API, you&#8217;ll use their
+function names.</p>
+<p>There are two additional configuration keys you may make use of when
+initializing the server class: debug can be set to TRUE in order to
+enable debugging, and xss_clean may be set to FALSE to prevent sending
+data through the Security library&#8217;s xss_clean function.</p>
+</div>
+<div class="section" id="processing-server-requests">
+<h3>Processing Server Requests<a class="headerlink" href="#processing-server-requests" title="Permalink to this headline">¶</a></h3>
+<p>When the XML-RPC Server receives a request and loads the class/method
+for processing, it will pass an object to that method containing the
+data sent by the client.</p>
+<p>Using the above example, if the new_post method is requested, the
+server will expect a class to exist with this prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">My_blog</span> <span class="k">extends</span> <span class="nx">CI_Controller</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">new_post</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+        <span class="p">{</span>
+
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The $request variable is an object compiled by the Server, which
+contains the data sent by the XML-RPC Client. Using this object you will
+have access to the <em>request parameters</em> enabling you to process the
+request. When you are done you will send a Response back to the Client.</p>
+<p>Below is a real-world example, using the Blogger API. One of the methods
+in the Blogger API is getUserInfo(). Using this method, an XML-RPC
+Client can send the Server a username and password, in return the Server
+sends back information about that particular user (nickname, user ID,
+email address, etc.). Here is how the processing function might look:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">My_blog</span> <span class="k">extends</span> <span class="nx">CI_Controller</span> <span class="p">{</span>
+
+    <span class="k">function</span> <span class="nf">getUserInfo</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$username</span> <span class="o">=</span> <span class="s1">&#39;smitty&#39;</span><span class="p">;</span>
+        <span class="nv">$password</span> <span class="o">=</span> <span class="s1">&#39;secretsmittypass&#39;</span><span class="p">;</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpc&#39;</span><span class="p">);</span>
+
+        <span class="nv">$parameters</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">output_parameters</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$parameters</span><span class="p">[</span><span class="s1">&#39;1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="nv">$username</span> <span class="k">AND</span> <span class="nv">$parameters</span><span class="p">[</span><span class="s1">&#39;2&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="nv">$password</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">send_error_message</span><span class="p">(</span><span class="s1">&#39;100&#39;</span><span class="p">,</span> <span class="s1">&#39;Invalid Access&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nv">$response</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;nickname&#39;</span>  <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Smitty&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                                <span class="s1">&#39;userid&#39;</span>    <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;99&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                                <span class="s1">&#39;url&#39;</span>       <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;http://yoursite.com&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                                <span class="s1">&#39;email&#39;</span>     <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;jsmith@yoursite.com&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                                <span class="s1">&#39;lastname&#39;</span>  <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Smith&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                                <span class="s1">&#39;firstname&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span><span class="s1">&#39;string&#39;</span><span class="p">)</span>
+                                <span class="p">),</span>
+                         <span class="s1">&#39;struct&#39;</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">send_response</span><span class="p">(</span><span class="nv">$response</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="notes">
+<h4>Notes:<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h4>
+<p>The output_parameters() function retrieves an indexed array
+corresponding to the request parameters sent by the client. In the above
+example, the output parameters will be the username and password.</p>
+<p>If the username and password sent by the client were not valid, and
+error message is returned using send_error_message().</p>
+<p>If the operation was successful, the client will be sent back a response
+array containing the user&#8217;s info.</p>
+</div>
+</div>
+<div class="section" id="formatting-a-response">
+<h3>Formatting a Response<a class="headerlink" href="#formatting-a-response" title="Permalink to this headline">¶</a></h3>
+<p>Similar to <em>Requests</em>, <em>Responses</em> must be formatted as an array.
+However, unlike requests, a response is an array <strong>that contains a
+single item</strong>. This item can be an array with several additional arrays,
+but there can be only one primary array index. In other words, the basic
+prototype is this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$response</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Response data&#39;</span><span class="p">,</span>  <span class="s1">&#39;array&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Responses, however, usually contain multiple pieces of information. In
+order to accomplish this we must put the response into its own array so
+that the primary array continues to contain a single piece of data.
+Here&#8217;s an example showing how this might be accomplished:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$response</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+                   <span class="k">array</span><span class="p">(</span>
+                         <span class="s1">&#39;first_name&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                         <span class="s1">&#39;last_name&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Doe&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">),</span>
+                         <span class="s1">&#39;member_id&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="mi">123435</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">),</span>
+                         <span class="s1">&#39;todo_list&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;clean house&#39;</span><span class="p">,</span> <span class="s1">&#39;call mom&#39;</span><span class="p">,</span> <span class="s1">&#39;water plants&#39;</span><span class="p">),</span> <span class="s1">&#39;array&#39;</span><span class="p">),</span>
+                        <span class="p">),</span>
+                 <span class="s1">&#39;struct&#39;</span>
+                 <span class="p">);</span>
+</pre></div>
+</div>
+<p>Notice that the above array is formatted as a struct. This is the most
+common data type for responses.</p>
+<p>As with Requests, a response can be one of the seven data types listed
+in the <a class="reference external" href="#datatypes">Data Types</a> section.</p>
+</div>
+<div class="section" id="sending-an-error-response">
+<h3>Sending an Error Response<a class="headerlink" href="#sending-an-error-response" title="Permalink to this headline">¶</a></h3>
+<p>If you need to send the client an error response you will use the
+following:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">send_error_message</span><span class="p">(</span><span class="s1">&#39;123&#39;</span><span class="p">,</span> <span class="s1">&#39;Requested data not available&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The first parameter is the error number while the second parameter is
+the error message.</p>
+</div>
+<div class="section" id="creating-your-own-client-and-server">
+<h3>Creating Your Own Client and Server<a class="headerlink" href="#creating-your-own-client-and-server" title="Permalink to this headline">¶</a></h3>
+<p>To help you understand everything we&#8217;ve covered thus far, let&#8217;s create a
+couple controllers that act as XML-RPC Client and Server. You&#8217;ll use the
+Client to send a request to the Server and receive a response.</p>
+<div class="section" id="the-client">
+<h4>The Client<a class="headerlink" href="#the-client" title="Permalink to this headline">¶</a></h4>
+<p>Using a text editor, create a controller called xmlrpc_client.php. In
+it, place this code and save it to your application/controllers/
+folder:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="k">class</span> <span class="nc">Xmlrpc_client</span> <span class="k">extends</span> <span class="nx">CI_Controller</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">);</span>
+                <span class="nv">$server_url</span> <span class="o">=</span> <span class="nx">site_url</span><span class="p">(</span><span class="s1">&#39;xmlrpc_server&#39;</span><span class="p">);</span>
+
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpc&#39;</span><span class="p">);</span>
+
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">server</span><span class="p">(</span><span class="nv">$server_url</span><span class="p">,</span> <span class="mi">80</span><span class="p">);</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">(</span><span class="s1">&#39;Greetings&#39;</span><span class="p">);</span>
+
+                <span class="nv">$request</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;How is it going?&#39;</span><span class="p">);</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">request</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">send_request</span><span class="p">())</span>
+                <span class="p">{</span>
+                        <span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">display_error</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">else</span>
+                <span class="p">{</span>
+                        <span class="k">echo</span> <span class="s1">&#39;&lt;pre&gt;&#39;</span><span class="p">;</span>
+                        <span class="nb">print_r</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">display_response</span><span class="p">());</span>
+                        <span class="k">echo</span> <span class="s1">&#39;&lt;/pre&gt;&#39;</span><span class="p">;</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In the above code we are using a &#8220;url helper&#8221;. You can find more
+information in the <a class="reference internal" href="../general/helpers.html"><em>Helpers Functions</em></a> page.</p>
+</div>
+</div>
+<div class="section" id="the-server">
+<h4>The Server<a class="headerlink" href="#the-server" title="Permalink to this headline">¶</a></h4>
+<p>Using a text editor, create a controller called xmlrpc_server.php. In
+it, place this code and save it to your application/controllers/
+folder:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="k">class</span> <span class="nc">Xmlrpc_server</span> <span class="k">extends</span> <span class="nx">CI_Controller</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpc&#39;</span><span class="p">);</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;xmlrpcs&#39;</span><span class="p">);</span>
+
+                <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;functions&#39;</span><span class="p">][</span><span class="s1">&#39;Greetings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;function&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Xmlrpc_server.process&#39;</span><span class="p">);</span>
+
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpcs</span><span class="o">-&gt;</span><span class="na">initialize</span><span class="p">(</span><span class="nv">$config</span><span class="p">);</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpcs</span><span class="o">-&gt;</span><span class="na">serve</span><span class="p">();</span>
+        <span class="p">}</span>
+
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">process</span><span class="p">(</span><span class="nv">$request</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="nv">$parameters</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">output_parameters</span><span class="p">();</span>
+
+                <span class="nv">$response</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                                        <span class="k">array</span><span class="p">(</span>
+                                                <span class="s1">&#39;you_said&#39;</span>  <span class="o">=&gt;</span> <span class="nv">$parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                <span class="s1">&#39;i_respond&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Not bad at all.&#39;</span>
+                                        <span class="p">),</span>
+                                        <span class="s1">&#39;struct&#39;</span>
+                                <span class="p">);</span>
+
+                <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">send_response</span><span class="p">(</span><span class="nv">$response</span><span class="p">);</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="try-it">
+<h4>Try it!<a class="headerlink" href="#try-it" title="Permalink to this headline">¶</a></h4>
+<p>Now visit the your site using a URL similar to this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">xmlrpc_client</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>You should now see the message you sent to the server, and its response
+back to you.</p>
+<p>The client you created sends a message (&#8220;How&#8217;s is going?&#8221;) to the
+server, along with a request for the &#8220;Greetings&#8221; method. The Server
+receives the request and maps it to the &#8220;process&#8221; function, where a
+response is sent back.</p>
+</div>
+</div>
+<div class="section" id="using-associative-arrays-in-a-request-parameter">
+<h3>Using Associative Arrays In a Request Parameter<a class="headerlink" href="#using-associative-arrays-in-a-request-parameter" title="Permalink to this headline">¶</a></h3>
+<p>If you wish to use an associative array in your method parameters you
+will need to use a struct datatype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$request</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                 <span class="k">array</span><span class="p">(</span>
+                       <span class="c1">// Param 0</span>
+                       <span class="k">array</span><span class="p">(</span>
+                             <span class="s1">&#39;name&#39;</span><span class="o">=&gt;</span><span class="s1">&#39;John&#39;</span>
+                                <span class="p">),</span>
+                             <span class="s1">&#39;struct&#39;</span>
+                       <span class="p">),</span>
+                       <span class="k">array</span><span class="p">(</span>
+                             <span class="c1">// Param 1</span>
+                             <span class="k">array</span><span class="p">(</span>
+                                        <span class="s1">&#39;size&#39;</span><span class="o">=&gt;</span><span class="s1">&#39;large&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;shape&#39;</span><span class="o">=&gt;</span><span class="s1">&#39;round&#39;</span>
+                                        <span class="p">),</span>
+                             <span class="s1">&#39;struct&#39;</span>
+                       <span class="p">)</span>
+                 <span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">request</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can retrieve the associative array when processing the request in
+the Server.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$parameters</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">output_parameters</span><span class="p">();</span>
+<span class="nv">$name</span> <span class="o">=</span> <span class="nv">$parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+<span class="nv">$size</span> <span class="o">=</span> <span class="nv">$parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">];</span>
+<span class="nv">$shape</span> <span class="o">=</span> <span class="nv">$parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;shape&#39;</span><span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="xml-rpc-function-reference">
+<h2>XML-RPC Function Reference<a class="headerlink" href="#xml-rpc-function-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="this-xmlrpc-server">
+<h3>$this-&gt;xmlrpc-&gt;server()<a class="headerlink" href="#this-xmlrpc-server" title="Permalink to this headline">¶</a></h3>
+<p>Sets the URL and port number of the server to which a request is to be
+sent:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">server</span><span class="p">(</span><span class="s1">&#39;http://www.sometimes.com/pings.php&#39;</span><span class="p">,</span> <span class="mi">80</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-xmlrpc-timeout">
+<h3>$this-&gt;xmlrpc-&gt;timeout()<a class="headerlink" href="#this-xmlrpc-timeout" title="Permalink to this headline">¶</a></h3>
+<p>Set a time out period (in seconds) after which the request will be
+canceled:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">timeout</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-xmlrpc-method">
+<h3>$this-&gt;xmlrpc-&gt;method()<a class="headerlink" href="#this-xmlrpc-method" title="Permalink to this headline">¶</a></h3>
+<p>Sets the method that will be requested from the XML-RPC server:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where method is the name of the method.</p>
+</div>
+<div class="section" id="this-xmlrpc-request">
+<h3>$this-&gt;xmlrpc-&gt;request()<a class="headerlink" href="#this-xmlrpc-request" title="Permalink to this headline">¶</a></h3>
+<p>Takes an array of data and builds request to be sent to XML-RPC server:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$request</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;My Photoblog&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">),</span> <span class="s1">&#39;http://www.yoursite.com/photoblog/&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">request</span><span class="p">(</span><span class="nv">$request</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-xmlrpc-send-request">
+<h3>$this-&gt;xmlrpc-&gt;send_request()<a class="headerlink" href="#this-xmlrpc-send-request" title="Permalink to this headline">¶</a></h3>
+<p>The request sending function. Returns boolean TRUE or FALSE based on
+success for failure, enabling it to be used conditionally.</p>
+</div>
+<div class="section" id="this-xmlrpc-set-debug-true">
+<h3>$this-&gt;xmlrpc-&gt;set_debug(TRUE);<a class="headerlink" href="#this-xmlrpc-set-debug-true" title="Permalink to this headline">¶</a></h3>
+<p>Enables debugging, which will display a variety of information and error
+data helpful during development.</p>
+</div>
+<div class="section" id="this-xmlrpc-display-error">
+<h3>$this-&gt;xmlrpc-&gt;display_error()<a class="headerlink" href="#this-xmlrpc-display-error" title="Permalink to this headline">¶</a></h3>
+<p>Returns an error message as a string if your request failed for some
+reason.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">display_error</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-xmlrpc-display-response">
+<h3>$this-&gt;xmlrpc-&gt;display_response()<a class="headerlink" href="#this-xmlrpc-display-response" title="Permalink to this headline">¶</a></h3>
+<p>Returns the response from the remote server once request is received.
+The response will typically be an associative array.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">display_response</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-xmlrpc-send-error-message">
+<h3>$this-&gt;xmlrpc-&gt;send_error_message()<a class="headerlink" href="#this-xmlrpc-send-error-message" title="Permalink to this headline">¶</a></h3>
+<p>This function lets you send an error message from your server to the
+client. First parameter is the error number while the second parameter
+is the error message.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">send_error_message</span><span class="p">(</span><span class="s1">&#39;123&#39;</span><span class="p">,</span> <span class="s1">&#39;Requested data not available&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-xmlrpc-send-response">
+<h3>$this-&gt;xmlrpc-&gt;send_response()<a class="headerlink" href="#this-xmlrpc-send-response" title="Permalink to this headline">¶</a></h3>
+<p>Lets you send the response from your server to the client. An array of
+valid data values must be sent with this method.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$response</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                 <span class="k">array</span><span class="p">(</span>
+                        <span class="s1">&#39;flerror&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="k">FALSE</span><span class="p">,</span> <span class="s1">&#39;boolean&#39;</span><span class="p">),</span>
+                        <span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s2">&quot;Thanks for the ping!&quot;</span>
+                     <span class="p">)</span>
+                 <span class="s1">&#39;struct&#39;</span><span class="p">);</span>
+<span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">xmlrpc</span><span class="o">-&gt;</span><span class="na">send_response</span><span class="p">(</span><span class="nv">$response</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>Data Types<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>According to the <a class="reference external" href="http://www.xmlrpc.com/spec">XML-RPC spec</a> there are
+seven types of values that you can send via XML-RPC:</p>
+<ul class="simple">
+<li><em>int</em> or <em>i4</em></li>
+<li><em>boolean</em></li>
+<li><em>string</em></li>
+<li><em>double</em></li>
+<li><em>dateTime.iso8601</em></li>
+<li><em>base64</em></li>
+<li><em>struct</em> (contains array of values)</li>
+<li><em>array</em> (contains array of values)</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

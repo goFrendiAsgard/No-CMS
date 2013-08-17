@@ -13,7 +13,7 @@
 |
 */
 
-$config['parser_enabled'] = FALSE;
+$config['parser_enabled'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,18 +45,18 @@ $config['title_separator'] = ' | ';
 
 /*
 |--------------------------------------------------------------------------
-| Theme
+| Layout
 |--------------------------------------------------------------------------
 |
 | Which layout file should be used? When combined with theme it will be a layout file in that theme
 |
-| Change to 'main' to get /application/views/main.php
+| Change to 'main' to get /application/views/layouts/main.php
 |
-|   Default: FALSE
+|   Default: 'default'
 |
 */
 
-$config['layout'] = FALSE;
+$config['layout'] = 'default';
 
 /*
 |--------------------------------------------------------------------------
@@ -75,7 +75,7 @@ $config['theme'] = '';
 
 /*
 |--------------------------------------------------------------------------
-| Theme
+| Theme Locations
 |--------------------------------------------------------------------------
 |
 | Where should we expect to see themes?
@@ -84,7 +84,7 @@ $config['theme'] = '';
 |
 */
 
-$config['theme_locations'] = array(	
-	APPPATH.'../themes/',
-	APPPATH.'themes/',
+$config['theme_locations'] = array(
+    APPPATH.'../themes/',
+    APPPATH.'themes/',
 );

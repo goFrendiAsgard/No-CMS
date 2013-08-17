@@ -1,0 +1,661 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>HTML Helper &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Helpers" href="index.html" />
+	    <link rel="next" title="Inflector Helper" href="inflector_helper.html" />
+	    <link rel="prev" title="Form Helper" href="form_helper.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3871b4>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Helpers</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>HTML Helper</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="html-helper">
+<h1><a class="toc-backref" href="#id1">HTML Helper</a><a class="headerlink" href="#html-helper" title="Permalink to this headline">¶</a></h1>
+<p>The HTML Helper file contains functions that assist in working with
+HTML.</p>
+<div class="contents topic" id="page-contents">
+<p class="topic-title first">Page Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#html-helper" id="id1">HTML Helper</a><ul>
+<li><a class="reference internal" href="#loading-this-helper" id="id2">Loading this Helper</a></li>
+<li><a class="reference internal" href="#br" id="id3">br()</a></li>
+<li><a class="reference internal" href="#heading" id="id4">heading()</a></li>
+<li><a class="reference internal" href="#img" id="id5">img()</a></li>
+<li><a class="reference internal" href="#link-tag" id="id6">link_tag()</a></li>
+<li><a class="reference internal" href="#nbs" id="id7">nbs()</a></li>
+<li><a class="reference internal" href="#ul-and-ol" id="id8">ul() and ol()</a></li>
+<li><a class="reference internal" href="#meta" id="id9">meta()</a></li>
+<li><a class="reference internal" href="#doctype" id="id10">doctype()</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="loading-this-helper">
+<h2><a class="toc-backref" href="#id2">Loading this Helper</a><a class="headerlink" href="#loading-this-helper" title="Permalink to this headline">¶</a></h2>
+<p>This helper is loaded using the following code:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;html&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The following functions are available:</p>
+</div>
+<div class="section" id="br">
+<h2><a class="toc-backref" href="#id3">br()</a><a class="headerlink" href="#br" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<tt class="descname">br</tt><big>(</big><em>$count = 1</em><big>)</big></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$count</strong> (<em>int</em>) &#8211; Number of times to repeat the tag</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Generates line break tags (&lt;br /&gt;) based on the number you submit.
+Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">br</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above would produce: &lt;br /&gt;&lt;br /&gt;&lt;br /&gt;</p>
+</div>
+<div class="section" id="heading">
+<h2><a class="toc-backref" href="#id4">heading()</a><a class="headerlink" href="#heading" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<tt class="descname">heading</tt><big>(</big><em>$data = ''</em>, <em>$h = '1'</em>, <em>$attributes = ''</em><big>)</big></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>string</em>) &#8211; Content</li>
+<li><strong>$h</strong> (<em>string</em>) &#8211; Heading level</li>
+<li><strong>$attributes</strong> (<em>array</em>) &#8211; HTML attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you create HTML heading tags. The first parameter will contain the
+data, the second the size of the heading. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">heading</span><span class="p">(</span><span class="s1">&#39;Welcome!&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above would produce: &lt;h3&gt;Welcome!&lt;/h3&gt;</p>
+<p>Additionally, in order to add attributes to the heading tag such as HTML
+classes, ids or inline styles, a third parameter is available:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">heading</span><span class="p">(</span><span class="s1">&#39;Welcome!&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;class=&quot;pink&quot;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above code produces: &lt;h3 class=&#8221;pink&#8221;&gt;Welcome!&lt;&lt;h3&gt;</p>
+</div>
+<div class="section" id="img">
+<h2><a class="toc-backref" href="#id5">img()</a><a class="headerlink" href="#img" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<tt class="descname">img</tt><big>(</big><em>$src = ''</em>, <em>$index_page = FALSE</em>, <em>$attributes = ''</em><big>)</big></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$src</strong> (<em>string</em>) &#8211; Image source data</li>
+<li><strong>$index_page</strong> (<em>bool</em>) &#8211; Whether to treat $src as a routed URI string</li>
+<li><strong>$attributes</strong> (<em>array</em>) &#8211; HTML attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you create HTML &lt;img /&gt; tags. The first parameter contains the
+image source. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">img</span><span class="p">(</span><span class="s1">&#39;images/picture.jpg&#39;</span><span class="p">);</span> <span class="c1">// gives &lt;img src=&quot;http://site.com/images/picture.jpg&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>There is an optional second parameter that is a TRUE/FALSE value that
+specifics if the <em>src</em> should have the page specified by
+<tt class="docutils literal"><span class="pre">$config['index_page']</span></tt> added to the address it creates.
+Presumably, this would be if you were using a media controller:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">img</span><span class="p">(</span><span class="s1">&#39;images/picture.jpg&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span> <span class="c1">// gives &lt;img src=&quot;http://site.com/index.php/images/picture.jpg&quot; alt=&quot;&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>Additionally, an associative array can be passed to the <tt class="docutils literal"><span class="pre">img()</span></tt> function
+for complete control over all attributes and values. If an <em>alt</em> attribute
+is not provided, CodeIgniter will generate an empty string.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$image_properties</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;src&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;images/picture.jpg&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;alt&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;Me, demonstrating how to eat 4 slices of pizza at one time&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;post_images&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;width&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;height&#39;</span><span class="o">=&gt;</span> <span class="s1">&#39;200&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;That was quite a night&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rel&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;lightbox&#39;</span>
+<span class="p">);</span>
+
+<span class="nx">img</span><span class="p">(</span><span class="nv">$image_properties</span><span class="p">);</span>
+<span class="c1">// &lt;img src=&quot;http://site.com/index.php/images/picture.jpg&quot; alt=&quot;Me, demonstrating how to eat 4 slices of pizza at one time&quot; class=&quot;post_images&quot; width=&quot;200&quot; height=&quot;200&quot; title=&quot;That was quite a night&quot; rel=&quot;lightbox&quot; /&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="link-tag">
+<h2><a class="toc-backref" href="#id6">link_tag()</a><a class="headerlink" href="#link-tag" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ling_tag">
+<tt class="descname">ling_tag</tt><big>(</big><em>$href = ''</em>, <em>$rel = 'stylesheet'</em>, <em>$type = 'text/css'</em>, <em>$title = ''</em>, <em>$media = ''</em>, <em>$index_page = FALSE</em><big>)</big><a class="headerlink" href="#ling_tag" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$href</strong> (<em>string</em>) &#8211; What are we linking to</li>
+<li><strong>$rel</strong> (<em>string</em>) &#8211; Relation type</li>
+<li><strong>$type</strong> (<em>string</em>) &#8211; Type of the related document</li>
+<li><strong>$title</strong> (<em>string</em>) &#8211; Link title</li>
+<li><strong>$media</strong> (<em>string</em>) &#8211; Media type</li>
+<li><strong>$index_page</strong> (<em>bool</em>) &#8211; Whether to treat $src as a routed URI string</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Lets you create HTML &lt;link /&gt; tags. This is useful for stylesheet links,
+as well as other links. The parameters are <em>href</em>, with optional <em>rel</em>,
+<em>type</em>, <em>title</em>, <em>media</em> and <em>index_page</em>.</p>
+<p><em>index_page</em> is a boolean value that specifies if the <em>href</em> should have
+the page specified by <tt class="docutils literal"><span class="pre">$config['index_page']</span></tt> added to the address it creates.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">link_tag</span><span class="p">(</span><span class="s1">&#39;css/mystyles.css&#39;</span><span class="p">);</span>
+<span class="c1">// gives &lt;link href=&quot;http://site.com/css/mystyles.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>Further examples:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">link_tag</span><span class="p">(</span><span class="s1">&#39;favicon.ico&#39;</span><span class="p">,</span> <span class="s1">&#39;shortcut icon&#39;</span><span class="p">,</span> <span class="s1">&#39;image/ico&#39;</span><span class="p">);</span>
+<span class="c1">// &lt;link href=&quot;http://site.com/favicon.ico&quot; rel=&quot;shortcut icon&quot; type=&quot;image/ico&quot; /&gt;</span>
+
+<span class="k">echo</span> <span class="nx">link_tag</span><span class="p">(</span><span class="s1">&#39;feed&#39;</span><span class="p">,</span> <span class="s1">&#39;alternate&#39;</span><span class="p">,</span> <span class="s1">&#39;application/rss+xml&#39;</span><span class="p">,</span> <span class="s1">&#39;My RSS Feed&#39;</span><span class="p">);</span>
+<span class="c1">// &lt;link href=&quot;http://site.com/feed&quot; rel=&quot;alternate&quot; type=&quot;application/rss+xml&quot; title=&quot;My RSS Feed&quot; /&gt;</span>
+</pre></div>
+</div>
+<p>Additionally, an associative array can be passed to the <tt class="docutils literal"><span class="pre">link()</span></tt> function
+for complete control over all attributes and values:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$link</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;href&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;css/printer.css&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rel&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;stylesheet&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;type&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;text/css&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;media&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;print&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">link_tag</span><span class="p">(</span><span class="nv">$link</span><span class="p">);</span>
+<span class="c1">// &lt;link href=&quot;http://site.com/css/printer.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; media=&quot;print&quot; /&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="nbs">
+<h2><a class="toc-backref" href="#id7">nbs()</a><a class="headerlink" href="#nbs" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<tt class="descname">nbs</tt><big>(</big><em>$num = 1</em><big>)</big></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$num</strong> (<em>int</em>) &#8211; Number of space entities to produce</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Generates non-breaking spaces (&amp;nbsp;) based on the number you submit.
+Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">nbs</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above would produce:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&amp;</span><span class="nx">nbsp</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">nbsp</span><span class="p">;</span><span class="o">&amp;</span><span class="nx">nbsp</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ul-and-ol">
+<h2><a class="toc-backref" href="#id8">ul() and ol()</a><a class="headerlink" href="#ul-and-ol" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="ul">
+<tt class="descname">ul</tt><big>(</big><em>$list</em>, <em>$attributes = ''</em><big>)</big><a class="headerlink" href="#ul" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$list</strong> (<em>array</em>) &#8211; List entries</li>
+<li><strong>$attributes</strong> (<em>array</em>) &#8211; HTML attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Permits you to generate ordered or unordered HTML lists from simple or
+multi-dimensional arrays. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$list</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;green&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;yellow&#39;</span>
+<span class="p">);</span>
+
+<span class="nv">$attributes</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boldlist&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;id&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;mylist&#39;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">ul</span><span class="p">(</span><span class="nv">$list</span><span class="p">,</span> <span class="nv">$attributes</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above code will produce this:</p>
+<div class="highlight-ci"><pre> &lt;ul class="boldlist" id="mylist"&gt;
+        &lt;li&gt;red&lt;/li&gt;
+        &lt;li&gt;blue&lt;/li&gt;
+        &lt;li&gt;green&lt;/li&gt;
+        &lt;li&gt;yellow&lt;/li&gt;
+&lt;/ul&gt;</pre>
+</div>
+<p>Here is a more complex example, using a multi-dimensional array:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$attributes</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;boldlist&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;id&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;mylist&#39;</span>
+<span class="p">);</span>
+
+<span class="nv">$list</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;colors&#39;</span>  <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;red&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;blue&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;green&#39;</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;shapes&#39;</span>  <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;round&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;square&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;circles&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                        <span class="s1">&#39;ellipse&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;oval&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;sphere&#39;</span>
+                <span class="p">)</span>
+        <span class="p">),</span>
+        <span class="s1">&#39;moods&#39;</span>  <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;happy&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;upset&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                        <span class="s1">&#39;defeated&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                                <span class="s1">&#39;dejected&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;disheartened&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;depressed&#39;</span>
+                        <span class="p">),</span>
+                        <span class="s1">&#39;annoyed&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;cross&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;angry&#39;</span>
+                <span class="p">)</span>
+        <span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">ul</span><span class="p">(</span><span class="nv">$list</span><span class="p">,</span> <span class="nv">$attributes</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above code will produce this:</p>
+<div class="highlight-ci"><pre>&lt;ul class="boldlist" id="mylist"&gt;
+        &lt;li&gt;colors
+                &lt;ul&gt;
+                        &lt;li&gt;red&lt;/li&gt;
+                        &lt;li&gt;blue&lt;/li&gt;
+                        &lt;li&gt;green&lt;/li&gt;
+                &lt;/ul&gt;
+        &lt;/li&gt;
+        &lt;li&gt;shapes
+                &lt;ul&gt;
+                        &lt;li&gt;round&lt;/li&gt;
+                        &lt;li&gt;suare&lt;/li&gt;
+                        &lt;li&gt;circles
+                                &lt;ul&gt;
+                                        &lt;li&gt;elipse&lt;/li&gt;
+                                        &lt;li&gt;oval&lt;/li&gt;
+                                        &lt;li&gt;sphere&lt;/li&gt;
+                                &lt;/ul&gt;
+                        &lt;/li&gt;
+                &lt;/ul&gt;
+        &lt;/li&gt;
+        &lt;li&gt;moods
+                &lt;ul&gt;
+                        &lt;li&gt;happy&lt;/li&gt;
+                        &lt;li&gt;upset
+                                &lt;ul&gt;
+                                        &lt;li&gt;defeated
+                                                &lt;ul&gt;
+                                                        &lt;li&gt;dejected&lt;/li&gt;
+                                                        &lt;li&gt;disheartened&lt;/li&gt;
+                                                        &lt;li&gt;depressed&lt;/li&gt;
+                                                &lt;/ul&gt;
+                                        &lt;/li&gt;
+                                        &lt;li&gt;annoyed&lt;/li&gt;
+                                        &lt;li&gt;cross&lt;/li&gt;
+                                        &lt;li&gt;angry&lt;/li&gt;
+                                &lt;/ul&gt;
+                        &lt;/li&gt;
+                &lt;/ul&gt;
+        &lt;/li&gt;
+&lt;/ul&gt;</pre>
+</div>
+<dl class="function">
+<dt id="ol">
+<tt class="descname">ol</tt><big>(</big><em>$list</em>, <em>$attributes = ''</em><big>)</big><a class="headerlink" href="#ol" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$list</strong> (<em>array</em>) &#8211; List entries</li>
+<li><strong>$attributes</strong> (<em>array</em>) &#8211; HTML attributes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Identical to <a class="reference internal" href="#ul" title="ul"><tt class="xref php php-func docutils literal"><span class="pre">ul()</span></tt></a>, only it produces the &lt;ol&gt; tag for
+ordered lists instead of &lt;ul&gt;.</p>
+</div>
+<div class="section" id="meta">
+<h2><a class="toc-backref" href="#id9">meta()</a><a class="headerlink" href="#meta" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<tt class="descname">meta</tt><big>(</big><em>$name = ''</em>, <em>$content = ''</em>, <em>$type = 'name'</em>, <em>$newline = &quot;n&quot;</em><big>)</big></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$name</strong> (<em>string</em>) &#8211; Meta name</li>
+<li><strong>$content</strong> (<em>string</em>) &#8211; Meta content</li>
+<li><strong>$type</strong> (<em>string</em>) &#8211; Meta type</li>
+<li><strong>$newline</strong> (<em>string</em>) &#8211; Newline character</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Helps you generate meta tags. You can pass strings to the function, or
+simple arrays, or multidimensional ones.</p>
+<p>Examples:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">meta</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;My Great site&#39;</span><span class="p">);</span>
+<span class="c1">// Generates:  &lt;meta name=&quot;description&quot; content=&quot;My Great Site&quot; /&gt;</span>
+
+<span class="k">echo</span> <span class="nx">meta</span><span class="p">(</span><span class="s1">&#39;Content-type&#39;</span><span class="p">,</span> <span class="s1">&#39;text/html; charset=utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;equiv&#39;</span><span class="p">);</span>
+<span class="c1">// Note the third parameter.  Can be &quot;equiv&quot; or &quot;name&quot;</span>
+<span class="c1">// Generates:  &lt;meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span>
+
+<span class="k">echo</span> <span class="nx">meta</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;robots&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;no-cache&#39;</span><span class="p">));</span>
+<span class="c1">// Generates:  &lt;meta name=&quot;robots&quot; content=&quot;no-cache&quot; /&gt;</span>
+
+<span class="nv">$meta</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;robots&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;no-cache&#39;</span>
+        <span class="p">),</span>
+        <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;My Great Site&#39;</span>
+        <span class="p">),</span>
+        <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;keywords&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;love, passion, intrigue, deception&#39;</span>
+        <span class="p">),</span>
+        <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;robots&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;no-cache&#39;</span>
+        <span class="p">),</span>
+        <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Content-type&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;content&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html; charset=utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;equiv&#39;</span>
+        <span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nx">meta</span><span class="p">(</span><span class="nv">$meta</span><span class="p">);</span>
+<span class="c1">// Generates:</span>
+<span class="c1">// &lt;meta name=&quot;robots&quot; content=&quot;no-cache&quot; /&gt;</span>
+<span class="c1">// &lt;meta name=&quot;description&quot; content=&quot;My Great Site&quot; /&gt;</span>
+<span class="c1">// &lt;meta name=&quot;keywords&quot; content=&quot;love, passion, intrigue, deception&quot; /&gt;</span>
+<span class="c1">// &lt;meta name=&quot;robots&quot; content=&quot;no-cache&quot; /&gt;</span>
+<span class="c1">// &lt;meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="doctype">
+<h2><a class="toc-backref" href="#id10">doctype()</a><a class="headerlink" href="#doctype" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<tt class="descname">doctype</tt><big>(</big><em>$type = 'xhtml1-strict'</em><big>)</big></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>$type</strong> (<em>string</em>) &#8211; Doctype name</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Helps you generate document type declarations, or DTD&#8217;s. XHTML 1.0
+Strict is used by default, but many doctypes are available.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="nx">doctype</span><span class="p">();</span> <span class="c1">// &lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;</span>
+
+<span class="k">echo</span> <span class="nx">doctype</span><span class="p">(</span><span class="s1">&#39;html4-trans&#39;</span><span class="p">);</span> <span class="c1">// &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot; &quot;http://www.w3.org/TR/html4/strict.dtd&quot;&gt;</span>
+</pre></div>
+</div>
+<p>The following is a list of doctype choices. These are configurable, and
+pulled from application/config/doctypes.php</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="14%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Doctype</th>
+<th class="head">Option</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>XHTML 1.1</td>
+<td>doctype(&#8216;xhtml11&#8217;)</td>
+<td>&lt;!DOCTYPE html PUBLIC &#8220;-//W3C//DTD XHTML 1.1//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-odd"><td>XHTML 1.0 Strict</td>
+<td>doctype(&#8216;xhtml1-strict&#8217;)</td>
+<td>&lt;!DOCTYPE html PUBLIC &#8220;-//W3C//DTD XHTML 1.0 Strict//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-even"><td>XHTML 1.0 Transitional</td>
+<td>doctype(&#8216;xhtml1-trans&#8217;)</td>
+<td>&lt;!DOCTYPE html PUBLIC &#8220;-//W3C//DTD XHTML 1.0 Transitional//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-odd"><td>XHTML 1.0 Frameset</td>
+<td>doctype(&#8216;xhtml1-frame&#8217;)</td>
+<td>&lt;!DOCTYPE html PUBLIC &#8220;-//W3C//DTD XHTML 1.0 Frameset//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-even"><td>XHTML Basic 1.1</td>
+<td>doctype(&#8216;xhtml-basic11&#8217;)</td>
+<td>&lt;!DOCTYPE html PUBLIC &#8220;-//W3C//DTD XHTML Basic 1.1//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-odd"><td>HTML 5</td>
+<td>doctype(&#8216;html5&#8217;)</td>
+<td>&lt;!DOCTYPE html&gt;</td>
+</tr>
+<tr class="row-even"><td>HTML 4 Strict</td>
+<td>doctype(&#8216;html4-strict&#8217;)</td>
+<td>&lt;!DOCTYPE HTML PUBLIC &#8220;-//W3C//DTD HTML 4.01//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/html4/strict.dtd">http://www.w3.org/TR/html4/strict.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-odd"><td>HTML 4 Transitional</td>
+<td>doctype(&#8216;html4-trans&#8217;)</td>
+<td>&lt;!DOCTYPE HTML PUBLIC &#8220;-//W3C//DTD HTML 4.01 Transitional//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/html4/loose.dtd">http://www.w3.org/TR/html4/loose.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-even"><td>HTML 4 Frameset</td>
+<td>doctype(&#8216;html4-frame&#8217;)</td>
+<td>&lt;!DOCTYPE HTML PUBLIC &#8220;-//W3C//DTD HTML 4.01 Frameset//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/html4/frameset.dtd">http://www.w3.org/TR/html4/frameset.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-odd"><td>MathML 1.01</td>
+<td>doctype(&#8216;mathml1&#8217;)</td>
+<td>&lt;!DOCTYPE math SYSTEM &#8220;<a class="reference external" href="http://www.w3.org/Math/DTD/mathml1/mathml.dtd">http://www.w3.org/Math/DTD/mathml1/mathml.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-even"><td>MathML 2.0</td>
+<td>doctype(&#8216;mathml2&#8217;)</td>
+<td>&lt;!DOCTYPE math PUBLIC &#8220;-//W3C//DTD MathML 2.0//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/Math/DTD/mathml2/mathml2.dtd">http://www.w3.org/Math/DTD/mathml2/mathml2.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-odd"><td>SVG 1.0</td>
+<td>doctype(&#8216;svg10&#8217;)</td>
+<td>&lt;!DOCTYPE svg PUBLIC &#8220;-//W3C//DTD SVG 1.0//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-even"><td>SVG 1.1 Full</td>
+<td>doctype(&#8216;svg11&#8217;)</td>
+<td>&lt;!DOCTYPE svg PUBLIC &#8220;-//W3C//DTD SVG 1.1//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-odd"><td>SVG 1.1 Basic</td>
+<td>doctype(&#8216;svg11-basic&#8217;)</td>
+<td>&lt;!DOCTYPE svg PUBLIC &#8220;-//W3C//DTD SVG 1.1 Basic//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-even"><td>SVG 1.1 Tiny</td>
+<td>doctype(&#8216;svg11-tiny&#8217;)</td>
+<td>&lt;!DOCTYPE svg PUBLIC &#8220;-//W3C//DTD SVG 1.1 Tiny//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-odd"><td>XHTML+MathML+SVG (XHTML host)</td>
+<td>doctype(&#8216;xhtml-math-svg-xh&#8217;)</td>
+<td>&lt;!DOCTYPE html PUBLIC &#8220;-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-even"><td>XHTML+MathML+SVG (SVG host)</td>
+<td>doctype(&#8216;xhtml-math-svg-sh&#8217;)</td>
+<td>&lt;!DOCTYPE svg:svg PUBLIC &#8220;-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN&#8221; &#8220;http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd&#8221;&gt;</td>
+</tr>
+<tr class="row-odd"><td>XHTML+RDFa 1.0</td>
+<td>doctype(&#8216;xhtml-rdfa-1&#8217;)</td>
+<td>&lt;!DOCTYPE html PUBLIC &#8220;-//W3C//DTD XHTML+RDFa 1.0//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd</a>&#8220;&gt;</td>
+</tr>
+<tr class="row-even"><td>XHTML+RDFa 1.1</td>
+<td>doctype(&#8216;xhtml-rdfa-2&#8217;)</td>
+<td>&lt;!DOCTYPE html PUBLIC &#8220;-//W3C//DTD XHTML+RDFa 1.1//EN&#8221; &#8220;<a class="reference external" href="http://www.w3.org/MarkUp/DTD/xhtml-rdfa-2.dtd">http://www.w3.org/MarkUp/DTD/xhtml-rdfa-2.dtd</a>&#8220;&gt;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

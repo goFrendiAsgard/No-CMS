@@ -28,8 +28,9 @@ class CMS_Model extends CI_Model
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
+        $this->load->helper('string');
         $this->load->library('user_agent');
-        $this->load->library('session');
+        $this->load->driver('session');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
         $this->load->database();
@@ -163,12 +164,13 @@ class CMS_Model extends CI_Model
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
+        $user_id    = $user_id == ''?0:$user_id;
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
         //get max_menu_depth from configuration
-        if (!isset($parent_id)) {
+        if (!isset($max_menu_depth)) {
             $max_menu_depth = $this->cms_get_config('max_menu_depth');
         }
 
@@ -180,24 +182,24 @@ class CMS_Model extends CI_Model
 
         $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
         $query         = $this->db->query("SELECT navigation_id, navigation_name, is_static, title, description, url, active,
-                	(
+                    (
                         (authorization_id = 1) OR
                         (authorization_id = 2 AND $not_login) OR
                         (authorization_id = 3 AND $login) OR
                         (
                             (authorization_id = 4 AND $login) AND
                             (
-                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id =" . addslashes($user_id) . ")>0
                                     OR $super_user OR
                                 (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
                                     WHERE
                                         gn.navigation_id=n.navigation_id AND
                                         gn.group_id IN
-                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
+                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
                                 )>0
                             )
                         )
-					) AS allowed
+                    ) AS allowed
                 FROM ".cms_table_name('main_navigation')." AS n WHERE
                     $where_is_root ORDER BY n.index");
         $result        = array();
@@ -244,19 +246,20 @@ class CMS_Model extends CI_Model
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
+        $user_id    = $user_id == ''?0:$user_id;
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
-        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, is_static, title, description, url
+        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, is_static, title, description, url, active
                         FROM
-                        	".cms_table_name('main_navigation')." AS n,
-                        	".cms_table_name('main_quicklink')." AS q
+                            ".cms_table_name('main_navigation')." AS n,
+                            ".cms_table_name('main_quicklink')." AS q
                         WHERE
-                        	(
-                        		q.navigation_id = n.navigation_id
-                        	)
-                        	AND
+                            (
+                                q.navigation_id = n.navigation_id
+                            )
+                            AND
                             (
                                 (authorization_id = 1) OR
                                 (authorization_id = 2 AND $not_login) OR
@@ -264,19 +267,28 @@ class CMS_Model extends CI_Model
                                 (
                                     (authorization_id = 4 AND $login) AND
                                     (
-                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id =" . addslashes($user_id) . ")>0
                                             OR $super_user OR
                                         (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
                                             WHERE
                                                 gn.navigation_id=n.navigation_id AND
                                                 gn.group_id IN
-                                                    (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
+                                                    (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
                                         )>0
                                     )
                                 )
                             ) ORDER BY q.index");
         $result = array();
         foreach ($query->result() as $row) {
+            $all_children   = $this->cms_navigations($row->navigation_id);
+            $children       = array();
+            foreach ($all_children as $child) {
+                if ($child['allowed']) {
+                    unset($child['allowed']);
+                    unset($child['have_allowed_children']);
+                    $children[] = $child;
+                }
+            }
             if ((!isset($row->url) || $row->url == '') && $row->is_static == 1) {
                 $url = 'main/static_page/' . $row->navigation_name;
             } else {
@@ -292,7 +304,9 @@ class CMS_Model extends CI_Model
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "url" => $url,
-                "is_static" => $row->is_static
+                "is_static" => $row->is_static,
+                "child" => $children,
+                "active" => $row->active,
             );
         }
         return $result;
@@ -307,13 +321,15 @@ class CMS_Model extends CI_Model
      */
     public function cms_widgets($slug = NULL, $widget_name=NULL)
     {
+        // get user_name, user_id, etc
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
+        $user_id    = !isset($user_id)||is_null($user_id)?0:$user_id;
         $not_login  = !$user_name ? "TRUE" : "FALSE";
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
         $slug_where = isset($slug)?
-            "((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%'))" :
+            "(((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%')) AND active=1)" :
             "1=1";
         $widget_name_where = isset($widget_name)? "widget_name LIKE '".addslashes($widget_name)."'" : "1=1";
 
@@ -334,11 +350,11 @@ class CMS_Model extends CI_Model
                                     WHERE
                                         gw.widget_id=w.widget_id AND
                                         gw.group_id IN
-                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
+                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
                                 )>0
                             )
                         )
-                    ) AND active=1 AND $slug_where AND $widget_name_where ORDER BY `index`";
+                    ) AND $slug_where AND $widget_name_where ORDER BY ".$this->db->protect_identifiers('index');
         $query  = $this->db->query($SQL);
         $result = array();
         foreach ($query->result() as $row) {
@@ -350,8 +366,11 @@ class CMS_Model extends CI_Model
                 // url
                 $url = $row->url;
                 // content
-                $content .= '<div id="_cms_widget_' . $row->widget_id . '">';
-
+                if($slug){
+                    $content .= '<div id="__cms_widget_' . $row->widget_id . '">';
+                }else{
+                    $content .= '<span id="__cms_widget_' . $row->widget_id . '" style="padding:0px; margin:0px;">';
+                }
                 if (strpos(strtoupper($url), 'HTTP://') !== FALSE || strpos(strtoupper($url), 'HTTPS://') !== FALSE) {
                     $response = NULL;
                     // use CURL
@@ -372,12 +391,29 @@ class CMS_Model extends CI_Model
                         $response = preg_replace('#(href|src|action)="([^:"]*)(?:")#', '$1="' . $url . '/$2"', $response);
                         $content .= $response;
                     }
-                } else {
+                } else {                                                   
+                    $url = trim_slashes($url);
+                    $url_partial = explode('/',$url);
                     $this->cms_ci_session('cms_dynamic_widget', TRUE);
-                    $content .= @Modules::run($url);
+                    $response = @Modules::run($url);
+                    if(strlen($response) == 0){
+                        $response = @Modules::run($url.'/index');
+                    }
+                    // fallback, Modules::run failed, use AJAX instead
+                    if(strlen($response)==0){
+                        $response = '<script type="text/javascript">';
+                        $response .= '$(document).ready(function(){$("#__cms_widget_' . $row->widget_id . '").load("'.site_url($url).'?_only_content=TRUE");});';
+                        $response .= '</script>';
+                    }
+                    $content .= $response;                    
                     $this->cms_unset_ci_session('cms_dynamic_widget');
                 }
-                $content .= '</div>';
+                
+                if($slug){
+                    $content .= '</div>';
+                }else{
+                    $content .= '</span>';
+                }
             }
             // make widget based on slug
             $slugs = explode(',', $row->slug);
@@ -396,7 +432,6 @@ class CMS_Model extends CI_Model
             }
 
         }
-
         return $result;
     }
 
@@ -501,11 +536,12 @@ class CMS_Model extends CI_Model
                         SELECT parent_id FROM ".cms_table_name('main_navigation')."
                         WHERE navigation_name = '" . addslashes($navigation_name) . "'
                     )");
-        if ($query->num_rows == 0)
+        if ($query->num_rows() == 0)
             return false;
         else {
             foreach ($query->result() as $row) {
                 return array(
+                    "navigation_id" => $row->navigation_id,
                     "navigation_name" => $row->navigation_name,
                     "title" => $this->cms_lang($row->title),
                     "description" => $row->description,
@@ -528,11 +564,12 @@ class CMS_Model extends CI_Model
         $query = $this->db->query("SELECT navigation_id, navigation_name, title, description, url
                     FROM ".cms_table_name('main_navigation')."
                     WHERE navigation_name = '" . addslashes($navigation_name) . "'");
-        if ($query->num_rows == 0)
+        if ($query->num_rows() == 0)
             return false;
         else {
             foreach ($query->result() as $row) {
                 return array(
+                    "navigation_id" => $row->navigation_id,
                     "navigation_name" => $row->navigation_name,
                     "title" => $this->cms_lang($row->title),
                     "description" => $row->description,
@@ -577,6 +614,7 @@ class CMS_Model extends CI_Model
     {
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
+        $user_id    = !isset($user_id)||is_null($user_id)?0:$user_id;
         $not_login  = !isset($user_name) ? "TRUE" : "FALSE";
         $login      = isset($user_name) ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
@@ -615,32 +653,20 @@ class CMS_Model extends CI_Model
      * @param   string navigation_name
      * @param   mixed navigations
      * @return  bool
-     * @desc    only used in cms_allow_navigate
+     * @desc    check if user authorized to navigate into a page specified in parameter
      */
-    private function __cms_allow_navigate($navigation_name, $navigations = NULL)
+    public function cms_allow_navigate($navigation_name, $navigations = NULL)
     {
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
         for ($i = 0; $i < count($navigations); $i++) {
             if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"] == 1) {
                 return true;
-            } else if ($this->__cms_allow_navigate($navigation_name, $navigations[$i]["child"])) {
+            } else if ($this->cms_allow_navigate($navigation_name, $navigations[$i]["child"])) {
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param   string navigation_name
-     * @return  bool
-     * @desc    check if user authorized to navigate into a page specified in parameter
-     */
-    public function cms_allow_navigate($navigation_name)
-    {
-        if($this->cms_user_id()==1) return TRUE;
-        else return $this->__cms_allow_navigate($navigation_name);
     }
 
     /**
@@ -674,7 +700,7 @@ class CMS_Model extends CI_Model
         $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".cms_table_name('main_user')." WHERE
                     (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
                     password = '" . md5($password) . "' AND
-                    active = TRUE");
+                    active = 1");
         foreach ($query->result() as $row) {
             $this->cms_user_name($row->user_name);
             $this->cms_user_id($row->user_id);
@@ -695,6 +721,335 @@ class CMS_Model extends CI_Model
         $this->cms_unset_ci_session('cms_user_id');
         $this->cms_unset_ci_session('cms_user_real_name');
         $this->cms_unset_ci_session('cms_user_email');
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string parent
+     * @desc    re-arange index of navigation with certain parent_id
+     */
+    private function __cms_reindex_navigation($parent_id=NULL){
+        if (isset($parent_id)) {
+            $whereParentId = "(parent_id = $parent_id)";
+        } else {
+            $whereParentId = "(parent_id IS NULL)";
+        }
+        $query = $this->db->select('navigation_id,index')
+            ->from(cms_table_name('main_navigation'))
+            ->where($whereParentId)
+            ->order_by('index')
+            ->get();
+        $index = 1;
+        foreach($query->result() as $row){
+            if($index != $row->index){
+                $where = array('navigation_id'=>$row->navigation_id);
+                $data = array('index'=>$index);
+                $this->db->update(cms_table_name('main_navigation'), $data, $where);
+            }
+            $index += 1;
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string parent
+     * @desc    re-arange index of widget
+     */
+    private function __cms_reindex_widget(){
+        $query = $this->db->select('widget_id,index')
+            ->from(cms_table_name('main_widget'))
+            ->order_by('index')
+            ->get();
+        $index = 1;
+        foreach($query->result() as $row){
+            if($index != $row->index){
+                $where = array('widget_id'=>$row->widget_id);
+                $data = array('index'=>$index);
+                $this->db->update(cms_table_name('main_widget'), $data, $where);
+            }
+            $index += 1;
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string parent
+     * @desc    re-arange index of quicklink
+     */
+    private function __cms_reindex_quicklink(){
+        $query = $this->db->select('quicklink_id,index')
+            ->from(cms_table_name('main_quicklink'))
+            ->order_by('index')
+            ->get();
+        $index = 1;
+        foreach($query->result() as $row){
+            if($index != $row->index){
+                $where = array('quicklink_id'=>$row->quicklink_id);
+                $data = array('index'=>$index);
+                $this->db->update(cms_table_name('main_quicklink'), $data, $where);
+            }
+            $index += 1;
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   int navigation id
+     * @desc    move quicklink up
+     */
+    public function cms_do_move_up_quicklink($navigation_id){
+        // re-index all
+        $this->__cms_reindex_quicklink();
+        // get the index again
+        $query = $this->db->select('quicklink_id, index')
+            ->from(cms_table_name('main_quicklink'))
+            ->where('navigation_id', $navigation_id)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        $this_quicklink_id = $row->quicklink_id;
+        $SQL   = "
+            SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_quicklink')." WHERE ".
+            $this->db->protect_identifiers('index')."<".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_quicklink'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('quicklink_id'=>$this_quicklink_id);
+            $this->db->update(cms_table_name('main_quicklink'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   int navigation id
+     * @desc    move quicklink down
+     */
+    public function cms_do_move_down_quicklink($navigation_id){
+        // re-index all
+        $this->__cms_reindex_quicklink();
+        // get the index again
+        $query = $this->db->select('quicklink_id, index')
+            ->from(cms_table_name('main_quicklink'))
+            ->where('navigation_id', $navigation_id)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        $this_quicklink_id = $row->quicklink_id;
+        $SQL   = "
+            SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_quicklink')." WHERE ".
+            $this->db->protect_identifiers('index').">".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_quicklink'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('quicklink_id'=>$this_quicklink_id);
+            $this->db->update(cms_table_name('main_quicklink'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string widget_name
+     * @desc    move widget up
+     */
+    public function cms_do_move_up_widget($widget_name){
+        // get current navigation info
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        $row = $query->row();
+        $this_widget_id = $row->widget_id;
+        // re-index all
+        $this->__cms_reindex_widget();
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        $SQL   = "
+            SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_widget')." WHERE ".
+            $this->db->protect_identifiers('index')."<".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_widget'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('widget_id'=>$this_widget_id);
+            $this->db->update(cms_table_name('main_widget'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string widget_name
+     * @desc    move widget down
+     */
+    public function cms_do_move_down_widget($widget_name){
+        // get current navigation info
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        $row = $query->row();
+        $this_widget_id = $row->widget_id;
+        // re-index all
+        $this->__cms_reindex_widget();
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        $SQL   = "
+            SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_widget')." WHERE ".
+            $this->db->protect_identifiers('index').">".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_widget'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('widget_id'=>$this_widget_id);
+            $this->db->update(cms_table_name('main_widget'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @desc    move navigation up
+     */
+    public function cms_do_move_up_navigation($navigation_name){
+        // get current navigation info
+        $query = $this->db->select('parent_id, navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        $row = $query->row();
+        $parent_id = $row->parent_id;
+        $this_navigation_id = $row->navigation_id;
+        // re-index all
+        $this->__cms_reindex_navigation($parent_id);
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        // select
+        if (isset($parent_id)) {
+            $whereParentId = "(parent_id = $parent_id)";
+        } else {
+            $whereParentId = "(parent_id IS NULL)";
+        }
+        $SQL   = "
+            SELECT max(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_navigation')." WHERE $whereParentId AND ".
+            $this->db->protect_identifiers('index')."<".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('navigation_id'=>$this_navigation_id);
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+        }
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @desc    move navigation down
+     */
+    public function cms_do_move_down_navigation($navigation_name){
+        // get current navigation info
+        $query = $this->db->select('parent_id, navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        $row = $query->row();
+        $parent_id = $row->parent_id;
+        $this_navigation_id = $row->navigation_id;
+        // re-index all
+        $this->__cms_reindex_navigation($parent_id);
+        // get the index again
+        $query = $this->db->select('index')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        $row = $query->row();
+        $this_index = $row->index;
+        // select
+        if (isset($parent_id)) {
+            $whereParentId = "(parent_id = $parent_id)";
+        } else {
+            $whereParentId = "(parent_id IS NULL)";
+        }
+        $SQL   = "
+            SELECT min(".$this->db->protect_identifiers('index').") AS ".$this->db->protect_identifiers('index')."
+            FROM ".cms_table_name('main_navigation')." WHERE $whereParentId AND ".
+            $this->db->protect_identifiers('index').">".$this_index;
+        $query = $this->db->query($SQL);
+        $row   = $query->row();
+        if(intval($row->index) > 0){
+            $neighbor_index = intval($row->index);
+
+            // update neighbor
+            $data = array('index'=>$this_index);
+            $where = $whereParentId. ' AND ' . $this->db->protect_identifiers('index'). ' = '.$neighbor_index;
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+            // update current row
+            $data = array('index'=>$neighbor_index);
+            $where = array('navigation_id'=>$this_navigation_id);
+            $this->db->update(cms_table_name('main_navigation'),$data, $where);
+        }
+
     }
 
     /**
@@ -774,16 +1129,18 @@ class CMS_Model extends CI_Model
     public function cms_get_module_list()
     {
         $this->load->helper('directory');
-        $directories = directory_map('modules', 1);
+        $directories = directory_map(APPPATH.'../modules', 1);
+        sort($directories);
         $module      = array();
         foreach ($directories as $directory) {
-            if (!is_dir('modules/' . $directory))
+            $directory = str_replace(array('/','\\'),'',$directory);
+            if (!is_dir(APPPATH.'../modules/' . $directory))
                 continue;
 
-            if (!file_exists('modules/' . $directory . '/controllers/install.php'))
+            if (!file_exists(APPPATH.'../modules/' . $directory . '/controllers/install.php'))
                 continue;
 
-            $files              = directory_map('modules/' . $directory . '/controllers', 1);
+            $files              = directory_map(APPPATH.'../modules/' . $directory . '/controllers', 1);
             $module_controllers = array();
             foreach ($files as $file) {
                 $filename_array = explode('.', $file);
@@ -855,25 +1212,27 @@ class CMS_Model extends CI_Model
     {
         $this->load->helper('directory');
         $directories = directory_map('themes', 1);
-        $module      = array();
+        sort($directories);
+        $themes      = array();
         foreach ($directories as $directory) {
+            $directory = str_replace(array('/','\\'),'',$directory);
             if (!is_dir('themes/' . $directory))
                 continue;
 
             $layout_name = $directory;
 
-            $module[] = array(
+            $themes[] = array(
                 "path" => $directory,
                 "used" => $this->cms_get_config('site_theme') == $layout_name
             );
         }
-        return $module;
+        return $themes;
     }
 
     /**
      * @author  goFrendiAsgard
      * @param   string identity
-     * @param	bool send_mail
+     * @param    bool send_mail
      * @param   string reason (FORGOT, SIGNUP)
      * @return  bool
      * @desc    generate activation code, and send email to applicant
@@ -1085,7 +1444,7 @@ class CMS_Model extends CI_Model
         $value = cms_config($name);
         if($value === FALSE){
             if (!isset($this->__cms_model_properties['config'][$name])) {
-                $query  = $this->db->query("SELECT `value` FROM ".cms_table_name('main_config')." WHERE
+                $query  = $this->db->query("SELECT ".$this->db->protect_identifiers('value')." FROM ".cms_table_name('main_config')." WHERE
                             config_name = '" . addslashes($name) . "'");
                 if($query->num_rows()>0){
                     $row    = $query->row();
@@ -1105,13 +1464,13 @@ class CMS_Model extends CI_Model
             $value = $this->cms_parse_keyword($value);
         }
         return $value;
-    }
+}
 
     /**
-     * @author	goFrendiAsgard
-     * @param	string language
-     * @return	string language
-     * @desc	set language for this session only
+     * @author    goFrendiAsgard
+     * @param    string language
+     * @return    string language
+     * @desc    set language for this session only
      */
     public function cms_language($language = NULL)
     {
@@ -1129,17 +1488,36 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author	goFrendiAsgard
-     * @return	array list of available languages
-     * @desc	get available languages
+     * @author    goFrendiAsgard
+     * @return    array list of available languages
+     * @desc    get available languages
      */
     public function cms_language_list()
     {
         $this->load->helper('file');
-        $result = get_filenames('assets/nocms/languages');
-        for ($i = 0; $i < count($result); $i++) {
-            $result[$i] = str_ireplace('.php', '', $result[$i]);
+        $result = array();
+        $language_list = get_filenames(APPPATH.'../assets/nocms/languages');
+        foreach ($language_list as $language){
+            if(preg_match('/\.php$/i', $language)){
+                $result[] = str_ireplace('.php', '', $language);
+            }
         }
+        $module_list = $this->cms_get_module_list();
+        $module_list[] = array('module_path'=>'main');
+        foreach ($module_list as $module){
+            $directory = $module['module_path'];
+            $module_language_list = get_filenames(APPPATH.'../modules/'.$directory.'/assets/languages');
+            if($module_language_list === FALSE) continue;
+            foreach($module_language_list as $module_language){
+                if(preg_match('/\.php$/i', $module_language)){
+                    $module_language = str_ireplace('.php', '', $module_language);
+                    if(!in_array($module_language, $result)){
+                        $result[] = $module_language;
+                    }
+                }
+            }
+        }
+        sort($result);
         return $result;
     }
 
@@ -1159,20 +1537,25 @@ class CMS_Model extends CI_Model
             foreach ($modules as $module) {
                 $module_path = $module['module_path'];
                 if ($module_path != $this->cms_module_path()) {
-                    $local_language_file = "modules/$module_path/assets/languages/$language.php";
+                    $local_language_file = APPPATH."../modules/$module_path/assets/languages/$language.php";
                     if (file_exists($local_language_file)) {
                         include($local_language_file);
                     }
                 }
             }
+            // nocms main module language setting override previous language setting
+            $language_file = APPPATH."../modules/main/assets/languages/$language.php";
+            if (file_exists($language_file)) {
+                include($language_file);
+            }
             // global nocms language setting override previous language setting
-            $language_file = "assets/nocms/languages/$language.php";
+            $language_file = APPPATH."../assets/nocms/languages/$language.php";
             if (file_exists($language_file)) {
                 include($language_file);
             }
             // language setting from current module
             $module_path         = $this->cms_module_path();
-            $local_language_file = "modules/$module_path/assets/languages/$language.php";
+            $local_language_file = APPPATH."../modules/$module_path/assets/languages/$language.php";
             if (file_exists($local_language_file)) {
                 include($local_language_file);
             }
@@ -1194,7 +1577,6 @@ class CMS_Model extends CI_Model
         $language = $this->cms_language();
 
         $dictionary = $this->cms_language_dictionary();
-
         // get the language
         if (isset($dictionary[$key])) {
             return $dictionary[$key];
@@ -1214,102 +1596,113 @@ class CMS_Model extends CI_Model
     public function cms_parse_keyword($value)
     {
         $value = $this->cms_escape_template($value);
-
-        $pattern     = array();
-        $replacement = array();
-
-        // user_name
-        $pattern[]     = "/\{\{ user_id \}\}/si";
-        $replacement[] = $this->cms_user_id();
-
-        // user_name
-        $pattern[]     = "/\{\{ user_name \}\}/si";
-        $replacement[] = $this->cms_user_name();
-
-        // user_real_name
-        $pattern[]     = "/\{\{ user_real_name \}\}/si";
-        $replacement[] = $this->cms_user_real_name();
-
-        // user_email
-        $pattern[]     = "/\{\{ user_email \}\}/si";
-        $replacement[] = $this->cms_user_email();
-
-        // site_url
-        $site_url = site_url();
-        if ($site_url[strlen($site_url) - 1] != '/')
-            $site_url .= '/';
-        $pattern[]     = '/\{\{ site_url \}\}/si';
-        $replacement[] = $site_url;
-
-        // base_url
-        $base_url = base_url();
-        if ($base_url[strlen($base_url) - 1] != '/')
-            $base_url .= '/';
-        $pattern[]     = '/\{\{ base_url \}\}/si';
-        $replacement[] = $base_url;
-
-        // module_path & module_name
-        $module_path = $this->cms_module_path();
-        $module_name = $this->cms_module_name($module_path);
-        $module_site_url = site_url($module_path);
-        $module_base_url = base_url($module_path);
-        if ($module_site_url[strlen($module_site_url) - 1] != '/')
-            $module_site_url .= '/';
-        if ($module_base_url[strlen($module_base_url) - 1] != '/')
-            $module_base_url .= '/';
-        $pattern[]     = '/\{\{ module_path \}\}/si';
-        $replacement[] = $module_path;
-        $pattern[]     = '/\{\{ module_site_url \}\}/si';
-        $replacement[] = $module_site_url;
-        $pattern[]     = '/\{\{ module_base_url \}\}/si';
-        $replacement[] = $module_base_url;
-        $pattern[]     = '/\{\{ module_name \}\}/si';
-        $replacement[] = $module_name;
-
-        // language
-        $pattern[]     = '/\{\{ language \}\}/si';
-        $replacement[] = $this->cms_language();
-
-        // execute regex
-        $value = preg_replace($pattern, $replacement, $value);
-
+        
+        if(strpos($value, '{{ ') !== FALSE){
+    
+            $pattern     = array();
+            $replacement = array();
+    
+            // user_name
+            $pattern[]     = "/\{\{ user_id \}\}/si";
+            $replacement[] = $this->cms_user_id();
+    
+            // user_name
+            $pattern[]     = "/\{\{ user_name \}\}/si";
+            $replacement[] = $this->cms_user_name();
+    
+            // user_real_name
+            $pattern[]     = "/\{\{ user_real_name \}\}/si";
+            $replacement[] = $this->cms_user_real_name();
+    
+            // user_email
+            $pattern[]     = "/\{\{ user_email \}\}/si";
+            $replacement[] = $this->cms_user_email();
+    
+            // site_url
+            $site_url = site_url();
+            if ($site_url[strlen($site_url) - 1] != '/')
+                $site_url .= '/';
+            $pattern[]     = '/\{\{ site_url \}\}/si';
+            $replacement[] = $site_url;
+    
+            // base_url
+            $base_url = base_url();
+            if ($base_url[strlen($base_url) - 1] != '/')
+                $base_url .= '/';
+            $pattern[]     = '/\{\{ base_url \}\}/si';
+            $replacement[] = $base_url;
+    
+            // module_path & module_name
+            $module_path = $this->cms_module_path();
+            $module_name = $this->cms_module_name($module_path);
+            $module_site_url = site_url($module_path);
+            $module_base_url = base_url($module_path);
+            if ($module_site_url[strlen($module_site_url) - 1] != '/')
+                $module_site_url .= '/';
+            if ($module_base_url[strlen($module_base_url) - 1] != '/')
+                $module_base_url .= '/';
+            $pattern[]     = '/\{\{ module_path \}\}/si';
+            $replacement[] = $module_path;
+            $pattern[]     = '/\{\{ module_site_url \}\}/si';
+            $replacement[] = $module_site_url;
+            $pattern[]     = '/\{\{ module_base_url \}\}/si';
+            $replacement[] = $module_base_url;
+            $pattern[]     = '/\{\{ module_name \}\}/si';
+            $replacement[] = $module_name;
+    
+            // language
+            $pattern[]     = '/\{\{ language \}\}/si';
+            $replacement[] = $this->cms_language();
+    
+            // execute regex
+            $value = preg_replace($pattern, $replacement, $value);
+        }       
+        
         // translate language
-        $pattern = '/\{\{ language:(.*?) \}\}/si';
-        // execute regex
-        $value   = preg_replace_callback($pattern, array(
-            $this,
-            '__cms_preg_replace_callback_lang'
-        ), $value);
+        if(strpos($value, '{{ ') !== FALSE){
+            $pattern = '/\{\{ language:(.*?) \}\}/si';
+            // execute regex
+            $value   = preg_replace_callback($pattern, array(
+                $this,
+                '__cms_preg_replace_callback_lang'
+            ), $value);
+        }
 
         // if language, elif
-        $language    = $this->cms_language();
-        $pattern     = array();
-        $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if \}\}/si";
-        $pattern[]   = "/\{\{ if_language:.*?\{\{ end_if \}\}/si";
-        $replacement = '$1';
-        // execute regex
-        $value       = preg_replace($pattern, $replacement, $value);
+        if(strpos($value, '{{ ') !== FALSE){
+            $language    = $this->cms_language();
+            $pattern     = array();
+            $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ elif_language:.*?\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ else \}\}.*?\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ elif_language:$language \}\}(.*?)\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ else \}\}(.*?)\{\{ end_if \}\}/si";
+            $pattern[]   = "/\{\{ if_language:.*?\{\{ end_if \}\}/si";
+            $replacement = '$1';
+            // execute regex
+            $value       = preg_replace($pattern, $replacement, $value);
+        }
 
         // clear un-translated language
-        $pattern     = array();
-        $pattern     = "/\{\{ if_language:.*?\{\{ end_if \}\}/s";
-        $replacement = '';
-        // execute regex
-        $value       = preg_replace($pattern, $replacement, $value);
+        if(strpos($value, '{{ ') !== FALSE){
+            $pattern     = array();
+            $pattern     = "/\{\{ if_language:.*?\{\{ end_if \}\}/s";
+            $replacement = '';
+            // execute regex
+            $value       = preg_replace($pattern, $replacement, $value);
+        }
 
         // configuration
-        $pattern = '/\{\{ (.*?) \}\}/si';
-        // execute regex
-        $value   = preg_replace_callback($pattern, array(
-            $this,
-            '__cms_preg_replace_callback_config'
-        ), $value);
+        if(strpos($value, '{{ ') !== FALSE){
+            $pattern = '/\{\{ (.*?) \}\}/si';
+            // execute regex
+            $value   = preg_replace_callback($pattern, array(
+                $this,
+                '__cms_preg_replace_callback_config'
+            ), $value);
+        }
 
         return $value;
     }
@@ -1490,6 +1883,7 @@ class CMS_Model extends CI_Model
 
 
         $user_id = $this->cms_user_id();
+        $user_id    = !isset($user_id)||is_null($user_id)?0:$user_id;
         $query   = $this->db->select('user_id')->from(cms_table_name('main_user'))->where('auth_' . $provider, $identifier)->get();
         if ($query->num_rows() > 0) { // get user_id based on auth field
             $row     = $query->row();
@@ -1563,6 +1957,6 @@ class CMS_Model extends CI_Model
 
 }
 
-class MY_Model extends CMS_Model
+class MY_Model extends CI_Model
 {
 }

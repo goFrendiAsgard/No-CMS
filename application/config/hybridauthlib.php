@@ -9,60 +9,87 @@
 //	HybridAuth Config file: http://hybridauth.sourceforge.net/userguide/Configuration.html
 // ----------------------------------------------------------------------------------------
 
+$auth_enable_facebook         = FALSE;
+$auth_facebook_app_id         = '';
+$auth_facebook_app_secret     = '';
+$auth_enable_twitter          = FALSE;
+$auth_twitter_app_key         = '';
+$auth_twitter_app_secret      = '';
+$auth_enable_google           = FALSE;
+$auth_google_app_id           = '';
+$auth_google_app_secret       = '';
+$auth_enable_yahoo            = FALSE;
+$auth_yahoo_app_id            = '';
+$auth_yahoo_app_secret        = '';
+$auth_enable_linkedin         = FALSE;
+$auth_linkedin_app_key        = '';
+$auth_linkedin_app_secret     = '';
+$auth_enable_myspace          = FALSE;
+$auth_myspace_app_key         = '';
+$auth_myspace_app_secret      = '';
+$auth_enable_foursquare       = FALSE;
+$auth_foursquare_app_id       = '';
+$auth_foursquare_app_secret   = '';
+$auth_enable_windows_live     = FALSE;
+$auth_windows_live_app_id     = '';
+$auth_windows_live_app_secret = '';
+$auth_enable_open_id          = FALSE;
+$auth_enable_aol              = FALSE;
+
 $config =
 	array(
 		// set on "base_url" the relative url that point to HybridAuth Endpoint
-		'base_url' => '/hauth/endpoint',
+		'base_url' => '/main/hauth/endpoint',
 
 		"providers" => array (
 			// openid providers
 			"OpenID" => array (
-				"enabled" => false
+				"enabled" => $auth_enable_open_id,
 			),
 
 			"Yahoo" => array (
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ),
+				"enabled" => $auth_enable_yahoo,
+				"keys"    => array ( "id" => $auth_yahoo_app_id, "secret" => $auth_yahoo_app_secret ),
 			),
 
 			"AOL"  => array (
-				"enabled" => false
+				"enabled" => $auth_enable_aol,
 			),
 
 			"Google" => array (
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ),
+				"enabled" => $auth_enable_google,
+				"keys"    => array ( "id" => $auth_google_app_id, "secret" => $auth_google_app_secret ),
 			),
 
 			"Facebook" => array (
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" ),
+				"enabled" => $auth_enable_facebook,
+				"keys"    => array ( "id" => $auth_facebook_app_id, "secret" => $auth_facebook_app_secret ),
 			),
 
 			"Twitter" => array (
-				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" )
+				"enabled" => $auth_enable_twitter,
+				"keys"    => array ( "key" => $auth_twitter_app_key, "secret" => $auth_twitter_app_secret )
 			),
 
 			// windows live
 			"Live" => array (
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" )
+				"enabled" => $auth_enable_windows_live,
+				"keys"    => array ( "id" => $auth_windows_live_app_id, "secret" => $auth_windows_live_app_secret )
 			),
 
 			"MySpace" => array (
-				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" )
+				"enabled" => $auth_enable_myspace,
+				"keys"    => array ( "key" => $auth_myspace_app_key, "secret" => $auth_myspace_app_secret )
 			),
 
 			"LinkedIn" => array (
-				"enabled" => false,
-				"keys"    => array ( "key" => "", "secret" => "" )
+				"enabled" => $auth_enable_linkedin,
+				"keys"    => array ( "key" => $auth_linkedin_app_key, "secret" => $auth_linkedin_app_secret )
 			),
 
 			"Foursquare" => array (
-				"enabled" => false,
-				"keys"    => array ( "id" => "", "secret" => "" )
+				"enabled" => $auth_enable_foursquare,
+				"keys"    => array ( "id" => $auth_foursquare_app_id, "secret" => $auth_foursquare_app_secret )
 			),
 		),
 

@@ -2,6 +2,7 @@
 	$record_index = 0;
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS); ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?>" />
 <style type="text/css">
 	/* set width of every detail input*/
 	#md_table_citizen .md_field_citizen_col{

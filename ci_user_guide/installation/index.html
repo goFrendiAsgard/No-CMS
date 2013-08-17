@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Installation Instructions &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="next" title="Downloading CodeIgniter" href="downloads.html" />
+	    <link rel="prev" title="Welcome to CodeIgniter" href="../general/welcome.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xad371ec>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><strong>Installation Instructions</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="installation-instructions">
+<h1>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter is installed in four steps:</p>
+<ol class="arabic simple">
+<li>Unzip the package.</li>
+<li>Upload the CodeIgniter folders and files to your server. Normally the
+index.php file will be at your root.</li>
+<li>Open the application/config/config.php file with a text editor and
+set your base URL. If you intend to use encryption or sessions, set
+your encryption key.</li>
+<li>If you intend to use a database, open the
+application/config/database.php file with a text editor and set your
+database settings.</li>
+</ol>
+<p>If you wish to increase security by hiding the location of your
+CodeIgniter files you can rename the system and application folders to
+something more private. If you do rename them, you must open your main
+index.php file and set the $system_path and $application_folder
+variables at the top of the file with the new name you&#8217;ve chosen.</p>
+<p>For the best security, both the system and any application folders
+should be placed above web root so that they are not directly accessible
+via a browser. By default, .htaccess files are included in each folder
+to help prevent direct access, but it is best to remove them from public
+access entirely in case the web server configuration changes or doesn&#8217;t
+abide by the .htaccess.</p>
+<p>If you would like to keep your views public it is also possible to move
+the views folder out of your application folder.</p>
+<p>After moving them, open your main index.php file and set the
+$system_path, $application_folder and $view_folder variables,
+preferably with a full path, e.g. &#8216;/www/MyUser/system&#8217;.</p>
+<p>One additional measure to take in production environments is to disable
+PHP error reporting and any other development-only functionality. In
+CodeIgniter, this can be done by setting the ENVIRONMENT constant, which
+is more fully described on the <a class="reference internal" href="../general/security.html"><em>security
+page</em></a>.</p>
+<p>That&#8217;s it!</p>
+<p>If you&#8217;re new to CodeIgniter, please read the <a class="reference internal" href="../overview/getting_started.html"><em>Getting
+Started</em></a> section of the User Guide
+to begin learning how to build dynamic PHP applications. Enjoy!</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

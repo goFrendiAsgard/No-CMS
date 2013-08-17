@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Migrations Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Output Class" href="output.html" />
+	    <link rel="prev" title="Loader Class" href="loader.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa80809c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Migrations Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="migrations-class">
+<h1>Migrations Class<a class="headerlink" href="#migrations-class" title="Permalink to this headline">¶</a></h1>
+<p>Migrations are a convenient way for you to alter your database in a
+structured and organized manner. You could edit fragments of SQL by hand
+but you would then be responsible for telling other developers that they
+need to go and run them. You would also have to keep track of which changes
+need to be run against the production machines next time you deploy.</p>
+<p>The database table <strong>migration</strong> tracks which migrations have already been
+run so all you have to do is update your application files and
+call <strong>$this-&gt;migration-&gt;current()</strong> to work out which migrations should be run.
+The current version is found in <strong>config/migration.php</strong>.</p>
+<div class="section" id="migration-file-names">
+<h2>Migration file names<a class="headerlink" href="#migration-file-names" title="Permalink to this headline">¶</a></h2>
+<p>Each Migration is run in numeric order forward or backwards depending on the
+method taken. Two numbering styles are available:</p>
+<ul class="simple">
+<li><strong>Sequential:</strong> each migration is numbered in sequence, starting with <strong>001</strong>.
+Each number must be three digits, and there must not be any gaps in the
+sequence. (This was the numbering scheme prior to CodeIgniter 3.0.)</li>
+<li><strong>Timestamp:</strong> each migration is numbered using the timestamp when the migration
+was created, in <strong>YYYYMMDDHHIISS</strong> format (e.g. <strong>20121031100537</strong>). This
+helps prevent numbering conflicts when working in a team environment, and is
+the preferred scheme in CodeIgniter 3.0 and later.</li>
+</ul>
+<p>The desired style may be selected using the <strong>$config[&#8216;migration_type&#8217;]</strong>
+setting in your <strong>migration.php</strong> config file.</p>
+<p>Regardless of which numbering style you choose to use, prefix your migration
+files with the migration number followed by an underscore and a descriptive
+name for the migration. For example:</p>
+<ul class="simple">
+<li><strong>001_add_blog.php</strong> (sequential numbering)</li>
+<li><strong>20121031100537_add_blog.php</strong> (timestamp numbering)</li>
+</ul>
+</div>
+<div class="section" id="create-a-migration">
+<h2>Create a Migration<a class="headerlink" href="#create-a-migration" title="Permalink to this headline">¶</a></h2>
+<p>This will be the first migration for a new site which has a blog. All
+migrations go in the folder <strong>application/migrations/</strong> and have names such
+as <strong>20121031100537_add_blog.php</strong>.:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;BASEPATH&#39;</span><span class="p">)</span> <span class="k">OR</span> <span class="k">exit</span><span class="p">(</span><span class="s1">&#39;No direct script access allowed&#39;</span><span class="p">);</span>
+
+<span class="k">class</span> <span class="nc">Migration_Add_blog</span> <span class="k">extends</span> <span class="nx">CI_Migration</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">up</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbforge</span><span class="o">-&gt;</span><span class="na">add_field</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+                        <span class="s1">&#39;blog_id&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                                <span class="s1">&#39;type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;constraint&#39;</span> <span class="o">=&gt;</span> <span class="mi">5</span><span class="p">,</span>
+                                <span class="s1">&#39;unsigned&#39;</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+                                <span class="s1">&#39;auto_increment&#39;</span> <span class="o">=&gt;</span> <span class="k">TRUE</span>
+                        <span class="p">),</span>
+                        <span class="s1">&#39;blog_title&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                                <span class="s1">&#39;type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;VARCHAR&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;constraint&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;100&#39;</span><span class="p">,</span>
+                        <span class="p">),</span>
+                        <span class="s1">&#39;blog_description&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+                                <span class="s1">&#39;type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;null&#39;</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+                        <span class="p">),</span>
+                <span class="p">));</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbforge</span><span class="o">-&gt;</span><span class="na">add_key</span><span class="p">(</span><span class="s1">&#39;blog_id&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbforge</span><span class="o">-&gt;</span><span class="na">create_table</span><span class="p">(</span><span class="s1">&#39;blog&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">down</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbforge</span><span class="o">-&gt;</span><span class="na">drop_table</span><span class="p">(</span><span class="s1">&#39;blog&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Then in <strong>application/config/migration.php</strong> set <strong>$config[&#8216;migration_version&#8217;] = 1;</strong>.</p>
+</div>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>In this example some simple code is placed in <strong>application/controllers/migrate.php</strong>
+to update the schema.:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="k">class</span> <span class="nc">Migrate</span> <span class="k">extends</span> <span class="nx">CI_Controller</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;migration&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">migration</span><span class="o">-&gt;</span><span class="na">current</span><span class="p">()</span> <span class="o">===</span> <span class="k">FALSE</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="nx">show_error</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">migration</span><span class="o">-&gt;</span><span class="na">error_string</span><span class="p">());</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="function-reference">
+<h2>Function Reference<a class="headerlink" href="#function-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="this-migration-current">
+<h3>$this-&gt;migration-&gt;current()<a class="headerlink" href="#this-migration-current" title="Permalink to this headline">¶</a></h3>
+<p>The current migration is whatever is set for <strong>$config[&#8216;migration_version&#8217;]</strong> in
+<strong>application/config/migration.php</strong>.</p>
+</div>
+<div class="section" id="this-migration-error-string">
+<h3>$this-&gt;migration-&gt;error_string()<a class="headerlink" href="#this-migration-error-string" title="Permalink to this headline">¶</a></h3>
+<p>This returns a string of errors while performing a migration.</p>
+</div>
+<div class="section" id="this-migration-find-migrations">
+<h3>$this-&gt;migration-&gt;find_migrations()<a class="headerlink" href="#this-migration-find-migrations" title="Permalink to this headline">¶</a></h3>
+<p>An array of migration filenames are returned that are found in the <strong>migration_path</strong>
+property.</p>
+</div>
+<div class="section" id="this-migration-latest">
+<h3>$this-&gt;migration-&gt;latest()<a class="headerlink" href="#this-migration-latest" title="Permalink to this headline">¶</a></h3>
+<p>This works much the same way as current() but instead of looking for
+the <strong>$config[&#8216;migration_version&#8217;]</strong> the Migration class will use the very
+newest migration found in the filesystem.</p>
+</div>
+<div class="section" id="this-migration-version">
+<h3>$this-&gt;migration-&gt;version()<a class="headerlink" href="#this-migration-version" title="Permalink to this headline">¶</a></h3>
+<p>Version can be used to roll back changes or step forwards programmatically to
+specific versions. It works just like current but ignores <strong>$config[&#8216;migration_version&#8217;]</strong>.:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;migration&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">migration</span><span class="o">-&gt;</span><span class="na">version</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="migration-preferences">
+<h2>Migration Preferences<a class="headerlink" href="#migration-preferences" title="Permalink to this headline">¶</a></h2>
+<p>The following is a table of all the config options for migrations.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="18%" />
+<col width="22%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Preference</th>
+<th class="head">Default</th>
+<th class="head">Options</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>migration_enabled</strong></td>
+<td>FALSE</td>
+<td>TRUE / FALSE</td>
+<td>Enable or disable migrations.</td>
+</tr>
+<tr class="row-odd"><td><strong>migration_path</strong></td>
+<td>APPPATH.&#8217;migrations/&#8217;</td>
+<td>None</td>
+<td>The path to your migrations folder.</td>
+</tr>
+<tr class="row-even"><td><strong>migration_version</strong></td>
+<td>0</td>
+<td>None</td>
+<td>The current version your database should use.</td>
+</tr>
+<tr class="row-odd"><td><strong>migration_table</strong></td>
+<td>migrations</td>
+<td>None</td>
+<td>The table name for storing the schema
+version number.</td>
+</tr>
+<tr class="row-even"><td><strong>migration_auto_latest</strong></td>
+<td>FALSE</td>
+<td>TRUE / FALSE</td>
+<td>Enable or disable automatically
+running migrations.</td>
+</tr>
+<tr class="row-odd"><td><strong>migration_type</strong></td>
+<td>&#8216;timestamp&#8217;</td>
+<td>&#8216;timestamp&#8217; / &#8216;sequential&#8217;</td>
+<td>The type of numeric identifier used to name
+migration files.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

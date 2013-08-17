@@ -27,11 +27,11 @@ class Install extends CMS_Module_Installer {
 
     // DEACTIVATION
     protected function do_deactivate(){
-        $module_path = $this->cms_module_path();
-
+	    /* This doesn't work with PDO
         $this->backup_database(array(
             {{ table_list }}
         ));
+	    */
         $this->remove_all();
     }
 
@@ -77,11 +77,15 @@ class Install extends CMS_Module_Installer {
 
         // remove parent of all navigations
         $this->remove_navigation($this->cms_complete_navigation_name('{{ navigation_parent_name }}'));
-
-        // import uninstall.sql
+        
+        // drop tables
+        {{ drop_table_forge }}
+        
+        /*
+        // import uninstall.sql (this is only works for MySQL)
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
             '/assets/db/uninstall.sql');
-
+        */
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -94,10 +98,15 @@ class Install extends CMS_Module_Installer {
 
         // add navigations
 {{ add_navigations }}
-
-        // import install.sql
+        
+        // create tables
+        {{ create_table_forge }}
+        
+        /*
+        // import install.sql (this only works for MySQL)
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
             '/assets/db/install.sql');
+        */
     }
 
     // IMPORT SQL FILE
@@ -107,10 +116,15 @@ class Install extends CMS_Module_Installer {
 
     // EXPORT DATABASE
     private function backup_database($table_names, $limit = 100){
+        
+	    /* this doesn't work with PDO
+	     
+	    
         $module_path = $this->cms_module_path();
-
         $this->load->dbutil();
         $sql = '';
+        
+        
 
         // create DROP TABLE syntax
         for($i=count($table_names)-1; $i>=0; $i--){
@@ -119,7 +133,8 @@ class Install extends CMS_Module_Installer {
         }
         if($sql !='')$sql.= PHP_EOL;
 
-        // create CREATE TABLE and INSERT syntax
+        // create CREATE TABLE and INSERT syntax 
+        
         $prefs = array(
                 'tables'      => $table_names,
                 'ignore'      => array(),
@@ -129,7 +144,7 @@ class Install extends CMS_Module_Installer {
                 'add_insert'  => TRUE,
                 'newline'     => PHP_EOL
               );
-        $sql.= $this->dbutil->backup($prefs);
+        $sql.= $this->dbutil->backup($prefs);        
 
         //write file
         $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
@@ -137,6 +152,7 @@ class Install extends CMS_Module_Installer {
                 BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
                 $sql
             );
+        */
 
     }
 }

@@ -1,0 +1,421 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Common Functions &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="URI Routing" href="routing.html" />
+	    <link rel="prev" title="Auto-loading Resources" href="autoloader.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa80856c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Common Functions</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="common-functions">
+<h1>Common Functions<a class="headerlink" href="#common-functions" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter uses a few functions for its operation that are globally
+defined, and are available to you at any point. These do not require
+loading any libraries or helpers.</p>
+<div class="section" id="is-php">
+<h2>is_php()<a class="headerlink" href="#is-php" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="is_php">
+<tt class="descname">is_php</tt><big>(</big><em>$version = '5.3.0'</em><big>)</big><a class="headerlink" href="#is_php" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$version</strong> (<em>string</em>) &#8211; Version number</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Determines of the PHP version being used is greater than the
+supplied version number.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nx">is_php</span><span class="p">(</span><span class="s1">&#39;5.3&#39;</span><span class="p">))</span>
+<span class="p">{</span>
+        <span class="nv">$str</span> <span class="o">=</span> <span class="nx">quoted_printable_encode</span><span class="p">(</span><span class="nv">$str</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Returns boolean TRUE if the installed version of PHP is equal to or
+greater than the supplied version number. Returns FALSE if the installed
+version of PHP is lower than the supplied version number.</p>
+</div>
+<div class="section" id="is-really-writable">
+<h2>is_really_writable()<a class="headerlink" href="#is-really-writable" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="is_really_writable">
+<tt class="descname">is_really_writable</tt><big>(</big><em>$file</em><big>)</big><a class="headerlink" href="#is_really_writable" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$file</strong> (<em>string</em>) &#8211; File path</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p><tt class="docutils literal"><span class="pre">is_writable()</span></tt> returns TRUE on Windows servers when you really can&#8217;t
+write to the file as the OS reports to PHP as FALSE only if the
+read-only attribute is marked.</p>
+<p>This function determines if a file is actually writable by attempting
+to write to it first. Generally only recommended on platforms where
+this information may be unreliable.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nx">is_really_writable</span><span class="p">(</span><span class="s1">&#39;file.txt&#39;</span><span class="p">))</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">&quot;I could write to this if I wanted to&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">&quot;File is not writable&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="config-item">
+<h2>config_item()<a class="headerlink" href="#config-item" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="config_item">
+<tt class="descname">config_item</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#config_item" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$key</strong> (<em>string</em>) &#8211; Config item key</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">mixed</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>The <a class="reference internal" href="../libraries/config.html"><em>Config Library</em></a> is the preferred way of
+accessing configuration information, however <tt class="docutils literal"><span class="pre">config_item()</span></tt> can be used
+to retrieve single keys. See <a class="reference internal" href="../libraries/config.html"><em>Config Library</em></a>
+documentation for more information.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This function only returns values set in your configuration
+files. It does not take into account config values that are
+dynamically set at runtime.</p>
+</div>
+</div>
+<div class="section" id="show-error">
+<h2>show_error()<a class="headerlink" href="#show-error" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="show_error">
+<tt class="descname">show_error</tt><big>(</big><em>$message</em>, <em>$status_code</em>, <em>$heading = 'An Error Was Encountered'</em><big>)</big><a class="headerlink" href="#show_error" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$message</strong> (<em>mixed</em>) &#8211; Error message</li>
+<li><strong>$status_code</strong> (<em>int</em>) &#8211; HTTP Response status code</li>
+<li><strong>$heading</strong> (<em>string</em>) &#8211; Error page heading</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function calls <tt class="docutils literal"><span class="pre">CI_Exception::show_error()</span></tt>. For more info,
+please see the <a class="reference internal" href="errors.html"><em>Error Handling</em></a> documentation.</p>
+</div>
+<div class="section" id="show-404">
+<h2>show_404()<a class="headerlink" href="#show-404" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="show_404">
+<tt class="descname">show_404</tt><big>(</big><em>$page = ''</em>, <em>$log_error = TRUE</em><big>)</big><a class="headerlink" href="#show_404" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$page</strong> (<em>string</em>) &#8211; URI string</li>
+<li><strong>$log_error</strong> (<em>bool</em>) &#8211; Whether to log the error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function calls <tt class="docutils literal"><span class="pre">CI_Exception::show_404()</span></tt>. For more info,
+please see the <a class="reference internal" href="errors.html"><em>Error Handling</em></a> documentation.</p>
+</div>
+<div class="section" id="log-message">
+<h2>log_message()<a class="headerlink" href="#log-message" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="log_message">
+<tt class="descname">log_message</tt><big>(</big><em>$level</em>, <em>$message</em>, <em>$php_error = FALSE</em><big>)</big><a class="headerlink" href="#log_message" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$level</strong> (<em>string</em>) &#8211; Log level: &#8216;error&#8217;, &#8216;debug&#8217; or &#8216;info&#8217;</li>
+<li><strong>$message</strong> (<em>string</em>) &#8211; Message to log</li>
+<li><strong>$php_error</strong> (<em>bool</em>) &#8211; Whether we&#8217;re logging a native PHP error message</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function is an alias for <tt class="docutils literal"><span class="pre">CI_Log::write_log()</span></tt>. For more info,
+please see the <a class="reference internal" href="errors.html"><em>Error Handling</em></a> documentation.</p>
+</div>
+<div class="section" id="set-status-header">
+<h2>set_status_header()<a class="headerlink" href="#set-status-header" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="set_status_header">
+<tt class="descname">set_status_header</tt><big>(</big><em>$code</em>, <em>$text = ''</em><big>)</big><a class="headerlink" href="#set_status_header" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$code</strong> (<em>int</em>) &#8211; HTTP Reponse status code</li>
+<li><strong>$text</strong> (<em>string</em>) &#8211; A custom message to set with the status code</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Permits you to manually set a server status header. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">set_status_header</span><span class="p">(</span><span class="mi">401</span><span class="p">);</span>
+<span class="c1">// Sets the header as:  Unauthorized</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">See here</a> for
+a full list of headers.</p>
+</div>
+<div class="section" id="remove-invisible-characters">
+<h2>remove_invisible_characters()<a class="headerlink" href="#remove-invisible-characters" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="remove_invisible_characters">
+<tt class="descname">remove_invisible_characters</tt><big>(</big><em>$str</em>, <em>$url_encoded = TRUE</em><big>)</big><a class="headerlink" href="#remove_invisible_characters" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$str</strong> (<em>string</em>) &#8211; Input string</li>
+<li><strong>$url_encoded</strong> (<em>bool</em>) &#8211; Whether to remove URL-encoded characters as well</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function prevents inserting NULL characters between ASCII
+characters, like Java\0script.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">remove_invisible_characters</span><span class="p">(</span><span class="s1">&#39;Java\\0script&#39;</span><span class="p">);</span>
+<span class="c1">// Returns: &#39;Javascript&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="html-escape">
+<h2>html_escape()<a class="headerlink" href="#html-escape" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="html_escape">
+<tt class="descname">html_escape</tt><big>(</big><em>$var</em><big>)</big><a class="headerlink" href="#html_escape" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$var</strong> (<em>mixed</em>) &#8211; Variable to escape
+(string or array)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">mixed</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function acts as an alias for PHP&#8217;s native <tt class="docutils literal"><span class="pre">htmlspecialchars()</span></tt>
+function, with the advantage of being able to accept an array of strings.</p>
+<p>It is useful in preventing Cross Site Scripting (XSS).</p>
+</div>
+<div class="section" id="get-mimes">
+<h2>get_mimes()<a class="headerlink" href="#get-mimes" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="get_mimes">
+<tt class="descname">get_mimes</tt><big>(</big><big>)</big><a class="headerlink" href="#get_mimes" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function returns a <em>reference</em> to the MIMEs array from
+<em>application/config/mimes.php</em>.</p>
+</div>
+<div class="section" id="is-https">
+<h2>is_https()<a class="headerlink" href="#is-https" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="is_https">
+<tt class="descname">is_https</tt><big>(</big><big>)</big><a class="headerlink" href="#is_https" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Returns TRUE if a secure (HTTPS) connection is used and FALSE
+in any other case (including non-HTTP requests).</p>
+</div>
+<div class="section" id="function-usable">
+<h2>function_usable()<a class="headerlink" href="#function-usable" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="function_usable">
+<tt class="descname">function_usable</tt><big>(</big><em>$function_name</em><big>)</big><a class="headerlink" href="#function_usable" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$function_name</strong> (<em>string</em>) &#8211; Function name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Returns TRUE if a function exists and is usable, FALSE otherwise.</p>
+<p>This function runs a <tt class="docutils literal"><span class="pre">function_exists()</span></tt> check and if the
+<cite>Suhosin extension &lt;http://www.hardened-php.net/suhosin/&gt;</cite> is loaded,
+checks if it doesn&#8217;t disable the function being checked.</p>
+<p>It is useful if you want to check for the availability of functions
+such as <tt class="docutils literal"><span class="pre">eval()</span></tt> and <tt class="docutils literal"><span class="pre">exec()</span></tt>, which are dangerous and might be
+disabled on servers with highly restrictive security policies.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

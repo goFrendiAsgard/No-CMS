@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Output Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Pagination Class" href="pagination.html" />
+	    <link rel="prev" title="Migrations Class" href="migration.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa808b54>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Output Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="output-class">
+<h1>Output Class<a class="headerlink" href="#output-class" title="Permalink to this headline">¶</a></h1>
+<p>The Output class is a small class with one main function: To send the
+finalized web page to the requesting browser. It is also responsible for
+<a class="reference internal" href="../general/caching.html"><em>caching</em></a> your web pages, if you use that
+feature.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This class is initialized automatically by the system so there
+is no need to do it manually.</p>
+</div>
+<p>Under normal circumstances you won&#8217;t even notice the Output class since
+it works transparently without your intervention. For example, when you
+use the <a class="reference internal" href="loader.html"><em>Loader</em></a> class to load a view file,
+it&#8217;s automatically passed to the Output class, which will be called
+automatically by CodeIgniter at the end of system execution. It is
+possible, however, for you to manually intervene with the output if you
+need to, using either of the two following functions:</p>
+<div class="section" id="this-output-set-output">
+<h2>$this-&gt;output-&gt;set_output();<a class="headerlink" href="#this-output-set-output" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to manually set the final output string. Usage example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_output</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">If you do set your output manually, it must be the last
+thing done in the function you call it from. For example, if you build a
+page in one of your controller functions, don&#8217;t set the output until the
+end.</p>
+</div>
+</div>
+<div class="section" id="this-output-set-content-type">
+<h2>$this-&gt;output-&gt;set_content_type();<a class="headerlink" href="#this-output-set-content-type" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to set the mime-type of your page so you can serve JSON
+data, JPEG&#8217;s, XML, etc easily.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span>
+    <span class="o">-&gt;</span><span class="na">set_content_type</span><span class="p">(</span><span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+    <span class="o">-&gt;</span><span class="na">set_output</span><span class="p">(</span><span class="nx">json_encode</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;bar&#39;</span><span class="p">)));</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span>
+    <span class="o">-&gt;</span><span class="na">set_content_type</span><span class="p">(</span><span class="s1">&#39;jpeg&#39;</span><span class="p">)</span> <span class="c1">// You could also use &quot;.jpeg&quot; which will have the full stop removed before looking in config/mimes.php</span>
+    <span class="o">-&gt;</span><span class="na">set_output</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">&#39;files/something.jpg&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Make sure any non-mime string you pass to this method
+exists in config/mimes.php or it will have no effect.</p>
+</div>
+<p>You can also set the character set of the document, by passing a second argument:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_content_type</span><span class="p">(</span><span class="s1">&#39;css&#39;</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-output-get-content-type">
+<h2>$this-&gt;output-&gt;get_content_type()<a class="headerlink" href="#this-output-get-content-type" title="Permalink to this headline">¶</a></h2>
+<p>Returns the Content-Type HTTP header that&#8217;s currently in use,
+excluding the character set value.</p>
+<blockquote>
+<div>$mime = $this-&gt;output-&gt;get_content_type();</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If not set, the default return value is &#8216;text/html&#8217;.</p>
+</div>
+</div>
+<div class="section" id="this-output-get-header">
+<h2>$this-&gt;output-&gt;get_header()<a class="headerlink" href="#this-output-get-header" title="Permalink to this headline">¶</a></h2>
+<p>Gets the requested HTTP header value, if set.</p>
+<p>If the header is not set, NULL will be returned.
+If an empty value is passed to the method, it will return FALSE.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_content_type</span><span class="p">(</span><span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">get_header</span><span class="p">(</span><span class="s1">&#39;content-type&#39;</span><span class="p">);</span>
+<span class="c1">// Outputs: text/plain; charset=utf-8</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The header name is compared in a case-insensitive manner.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Raw headers sent via PHP&#8217;s native <tt class="docutils literal"><span class="pre">header()</span></tt> function are
+also detected.</p>
+</div>
+</div>
+<div class="section" id="this-output-get-output">
+<h2>$this-&gt;output-&gt;get_output()<a class="headerlink" href="#this-output-get-output" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to manually retrieve any output that has been sent for
+storage in the output class. Usage example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$string</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">get_output</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Note that data will only be retrievable from this function if it has
+been previously sent to the output class by one of the CodeIgniter
+functions like $this-&gt;load-&gt;view().</p>
+</div>
+<div class="section" id="this-output-append-output">
+<h2>$this-&gt;output-&gt;append_output();<a class="headerlink" href="#this-output-append-output" title="Permalink to this headline">¶</a></h2>
+<p>Appends data onto the output string. Usage example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">append_output</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-output-set-header">
+<h2>$this-&gt;output-&gt;set_header();<a class="headerlink" href="#this-output-set-header" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to manually set server headers, which the output class will
+send for you when outputting the final rendered display. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_header</span><span class="p">(</span><span class="s2">&quot;HTTP/1.0 200 OK&quot;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_header</span><span class="p">(</span><span class="s2">&quot;HTTP/1.1 200 OK&quot;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_header</span><span class="p">(</span><span class="s1">&#39;Last-Modified: &#39;</span><span class="o">.</span><span class="nb">gmdate</span><span class="p">(</span><span class="s1">&#39;D, d M Y H:i:s&#39;</span><span class="p">,</span> <span class="nv">$last_update</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39; GMT&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_header</span><span class="p">(</span><span class="s2">&quot;Cache-Control: no-store, no-cache, must-revalidate&quot;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_header</span><span class="p">(</span><span class="s2">&quot;Cache-Control: post-check=0, pre-check=0&quot;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_header</span><span class="p">(</span><span class="s2">&quot;Pragma: no-cache&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-output-set-status-header-code-text">
+<h2>$this-&gt;output-&gt;set_status_header(code, &#8216;text&#8217;);<a class="headerlink" href="#this-output-set-status-header-code-text" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to manually set a server status header. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">set_status_header</span><span class="p">(</span><span class="s1">&#39;401&#39;</span><span class="p">);</span>
+<span class="c1">// Sets the header as:  Unauthorized</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">See here</a> for
+a full list of headers.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is an alias for <a class="reference internal" href="../general/common_functions.html"><em>Common function</em></a>
+<tt class="docutils literal"><span class="pre">set_status_header()</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="this-output-enable-profiler">
+<h2>$this-&gt;output-&gt;enable_profiler();<a class="headerlink" href="#this-output-enable-profiler" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to enable/disable the
+<a class="reference internal" href="../general/profiling.html"><em>Profiler</em></a>, which will display benchmark
+and other data at the bottom of your pages for debugging and
+optimization purposes.</p>
+<p>To enable the profiler place the following function anywhere within your
+<a class="reference internal" href="../general/controllers.html"><em>Controller</em></a> functions:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">enable_profiler</span><span class="p">(</span><span class="k">TRUE</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>When enabled a report will be generated and inserted at the bottom of
+your pages.</p>
+<p>To disable the profiler you will use:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">enable_profiler</span><span class="p">(</span><span class="k">FALSE</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-output-set-profiler-sections">
+<h2>$this-&gt;output-&gt;set_profiler_sections();<a class="headerlink" href="#this-output-set-profiler-sections" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to enable/disable specific sections of the Profiler when
+enabled. Please refer to the <a class="reference internal" href="../general/profiling.html"><em>Profiler</em></a>
+documentation for further information.</p>
+</div>
+<div class="section" id="this-output-cache">
+<h2>$this-&gt;output-&gt;cache();<a class="headerlink" href="#this-output-cache" title="Permalink to this headline">¶</a></h2>
+<p>The CodeIgniter output library also controls caching. For more
+information, please see the <a class="reference internal" href="../general/caching.html"><em>caching
+documentation</em></a>.</p>
+</div>
+<div class="section" id="parsing-execution-variables">
+<h2>Parsing Execution Variables<a class="headerlink" href="#parsing-execution-variables" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter will parse the pseudo-variables {elapsed_time} and
+{memory_usage} in your output by default. To disable this, set the
+$parse_exec_vars class property to FALSE in your controller.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">output</span><span class="o">-&gt;</span><span class="na">parse_exec_vars</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

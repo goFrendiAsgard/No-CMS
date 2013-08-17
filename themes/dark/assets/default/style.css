@@ -28,25 +28,26 @@ footer{
 	padding: 10px;
 }
 
-#layout-banner{
-	/* IE10 */ 
-	background-image: -ms-linear-gradient(top left, black 0%, gray 100%);
-	
-	/* Mozilla Firefox */ 
-	background-image: -moz-linear-gradient(top left, black 0%, gray 100%);
-	
-	/* Opera */ 
-	background-image: -o-linear-gradient(top left, black 0%, gray 100%);
-	
-	/* Webkit (Safari/Chrome 10) */ 
-	background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, black), color-stop(1, gray));
-	
-	/* Webkit (Chrome 11+) */ 
-	background-image: -webkit-linear-gradient(top left, black 0%, gray 100%);
-	
-	/* Proposed W3C Markup */ 
-	background-image: linear-gradient(top left, black 0%, gray 100%);
+#__section-banner>div{
+    /* IE10 */ 
+    background-image: -ms-linear-gradient(top left, black 0%, gray 100%);
+    
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(top left, black 0%, gray 100%);
+    
+    /* Opera */ 
+    background-image: -o-linear-gradient(top left, black 0%, gray 100%);
+    
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, black), color-stop(1, gray));
+    
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(top left, black 0%, gray 100%);
+    
+    /* Proposed W3C Markup */ 
+    background-image: linear-gradient(top left, black 0%, gray 100%);
 }
+
 
 /* grocery-CRUD flexigrid */
 .pGroup select#per_page

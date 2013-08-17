@@ -28,7 +28,7 @@ footer{
 	padding: 10px;
 }
 
-#layout-banner{
+#__section-banner>div{
 	/* IE10 */ 
 	background-image: -ms-linear-gradient(top left, white 0%, gray 100%);
 	
@@ -48,7 +48,7 @@ footer{
 	background-image: linear-gradient(top left, white 0%, gray 100%);
 }
 
-#layout-content{
+#__section-left-and-content{
 	padding:5px;
 	margin-left:0px;
 	

@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Error Handling &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Web Page Caching" href="caching.html" />
+	    <link rel="prev" title="URI Routing" href="routing.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa48b72c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Error Handling</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="error-handling">
+<h1>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter lets you build error reporting into your applications using
+the functions described below. In addition, it has an error logging
+class that permits error and debugging messages to be saved as text
+files.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">By default, CodeIgniter displays all PHP errors. You might
+wish to change this behavior once your development is complete. You&#8217;ll
+find the error_reporting() function located at the top of your main
+index.php file. Disabling error reporting will NOT prevent log files
+from being written if there are errors.</p>
+</div>
+<p>Unlike most systems in CodeIgniter, the error functions are simple
+procedural interfaces that are available globally throughout the
+application. This approach permits error messages to get triggered
+without having to worry about class/function scoping.</p>
+<p>CodeIgniter also returns a status code whenever a portion of the core
+calls <tt class="docutils literal"><span class="pre">exit()</span></tt>. This exit status code is separate from the HTTP status
+code, and serves as a notice to other processes that may be watching of
+whether the script completed successfully, or if not, what kind of
+problem it encountered that caused it to abort. These values are
+defined in <em>application/config/constants.php</em>. While exit status codes
+are most useful in CLI settings, returning the proper code helps server
+software keep track of your scripts and the health of your application.</p>
+<p>The following functions let you generate errors:</p>
+<div class="section" id="show-error">
+<h2>show_error()<a class="headerlink" href="#show-error" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="show_error">
+<tt class="descname">show_error</tt><big>(</big><em>$message</em>, <em>$status_code</em>, <em>$heading = 'An Error Was Encountered'</em><big>)</big><a class="headerlink" href="#show_error" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$message</strong> (<em>mixed</em>) &#8211; Error message</li>
+<li><strong>$status_code</strong> (<em>int</em>) &#8211; HTTP Response status code</li>
+<li><strong>$heading</strong> (<em>string</em>) &#8211; Error page heading</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function will display the error message supplied to it using the
+following error template:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">application</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">errors</span><span class="o">/</span><span class="nx">error_general</span><span class="o">.</span><span class="nx">php</span>
+</pre></div>
+</div>
+<p>The optional parameter <tt class="docutils literal"><span class="pre">$status_code</span></tt> determines what HTTP status
+code should be sent with the error. If <tt class="docutils literal"><span class="pre">$status_code</span></tt> is less than 100,
+the HTTP status code will be set to 500, and the exit status code will
+be set to <tt class="docutils literal"><span class="pre">$status_code</span> <span class="pre">+</span> <span class="pre">EXIT__AUTO_MIN</span></tt>. If that value is larger than
+<tt class="docutils literal"><span class="pre">EXIT__AUTO_MAX</span></tt>, or if <tt class="docutils literal"><span class="pre">$status_code</span></tt> is 100 or higher, the exit
+status code will be set to <tt class="docutils literal"><span class="pre">EXIT_ERROR</span></tt>. You can check in
+<em>application/config/constants.php</em> for more detail.</p>
+</div>
+<div class="section" id="show-404">
+<h2>show_404()<a class="headerlink" href="#show-404" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="show_404">
+<tt class="descname">show_404</tt><big>(</big><em>$page = ''</em>, <em>$log_error = TRUE</em><big>)</big><a class="headerlink" href="#show_404" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$page</strong> (<em>string</em>) &#8211; URI string</li>
+<li><strong>$log_error</strong> (<em>bool</em>) &#8211; Whether to log the error</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function will display the 404 error message supplied to it using
+the following error template:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">application</span><span class="o">/</span><span class="nx">views</span><span class="o">/</span><span class="nx">errors</span><span class="o">/</span><span class="nx">error_404</span><span class="o">.</span><span class="nx">php</span>
+</pre></div>
+</div>
+<p>The function expects the string passed to it to be the file path to the
+page that isn&#8217;t found. The exit status code will be set to <tt class="docutils literal"><span class="pre">EXIT_UNKNOWN_FILE</span></tt>.
+Note that CodeIgniter automatically shows 404 messages if controllers are
+not found.</p>
+<p>CodeIgniter automatically logs any <tt class="docutils literal"><span class="pre">show_404()</span></tt> calls. Setting the
+optional second parameter to FALSE will skip logging.</p>
+</div>
+<div class="section" id="log-message">
+<h2>log_message()<a class="headerlink" href="#log-message" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="log_message">
+<tt class="descname">log_message</tt><big>(</big><em>$level</em>, <em>$message</em>, <em>$php_error = FALSE</em><big>)</big><a class="headerlink" href="#log_message" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$level</strong> (<em>string</em>) &#8211; Log level: &#8216;error&#8217;, &#8216;debug&#8217; or &#8216;info&#8217;</li>
+<li><strong>$message</strong> (<em>string</em>) &#8211; Message to log</li>
+<li><strong>$php_error</strong> (<em>bool</em>) &#8211; Whether we&#8217;re logging a native PHP error message</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">void</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>This function lets you write messages to your log files. You must supply
+one of three &#8220;levels&#8221; in the first parameter, indicating what type of
+message it is (debug, error, info), with the message itself in the
+second parameter.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$some_var</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nx">log_message</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;Some variable did not contain a value.&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+        <span class="nx">log_message</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">,</span> <span class="s1">&#39;Some variable was correctly set&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">log_message</span><span class="p">(</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="s1">&#39;The purpose of some variable is to provide some value.&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>There are three message types:</p>
+<ol class="arabic simple">
+<li>Error Messages. These are actual errors, such as PHP errors or user
+errors.</li>
+<li>Debug Messages. These are messages that assist in debugging. For
+example, if a class has been initialized, you could log this as
+debugging info.</li>
+<li>Informational Messages. These are the lowest priority messages,
+simply giving information regarding some process. CodeIgniter doesn&#8217;t
+natively generate any info messages but you may want to in your
+application.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In order for the log file to actually be written, the <em>logs</em>
+directory must be writable. In addition, you must set the &#8220;threshold&#8221;
+for logging in <em>application/config/config.php</em>. You might, for example,
+only want error messages to be logged, and not the other two types.
+If you set it to zero logging will be disabled.</p>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

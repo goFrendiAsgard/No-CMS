@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Hooks - Extending the Framework Core &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Auto-loading Resources" href="autoloader.html" />
+	    <link rel="prev" title="Creating Ancillary Classes" href="ancillary_classes.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa48b304>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Hooks - Extending the Framework Core</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="hooks-extending-the-framework-core">
+<h1>Hooks - Extending the Framework Core<a class="headerlink" href="#hooks-extending-the-framework-core" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter&#8217;s Hooks feature provides a means to tap into and modify the
+inner workings of the framework without hacking the core files. When
+CodeIgniter runs it follows a specific execution process, diagramed in
+the <a class="reference internal" href="../overview/appflow.html"><em>Application Flow</em></a> page. There may be
+instances, however, where you&#8217;d like to cause some action to take place
+at a particular stage in the execution process. For example, you might
+want to run a script right before your controllers get loaded, or right
+after, or you might want to trigger one of your own scripts in some
+other location.</p>
+<div class="section" id="enabling-hooks">
+<h2>Enabling Hooks<a class="headerlink" href="#enabling-hooks" title="Permalink to this headline">¶</a></h2>
+<p>The hooks feature can be globally enabled/disabled by setting the
+following item in the <strong>application/config/config.php</strong> file:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;enable_hooks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="defining-a-hook">
+<h2>Defining a Hook<a class="headerlink" href="#defining-a-hook" title="Permalink to this headline">¶</a></h2>
+<p>Hooks are defined in <strong>application/config/hooks.php</strong> file.
+Each hook is specified as an array with this prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$hook</span><span class="p">[</span><span class="s1">&#39;pre_controller&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;class&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;MyClass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;function&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Myfunction&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;filename&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Myclass.php&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;filepath&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;hooks&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;params&#39;</span>   <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;beer&#39;</span><span class="p">,</span> <span class="s1">&#39;wine&#39;</span><span class="p">,</span> <span class="s1">&#39;snacks&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<p>The array index correlates to the name of the particular hook point you
+want to use. In the above example the hook point is pre_controller. A
+list of hook points is found below. The following items should be
+defined in your associative hook array:</p>
+<ul class="simple">
+<li><strong>class</strong> The name of the class you wish to invoke. If you prefer to
+use a procedural function instead of a class, leave this item blank.</li>
+<li><strong>function</strong> The function (or method) name you wish to call.</li>
+<li><strong>filename</strong> The file name containing your class/function.</li>
+<li><strong>filepath</strong> The name of the directory containing your script.
+Note:
+Your script must be located in a directory INSIDE your <em>application/</em>
+directory, so the file path is relative to that directory. For example,
+if your script is located in <em>application/hooks/</em>, you will simply use
+&#8216;hooks&#8217; as your filepath. If your script is located in
+<em>application/hooks/utilities/</em> you will use &#8216;hooks/utilities&#8217; as your
+filepath. No trailing slash.</li>
+<li><strong>params</strong> Any parameters you wish to pass to your script. This item
+is optional.</li>
+</ul>
+</div>
+<div class="section" id="multiple-calls-to-the-same-hook">
+<h2>Multiple Calls to the Same Hook<a class="headerlink" href="#multiple-calls-to-the-same-hook" title="Permalink to this headline">¶</a></h2>
+<p>If want to use the same hook point with more then one script, simply
+make your array declaration multi-dimensional, like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$hook</span><span class="p">[</span><span class="s1">&#39;pre_controller&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;class&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;MyClass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;function&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyMethod&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;filename&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Myclass.php&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;filepath&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;hooks&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;params&#39;</span>   <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;beer&#39;</span><span class="p">,</span> <span class="s1">&#39;wine&#39;</span><span class="p">,</span> <span class="s1">&#39;snacks&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="nv">$hook</span><span class="p">[</span><span class="s1">&#39;pre_controller&#39;</span><span class="p">][]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;class&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;MyOtherClass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;function&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyOtherMethod&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;filename&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Myotherclass.php&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;filepath&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;hooks&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;params&#39;</span>   <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>Notice the brackets after each array index:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$hook</span><span class="p">[</span><span class="s1">&#39;pre_controller&#39;</span><span class="p">][]</span>
+</pre></div>
+</div>
+<p>This permits you to have the same hook point with multiple scripts. The
+order you define your array will be the execution order.</p>
+</div>
+<div class="section" id="hook-points">
+<h2>Hook Points<a class="headerlink" href="#hook-points" title="Permalink to this headline">¶</a></h2>
+<p>The following is a list of available hook points.</p>
+<ul class="simple">
+<li><strong>pre_system</strong>
+Called very early during system execution. Only the benchmark and
+hooks class have been loaded at this point. No routing or other
+processes have happened.</li>
+<li><strong>pre_controller</strong>
+Called immediately prior to any of your controllers being called.
+All base classes, routing, and security checks have been done.</li>
+<li><strong>post_controller_constructor</strong>
+Called immediately after your controller is instantiated, but prior
+to any method calls happening.</li>
+<li><strong>post_controller</strong>
+Called immediately after your controller is fully executed.</li>
+<li><strong>display_override</strong>
+Overrides the <tt class="docutils literal"><span class="pre">_display()</span></tt> method, used to send the finalized page
+to the web browser at the end of system execution. This permits you
+to use your own display methodology. Note that you will need to
+reference the CI superobject with <tt class="docutils literal"><span class="pre">$this-&gt;CI</span> <span class="pre">=&amp;</span> <span class="pre">get_instance()</span></tt> and
+then the finalized data will be available by calling
+<tt class="docutils literal"><span class="pre">$this-&gt;CI-&gt;output-&gt;get_output()</span></tt>.</li>
+<li><strong>cache_override</strong>
+Enables you to call your own method instead of the <tt class="docutils literal"><span class="pre">_display_cache()</span></tt>
+method in the <a class="reference internal" href="../libraries/output.html"><em>Output Library</em></a>. This permits
+you to use your own cache display mechanism.</li>
+<li><strong>post_system</strong>
+Called after the final rendered page is sent to the browser, at the
+end of system execution after the finalized data is sent to the
+browser.</li>
+</ul>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

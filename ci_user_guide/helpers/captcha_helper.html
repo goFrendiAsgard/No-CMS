@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>CAPTCHA Helper &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Helpers" href="index.html" />
+	    <link rel="next" title="Cookie Helper" href="cookie_helper.html" />
+	    <link rel="prev" title="Array Helper" href="array_helper.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa1e3f0c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Helpers</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>CAPTCHA Helper</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="captcha-helper">
+<h1><a class="toc-backref" href="#id1">CAPTCHA Helper</a><a class="headerlink" href="#captcha-helper" title="Permalink to this headline">¶</a></h1>
+<p>The CAPTCHA Helper file contains functions that assist in creating
+CAPTCHA images.</p>
+<div class="contents topic" id="page-contents">
+<p class="topic-title first">Page Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#captcha-helper" id="id1">CAPTCHA Helper</a><ul>
+<li><a class="reference internal" href="#loading-this-helper" id="id2">Loading this Helper</a></li>
+<li><a class="reference internal" href="#create-captcha" id="id3">create_captcha()</a><ul>
+<li><a class="reference internal" href="#using-the-captcha-helper" id="id4">Using the CAPTCHA helper</a></li>
+<li><a class="reference internal" href="#adding-a-database" id="id5">Adding a Database</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="loading-this-helper">
+<h2><a class="toc-backref" href="#id2">Loading this Helper</a><a class="headerlink" href="#loading-this-helper" title="Permalink to this headline">¶</a></h2>
+<p>This helper is loaded using the following code</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;captcha&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The following functions are available:</p>
+</div>
+<div class="section" id="create-captcha">
+<h2><a class="toc-backref" href="#id3">create_captcha()</a><a class="headerlink" href="#create-captcha" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<tt class="descname">function create_captcha($data = '', $img_path = '', $img_url = '', $font_path = '')</tt></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>array</em>) &#8211; Array of data for the CAPTCHA</li>
+<li><strong>$img_path</strong> (<em>string</em>) &#8211; Path to create the image in</li>
+<li><strong>$img_url</strong> (<em>string</em>) &#8211; URL to the CAPTCHA image folder</li>
+<li><strong>$font_path</strong> (<em>string</em>) &#8211; Server path to font</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">array(&#8216;word&#8217; =&gt; $word, &#8216;time&#8217; =&gt; $now, &#8216;image&#8217; =&gt; $img)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>Takes an array of information to generate the CAPTCHA as input and
+creates the image to your specifications, returning an array of
+associative data about the image.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;image&#39;</span> <span class="o">=&gt;</span> <span class="nx">IMAGE</span> <span class="nx">TAG</span>
+        <span class="s1">&#39;time&#39;</span>  <span class="o">=&gt;</span> <span class="nx">TIMESTAMP</span> <span class="p">(</span><span class="nx">in</span> <span class="nb">microtime</span><span class="p">)</span>
+        <span class="s1">&#39;word&#39;</span>  <span class="o">=&gt;</span> <span class="nx">CAPTCHA</span> <span class="nx">WORD</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <strong>image</strong> is the actual image tag:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">img</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&quot;http://example.com/captcha/12345.jpg&quot;</span> <span class="nx">width</span><span class="o">=</span><span class="s2">&quot;140&quot;</span> <span class="nx">height</span><span class="o">=</span><span class="s2">&quot;50&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>The <strong>time</strong> is the micro timestamp used as the image name without the
+file extension. It will be a number like this: 1139612155.3422</p>
+<p>The <strong>word</strong> is the word that appears in the captcha image, which if not
+supplied to the function, will be a random string.</p>
+<div class="section" id="using-the-captcha-helper">
+<h3><a class="toc-backref" href="#id4">Using the CAPTCHA helper</a><a class="headerlink" href="#using-the-captcha-helper" title="Permalink to this headline">¶</a></h3>
+<p>Once loaded you can generate a captcha like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$vals</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;word&#39;</span>          <span class="o">=&gt;</span> <span class="s1">&#39;Random word&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;img_path&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;./captcha/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;img_url&#39;</span>       <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/captcha/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;font_path&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;./path/to/fonts/texb.ttf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;img_width&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;150&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;img_height&#39;</span>    <span class="o">=&gt;</span> <span class="mi">30</span><span class="p">,</span>
+        <span class="s1">&#39;expiration&#39;</span>    <span class="o">=&gt;</span> <span class="mi">7200</span><span class="p">,</span>
+        <span class="s1">&#39;word_length&#39;</span>   <span class="o">=&gt;</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s1">&#39;pool&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span>
+<span class="p">);</span>
+
+<span class="nv">$cap</span> <span class="o">=</span> <span class="nx">create_captcha</span><span class="p">(</span><span class="nv">$vals</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$cap</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">];</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>The captcha function requires the GD image library.</li>
+<li>Only the <strong>img_path</strong> and <strong>img_url</strong> are required.</li>
+<li>If a <strong>word</strong> is not supplied, the function will generate a random
+ASCII string. You might put together your own word library that you
+can draw randomly from.</li>
+<li>If you do not specify a path to a TRUE TYPE font, the native ugly GD
+font will be used.</li>
+<li>The &#8220;captcha&#8221; folder must be writable (666, or 777)</li>
+<li>The <strong>expiration</strong> (in seconds) signifies how long an image will remain
+in the captcha folder before it will be deleted. The default is two
+hours.</li>
+<li><strong>word_length</strong> defaults to 8, <strong>pool</strong> defaults to &#8216;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#8217;</li>
+</ul>
+</div>
+<div class="section" id="adding-a-database">
+<h3><a class="toc-backref" href="#id5">Adding a Database</a><a class="headerlink" href="#adding-a-database" title="Permalink to this headline">¶</a></h3>
+<p>In order for the captcha function to prevent someone from submitting,
+you will need to add the information returned from <tt class="docutils literal"><span class="pre">create_captcha()</span></tt>
+to your database. Then, when the data from the form is submitted by
+the user you will need to verify that the data exists in the database
+and has not expired.</p>
+<p>Here is a table prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">CREATE</span> <span class="nx">TABLE</span> <span class="nx">captcha</span> <span class="p">(</span>
+        <span class="nx">captcha_id</span> <span class="nx">bigint</span><span class="p">(</span><span class="mi">13</span><span class="p">)</span> <span class="nx">unsigned</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="nx">auto_increment</span><span class="p">,</span>
+        <span class="nx">captcha_time</span> <span class="nx">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="nx">unsigned</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">ip_address</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">word</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">PRIMARY</span> <span class="nx">KEY</span> <span class="sb">`captcha_id`</span> <span class="p">(</span><span class="sb">`captcha_id`</span><span class="p">),</span>
+        <span class="nx">KEY</span> <span class="sb">`word`</span> <span class="p">(</span><span class="sb">`word`</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>Here is an example of usage with a database. On the page where the
+CAPTCHA will be shown you&#8217;ll have something like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;captcha&#39;</span><span class="p">);</span>
+<span class="nv">$vals</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;img_path&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;./captcha/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;img_url&#39;</span>       <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/captcha/&#39;</span>
+<span class="p">);</span>
+
+<span class="nv">$cap</span> <span class="o">=</span> <span class="nx">create_captcha</span><span class="p">(</span><span class="nv">$vals</span><span class="p">);</span>
+<span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;captcha_time&#39;</span>  <span class="o">=&gt;</span> <span class="nv">$cap</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;ip_address&#39;</span>    <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">ip_address</span><span class="p">(),</span>
+        <span class="s1">&#39;word&#39;</span>          <span class="o">=&gt;</span> <span class="nv">$cap</span><span class="p">[</span><span class="s1">&#39;word&#39;</span><span class="p">]</span>
+<span class="p">);</span>
+
+<span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">insert_string</span><span class="p">(</span><span class="s1">&#39;captcha&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$query</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="s1">&#39;Submit the word you see below:&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$cap</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">];</span>
+<span class="k">echo</span> <span class="s1">&#39;&lt;input type=&quot;text&quot; name=&quot;captcha&quot; value=&quot;&quot; /&gt;&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Then, on the page that accepts the submission you&#8217;ll have something like
+this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// First, delete old captchas</span>
+<span class="nv">$expiration</span> <span class="o">=</span> <span class="nb">time</span><span class="p">()</span> <span class="o">-</span> <span class="mi">7200</span><span class="p">;</span> <span class="c1">// Two hour limit</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">where</span><span class="p">(</span><span class="s1">&#39;captcha_time &lt; &#39;</span><span class="p">,</span> <span class="nv">$expiration</span><span class="p">)</span>
+        <span class="o">-&gt;</span><span class="na">delete</span><span class="p">(</span><span class="s1">&#39;captcha&#39;</span><span class="p">);</span>
+
+<span class="c1">// Then see if a captcha exists:</span>
+<span class="nv">$sql</span> <span class="o">=</span> <span class="s1">&#39;SELECT COUNT(*) AS count FROM captcha WHERE word = ? AND ip_address = ? AND captcha_time &gt; ?&#39;</span><span class="p">;</span>
+<span class="nv">$binds</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;captcha&#39;</span><span class="p">],</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">ip_address</span><span class="p">(),</span> <span class="nv">$expiration</span><span class="p">);</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$sql</span><span class="p">,</span> <span class="nv">$binds</span><span class="p">);</span>
+<span class="nv">$row</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">row</span><span class="p">();</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$row</span><span class="o">-&gt;</span><span class="na">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="s1">&#39;You must submit the word that appears in the image.&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

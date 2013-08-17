@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Upgrading from 1.7.1 to 1.7.2 &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Installation Instructions" href="index.html" />
+	    <link rel="next" title="Upgrading from 1.7.2 to 2.0.0" href="upgrade_200.html" />
+	    <link rel="prev" title="Upgrading from 1.7.0 to 1.7.1" href="upgrade_171.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa808c34>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Installation Instructions</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Upgrading from 1.7.1 to 1.7.2</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="upgrading-from-1-7-1-to-1-7-2">
+<h1>Upgrading from 1.7.1 to 1.7.2<a class="headerlink" href="#upgrading-from-1-7-1-to-1-7-2" title="Permalink to this headline">¶</a></h1>
+<p>Before performing an update you should take your site offline by
+replacing the index.php file with a static one.</p>
+<div class="section" id="step-1-update-your-codeigniter-files">
+<h2>Step 1: Update your CodeIgniter files<a class="headerlink" href="#step-1-update-your-codeigniter-files" title="Permalink to this headline">¶</a></h2>
+<p>Replace these files and directories in your &#8220;system&#8221; folder with the new
+versions:</p>
+<ul class="simple">
+<li>system/codeigniter</li>
+<li>system/database</li>
+<li>system/helpers</li>
+<li>system/language</li>
+<li>system/libraries</li>
+<li>index.php</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have any custom developed files in these folders please
+make copies of them first.</p>
+</div>
+</div>
+<div class="section" id="step-2-remove-header-from-404-error-template">
+<h2>Step 2: Remove header() from 404 error template<a class="headerlink" href="#step-2-remove-header-from-404-error-template" title="Permalink to this headline">¶</a></h2>
+<p>If you are using header() in your 404 error template, such as the case
+with the default error_404.php template shown below, remove that line
+of code.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span> <span class="nb">header</span><span class="p">(</span><span class="s2">&quot;HTTP/1.1 404 Not Found&quot;</span><span class="p">);</span> <span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<p>404 status headers are now properly handled in the show_404() method
+itself.</p>
+</div>
+<div class="section" id="step-3-confirm-your-system-path">
+<h2>Step 3: Confirm your system_path<a class="headerlink" href="#step-3-confirm-your-system-path" title="Permalink to this headline">¶</a></h2>
+<p>In your updated index.php file, confirm that the $system_path variable
+is set to your application&#8217;s system folder.</p>
+</div>
+<div class="section" id="step-4-update-your-user-guide">
+<h2>Step 4: Update your user guide<a class="headerlink" href="#step-4-update-your-user-guide" title="Permalink to this headline">¶</a></h2>
+<p>Please replace your local copy of the user guide with the new version,
+including the image files.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

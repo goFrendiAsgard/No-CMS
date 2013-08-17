@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Generating Query Results &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="The Database Class" href="index.html" />
+	    <link rel="next" title="Query Helper Functions" href="helpers.html" />
+	    <link rel="prev" title="Queries" href="queries.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa2835a4>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">The Database Class</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Generating Query Results</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="generating-query-results">
+<h1>Generating Query Results<a class="headerlink" href="#generating-query-results" title="Permalink to this headline">¶</a></h1>
+<p>There are several ways to generate query results:</p>
+<div class="section" id="result">
+<h2>result()<a class="headerlink" href="#result" title="Permalink to this headline">¶</a></h2>
+<p>This function returns the query result as an array of <strong>objects</strong>, or
+<strong>an empty array</strong> on failure. Typically you&#8217;ll use this in a foreach
+loop, like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;YOUR QUERY&quot;</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">;</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The above function is an alias of result_object().</p>
+<p>If you run queries that might <strong>not</strong> produce a result, you are
+encouraged to test the result first:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;YOUR QUERY&quot;</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">num_rows</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">;</span>
+                <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+                <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>You can also pass a string to result() which represents a class to
+instantiate for each result object (note: this class must be loaded)</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM users;&quot;</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$user</span><span class="p">)</span>
+<span class="p">{</span>
+   <span class="k">echo</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span> <span class="c1">// call attributes</span>
+   <span class="k">echo</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">reverse_name</span><span class="p">();</span> <span class="c1">// or methods defined on the &#39;User&#39; class</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="result-array">
+<h2>result_array()<a class="headerlink" href="#result-array" title="Permalink to this headline">¶</a></h2>
+<p>This function returns the query result as a pure array, or an empty
+array when no result is produced. Typically you&#8217;ll use this in a foreach
+loop, like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;YOUR QUERY&quot;</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">result_array</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">];</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="row">
+<h2>row()<a class="headerlink" href="#row" title="Permalink to this headline">¶</a></h2>
+<p>This function returns a single result row. If your query has more than
+one row, it returns only the first row. The result is returned as an
+<strong>object</strong>. Here&#8217;s a usage example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;YOUR QUERY&quot;</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">num_rows</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nv">$row</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">row</span><span class="p">();</span>
+
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">;</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If you want a specific row returned you can submit the row number as a
+digit in the first parameter:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$row</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">row</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can also add a second String parameter, which is the name of a class
+to instantiate the row with:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM users LIMIT 1;&quot;</span><span class="p">);</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">row</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span> <span class="c1">// call attributes</span>
+<span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">reverse_name</span><span class="p">();</span> <span class="c1">// or methods defined on the &#39;User&#39; class</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="row-array">
+<h2>row_array()<a class="headerlink" href="#row-array" title="Permalink to this headline">¶</a></h2>
+<p>Identical to the above row() function, except it returns an array.
+Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;YOUR QUERY&quot;</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">num_rows</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nv">$row</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">row_array</span><span class="p">();</span>
+
+        <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">];</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If you want a specific row returned you can submit the row number as a
+digit in the first parameter:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$row</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">row_array</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In addition, you can walk forward/backwards/first/last through your
+results using these variations:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>$row = $query-&gt;first_row()</strong></div>
+<div class="line"><strong>$row = $query-&gt;last_row()</strong></div>
+<div class="line"><strong>$row = $query-&gt;next_row()</strong></div>
+<div class="line"><strong>$row = $query-&gt;previous_row()</strong></div>
+</div>
+</div></blockquote>
+<p>By default they return an object unless you put the word &#8220;array&#8221; in the
+parameter:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><strong>$row = $query-&gt;first_row(&#8216;array&#8217;)</strong></div>
+<div class="line"><strong>$row = $query-&gt;last_row(&#8216;array&#8217;)</strong></div>
+<div class="line"><strong>$row = $query-&gt;next_row(&#8216;array&#8217;)</strong></div>
+<div class="line"><strong>$row = $query-&gt;previous_row(&#8216;array&#8217;)</strong></div>
+</div>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">all the functions above will load the whole result into memory (prefetching) use unbuffered_row() for processing large result sets.</p>
+</div>
+</div>
+<div class="section" id="unbuffered-row">
+<h2>unbuffered_row()<a class="headerlink" href="#unbuffered-row" title="Permalink to this headline">¶</a></h2>
+<p>This method returns a single result row without prefetching the whole
+result in memory as <tt class="docutils literal"><span class="pre">row()</span></tt> does. If your query has more than one row,
+it returns the current row and moves the internal data pointer ahead.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;YOUR QUERY&quot;</span><span class="p">);</span>
+
+<span class="k">while</span> <span class="p">(</span><span class="nv">$row</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">unbuffered_row</span><span class="p">())</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">;</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>You can optionally pass &#8216;object&#8217; (default) or &#8216;array&#8217; in order to specify
+the returned value&#8217;s type:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">unbuffered_row</span><span class="p">();</span>               <span class="c1">// object</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">unbuffered_row</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">);</span>       <span class="c1">// object</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">unbuffered_row</span><span class="p">(</span><span class="s1">&#39;array&#39;</span><span class="p">);</span>        <span class="c1">// associative array</span>
+</pre></div>
+</div>
+<div class="section" id="result-helper-functions">
+<h3>Result Helper Functions<a class="headerlink" href="#result-helper-functions" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="query-num-rows">
+<h2>$query-&gt;num_rows()<a class="headerlink" href="#query-num-rows" title="Permalink to this headline">¶</a></h2>
+<p>The number of rows returned by the query. Note: In this example, $query
+is the variable that the query result object is assigned to:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM my_table&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">num_rows</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all database drivers have a native way of getting the total
+number of rows for a result set. When this is the case, all of
+the data is prefetched and count() is manually called on the
+resulting array in order to achieve the same functionality.</p>
+</div>
+</div>
+<div class="section" id="query-num-fields">
+<h2>$query-&gt;num_fields()<a class="headerlink" href="#query-num-fields" title="Permalink to this headline">¶</a></h2>
+<p>The number of FIELDS (columns) returned by the query. Make sure to call
+the function using your query result object:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM my_table&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">num_fields</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="query-free-result">
+<h2>$query-&gt;free_result()<a class="headerlink" href="#query-free-result" title="Permalink to this headline">¶</a></h2>
+<p>It frees the memory associated with the result and deletes the result
+resource ID. Normally PHP frees its memory automatically at the end of
+script execution. However, if you are running a lot of queries in a
+particular script you might want to free the result after each query
+result has been generated in order to cut down on memory consumptions.
+Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">&#39;SELECT title FROM my_table&#39;</span><span class="p">);</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">title</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">free_result</span><span class="p">();</span>  <span class="c1">// The $query result object will no longer be available</span>
+
+<span class="nv">$query2</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">&#39;SELECT name FROM some_table&#39;</span><span class="p">);</span>
+
+<span class="nv">$row</span> <span class="o">=</span> <span class="nv">$query2</span><span class="o">-&gt;</span><span class="na">row</span><span class="p">();</span>
+<span class="k">echo</span> <span class="nv">$row</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<span class="nv">$query2</span><span class="o">-&gt;</span><span class="na">free_result</span><span class="p">();</span> <span class="c1">// The $query2 result object will no longer be available</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-seek">
+<h2>data_seek()<a class="headerlink" href="#data-seek" title="Permalink to this headline">¶</a></h2>
+<p>This method sets the internal pointer for the next result row to be
+fetched. It is only useful in combination with <tt class="docutils literal"><span class="pre">unbuffered_row()</span></tt>.</p>
+<p>It accepts a positive integer value, which defaults to 0 and returns
+TRUE on success or FALSE on failure.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s1">&#39;SELECT `field_name` FROM `table_name`&#39;</span><span class="p">);</span>
+<span class="nv">$query</span><span class="o">-&gt;</span><span class="na">data_seek</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span> <span class="c1">// Skip the first 5 rows</span>
+<span class="nv">$row</span> <span class="o">=</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">unbuffered_row</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all database drivers support this feature and will return FALSE.
+Most notably - you won&#8217;t be able to use it with PDO.</p>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

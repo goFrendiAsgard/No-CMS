@@ -1,0 +1,625 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Session Driver &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="HTML Table Class" href="table.html" />
+	    <link rel="prev" title="Security Class" href="security.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3f78b4>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Session Driver</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="session-driver">
+<h1>Session Driver<a class="headerlink" href="#session-driver" title="Permalink to this headline">¶</a></h1>
+<p>The Session class permits you maintain a user&#8217;s &#8220;state&#8221; and track their
+activity while they browse your site. CodeIgniter offers two default
+session drivers: the classic <a class="reference internal" href="#cookie-driver">Cookie Driver</a>, and the <a class="reference internal" href="#native-driver">Native Driver</a>,
+which supports usage of the native PHP Session mechanism. In addition,
+you may create your own <a class="reference internal" href="#custom-drivers">Custom Drivers</a> to store session data however
+you wish, while still taking advantage of the features of the Session class.</p>
+<div class="section" id="initializing-a-session">
+<h2>Initializing a Session<a class="headerlink" href="#initializing-a-session" title="Permalink to this headline">¶</a></h2>
+<p>Sessions will typically run globally with each page load, so the session
+class must either be <a class="reference internal" href="../general/drivers.html"><em>initialized</em></a> in your
+<a class="reference internal" href="../general/controllers.html"><em>controller</em></a> constructors, or it can be
+<a class="reference internal" href="../general/autoloader.html"><em>auto-loaded</em></a> by the system. For the most
+part the session class will run unattended in the background, so simply
+initializing the class will cause it to read, create, and update
+sessions.</p>
+<p>To initialize the Session class manually in your controller constructor,
+use the $this-&gt;load-&gt;driver function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">driver</span><span class="p">(</span><span class="s1">&#39;session&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once loaded, the Sessions library object will be available using:
+$this-&gt;session</p>
+</div>
+<div class="section" id="how-do-sessions-work">
+<h2>How do Sessions work?<a class="headerlink" href="#how-do-sessions-work" title="Permalink to this headline">¶</a></h2>
+<p>When a page is loaded, the session class will check to see if valid
+session data exists in the user&#8217;s session. If sessions data does <strong>not</strong>
+exist (or if it has expired) a new session will be created and saved.
+If a session does exist, its information will be updated. With each update,
+the session_id will be regenerated.</p>
+<p>It&#8217;s important for you to understand that once initialized, the Session
+class runs automatically. There is nothing you need to do to cause the
+above behavior to happen. You can, as you&#8217;ll see below, work with
+session data or even add your own data to a user&#8217;s session, but the
+process of reading, writing, and updating a session is automatic.</p>
+</div>
+<div class="section" id="what-is-session-data">
+<h2>What is Session Data?<a class="headerlink" href="#what-is-session-data" title="Permalink to this headline">¶</a></h2>
+<p>A <em>session</em>, as far as CodeIgniter is concerned, is simply an array
+containing the following information:</p>
+<ul class="simple">
+<li>The user&#8217;s unique Session ID (this is a statistically random string
+with very strong entropy, hashed with MD5 for portability, and
+regenerated (by default) every five minutes)</li>
+<li>The user&#8217;s IP Address</li>
+<li>The user&#8217;s User Agent data (the first 120 characters of the browser
+data string)</li>
+<li>The &#8220;last activity&#8221; time stamp.</li>
+</ul>
+<p>The above data is stored in a cookie as a serialized array with this
+prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="p">[</span><span class="k">array</span><span class="p">]</span>
+<span class="p">(</span>
+     <span class="s1">&#39;session_id&#39;</span>    <span class="o">=&gt;</span> <span class="nx">random</span> <span class="nx">hash</span><span class="p">,</span>
+     <span class="s1">&#39;ip_address&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;string - user IP address&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;user_agent&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;string - user agent data&#39;</span><span class="p">,</span>
+     <span class="s1">&#39;last_activity&#39;</span> <span class="o">=&gt;</span> <span class="nx">timestamp</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Sessions are only updated every five minutes by default to
+reduce processor load. If you repeatedly reload a page you&#8217;ll notice
+that the &#8220;last activity&#8221; time only updates if five minutes or more has
+passed since the last time the cookie was written. This time is
+configurable by changing the $config[&#8216;sess_time_to_update&#8217;] line in
+your system/config/config.php file.</p>
+</div>
+</div>
+<div class="section" id="retrieving-session-data">
+<h2>Retrieving Session Data<a class="headerlink" href="#retrieving-session-data" title="Permalink to this headline">¶</a></h2>
+<p>Any piece of information from the session array is available using the
+following function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">userdata</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where item is the array index corresponding to the item you wish to
+fetch. For example, to fetch the session ID you will do this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$session_id</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">userdata</span><span class="p">(</span><span class="s1">&#39;session_id&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The function returns NULL if the item you are
+trying to access does not exist.</p>
+</div>
+</div>
+<div class="section" id="adding-custom-session-data">
+<h2>Adding Custom Session Data<a class="headerlink" href="#adding-custom-session-data" title="Permalink to this headline">¶</a></h2>
+<p>A useful aspect of the session array is that you can add your own data
+to it and it will be stored in the user&#8217;s cookie. Why would you want to
+do this? Here&#8217;s one example:</p>
+<p>Let&#8217;s say a particular user logs into your site. Once authenticated, you
+could add their username and email address to the session, making
+that data globally available to you without having to run a database
+query when you need it.</p>
+<p>To add your data to the session array involves passing an array
+containing your new data to this function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">set_userdata</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where $array is an associative array containing your new data. Here&#8217;s an
+example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$newdata</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                   <span class="s1">&#39;username&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;johndoe&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;email&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;johndoe@some-site.com&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;logged_in&#39;</span> <span class="o">=&gt;</span> <span class="k">TRUE</span>
+               <span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">set_userdata</span><span class="p">(</span><span class="nv">$newdata</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you want to add userdata one value at a time, set_userdata() also
+supports this syntax.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">set_userdata</span><span class="p">(</span><span class="s1">&#39;some_name&#39;</span><span class="p">,</span> <span class="s1">&#39;some_value&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you want to verify that a userdata value exists, call has_userdata().</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">has_userdata</span><span class="p">(</span><span class="s1">&#39;some_name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="retrieving-all-session-data">
+<h2>Retrieving All Session Data<a class="headerlink" href="#retrieving-all-session-data" title="Permalink to this headline">¶</a></h2>
+<p>An array of all userdata can be retrieved as follows:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">all_userdata</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>And returns an associative array like the following:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">Array</span>
+<span class="p">(</span>
+    <span class="p">[</span><span class="nb">session_id</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">4</span><span class="nx">a5a5dca22728fb0a84364eeb405b601</span>
+    <span class="p">[</span><span class="nx">ip_address</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span>
+    <span class="p">[</span><span class="nx">user_agent</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">Mozilla</span><span class="o">/</span><span class="mf">5.0</span> <span class="p">(</span><span class="nx">Macintosh</span><span class="p">;</span> <span class="nx">U</span><span class="p">;</span> <span class="nx">Intel</span> <span class="nx">Mac</span> <span class="nx">OS</span> <span class="nx">X</span> <span class="mi">10</span><span class="nx">_6_7</span><span class="p">;</span>
+    <span class="p">[</span><span class="nx">last_activity</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="mi">1303142623</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="removing-session-data">
+<h2>Removing Session Data<a class="headerlink" href="#removing-session-data" title="Permalink to this headline">¶</a></h2>
+<p>Just as set_userdata() can be used to add information into a session,
+unset_userdata() can be used to remove it, by passing the session key.
+For example, if you wanted to remove &#8216;some_name&#8217; from your session
+information:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">unset_userdata</span><span class="p">(</span><span class="s1">&#39;some_name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This function can also be passed an associative array of items to unset.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$array_items</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">unset_userdata</span><span class="p">(</span><span class="nv">$array_items</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="flashdata">
+<h2>Flashdata<a class="headerlink" href="#flashdata" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter supports &#8220;flashdata&#8221;, or session data that will only be
+available for the next server request, and are then automatically
+cleared. These can be very useful, and are typically used for
+informational or status messages (for example: &#8220;record 2 deleted&#8221;).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Flash variables are prefaced with &#8220;flash_&#8221; so avoid this prefix
+in your own session names.</p>
+</div>
+<p>To add flashdata:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">set_flashdata</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can also pass an array to set_flashdata(), in the same manner as
+set_userdata().</p>
+<p>To read a flashdata variable:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">flashdata</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>An array of all flashdata can be retrieved as follows:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">all_flashdata</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>If you find that you need to preserve a flashdata variable through an
+additional request, you can do so using the keep_flashdata() function.
+You can either pass a single item or an array of flashdata items to keep.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">keep_flashdata</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">keep_flashdata</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;item1&#39;</span><span class="p">,</span> <span class="s1">&#39;item2&#39;</span><span class="p">,</span> <span class="s1">&#39;item3&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tempdata">
+<h2>Tempdata<a class="headerlink" href="#tempdata" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter also supports &#8220;tempdata&#8221;, or session data with a specific
+expiration time. After the value expires, or the session expires or is
+deleted, the value is automatically removed.</p>
+<p>To add tempdata:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$expire</span> <span class="o">=</span> <span class="mi">300</span><span class="p">;</span>  <span class="c1">// Expire in 5 minutes</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">set_tempdata</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="nv">$expire</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can also pass an array to set_tempdata():</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$tempdata</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;newuser&#39;</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Thanks for joining!&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">set_tempdata</span><span class="p">(</span><span class="nv">$tempdata</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$expire</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the expiration is omitted or set to 0, the default expiration of
+5 minutes will be used.</p>
+</div>
+<p>To read a tempdata variable:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">tempdata</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you need to remove a tempdata value before it expires,
+use unset_tempdata():</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">unset_tempdata</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="destroying-a-session">
+<h2>Destroying a Session<a class="headerlink" href="#destroying-a-session" title="Permalink to this headline">¶</a></h2>
+<p>To clear the current session:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">sess_destroy</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function should be the last one called, and even flash
+variables will no longer be available. If you only want some items
+destroyed and not all, use unset_userdata().</p>
+</div>
+</div>
+<div class="section" id="session-preferences">
+<h2>Session Preferences<a class="headerlink" href="#session-preferences" title="Permalink to this headline">¶</a></h2>
+<p>You&#8217;ll find the following Session related preferences in your
+application/config/config.php file:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="10%" />
+<col width="19%" />
+<col width="52%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Preference</th>
+<th class="head">Default</th>
+<th class="head">Options</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>sess_driver</strong></td>
+<td>cookie</td>
+<td>cookie/native/<em>custom</em></td>
+<td>The initial session driver to load.</td>
+</tr>
+<tr class="row-odd"><td><strong>sess_valid_drivers</strong></td>
+<td>cookie, native</td>
+<td>None</td>
+<td>Additional valid drivers which may be loaded.</td>
+</tr>
+<tr class="row-even"><td><strong>sess_cookie_name</strong></td>
+<td>ci_session</td>
+<td>None</td>
+<td>The name you want the session cookie saved as (data for Cookie driver or
+session ID for Native driver).</td>
+</tr>
+<tr class="row-odd"><td><strong>sess_expiration</strong></td>
+<td>7200</td>
+<td>None</td>
+<td>The number of seconds you would like the session to last. The default
+value is 2 hours (7200 seconds). If you would like a non-expiring
+session set the value to zero: 0</td>
+</tr>
+<tr class="row-even"><td><strong>sess_expire_on_close</strong></td>
+<td>FALSE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>Whether to cause the session to expire automatically when the browser
+window is closed.</td>
+</tr>
+<tr class="row-odd"><td><strong>sess_encrypt_cookie</strong></td>
+<td>FALSE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>Whether to encrypt the session data (Cookie driver only).</td>
+</tr>
+<tr class="row-even"><td><strong>sess_use_database</strong></td>
+<td>FALSE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>Whether to save the session data to a database. You must create the
+table before enabling this option (Cookie driver only).</td>
+</tr>
+<tr class="row-odd"><td><strong>sess_table_name</strong></td>
+<td>ci_sessions</td>
+<td>Any valid SQL table name</td>
+<td>The name of the session database table (Cookie driver only).</td>
+</tr>
+<tr class="row-even"><td><strong>sess_time_to_update</strong></td>
+<td>300</td>
+<td>Time in seconds</td>
+<td>This options controls how often the session class will regenerate itself
+and create a new session id.</td>
+</tr>
+<tr class="row-odd"><td><strong>sess_match_ip</strong></td>
+<td>FALSE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>Whether to match the user&#8217;s IP address when reading the session data.
+Note that some ISPs dynamically changes the IP, so if you want a
+non-expiring session you will likely set this to FALSE.</td>
+</tr>
+<tr class="row-even"><td><strong>sess_match_useragent</strong></td>
+<td>TRUE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>Whether to match the User Agent when reading the session data.</td>
+</tr>
+</tbody>
+</table>
+<p>In addition to the values above, the cookie and native drivers apply the
+following configuration values shared by the <a class="reference internal" href="input.html"><em>Input</em></a> and
+<a class="reference internal" href="security.html"><em>Security</em></a> classes:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="13%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Preference</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>cookie_prefix</strong></td>
+<td>&#8216;&#8217;</td>
+<td>Set a cookie name prefix in order to avoid name collisions</td>
+</tr>
+<tr class="row-odd"><td><strong>cookie_domain</strong></td>
+<td>&#8216;&#8217;</td>
+<td>The domain for which the session is applicable</td>
+</tr>
+<tr class="row-even"><td><strong>cookie_path</strong></td>
+<td>/</td>
+<td>The path to which the session is applicable</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="session-drivers">
+<h2>Session Drivers<a class="headerlink" href="#session-drivers" title="Permalink to this headline">¶</a></h2>
+<p>By default, the <a class="reference internal" href="#cookie-driver">Cookie Driver</a> is loaded when a session is initialized.
+However, any valid driver may be selected with the $config[&#8216;sess_driver&#8217;]
+line in your config.php file.</p>
+<p>The session driver library comes with the cookie and native drivers
+installed, and <a class="reference internal" href="#custom-drivers">Custom Drivers</a> may also be installed by the user.</p>
+<p>Typically, only one driver will be used at a time, but CodeIgniter does
+support loading multiple drivers. If a specific valid driver is called, it
+will be automatically loaded. Or, an additional driver may be explicitly
+loaded by calling load_driver():</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">load_driver</span><span class="p">(</span><span class="s1">&#39;native&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The Session library keeps track of the most recently selected driver to call
+for driver methods. Normally, session class methods are called directly on
+the parent class, as illustrated above. However, any methods called through
+a specific driver will select that driver before invoking the parent method.</p>
+<p>So, alternation between multiple drivers can be achieved by specifying which
+driver to use for each call:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">native</span><span class="o">-&gt;</span><span class="na">set_userdata</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">cookie</span><span class="o">-&gt;</span><span class="na">userdata</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">native</span><span class="o">-&gt;</span><span class="na">unset_userdata</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Notice in the previous example that the <em>native</em> userdata value &#8216;foo&#8217;
+would be set to &#8216;bar&#8217;, which would NOT be returned by the call for
+the <em>cookie</em> userdata &#8216;foo&#8217;, nor would the <em>cookie</em> value be unset by
+the call to unset the <em>native</em> &#8216;foo&#8217; value. The drivers maintain independent
+sets of values, regardless of key names.</p>
+<p>A specific driver may also be explicitly selected for use by pursuant
+methods with the select_driver() call:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">select_driver</span><span class="p">(</span><span class="s1">&#39;native&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">session</span><span class="o">-&gt;</span><span class="na">userdata</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">);</span>       <span class="c1">// Uses the native driver</span>
+</pre></div>
+</div>
+<div class="section" id="cookie-driver">
+<h3>Cookie Driver<a class="headerlink" href="#cookie-driver" title="Permalink to this headline">¶</a></h3>
+<p>The Cookie driver stores session information for each user as serialized
+(and optionally encrypted) data in a cookie. It can also store the session
+data in a database table for added security, as this permits the session ID
+in the user&#8217;s cookie to be matched against the stored session ID. By default
+only the cookie is saved. If you choose to use the database option you&#8217;ll
+need to create the session table as indicated below.</p>
+<p>If you have the encryption option enabled, the serialized array will be
+encrypted before being stored in the cookie, making the data highly
+secure and impervious to being read or altered by someone. More info
+regarding encryption can be <a class="reference internal" href="encryption.html"><em>found here</em></a>, although
+the Session class will take care of initializing and encrypting the data
+automatically.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Even if you are not using encrypted sessions, you must set
+an <a class="reference internal" href="encryption.html"><em>encryption key</em></a> in your config file which is used
+to aid in preventing session data manipulation.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Cookies can only hold 4KB of data, so be careful not to exceed
+the capacity. The encryption process in particular produces a longer
+data string than the original so keep careful track of how much data you
+are storing.</p>
+</div>
+<div class="section" id="saving-session-data-to-a-database">
+<h4>Saving Session Data to a Database<a class="headerlink" href="#saving-session-data-to-a-database" title="Permalink to this headline">¶</a></h4>
+<p>While the session data array stored in the user&#8217;s cookie contains a
+Session ID, unless you store session data in a database there is no way
+to validate it. For some applications that require little or no
+security, session ID validation may not be needed, but if your
+application requires security, validation is mandatory. Otherwise, an
+old session could be restored by a user modifying their cookies.</p>
+<p>When session data is available in a database, every time a valid session
+is found in the user&#8217;s cookie, a database query is performed to match
+it. If the session ID does not match, the session is destroyed. Session
+IDs can never be updated, they can only be generated when a new session
+is created.</p>
+<p>In order to store sessions, you must first create a database table for
+this purpose. Here is the basic prototype (for MySQL) required by the
+session class:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">CREATE</span> <span class="nx">TABLE</span> <span class="k">IF</span> <span class="k">NOT</span> <span class="nx">EXISTS</span>  <span class="sb">`ci_sessions`</span> <span class="p">(</span>
+        <span class="nb">session_id</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="s1">&#39;0&#39;</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">ip_address</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="s1">&#39;0&#39;</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">user_agent</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">last_activity</span> <span class="nx">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="nx">unsigned</span> <span class="k">DEFAULT</span> <span class="mi">0</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">user_data</span> <span class="nx">text</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">PRIMARY</span> <span class="nx">KEY</span> <span class="p">(</span><span class="nb">session_id</span><span class="p">,</span> <span class="nx">ip_address</span><span class="p">,</span> <span class="nx">user_agent</span><span class="p">),</span>
+        <span class="nx">KEY</span> <span class="sb">`last_activity_idx`</span> <span class="p">(</span><span class="sb">`last_activity`</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>By default the table is called ci_sessions, but you can name
+it anything you want as long as you update the
+application/config/config.php file so that it contains the name you have
+chosen. Once you have created your database table you can enable the
+database option in your config.php file as follows:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;sess_use_database&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Once enabled, the Session class will store session data in the DB.</p>
+<p>Make sure you&#8217;ve specified the table name in your config file as well:</p>
+<div class="last highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;sess_table_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ci_sessions&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Cookie driver has built-in garbage collection which clears
+out expired sessions so you do not need to write your own routine to do
+it.</p>
+</div>
+</div>
+</div>
+<div class="section" id="native-driver">
+<h3>Native Driver<a class="headerlink" href="#native-driver" title="Permalink to this headline">¶</a></h3>
+<p>The Native driver relies on native PHP sessions to store data in the
+$_SESSION superglobal array. All stored values continue to be available
+through $_SESSION, but flash- and temp- data items carry special prefixes.</p>
+</div>
+<div class="section" id="custom-drivers">
+<h3>Custom Drivers<a class="headerlink" href="#custom-drivers" title="Permalink to this headline">¶</a></h3>
+<p>You may also <a class="reference internal" href="../general/creating_drivers.html"><em>create your own</em></a> custom
+session drivers. A session driver basically manages an array of name/value
+pairs with some sort of storage mechanism.</p>
+<p>To make a new driver, extend CI_Session_driver. Overload the initialize()
+method and read or create session data. Then implement a save handler to
+write changed data to storage (sess_save), a destroy handler to remove
+deleted data (sess_destroy), a regenerate handler to make a new session ID
+(sess_regenerate), and an access handler to expose the data (get_userdata).
+Your initial class might look like:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CI_Session_custom</span> <span class="k">extends</span> <span class="nx">CI_Session_driver</span> <span class="p">{</span>
+        <span class="k">protected</span> <span class="k">function</span> <span class="nf">initialize</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="c1">// Read existing session data or create a new one</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">sess_save</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="c1">// Save current data to storage</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">sess_destroy</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="c1">// Destroy the current session and clean up storage</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">sess_regenerate</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="c1">// Create new session ID</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="o">&amp;</span><span class="nf">get_userdata</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="c1">// Return a reference to your userdata array</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Notice that get_userdata() returns a reference so the parent library is
+accessing the same array the driver object is using. This saves memory
+and avoids synchronization issues during usage.</p>
+<p>Put your driver in the libraries/Session/drivers folder anywhere in your
+package paths. This includes the application directory, the system directory,
+or any path you add with $CI-&gt;load-&gt;add_package_path(). Your driver must be
+named CI_Session_&lt;name&gt;, and your filename must be Session_&lt;name&gt;.php,
+preferably also capitalized, such as:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">CI_Session_foo</span> <span class="nx">in</span> <span class="nx">libraries</span><span class="o">/</span><span class="nx">Session</span><span class="o">/</span><span class="nx">drivers</span><span class="o">/</span><span class="nx">Session_foo</span><span class="o">.</span><span class="nx">php</span>
+</pre></div>
+</div>
+<p>Then specify the driver by setting &#8216;sess_driver&#8217; in your config.php file or as a
+parameter when loading the CI_Session object:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;sess_driver&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>OR:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$CI</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">driver</span><span class="p">(</span><span class="s1">&#39;session&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;sess_driver&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;foo&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>The driver specified by &#8216;sess_driver&#8217; is automatically included as a valid
+driver. However, if you want to make a custom driver available as an option
+without making it the initially loaded driver, set &#8216;sess_valid_drivers&#8217; in
+your config.php file to an array including your driver name:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;sess_valid_drivers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;sess_driver&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

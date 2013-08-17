@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Language Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Loader Class" href="loader.html" />
+	    <link rel="prev" title="Javascript Class" href="javascript.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xad371b4>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Language Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="language-class">
+<h1>Language Class<a class="headerlink" href="#language-class" title="Permalink to this headline">¶</a></h1>
+<p>The Language Class provides functions to retrieve language files and
+lines of text for purposes of internationalization.</p>
+<p>In your CodeIgniter system folder you&#8217;ll find one called language
+containing sets of language files. You can create your own language
+files as needed in order to display error and other messages in other
+languages.</p>
+<p>Language files are typically stored in your <strong>system/language/</strong> directory.
+Alternately you can create a directory called language inside your
+application folder and store them there. CodeIgniter will always load the
+one in <strong>system/language/</strong> first and will then look for an override in
+your <strong>application/language/</strong> directory.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Each language should be stored in its own folder. For example,
+the English files are located at: system/language/english</p>
+</div>
+<div class="section" id="creating-language-files">
+<h2>Creating Language Files<a class="headerlink" href="#creating-language-files" title="Permalink to this headline">¶</a></h2>
+<p>Language files must be named with <strong>_lang.php</strong> as the file extension. For
+example, let&#8217;s say you want to create a file containing error messages.
+You might name it: error_lang.php</p>
+<p>Within the file you will assign each line of text to an array called
+<tt class="docutils literal"><span class="pre">$lang</span></tt> with this prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$lang</span><span class="p">[</span><span class="s1">&#39;language_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;The actual message to be shown&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It&#8217;s a good practice to use a common prefix for all messages
+in a given file to avoid collisions with similarly named items in other
+files. For example, if you are creating error messages you might prefix
+them with error_</p>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$lang</span><span class="p">[</span><span class="s1">&#39;error_email_missing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;You must submit an email address&#39;</span><span class="p">;</span>
+<span class="nv">$lang</span><span class="p">[</span><span class="s1">&#39;error_url_missing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;You must submit a URL&#39;</span><span class="p">;</span>
+<span class="nv">$lang</span><span class="p">[</span><span class="s1">&#39;error_username_missing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;You must submit a username&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="loading-a-language-file">
+<h2>Loading A Language File<a class="headerlink" href="#loading-a-language-file" title="Permalink to this headline">¶</a></h2>
+<p>In order to fetch a line from a particular file you must load the file
+first. Loading a language file is done with the following code:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lang</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="s1">&#39;language&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where filename is the name of the file you wish to load (without the
+file extension), and language is the language set containing it (ie,
+english). If the second parameter is missing, the default language set
+in your <strong>application/config/config.php</strong> file will be used.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <em>language</em> parameter can only consist of letters.</p>
+</div>
+</div>
+<div class="section" id="fetching-a-line-of-text">
+<h2>Fetching a Line of Text<a class="headerlink" href="#fetching-a-line-of-text" title="Permalink to this headline">¶</a></h2>
+<p>Once your desired language file is loaded you can access any line of
+text using this function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lang</span><span class="o">-&gt;</span><span class="na">line</span><span class="p">(</span><span class="s1">&#39;language_key&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where <em>language_key</em> is the array key corresponding to the line you wish
+to show.</p>
+<p>You can optionally pass FALSE as the second argument of that method to
+disable error logging, in case you&#8217;re not sure if the line exists:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lang</span><span class="o">-&gt;</span><span class="na">line</span><span class="p">(</span><span class="s1">&#39;misc_key&#39;</span><span class="p">,</span> <span class="k">FALSE</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method simply returns the line. It does not echo it.</p>
+</div>
+<div class="section" id="using-language-lines-as-form-labels">
+<h3>Using language lines as form labels<a class="headerlink" href="#using-language-lines-as-form-labels" title="Permalink to this headline">¶</a></h3>
+<p>This feature has been deprecated from the language library and moved to
+the <tt class="xref php php-func docutils literal"><span class="pre">lang()</span></tt> function of the <a class="reference internal" href="../helpers/language_helper.html"><em>Language Helper</em></a>.</p>
+</div>
+</div>
+<div class="section" id="auto-loading-languages">
+<h2>Auto-loading Languages<a class="headerlink" href="#auto-loading-languages" title="Permalink to this headline">¶</a></h2>
+<p>If you find that you need a particular language globally throughout your
+application, you can tell CodeIgniter to <a class="reference internal" href="../general/autoloader.html"><em>auto-load</em></a> it during system initialization. This is done
+by opening the <strong>application/config/autoload.php</strong> file and adding the
+language(s) to the autoload array.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

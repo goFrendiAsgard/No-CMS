@@ -13,7 +13,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize groceryCRUD
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         // set model
@@ -325,7 +325,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 		$query = $this->db->select('hobby_id,name')
            ->from($this->cms_complete_table_name('twn_hobby'))->get();
 		foreach($query->result() as $row){
-			$options['hobby'][] = array('value' => $row->hobby_id, 'caption' => $row->name);
+			$options['hobby'][] = array('value' => $row->hobby_id, 'caption' => strip_tags($row->name));
 		}
 		$data = array(
 			'result' => $result,

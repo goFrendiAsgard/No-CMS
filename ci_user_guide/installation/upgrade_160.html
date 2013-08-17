@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Upgrading from 1.5.4 to 1.6.0 &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Installation Instructions" href="index.html" />
+	    <link rel="next" title="Upgrading from 1.6.0 to 1.6.1" href="upgrade_161.html" />
+	    <link rel="prev" title="Upgrading from 1.5.3 to 1.5.4" href="upgrade_154.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa808f44>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Installation Instructions</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Upgrading from 1.5.4 to 1.6.0</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="upgrading-from-1-5-4-to-1-6-0">
+<h1>Upgrading from 1.5.4 to 1.6.0<a class="headerlink" href="#upgrading-from-1-5-4-to-1-6-0" title="Permalink to this headline">¶</a></h1>
+<p>Before performing an update you should take your site offline by
+replacing the index.php file with a static one.</p>
+<div class="section" id="step-1-update-your-codeigniter-files">
+<h2>Step 1: Update your CodeIgniter files<a class="headerlink" href="#step-1-update-your-codeigniter-files" title="Permalink to this headline">¶</a></h2>
+<p>Replace these files and directories in your &#8220;system&#8221; folder with the new
+versions:</p>
+<ul class="simple">
+<li>system/codeigniter</li>
+<li>system/database</li>
+<li>system/helpers</li>
+<li>system/libraries</li>
+<li>system/plugins</li>
+<li>system/language</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have any custom developed files in these folders please
+make copies of them first.</p>
+</div>
+</div>
+<div class="section" id="step-2-add-time-to-update-to-your-config-php">
+<h2>Step 2: Add time_to_update to your config.php<a class="headerlink" href="#step-2-add-time-to-update-to-your-config-php" title="Permalink to this headline">¶</a></h2>
+<p>Add the following to application/config/config.php with the other
+session configuration options</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;sess_time_to_update&#39;</span><span class="p">]</span>         <span class="o">=</span> <span class="mi">300</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-3-add-autoload-model">
+<h2>Step 3: Add $autoload[&#8216;model&#8217;]<a class="headerlink" href="#step-3-add-autoload-model" title="Permalink to this headline">¶</a></h2>
+<p>Add the following to application/config/autoload.php</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">| -------------------------------------------------------------------</span>
+<span class="cm">| Auto-load Model files</span>
+<span class="cm">| -------------------------------------------------------------------</span>
+<span class="cm">| Prototype:</span>
+<span class="cm">|</span>
+<span class="cm">| $autoload[&#39;model&#39;] = array(&#39;my_model&#39;);</span>
+<span class="cm">|</span>
+<span class="cm">*/</span>
+
+<span class="nv">$autoload</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-4-add-to-your-database-php">
+<h2>Step 4: Add to your database.php<a class="headerlink" href="#step-4-add-to-your-database-php" title="Permalink to this headline">¶</a></h2>
+<p>Make the following changes to your application/config/database.php file:</p>
+<p>Add the following variable above the database configuration options,
+with $active_group</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$active_record</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Remove the following from your database configuration options</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$db</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">][</span><span class="s1">&#39;active_r&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">TRUE</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Add the following to your database configuration options</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$db</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">][</span><span class="s1">&#39;char_set&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;utf8&quot;</span><span class="p">;</span>
+<span class="nv">$db</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">][</span><span class="s1">&#39;dbcollat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;utf8_general_ci&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-5-update-your-user-guide">
+<h2>Step 5: Update your user guide<a class="headerlink" href="#step-5-update-your-user-guide" title="Permalink to this headline">¶</a></h2>
+<p>Please also replace your local copy of the user guide with the new
+version.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

@@ -31,7 +31,7 @@
 			$lookup_column_name = $column['lookup_column_name'];
 			$lookup_table_primary_key = $column['lookup_table_primary_key'];
 			$select_array[] = $stripped_lookup_table_name.'.'.$lookup_column_name.' as '.$stripped_lookup_table_name.'_'.$lookup_column_name;
-			$join_array[] = '$this->cms_complete_table_name(\''.$stripped_lookup_table_name.'\').\' as '.$stripped_lookup_table_name.' \', \''.$stripped_table_name.'.'.$column_name.'='.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_table_primary_key.'\', \'left\'';
+			$join_array[] = '$this->cms_complete_table_name(\''.$stripped_lookup_table_name.'\').\' as '.$stripped_lookup_table_name.'\', \''.$stripped_table_name.'.'.$column_name.'='.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_table_primary_key.'\', \'left\'';
 			$like_array[] = '\''.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_column_name.'\', $keyword';
 		}
 	}

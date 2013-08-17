@@ -81,5 +81,6 @@ CREATE TABLE `{{ complete_table_name:twn_citizen_hobby }}` (
 CREATE TABLE `{{ complete_table_name:twn_tourism }}` (
   `tourism_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20),
+  `type` enum("natural","synthesis"),
   PRIMARY KEY (`tourism_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

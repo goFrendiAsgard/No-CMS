@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>HTML Table Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Trackback Class" href="trackback.html" />
+	    <link rel="prev" title="Session Driver" href="sessions.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3f76bc>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>HTML Table Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="html-table-class">
+<h1>HTML Table Class<a class="headerlink" href="#html-table-class" title="Permalink to this headline">¶</a></h1>
+<p>The Table Class provides functions that enable you to auto-generate HTML
+tables from arrays or database result sets.</p>
+<div class="section" id="initializing-the-class">
+<h2>Initializing the Class<a class="headerlink" href="#initializing-the-class" title="Permalink to this headline">¶</a></h2>
+<p>Like most other classes in CodeIgniter, the Table class is initialized
+in your controller using the $this-&gt;load-&gt;library function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once loaded, the Table library object will be available using:
+$this-&gt;table</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Here is an example showing how you can create a table from a
+multi-dimensional array. Note that the first array index will become the
+table heading (or you can set your own headings using the set_heading()
+function described in the function reference below).</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">);</span>
+
+<span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+             <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span> <span class="s1">&#39;Size&#39;</span><span class="p">),</span>
+             <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Fred&#39;</span><span class="p">,</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Small&#39;</span><span class="p">),</span>
+             <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Mary&#39;</span><span class="p">,</span> <span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Large&#39;</span><span class="p">),</span>
+             <span class="k">array</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">,</span> <span class="s1">&#39;Medium&#39;</span><span class="p">)</span>
+             <span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Here is an example of a table created from a database query result. The
+table class will automatically generate the headings based on the table
+names (or you can set your own headings using the set_heading()
+function described in the function reference below).</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">);</span>
+
+<span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM my_table&quot;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="nv">$query</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Here is an example showing how you might create a table using discrete
+parameters:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_heading</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span> <span class="s1">&#39;Size&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;Fred&#39;</span><span class="p">,</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Small&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;Mary&#39;</span><span class="p">,</span> <span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Large&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">,</span> <span class="s1">&#39;Medium&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Here is the same example, except instead of individual parameters,
+arrays are used:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_heading</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span> <span class="s1">&#39;Size&#39;</span><span class="p">));</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;Fred&#39;</span><span class="p">,</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Small&#39;</span><span class="p">));</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;Mary&#39;</span><span class="p">,</span> <span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Large&#39;</span><span class="p">));</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">,</span> <span class="s1">&#39;Medium&#39;</span><span class="p">));</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="changing-the-look-of-your-table">
+<h2>Changing the Look of Your Table<a class="headerlink" href="#changing-the-look-of-your-table" title="Permalink to this headline">¶</a></h2>
+<p>The Table Class permits you to set a table template with which you can
+specify the design of your layout. Here is the template prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$tmpl</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+                    <span class="s1">&#39;table_open&#39;</span>          <span class="o">=&gt;</span> <span class="s1">&#39;&lt;table border=&quot;0&quot; cellpadding=&quot;4&quot; cellspacing=&quot;0&quot;&gt;&#39;</span><span class="p">,</span>
+
+                    <span class="s1">&#39;heading_row_start&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;heading_row_end&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;heading_cell_start&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;&lt;th&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;heading_cell_end&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;&lt;/th&gt;&#39;</span><span class="p">,</span>
+
+                    <span class="s1">&#39;row_start&#39;</span>           <span class="o">=&gt;</span> <span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;row_end&#39;</span>             <span class="o">=&gt;</span> <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;cell_start&#39;</span>          <span class="o">=&gt;</span> <span class="s1">&#39;&lt;td&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;cell_end&#39;</span>            <span class="o">=&gt;</span> <span class="s1">&#39;&lt;/td&gt;&#39;</span><span class="p">,</span>
+
+                    <span class="s1">&#39;row_alt_start&#39;</span>       <span class="o">=&gt;</span> <span class="s1">&#39;&lt;tr&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;row_alt_end&#39;</span>         <span class="o">=&gt;</span> <span class="s1">&#39;&lt;/tr&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;cell_alt_start&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;&lt;td&gt;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;cell_alt_end&#39;</span>        <span class="o">=&gt;</span> <span class="s1">&#39;&lt;/td&gt;&#39;</span><span class="p">,</span>
+
+                    <span class="s1">&#39;table_close&#39;</span>         <span class="o">=&gt;</span> <span class="s1">&#39;&lt;/table&gt;&#39;</span>
+              <span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_template</span><span class="p">(</span><span class="nv">$tmpl</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You&#8217;ll notice there are two sets of &#8220;row&#8221; blocks in the
+template. These permit you to create alternating row colors or design
+elements that alternate with each iteration of the row data.</p>
+</div>
+<p>You are NOT required to submit a complete template. If you only need to
+change parts of the layout you can simply submit those elements. In this
+example, only the table opening tag is being changed:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$tmpl</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">&#39;table_open&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;&lt;table border=&quot;1&quot; cellpadding=&quot;2&quot; cellspacing=&quot;1&quot; class=&quot;mytable&quot;&gt;&#39;</span> <span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_template</span><span class="p">(</span><span class="nv">$tmpl</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can also set defaults for these in a config file.</p>
+<div class="section" id="function-reference">
+<h3>Function Reference<a class="headerlink" href="#function-reference" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="this-table-generate">
+<h2>$this-&gt;table-&gt;generate()<a class="headerlink" href="#this-table-generate" title="Permalink to this headline">¶</a></h2>
+<p>Returns a string containing the generated table. Accepts an optional
+parameter which can be an array or a database result object.</p>
+</div>
+<div class="section" id="this-table-set-caption">
+<h2>$this-&gt;table-&gt;set_caption()<a class="headerlink" href="#this-table-set-caption" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to add a caption to the table.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_caption</span><span class="p">(</span><span class="s1">&#39;Colors&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-table-set-heading">
+<h2>$this-&gt;table-&gt;set_heading()<a class="headerlink" href="#this-table-set-heading" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to set the table heading. You can submit an array or
+discrete params:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_heading</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span> <span class="s1">&#39;Size&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_heading</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span> <span class="s1">&#39;Size&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-table-add-row">
+<h2>$this-&gt;table-&gt;add_row()<a class="headerlink" href="#this-table-add-row" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to add a row to your table. You can submit an array or
+discrete params:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>If you would like to set an individual cell&#8217;s tag attributes, you can
+use an associative array for that cell. The associative key &#8216;data&#8217;
+defines the cell&#8217;s data. Any other key =&gt; val pairs are added as
+key=&#8217;val&#8217; attributes to the tag:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$cell</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;data&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;highlight&#39;</span><span class="p">,</span> <span class="s1">&#39;colspan&#39;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="nv">$cell</span><span class="p">,</span> <span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">);</span>
+
+<span class="c1">// generates</span>
+<span class="c1">// &lt;td class=&#39;highlight&#39; colspan=&#39;2&#39;&gt;Blue&lt;/td&gt;&lt;td&gt;Red&lt;/td&gt;&lt;td&gt;Green&lt;/td&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-table-make-columns">
+<h2>$this-&gt;table-&gt;make_columns()<a class="headerlink" href="#this-table-make-columns" title="Permalink to this headline">¶</a></h2>
+<p>This function takes a one-dimensional array as input and creates a
+multi-dimensional array with a depth equal to the number of columns
+desired. This allows a single array with many elements to be displayed
+in a table that has a fixed column count. Consider this example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$list</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="s1">&#39;three&#39;</span><span class="p">,</span> <span class="s1">&#39;four&#39;</span><span class="p">,</span> <span class="s1">&#39;five&#39;</span><span class="p">,</span> <span class="s1">&#39;six&#39;</span><span class="p">,</span> <span class="s1">&#39;seven&#39;</span><span class="p">,</span> <span class="s1">&#39;eight&#39;</span><span class="p">,</span> <span class="s1">&#39;nine&#39;</span><span class="p">,</span> <span class="s1">&#39;ten&#39;</span><span class="p">,</span> <span class="s1">&#39;eleven&#39;</span><span class="p">,</span> <span class="s1">&#39;twelve&#39;</span><span class="p">);</span>
+
+<span class="nv">$new_list</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">make_columns</span><span class="p">(</span><span class="nv">$list</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="nv">$new_list</span><span class="p">);</span>
+
+<span class="c1">// Generates a table with this prototype</span>
+
+<span class="o">&lt;</span><span class="nx">table</span> <span class="nx">border</span><span class="o">=</span><span class="s2">&quot;0&quot;</span> <span class="nx">cellpadding</span><span class="o">=</span><span class="s2">&quot;4&quot;</span> <span class="nx">cellspacing</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">tr</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">one</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">two</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">three</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">tr</span><span class="o">&gt;&lt;</span><span class="nx">tr</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">four</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">five</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">six</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">tr</span><span class="o">&gt;&lt;</span><span class="nx">tr</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">seven</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">eight</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">nine</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">tr</span><span class="o">&gt;&lt;</span><span class="nx">tr</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">ten</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">eleven</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">twelve</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;/</span><span class="nx">tr</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">table</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-table-set-template">
+<h2>$this-&gt;table-&gt;set_template()<a class="headerlink" href="#this-table-set-template" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to set your template. You can submit a full or partial
+template.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$tmpl</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">&#39;table_open&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;&lt;table border=&quot;1&quot; cellpadding=&quot;2&quot; cellspacing=&quot;1&quot; class=&quot;mytable&quot;&gt;&#39;</span> <span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_template</span><span class="p">(</span><span class="nv">$tmpl</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-table-set-empty">
+<h2>$this-&gt;table-&gt;set_empty()<a class="headerlink" href="#this-table-set-empty" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s you set a default value for use in any table cells that are empty.
+You might, for example, set a non-breaking space:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_empty</span><span class="p">(</span><span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-table-clear">
+<h2>$this-&gt;table-&gt;clear()<a class="headerlink" href="#this-table-clear" title="Permalink to this headline">¶</a></h2>
+<p>Lets you clear the table heading and row data. If you need to show
+multiple tables with different data you should to call this function
+after each table has been generated to empty the previous table
+information. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_heading</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span> <span class="s1">&#39;Size&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;Fred&#39;</span><span class="p">,</span> <span class="s1">&#39;Blue&#39;</span><span class="p">,</span> <span class="s1">&#39;Small&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;Mary&#39;</span><span class="p">,</span> <span class="s1">&#39;Red&#39;</span><span class="p">,</span> <span class="s1">&#39;Large&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="s1">&#39;Green&#39;</span><span class="p">,</span> <span class="s1">&#39;Medium&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">();</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">clear</span><span class="p">();</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_heading</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Day&#39;</span><span class="p">,</span> <span class="s1">&#39;Delivery&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;Fred&#39;</span><span class="p">,</span> <span class="s1">&#39;Wednesday&#39;</span><span class="p">,</span> <span class="s1">&#39;Express&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;Mary&#39;</span><span class="p">,</span> <span class="s1">&#39;Monday&#39;</span><span class="p">,</span> <span class="s1">&#39;Air&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;John&#39;</span><span class="p">,</span> <span class="s1">&#39;Saturday&#39;</span><span class="p">,</span> <span class="s1">&#39;Overnight&#39;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-table-function">
+<h2>$this-&gt;table-&gt;function<a class="headerlink" href="#this-table-function" title="Permalink to this headline">¶</a></h2>
+<p>Allows you to specify a native PHP function or a valid function array
+object to be applied to all cell data.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;table&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">set_heading</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span> <span class="s1">&#39;Size&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">add_row</span><span class="p">(</span><span class="s1">&#39;Fred&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;strong&gt;Blue&lt;/strong&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;Small&#39;</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">function</span> <span class="o">=</span> <span class="s1">&#39;htmlspecialchars&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">table</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>In the above example, all cell data would be ran through PHP&#8217;s
+htmlspecialchars() function, resulting in:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">Fred</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="nx">strong</span><span class="o">&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">Blue</span><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">/</span><span class="nx">strong</span><span class="o">&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;&lt;</span><span class="nx">td</span><span class="o">&gt;</span><span class="nx">Small</span><span class="o">&lt;/</span><span class="nx">td</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

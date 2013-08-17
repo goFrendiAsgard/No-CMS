@@ -11,7 +11,7 @@ class Twn_City_Model extends  CMS_Model{
 		$limit = 10;
 		$query = $this->db->select('twn_city.city_id, twn_country.name as twn_country_name, twn_city.name')
 			->from($this->cms_complete_table_name('twn_city').' as twn_city')
-			->join($this->cms_complete_table_name('twn_country').' as twn_country ', 'twn_city.country_id=twn_country.country_id', 'left')
+			->join($this->cms_complete_table_name('twn_country').' as twn_country', 'twn_city.country_id=twn_country.country_id', 'left')
 			->like('twn_country.name', $keyword)
 			->or_like('twn_city.name', $keyword)
 			->limit($limit, $page*$limit)

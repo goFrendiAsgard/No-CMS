@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Create news items &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Tutorial" href="index.html" />
+	    <link rel="next" title="Conclusion" href="conclusion.html" />
+	    <link rel="prev" title="News section" href="news_section.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3b4764>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Tutorial</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Create news items</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="create-news-items">
+<h1>Create news items<a class="headerlink" href="#create-news-items" title="Permalink to this headline">¶</a></h1>
+<p>You now know how you can read data from a database using CodeIgniter, but
+you haven&#8217;t written any information to the database yet. In this section
+you&#8217;ll expand your news controller and model created earlier to include
+this functionality.</p>
+<div class="section" id="create-a-form">
+<h2>Create a form<a class="headerlink" href="#create-a-form" title="Permalink to this headline">¶</a></h2>
+<p>To input data into the database you need to create a form where you can
+input the information to be stored. This means you&#8217;ll be needing a form
+with two fields, one for the title and one for the text. You&#8217;ll derive
+the slug from our title in the model. Create the new view at
+application/views/news/create.php.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Create</span> <span class="nx">a</span> <span class="nx">news</span> <span class="nx">item</span><span class="o">&lt;/</span><span class="nx">h2</span><span class="o">&gt;</span>
+
+<span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nx">validation_errors</span><span class="p">();</span> <span class="cp">?&gt;</span>
+
+<span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nx">form_open</span><span class="p">(</span><span class="s1">&#39;news/create&#39;</span><span class="p">)</span> <span class="cp">?&gt;</span>
+
+    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;title&quot;</span><span class="nt">&gt;</span>Title<span class="nt">&lt;/label&gt;</span>
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;input&quot;</span> <span class="na">name=</span><span class="s">&quot;title&quot;</span> <span class="nt">/&gt;&lt;br</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;label</span> <span class="na">for=</span><span class="s">&quot;text&quot;</span><span class="nt">&gt;</span>Text<span class="nt">&lt;/label&gt;</span>
+    <span class="nt">&lt;textarea</span> <span class="na">name=</span><span class="s">&quot;text&quot;</span><span class="nt">&gt;&lt;/textarea&gt;&lt;br</span> <span class="nt">/&gt;</span>
+
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">name=</span><span class="s">&quot;submit&quot;</span> <span class="na">value=</span><span class="s">&quot;Create news item&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/form&gt;</span>
+</pre></div>
+</div>
+<p>There are only two things here that probably look unfamiliar to you: the
+form_open() function and the validation_errors() function.</p>
+<p>The first function is provided by the <a class="reference external" href="../helpers/form_helper.html">form
+helper</a> and renders the form element and
+adds extra functionality, like adding a hidden <a class="reference external" href="../libraries/security.html">CSFR prevention
+field</a>. The latter is used to report
+errors related to form validation.</p>
+<p>Go back to your news controller. You&#8217;re going to do two things here,
+check whether the form was submitted and whether the submitted data
+passed the validation rules. You&#8217;ll use the <a class="reference external" href="../libraries/form_validation.html">form
+validation</a> library to do this.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">public</span> <span class="k">function</span> <span class="nf">create</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;form_validation&#39;</span><span class="p">);</span>
+
+    <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Create a news item&#39;</span><span class="p">;</span>
+
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">form_validation</span><span class="o">-&gt;</span><span class="na">set_rules</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="s1">&#39;required&#39;</span><span class="p">);</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">form_validation</span><span class="o">-&gt;</span><span class="na">set_rules</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;required&#39;</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">form_validation</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">()</span> <span class="o">===</span> <span class="k">FALSE</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;templates/header&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;news/create&#39;</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;templates/footer&#39;</span><span class="p">);</span>
+
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">news_model</span><span class="o">-&gt;</span><span class="na">set_news</span><span class="p">();</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;news/success&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The code above adds a lot of functionality. The first few lines load the
+form helper and the form validation library. After that, rules for the
+form validation are set. The set_rules() method takes three arguments;
+the name of the input field, the name to be used in error messages, and
+the rule. In this case the title and text fields are required.</p>
+<p>CodeIgniter has a powerful form validation library as demonstrated
+above. You can read <a class="reference external" href="../libraries/form_validation.html">more about this library
+here</a>.</p>
+<p>Continuing down, you can see a condition that checks whether the form
+validation ran successfully. If it did not, the form is displayed, if it
+was submitted <strong>and</strong> passed all the rules, the model is called. After
+this, a view is loaded to display a success message. Create a view at
+application/view/news/success.php and write a success message.</p>
+</div>
+<div class="section" id="model">
+<h2>Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h2>
+<p>The only thing that remains is writing a method that writes the data to
+the database. You&#8217;ll use the Query Builder class to insert the
+information and use the input library to get the posted data. Open up
+the model created earlier and add the following:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">public</span> <span class="k">function</span> <span class="nf">set_news</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">);</span>
+
+    <span class="nv">$slug</span> <span class="o">=</span> <span class="nx">url_title</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">),</span> <span class="s1">&#39;dash&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+
+    <span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;title&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;slug&#39;</span> <span class="o">=&gt;</span> <span class="nv">$slug</span><span class="p">,</span>
+        <span class="s1">&#39;text&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">post</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">)</span>
+    <span class="p">);</span>
+
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">insert</span><span class="p">(</span><span class="s1">&#39;news&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This new method takes care of inserting the news item into the database.
+The third line contains a new function, url_title(). This function -
+provided by the <a class="reference external" href="../helpers/url_helper.html">URL helper</a> - strips down
+the string you pass it, replacing all spaces by dashes (-) and makes
+sure everything is in lowercase characters. This leaves you with a nice
+slug, perfect for creating URIs.</p>
+<p>Let&#8217;s continue with preparing the record that is going to be inserted
+later, inside the $data array. Each element corresponds with a column in
+the database table created earlier. You might notice a new method here,
+namely the post() method from the <a class="reference external" href="../libraries/input.html">input
+library</a>. This method makes sure the data is
+sanitized, protecting you from nasty attacks from others. The input
+library is loaded by default. At last, you insert our $data array into
+our database.</p>
+</div>
+<div class="section" id="routing">
+<h2>Routing<a class="headerlink" href="#routing" title="Permalink to this headline">¶</a></h2>
+<p>Before you can start adding news items into your CodeIgniter application
+you have to add an extra rule to config/routes.php file. Make sure your
+file contains the following. This makes sure CodeIgniter sees &#8216;create&#8217;
+as a method instead of a news item&#8217;s slug.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;news/create&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;news/create&#39;</span><span class="p">;</span>
+<span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;news/(:any)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;news/view/$1&#39;</span><span class="p">;</span>
+<span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;news&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;news&#39;</span><span class="p">;</span>
+<span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;(:any)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pages/view/$1&#39;</span><span class="p">;</span>
+<span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;default_controller&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pages/view&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Now point your browser to your local development environment where you
+installed CodeIgniter and add index.php/news/create to the URL.
+Congratulations, you just created your first CodeIgniter application!
+Add some news and check out the different pages you made.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

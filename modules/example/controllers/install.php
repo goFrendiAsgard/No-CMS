@@ -27,8 +27,7 @@ class Install extends CMS_Module_Installer {
 
     // DEACTIVATION
     protected function do_deactivate(){
-        $module_path = $this->cms_module_path();
-
+	    /* This doesn't work with PDO
         $this->backup_database(array(
             $this->cms_complete_table_name('twn_citizen'),
             $this->cms_complete_table_name('twn_job'),
@@ -41,6 +40,7 @@ class Install extends CMS_Module_Installer {
             $this->cms_complete_table_name('twn_citizen_hobby'),
             $this->cms_complete_table_name('twn_tourism')
         ));
+	    */
         $this->remove_all();
     }
 
@@ -93,11 +93,24 @@ class Install extends CMS_Module_Installer {
 
         // remove parent of all navigations
         $this->remove_navigation($this->cms_complete_navigation_name('index'));
-
-        // import uninstall.sql
+        
+        // drop tables
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_tourism'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_citizen_hobby'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_city'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_city_commodity'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_city_tourism'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_commodity'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_country'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_hobby'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_job'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('twn_citizen'), TRUE);
+        
+        /*
+        // import uninstall.sql (this is only works for MySQL)
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
             '/assets/db/uninstall.sql');
-
+        */
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -131,10 +144,117 @@ class Install extends CMS_Module_Installer {
             $module_path.'/manage_twn_tourism', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
+        
+        // create tables
+        // twn_citizen
+        $fields = array(
+            'citizen_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'birthdate'=> array("type"=>'date', "null"=>TRUE),
+            'job_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'hobby'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('citizen_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_citizen'));
 
-        // import install.sql
+        // twn_job
+        $fields = array(
+            'job_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('job_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_job'));
+
+        // twn_hobby
+        $fields = array(
+            'hobby_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('hobby_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_hobby'));
+
+        // twn_country
+        $fields = array(
+            'country_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('country_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_country'));
+
+        // twn_commodity
+        $fields = array(
+            'commodity_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('commodity_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_commodity'));
+
+        // twn_city_tourism
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'tourism_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_city_tourism'));
+
+        // twn_city_commodity
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'commodity_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'priority'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_city_commodity'));
+
+        // twn_city
+        $fields = array(
+            'city_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'country_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
+            'tourism'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
+            'commodity'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
+            'citizen'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('city_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_city'));
+
+        // twn_citizen_hobby
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'citizen_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'hobby_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_citizen_hobby'));
+
+        // twn_tourism
+        $fields = array(
+            'tourism_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
+            'type'=> array("type"=>'enum', "constraint"=>array("natural","synthesis"), "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('tourism_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('twn_tourism'));
+
+        
+        /*
+        // import install.sql (this only works for MySQL)
         $this->import_sql(BASEPATH.'../modules/'.$module_path.
             '/assets/db/install.sql');
+        */
     }
 
     // IMPORT SQL FILE
@@ -144,10 +264,15 @@ class Install extends CMS_Module_Installer {
 
     // EXPORT DATABASE
     private function backup_database($table_names, $limit = 100){
+        
+	    /* this doesn't work with PDO
+	     
+	    
         $module_path = $this->cms_module_path();
-
         $this->load->dbutil();
         $sql = '';
+        
+        
 
         // create DROP TABLE syntax
         for($i=count($table_names)-1; $i>=0; $i--){
@@ -156,7 +281,8 @@ class Install extends CMS_Module_Installer {
         }
         if($sql !='')$sql.= PHP_EOL;
 
-        // create CREATE TABLE and INSERT syntax
+        // create CREATE TABLE and INSERT syntax 
+        
         $prefs = array(
                 'tables'      => $table_names,
                 'ignore'      => array(),
@@ -166,7 +292,7 @@ class Install extends CMS_Module_Installer {
                 'add_insert'  => TRUE,
                 'newline'     => PHP_EOL
               );
-        $sql.= $this->dbutil->backup($prefs);
+        $sql.= $this->dbutil->backup($prefs);        
 
         //write file
         $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
@@ -174,6 +300,7 @@ class Install extends CMS_Module_Installer {
                 BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
                 $sql
             );
+        */
 
     }
 }

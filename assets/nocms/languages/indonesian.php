@@ -2,6 +2,7 @@
 $lang['language_alias'] = 'id';
 $lang['Home'] = 'Rumah';
 $lang['Language'] = 'Bahasa';
+$lang['Third Party Authentication'] = 'Autentikasi Pihak Ke Tiga';
 $lang['Login'] = 'Masuk';
 $lang['Logout'] = 'Keluar';
 $lang['Forgot Password'] = 'Lupa Password';

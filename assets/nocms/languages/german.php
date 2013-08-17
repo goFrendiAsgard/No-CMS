@@ -2,6 +2,7 @@
 $lang['language_alias'] = 'de';
 $lang['Home'] = 'Startseite';
 $lang['Language'] = 'Sprache';
+$lang['Third Party Authentication'] = 'Third Party Authentication';
 $lang['Login'] = 'Anmelden';
 $lang['Logout'] = 'Abmelden';
 $lang['Forgot Password'] = 'Kennwort vergessen';

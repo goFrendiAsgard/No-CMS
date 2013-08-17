@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Calendaring Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Shopping Cart Class" href="cart.html" />
+	    <link rel="prev" title="Caching Driver" href="caching.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb387cdc>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Calendaring Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="calendaring-class">
+<h1>Calendaring Class<a class="headerlink" href="#calendaring-class" title="Permalink to this headline">¶</a></h1>
+<p>The Calendar class enables you to dynamically create calendars. Your
+calendars can be formatted through the use of a calendar template,
+allowing 100% control over every aspect of its design. In addition, you
+can pass data to your calendar cells.</p>
+<div class="section" id="initializing-the-class">
+<h2>Initializing the Class<a class="headerlink" href="#initializing-the-class" title="Permalink to this headline">¶</a></h2>
+<p>Like most other classes in CodeIgniter, the Calendar class is
+initialized in your controller using the $this-&gt;load-&gt;library function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once loaded, the Calendar object will be available using:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">calendar</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="displaying-a-calendar">
+<h2>Displaying a Calendar<a class="headerlink" href="#displaying-a-calendar" title="Permalink to this headline">¶</a></h2>
+<p>Here is a very simple example showing how you can display a calendar:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">calendar</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>The above code will generate a calendar for the current month/year based
+on your server time. To show a calendar for a specific month and year
+you will pass this information to the calendar generating function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">);</span>
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">calendar</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="mi">2006</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above code will generate a calendar showing the month of June in
+2006. The first parameter specifies the year, the second parameter
+specifies the month.</p>
+</div>
+<div class="section" id="passing-data-to-your-calendar-cells">
+<h2>Passing Data to your Calendar Cells<a class="headerlink" href="#passing-data-to-your-calendar-cells" title="Permalink to this headline">¶</a></h2>
+<p>To add data to your calendar cells involves creating an associative
+array in which the keys correspond to the days you wish to populate and
+the array value contains the data. The array is passed to the third
+parameter of the calendar generating function. Consider this example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">);</span>
+
+<span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+               <span class="mi">3</span>  <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/news/article/2006/03/&#39;</span><span class="p">,</span>
+               <span class="mi">7</span>  <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/news/article/2006/07/&#39;</span><span class="p">,</span>
+               <span class="mi">13</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/news/article/2006/13/&#39;</span><span class="p">,</span>
+               <span class="mi">26</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/news/article/2006/26/&#39;</span>
+             <span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">calendar</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="mi">2006</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Using the above example, day numbers 3, 7, 13, and 26 will become links
+pointing to the URLs you&#8217;ve provided.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">By default it is assumed that your array will contain links.
+In the section that explains the calendar template below you&#8217;ll see how
+you can customize how data passed to your cells is handled so you can
+pass different types of information.</p>
+</div>
+</div>
+<div class="section" id="setting-display-preferences">
+<h2>Setting Display Preferences<a class="headerlink" href="#setting-display-preferences" title="Permalink to this headline">¶</a></h2>
+<p>There are seven preferences you can set to control various aspects of
+the calendar. Preferences are set by passing an array of preferences in
+the second parameter of the loading function. Here is an example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$prefs</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+               <span class="s1">&#39;start_day&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;saturday&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;month_type&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;long&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;day_type&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;short&#39;</span>
+             <span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">,</span> <span class="nv">$prefs</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">calendar</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>The above code would start the calendar on saturday, use the &#8220;long&#8221;
+month heading, and the &#8220;short&#8221; day names. More information regarding
+preferences below.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="7%" />
+<col width="32%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Preference</th>
+<th class="head">Default</th>
+<th class="head">Options</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>template</strong></td>
+<td>None</td>
+<td>None</td>
+<td>A string containing your calendar template.
+See the template section below.</td>
+</tr>
+<tr class="row-odd"><td><strong>local_time</strong></td>
+<td>time()</td>
+<td>None</td>
+<td>A Unix timestamp corresponding to the current time.</td>
+</tr>
+<tr class="row-even"><td><strong>start_day</strong></td>
+<td>sunday</td>
+<td>Any week day (sunday, monday, tuesday, etc.)</td>
+<td>Sets the day of the week the calendar should start on.</td>
+</tr>
+<tr class="row-odd"><td><strong>month_type</strong></td>
+<td>long</td>
+<td>long, short</td>
+<td>Determines what version of the month name to use in the header.
+long = January, short = Jan.</td>
+</tr>
+<tr class="row-even"><td><strong>day_type</strong></td>
+<td>abr</td>
+<td>long, short, abr</td>
+<td>Determines what version of the weekday names to use in
+the column headers. long = Sunday, short = Sun, abr = Su.</td>
+</tr>
+<tr class="row-odd"><td><strong>show_next_prev</strong></td>
+<td>FALSE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>Determines whether to display links allowing you to toggle
+to next/previous months. See information on this feature below.</td>
+</tr>
+<tr class="row-even"><td><strong>next_prev_url</strong></td>
+<td>None</td>
+<td>A URL</td>
+<td>Sets the basepath used in the next/previous calendar links.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="showing-next-previous-month-links">
+<h2>Showing Next/Previous Month Links<a class="headerlink" href="#showing-next-previous-month-links" title="Permalink to this headline">¶</a></h2>
+<p>To allow your calendar to dynamically increment/decrement via the
+next/previous links requires that you set up your calendar code similar
+to this example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$prefs</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+               <span class="s1">&#39;show_next_prev&#39;</span>  <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+               <span class="s1">&#39;next_prev_url&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/index.php/calendar/show/&#39;</span>
+             <span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">,</span> <span class="nv">$prefs</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">calendar</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>You&#8217;ll notice a few things about the above example:</p>
+<ul class="simple">
+<li>You must set the &#8220;show_next_prev&#8221; to TRUE.</li>
+<li>You must supply the URL to the controller containing your calendar in
+the &#8220;next_prev_url&#8221; preference.</li>
+<li>You must supply the &#8220;year&#8221; and &#8220;month&#8221; to the calendar generating
+function via the URI segments where they appear (Note: The calendar
+class automatically adds the year/month to the base URL you
+provide.).</li>
+</ul>
+</div>
+<div class="section" id="creating-a-calendar-template">
+<h2>Creating a Calendar Template<a class="headerlink" href="#creating-a-calendar-template" title="Permalink to this headline">¶</a></h2>
+<p>By creating a calendar template you have 100% control over the design of
+your calendar. Each component of your calendar will be placed within a
+pair of pseudo-variables as shown here:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$prefs</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span>
+
+<span class="s1">   {table_open}&lt;table border=&quot;0&quot; cellpadding=&quot;0&quot; cellspacing=&quot;0&quot;&gt;{/table_open}</span>
+
+<span class="s1">   {heading_row_start}&lt;tr&gt;{/heading_row_start}</span>
+
+<span class="s1">   {heading_previous_cell}&lt;th&gt;&lt;a href=&quot;{previous_url}&quot;&gt;&amp;lt;&amp;lt;&lt;/a&gt;&lt;/th&gt;{/heading_previous_cell}</span>
+<span class="s1">   {heading_title_cell}&lt;th colspan=&quot;{colspan}&quot;&gt;{heading}&lt;/th&gt;{/heading_title_cell}</span>
+<span class="s1">   {heading_next_cell}&lt;th&gt;&lt;a href=&quot;{next_url}&quot;&gt;&amp;gt;&amp;gt;&lt;/a&gt;&lt;/th&gt;{/heading_next_cell}</span>
+
+<span class="s1">   {heading_row_end}&lt;/tr&gt;{/heading_row_end}</span>
+
+<span class="s1">   {week_row_start}&lt;tr&gt;{/week_row_start}</span>
+<span class="s1">   {week_day_cell}&lt;td&gt;{week_day}&lt;/td&gt;{/week_day_cell}</span>
+<span class="s1">   {week_row_end}&lt;/tr&gt;{/week_row_end}</span>
+
+<span class="s1">   {cal_row_start}&lt;tr&gt;{/cal_row_start}</span>
+<span class="s1">   {cal_cell_start}&lt;td&gt;{/cal_cell_start}</span>
+
+<span class="s1">   {cal_cell_content}&lt;a href=&quot;{content}&quot;&gt;{day}&lt;/a&gt;{/cal_cell_content}</span>
+<span class="s1">   {cal_cell_content_today}&lt;div class=&quot;highlight&quot;&gt;&lt;a href=&quot;{content}&quot;&gt;{day}&lt;/a&gt;&lt;/div&gt;{/cal_cell_content_today}</span>
+
+<span class="s1">   {cal_cell_no_content}{day}{/cal_cell_no_content}</span>
+<span class="s1">   {cal_cell_no_content_today}&lt;div class=&quot;highlight&quot;&gt;{day}&lt;/div&gt;{/cal_cell_no_content_today}</span>
+
+<span class="s1">   {cal_cell_blank}&amp;nbsp;{/cal_cell_blank}</span>
+
+<span class="s1">   {cal_cell_end}&lt;/td&gt;{/cal_cell_end}</span>
+<span class="s1">   {cal_row_end}&lt;/tr&gt;{/cal_row_end}</span>
+
+<span class="s1">   {table_close}&lt;/table&gt;{/table_close}</span>
+<span class="s1">&#39;</span><span class="p">;</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">,</span> <span class="nv">$prefs</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">calendar</span><span class="o">-&gt;</span><span class="na">generate</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

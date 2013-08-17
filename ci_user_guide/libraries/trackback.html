@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Trackback Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Typography Class" href="typography.html" />
+	    <link rel="prev" title="HTML Table Class" href="table.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3f78b4>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Trackback Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="trackback-class">
+<h1>Trackback Class<a class="headerlink" href="#trackback-class" title="Permalink to this headline">¶</a></h1>
+<p>The Trackback Class provides functions that enable you to send and
+receive Trackback data.</p>
+<p>If you are not familiar with Trackbacks you&#8217;ll find more information
+<a class="reference external" href="http://en.wikipedia.org/wiki/Trackback">here</a>.</p>
+<div class="section" id="initializing-the-class">
+<h2>Initializing the Class<a class="headerlink" href="#initializing-the-class" title="Permalink to this headline">¶</a></h2>
+<p>Like most other classes in CodeIgniter, the Trackback class is
+initialized in your controller using the $this-&gt;load-&gt;library function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;trackback&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once loaded, the Trackback library object will be available using:
+$this-&gt;trackback</p>
+</div>
+<div class="section" id="sending-trackbacks">
+<h2>Sending Trackbacks<a class="headerlink" href="#sending-trackbacks" title="Permalink to this headline">¶</a></h2>
+<p>A Trackback can be sent from any of your controller functions using code
+similar to this example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;trackback&#39;</span><span class="p">);</span>
+
+<span class="nv">$tb_data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;ping_url&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;http://example.com/trackback/456&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;url&#39;</span>       <span class="o">=&gt;</span> <span class="s1">&#39;http://www.my-example.com/blog/entry/123&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;title&#39;</span>     <span class="o">=&gt;</span> <span class="s1">&#39;The Title of My Entry&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;excerpt&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;The entry content.&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;blog_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;My Blog Name&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;charset&#39;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;utf-8&#39;</span>
+                <span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$tb_data</span><span class="p">))</span>
+<span class="p">{</span>
+     <span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">display_errors</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+     <span class="k">echo</span> <span class="s1">&#39;Trackback was sent!&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Description of array data:</p>
+<ul class="simple">
+<li><strong>ping_url</strong> - The URL of the site you are sending the Trackback to.
+You can send Trackbacks to multiple URLs by separating each URL with
+a comma.</li>
+<li><strong>url</strong> - The URL to YOUR site where the weblog entry can be seen.</li>
+<li><strong>title</strong> - The title of your weblog entry.</li>
+<li><strong>excerpt</strong> - The content of your weblog entry. Note: the Trackback
+class will automatically send only the first 500 characters of your
+entry. It will also strip all HTML.</li>
+<li><strong>blog_name</strong> - The name of your weblog.</li>
+<li><strong>charset</strong> - The character encoding your weblog is written in. If
+omitted, UTF-8 will be used.</li>
+</ul>
+<p>The Trackback sending function returns TRUE/FALSE (boolean) on success
+or failure. If it fails, you can retrieve the error message using:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">display_errors</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="receiving-trackbacks">
+<h2>Receiving Trackbacks<a class="headerlink" href="#receiving-trackbacks" title="Permalink to this headline">¶</a></h2>
+<p>Before you can receive Trackbacks you must create a weblog. If you don&#8217;t
+have a blog yet there&#8217;s no point in continuing.</p>
+<p>Receiving Trackbacks is a little more complex than sending them, only
+because you will need a database table in which to store them, and you
+will need to validate the incoming trackback data. You are encouraged to
+implement a thorough validation process to guard against spam and
+duplicate data. You may also want to limit the number of Trackbacks you
+allow from a particular IP within a given span of time to further
+curtail spam. The process of receiving a Trackback is quite simple; the
+validation is what takes most of the effort.</p>
+</div>
+<div class="section" id="your-ping-url">
+<h2>Your Ping URL<a class="headerlink" href="#your-ping-url" title="Permalink to this headline">¶</a></h2>
+<p>In order to accept Trackbacks you must display a Trackback URL next to
+each one of your weblog entries. This will be the URL that people will
+use to send you Trackbacks (we will refer to this as your &#8220;Ping URL&#8221;).</p>
+<p>Your Ping URL must point to a controller function where your Trackback
+receiving code is located, and the URL must contain the ID number for
+each particular entry, so that when the Trackback is received you&#8217;ll be
+able to associate it with a particular entry.</p>
+<p>For example, if your controller class is called Trackback, and the
+receiving function is called receive, your Ping URLs will look something
+like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">http</span><span class="o">://</span><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">trackback</span><span class="o">/</span><span class="nx">receive</span><span class="o">/</span><span class="nx">entry_id</span>
+</pre></div>
+</div>
+<p>Where entry_id represents the individual ID number for each of your
+entries.</p>
+</div>
+<div class="section" id="creating-a-trackback-table">
+<h2>Creating a Trackback Table<a class="headerlink" href="#creating-a-trackback-table" title="Permalink to this headline">¶</a></h2>
+<p>Before you can receive Trackbacks you must create a table in which to
+store them. Here is a basic prototype for such a table:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">CREATE</span> <span class="nx">TABLE</span> <span class="nx">trackbacks</span> <span class="p">(</span>
+ <span class="nx">tb_id</span> <span class="nx">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="nx">unsigned</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="nx">auto_increment</span><span class="p">,</span>
+ <span class="nx">entry_id</span> <span class="nx">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="nx">unsigned</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">default</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="nx">url</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="nx">title</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="nx">excerpt</span> <span class="nx">text</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="nx">blog_name</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="nx">tb_date</span> <span class="nx">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="nx">ip_address</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="nx">PRIMARY</span> <span class="nx">KEY</span> <span class="sb">`tb_id`</span> <span class="p">(</span><span class="sb">`tb_id`</span><span class="p">),</span>
+ <span class="nx">KEY</span> <span class="sb">`entry_id`</span> <span class="p">(</span><span class="sb">`entry_id`</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>The Trackback specification only requires four pieces of information to
+be sent in a Trackback (url, title, excerpt, blog_name), but to make
+the data more useful we&#8217;ve added a few more fields in the above table
+schema (date, IP address, etc.).</p>
+</div>
+<div class="section" id="processing-a-trackback">
+<h2>Processing a Trackback<a class="headerlink" href="#processing-a-trackback" title="Permalink to this headline">¶</a></h2>
+<p>Here is an example showing how you will receive and process a Trackback.
+The following code is intended for use within the controller function
+where you expect to receive Trackbacks.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;trackback&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">database</span><span class="p">();</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="k">FALSE</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">send_error</span><span class="p">(</span><span class="s2">&quot;Unable to determine the entry ID&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">receive</span><span class="p">())</span>
+<span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">send_error</span><span class="p">(</span><span class="s2">&quot;The Trackback did not contain valid data&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                <span class="s1">&#39;tb_id&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;entry_id&#39;</span>   <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+                <span class="s1">&#39;url&#39;</span>        <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;title&#39;</span>      <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;excerpt&#39;</span>    <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">(</span><span class="s1">&#39;excerpt&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;blog_name&#39;</span>  <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">(</span><span class="s1">&#39;blog_name&#39;</span><span class="p">),</span>
+                <span class="s1">&#39;tb_date&#39;</span>    <span class="o">=&gt;</span> <span class="nb">time</span><span class="p">(),</span>
+                <span class="s1">&#39;ip_address&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">input</span><span class="o">-&gt;</span><span class="na">ip_address</span><span class="p">()</span>
+                <span class="p">);</span>
+
+<span class="nv">$sql</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">insert_string</span><span class="p">(</span><span class="s1">&#39;trackbacks&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$sql</span><span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">send_success</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="section" id="notes">
+<h3>Notes:<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h3>
+<p>The entry ID number is expected in the third segment of your URL. This
+is based on the URI example we gave earlier:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">http</span><span class="o">://</span><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">trackback</span><span class="o">/</span><span class="nx">receive</span><span class="o">/</span><span class="nx">entry_id</span>
+</pre></div>
+</div>
+<p>Notice the entry_id is in the third URI segment, which you can retrieve
+using:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In our Trackback receiving code above, if the third segment is missing,
+we will issue an error. Without a valid entry ID, there&#8217;s no reason to
+continue.</p>
+<p>The $this-&gt;trackback-&gt;receive() function is simply a validation function
+that looks at the incoming data and makes sure it contains the four
+pieces of data that are required (url, title, excerpt, blog_name). It
+returns TRUE on success and FALSE on failure. If it fails you will issue
+an error message.</p>
+<p>The incoming Trackback data can be retrieved using this function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">(</span><span class="s1">&#39;item&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Where item represents one of these four pieces of info: url, title,
+excerpt, or blog_name</p>
+<p>If the Trackback data is successfully received, you will issue a success
+message using:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">trackback</span><span class="o">-&gt;</span><span class="na">send_success</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The above code contains no data validation, which you are
+encouraged to add.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

@@ -615,6 +615,8 @@ class Generator extends CMS_Controller{
 			'project_name',
 			'save_project_name',
 			'project_caption',
+			'drop_table_forge',
+			'create_table_forge',
 		);
 		$replacement = array(
 			underscore($this->cms_user_name()).'.'.underscore($this->project_name),
@@ -626,6 +628,8 @@ class Generator extends CMS_Controller{
 			$this->project_name,
 			underscore($this->project_name),
 			humanize($this->project_name),
+			$this->nds->get_drop_table_forge($tables),
+			$this->nds->get_create_table_forge($tables),
 		);
 		$str = $this->nds->read_view('default_generator/install', NULL, $pattern, $replacement);
 		$this->nds->write_file($project_path.'controllers/install.php', $str);

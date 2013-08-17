@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Database Utility Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="The Database Class" href="index.html" />
+	    <link rel="next" title="Writing CodeIgniter Documentation" href="../documentation/index.html" />
+	    <link rel="prev" title="Database Forge Class" href="forge.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa808ae4>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">The Database Class</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Database Utility Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="database-utility-class">
+<h1><a class="toc-backref" href="#id1">Database Utility Class</a><a class="headerlink" href="#database-utility-class" title="Permalink to this headline">¶</a></h1>
+<p>The Database Utility Class contains methods that help you manage your
+database.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#database-utility-class" id="id1">Database Utility Class</a><ul>
+<li><a class="reference internal" href="#function-reference" id="id2">Function Reference</a><ul>
+<li><a class="reference internal" href="#initializing-the-utility-class" id="id3">Initializing the Utility Class</a></li>
+<li><a class="reference internal" href="#this-dbutil-list-databases" id="id4">$this-&gt;dbutil-&gt;list_databases();</a></li>
+<li><a class="reference internal" href="#this-dbutil-database-exists" id="id5">$this-&gt;dbutil-&gt;database_exists();</a></li>
+<li><a class="reference internal" href="#this-dbutil-optimize-table-table-name" id="id6">$this-&gt;dbutil-&gt;optimize_table(&#8216;table_name&#8217;);</a></li>
+<li><a class="reference internal" href="#this-dbutil-repair-table-table-name" id="id7">$this-&gt;dbutil-&gt;repair_table(&#8216;table_name&#8217;);</a></li>
+<li><a class="reference internal" href="#this-dbutil-optimize-database" id="id8">$this-&gt;dbutil-&gt;optimize_database();</a></li>
+<li><a class="reference internal" href="#this-dbutil-csv-from-result-db-result" id="id9">$this-&gt;dbutil-&gt;csv_from_result($db_result);</a></li>
+<li><a class="reference internal" href="#this-dbutil-xml-from-result-db-result" id="id10">$this-&gt;dbutil-&gt;xml_from_result($db_result);</a></li>
+<li><a class="reference internal" href="#this-dbutil-backup" id="id11">$this-&gt;dbutil-&gt;backup();</a><ul>
+<li><a class="reference internal" href="#usage-example" id="id12">Usage Example</a></li>
+<li><a class="reference internal" href="#setting-backup-preferences" id="id13">Setting Backup Preferences</a></li>
+<li><a class="reference internal" href="#description-of-backup-preferences" id="id14">Description of Backup Preferences</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="function-reference">
+<h2><a class="toc-backref" href="#id2">Function Reference</a><a class="headerlink" href="#function-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="initializing-the-utility-class">
+<h3><a class="toc-backref" href="#id3">Initializing the Utility Class</a><a class="headerlink" href="#initializing-the-utility-class" title="Permalink to this headline">¶</a></h3>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">In order to initialize the Utility class, your database
+driver must already be running, since the utilities class relies on it.</p>
+</div>
+<p>Load the Utility Class as follows:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can also pass another database object to the DB Utility loader, in case
+the database you want to manage isn&#8217;t the default one:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">myutil</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">other_db</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In the above example, we&#8217;re passing a custom database object as the first
+parameter and then tell it to return the dbutil object, instead of
+assigning it directly to <tt class="docutils literal"><span class="pre">$this-&gt;dbutil</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Both of the parameters can be used individually, just pass an empty
+value as the first one if you wish to skip it.</p>
+</div>
+<p>Once initialized you will access the methods using the <tt class="docutils literal"><span class="pre">$this-&gt;dbutil</span></tt>
+object:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">some_method</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-dbutil-list-databases">
+<h3><a class="toc-backref" href="#id4">$this-&gt;dbutil-&gt;list_databases();</a><a class="headerlink" href="#this-dbutil-list-databases" title="Permalink to this headline">¶</a></h3>
+<p>Returns an array of database names:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$dbs</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">list_databases</span><span class="p">();</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$dbs</span> <span class="k">as</span> <span class="nv">$db</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="nv">$db</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-dbutil-database-exists">
+<h3><a class="toc-backref" href="#id5">$this-&gt;dbutil-&gt;database_exists();</a><a class="headerlink" href="#this-dbutil-database-exists" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes it&#8217;s helpful to know whether a particular database exists.
+Returns a boolean TRUE/FALSE. Usage example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">database_exists</span><span class="p">(</span><span class="s1">&#39;database_name&#39;</span><span class="p">))</span>
+<span class="p">{</span>
+        <span class="c1">// some code...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Replace <em>database_name</em> with the name of the table you are
+looking for. This method is case sensitive.</p>
+</div>
+</div>
+<div class="section" id="this-dbutil-optimize-table-table-name">
+<h3><a class="toc-backref" href="#id6">$this-&gt;dbutil-&gt;optimize_table(&#8216;table_name&#8217;);</a><a class="headerlink" href="#this-dbutil-optimize-table-table-name" title="Permalink to this headline">¶</a></h3>
+<p>Permits you to optimize a table using the table name specified in the
+first parameter. Returns TRUE/FALSE based on success or failure:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">optimize_table</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">))</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="s1">&#39;Success!&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all database platforms support table optimization. It is
+mostly for use with MySQL.</p>
+</div>
+</div>
+<div class="section" id="this-dbutil-repair-table-table-name">
+<h3><a class="toc-backref" href="#id7">$this-&gt;dbutil-&gt;repair_table(&#8216;table_name&#8217;);</a><a class="headerlink" href="#this-dbutil-repair-table-table-name" title="Permalink to this headline">¶</a></h3>
+<p>Permits you to repair a table using the table name specified in the
+first parameter. Returns TRUE/FALSE based on success or failure:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">repair_table</span><span class="p">(</span><span class="s1">&#39;table_name&#39;</span><span class="p">))</span>
+<span class="p">{</span>
+        <span class="k">echo</span> <span class="s1">&#39;Success!&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all database platforms support table repairs.</p>
+</div>
+</div>
+<div class="section" id="this-dbutil-optimize-database">
+<h3><a class="toc-backref" href="#id8">$this-&gt;dbutil-&gt;optimize_database();</a><a class="headerlink" href="#this-dbutil-optimize-database" title="Permalink to this headline">¶</a></h3>
+<p>Permits you to optimize the database your DB class is currently
+connected to. Returns an array containing the DB status messages or
+FALSE on failure.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$result</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">optimize_database</span><span class="p">();</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$result</span> <span class="o">!==</span> <span class="k">FALSE</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nb">print_r</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all database platforms support table optimization. It
+it is mostly for use with MySQL.</p>
+</div>
+</div>
+<div class="section" id="this-dbutil-csv-from-result-db-result">
+<h3><a class="toc-backref" href="#id9">$this-&gt;dbutil-&gt;csv_from_result($db_result);</a><a class="headerlink" href="#this-dbutil-csv-from-result-db-result" title="Permalink to this headline">¶</a></h3>
+<p>Permits you to generate a CSV file from a query result. The first
+parameter of the method must contain the result object from your
+query. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="p">();</span>
+
+<span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM mytable&quot;</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">csv_from_result</span><span class="p">(</span><span class="nv">$query</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The second, third, and fourth parameters allow you to set the delimiter
+newline, and enclosure characters respectively. By default commas are
+used as the delimiter, &#8220;n&#8221; is used as a new line, and a double-quote
+is used as the enclosure. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">;</span>
+<span class="nv">$newline</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="nv">$enclosure</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">csv_from_result</span><span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$delimiter</span><span class="p">,</span> <span class="nv">$newline</span><span class="p">,</span> <span class="nv">$enclosure</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This method will NOT write the CSV file for you. It
+simply creates the CSV layout. If you need to write the file
+use the <a class="reference internal" href="../helpers/file_helper.html"><em>File Helper</em></a>.</p>
+</div>
+</div>
+<div class="section" id="this-dbutil-xml-from-result-db-result">
+<h3><a class="toc-backref" href="#id10">$this-&gt;dbutil-&gt;xml_from_result($db_result);</a><a class="headerlink" href="#this-dbutil-xml-from-result-db-result" title="Permalink to this headline">¶</a></h3>
+<p>Permits you to generate an XML file from a query result. The first
+parameter expects a query result object, the second may contain an
+optional array of config parameters. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="p">();</span>
+
+<span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM mytable&quot;</span><span class="p">);</span>
+
+<span class="nv">$config</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span>
+        <span class="s1">&#39;root&#39;</span>          <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;element&#39;</span>       <span class="o">=&gt;</span> <span class="s1">&#39;element&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;newline&#39;</span>       <span class="o">=&gt;</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;tab&#39;</span>           <span class="o">=&gt;</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+<span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">xml_from_result</span><span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$config</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This method will NOT write the XML file for you. It
+simply creates the XML layout. If you need to write the file
+use the <a class="reference internal" href="../helpers/file_helper.html"><em>File Helper</em></a>.</p>
+</div>
+</div>
+<div class="section" id="this-dbutil-backup">
+<h3><a class="toc-backref" href="#id11">$this-&gt;dbutil-&gt;backup();</a><a class="headerlink" href="#this-dbutil-backup" title="Permalink to this headline">¶</a></h3>
+<p>Permits you to backup your full database or individual tables. The
+backup data can be compressed in either Zip or Gzip format.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This feature is only available for MySQL and Interbase/Firebird databases.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>For Interbase/Firebird databases, the backup file name is the only parameter.</p>
+<p class="last">Eg. $this-&gt;dbutil-&gt;backup(&#8216;db_backup_filename&#8217;);</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Due to the limited execution time and memory available to PHP,
+backing up very large databases may not be possible. If your database is
+very large you might need to backup directly from your SQL server via
+the command line, or have your server admin do it for you if you do not
+have root privileges.</p>
+</div>
+<div class="section" id="usage-example">
+<h4><a class="toc-backref" href="#id12">Usage Example</a><a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Load the DB utility class</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="p">();</span>
+
+<span class="c1">// Backup your entire database and assign it to a variable</span>
+<span class="nv">$backup</span> <span class="o">=&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">backup</span><span class="p">();</span>
+
+<span class="c1">// Load the file helper and write the file to your server</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">);</span>
+<span class="nx">write_file</span><span class="p">(</span><span class="s1">&#39;/path/to/mybackup.gz&#39;</span><span class="p">,</span> <span class="nv">$backup</span><span class="p">);</span>
+
+<span class="c1">// Load the download helper and send the file to your desktop</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;download&#39;</span><span class="p">);</span>
+<span class="nx">force_download</span><span class="p">(</span><span class="s1">&#39;mybackup.gz&#39;</span><span class="p">,</span> <span class="nv">$backup</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-backup-preferences">
+<h4><a class="toc-backref" href="#id13">Setting Backup Preferences</a><a class="headerlink" href="#setting-backup-preferences" title="Permalink to this headline">¶</a></h4>
+<p>Backup preferences are set by submitting an array of values to the first
+parameter of the <tt class="docutils literal"><span class="pre">backup()</span></tt> method. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$prefs</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;tables&#39;</span>        <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;table1&#39;</span><span class="p">,</span> <span class="s1">&#39;table2&#39;</span><span class="p">),</span>   <span class="c1">// Array of tables to backup.</span>
+        <span class="s1">&#39;ignore&#39;</span>        <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(),</span>                     <span class="c1">// List of tables to omit from the backup</span>
+        <span class="s1">&#39;format&#39;</span>        <span class="o">=&gt;</span> <span class="s1">&#39;txt&#39;</span><span class="p">,</span>                       <span class="c1">// gzip, zip, txt</span>
+        <span class="s1">&#39;filename&#39;</span>      <span class="o">=&gt;</span> <span class="s1">&#39;mybackup.sql&#39;</span><span class="p">,</span>              <span class="c1">// File name - NEEDED ONLY WITH ZIP FILES</span>
+        <span class="s1">&#39;add_drop&#39;</span>      <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>                        <span class="c1">// Whether to add DROP TABLE statements to backup file</span>
+        <span class="s1">&#39;add_insert&#39;</span>    <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>                        <span class="c1">// Whether to add INSERT data to backup file</span>
+        <span class="s1">&#39;newline&#39;</span>       <span class="o">=&gt;</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>                         <span class="c1">// Newline character used in backup file</span>
+<span class="p">);</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">dbutil</span><span class="o">-&gt;</span><span class="na">backup</span><span class="p">(</span><span class="nv">$prefs</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="description-of-backup-preferences">
+<h4><a class="toc-backref" href="#id14">Description of Backup Preferences</a><a class="headerlink" href="#description-of-backup-preferences" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="16%" />
+<col width="16%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Preference</th>
+<th class="head">Default Value</th>
+<th class="head">Options</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>tables</strong></td>
+<td>empty array</td>
+<td>None</td>
+<td>An array of tables you want backed up. If left blank all tables will be
+exported.</td>
+</tr>
+<tr class="row-odd"><td><strong>ignore</strong></td>
+<td>empty array</td>
+<td>None</td>
+<td>An array of tables you want the backup routine to ignore.</td>
+</tr>
+<tr class="row-even"><td><strong>format</strong></td>
+<td>gzip</td>
+<td>gzip, zip, txt</td>
+<td>The file format of the export file.</td>
+</tr>
+<tr class="row-odd"><td><strong>filename</strong></td>
+<td>the current date/time</td>
+<td>None</td>
+<td>The name of the backed-up file. The name is needed only if you are using
+zip compression.</td>
+</tr>
+<tr class="row-even"><td><strong>add_drop</strong></td>
+<td>TRUE</td>
+<td>TRUE/FALSE</td>
+<td>Whether to include DROP TABLE statements in your SQL export file.</td>
+</tr>
+<tr class="row-odd"><td><strong>add_insert</strong></td>
+<td>TRUE</td>
+<td>TRUE/FALSE</td>
+<td>Whether to include INSERT statements in your SQL export file.</td>
+</tr>
+<tr class="row-even"><td><strong>newline</strong></td>
+<td>&#8220;\n&#8221;</td>
+<td>&#8220;\n&#8221;, &#8220;\r&#8221;, &#8220;\r\n&#8221;</td>
+<td>Type of newline to use in your SQL export file.</td>
+</tr>
+<tr class="row-odd"><td><strong>foreign_key_checks</strong></td>
+<td>TRUE</td>
+<td>TRUE/FALSE</td>
+<td>Whether output should keep foreign key checks enabled.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>
