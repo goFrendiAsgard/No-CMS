@@ -391,16 +391,15 @@ class CMS_Model extends CI_Model
                         $response = preg_replace('#(href|src|action)="([^:"]*)(?:")#', '$1="' . $url . '/$2"', $response);
                         $content .= $response;
                     }
-                } else {                                                   
+                } else {                                                 
                     $url = trim_slashes($url);
-                    $url_partial = explode('/',$url);
                     $this->cms_ci_session('cms_dynamic_widget', TRUE);
                     $response = @Modules::run($url);
                     if(strlen($response) == 0){
                         $response = @Modules::run($url.'/index');
-                    }
+                    }                    
                     // fallback, Modules::run failed, use AJAX instead
-                    if(strlen($response)==0){
+                    if(strlen($response)==0){                        
                         $response = '<script type="text/javascript">';
                         $response .= '$(document).ready(function(){$("#__cms_widget_' . $row->widget_id . '").load("'.site_url($url).'?_only_content=TRUE");});';
                         $response .= '</script>';

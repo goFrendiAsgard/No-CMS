@@ -12,15 +12,15 @@
 
     <!-- Le styles -->
     <?php
-        $asset = new CMS_Asset();       
-        $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
+	    $asset = new CMS_Asset();	    
+	    $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
         $asset->add_themes_css('style.css', '{{ used_theme }}', 'default');
-        echo $asset->compile_css();
+	    echo $asset->compile_css();
 
-        $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
-        $asset->add_themes_js('script.js', '{{ used_theme }}', 'default');
-        echo $asset->compile_js();
-    ?>
+	    $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
+	    $asset->add_themes_js('script.js', '{{ used_theme }}', 'default');
+	    echo $asset->compile_js();
+	?>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -34,21 +34,7 @@
     {{ widget_name:section_top_fix }}
     <div class="container">
       <div class="row-fluid">
-        <div id="__section-banner">
-    	{{ widget_name:section_banner }}
-    	</div>
-    	<div>     
-        	<div id="__section-left-and-content" class="span9">
-        		<div>{{ navigation_path }}</div><hr />
-        		<div>
-                    <div id="__section-left" class="hidden">{{ widget_name:section_left }}</div>
-                    <div id="__section-content" class="span12"><?php echo $template['body'];?></div>
-                </div>
-            </div><!--/#layout-content-->
-            <div id="__section-right" class="span3">
-                {{ widget_name:section_right }}
-            </div><!--/#layout-widget-->
-        </div>
+    	<div id="__section-content" class="span12"><?php echo $template['body'];?></div>
       </div><!--/row-->
       <hr>
       <footer>{{ widget_name:section_bottom }}</footer>

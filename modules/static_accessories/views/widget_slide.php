@@ -10,7 +10,7 @@ for($i=0; $i<count($slide_list); $i++){
         $class = '';
     }
     $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';
-    $div_item_list[] = '<div class="item '.$class.'" style="background-image:url('.base_url('modules/{{ module_path }}/assets/images/slides/'.$slide['image_url']).'); background-repeat:no-repeat; background-position:center center; min-height:300px;">'.
+    $div_item_list[] = '<div class="item '.$class.'" style="background-image:url('.base_url('modules/{{ module_path }}/assets/images/slides/'.$slide['image_url']).'); background-repeat:no-repeat; background-position:center center; min-height:350px;">'.
             '<div class="carousel-caption">'.$slide['content'].'</div>'.
             '</div>';
 }
@@ -18,13 +18,21 @@ for($i=0; $i<count($slide_list); $i++){
 ?>
 <style type="text/css">
     .carousel-indicators{
-        background-color:#000000;
-        opacity: 0.85;
-        filter:alpha(opacity=85);
+        background-color:#222222;
+        opacity: 0.5;
+        filter:alpha(opacity=50);
         padding: 10px;
+        border-radius: 20px;
+    }
+    .carousel-indicators:hover{
+        opacity: 0.9;
+        filter:alpha(opacity=90);
+    }
+    .carousel-indicators li{
+        cursor: pointer;
     }
 </style>
-<div class="carousel slide" id="slideshow-widget">
+<div class="carousel slide hidden-phone" id="slideshow-widget">
     <!-- Indicators -->
     <ol class="carousel-indicators">
         <?php foreach($li_indicator_list as $li_indicator){ echo $li_indicator;} ?>

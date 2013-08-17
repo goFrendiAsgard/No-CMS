@@ -76,8 +76,8 @@ class Install extends CMS_Module_Installer {
         
         // remove widgets
         $this->remove_widget($this->cms_complete_navigation_name('slideshow'));
-        $this->add_widget($this->cms_complete_navigation_name('tab'));
-        $this->add_widget($this->cms_complete_navigation_name('visitor_count'));
+        $this->remove_widget($this->cms_complete_navigation_name('tab'));
+        $this->remove_widget($this->cms_complete_navigation_name('visitor_count'));
 
         // remove navigations
         $this->remove_navigation($this->cms_complete_navigation_name('manage_visitor_counter'));
