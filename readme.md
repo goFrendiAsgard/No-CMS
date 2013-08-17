@@ -23,7 +23,7 @@ No-CMS will be good for you if you say yes for majority of these statement:
 
 Batteries Included
 --------------------------------------------
-No-CMS come with several battery included:
+No-CMS come with several batteries included:
 
 * HMVC, to make fully modular separation
 * Phil Sturgeon's Template, to make customizable themes
