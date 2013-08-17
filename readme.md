@@ -40,7 +40,7 @@ No-CMS come with several battery included:
 Release Information
 ===================
 
-- v0.6.5 development, August, 03, 2013
+- v0.6.5 stable, August, 17, 2013
 
 
 Server Requirements
@@ -857,15 +857,17 @@ v0.6.2
 v0.6.5
 + (cancelled) automatically create thumbnail in wysiwyg, use better uploader library <-- there is no more WYSIWYG
 + (done, tested) make language and module list sorted
-+ (in progress) support PDO, use groceryCRUD that support PDO, use CodeIgniter 3.0
++ (done, tested) support PDO, use groceryCRUD that support PDO, use CodeIgniter 3.0
 + (done, tested) new installer that will also support PDO
-+ (in progress) make nordrassil generated code also support PDO <-- Need to check enum and set
++ (done, but not tested for enum & set) make nordrassil generated code also support PDO
 + (done, tested) change all default module to use dbforge on installation
 + (done, tested) make navigation management more intuitive
 + (done, tested) allowing widget inside widget
-+ (proposed) Navigation: move to anywhere.
 + (done, tested) remove WYSIWYG, use layout management instead.
 + (done, tested) use APPPATH to fetch language & modules in case of the user move index.php. Thanks to Petr Valenta
 + (done, tested) fix infinite redirection potential in cms_redirect if combined with dynamic widget
 + (done, tested) rename `widget.php` at blog & static_accessories to avoid conflict
 + (done, tested) use AJAX when load widget via `Modules::run` failed
+
+v0.6.6
++ (proposed) Navigation: move to anywhere.

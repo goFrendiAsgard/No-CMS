@@ -100,7 +100,8 @@ class Main extends CMS_Controller
         if ($this->form_validation->run()) {
             if ($this->cms_do_login($identity, $password)) {
                 //if old_url exist, redirect to old_url, else redirect to main/index
-                if (!is_bool($old_url)) {
+                if (isset($old_url)) {
+                    $this->session->set_flashdata('cms_old_url', NULL);
                     redirect($old_url);
                 } else {
                     redirect('main/index');
@@ -108,7 +109,7 @@ class Main extends CMS_Controller
             } else {
                 //the login process failed
                 //save the old_url again
-                if (!is_bool($old_url)) {
+                if (isset($old_url)) {
                     $this->session->keep_flashdata('cms_old_url');
                 }
 
@@ -124,7 +125,7 @@ class Main extends CMS_Controller
             }
         } else {
             //save the old_url again
-            if (!is_bool($old_url)) {
+            if (isset($old_url)) {
                 $this->session->keep_flashdata('cms_old_url');
             }
 

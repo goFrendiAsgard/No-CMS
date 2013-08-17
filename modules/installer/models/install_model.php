@@ -384,8 +384,6 @@ class Install_Model extends CI_Model{
         if(!trim($this->db_table_prefix) == ''){
             $table_name = $this->db_table_prefix.'_'.$table_name;
         }
-        log_message('error', $this->db_table_prefix);
-        log_message('error', $table_name);
         $this->db_no_error = $this->dbforge->create_table($table_name) && $this->db_no_error;
         return $this->db->last_query();
     }

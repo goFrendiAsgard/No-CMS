@@ -321,6 +321,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_widgets($slug = NULL, $widget_name=NULL)
     {
+        // get user_name, user_id, etc
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
         $user_id    = !isset($user_id)||is_null($user_id)?0:$user_id;
@@ -390,7 +391,7 @@ class CMS_Model extends CI_Model
                         $response = preg_replace('#(href|src|action)="([^:"]*)(?:")#', '$1="' . $url . '/$2"', $response);
                         $content .= $response;
                     }
-                } else {                    
+                } else {                                                   
                     $url = trim_slashes($url);
                     $url_partial = explode('/',$url);
                     $this->cms_ci_session('cms_dynamic_widget', TRUE);
@@ -404,7 +405,7 @@ class CMS_Model extends CI_Model
                         $response .= '$(document).ready(function(){$("#__cms_widget_' . $row->widget_id . '").load("'.site_url($url).'?_only_content=TRUE");});';
                         $response .= '</script>';
                     }
-                    $content .= $response;
+                    $content .= $response;                    
                     $this->cms_unset_ci_session('cms_dynamic_widget');
                 }
                 

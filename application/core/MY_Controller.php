@@ -37,17 +37,20 @@ class CMS_Controller extends MX_Controller
         $this->load->helper('string');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
-
-        // if there is old_url, then save it
         $this->load->driver('session');
-        $old_url = $this->session->flashdata('cms_old_url');
-        if (!is_bool($old_url)) {
-            $this->session->keep_flashdata('cms_old_url');
-        }
+        
         // get dynamic widget status
         if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
             $this->__cms_dynamic_widget = TRUE;
         }
+        
+        if(!$this->__cms_dynamic_widget){
+            // if there is old_url, then save it            
+            $old_url = $this->session->flashdata('cms_old_url');
+            if (isset($old_url)) {
+                $this->session->keep_flashdata('cms_old_url');
+            }
+        }        
 
         $this->load->library('grocery_CRUD');
         $this->load->library('template');
@@ -571,7 +574,7 @@ class CMS_Controller extends MX_Controller
     {
         $uriString = $this->uri->uri_string();
         $old_url   = $this->session->flashdata('old_url');
-        if (is_bool($old_url)) {
+        if (!isset($old_url)) {
             $this->session->set_flashdata('cms_old_url', $uriString);
         }
         
@@ -651,6 +654,8 @@ class CMS_Controller extends MX_Controller
             $this->__cms_dynamic_widget = TRUE;
         }
         $this->cms_unset_ci_session('cms_dynamic_widget');
+        
+        
         
         /**
          * PREPARE PARAMETERS *********************************************************************************************
@@ -1937,7 +1942,7 @@ class CMS_Module_Installer extends CMS_Controller
         }
     }
 
-    protected final function add_widget($widget_name, $title, $authorization_id = 1, $url = NULL, $slug = NULL, $index = NULL, $description = NULL)
+    protected final function add_widget($widget_name, $title=NULL, $authorization_id = 1, $url = NULL, $slug = NULL, $index = NULL, $description = NULL)
     {
         //if it is null, index = max index+1
         if (!isset($index)) {

@@ -30,6 +30,9 @@ assets/caches/*.css
 modules/.git
 application/logs/*.php
 
+# No-CMS user guide odt
+No-CMS-User-Guide.odt
+
 # my private modules
 modules/gis
 modules/typing_defense
