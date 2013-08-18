@@ -51,7 +51,7 @@
 |
 | There are two reserved routes:
 |
-|	$route['default_controller'] = 'main';
+|	$route['default_controller'] = 'welcome';
 |
 | This route indicates which controller class should be loaded if the
 | URI contains no data. In the above example, the "welcome" class
@@ -64,7 +64,7 @@
 |
 */
 
-$route['default_controller'] = 'main';
+$route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 
 /* End of file routes.php */
