@@ -320,20 +320,8 @@ class Install_Model extends CI_Model{
                     $mod_rewrite = TRUE;
                 }
             }
-            if (!$mod_rewrite && in_array('curl', get_loaded_extensions())) {
-                file_put_contents(get_test_path('.htaccess'), $htaccess_content);
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, get_test_url('test_mod_rewrite'));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                $response = curl_exec($ch);
-                curl_close($ch);
-                unlink(get_test_path('.htaccess'));
-                if ($response == 'ok') {
-                    $mod_rewrite = TRUE;
-                }
-            }
             /* TODO: apply this if possible
-                if (!$mod_rewrite) {
+             if (!$mod_rewrite) {
                     $htaccess_content = '<IfModule mod_rewrite.c>' . PHP_EOL;
                     $htaccess_content .= '   Options +FollowSymLinks -Indexes' . PHP_EOL;
                     $htaccess_content .= '   RewriteEngine On' . PHP_EOL;
@@ -348,6 +336,20 @@ class Install_Model extends CI_Model{
                         $mod_rewrite = TRUE;
                     }
                 }
+            if (!$mod_rewrite && in_array('curl', get_loaded_extensions())) {
+                file_put_contents(get_test_path('.htaccess'), $htaccess_content);
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, get_test_url('test_mod_rewrite'));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                $response = curl_exec($ch);
+                curl_close($ch);
+                unlink(get_test_path('.htaccess'));
+                if ($response == 'ok') {
+                    $mod_rewrite = TRUE;
+                }
+            }
+            
+                
              */
             if(!$mod_rewrite){
                 $warning_list[] = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
