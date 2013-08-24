@@ -46,7 +46,7 @@ class MX_Loader extends CI_Loader
 		/* set the module name */
 		$this->_module = CI::$APP->router->fetch_module();
 		
-		if (is_a($controller, 'MX_Controller')) {	
+		if ($controller instanceof MX_Controller) {	
 			
 			/* reference to the module controller */
 			$this->controller = $controller;
