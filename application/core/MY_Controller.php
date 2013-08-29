@@ -1293,7 +1293,7 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
             $navigation_name = $this->cms_navigation_name($uriString);
         }
         $this->cms_guard_page($navigation_name);
-        if (!$this->__cms_dynamic_widget && !$this->ALLOW_UNKNOWN_NAVIGATION_NAME && !isset($navigation_name)) {
+        if (!$this->__cms_dynamic_widget && $uriString != '' && !$this->ALLOW_UNKNOWN_NAVIGATION_NAME && !isset($navigation_name)) {
             if ($this->input->is_ajax_request()) {
                 $response = array(
                     'success' => FALSE,
