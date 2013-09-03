@@ -104,7 +104,7 @@ class Main extends CMS_Controller
                     $this->session->set_flashdata('cms_old_url', NULL);
                     redirect($old_url);
                 } else {
-                    redirect('main/index');
+                    redirect('');
                 }
             } else {
                 //the login process failed
@@ -316,7 +316,7 @@ class Main extends CMS_Controller
     public function logout()
     {
         $this->cms_do_logout();
-        redirect('main/index');
+        redirect('');
     }
 
     public function index()
