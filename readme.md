@@ -741,6 +741,7 @@ Here are some names of considerable contributors:
 * Ann Low <-- Spain translation contributor
 * shakespam <-- nordrassil null field fix
 * heruprambadi <-- reporting several bugs, in 0.6.5 development version
+* Toni, Dani & Umar (aftinya@gmail.com, ragiel87@gmail.com, dlastpart@yahoo.com) <-- My students, make static_accessories widget
 * Everyone who was involved by creating issue & pull requests in github. I cannot write every names there. But No-CMS can't be better without them :)
 
 
