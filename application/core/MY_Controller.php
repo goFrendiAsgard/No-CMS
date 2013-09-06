@@ -59,6 +59,11 @@ class CMS_Controller extends MX_Controller
         if(false) $this->No_CMS_Model = new No_CMS_Model();
     }
 
+    /**
+     * @author goFrendiAsgard
+     * @return Grocery_CRUD
+     * @desc   return Grocery_CRUD
+     */
     public function new_crud(){
         $db_driver = $this->db->platform();
         $model_name = 'grocery_crud_model_'.$db_driver;

@@ -14,6 +14,9 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 		// initialize groceryCRUD
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = $this->new_crud();
+        // this is just for code completion
+        if (FALSE) $crud = new Grocery_CRUD();
+        // unset things 
         $crud->unset_jquery();
 
         // set model
