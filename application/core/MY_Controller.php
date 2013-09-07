@@ -580,7 +580,10 @@ class CMS_Controller extends MX_Controller
         $uriString = $this->uri->uri_string();
         $old_url   = $this->session->flashdata('old_url');
         if (!isset($old_url)) {
-            $this->session->set_flashdata('cms_old_url', $uriString);
+            // AJAX request should not be used for redirection
+            if(!$this->input->is_ajax_request()){
+                $this->session->set_flashdata('cms_old_url', $uriString);
+            }
         }
         
         if ($this->cms_allow_navigate('main_login') && ($uriString != 'main/login')) {
