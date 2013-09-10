@@ -409,14 +409,14 @@ You want to show list of pokemons based on the table content.
 Now edit your `/modules/new_module/models/pokemon_model.php` into this:
 ```php
     <?php
-    class Pokemon_Model extends CMS_Controller{
+    class Pokemon_Model extends CMS_Model{
 
         function get(){
             $query = $this->db->get('pokemons');
             // or you can use this too:
             //  $query = $this->db->query('SELECT * FROM pokemons')->get();
             $pokemon_list = array();
-            foreach($query->row() as $row){
+            foreach($query->result() as $row){
                 $pokemon_list[] = $row->name;
             }
             return $pokemon_list;
