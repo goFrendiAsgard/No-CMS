@@ -414,7 +414,7 @@ Now edit your `/modules/new_module/models/pokemon_model.php` into this:
         function get(){
             $query = $this->db->get('pokemons');
             // or you can use this too:
-            //  $query = $this->db->query('SELECT * FROM pokemons')->get();
+            //  $query = $this->db->query('SELECT * FROM pokemons');
             $pokemon_list = array();
             foreach($query->result() as $row){
                 $pokemon_list[] = $row->name;

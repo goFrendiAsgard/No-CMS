@@ -1224,7 +1224,7 @@ class Main extends CMS_Controller
     }
 
     public function widget_top_nav_no_quicklink($caption = 'Complete Menu'){
-        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, NULL);
+        $this->widget_top_nav($this->cms_lang($caption), TRUE, FALSE, TRUE, NULL);
     }
 
     public function widget_quicklink(){
