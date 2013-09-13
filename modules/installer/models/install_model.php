@@ -104,7 +104,7 @@ class Install_Model extends CI_Model{
     }
 
     protected function load_database(){        
-        $this->load->driver('session');
+        //$this->load->driver('session');
         $db_config = $this->build_db_config();
         $db = $this->load->database($db_config, TRUE);
 
@@ -131,14 +131,15 @@ class Install_Model extends CI_Model{
                 
                 // save the created database
                 if($success){
-                    $this->session->set_userdata('created_db', $this->db_name);
+                    //$this->session->set_userdata('created_db', $this->db_name);
                 }
             }
         }
-
+        /*
         if($this->db_protocol=='mysql' && $this->session->userdata('created_db') != NULL && $this->session->userdata('created_db') != $this->db_name){
             @$db->query('DROP DATABASE '.$this->session->userdata('created_db'));
         }
+         */
 
         // return value
         if($success){            
