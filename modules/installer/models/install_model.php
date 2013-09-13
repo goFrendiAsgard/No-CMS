@@ -103,7 +103,8 @@ class Install_Model extends CI_Model{
         );
     }
 
-    protected function load_database(){
+    protected function load_database(){        
+        $this->load->driver('session');
         $db_config = $this->build_db_config();
         $db = $this->load->database($db_config, TRUE);
 
@@ -127,11 +128,20 @@ class Install_Model extends CI_Model{
                 if($db->conn_id !== FALSE){
                     $success = TRUE;
                 }
+                
+                // save the created database
+                if($success){
+                    $this->session->set_userdata('created_db', $this->db_name);
+                }
             }
         }
 
+        if($this->db_protocol=='mysql' && $this->session->userdata('created_db') != NULL && $this->session->userdata('created_db') != $this->db_name){
+            @$db->query('DROP DATABASE '.$this->session->userdata('created_db'));
+        }
+
         // return value
-        if($success){
+        if($success){            
             $this->db = $db;
             $this->dbutil = $this->load->dbutil($db, TRUE);
             $this->dbforge = $this->load->dbforge($db, TRUE);
@@ -529,8 +539,9 @@ class Install_Model extends CI_Model{
                 'navigation_name' => $type_varchar_small_strict,
                 'parent_id' => $type_foreign_key,
                 'title' => $type_varchar_small_strict,
+                'bootstrap-glyph' => $type_varchar_small,
                 'page_title' => $type_varchar_small,
-                'page_keyword' => $type_varchar_large,
+                'page_keyword' => $type_varchar_large,                
                 'description' => $type_text,
                 'url' => $type_varchar_large,
                 'authorization_id' => $type_foreign_key_default_1,
@@ -824,7 +835,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_navigation('main_quicklink_management', 4, 'Quick Link Management', 'Quick Link Management', NULL, 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_config_management', 4, 'Configuration Management', 'Configuration Management', NULL, 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_layout', 4, 'Layout Management', 'Layout Management', NULL, 'Manage Layout', 'main/layout', 4, 9, 1, 0, NULL, 0);
-        $sql_list[] = $this->insert_navigation('main_index', NULL, 'Home', 'Home', NULL, 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h3>'.PHP_EOL.'  Welcome {{ user_name }}</h3>'.PHP_EOL.'<p>'.PHP_EOL.' This is the home page. You have several options to modify this page.</p>'.PHP_EOL.'<ul>'.PHP_EOL.'    <li>'.PHP_EOL.'      <b>Using static page</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'           This is the most recommended way to do.</p>'.PHP_EOL.'   </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Redirect default controller</b>'.PHP_EOL.'        <p>'.PHP_EOL.'           You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />'.PHP_EOL.'            <code>/application/config/routes.php</code>, around line 41.<br />'.PHP_EOL.'            Please make sure that your default controller is valid.<br />'.PHP_EOL.'         This is recommended if you also want your own page to be a default homepage.</p>'.PHP_EOL.'  </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Using dynamic page and edit the view manually</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'          and edit the corresponding view on <code>/modules/main/index.php</code></p>'.PHP_EOL.'   </li>'.PHP_EOL.'</ul>'.PHP_EOL.'<hr />'.PHP_EOL.'<p>'.PHP_EOL.' <b>Any other question? : </b><br />'.PHP_EOL.'   CodeIgniter forum member can visit No-CMS thread here: <a href="http://codeigniter.com/forums/viewthread/209171/">http://codeigniter.com/forums/viewthread/209171/</a><br />'.PHP_EOL.'  Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />'.PHP_EOL.'    While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />'.PHP_EOL.'  In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />'.PHP_EOL.' That&#39;s all. Start your new adventure with No-CMS !!!</p>'.PHP_EOL.'', 0);
+        $sql_list[] = $this->insert_navigation('main_index', NULL, 'Home', 'Home', NULL, 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h3>'.PHP_EOL.'  Welcome {{ user_name }}</h3>'.PHP_EOL.'<p>'.PHP_EOL.' This is the home page. You have several options to modify this page.</p>'.PHP_EOL.'<ul>'.PHP_EOL.'    <li>'.PHP_EOL.'      <b>Using static page</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'           This is the most recommended way to do.</p>'.PHP_EOL.'   </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Redirect default controller</b>'.PHP_EOL.'        <p>'.PHP_EOL.'           You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />'.PHP_EOL.'            <code>/application/config/routes.php</code>, around line 41.<br />'.PHP_EOL.'            Please make sure that your default controller is valid.<br />'.PHP_EOL.'         This is recommended if you also want your own page to be a default homepage.</p>'.PHP_EOL.'  </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Using dynamic page and edit the view manually</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'          and edit the corresponding view on <code>/modules/main/index.php</code></p>'.PHP_EOL.'   </li>'.PHP_EOL.'</ul>'.PHP_EOL.'<hr />'.PHP_EOL.'<p>'.PHP_EOL.' <b>Any other question? : </b><br />'.PHP_EOL.'   Visit No-CMS forum here: <a href="http://getnocms.com/forum">http://getnocms.com/forum</a><br />'.PHP_EOL.'  Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />'.PHP_EOL.'    While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />'.PHP_EOL.'  In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />'.PHP_EOL.' That&#39;s all. Start your new adventure with No-CMS !!!</p>'.PHP_EOL.'', 0);
         $sql_list[] = $this->insert_navigation('main_language', NULL, 'Language', 'Language', NULL, 'Choose the language', 'main/language', 1, 0, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', NULL, 'Third Party Authentication', 'main/hauth/index', 1, 0, 1, 0, NULL, 0);
         // quicklink
