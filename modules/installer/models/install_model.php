@@ -1,4 +1,5 @@
 <?php
+session_start();
 class Install_Model extends CI_Model{
 
     public $db_protocol     = 'mysql';
@@ -103,10 +104,9 @@ class Install_Model extends CI_Model{
         );
     }
 
-    protected function load_database(){        
-        //$this->load->driver('session');
+    protected function load_database(){
         $db_config = $this->build_db_config();
-        $db = $this->load->database($db_config, TRUE);
+        $db = $this->load->database($db_config, TRUE);       
 
         $success = TRUE;
         if($db->conn_id === FALSE){
@@ -119,7 +119,10 @@ class Install_Model extends CI_Model{
                 $db_config = $this->build_db_config();
                 $db = $this->load->database($db_config, TRUE);
                 if($db->conn_id !== FALSE){
-                    // try to make the database
+                    // try to make the database and drop the previously created database
+                    if(isset($_SESSION['created_db'])){
+                        $db->query('DROP DATABASE '.$_SESSION['created_db']);
+                    }
                     $result = $db->query('CREATE DATABASE ' . $db_name . ' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;');
                 }
                 $this->db_name = $db_name;
@@ -131,15 +134,10 @@ class Install_Model extends CI_Model{
                 
                 // save the created database
                 if($success){
-                    //$this->session->set_userdata('created_db', $this->db_name);
+                    $_SESSION['created_db'] = $this->db_name;
                 }
             }
         }
-        /*
-        if($this->db_protocol=='mysql' && $this->session->userdata('created_db') != NULL && $this->session->userdata('created_db') != $this->db_name){
-            @$db->query('DROP DATABASE '.$this->session->userdata('created_db'));
-        }
-         */
 
         // return value
         if($success){            
