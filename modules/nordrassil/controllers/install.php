@@ -8,7 +8,7 @@ class Install extends CMS_Module_Installer {
     protected $DEPENDENCIES = array();
     protected $NAME         = 'gofrendi.noCMS.nordrassil';
     protected $DESCRIPTION  = 'A very cool and easy module generator. Choose your database schema, press the magical "generate" button, and enjoy your life';
-
+    
     //this should be what happen when user install this module
     protected function do_activate(){
         $this->remove_all();
@@ -176,7 +176,12 @@ class Install extends CMS_Module_Installer {
 			array('name'=>'import_data', 'description'=>'Also create insert statement (e.g: for configuration table)'),
 		);
 		$column_options = array(
-			array('name'=>'hide', 'description'=>'shown'),
+			array('name'=>'hide', 'description'=>'hide field'),
+            array('name'=>'required', 'description'=>'make field required'),
+            array('name'=>'unique', 'description'=>'make field unique'),
+            array('name'=>'validation_alpha', 'description'=>'alpha filter'),
+            array('name'=>'validation_numeric', 'description'=>'numeric filter'),
+            array('name'=>'validation_alphanumeric', 'description'=>'alphanumeric filter'),
 		);
 		$this->nordrassillib->install_template($template_name, $generator_path,
 			$project_options, $table_options, $column_options);

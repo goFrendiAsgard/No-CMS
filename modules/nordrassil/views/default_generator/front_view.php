@@ -1,23 +1,23 @@
 <?php
-	$fields = array();
-	$captions = array();
-	$primary_key = '';
-	foreach($columns as $column){
-		$column_name = $column['name'];
-		$column_role = $column['role'];
-		$column_caption = $column['caption'];
-		if($column_role == 'primary'){
-			$primary_key = $column_name;
-		}else if($column_role == ''){
-			$fields[] = $column_name;
-			$captions[] = $column_caption;
-		}else if($column_role == 'lookup'){
-			$lookup_table_name = $column['lookup_table_name'];
-			$lookup_column_name = $column['lookup_column_name'];
-			$fields[] = $lookup_table_name.'_'.$lookup_column_name;
-			$captions[] = $column_caption;
-		}
-	}
+    $fields = array();
+    $captions = array();
+    $primary_key = '';
+    foreach($columns as $column){
+        $column_name = $column['name'];
+        $column_role = $column['role'];
+        $column_caption = $column['caption'];
+        if($column_role == 'primary'){
+            $primary_key = $column_name;
+        }else if($column_role == ''){
+            $fields[] = $column_name;
+            $captions[] = $column_caption;
+        }else if($column_role == 'lookup'){
+            $lookup_table_name = $column['lookup_table_name'];
+            $lookup_column_name = $column['lookup_column_name'];
+            $fields[] = $lookup_table_name.'_'.$lookup_column_name;
+            $captions[] = $column_caption;
+        }
+    }
 ?>
 &lt;?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?&gt;
 <style type="text/css">

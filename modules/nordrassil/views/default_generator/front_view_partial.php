@@ -1,15 +1,17 @@
 <?php
-    function front_view_partial_strip_table_prefix($project_db_table_prefix, $table_name){
-        if(!isset($project_db_table_prefix) || $project_db_table_prefix == ''){
+	if(!function_exists('front_view_partial_strip_table_prefix')){
+        function front_view_partial_strip_table_prefix($project_db_table_prefix, $table_name){
+            if(!isset($project_db_table_prefix) || $project_db_table_prefix == ''){
+                return $table_name;
+            }
+            if(strpos($table_name, $project_db_table_prefix) === 0){
+                $table_name = substr($table_name, strlen($project_db_table_prefix));
+            }
+            if($table_name[0]=='_'){
+                $table_name = substr($table_name,1);
+            }
             return $table_name;
         }
-        if(strpos($table_name, $project_db_table_prefix) === 0){
-            $table_name = substr($table_name, strlen($project_db_table_prefix));
-        }
-        if($table_name[0]=='_'){
-            $table_name = substr($table_name,1);
-        }
-        return $table_name;
     }
 
 	$fields = array();

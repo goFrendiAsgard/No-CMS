@@ -1,16 +1,18 @@
 <?php
-    function strip_table_prefix($table_name, $table_prefix){
-        if(!isset($table_prefix) || $table_prefix == ''){
-            return $table_name;
-        }
-        if(strpos($table_name, $table_prefix) === 0){
-            $table_name = substr($table_name, strlen($table_prefix));
-        }
-        if($table_name[0]=='_'){
-            $table_name = substr($table_name,1);
-        }
-        return $table_name;
-    }
+	if(!function_exists('strip_table_prefix')){
+	    function strip_table_prefix($table_name, $table_prefix){
+	        if(!isset($table_prefix) || $table_prefix == ''){
+	            return $table_name;
+	        }
+	        if(strpos($table_name, $table_prefix) === 0){
+	            $table_name = substr($table_name, strlen($table_prefix));
+	        }
+	        if($table_name[0]=='_'){
+	            $table_name = substr($table_name,1);
+	        }
+	        return $table_name;
+	    }
+	}
 
     $stripped_table_name = strip_table_prefix($table_name, $table_prefix);
 
