@@ -7,12 +7,12 @@
  */
 class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 
-	protected $URL_MAP = array();
+    protected $URL_MAP = array();
 
-	public function index(){
+    public function index(){
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// initialize groceryCRUD
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // initialize groceryCRUD
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = $this->new_crud();
         // this is just for code completion
         if (FALSE) $crud = new Grocery_CRUD();
@@ -41,42 +41,66 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
         // caption of each columns
 {{ display_as }}
 
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// HINT: Put set relation (lookup) codes here
-		// (documentation: http://www.grocerycrud.com/documentation/options_functions/set_relation)
-		// eg:
-		// 		$crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Put required field validation codes here
+        // (documentation: http://www.grocerycrud.com/documentation/options_functions/required_fields)
+        // eg:
+        //      $crud->required_fields( $field1, $field2, $field3, ... );
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+{{ required_fields }}
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Put required field validation codes here
+        // (documentation: http://www.grocerycrud.com/documentation/options_functions/unique_fields)
+        // eg:
+        //      $crud->unique_fields( $field1, $field2, $field3, ... );
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+{{ unique_fields }}
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Put field validation codes here
+        // (documentation: http://www.grocerycrud.com/documentation/options_functions/set_rules)
+        // eg:
+        //      $crud->set_rules( $field_name , $caption, $filter );
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+{{ set_rules }}
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Put set relation (lookup) codes here
+        // (documentation: http://www.grocerycrud.com/documentation/options_functions/set_relation)
+        // eg:
+        //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 {{ set_relation }}
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// HINT: Put set relation_n_n (detail many to many) codes here
-		// (documentation: http://www.grocerycrud.com/documentation/options_functions/set_relation_n_n)
-		// eg:
-		// 		$crud->set_relation_n_n( $field_name, $relation_table, $selection_table, $primary_key_alias_to_this_table,
-		// 			$primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Put set relation_n_n (detail many to many) codes here
+        // (documentation: http://www.grocerycrud.com/documentation/options_functions/set_relation_n_n)
+        // eg:
+        //      $crud->set_relation_n_n( $field_name, $relation_table, $selection_table, $primary_key_alias_to_this_table,
+        //          $primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 {{ set_relation_n_n }}
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// HINT: Put custom field type here
-		// (documentation: http://www.grocerycrud.com/documentation/options_functions/field_type)
-		// eg:
-		// 		$crud->field_type( $field_name , $field_type, $value  );
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Put custom field type here
+        // (documentation: http://www.grocerycrud.com/documentation/options_functions/field_type)
+        // eg:
+        //      $crud->field_type( $field_name , $field_type, $value  );
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 {{ enum_set_field }}
 {{ hide_field }}
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// HINT: Put callback here
-		// (documentation: httm://www.grocerycrud.com/documentation/options_functions)
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		$crud->callback_before_insert(array($this,'before_insert'));
-		$crud->callback_before_update(array($this,'before_update'));
-		$crud->callback_before_delete(array($this,'before_delete'));
-		$crud->callback_after_insert(array($this,'after_insert'));
-		$crud->callback_after_update(array($this,'after_update'));
-		$crud->callback_after_delete(array($this,'after_delete'));
+        // HINT: Put callback here
+        // (documentation: httm://www.grocerycrud.com/documentation/options_functions)
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $crud->callback_before_insert(array($this,'before_insert'));
+        $crud->callback_before_update(array($this,'before_update'));
+        $crud->callback_before_delete(array($this,'before_delete'));
+        $crud->callback_after_insert(array($this,'after_insert'));
+        $crud->callback_after_update(array($this,'after_update'));
+        $crud->callback_after_delete(array($this,'after_delete'));
 
 {{ detail_callback_call }}
 
@@ -90,36 +114,36 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
     }
 
     public function before_insert($post_array){
-		return TRUE;
-	}
+        return TRUE;
+    }
 
-	public function after_insert($post_array, $primary_key){
-		$success = $this->after_insert_or_update($post_array, $primary_key);
-		return $success;
-	}
+    public function after_insert($post_array, $primary_key){
+        $success = $this->after_insert_or_update($post_array, $primary_key);
+        return $success;
+    }
 
-	public function before_update($post_array, $primary_key){
-		return TRUE;
-	}
+    public function before_update($post_array, $primary_key){
+        return TRUE;
+    }
 
-	public function after_update($post_array, $primary_key){
-		$success = $this->after_insert_or_update($post_array, $primary_key);
-		return $success;
-	}
+    public function after_update($post_array, $primary_key){
+        $success = $this->after_insert_or_update($post_array, $primary_key);
+        return $success;
+    }
 
-	public function before_delete($primary_key){
+    public function before_delete($primary_key){
 {{ detail_before_delete }}
-		return TRUE;
-	}
+        return TRUE;
+    }
 
-	public function after_delete($primary_key){
-		return TRUE;
-	}
+    public function after_delete($primary_key){
+        return TRUE;
+    }
 
-	public function after_insert_or_update($post_array, $primary_key){
+    public function after_insert_or_update($post_array, $primary_key){
 {{ detail_after_insert_or_update }}
         return TRUE;
-	}
+    }
 
 {{ detail_callback_declaration }}
 
