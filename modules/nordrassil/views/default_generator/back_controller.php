@@ -37,6 +37,14 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
         $crud->edit_fields({{ field_list }});
         // displayed columns on add operation
         $crud->add_fields({{ field_list }});
+        
+        $crud->unset_read();
+        // $crud->unset_add();
+        // $crud->unset_edit();
+        // $crud->unset_list();
+        // $crud->unset_back_to_list();
+        // $crud->unset_print();
+        // $crud->unset_export();
 
         // caption of each columns
 {{ display_as }}

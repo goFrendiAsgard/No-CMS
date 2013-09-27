@@ -185,8 +185,6 @@ class Generator extends CMS_Controller{
 
             $this->create_directory();
             $this->create_config();
-            $this->create_install_db_file();
-            $this->create_uninstall_db_file();
             $this->create_installer();
             $this->create_main_controller_and_view();
             $this->create_back_controller_and_view();
@@ -464,7 +462,7 @@ class Generator extends CMS_Controller{
                 'detail_callback_call',
                 'detail_callback_declaration',
                 'detail_before_delete',
-                'detail_after_insert_or_update'
+                'detail_after_insert_or_update',
                 'required_fields',
                 'unique_fields',
                 'set_rules'
@@ -687,91 +685,6 @@ class Generator extends CMS_Controller{
         $this->nds->write_file($this->project_path.'helpers/.htaccess', $str);
         $this->nds->write_file($this->project_path.'libraries/.htaccess', $str);
         $this->nds->write_file($this->project_path.'config/.htaccess', $str);
-    }
-
-    private function create_install_db_file(){
-        $project_id = $this->project_id;
-        $project_path = $this->project_path;
-        $tables = $this->tables;
-        // create table syntax
-        $selected_tables = array();
-        for($i=0; $i<count($tables); $i++){
-            $table = $tables[$i];
-            if(!$table['options']['dont_create_table']){
-                $selected_tables[] = $table;
-            }
-        }
-        $create_table = $this->nds->get_create_table_syntax($selected_tables);
-        // insert table syntax
-        $selected_tables = array();
-        for($i=0; $i<count($tables); $i++){
-            $table = $tables[$i];
-            if($table['options']['import_data']){
-                $selected_tables[] = $table;
-            }
-        }
-        $insert_table = $this->nds->get_insert_table_syntax($project_id, $selected_tables);
-
-        $db_arr = array();
-        foreach(explode('/*split*/',$create_table) as $item){
-            if(trim($item)=='') continue;
-            $db_arr[] = $item;
-        }
-        foreach(explode('/*split*/',$insert_table) as $item){
-            if(trim($item)=='') continue;
-            $db_arr[] = $item;
-        }
-        if(count($db_arr)>0){
-            $str = implode(PHP_EOL.'/*split*/'.PHP_EOL, $db_arr);
-        }else{
-            $str = '';
-        }
-        // define pattern
-        if($this->config_table_prefix == ''){
-            $pattern = array(
-                '/CREATE TABLE `([^`]*)`/si',
-                '/INSERT INTO `([^`]*)`/si'
-            );
-        }else{
-            $pattern = array(
-                '/CREATE TABLE `'.$this->config_table_prefix.'_([^`]*)`/si',
-                '/INSERT INTO `'.$this->config_table_prefix.'_([^`]*)`/si'
-            );
-        }
-        $replacement = array(
-            'CREATE TABLE `{{ complete_table_name:${1} }}`',
-            'INSERT INTO `{{ complete_table_name:${1} }}`',
-        );
-        $str = preg_replace($pattern, $replacement, $str);
-        $this->nds->write_file($project_path.'assets/db/install.sql', $str);
-    }
-
-    private function create_uninstall_db_file(){
-        $project_path = $this->project_path;
-        $tables = $this->tables;
-        $selected_tables = array();
-        for($i=0; $i<count($tables); $i++){
-            $table = $tables[$i];
-            if(!$table['options']['dont_create_table']){
-                $selected_tables[] = $table;
-            }
-        }
-        $str = $this->nds->get_drop_table_syntax($selected_tables);
-        // define pattern
-        if($this->config_table_prefix == ''){
-            $pattern = array(
-                '/DROP TABLE IF EXISTS `([^`]*)`/si',
-            );
-        }else{
-            $pattern = array(
-                '/DROP TABLE IF EXISTS `'.$this->config_table_prefix.'_([^`]*)`/si',
-            );
-        }
-        $replacement = array(
-            'DROP TABLE IF EXISTS `{{ complete_table_name:${1} }}`',
-        );
-        $str = preg_replace($pattern, $replacement, $str);
-        $this->nds->write_file($project_path.'assets/db/uninstall.sql', $str);
     }
 
 }

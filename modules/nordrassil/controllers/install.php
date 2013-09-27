@@ -173,7 +173,7 @@ class Install extends CMS_Module_Installer {
 			array('name'=>'dont_make_form', 'description'=>'make form for this table'),
 			array('name'=>'dont_create_table', 'description'=>'don\'t create/drop table on installation'),
 			array('name'=>'make_frontpage', 'description'=>'Make front page for this table'),
-			array('name'=>'import_data', 'description'=>'Also create insert statement (e.g: for configuration table)'),
+			//array('name'=>'import_data', 'description'=>'Also create insert statement (e.g: for configuration table)'),
 		);
 		$column_options = array(
 			array('name'=>'hide', 'description'=>'hide field'),
@@ -191,6 +191,7 @@ class Install extends CMS_Module_Installer {
             array('name'=>'validation_valid_emails', 'description'=>'comma separated multiple email validation filter'),
             array('name'=>'validation_valid_ip', 'description'=>'ip validation filter'),
             array('name'=>'validation_valid_base64', 'description'=>'base64 character validation filter'),
+            array('name'=>'upload', 'description'=>'upload field')
 		);
 		$this->nordrassillib->install_template($template_name, $generator_path,
 			$project_options, $table_options, $column_options);

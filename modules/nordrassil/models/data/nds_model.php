@@ -281,7 +281,7 @@ class Nds_Model extends CMS_Model{
 	}
     
     public function get_create_table_forge($tables){
-        $php = array();
+        $php = array();        
         foreach($tables as $table){            
             $table_name = $table['stripped_name'];
             $columns = $table['columns'];

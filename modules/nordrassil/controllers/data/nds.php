@@ -23,6 +23,8 @@ class nds extends CMS_Controller {
         $crud->edit_fields('name','generator_path','options');
         // displayed columns on add operation
         $crud->add_fields('name','generator_path');
+        
+        $crud->unset_read();
 
         $crud->required_fields('name','generator_path');
         $crud->unique_fields('name');
@@ -157,6 +159,8 @@ class nds extends CMS_Controller {
 
         $crud->required_fields('template_id','name');
         $crud->unique_fields('name');
+        
+        $crud->unset_read();
 
         // caption of each columns
         $crud->display_as('template_id','Template');
@@ -251,6 +255,8 @@ class nds extends CMS_Controller {
 
         $crud->required_fields('name','caption');
         $crud->unique_fields('name');
+        
+        $crud->unset_read();
 
         // displayed columns on edit operation
         $crud->edit_fields('project_id','name','caption','priority','options','columns');
@@ -354,6 +360,8 @@ class nds extends CMS_Controller {
 
         $crud->required_fields('name','caption');
         $crud->unique_fields('name');
+        
+        $crud->unset_read();
 
         // displayed columns on edit operation
         $crud->edit_fields('table_id','name','caption','role','data_type','data_size','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
