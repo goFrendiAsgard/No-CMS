@@ -15,6 +15,12 @@ class Generator extends CMS_Controller{
     private $config_table_prefix;
     private $config_module_prefix;
 
+    private $validation_rules_array = array(
+            'alpha', 'numeric', 'alpha_numeric', 'alpha_numeric_spaces', 'integer',
+            'natural', 'natural_no_zero', 'valid_url', 'valid_email', 'valid_emails',
+            'valid_ip', 'valid_base64'
+        );
+
     public function __construct(){
         parent::__construct();
         $this->load->helper('inflector');
@@ -30,11 +36,14 @@ class Generator extends CMS_Controller{
         if(isset($key)){
             $new_array = array();
             foreach($array as $element){
-                $new_array[] = $element_prefix.$element[$key].$element_suffix;
+                $new_array[] = $element[$key];
             }
             $array = $new_array;
         }
-        return implode(', ', $new_array);
+        for($i=0; $i<count($array); $i++){
+            $array[$i] = $element_prefix . $array[$i] . $element_suffix;
+        }
+        return implode(', ', $array);
     }
 
     private function php_class_file_name($class_name, $without_extension = FALSE){
@@ -307,6 +316,10 @@ class Generator extends CMS_Controller{
             $detail_callback_declaration_array = array();
             $detail_before_delete_array = array();
             $detail_after_insert_or_update_array = array();
+            $required_field_array = array();
+            $unique_field_array = array();
+            $rules_array = array();
+            $upload_field_array = array();
             foreach($columns as $column){
                 if($column['role']=='primary') continue;
                 $column_name = $column['name'];
@@ -366,6 +379,27 @@ class Generator extends CMS_Controller{
                         array('field_name', 'value_selection_mode', 'value_selection_item'),
                         array($column_name, $value_selection_mode, $value_selection_item)
                     );
+                }
+                // required_field
+                if($column['options']['required']){
+                    $required_field_array[] = $column_name;
+                }
+                // unique field
+                if($column['options']['unique']){
+                    $unique_field_array[] = $column_name;
+                }
+                // upload field
+                if($column['options']['upload']){
+                    $upload_field_array[] = $column_name;
+                }
+                // rules
+                foreach($this->validation_rules_array as $validation_rule){
+                    if($column['options']['validation_'.$validation_rule]){
+                        if(!array_key_exists($column_name, $rules_array)){
+                            $rules_array[$column_name] = array('caption'=>$column_caption, 'rule');
+                        }
+                        $rules_array[$column_name]['rule'][] = $validation_rule; 
+                    }
                 }
                 // detail (one to many) field
                 if($column['role']=='detail one to many'){
@@ -437,12 +471,29 @@ class Generator extends CMS_Controller{
             $detail_before_delete = implode(PHP_EOL, $detail_before_delete_array);
             $detail_after_insert_or_update = implode(PHP_EOL, $detail_after_insert_or_update_array);
 
-            // TODO : finish this
-            $required_field_array = array();
-            $unique_field_array = array();
-            $required_fields = '';
-            $unique_fields = '';
+            // additional validations
+            if(count($required_field_array)>0){
+                $required_fields = '$crud->required_fields('.$this->array_to_quoted_string($required_field_array).');';
+            }else{
+                $required_fields = '';
+            }
+            if(count($unique_field_array)>0){
+                $unique_fields = '$crud->unique_fields('.$this->array_to_quoted_string($unique_field_array).');';
+            }else{
+                $unique_fields = '';
+            }
             $set_rules = '';
+            foreach($rules_array as $key=>$value){
+                $set_rules .= '        ';
+                $set_rules .= '$crud->set_rules(\''.$key.'\', \''.$value['caption'].'\', \''.implode('|', $value['rule']).'\');';
+                $set_rules .= PHP_EOL;
+            }
+            $upload = '';
+            foreach($upload_field_array as $column_name){
+                $upload .= '        ';
+                $upload .= '$crud->set_field_upload(\''.$column_name.'\', \'modules/\'.$this->cms_module_path().\'/assets/uploads\');';
+                $upload .= PHP_EOL;
+            }
             // create pattern & replacement
             $pattern = array(
                 'navigation_name',
@@ -465,7 +516,8 @@ class Generator extends CMS_Controller{
                 'detail_after_insert_or_update',
                 'required_fields',
                 'unique_fields',
-                'set_rules'
+                'set_rules',
+                'upload'
             );
             $replacement = array(
                 $this->back_navigation_name($stripped_table_name),
@@ -489,6 +541,7 @@ class Generator extends CMS_Controller{
                 $required_fields,
                 $unique_fields,
                 $set_rules,
+                $upload
             );
             // controllers
             $str = $this->nds->read_view('nordrassil/default_generator/back_controller.php',NULL,$pattern,$replacement);
@@ -669,6 +722,7 @@ class Generator extends CMS_Controller{
         $this->nds->make_directory($this->project_path.'assets/scripts/');
         $this->nds->make_directory($this->project_path.'assets/styles/');
         $this->nds->make_directory($this->project_path.'assets/images/');
+        $this->nds->make_directory($this->project_path.'assets/uploads/');
         $this->nds->make_directory($this->project_path.'controllers/');
         $this->nds->make_directory($this->project_path.'models/');
         $this->nds->make_directory($this->project_path.'views/');
