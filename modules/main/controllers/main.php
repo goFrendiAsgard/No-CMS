@@ -370,6 +370,9 @@ class Main extends CMS_Controller
         $crud->unset_add();
         $crud->unset_delete();
         $crud->unset_edit();
+        $crud->required_fields('authorization_name');        
+        $crud->unique_fields('authorization_name');
+        $crud->unset_read();
 
         $crud->set_language($this->cms_language());
 
@@ -388,7 +391,9 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_user'));
         $crud->set_subject($this->cms_lang('User'));
 
-        $crud->required_fields('user_name');
+        $crud->required_fields('user_name','password');        
+        $crud->unique_fields('user_name');
+        $crud->unset_read();
 
         $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
         $crud->edit_fields('user_name', 'email', 'real_name', 'active', 'groups');
@@ -463,7 +468,9 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_group'));
         $crud->set_subject($this->cms_lang('User Group'));
 
-        $crud->required_fields('group_name');
+        $crud->required_fields('group_name');       
+        $crud->unique_fields('group_name');
+        $crud->unset_read();
 
         $crud->columns('group_name', 'description');
         $crud->edit_fields('group_name', 'description', 'users', 'navigations', 'privileges');
@@ -520,6 +527,8 @@ class Main extends CMS_Controller
         $crud->set_subject($this->cms_lang('Navigation (Page)'));
 
         $crud->required_fields('navigation_name', 'title');
+        $crud->unique_fields('navigation_name', 'title');
+        $crud->unset_read();
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
@@ -759,7 +768,9 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_quicklink'));
         $crud->set_subject($this->cms_lang('Quick Link'));
 
-        $crud->required_fields('navigation_id');
+        $crud->required_fields('navigation_id');       
+        $crud->unique_fields('navigation_id');
+        $crud->unset_read();
 
         $crud->columns('navigation_id');
         $crud->edit_fields('navigation_id');
@@ -855,7 +866,9 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_privilege'));
         $crud->set_subject($this->cms_lang('Privilege'));
 
-        $crud->required_fields('privilege_name');
+        $crud->required_fields('privilege_name');        
+        $crud->unique_fields('privilege_name');
+        $crud->unset_read();
 
         $crud->columns('privilege_name','title','description');
         $crud->edit_fields('privilege_name','title','description','authorization_id','groups');
@@ -890,7 +903,9 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_widget'));
         $crud->set_subject($this->cms_lang('Widget'));
 
-        $crud->required_fields('widget_name');
+        $crud->required_fields('widget_name');        
+        $crud->unique_fields('widget_name');
+        $crud->unset_read();
 
         $crud->columns('widget_name', 'title', 'active', 'slug');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
@@ -1036,6 +1051,10 @@ class Main extends CMS_Controller
 
         $crud->set_table(cms_table_name('main_config'));
         $crud->set_subject($this->cms_lang('Configuration'));
+        
+        $crud->required_fields('config_name');        
+        $crud->unique_fields('config_name');
+        $crud->unset_read();
 
         $crud->columns('config_name', 'value');
         $crud->edit_fields('config_name', 'value', 'description');
