@@ -216,6 +216,7 @@ class Install extends CMS_Module_Installer {
             // create DROP TABLE syntax
             for($i=count($table_names)-1; $i>=0; $i--){
                 $table_name = $this->cms_complete_table_name($table_names[$i]);
+                $table_names[$i] = $table_name;
                 $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
             }
             if($sql !='')$sql.= PHP_EOL;
