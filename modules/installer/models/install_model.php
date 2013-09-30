@@ -81,13 +81,14 @@ class Install_Model extends CI_Model{
 
     protected function build_db_config(){
         $dsn = $this->build_dsn();
+        $db_driver = $this->db_protocol == 'mysql'? 'mysqli' : 'pdo';
         return array(
             'dsn' => $dsn,
             'hostname' => $this->db_host,
             'username' => $this->db_username,
             'password' => $this->db_password,
             'database' => $this->db_name,
-            'dbdriver' => 'pdo',
+            'dbdriver' => $db_driver,
             'dbprefix' => '',
             'pconnect' => TRUE,
             'db_debug' => FALSE,
@@ -962,12 +963,13 @@ class Install_Model extends CI_Model{
         $value_suffix = "',";
         $equal_sign = '=>';
 
+        $db_driver = $this->db_protocol == 'mysql'? 'mysqli' : 'pdo';
         $this->change_config($file_name, "dsn", $this->build_dsn(), $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "hostname", $this->db_host, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "database", $this->db_name, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "username", $this->db_username, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "password", $this->db_password, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "dbdriver", "pdo", $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
         // cms_config
         $file_name = APPPATH.'config/cms_config.php';

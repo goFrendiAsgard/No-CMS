@@ -94,16 +94,11 @@ class Install extends CMS_Module_Installer {
         // create tables
         {{ create_table_forge }}
         
-        /*
-        // import install.sql (this only works for MySQL)
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/install.sql');
-        */
     }
 
     // EXPORT DATABASE
     private function backup_database($table_names, $limit = 100){         
-        if($this->db->dbdriver == 'mysql'){
+        if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
             $module_path = $this->cms_module_path();
             $this->load->dbutil();
             $sql = '';
