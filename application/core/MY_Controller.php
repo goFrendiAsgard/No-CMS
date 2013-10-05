@@ -174,6 +174,15 @@ class CMS_Controller extends MX_Controller
     }
 
     /**
+     * @author goFrendiAsgard
+     * @return boolean
+     * @desc   TRUE if current user is super admin, FALSE otherwise
+     */
+    protected function cms_user_is_super_admin(){
+        return $this->No_CMS_Model->cms_user_is_super_admin();
+    }  
+
+    /**
      * @author  goFrendiAsgard
      * @param   string navigation_name
      * @desc    move navigation up

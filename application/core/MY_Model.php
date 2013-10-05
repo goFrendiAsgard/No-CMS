@@ -156,6 +156,7 @@ class CMS_Model extends CI_Model
     /**
      * @author goFrendiAsgard
      * @return array
+     * @desc   get group list of current user
      */
     public function cms_user_group(){
         $query = $this->db->select('group_name')
@@ -169,6 +170,24 @@ class CMS_Model extends CI_Model
         }
         return $group_name;
     }
+
+    /**
+     * @author goFrendiAsgard
+     * @return boolean
+     * @desc   TRUE if current user is super admin, FALSE otherwise
+     */
+    public function cms_user_is_super_admin(){
+        if($this->cms_user_id()==1){
+            return TRUE;
+        }
+        $query = $this->db->select('group_name')
+            ->from(cms_table_name('main_group'))
+            ->join(cms_table_name('main_group_user'), cms_table_name('main_group_user').'.group_id = '.cms_table_name('main_group').'.group_id')
+            ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
+            ->where(cms_table_name('main_group').'.group_id', 1)
+            ->get();
+        return $query->num_rows()>0;
+    }    
 
     /**
      * @author  goFrendiAsgard
