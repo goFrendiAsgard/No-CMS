@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_Twn_Country
+ * Description of Manage_Jenis_Lomba
  *
  * @author No-CMS Module Generator
  */
-class Manage_Twn_Country extends CMS_Priv_Strict_Controller {
+class Manage_Jenis_Lomba extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
@@ -29,28 +29,28 @@ class Manage_Twn_Country extends CMS_Priv_Strict_Controller {
         // $crud->unset_export();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_twn_country_model');
+        $crud->set_model($this->cms_module_path().'/grocerycrud_jenis_lomba_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('twn_country'));
+        $crud->set_table($this->cms_complete_table_name('jenis_lomba'));
 
         // set subject
-        $crud->set_subject('Country');
+        $crud->set_subject('Jenis Lomba');
 
         // displayed columns on list
-        $crud->columns('name');
+        $crud->columns('nama');
         // displayed columns on edit operation
-        $crud->edit_fields('name');
+        $crud->edit_fields('nama');
         // displayed columns on add operation
-        $crud->add_fields('name');
+        $crud->add_fields('nama');
         
         
 
         // caption of each columns
-        $crud->display_as('name','Name');
+        $crud->display_as('nama','Nama');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -58,7 +58,7 @@ class Manage_Twn_Country extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->required_fields('name');
+        $crud->required_fields('nama');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -66,7 +66,7 @@ class Manage_Twn_Country extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->unique_fields('name');
+        $crud->unique_fields('nama');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -128,8 +128,8 @@ class Manage_Twn_Country extends CMS_Priv_Strict_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
-        $this->view($this->cms_module_path().'/manage_twn_country_view', $output,
-            $this->cms_complete_navigation_name('manage_twn_country'));
+        $this->view($this->cms_module_path().'/manage_jenis_lomba_view', $output,
+            $this->cms_complete_navigation_name('manage_jenis_lomba'));
 
     }
 

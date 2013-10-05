@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_Twn_City
+ * Description of Manage_Lomba
  *
  * @author No-CMS Module Generator
  */
-class Manage_Twn_City extends CMS_Priv_Strict_Controller {
+class Manage_Lomba extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
@@ -29,32 +29,34 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         // $crud->unset_export();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_twn_city_model');
+        $crud->set_model($this->cms_module_path().'/grocerycrud_lomba_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('twn_city'));
+        $crud->set_table($this->cms_complete_table_name('lomba'));
 
         // set subject
-        $crud->set_subject('City');
+        $crud->set_subject('Lomba');
 
         // displayed columns on list
-        $crud->columns('country_id','name','tourism','commodity','citizen');
+        $crud->columns('judul','id_jenis_lomba','id_mahasiswa_ketua','id_dosen_pembimbing','proposal','id_user','anggota');
         // displayed columns on edit operation
-        $crud->edit_fields('country_id','name','tourism','commodity','citizen');
+        $crud->edit_fields('judul','id_jenis_lomba','id_mahasiswa_ketua','id_dosen_pembimbing','proposal','id_user','anggota');
         // displayed columns on add operation
-        $crud->add_fields('country_id','name','tourism','commodity','citizen');
+        $crud->add_fields('judul','id_jenis_lomba','id_mahasiswa_ketua','id_dosen_pembimbing','proposal','id_user','anggota');
         
         
 
         // caption of each columns
-        $crud->display_as('country_id','Country');
-        $crud->display_as('name','Name');
-        $crud->display_as('tourism','Tourism');
-        $crud->display_as('commodity','Commodity');
-        $crud->display_as('citizen','Citizen');
+        $crud->display_as('judul','Judul');
+        $crud->display_as('id_jenis_lomba','Jenis Lomba');
+        $crud->display_as('id_mahasiswa_ketua','Ketua');
+        $crud->display_as('id_dosen_pembimbing','Dosen Pembimbing');
+        $crud->display_as('proposal','Proposal');
+        $crud->display_as('id_user','Id User');
+        $crud->display_as('anggota','Anggota');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -62,7 +64,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->required_fields('name');
+        $crud->required_fields('id_user', 'judul', 'id_jenis_lomba', 'id_mahasiswa_ketua', 'id_dosen_pembimbing');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -70,7 +72,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->unique_fields('name');
+        $crud->unique_fields('judul', 'id_user');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -86,7 +88,9 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		$crud->set_relation('country_id', $this->cms_complete_table_name('twn_country'), 'name');
+		$crud->set_relation('id_jenis_lomba', $this->cms_complete_table_name('jenis_lomba'), 'nama');
+		$crud->set_relation('id_mahasiswa_ketua', $this->cms_complete_table_name('mahasiswa'), '{nrp} - {nama}');
+		$crud->set_relation('id_dosen_pembimbing', $this->cms_complete_table_name('dosen'), '{nidn} - {nama}');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here
@@ -95,16 +99,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         //      $crud->set_relation_n_n( $field_name, $relation_table, $selection_table, $primary_key_alias_to_this_table,
         //          $primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		$crud->set_relation_n_n('tourism',
-		    $this->cms_complete_table_name('twn_city_tourism'),
-		    $this->cms_complete_table_name('twn_tourism'),
-			'city_id', 'tourism_id',
-			'name', NULL);
-		$crud->set_relation_n_n('commodity',
-		    $this->cms_complete_table_name('twn_city_commodity'),
-		    $this->cms_complete_table_name('twn_commodity'),
-			'city_id', 'commodity_id',
-			'name', 'priority');
+
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put custom field type here
@@ -127,8 +122,8 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         $crud->callback_after_update(array($this,'after_update'));
         $crud->callback_after_delete(array($this,'after_delete'));
 
-		$crud->callback_column('citizen',array($this, 'callback_column_citizen'));
-		$crud->callback_field('citizen',array($this, 'callback_field_citizen'));
+		$crud->callback_column('anggota',array($this, 'callback_column_anggota'));
+		$crud->callback_field('anggota',array($this, 'callback_field_anggota'));
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put custom error message here
@@ -142,8 +137,8 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
-        $this->view($this->cms_module_path().'/manage_twn_city_view', $output,
-            $this->cms_complete_navigation_name('manage_twn_city'));
+        $this->view($this->cms_module_path().'/manage_lomba_view', $output,
+            $this->cms_complete_navigation_name('manage_lomba'));
 
     }
 
@@ -166,9 +161,9 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
     }
 
     public function before_delete($primary_key){
-		// delete corresponding twn_citizen
-		$this->db->delete($this->cms_complete_table_name('twn_citizen'),
-		      array('citizen_id'=>$primary_key));
+		// delete corresponding anggota_lomba
+		$this->db->delete($this->cms_complete_table_name('anggota_lomba'),
+		      array('id'=>$primary_key));
         return TRUE;
     }
 
@@ -180,21 +175,21 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
-		// SAVE CHANGES OF twn_citizen
-		//  * The twn_citizen data in in json format.
-		//  * It can be accessed via $_POST['md_real_field_citizen_col']
+		// SAVE CHANGES OF anggota_lomba
+		//  * The anggota_lomba data in in json format.
+		//  * It can be accessed via $_POST['md_real_field_anggota_col']
 		//
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		$data = json_decode($this->input->post('md_real_field_citizen_col'), TRUE);
+		$data = json_decode($this->input->post('md_real_field_anggota_col'), TRUE);
 		$insert_records = $data['insert'];
 		$update_records = $data['update'];
 		$delete_records = $data['delete'];
-		$real_column_names = array('citizen_id', 'name', 'birthdate', 'job_id');
+		$real_column_names = array('id', 'id_mahasiswa');
 		$set_column_names = array();
-		$many_to_many_column_names = array('hobby');
-		$many_to_many_relation_tables = array('twn_citizen_hobby');
-		$many_to_many_relation_table_columns = array('citizen_id');
-		$many_to_many_relation_selection_columns = array('hobby_id');
+		$many_to_many_column_names = array();
+		$many_to_many_relation_tables = array();
+		$many_to_many_relation_table_columns = array();
+		$many_to_many_relation_selection_columns = array();
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//  DELETED DATA
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,8 +205,8 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 				);
 				$this->db->delete($table_name, $where);
 			}
-			$this->db->delete($this->cms_complete_table_name('twn_citizen'),
-			     array('citizen_id'=>$detail_primary_key));
+			$this->db->delete($this->cms_complete_table_name('anggota_lomba'),
+			     array('id'=>$detail_primary_key));
 		}
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  UPDATED DATA
@@ -226,9 +221,9 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 					$data[$key] = $value;
 				}
 			}
-			$data['city_id'] = $primary_key;
-			$this->db->update($this->cms_complete_table_name('twn_citizen'),
-			     $data, array('citizen_id'=>$detail_primary_key));
+			$data['id_lomba'] = $primary_key;
+			$this->db->update($this->cms_complete_table_name('anggota_lomba'),
+			     $data, array('id'=>$detail_primary_key));
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// Adjust Many-to-Many Fields of Updated Data
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -284,8 +279,8 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 					$data[$key] = $value;
 				}
 			}
-			$data['city_id'] = $primary_key;
-			$this->db->insert($this->cms_complete_table_name('twn_citizen'), $data);
+			$data['id_lomba'] = $primary_key;
+			$this->db->insert($this->cms_complete_table_name('anggota_lomba'), $data);
 			$detail_primary_key = $this->db->insert_id();
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Inserted Data
@@ -336,67 +331,50 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 
 
 	// returned on insert and edit
-	public function callback_field_citizen($value, $primary_key){
+	public function callback_field_anggota($value, $primary_key){
 	    $module_path = $this->cms_module_path();
 		$this->config->load('grocery_crud');
         $date_format = $this->config->item('grocery_crud_date_format');
 
 		if(!isset($primary_key)) $primary_key = -1;
-		$query = $this->db->select('citizen_id, name, birthdate, job_id')
-			->from($this->cms_complete_table_name('twn_citizen'))
-			->where('city_id', $primary_key)
+		$query = $this->db->select('id, id_mahasiswa')
+			->from($this->cms_complete_table_name('anggota_lomba'))
+			->where('id_lomba', $primary_key)
 			->get();
 		$result = $query->result_array();
-		// add "hobby" to $result
-		for($i=0; $i<count($result); $i++){
-			$query_detail = $this->db->select('hobby_id')
-               ->from($this->cms_complete_table_name('twn_citizen_hobby'))
-               ->where(array('citizen_id'=>$result[$i]['citizen_id']))->get();
-			$value = array();
-			foreach($query_detail->result() as $row){
-				$value[] = $row->hobby_id;
-			}
-			$result[$i]['hobby'] = $value;
-		}
 
 		// get options
 		$options = array();
-		$options['job_id'] = array();
-		$query = $this->db->select('job_id,name')
-           ->from($this->cms_complete_table_name('twn_job'))
+		$options['id_mahasiswa'] = array();
+		$query = $this->db->select('id,nrp,nama')
+           ->from($this->cms_complete_table_name('mahasiswa'))
            ->get();
 		foreach($query->result() as $row){
-			$options['job_id'][] = array('value' => $row->job_id, 'caption' => $row->name);
-		}
-		$options['hobby'] = array();
-		$query = $this->db->select('hobby_id,name')
-           ->from($this->cms_complete_table_name('twn_hobby'))->get();
-		foreach($query->result() as $row){
-			$options['hobby'][] = array('value' => $row->hobby_id, 'caption' => strip_tags($row->name));
+			$options['id_mahasiswa'][] = array('value' => $row->id, 'caption' => $row->nrp . ' - ' . $row->nama);
 		}
 		$data = array(
 			'result' => $result,
 			'options' => $options,
 			'date_format' => $date_format,
 		);
-		return $this->load->view($this->cms_module_path().'/field_twn_city_citizen',$data, TRUE);
+		return $this->load->view($this->cms_module_path().'/field_lomba_anggota',$data, TRUE);
 	}
 
 	// returned on view
-	public function callback_column_citizen($value, $row){
+	public function callback_column_anggota($value, $row){
 	    $module_path = $this->cms_module_path();
-		$query = $this->db->select('citizen_id, name, birthdate, job_id')
-			->from($this->cms_complete_table_name('twn_citizen'))
-			->where('city_id', $row->city_id)
+		$query = $this->db->select('id, id_mahasiswa')
+			->from($this->cms_complete_table_name('anggota_lomba'))
+			->where('id_lomba', $row->id)
 			->get();
 		$num_row = $query->num_rows();
 		// show how many records
 		if($num_row>1){
-			return $num_row .' Citizens';
+			return $num_row .' Anggota Lombas';
 		}else if($num_row>0){
-			return $num_row .' Citizen';
+			return $num_row .' Anggota Lomba';
 		}else{
-			return 'No Citizen';
+			return 'No Anggota Lomba';
 		}
 	}
 

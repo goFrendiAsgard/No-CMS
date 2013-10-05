@@ -154,6 +154,23 @@ class CMS_Model extends CI_Model
     }
 
     /**
+     * @author goFrendiAsgard
+     * @return array
+     */
+    public function cms_user_group(){
+        $query = $this->db->select('group_name')
+            ->from(cms_table_name('main_group'))
+            ->join(cms_table_name('main_group_user'), cms_table_name('main_group_user').'.group_id = '.cms_table_name('main_group').'.group_id')
+            ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
+            ->get();
+        $group_name = array();
+        foreach($query->result() as $row){
+            $group_name[] = $row->group_name;
+        }
+        return $group_name;
+    }
+
+    /**
      * @author  goFrendiAsgard
      * @param   int parent_id
      * @param   int max_menu_depth
@@ -181,7 +198,7 @@ class CMS_Model extends CI_Model
         }
 
         $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
-        $query         = $this->db->query("SELECT navigation_id, navigation_name, is_static, title, description, url, active,
+        $query         = $this->db->query("SELECT navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, active,
                     (
                         (authorization_id = 1) OR
                         (authorization_id = 2 AND $not_login) OR
@@ -224,6 +241,7 @@ class CMS_Model extends CI_Model
             $result[] = array(
                 "navigation_id" => $row->navigation_id,
                 "navigation_name" => $row->navigation_name,
+                "bootstrap_glyph" => $row->bootstrap_glyph,
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "url" => $url,
@@ -251,7 +269,7 @@ class CMS_Model extends CI_Model
         $login      = $user_name ? "TRUE" : "FALSE";
         $super_user = $user_id == 1 ? "TRUE" : "FALSE";
 
-        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, is_static, title, description, url, active
+        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, active
                         FROM
                             ".cms_table_name('main_navigation')." AS n,
                             ".cms_table_name('main_quicklink')." AS q
@@ -301,6 +319,7 @@ class CMS_Model extends CI_Model
             $result[] = array(
                 "navigation_id" => $row->navigation_id,
                 "navigation_name" => $row->navigation_name,
+                "bootstrap_glyph" => $row->bootstrap_glyph,
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "url" => $url,

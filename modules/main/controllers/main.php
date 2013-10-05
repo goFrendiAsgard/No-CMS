@@ -531,8 +531,8 @@ class Main extends CMS_Controller
         $crud->unset_read();
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
@@ -564,6 +564,8 @@ class Main extends CMS_Controller
         $crud->unset_texteditor('description');
         $crud->field_type('only_content', 'true_false');
 
+        $crud->field_type('bootstrap_glyph','enum',array('icon-glass', 'icon-music', 'icon-search', 'icon-envelope', 'icon-heart', 'icon-star', 'icon-star-empty', 'icon-user', 'icon-film', 'icon-th-large', 'icon-th', 'icon-th-list', 'icon-ok', 'icon-remove', 'icon-zoom-in', 'icon-zoom-out', 'icon-off', 'icon-signal', 'icon-cog', 'icon-trash', 'icon-home', 'icon-file', 'icon-time', 'icon-road', 'icon-download-alt', 'icon-download', 'icon-upload', 'icon-inbox', 'icon-play-circle', 'icon-repeat', 'icon-refresh', 'icon-list-alt', 'icon-lock', 'icon-flag', 'icon-headphones', 'icon-volume-off', 'icon-volume-down', 'icon-volume-up', 'icon-qrcode', 'icon-barcode', 'icon-tag', 'icon-tags', 'icon-book', 'icon-bookmark', 'icon-print', 'icon-camera', 'icon-font', 'icon-bold', 'icon-italic', 'icon-text-height', 'icon-text-width', 'icon-align-left', 'icon-align-center', 'icon-align-right', 'icon-align-justify', 'icon-list', 'icon-indent-left', 'icon-indent-right', 'icon-facetime-video', 'icon-picture', 'icon-pencil', 'icon-map-marker', 'icon-adjust', 'icon-tint', 'icon-edit', 'icon-share', 'icon-check', 'icon-move', 'icon-step-backward', 'icon-fast-backward', 'icon-backward', 'icon-play', 'icon-pause', 'icon-stop', 'icon-forward', 'icon-fast-forward', 'icon-step-forward', 'icon-eject', 'icon-chevron-left', 'icon-chevron-right', 'icon-plus-sign', 'icon-minus-sign', 'icon-remove-sign', 'icon-ok-sign', 'icon-question-sign', 'icon-info-sign', 'icon-screenshot', 'icon-remove-circle', 'icon-ok-circle', 'icon-ban-circle', 'icon-arrow-left', 'icon-arrow-right', 'icon-arrow-up', 'icon-arrow-down', 'icon-share-alt', 'icon-resize-full', 'icon-resize-small', 'icon-plus', 'icon-minus', 'icon-asterisk', 'icon-exclamation-sign', 'icon-gift', 'icon-leaf', 'icon-fire', 'icon-eye-open', 'icon-eye-close', 'icon-warning-sign', 'icon-plane', 'icon-calendar', 'icon-random', 'icon-comment', 'icon-magnet', 'icon-chevron-up', 'icon-chevron-down', 'icon-retweet', 'icon-shopping-cart', 'icon-folder-close', 'icon-folder-open', 'icon-resize-vertical', 'icon-resize-horizontal', 'icon-hdd', 'icon-bullhorn', 'icon-bell', 'icon-certificate', 'icon-thumbs-up', 'icon-thumbs-down', 'icon-hand-right', 'icon-hand-left', 'icon-hand-up', 'icon-hand-down', 'icon-circle-arrow-right', 'icon-circle-arrow-left', 'icon-circle-arrow-up', 'icon-circle-arrow-down', 'icon-globe', 'icon-wrench', 'icon-tasks', 'icon-filter', 'icon-briefcase', 'icon-fullscreen'));
+
         $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
         $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name');
 
@@ -573,7 +575,7 @@ class Main extends CMS_Controller
             $crud->where(cms_table_name('main_navigation').'.parent_id', $parent_id);
             $state = $crud->getState();
             if($state == 'add'){
-                $crud->change_field_type('parent_id', 'hidden', $parent_id);
+                $crud->field_type('parent_id', 'hidden', $parent_id);
             }
         }else{
             $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
@@ -1191,11 +1193,12 @@ class Main extends CMS_Controller
             $result .= '<ul class="dropdown-menu">';
             foreach($navigations as $navigation){
                 if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                    $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == ''? 'icon-white': $navigation['bootstrap_glyph'];
                     // make text
                     if($navigation['allowed'] && $navigation['active']){
-                        $text = '<a href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
+                        $text = '<a href="'.$navigation['url'].'"><i class="'.$navigation['bootstrap_glyph'].'">&nbsp;</i>&nbsp;'.$navigation['title'].'</a>';
                     }else{
-                        $text = '<a href="#">'.$navigation['title'].'</a>';
+                        $text = '<a href="#"><i class="'.$navigation['bootstrap_glyph'].'">&nbsp;</i>&nbsp;'.$navigation['title'].'</a>';
                     }
 
                     if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
@@ -1263,23 +1266,35 @@ class Main extends CMS_Controller
         	if(!$quicklink['active']){
         		continue;
         	}
-			// create li based on child availability
+			// create icon if needed
+            $icon = '';            
+            if($first){
+                $icon_class = $quicklink['bootstrap_glyph'].' icon-white';
+            }else{
+                $icon_class = $quicklink['bootstrap_glyph'];
+            }
+            if($quicklink['bootstrap_glyph'] != '' || !$first){
+                $icon_class = $icon_class==''? 'icon-white': $icon_class;
+                $icon = '<i class="'.$icon_class.'">&nbsp;</i>&nbsp;';
+            }
+            // create li based on child availability
             if(count($quicklink['child'])==0){
                 $html.= '<li>';
-                $html.= anchor($quicklink['url'], $quicklink['title']);
+                $html.= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].'</span>');
                 $html.= '</li>';
             }else{
                 if($first){
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
-                        '<span onclick="if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;window.location = \''.$quicklink['url'].'\'">'.$quicklink['title'].'</span>'.
+                        '<span onclick="if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;window.location = \''.$quicklink['url'].'\'">'.
+                        $icon.$quicklink['title'].'</span>'.
                         '&nbsp;<span class="caret"></span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{
                     $html.= '<li class="dropdown-submenu">';
                     $html.= '<a href="'.$quicklink['url'].'">'.
-                        '<span>'.$quicklink['title'].'</span></a>';
+                        '<span>'.$icon.$quicklink['title'].'</span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }

@@ -7,10 +7,14 @@
 */
 .navbar-fixed-top .nav > .active > a > [class^="icon-"],
 .navbar-fixed-top .nav > .active > a > [class*=" icon-"] {
-  background-image: url("../img/glyphicons-halflings-white.png");
+  background-image: url("../img/glyphicons-halflings-white.png")!important;
 }
 .navbar-fixed-top {
-  color: #999999;
+  color: #EEEEEE;
+}
+.navbar .nav li.dropdown>a:hover .caret, .navbar .nav li.dropdown>a:focus .caret {
+    border-top-color: #FFFFFF;
+    border-bottom-color: #FFFFFF;
 }
 .navbar-fixed-top .navbar-inner {
   background-color: #1b1b1b;
@@ -25,7 +29,7 @@
 }
 .navbar-fixed-top .brand,
 .navbar-fixed-top .nav > li > a {
-  color: #999999;
+  color: #EEEEEE;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 .navbar-fixed-top .brand:hover,
@@ -44,7 +48,7 @@
   background-color: #111111;
 }
 .navbar-fixed-top .navbar-link {
-  color: #999999;
+  color: #EEEEEE;
 }
 .navbar-fixed-top .navbar-link:hover {
   color: #ffffff;
@@ -60,8 +64,8 @@
   color: #ffffff;
 }
 .navbar-fixed-top .nav li.dropdown > .dropdown-toggle .caret {
-  border-top-color: #999999;
-  border-bottom-color: #999999;
+  border-top-color: #EEEEEE;
+  border-bottom-color: #EEEEEE;
 }
 .navbar-fixed-top .nav li.dropdown.open > .dropdown-toggle .caret,
 .navbar-fixed-top .nav li.dropdown.active > .dropdown-toggle .caret,
@@ -271,6 +275,10 @@ footer{
     {
         display: table-cell!important;
     }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
+    }
 }
 
 /* Landscape phone to portrait tablet */
@@ -300,6 +308,10 @@ footer{
     {
         display: table-cell!important;
     }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
+    }
 }
 
 /* Portrait tablet to landscape and desktop */
@@ -323,6 +335,10 @@ footer{
     .flexigrid table th:nth-child(4)
     {
         display: table-cell!important;
+    }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
     }
 }
 

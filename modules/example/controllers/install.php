@@ -27,7 +27,6 @@ class Install extends CMS_Module_Installer {
 
     // DEACTIVATION
     protected function do_deactivate(){
-	    /* This doesn't work with PDO
         $this->backup_database(array(
             $this->cms_complete_table_name('twn_citizen'),
             $this->cms_complete_table_name('twn_job'),
@@ -40,7 +39,6 @@ class Install extends CMS_Module_Installer {
             $this->cms_complete_table_name('twn_citizen_hobby'),
             $this->cms_complete_table_name('twn_tourism')
         ));
-	    */
         $this->remove_all();
     }
 
@@ -105,12 +103,6 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->drop_table($this->cms_complete_table_name('twn_hobby'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('twn_job'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('twn_citizen'), TRUE);
-        
-        /*
-        // import uninstall.sql (this is only works for MySQL)
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/uninstall.sql');
-        */
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -242,65 +234,49 @@ class Install extends CMS_Module_Installer {
         // twn_tourism
         $fields = array(
             'tourism_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
-            'type'=> array("type"=>'enum', "constraint"=>array("natural","synthesis"), "null"=>TRUE)
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('tourism_id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('twn_tourism'));
 
         
-        /*
-        // import install.sql (this only works for MySQL)
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/install.sql');
-        */
-    }
-
-    // IMPORT SQL FILE
-    private function import_sql($file_name){
-        $this->execute_SQL(file_get_contents($file_name), '/*split*/');
     }
 
     // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){
-        
-	    /* this doesn't work with PDO
-	     
-	    
-        $module_path = $this->cms_module_path();
-        $this->load->dbutil();
-        $sql = '';
-        
-        
+    private function backup_database($table_names, $limit = 100){         
+        if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
+            $module_path = $this->cms_module_path();
+            $this->load->dbutil();
+            $sql = '';
+            
+            // create DROP TABLE syntax
+            for($i=count($table_names)-1; $i>=0; $i--){
+                $table_name = $table_names[$i];
+                $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
+            }
+            if($sql !='')$sql.= PHP_EOL;
 
-        // create DROP TABLE syntax
-        for($i=count($table_names)-1; $i>=0; $i--){
-            $table_name = $table_names[$i];
-            $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-        }
-        if($sql !='')$sql.= PHP_EOL;
+            // create CREATE TABLE and INSERT syntax 
+            
+            $prefs = array(
+                    'tables'      => $table_names,
+                    'ignore'      => array(),
+                    'format'      => 'txt',
+                    'filename'    => 'mybackup.sql',
+                    'add_drop'    => FALSE,
+                    'add_insert'  => TRUE,
+                    'newline'     => PHP_EOL
+                  );
+            $sql.= @$this->dbutil->backup($prefs);        
 
-        // create CREATE TABLE and INSERT syntax 
-        
-        $prefs = array(
-                'tables'      => $table_names,
-                'ignore'      => array(),
-                'format'      => 'txt',
-                'filename'    => 'mybackup.sql',
-                'add_drop'    => FALSE,
-                'add_insert'  => TRUE,
-                'newline'     => PHP_EOL
-              );
-        $sql.= $this->dbutil->backup($prefs);        
-
-        //write file
-        $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
-        file_put_contents(
-                BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-                $sql
-            );
-        */
+            //write file
+            $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
+            file_put_contents(
+                    BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
+                    $sql
+                );
+        }       
 
     }
 }

@@ -7,10 +7,14 @@
 */
 .navbar-fixed-top .nav > .active > a > [class^="icon-"],
 .navbar-fixed-top .nav > .active > a > [class*=" icon-"] {
-  background-image: url("../img/glyphicons-halflings-white.png");
+  background-image: url("../img/glyphicons-halflings-white.png")!important;
 }
 .navbar-fixed-top {
-  color: #999999;
+  color: #EEEEEE;
+}
+.navbar .nav li.dropdown>a:hover .caret, .navbar .nav li.dropdown>a:focus .caret {
+    border-top-color: #FFFFFF;
+    border-bottom-color: #FFFFFF;
 }
 .navbar-fixed-top .navbar-inner {
   background-color: #1b1b1b;
@@ -25,7 +29,7 @@
 }
 .navbar-fixed-top .brand,
 .navbar-fixed-top .nav > li > a {
-  color: #999999;
+  color: #EEEEEE;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 .navbar-fixed-top .brand:hover,
@@ -44,7 +48,7 @@
   background-color: #111111;
 }
 .navbar-fixed-top .navbar-link {
-  color: #999999;
+  color: #EEEEEE;
 }
 .navbar-fixed-top .navbar-link:hover {
   color: #ffffff;
@@ -60,8 +64,8 @@
   color: #ffffff;
 }
 .navbar-fixed-top .nav li.dropdown > .dropdown-toggle .caret {
-  border-top-color: #999999;
-  border-bottom-color: #999999;
+  border-top-color: #EEEEEE;
+  border-bottom-color: #EEEEEE;
 }
 .navbar-fixed-top .nav li.dropdown.open > .dropdown-toggle .caret,
 .navbar-fixed-top .nav li.dropdown.active > .dropdown-toggle .caret,
@@ -150,11 +154,11 @@
 }
 /* start */
 .not_shown{
-	display: none;
+    display: none;
 }
 
 .clear{
-	clear: both;
+    clear: both;
 }
 
 .layout_widget_container input, .layout_widget_container textarea {
@@ -162,14 +166,58 @@
 }
 
 body {
-	padding-bottom:40px;
-	padding-right:0px;
-	padding-left:0px;
+    padding-bottom:40px;
+    padding-right:0px;
+    padding-left:0px;
 }
 
 footer{
-	padding: 10px;
+    padding: 10px;
 }
+
+#__section-banner>div{
+    /* IE10 */ 
+    background-image: -ms-linear-gradient(top left, white 0%, gray 100%);
+    
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(top left, white 0%, gray 100%);
+    
+    /* Opera */ 
+    background-image: -o-linear-gradient(top left, white 0%, gray 100%);
+    
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, gray));
+    
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(top left, white 0%, gray 100%);
+    
+    /* Proposed W3C Markup */ 
+    background-image: linear-gradient(top left, white 0%, gray 100%);
+}
+
+#__section-left-and-content{
+    padding:5px;
+    margin-left:0px;
+    
+    /* IE10 */ 
+    background-image: -ms-linear-gradient(top left, white 0%, #EEEEEE 100%);
+    
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(top left, white 0%, #EEEEEE 100%);
+    
+    /* Opera */ 
+    background-image: -o-linear-gradient(top left, white 0%, #EEEEEE 100%);
+    
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, #EEEEEE));
+    
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(top left, white 0%, #EEEEEE 100%);
+    
+    /* Proposed W3C Markup */ 
+    background-image: linear-gradient(top left, white 0%, #EEEEEE 100%);
+}
+
 
 /* grocery-CRUD flexigrid */
 .pGroup select#per_page
@@ -185,8 +233,8 @@ footer{
     width: 400px!important;
 }
 .form-input-box>div.ui-multiselect{
-	max-width: 440px;
-	border: 1px solid gray;
+    max-width: 440px;
+    border: 1px solid gray;
 }
 .form-input-box>div.ui-multiselect>div.selected{
     max-width: 213px;
@@ -197,7 +245,7 @@ footer{
 .pGroup .btnseparator
 {
     float: left;
-    margin: 2px;	
+    margin: 2px;    
 }
 
 /* end of grocery-CRUD flexigrid */
@@ -210,23 +258,27 @@ footer{
     .form-input-box>input, .form-input-box>textarea,
     .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
         width: 250px!important;
-	    float: left!important;
-	}
-	.form-display-as-box{
-	   width: 100%!important;
-	}
-	
-	.flexigrid table td,
-	.flexigrid table th{
-	    display: none!important;
-	}
-	.flexigrid table td:first-child,
-	.flexigrid table th:first-child,
-	.flexigrid table td:last-child,
-	.flexigrid table th:last-child
-	{
-	    display: table-cell!important;
-	}
+        float: left!important;
+    }
+    .form-display-as-box{
+       width: 100%!important;
+    }
+    
+    .flexigrid table td,
+    .flexigrid table th{
+        display: none!important;
+    }
+    .flexigrid table td:first-child,
+    .flexigrid table th:first-child,
+    .flexigrid table td:last-child,
+    .flexigrid table th:last-child
+    {
+        display: table-cell!important;
+    }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
+    }
 }
 
 /* Landscape phone to portrait tablet */
@@ -256,6 +308,10 @@ footer{
     {
         display: table-cell!important;
     }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
+    }
 }
 
 /* Portrait tablet to landscape and desktop */
@@ -279,6 +335,10 @@ footer{
     .flexigrid table th:nth-child(4)
     {
         display: table-cell!important;
+    }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
     }
 }
 
