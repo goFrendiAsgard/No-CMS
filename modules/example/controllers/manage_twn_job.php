@@ -15,7 +15,7 @@ class Manage_Twn_Job extends CMS_Priv_Strict_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = $this->new_crud();
         // this is just for code completion
-        if (FALSE) $crud = new Grocery_CRUD();
+        if (FALSE) $crud = new Extended_Grocery_CRUD();
 
         
         // unset things 

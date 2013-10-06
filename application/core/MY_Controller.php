@@ -37,6 +37,7 @@ class CMS_Controller extends MX_Controller
         $this->load->helper('string');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
+        $this->form_validation->CI =& $this;
         $this->load->driver('session');
         
         // get dynamic widget status
@@ -52,10 +53,10 @@ class CMS_Controller extends MX_Controller
             }
         }        
 
-        $this->load->library('grocery_CRUD');
+        $this->load->library('Extended_Grocery_CRUD');
         $this->load->library('template');
 
-        // just for autocompletion, never run
+        // just for autocompletion, never executed
         if(false) $this->No_CMS_Model = new No_CMS_Model();
     }
 
@@ -69,14 +70,16 @@ class CMS_Controller extends MX_Controller
         $model_name = 'grocery_crud_model_'.$db_driver;
         $model_alias = 'm'.substr(md5(rand()), 0, rand(4,15) );
 
-        $this->load->library('grocery_CRUD');
-        $crud = new Grocery_CRUD();
+        $this->load->library('Extended_Grocery_CRUD');
+        $crud = new Extended_Grocery_CRUD();
         if (file_exists(APPPATH.'/models/'.$model_name.'.php')){
             $this->load->model('grocery_crud_model');
             $this->load->model('grocery_crud_generic_model');
             $this->load->model($model_name,$model_alias);
             $crud->basic_model = $this->{$model_alias};
         }
+        // resolve HMVC set rule callback problem
+        $crud->form_validation = $this->form_validation;
         return $crud;
     }
 

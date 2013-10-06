@@ -9,8 +9,12 @@ echo $asset->compile_css();
 foreach($js_files as $file){
 	$asset->add_js($file);
 }
-echo $asset->compile_js();	
-echo $output;
+echo $asset->compile_js();
 
+// For every content of option tag, this will replace '&nbsp;' with ' '
+function __ommit_nbsp($matches){
+    return $matches[1].str_replace('&nbsp;', ' ', $matches[2]).$matches[3];
+}
+echo preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', '__ommit_nbsp', $output);
 ?>
 <a class="btn btn-primary" href="{{ site_url }}{{ module_path }}/browse_twn_city/index">Show Front Page</a>

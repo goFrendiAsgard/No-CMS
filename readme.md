@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.5 stable, September, 29, 2013
+- v0.6.5 stable, October, 06, 2013
 
 
 Server Requirements
@@ -873,4 +873,5 @@ v0.6.5
 
 v0.6.6
 + (proposed) Navigation: move to anywhere.
-+ (proposed) Add icon on navigation.
++ (done, tested) Add icon for navigation and quicklink.
++ (done, tested) Make set_rule callback of groceryCRUD works.
