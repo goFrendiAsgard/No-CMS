@@ -145,15 +145,15 @@
             echo '        /////////////////////////////////////////////////////////////////////////////////////////////////////'.PHP_EOL;
             echo '        //    FIELD "'.$name.'"'.PHP_EOL;
             echo '        /////////////////////////////////////////////////////////////////////////////////////////////////////'.PHP_EOL;
-            echo '      var field_value = \'\''.PHP_EOL;
-            echo '      if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
+            echo '        var field_value = \'\''.PHP_EOL;
+            echo '        if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
             if($data_type=='date'){
                 echo '          field_value = php_date_to_js(value.'.$name.');'.PHP_EOL;
             }else{
                 echo '          field_value = value.'.$name.';'.PHP_EOL;
             }
-            echo '      }'.PHP_EOL;
-            echo '      component += \'<td>\';'.PHP_EOL;
+            echo '        }'.PHP_EOL;
+            echo '        component += \'<td>\';'.PHP_EOL;
             // create input based on role and type
             if($role=='lookup' || $role=='detail many to many' || $selection_mode=='enum' || $selection_mode=='set'){
                 $multiple = '';
@@ -162,11 +162,11 @@
                 }else{
                     $multiple = ' multiple = "multiple"';
                 }
-                echo '      component += \'<select id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
+                echo '        component += \'<select id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
                     '+\'" class="'.$column_input_class.$additional_class.' chzn-select" column_name="'.$name.'" '.$multiple.'>\';'.PHP_EOL;
-                echo '      var options = OPTIONS.'.$name.';'.PHP_EOL;
-                echo '      component += \'<option value></option>\';'.PHP_EOL;
-                echo '      for(var i=0; i<options.length; i++){'.PHP_EOL;
+                echo '        var options = OPTIONS.'.$name.';'.PHP_EOL;
+                echo '        component += \'<option value></option>\';'.PHP_EOL;
+                echo '        for(var i=0; i<options.length; i++){'.PHP_EOL;
                 echo '          var option = options[i];'.PHP_EOL;
                 if($role=='lookup' || $selection_mode=='enum'){
                     echo '          var selected = \'\';'.PHP_EOL;
@@ -180,16 +180,16 @@
                     echo '          }'.PHP_EOL;
                 }
                 echo '          component += \'<option value="\'+option[\'value\']+\'" \'+selected+\'>\'+option[\'caption\']+\'</option>\';'.PHP_EOL;
-                echo '      }'.PHP_EOL;
-                echo '      component += \'</select>\';'.PHP_EOL;
+                echo '        }'.PHP_EOL;
+                echo '        component += \'</select>\';'.PHP_EOL;
             }else{
-                echo '      component += \'<input id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
+                echo '        component += \'<input id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
                     '+\'" class="'.$column_input_class.$additional_class.'" column_name="'.$name.'" type="text" value="\'+field_value+\'"/>\';'.PHP_EOL;
                 if($data_type == 'date'){
-                    echo '      component += \'<a href="#" class="datepicker-input-clear btn">Clear</a>\';'.PHP_EOL;
+                    echo '        component += \'<a href="#" class="datepicker-input-clear btn">Clear</a>\';'.PHP_EOL;
                 }
             }
-            echo'       component += \'</td>\';'.PHP_EOL.PHP_EOL;
+            echo'        component += \'</td>\';'.PHP_EOL.PHP_EOL;
         }
         ?>
 

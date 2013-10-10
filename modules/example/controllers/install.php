@@ -118,22 +118,22 @@ class Install extends CMS_Module_Installer {
             $module_path.'/browse_twn_city', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_twn_job'), 'Manage Job',
-            $module_path.'/manage_twn_job', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_twn_job', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_twn_hobby'), 'Manage Hobby',
-            $module_path.'/manage_twn_hobby', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_twn_hobby', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_twn_country'), 'Manage Country',
-            $module_path.'/manage_twn_country', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_twn_country', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_twn_commodity'), 'Manage Commodity',
-            $module_path.'/manage_twn_commodity', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_twn_commodity', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_twn_city'), 'Manage City',
-            $module_path.'/manage_twn_city', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_twn_city', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_twn_tourism'), 'Manage Tourism',
-            $module_path.'/manage_twn_tourism', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_twn_tourism', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
 
         
