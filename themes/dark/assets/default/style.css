@@ -17,6 +17,11 @@
     max-width: 100%;
 }
 
+#__section-content{
+    overflow: auto;
+    overflow-y:hidden;
+}
+
 body { 
 	padding-bottom:40px;
 	padding-right:0px;

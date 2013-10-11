@@ -33,8 +33,10 @@
 
     $var_record_index = 'RECORD_INDEX_'.$master_column_name;
     $var_data = 'DATA_'.$master_column_name;
+    $var_options = 'OPTIONS_'.$master_column_name;
     $fn_synchronize = 'synchronize_'.$master_column_name;
     $fn_add_table_row = 'add_table_row_'.$master_column_name;
+    $fn_mutate_input = 'mutate_input_'.$master_column_name;
 ?>
 &lt;?php
     $record_index = 0;
@@ -59,27 +61,39 @@
         min-width:100px!important;
         max-width:250px!important;
     }
+    #<?php echo $master_column_name ?>_input_box{
+        width: 100%;
+    }
+    #<?php echo $table_id; ?>_container{
+        overflow: auto;
+        overflow-y:hidden;
+    }
+    #<?php echo $table_id; ?> th:last-child, #<?php echo $table_id; ?> td:last-child{
+        width: 125px;
+    }
 </style>
 
-<table id="<?php echo $table_id; ?>" class="table table-striped table-bordered">
-    <thead>
-        <tr>
+<div id="<?php echo $table_id; ?>_container">
+    <table id="<?php echo $table_id; ?>" class="table table-striped table-bordered">
+        <thead>
+            <tr>
 <?php
     foreach($detail_column_captions as $caption){
-        echo '          <th>'.$caption.'</th>'.PHP_EOL;
+        echo '                <th>'.$caption.'</th>'.PHP_EOL;
     }
 ?>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- the data presentation be here -->
-    </tbody>
-</table>
-<input id="<?php echo $add_button_id; ?>" class="btn" type="button" value="Add <?php echo $detail_table_caption; ?>" />
-<br />
-<!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
-<input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- the data presentation be here -->
+        </tbody>
+    </table>
+    <input id="<?php echo $add_button_id; ?>" class="btn btn-success" type="button" value="Add <?php echo $detail_table_caption; ?>" />
+    <br />
+    <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
+    <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
+</div>
 
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
@@ -94,7 +108,7 @@
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     var DATE_FORMAT = '&lt;?php echo $date_format ?&gt;';
-    var OPTIONS = &lt;?php echo json_encode($options); ?&gt;;
+    var <?php echo $var_options; ?> = &lt;?php echo json_encode($options); ?&gt;;
     var <?php echo $var_record_index; ?> = &lt;?php echo $record_index; ?&gt;;
     var <?php echo $var_data; ?> = {update:new Array(), insert:new Array(), delete:new Array()};
     var old_data = &lt;?php echo json_encode($result); ?&gt;;
@@ -164,7 +178,7 @@
                 }
                 echo '        component += \'<select id="'.$column_input_class.'_'.$name.'_\'+'.$var_record_index.'+\'" record_index="\'+'.$var_record_index.
                     '+\'" class="'.$column_input_class.$additional_class.' chzn-select" column_name="'.$name.'" '.$multiple.'>\';'.PHP_EOL;
-                echo '        var options = OPTIONS.'.$name.';'.PHP_EOL;
+                echo '        var options = '.$var_options.'.'.$name.';'.PHP_EOL;
                 echo '        component += \'<option value></option>\';'.PHP_EOL;
                 echo '        for(var i=0; i<options.length; i++){'.PHP_EOL;
                 echo '          var option = options[i];'.PHP_EOL;
@@ -197,14 +211,14 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><input class="<?php echo $delete_button_class; ?> btn" record_index="'+<?php echo $var_record_index; ?>+'" primary_key="" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';
+        component += '<td><input class="<?php echo $delete_button_class; ?> btn btn-danger" record_index="'+<?php echo $var_record_index; ?>+'" primary_key="" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Add component to table
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         $('#<?php echo $table_id; ?> tbody').append(component);
-        mutate_input();
+        <?php echo $fn_mutate_input; ?>();
 
     } // end of ADD ROW FUNCTION
 
@@ -346,17 +360,70 @@
                 $('#md_table_<?php echo $master_column_name; ?> tr').not(':first').remove();
                 <?php echo $fn_synchronize; ?>();
             }
+        }
     });
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // synchronize data to <?php echo $real_input_id; ?>.
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function <?php echo $fn_synchronize; ?>(){
+        $('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // function to mutate input
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function <?php echo $fn_mutate_input; ?>(){
+        // datepikcer-input
+        $('#<?php echo $table_id; ?> .datepicker-input').datepicker({
+                dateFormat: js_date_format,
+                showButtonPanel: true,
+                changeMonth: true,
+                changeYear: true
+        });
+        // date-picker-input-clear
+        $('#<?php echo $table_id; ?> .datepicker-input-clear').click(function(){
+            $(this).parent().find('.datepicker-input').val('');
+            return false;
+        });
+        // chzn-select
+        $("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true});
+        // numeric
+        $('#<?php echo $table_id; ?> .numeric').numeric();
+        $('#<?php echo $table_id; ?> .numeric').keydown(function(e){
+            if(e.keyCode == 38)
+            {
+                if(IsNumeric($(this).val()))
+                {
+                    var new_number = parseInt($(this).val()) + 1;
+                    $(this).val(new_number);
+                }else if($(this).val().length == 0)
+                {
+                    var new_number = 1;
+                    $(this).val(new_number);
+                }
+            }
+            else if(e.keyCode == 40)
+            {
+                if(IsNumeric($(this).val()))
+                {
+                    var new_number = parseInt($(this).val()) - 1;
+                    $(this).val(new_number);
+                }else if($(this).val().length == 0)
+                {
+                    var new_number = -1;
+                    $(this).val(new_number);
+                }
+            }
+            $(this).trigger('change');
+        });
+
+    }
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // General Functions
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // synchronize data to <?php echo $real_input_id; ?>.
-    function <?php echo $fn_synchronize; ?>(){
-        $('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
-    }
 
     function js_datetime_to_php(js_datetime){
         var datetime_array = js_datetime.split(' ');
@@ -425,53 +492,6 @@
 
     function IsNumeric(input){
         return (input - 0) == input && input.length > 0;
-    }
-
-    function mutate_input(){
-        // datepikcer-input
-        $('#<?php echo $table_id; ?> .datepicker-input').datepicker({
-                dateFormat: js_date_format,
-                showButtonPanel: true,
-                changeMonth: true,
-                changeYear: true
-        });
-        // date-picker-input-clear
-        $('#<?php echo $table_id; ?> .datepicker-input-clear').click(function(){
-            $(this).parent().find('.datepicker-input').val('');
-            return false;
-        });
-        // chzn-select
-        $("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true});
-        // numeric
-        $('#<?php echo $table_id; ?> .numeric').numeric();
-        $('#<?php echo $table_id; ?> .numeric').keydown(function(e){
-            if(e.keyCode == 38)
-            {
-                if(IsNumeric($(this).val()))
-                {
-                    var new_number = parseInt($(this).val()) + 1;
-                    $(this).val(new_number);
-                }else if($(this).val().length == 0)
-                {
-                    var new_number = 1;
-                    $(this).val(new_number);
-                }
-            }
-            else if(e.keyCode == 40)
-            {
-                if(IsNumeric($(this).val()))
-                {
-                    var new_number = parseInt($(this).val()) - 1;
-                    $(this).val(new_number);
-                }else if($(this).val().length == 0)
-                {
-                    var new_number = -1;
-                    $(this).val(new_number);
-                }
-            }
-            $(this).trigger('change');
-        });
-
-    }
+    }    
 
 </script>

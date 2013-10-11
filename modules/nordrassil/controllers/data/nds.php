@@ -254,7 +254,6 @@ class nds extends CMS_Controller {
     	}
 
         $crud->required_fields('name','caption');
-        $crud->unique_fields('name');
         
         $crud->unset_read();
 
@@ -359,7 +358,6 @@ class nds extends CMS_Controller {
     	}
 
         $crud->required_fields('name','caption');
-        $crud->unique_fields('name');
         
         $crud->unset_read();
 

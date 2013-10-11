@@ -67,5 +67,5 @@ INSERT INTO {{ complete_table_name:column_option }} (`id`, `column_id`, `option_
 (10, 23, 6),
 (11, 25, 5),
 (12, 25, 6),
-(13, 27, 6),
+(13, 27, 5),
 (14, 27, 6);

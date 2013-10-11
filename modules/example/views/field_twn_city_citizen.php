@@ -21,26 +21,38 @@
         min-width:100px!important;
         max-width:250px!important;
     }
+    #citizen_input_box{
+        width: 100%;
+    }
+    #md_table_citizen_container{
+        overflow: auto;
+        overflow-y:hidden;
+    }
+    #md_table_citizen th:last-child, #md_table_citizen td:last-child{
+        width: 125px;
+    }
 </style>
 
-<table id="md_table_citizen" class="table table-striped table-bordered">
-    <thead>
-        <tr>
-          <th>Name</th>
-          <th>Birthdate</th>
-          <th>Job</th>
-          <th>Hobby</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- the data presentation be here -->
-    </tbody>
-</table>
-<input id="md_field_citizen_add" class="btn" type="button" value="Add Citizen" />
-<br />
-<!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
-<input id="md_real_field_citizen_col" name="md_real_field_citizen_col" type="hidden" />
+<div id="md_table_citizen_container">
+    <table id="md_table_citizen" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Birthdate</th>
+                <th>Job</th>
+                <th>Hobby</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- the data presentation be here -->
+        </tbody>
+    </table>
+    <input id="md_field_citizen_add" class="btn btn-success" type="button" value="Add Citizen" />
+    <br />
+    <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
+    <input id="md_real_field_citizen_col" name="md_real_field_citizen_col" type="hidden" />
+</div>
 
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?>"></script>
@@ -55,7 +67,7 @@
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     var DATE_FORMAT = '<?php echo $date_format ?>';
-    var OPTIONS = <?php echo json_encode($options); ?>;
+    var OPTIONS_citizen = <?php echo json_encode($options); ?>;
     var RECORD_INDEX_citizen = <?php echo $record_index; ?>;
     var DATA_citizen = {update:new Array(), insert:new Array(), delete:new Array()};
     var old_data = <?php echo json_encode($result); ?>;
@@ -87,86 +99,86 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "name"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-      var field_value = ''
-      if(typeof(value) != 'undefined' && value.hasOwnProperty('name')){
+        var field_value = ''
+        if(typeof(value) != 'undefined' && value.hasOwnProperty('name')){
           field_value = value.name;
-      }
-      component += '<td>';
-      component += '<input id="md_field_citizen_col_name_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col" column_name="name" type="text" value="'+field_value+'"/>';
-       component += '</td>';
+        }
+        component += '<td>';
+        component += '<input id="md_field_citizen_col_name_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col" column_name="name" type="text" value="'+field_value+'"/>';
+        component += '</td>';
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "birthdate"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-      var field_value = ''
-      if(typeof(value) != 'undefined' && value.hasOwnProperty('birthdate')){
+        var field_value = ''
+        if(typeof(value) != 'undefined' && value.hasOwnProperty('birthdate')){
           field_value = php_date_to_js(value.birthdate);
-      }
-      component += '<td>';
-      component += '<input id="md_field_citizen_col_birthdate_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col datepicker-input" column_name="birthdate" type="text" value="'+field_value+'"/>';
-      component += '<a href="#" class="datepicker-input-clear btn">Clear</a>';
-       component += '</td>';
+        }
+        component += '<td>';
+        component += '<input id="md_field_citizen_col_birthdate_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col datepicker-input" column_name="birthdate" type="text" value="'+field_value+'"/>';
+        component += '<a href="#" class="datepicker-input-clear btn">Clear</a>';
+        component += '</td>';
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "job_id"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-      var field_value = ''
-      if(typeof(value) != 'undefined' && value.hasOwnProperty('job_id')){
+        var field_value = ''
+        if(typeof(value) != 'undefined' && value.hasOwnProperty('job_id')){
           field_value = value.job_id;
-      }
-      component += '<td>';
-      component += '<select id="md_field_citizen_col_job_id_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col numeric chzn-select" column_name="job_id" >';
-      var options = OPTIONS.job_id;
-      component += '<option value></option>';
-      for(var i=0; i<options.length; i++){
+        }
+        component += '<td>';
+        component += '<select id="md_field_citizen_col_job_id_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col numeric chzn-select" column_name="job_id" >';
+        var options = OPTIONS_citizen.job_id;
+        component += '<option value></option>';
+        for(var i=0; i<options.length; i++){
           var option = options[i];
           var selected = '';
           if(option['value'] == field_value){
               selected = 'selected="selected"';
           }
           component += '<option value="'+option['value']+'" '+selected+'>'+option['caption']+'</option>';
-      }
-      component += '</select>';
-       component += '</td>';
+        }
+        component += '</select>';
+        component += '</td>';
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "hobby"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-      var field_value = ''
-      if(typeof(value) != 'undefined' && value.hasOwnProperty('hobby')){
+        var field_value = ''
+        if(typeof(value) != 'undefined' && value.hasOwnProperty('hobby')){
           field_value = value.hobby;
-      }
-      component += '<td>';
-      component += '<select id="md_field_citizen_col_hobby_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col chzn-select" column_name="hobby"  multiple = "multiple">';
-      var options = OPTIONS.hobby;
-      component += '<option value></option>';
-      for(var i=0; i<options.length; i++){
+        }
+        component += '<td>';
+        component += '<select id="md_field_citizen_col_hobby_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col chzn-select" column_name="hobby"  multiple = "multiple">';
+        var options = OPTIONS_citizen.hobby;
+        component += '<option value></option>';
+        for(var i=0; i<options.length; i++){
           var option = options[i];
           var selected = '';
           if($.inArray(option['value'],field_value)>-1){
               selected = 'selected="selected"';
           }
           component += '<option value="'+option['value']+'" '+selected+'>'+option['caption']+'</option>';
-      }
-      component += '</select>';
-       component += '</td>';
+        }
+        component += '</select>';
+        component += '</td>';
 
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><input class="md_field_citizen_delete btn" record_index="'+RECORD_INDEX_citizen+'" primary_key="" type="button" value="Delete Citizen" /></td>';
+        component += '<td><input class="md_field_citizen_delete btn btn-danger" record_index="'+RECORD_INDEX_citizen+'" primary_key="" type="button" value="Delete Citizen" /></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Add component to table
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         $('#md_table_citizen tbody').append(component);
-        mutate_input();
+        mutate_input_citizen();
 
     } // end of ADD ROW FUNCTION
 
@@ -308,17 +320,70 @@
                 $('#md_table_citizen tr').not(':first').remove();
                 synchronize_citizen();
             }
+        }
     });
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // synchronize data to md_real_field_citizen_col.
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function synchronize_citizen(){
+        $('#md_real_field_citizen_col').val(JSON.stringify(DATA_citizen));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // function to mutate input
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function mutate_input_citizen(){
+        // datepikcer-input
+        $('#md_table_citizen .datepicker-input').datepicker({
+                dateFormat: js_date_format,
+                showButtonPanel: true,
+                changeMonth: true,
+                changeYear: true
+        });
+        // date-picker-input-clear
+        $('#md_table_citizen .datepicker-input-clear').click(function(){
+            $(this).parent().find('.datepicker-input').val('');
+            return false;
+        });
+        // chzn-select
+        $("#md_table_citizen .chzn-select").chosen({allow_single_deselect: true});
+        // numeric
+        $('#md_table_citizen .numeric').numeric();
+        $('#md_table_citizen .numeric').keydown(function(e){
+            if(e.keyCode == 38)
+            {
+                if(IsNumeric($(this).val()))
+                {
+                    var new_number = parseInt($(this).val()) + 1;
+                    $(this).val(new_number);
+                }else if($(this).val().length == 0)
+                {
+                    var new_number = 1;
+                    $(this).val(new_number);
+                }
+            }
+            else if(e.keyCode == 40)
+            {
+                if(IsNumeric($(this).val()))
+                {
+                    var new_number = parseInt($(this).val()) - 1;
+                    $(this).val(new_number);
+                }else if($(this).val().length == 0)
+                {
+                    var new_number = -1;
+                    $(this).val(new_number);
+                }
+            }
+            $(this).trigger('change');
+        });
+
+    }
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // General Functions
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // synchronize data to md_real_field_citizen_col.
-    function synchronize_citizen(){
-        $('#md_real_field_citizen_col').val(JSON.stringify(DATA_citizen));
-    }
 
     function js_datetime_to_php(js_datetime){
         var datetime_array = js_datetime.split(' ');
@@ -387,53 +452,6 @@
 
     function IsNumeric(input){
         return (input - 0) == input && input.length > 0;
-    }
-
-    function mutate_input(){
-        // datepikcer-input
-        $('#md_table_citizen .datepicker-input').datepicker({
-                dateFormat: js_date_format,
-                showButtonPanel: true,
-                changeMonth: true,
-                changeYear: true
-        });
-        // date-picker-input-clear
-        $('#md_table_citizen .datepicker-input-clear').click(function(){
-            $(this).parent().find('.datepicker-input').val('');
-            return false;
-        });
-        // chzn-select
-        $("#md_table_citizen .chzn-select").chosen({allow_single_deselect: true});
-        // numeric
-        $('#md_table_citizen .numeric').numeric();
-        $('#md_table_citizen .numeric').keydown(function(e){
-            if(e.keyCode == 38)
-            {
-                if(IsNumeric($(this).val()))
-                {
-                    var new_number = parseInt($(this).val()) + 1;
-                    $(this).val(new_number);
-                }else if($(this).val().length == 0)
-                {
-                    var new_number = 1;
-                    $(this).val(new_number);
-                }
-            }
-            else if(e.keyCode == 40)
-            {
-                if(IsNumeric($(this).val()))
-                {
-                    var new_number = parseInt($(this).val()) - 1;
-                    $(this).val(new_number);
-                }else if($(this).val().length == 0)
-                {
-                    var new_number = -1;
-                    $(this).val(new_number);
-                }
-            }
-            $(this).trigger('change');
-        });
-
-    }
+    }    
 
 </script>
