@@ -223,8 +223,11 @@ footer{
 }
 
 #__section-content{
-    overflow: auto;
+    overflow-x:auto;
     overflow-y:hidden;
+}
+.crud-form{
+    padding-bottom:165px;
 }
 
 body{
@@ -259,6 +262,7 @@ body{
 {
     max-width: 54px;
 }
+/*
 .pGroup .pcontrol input
 {
     max-width: 59px;
@@ -282,6 +286,7 @@ body{
     float: left;
     margin: 2px;	
 }
+*/
 
 /* end of grocery-CRUD flexigrid */
 

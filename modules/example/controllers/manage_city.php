@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_Twn_City
+ * Description of Manage_City
  *
  * @author No-CMS Module Generator
  */
-class Manage_Twn_City extends CMS_Priv_Strict_Controller {
+class Manage_City extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
@@ -29,13 +29,13 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         // $crud->unset_export();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_twn_city_model');
+        $crud->set_model($this->cms_module_path().'/grocerycrud_city_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('twn_city'));
+        $crud->set_table($this->cms_complete_table_name('city'));
 
         // set subject
         $crud->set_subject('City');
@@ -86,7 +86,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		$crud->set_relation('country_id', $this->cms_complete_table_name('twn_country'), 'name');
+		$crud->set_relation('country_id', $this->cms_complete_table_name('country'), 'name');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here
@@ -96,13 +96,13 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         //          $primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$crud->set_relation_n_n('tourism',
-		    $this->cms_complete_table_name('twn_city_tourism'),
-		    $this->cms_complete_table_name('twn_tourism'),
+		    $this->cms_complete_table_name('city_tourism'),
+		    $this->cms_complete_table_name('tourism'),
 			'city_id', 'tourism_id',
 			'name', NULL);
 		$crud->set_relation_n_n('commodity',
-		    $this->cms_complete_table_name('twn_city_commodity'),
-		    $this->cms_complete_table_name('twn_commodity'),
+		    $this->cms_complete_table_name('city_commodity'),
+		    $this->cms_complete_table_name('commodity'),
 			'city_id', 'commodity_id',
 			'name', 'priority');
 
@@ -142,8 +142,8 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
-        $this->view($this->cms_module_path().'/manage_twn_city_view', $output,
-            $this->cms_complete_navigation_name('manage_twn_city'));
+        $this->view($this->cms_module_path().'/manage_city_view', $output,
+            $this->cms_complete_navigation_name('manage_city'));
 
     }
 
@@ -166,8 +166,8 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
     }
 
     public function before_delete($primary_key){
-		// delete corresponding twn_citizen
-		$this->db->delete($this->cms_complete_table_name('twn_citizen'),
+		// delete corresponding citizen
+		$this->db->delete($this->cms_complete_table_name('citizen'),
 		      array('citizen_id'=>$primary_key));
         return TRUE;
     }
@@ -180,8 +180,8 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
-		// SAVE CHANGES OF twn_citizen
-		//  * The twn_citizen data in in json format.
+		// SAVE CHANGES OF citizen
+		//  * The citizen data in in json format.
 		//  * It can be accessed via $_POST['md_real_field_citizen_col']
 		//
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +192,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 		$real_column_names = array('citizen_id', 'name', 'birthdate', 'job_id');
 		$set_column_names = array();
 		$many_to_many_column_names = array('hobby');
-		$many_to_many_relation_tables = array('twn_citizen_hobby');
+		$many_to_many_relation_tables = array('citizen_hobby');
 		$many_to_many_relation_table_columns = array('citizen_id');
 		$many_to_many_relation_selection_columns = array('hobby_id');
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 				);
 				$this->db->delete($table_name, $where);
 			}
-			$this->db->delete($this->cms_complete_table_name('twn_citizen'),
+			$this->db->delete($this->cms_complete_table_name('citizen'),
 			     array('citizen_id'=>$detail_primary_key));
 		}
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -227,7 +227,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 				}
 			}
 			$data['city_id'] = $primary_key;
-			$this->db->update($this->cms_complete_table_name('twn_citizen'),
+			$this->db->update($this->cms_complete_table_name('citizen'),
 			     $data, array('citizen_id'=>$detail_primary_key));
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// Adjust Many-to-Many Fields of Updated Data
@@ -285,7 +285,7 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 				}
 			}
 			$data['city_id'] = $primary_key;
-			$this->db->insert($this->cms_complete_table_name('twn_citizen'), $data);
+			$this->db->insert($this->cms_complete_table_name('citizen'), $data);
 			$detail_primary_key = $this->db->insert_id();
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Inserted Data
@@ -343,14 +343,14 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 
 		if(!isset($primary_key)) $primary_key = -1;
 		$query = $this->db->select('citizen_id, name, birthdate, job_id')
-			->from($this->cms_complete_table_name('twn_citizen'))
+			->from($this->cms_complete_table_name('citizen'))
 			->where('city_id', $primary_key)
 			->get();
 		$result = $query->result_array();
 		// add "hobby" to $result
 		for($i=0; $i<count($result); $i++){
 			$query_detail = $this->db->select('hobby_id')
-               ->from($this->cms_complete_table_name('twn_citizen_hobby'))
+               ->from($this->cms_complete_table_name('citizen_hobby'))
                ->where(array('citizen_id'=>$result[$i]['citizen_id']))->get();
 			$value = array();
 			foreach($query_detail->result() as $row){
@@ -363,14 +363,14 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 		$options = array();
 		$options['job_id'] = array();
 		$query = $this->db->select('job_id,name')
-           ->from($this->cms_complete_table_name('twn_job'))
+           ->from($this->cms_complete_table_name('job'))
            ->get();
 		foreach($query->result() as $row){
 			$options['job_id'][] = array('value' => $row->job_id, 'caption' => $row->name);
 		}
 		$options['hobby'] = array();
 		$query = $this->db->select('hobby_id,name')
-           ->from($this->cms_complete_table_name('twn_hobby'))->get();
+           ->from($this->cms_complete_table_name('hobby'))->get();
 		foreach($query->result() as $row){
 			$options['hobby'][] = array('value' => $row->hobby_id, 'caption' => strip_tags($row->name));
 		}
@@ -379,14 +379,14 @@ class Manage_Twn_City extends CMS_Priv_Strict_Controller {
 			'options' => $options,
 			'date_format' => $date_format,
 		);
-		return $this->load->view($this->cms_module_path().'/field_twn_city_citizen',$data, TRUE);
+		return $this->load->view($this->cms_module_path().'/field_city_citizen',$data, TRUE);
 	}
 
 	// returned on view
 	public function callback_column_citizen($value, $row){
 	    $module_path = $this->cms_module_path();
 		$query = $this->db->select('citizen_id, name, birthdate, job_id')
-			->from($this->cms_complete_table_name('twn_citizen'))
+			->from($this->cms_complete_table_name('citizen'))
 			->where('city_id', $row->city_id)
 			->get();
 		$num_row = $query->num_rows();

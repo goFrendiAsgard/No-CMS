@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_Twn_Hobby
+ * Description of Manage_Job
  *
  * @author No-CMS Module Generator
  */
-class Manage_Twn_Hobby extends CMS_Priv_Strict_Controller {
+class Manage_Job extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
@@ -29,16 +29,16 @@ class Manage_Twn_Hobby extends CMS_Priv_Strict_Controller {
         // $crud->unset_export();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_twn_hobby_model');
+        $crud->set_model($this->cms_module_path().'/grocerycrud_job_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('twn_hobby'));
+        $crud->set_table($this->cms_complete_table_name('job'));
 
         // set subject
-        $crud->set_subject('Hobby');
+        $crud->set_subject('Job');
 
         // displayed columns on list
         $crud->columns('name');
@@ -128,8 +128,8 @@ class Manage_Twn_Hobby extends CMS_Priv_Strict_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
-        $this->view($this->cms_module_path().'/manage_twn_hobby_view', $output,
-            $this->cms_complete_navigation_name('manage_twn_hobby'));
+        $this->view($this->cms_module_path().'/manage_job_view', $output,
+            $this->cms_complete_navigation_name('manage_job'));
 
     }
 

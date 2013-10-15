@@ -4,28 +4,11 @@
 <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS); ?>" />
 <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?>" />
 <style type="text/css">
-    /* set width of every detail input*/
-    #md_table_citizen .md_field_citizen_col{
-        width:auto!important;
-        min-width:50px!important;
-        max-width:150px!important;
-    }
-    #md_table_citizen .datepicker-input{
-        width:auto!important;
-        min-width:50px!important;
-        max-width:100px!important;
-    }
-    #md_table_citizen .chzn-container,
-    #md_table_citizen .chzn-drop{
-        width:auto!important;
-        min-width:100px!important;
-        max-width:250px!important;
-    }
-    #citizen_input_box{
-        width: 100%;
+    #md_table_citizen input[type="text"]{
+        width:80px;
     }
     #md_table_citizen_container{
-        overflow: auto;
+        overflow-x: auto;
         overflow-y:hidden;
     }
     #md_table_citizen th:last-child, #md_table_citizen td:last-child{
@@ -48,7 +31,9 @@
             <!-- the data presentation be here -->
         </tbody>
     </table>
-    <input id="md_field_citizen_add" class="btn btn-success" type="button" value="Add Citizen" />
+    <div class="fbutton">
+        <span id="md_field_citizen_add" class="add">Add Citizen</span>
+    </div>
     <br />
     <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
     <input id="md_real_field_citizen_col" name="md_real_field_citizen_col" type="hidden" />
@@ -171,7 +156,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><input class="md_field_citizen_delete btn btn-danger" record_index="'+RECORD_INDEX_citizen+'" primary_key="" type="button" value="Delete Citizen" /></td>';
+        component += '<td><span class="delete-icon md_field_citizen_delete" record_index="'+RECORD_INDEX_citizen+'"></span></td>'
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,11 +183,17 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
+        synchronize_citizen_table_width();
         synchronize_citizen();
         for(var i=0; i<DATA_citizen.update.length; i++){
             add_table_row_citizen(DATA_citizen.update[i].data);
             RECORD_INDEX_citizen++;
         }
+
+        // on resize, adjust the table width
+        $(window).resize(function() {
+            synchronize_citizen_table_width();
+        });
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -313,7 +304,7 @@
     // reset field on save
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     $(document).ajaxSuccess(function(event, xhr, settings) {        
-        if (settings.url == "{{ module_site_url }}manage_twn_city/index/insert") {
+        if (settings.url == "{{ module_site_url }}manage_city/index/insert") {
             response = $.parseJSON(xhr.responseText);
             if(response.success == true){
                 DATA_citizen = {update:new Array(), insert:new Array(), delete:new Array()};
@@ -328,6 +319,14 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function synchronize_citizen(){
         $('#md_real_field_citizen_col').val(JSON.stringify(DATA_citizen));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // synchronize table width (called on resize).
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function synchronize_citizen_table_width(){
+        var parent_width = $("#md_table_citizen_container").parent().parent().width();
+        $("#md_table_citizen_container").width(parent_width);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

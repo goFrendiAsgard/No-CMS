@@ -18,8 +18,11 @@
 }
 
 #__section-content{
-    overflow: auto;
+    overflow-x:auto;
     overflow-y:hidden;
+}
+.crud-form{
+    padding-bottom:165px;
 }
 
 body { 
@@ -74,38 +77,6 @@ footer{
 	/* Proposed W3C Markup */ 
 	background-image: linear-gradient(top left, white 0%, #EEEEEE 100%);
 }
-
-
-/* grocery-CRUD flexigrid */
-.pGroup select#per_page
-{
-    max-width: 54px;
-}
-.pGroup .pcontrol input
-{
-    max-width: 59px;
-}
-.form-input-box>input, .form-input-box>textarea,
-.form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
-    width: 400px!important;
-}
-.form-input-box>div.ui-multiselect{
-	max-width: 440px;
-	border: 1px solid gray;
-}
-.form-input-box>div.ui-multiselect>div.selected{
-    max-width: 213px;
-}
-.form-input-box>div.ui-multiselect>div.available{
-    max-width: 225px;
-}
-.pGroup .btnseparator
-{
-    float: left;
-    margin: 2px;	
-}
-
-/* end of grocery-CRUD flexigrid */
 
 /* Landscape phones and down */
 @media (max-width: 480px){    

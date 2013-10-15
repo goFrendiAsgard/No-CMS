@@ -6,7 +6,7 @@ for($i=0; $i<count($result); $i++){
 	$contents .= '<div id="record_'.$record->city_id.'" class="record_container well">';
 
 	// show columns
-	$contents .= '<b>Country :</b> '.$record->twn_country_name.'  <br />'; 
+	$contents .= '<b>Country :</b> '.$record->country_name.'  <br />'; 
 	$contents .= '<b>Name :</b> '.$record->name.'  <br />'; 
 
 	// edit and delete button

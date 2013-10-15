@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_Twn_Tourism
+ * Description of Manage_Hobby
  *
  * @author No-CMS Module Generator
  */
-class Manage_Twn_Tourism extends CMS_Priv_Strict_Controller {
+class Manage_Hobby extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
@@ -29,16 +29,16 @@ class Manage_Twn_Tourism extends CMS_Priv_Strict_Controller {
         // $crud->unset_export();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_twn_tourism_model');
+        $crud->set_model($this->cms_module_path().'/grocerycrud_hobby_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('twn_tourism'));
+        $crud->set_table($this->cms_complete_table_name('hobby'));
 
         // set subject
-        $crud->set_subject('Tourism');
+        $crud->set_subject('Hobby');
 
         // displayed columns on list
         $crud->columns('name');
@@ -128,8 +128,8 @@ class Manage_Twn_Tourism extends CMS_Priv_Strict_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
-        $this->view($this->cms_module_path().'/manage_twn_tourism_view', $output,
-            $this->cms_complete_navigation_name('manage_twn_tourism'));
+        $this->view($this->cms_module_path().'/manage_hobby_view', $output,
+            $this->cms_complete_navigation_name('manage_hobby'));
 
     }
 

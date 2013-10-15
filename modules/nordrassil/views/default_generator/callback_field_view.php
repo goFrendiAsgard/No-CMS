@@ -35,6 +35,7 @@
     $var_data = 'DATA_'.$master_column_name;
     $var_options = 'OPTIONS_'.$master_column_name;
     $fn_synchronize = 'synchronize_'.$master_column_name;
+    $fn_synchronize_width = 'synchronize_'.$master_column_name.'_table_width';
     $fn_add_table_row = 'add_table_row_'.$master_column_name;
     $fn_mutate_input = 'mutate_input_'.$master_column_name;
 ?>
@@ -44,28 +45,11 @@
 <link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS); ?&gt;" />
 <link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?&gt;" />
 <style type="text/css">
-    /* set width of every detail input*/
-    #<?php echo $table_id; ?> .<?php echo $column_input_class ?>{
-        width:auto!important;
-        min-width:50px!important;
-        max-width:150px!important;
-    }
-    #<?php echo $table_id; ?> .datepicker-input{
-        width:auto!important;
-        min-width:50px!important;
-        max-width:100px!important;
-    }
-    #<?php echo $table_id; ?> .chzn-container,
-    #<?php echo $table_id; ?> .chzn-drop{
-        width:auto!important;
-        min-width:100px!important;
-        max-width:250px!important;
-    }
-    #<?php echo $master_column_name ?>_input_box{
-        width: 100%;
+    #<?php echo $table_id; ?> input[type="text"]{
+        width:80px;
     }
     #<?php echo $table_id; ?>_container{
-        overflow: auto;
+        overflow-x: auto;
         overflow-y:hidden;
     }
     #<?php echo $table_id; ?> th:last-child, #<?php echo $table_id; ?> td:last-child{
@@ -89,7 +73,9 @@
             <!-- the data presentation be here -->
         </tbody>
     </table>
-    <input id="<?php echo $add_button_id; ?>" class="btn btn-success" type="button" value="Add <?php echo $detail_table_caption; ?>" />
+    <div class="fbutton">
+        <span id="<?php echo $add_button_id; ?>" class="add">Add <?php echo $detail_table_caption; ?></span>
+    </div>
     <br />
     <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
     <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
@@ -211,7 +197,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><input class="<?php echo $delete_button_class; ?> btn btn-danger" record_index="'+<?php echo $var_record_index; ?>+'" primary_key="" type="button" value="Delete <?php echo $detail_table_caption; ?>" /></td>';
+        component += '<td><span class="delete-icon <?php echo $delete_button_class; ?>" record_index="'+<?php echo $var_record_index; ?>+'"></span></td>'
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -238,11 +224,17 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
+        <?php echo $fn_synchronize_width; ?>();
         <?php echo $fn_synchronize; ?>();
         for(var i=0; i<<?php echo $var_data; ?>.update.length; i++){
             <?php echo $fn_add_table_row; ?>(<?php echo $var_data; ?>.update[i].data);
             <?php echo $var_record_index; ?>++;
         }
+
+        // on resize, adjust the table width
+        $(window).resize(function() {
+            <?php echo $fn_synchronize_width; ?>();
+        });
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -356,7 +348,7 @@
         if (settings.url == "{{ module_site_url }}manage_<?php echo underscore($stripped_master_table_name) ?>/index/insert") {
             response = $.parseJSON(xhr.responseText);
             if(response.success == true){
-                DATA_citizen = {update:new Array(), insert:new Array(), delete:new Array()};
+                <?php echo $var_data ?> = {update:new Array(), insert:new Array(), delete:new Array()};
                 $('#md_table_<?php echo $master_column_name; ?> tr').not(':first').remove();
                 <?php echo $fn_synchronize; ?>();
             }
@@ -368,6 +360,14 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function <?php echo $fn_synchronize; ?>(){
         $('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // synchronize table width (called on resize).
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function <?php echo $fn_synchronize_width; ?>(){
+        var parent_width = $("#<?php echo $table_id; ?>_container").parent().parent().width();
+        $("#<?php echo $table_id; ?>_container").width(parent_width);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
 	var PAGE = 0;
-	var URL = '<?php echo site_url($module_path."/browse_twn_city/get_data"); ?>';
+	var URL = '<?php echo site_url($module_path."/browse_city/get_data"); ?>';
 	var ALLOW_NAVIGATE_BACKEND = <?php echo $allow_navigate_backend ? "true" : "false"; ?>;
 	var BACKEND_URL = '<?php echo $backend_url; ?>';
 	var LOADING = false;

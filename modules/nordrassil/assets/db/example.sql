@@ -1,5 +1,5 @@
 INSERT INTO {{ complete_table_name:project }} (`project_id`, `template_id`, `name`, `db_server`, `db_port`, `db_schema`, `db_user`, `db_password`, `db_table_prefix`) VALUES 
-(1, 1, 'example', 'localhost', '3306', 'town', 'root', 'toor', '');
+(1, 1, 'example', 'localhost', '3306', 'town', 'root', 'toor', 'twn');
 /*split*/
 INSERT INTO {{ complete_table_name:table }} (`table_id`, `project_id`, `name`, `caption`, `priority`) VALUES 
 (1, 1, 'twn_citizen', 'Citizen', 0),
