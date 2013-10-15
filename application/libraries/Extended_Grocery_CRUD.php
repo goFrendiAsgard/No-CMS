@@ -27,6 +27,9 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 	protected $callback_delete_ext=array();
 	protected $callback_post_render=array();
 
+    // fix issue http://www.grocerycrud.com/forums/topic/1975-bug-in-the-search/
+    protected $unsearchable_field = array(); 
+
 	public function __construct(){
 		parent::__construct();
 		$this->_ci = &get_instance();
@@ -53,6 +56,109 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
     				break;
     		}
     	}
+    }
+
+    // fix issue http://www.grocerycrud.com/forums/topic/1975-bug-in-the-search/
+    public function unset_search_field($field){
+        $this->unsearchable_field[] = $field;
+    }
+
+    protected function set_ajax_list_queries($state_info = null){
+        if(!empty($state_info->per_page))
+        {
+            if(empty($state_info->page) || !is_numeric($state_info->page) )
+                $this->limit($state_info->per_page);
+            else
+            {
+                $limit_page = ( ($state_info->page-1) * $state_info->per_page );
+                $this->limit($state_info->per_page, $limit_page);
+            }
+        }
+
+        if(!empty($state_info->order_by))
+        {
+            $this->order_by($state_info->order_by[0],$state_info->order_by[1]);
+        }
+
+        if(!empty($state_info->search))
+        {
+            if(!empty($this->relation))
+                foreach($this->relation as $relation_name => $relation_values)
+                    $temp_relation[$this->_unique_field_name($relation_name)] = $this->_get_field_names_to_search($relation_values);
+
+            if($state_info->search->field !== null)
+            {
+                if(isset($temp_relation[$state_info->search->field]))
+                {
+                    if(is_array($temp_relation[$state_info->search->field]))
+                        foreach($temp_relation[$state_info->search->field] as $search_field)
+                            $this->or_like($search_field , $state_info->search->text);
+                    else
+                        $this->like($temp_relation[$state_info->search->field] , $state_info->search->text);
+                }
+                elseif(isset($this->relation_n_n[$state_info->search->field]))
+                {
+                    $escaped_text = $this->basic_model->escape_str($state_info->search->text);
+                    $this->having($state_info->search->field." LIKE '%".$escaped_text."%'");
+                }
+                else
+                {
+                    $this->like($state_info->search->field , $state_info->search->text);
+                }
+            }
+            else
+            {
+                $columns = $this->get_columns();
+
+                $search_text = $state_info->search->text;
+
+                if(!empty($this->where))
+                    foreach($this->where as $where)
+                        $this->basic_model->having($where[0],$where[1],$where[2]);
+
+                //Get the list of actual columns and then before adding it to search ..
+                //compare it with the field ... does it exists? .. if yes.. great ..
+                //go ahead and add it to search list.. if not.. just ignore it                
+                $field_types = $this->get_field_types();
+                $actual_columns = array();
+                foreach($field_types as $field) {
+                    if( !isset($field->db_extra) || $field->db_extra != 'auto_increment' ){
+                        if(!in_array($field->name, $this->unsearchable_field)){
+                            $actual_columns[] = $field->name;
+                        }
+                    }
+                }
+                                
+                foreach($columns as $column)
+                {
+                    if(isset($temp_relation[$column->field_name]))
+                    {
+                        if(is_array($temp_relation[$column->field_name]))
+                        {
+                            foreach($temp_relation[$column->field_name] as $search_field)
+                            {
+                                $this->or_like($search_field, $search_text);
+                            }
+                        }
+                        else
+                        {
+                            $this->or_like($temp_relation[$column->field_name], $search_text);
+                        }
+                    }
+                    elseif(isset($this->relation_n_n[$column->field_name]))
+                    {
+                        //@todo have a where for the relation_n_n statement
+                    }
+                    else
+                    {
+                        if(array_search($column->field_name, $actual_columns) === false) {
+                            continue;
+                        }
+                        $this->or_like($column->field_name, $search_text);
+                    }
+                }
+            }
+        }
     }
 
     /**********************/
