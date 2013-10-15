@@ -1624,7 +1624,7 @@ class CMS_Module_Installer extends CMS_Controller
         } else if($result['success']) {
             redirect('main/module_management');
         } else {
-            $this->view('main/module_activation_error', $result, 'main_module_management');
+            $this->view('main/main_module_activation_error', $result, 'main_module_management');
         }
     }
 
@@ -1681,7 +1681,7 @@ class CMS_Module_Installer extends CMS_Controller
         if($result['success']) {
             redirect('main/module_management');
         } else {
-            $this->view('main/module_deactivation_error', $result, 'main_module_management');
+            $this->view('main/main_module_deactivation_error', $result, 'main_module_management');
         }
     }
 
