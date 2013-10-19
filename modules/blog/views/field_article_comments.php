@@ -207,6 +207,7 @@
                 $('#md_table_comments tr').not(':first').remove();
                 synchronize_comments();
             }
+        }
     });
 
 

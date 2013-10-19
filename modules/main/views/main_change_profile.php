@@ -9,6 +9,7 @@
 	var REQUEST = "";
     function check_user_exists(){
         var user_name =  $('input[name="user_name"]').val();
+        var email =  $('input[name="email"]').val();
         var password = $('input[name="password"]').val();
         var confirm_password = $('input[name="confirm_password"]').val();
         var change_password_checked = $('input[name="change_password"]').attr("checked")=='checked';
@@ -20,10 +21,10 @@
         REQUEST = $.ajax({
             "url" : "check_change_profile",
             "type" : "POST",
-            "data" : {"user_name":user_name},
+            "data" : {"user_name":user_name, "email":email},
             "dataType" : "json",
             "success" : function(data){
-                if(!data.exists && user_name!='' &&
+                if(!data.error && !data.exists && user_name!='' &&
                 ((!change_password_checked) || (change_password_checked && password!='' && password==confirm_password)) ){
                     $('input[name="change_profile"]').show();
                     $('input[name="change_profile"]').removeAttr('disabled');

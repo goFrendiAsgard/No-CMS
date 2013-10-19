@@ -102,6 +102,25 @@ class Main extends CMS_Controller
                 //if old_url exist, redirect to old_url, else redirect to main/index
                 if (isset($old_url)) {
                     $this->session->set_flashdata('cms_old_url', NULL);
+                    // seek for the closest url that exist in navigation table to avoid something like manage_x/index/edit/1/error to be appeared
+                    $old_url_part = explode('/', $old_url);
+                    while(count($old_url_part)>0){
+                        $query = $this->db->select('url')
+                            ->from(cms_table_name('main_navigation'))
+                            ->like('url', implode('/', $old_url_part))
+                            ->get();
+                        if($query->num_rows()>0){
+                            $row = $query->row();
+                            $old_url = $row->url;
+                            break;
+                        }else{
+                            $new_old_url_part = array();
+                            for($i=0; $i<count($old_url_part)-1; $i++){
+                                $new_old_url_part[] = $old_url_part[$i];
+                            }
+                            $old_url_part = $new_old_url_part;
+                        }
+                    }
                     redirect($old_url);
                 } else {
                     redirect('');
@@ -233,15 +252,24 @@ class Main extends CMS_Controller
     {
         if ($this->input->is_ajax_request()) {
             $user_name = $this->input->post('user_name');
+            $email = $this->input->post('email');
             $exists    = $this->cms_is_user_exists($user_name);
+            $valid_email = preg_match('/@.+\./', $email);
             $message   = "";
+            $error = FALSE;
             if ($user_name == "") {
                 $message = $this->cms_lang("Username is empty");
+                $error = TRUE;
             } else if ($exists) {
                 $message = $this->cms_lang("Username already exists");
+                $error = TRUE;
+            } else if (!$valid_email){
+                $message = $this->cms_lang("Invalid email address");
+                $error = TRUE;
             }
             $data = array(
                 "exists" => $exists,
+                "error" => $error,
                 "message" => $message
             );
             $this->cms_show_json($data);
@@ -252,15 +280,24 @@ class Main extends CMS_Controller
     {
         if ($this->input->is_ajax_request()) {
             $user_name = $this->input->post('user_name');
+            $email = $this->input->post('email');
             $exists    = $this->cms_is_user_exists($user_name) && $user_name != $this->cms_user_name();
+            $valid_email = preg_match('/@.+\./', $email);
             $message   = "";
+            $error = FALSE;
             if ($user_name == "") {
                 $message = $this->cms_lang("Username is empty");
+                $error = TRUE;
             } else if ($exists) {
                 $message = $this->cms_lang("Username already exists");
+                $error = TRUE;
+            } else if (!$valid_email){
+                $message = $this->cms_lang("Invalid email address");
+                $error = TRUE;
             }
             $data = array(
                 "exists" => $exists,
+                "error" => $error,
                 "message" => $message
             );
             $this->cms_show_json($data);
@@ -527,7 +564,7 @@ class Main extends CMS_Controller
         $crud->set_subject($this->cms_lang('Navigation (Page)'));
 
         $crud->required_fields('navigation_name', 'title');
-        $crud->unique_fields('navigation_name', 'title');
+        $crud->unique_fields('navigation_name', 'title', 'url');
         $crud->unset_read();
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');

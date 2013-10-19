@@ -9,7 +9,8 @@
 	var REQUEST = "";
     function check_user_exists(){
         var user_name =  $('input[name="user_name"]').val();
-        var password = $('input[name="password"]').val();
+        var email = $('input[name="email"]').val();
+        var password = $('input[name="password"]').val();        
         var confirm_password = $('input[name="confirm_password"]').val();
         $("#img_ajax_loader").show();
         if(REQUEST_EXISTS){
@@ -19,10 +20,10 @@
         REQUEST = $.ajax({
             "url" : "check_registration",
             "type" : "POST",
-            "data" : {"user_name":user_name},
+            "data" : {"user_name":user_name, "email":email},
             "dataType" : "json",
             "success" : function(data){
-            	if(!data.exists && user_name!='' && password!='' && password==confirm_password){
+            	if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
                     $('input[name="register"]').show();
                     $('input[name="register"]').removeAttr('disabled');
                 }else{

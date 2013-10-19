@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.5 stable, October, 15, 2013
+- v0.6.5 stable, October, 19, 2013
 
 
 Server Requirements
@@ -875,4 +875,7 @@ v0.6.6
 + (proposed) Navigation: move to anywhere.
 + (done, tested) Add icon for navigation and quicklink.
 + (done, tested) Make set_rule callback of groceryCRUD works.
-+ (done, tested) Fix bug: nordrassil generate buggy one to many input
++ (done, tested) Fix bug: nordrassil generate buggy one to many input.
++ (done, tested) Add old Mysql & Mysqli driver again.
++ (done, tested) Check email on registration & change profile.
++ (done, tested) Better redirection in case of user accidentally logged out but still do `edit` or `add` on GroceryCRUD generated form. Once he logged in again, he should be redirected to the grid, not to the error message

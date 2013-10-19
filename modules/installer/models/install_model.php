@@ -2,7 +2,7 @@
 session_start();
 class Install_Model extends CI_Model{
 
-    public $db_protocol     = 'mysql';
+    public $db_protocol     = 'mysqli';
     public $db_host         = 'localhost';
     public $db_port         = '3306';
     public $db_name         = '';
@@ -56,8 +56,10 @@ class Install_Model extends CI_Model{
 
     protected $DEFAULT_PORT = array(
             'mysql' => '3306',
-            'pgsql' => '5432',
-            'sqlite' => '',
+            'mysqli' => '3306',
+            'pdo_mysql' => '3306',
+            'pdo_pgsql' => '5432',
+            'pdo_sqlite' => '',
         );
 
     public function __construct(){
@@ -68,10 +70,17 @@ class Install_Model extends CI_Model{
         if($this->db_port == ''){
             $this->db_port = $this->DEFAULT_PORT[$this->db_protocol];
         }
-        if($this->db_protocol=='sqlite'){
+        if($this->db_protocol=='pdo_sqlite'){
             $dsn = 'sqlite:'.FCPATH.'db.sqlite';
         }else{
-            $dsn = $this->db_protocol.':host='.$this->db_host.';port='.$this->db_port;
+            $db_protocol = '';
+            switch($this->db_protocol){
+                case 'mysql': $db_protocol = 'mysql'; break;
+                case 'mysqli': $db_protocol = 'mysql'; break;
+                case 'pdo_mysql': $db_protocol = 'mysql'; break;
+                case 'pdo_pgsql': $db_protocol = 'pgsql'; break;
+            }
+            $dsn = $db_protocol.':host='.$this->db_host.';port='.$this->db_port;
             if($this->db_name != ''){
                 $dsn .= ';dbname='.$this->db_name;
             }
@@ -81,7 +90,14 @@ class Install_Model extends CI_Model{
 
     protected function build_db_config(){
         $dsn = $this->build_dsn();
-        $db_driver = $this->db_protocol == 'mysql'? 'mysqli' : 'pdo';
+        $db_driver = '';
+        switch($this->db_protocol){
+            case 'mysql': $db_driver = 'mysql'; break;
+            case 'mysqli': $db_driver = 'mysqli'; break;
+            case 'pdo_mysql': $db_driver = 'pdo'; break;
+            case 'pdo_pgsql': $db_driver = 'pdo'; break;
+            case 'pdo_sqlite': $db_driver = 'pdo'; break;
+        }
         return array(
             'dsn' => $dsn,
             'hostname' => $this->db_host,
@@ -113,7 +129,7 @@ class Install_Model extends CI_Model{
         if($db->conn_id === FALSE){
             $success = FALSE;
             // if it is MySQL, try to make database
-            if($this->db_protocol=='mysql'){
+            if($this->db_protocol=='mysql' || $this->db_protocol=='mysqli'){
                 // try to not use db_name
                 $db_name = $this->db_name;
                 $this->db_name = '';
@@ -161,10 +177,10 @@ class Install_Model extends CI_Model{
             $success =  FALSE;
             $error_list[] = 'Cannot connect using provided database setting';
         }
-        if($this->db_name=='' && $this->db_protocol != 'sqlite'){
+        if($this->db_name=='' && $this->db_protocol != 'pdo_sqlite'){
             $success = FALSE;
             $error_list[] = 'Database schema cannot be empty';
-        }
+        }        
         if($this->admin_user_name==''){
             $success = FALSE;
             $error_list[] = 'Admin user name cannot be empty';
@@ -181,14 +197,14 @@ class Install_Model extends CI_Model{
             $error_list[] = 'Admin password confirmation doesn\'t match';
         }
         // No-CMS directory
-        if (!is_writable(APPPATH.'..')) {
+        if (!is_writable(dirname(APPPATH))) {
             $success  = FALSE;
-            $error_list[] = APPPATH.'.. is not writable';
+            $error_list[] = dirname(APPPATH).' is not writable';
         }
         // assets/caches
-        if (!is_writable(APPPATH.'../assets/caches')) {
+        if (!is_writable(dirname(APPPATH).'/assets/caches')) {
             $success  = FALSE;
-            $error_list[] = "Asset cache directory (".APPPATH."../assets/caches) is not writable";
+            $error_list[] = "Asset cache directory (".dirname(APPPATH)."/assets/caches) is not writable";
         }
         // application/config/config.php
         if (!is_writable(APPPATH.'config/config.php')) {
@@ -330,37 +346,6 @@ class Install_Model extends CI_Model{
                     $mod_rewrite = TRUE;
                 }
             }
-            /* TODO: apply this if possible
-             if (!$mod_rewrite) {
-                    $htaccess_content = '<IfModule mod_rewrite.c>' . PHP_EOL;
-                    $htaccess_content .= '   Options +FollowSymLinks -Indexes' . PHP_EOL;
-                    $htaccess_content .= '   RewriteEngine On' . PHP_EOL;
-                    $htaccess_content .= '   RewriteBase ' . get_test_rewrite_base() . PHP_EOL;
-                    $htaccess_content .= '   # fake rule to verify if mod rewriting works (if there are unbearable restrictions..)' . PHP_EOL;
-                    $htaccess_content .= '   RewriteRule ^test_mod_rewrite$    test.php' . PHP_EOL;
-                    $htaccess_content .= '</IfModule>';
-                    file_put_contents(get_test_path('.htaccess'), $htaccess_content);
-                    $response = @file_get_contents(get_test_url('test_mod_rewrite'));
-                    unlink(get_test_path('.htaccess'));
-                    if ($response == 'ok') {
-                        $mod_rewrite = TRUE;
-                    }
-                }
-            if (!$mod_rewrite && in_array('curl', get_loaded_extensions())) {
-                file_put_contents(get_test_path('.htaccess'), $htaccess_content);
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, get_test_url('test_mod_rewrite'));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                $response = curl_exec($ch);
-                curl_close($ch);
-                unlink(get_test_path('.htaccess'));
-                if ($response == 'ok') {
-                    $mod_rewrite = TRUE;
-                }
-            }
-            
-                
-             */
             if(!$mod_rewrite){
                 $warning_list[] = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
             }
@@ -371,9 +356,9 @@ class Install_Model extends CI_Model{
             $error_list[] = APPPATH."logs is not writable";
         }
         // installer controller
-        if (!is_writable(APPPATH.'../modules/installer/controllers/installer.php')) {
+        if (!is_writable(dirname(APPPATH).'/modules/installer/controllers/installer.php')) {
             $success  = FALSE;
-            $error_list[] = APPPATH."../modules/installer/controllers/installer.php is not writable";
+            $error_list[] = dirname(APPPATH)."/modules/installer/controllers/installer.php is not writable";
         }
         return array(
                 'success' => $success,

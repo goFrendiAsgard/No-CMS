@@ -236,6 +236,7 @@
                 $('#md_table_photos tr').not(':first').remove();
                 synchronize_photos();
             }
+        }
     });
 
 

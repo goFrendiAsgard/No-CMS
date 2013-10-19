@@ -59,9 +59,11 @@
                                <label class="control-label" for="db_protocol">Protocol</label>
                                <div class="controls">
                                    <select id="db_protocol" name="db_protocol" class="input-xlarge input">
-                                       <option selected value="mysql">MySQL / MariaDB</option>
-                                       <option value="pgsql">PosgreSQL</option>
-                                       <option value="sqlite">SQLite</option>
+                                       <option value="mysql">MySQL/MariaDB (with mysql driver)</option>
+                                       <option selected value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
+                                       <option value="pdo_mysql">MySQL/MariaDB (with PDO driver)</option>
+                                       <option value="pdo_pgsql">PosgreSQL (with PDO driver)</option>
+                                       <option value="pdo_sqlite">SQLite (with PDO driver)</option>
                                    </select>
                                    <p class="help-block">Choose database protocol</p>
                                </div>
@@ -70,7 +72,7 @@
                                <label class="control-label" for="db_host">Server</label>
                                <div class="controls">
                                    <input type="text" id="db_host" name="db_host" value="localhost" class="input-xlarge input" />
-                                   <p class="help-block">Server name (e.g: 'localhost', '127.0.0.1', 'http://yourdomain.com')</p>
+                                   <p class="help-block">Server name (e.g: 'localhost', '127.0.0.1', 'http://yourDatabaseServer.com')</p>
                                </div>
                             </div>
                             <div class="control-group">
@@ -98,7 +100,7 @@
                                <label class="control-label" for="db_name">Schema</label>
                                <div class="controls">
                                    <input type="text" id="db_name" name="db_name" value="no_cms" class="input-xlarge input" />
-                                   <p class="help-block">Database schema (For MySQL/MariaDB, the installer will try to create the schema if it is not exists)</p>
+                                   <p class="help-block">Database schema (If you are on shared hosting or using PDO driver, the schema should be exists. If you are on local machine or have root privilege and use mysql/mysqli driver, the installer will try to make the schema for you)</p>
                                </div>
                             </div>
                             <div class="control-group">

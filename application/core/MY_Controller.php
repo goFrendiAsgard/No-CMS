@@ -1805,6 +1805,27 @@ class CMS_Module_Installer extends CMS_Controller
                 $index = 0;
         }
 
+        // is there any navigation with the same name?
+        $dont_insert = FALSE;
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)->get();
+        if($query->num_rows()>0){
+            $dont_insert = TRUE;
+        }
+
+        // is there any navigation with same url
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('url', $url)->get();
+        if($query->num_rows()>0){
+            $dont_insert = TRUE;
+        }
+
+        if($dont_insert){
+            $error = 'Navigation already exists';
+            throw new Exception($error);
+            return NULL;
+        }
+
         //insert it :D
         $data = array(
             "navigation_name" => $navigation_name,
