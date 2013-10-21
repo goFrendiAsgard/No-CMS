@@ -88,8 +88,7 @@ class Install_Model extends CI_Model{
         return $dsn;
     }
 
-    protected function build_db_config(){
-        $dsn = $this->build_dsn();
+    protected function get_db_driver(){
         $db_driver = '';
         switch($this->db_protocol){
             case 'mysql': $db_driver = 'mysql'; break;
@@ -98,6 +97,13 @@ class Install_Model extends CI_Model{
             case 'pdo_pgsql': $db_driver = 'pdo'; break;
             case 'pdo_sqlite': $db_driver = 'pdo'; break;
         }
+        return $db_driver;
+
+    }
+
+    protected function build_db_config(){
+        $dsn = $this->build_dsn();
+        $db_driver = $this->get_db_driver();
         return array(
             'dsn' => $dsn,
             'hostname' => $this->db_host,
@@ -949,7 +955,7 @@ class Install_Model extends CI_Model{
         $value_suffix = "',";
         $equal_sign = '=>';
 
-        $db_driver = $this->db_protocol == 'mysql'? 'mysqli' : 'pdo';
+        $db_driver = $this->get_db_driver();
         $this->change_config($file_name, "dsn", $this->build_dsn(), $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "hostname", $this->db_host, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "database", $this->db_name, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
