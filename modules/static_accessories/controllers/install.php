@@ -106,7 +106,7 @@ class Install extends CMS_Module_Installer {
 
         // parent of all navigations
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Accessories Widgets',
-            $module_path.'/static_accessories', $this->PRIV_EVERYONE, 'main_management');
+            $module_path.'/static_accessories', $this->PRIV_AUTHORIZED, 'main_management');
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('manage_slide'), 'Slideshow',
