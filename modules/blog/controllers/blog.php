@@ -27,10 +27,18 @@ class Blog extends CMS_Priv_Strict_Controller {
     public function index($article_url = NULL){
         $this->load->model($this->cms_module_path().'/article_model');
 
-        // add comment
-        // TODO: add scenario as in http://stackoverflow.com/a/10948623/755319
-        // or call "Kay Nine" :)
-        $previous_secret_code = $this->session->flashdata('blog_comment_secret_code');
+        // the honey_pot, every fake input should be empty
+        $honey_pot_pass = (strlen($this->input->post('name', ''))==0) &&
+            (strlen($this->input->post('email', ''))==0) &&
+            (strlen($this->input->post('website', ''))==0) &&
+            (strlen($this->input->post('content', ''))==0);
+        if(!$honey_pot_pass){
+            show_404();
+            die();
+        }
+
+        // get previously generated secret code
+        $previous_secret_code = $this->session->flashdata('__blog_comment_secret_code');
         if($previous_secret_code === NULL){
             $previous_secret_code = $this->__random_string();
         }
@@ -42,15 +50,7 @@ class Blog extends CMS_Priv_Strict_Controller {
         $email = $this->input->post($previous_secret_code.'xemail', TRUE);
         $website = $this->input->post($previous_secret_code.'xwebsite', TRUE);
         $content = $this->input->post($previous_secret_code.'xcontent', TRUE);
-        // the honey_pot, every fake input should be empty
-        $honey_pot_pass = (strlen($this->input->post('name', ''))==0) &&
-            (strlen($this->input->post('email', ''))==0) &&
-            (strlen($this->input->post('website', ''))==0) &&
-            (strlen($this->input->post('content', ''))==0);
-        if(!$honey_pot_pass){
-            show_404();
-            die();
-        }
+        
         if($content && $honey_pot_pass){
             $valid_email = preg_match('/@.+\./', $email);
             if(!$valid_email){
@@ -68,7 +68,7 @@ class Blog extends CMS_Priv_Strict_Controller {
 
         // generate new secret code
         $secret_code = $this->__random_string();
-        $this->session->set_flashdata('blog_comment_secret_code', $secret_code);
+        $this->session->set_flashdata('__blog_comment_secret_code', $secret_code);
 
         $data = array(
             'submenu_screen' => $this->cms_submenu_screen($this->cms_complete_navigation_name('index')),

@@ -12,6 +12,18 @@ class Main extends CMS_Controller
         return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
     }
 
+    private function __random_string($length=10)
+    {
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        $size = strlen( $chars );
+        $str = '';
+        for( $i = 0; $i < $length; $i++ ){
+            $str .= $chars[ rand( 0, $size - 1 ) ];
+        }
+        return $str;
+    }
+
     protected function upload($upload_path, $input_file_name = 'userfile', $submit_name = 'upload')
     {
         $data = array(
@@ -220,20 +232,39 @@ class Main extends CMS_Controller
     public function register()
     {
         $this->cms_guard_page('main_register');
+
+        // the honey_pot, every fake input should be empty
+        $honey_pot_pass = (strlen($this->input->post('user_name', ''))==0) &&
+            (strlen($this->input->post('email', ''))==0) &&
+            (strlen($this->input->post('real_name', ''))==0) &&
+            (strlen($this->input->post('password', ''))==0) &&
+            (strlen($this->input->post('confirm_password'))==0);
+        if(!$honey_pot_pass){
+            show_404();
+            die();
+        }
+
+        $previous_secret_code = $this->session->userdata('__main_registration_secret_code');
+        if($previous_secret_code === NULL){
+            $previous_secret_code = $this->__random_string();
+        }
         //get user input
-        $user_name        = $this->input->post('user_name');
-        $email            = $this->input->post('email');
-        $real_name        = $this->input->post('real_name');
-        $password         = $this->input->post('password');
-        $confirm_password = $this->input->post('confirm_password');
+        $user_name        = $this->input->post($previous_secret_code.'user_name');
+        $email            = $this->input->post($previous_secret_code.'email');
+        $real_name        = $this->input->post($previous_secret_code.'real_name');
+        $password         = $this->input->post($previous_secret_code.'password');
+        $confirm_password = $this->input->post($previous_secret_code.'confirm_password');
 
         //set validation rule
-        $this->form_validation->set_rules('user_name', 'User Name', 'required|xss_clean');
-        $this->form_validation->set_rules('email', 'E mail', 'required|xss_clean|valid_email');
-        $this->form_validation->set_rules('real_name', 'Real Name', 'required|xss_clean');
-        $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[confirm_password]');
-        $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
+        $this->form_validation->set_rules($previous_secret_code.'user_name', 'User Name', 'required|xss_clean');
+        $this->form_validation->set_rules($previous_secret_code.'email', 'E mail', 'required|xss_clean|valid_email');
+        $this->form_validation->set_rules($previous_secret_code.'real_name', 'Real Name', 'required|xss_clean');
+        $this->form_validation->set_rules($previous_secret_code.'password', 'Password', 'required|xss_clean|matches['.$previous_secret_code.'confirm_password]');
+        $this->form_validation->set_rules($previous_secret_code.'confirm_password', 'Password Confirmation', 'required|xss_clean');
 
+        // generate new secret code
+        $secret_code = $this->__random_string();
+        $this->session->set_userdata('__main_registration_secret_code', $secret_code);
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
             $this->cms_do_register($user_name, $email, $real_name, $password);
             redirect('main/index');
@@ -243,6 +274,7 @@ class Main extends CMS_Controller
                 "email" => $email,
                 "real_name" => $real_name,
                 "register_caption" => $this->cms_lang('Register'),
+                "secret_code" => $secret_code,
             );
             $this->view('main/main_register', $data, 'main_register');
         }

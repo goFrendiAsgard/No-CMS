@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.5 stable, October, 19, 2013
+- v0.6.5 stable, October, 23, 2013
 
 
 Server Requirements
@@ -879,7 +879,7 @@ v0.6.6
 + (done, tested) Add old Mysql & Mysqli driver again.
 + (done, tested) Check email on registration & change profile.
 + (done, tested) Better redirection in case of user accidentally logged out but still do `edit` or `add` on GroceryCRUD generated form. Once he logged in again, he should be redirected to the grid, not to the error message
-+ (proposed) Gravatar integration
++ (done, tested) Gravatar integration at blog comment
 + (proposed) Make "Contact Us" module, and make it secure
-+ (proposed) Secure Registration form
++ (done, tested) Secure Registration form
 + (done, tested) Secure comment
