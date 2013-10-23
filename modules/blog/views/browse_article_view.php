@@ -42,9 +42,6 @@
         font-size : small;
         font-weight: bold;
     }
-    div.row-odd{
-        background-color: #DDDDFF;
-    }
     div.edit_delete_record_container{
         margin-bottom:45px;
     }
@@ -108,12 +105,20 @@
             $odd_row = TRUE;
             foreach($article['comments'] as $comment){
                 echo '<div class="comment-item well">';
-                echo '<div class="comment-header">Comment From : '.$comment['name'].', '.$comment['date'];
+                echo '<div class="comment-header">';
+                echo '<img style="margin-right:20px; margin-bottom:5px; margin-top:5px; float:left;" src="'.$comment['gravatar_url'].'" />';
+                echo '<span stylel="float:left;">';
+                echo $comment['name'].', '.$comment['date'].br();
                 if($comment['website'] != ''){
-                    echo br().anchor($comment['website'], '('.$comment['website'].')');
+                    echo anchor($comment['website'], '('.$comment['website'].')');
+                }else{
+                    echo '(website not available)';
                 }
+                echo '</span>';
                 echo '</div>';
+                echo '<div style="clear:both; margin-top:10px;">';
                 echo $comment['content'];
+                echo '</div>';
                 echo '</div>';
             }
             echo br();

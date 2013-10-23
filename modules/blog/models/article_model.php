@@ -38,19 +38,18 @@ class Article_Model extends  CMS_Model{
     }
 
     public function get_count_article_url($article_url){
-        $SQL = "SELECT article_id FROM ".$this->cms_complete_table_name('article').
-        " WHERE article_url ='".addslashes($article_url)."'";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('article_id')
+            ->from($this->cms_complete_table_name('article'))
+            ->where('article_url', $article_url)
+            ->get();
         return $query->num_rows();
     }
 
     public function get_article_url($article_id){
-        $SQL = "
-            SELECT
-                article_id, article_url
-            FROM ".$this->cms_complete_table_name('article')."
-            WHERE article_id = $article_id";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('article_id, article_url')
+            ->from($this->cms_complete_table_name('article'))
+            ->where('article_id', $article_id)
+            ->get();
         if($query->num_rows()>0){
             $row = $query->row();
             return $row->article_url;
@@ -62,8 +61,9 @@ class Article_Model extends  CMS_Model{
 
     public function get_available_category(){
         $result = array(''=>'All Category');
-        $SQL = "SELECT category_name FROM ".$this->cms_complete_table_name('category');
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('category_name')
+            ->from($this->cms_complete_table_name('category'))
+            ->get();
         foreach($query->result() as $row){
             $result[$row->category_name] = $row->category_name;
         }
@@ -203,33 +203,37 @@ class Article_Model extends  CMS_Model{
         $search = array('<', '>');
         $replace = array('&lt;', '&gt;');
 
-        $SQL = "SELECT comment_id, date, author_user_id, name, email, website, content
-        FROM ".$this->cms_complete_table_name('comment')."
-        WHERE article_id = '$article_id' ORDER BY `date` asc";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content')
+            ->from($this->cms_complete_table_name('comment'))
+            ->where('article_id', $article_id)
+            ->order_by('date')
+            ->get();
 
         $data = array();
         foreach($query->result() as $row){
             $user_id = $row->author_user_id;
             if(isset($user_id) && $user_id>0){
-                $query_user = $this->db->select('real_name, user_name')
+                $query_user = $this->db->select('real_name, user_name, email')
                     ->from(cms_table_name('main_user'))
                     ->where('user_id', $user_id)
                     ->get();
                 $row_user = $query_user->row();
                 $name = trim($row_user->real_name)==''? $row_user->user_name: $row_user->real_name;
+                $email = $row_user->email;
             }else{
                 $name = $row->name;
+                $email = $row->email;
             }
+            $email = $email === NULL ? '' : $email;
+            $website = $row->website === NULL ? '' : $row->website;
             $this->load->helper('url');
-            if($row->website === NULL){
-                $row->website = '';
-            }
             $result = array(
                     "date" => date('Y-m-d'),
                     "content" => str_replace($search, $replace, $row->content),
                     "name" => $name,
-                    "website" => prep_url($row->website)
+                    "website" => prep_url($website),
+                    "email" => $email,
+                    "gravatar_url" => 'http://www.gravatar.com/avatar/'.md5($email).'?s=32&r=pg&d=identicon'
             );
             $data[] = $result;
         }

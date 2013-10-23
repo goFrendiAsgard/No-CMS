@@ -879,3 +879,7 @@ v0.6.6
 + (done, tested) Add old Mysql & Mysqli driver again.
 + (done, tested) Check email on registration & change profile.
 + (done, tested) Better redirection in case of user accidentally logged out but still do `edit` or `add` on GroceryCRUD generated form. Once he logged in again, he should be redirected to the grid, not to the error message
++ (proposed) Gravatar integration
++ (proposed) Make "Contact Us" module, and make it secure
++ (proposed) Secure Registration form
++ (done, tested) Secure comment
