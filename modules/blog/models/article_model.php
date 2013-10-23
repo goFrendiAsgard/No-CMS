@@ -222,6 +222,9 @@ class Article_Model extends  CMS_Model{
                 $name = $row->name;
             }
             $this->load->helper('url');
+            if($row->website === NULL){
+                $row->website = '';
+            }
             $result = array(
                     "date" => date('Y-m-d'),
                     "content" => str_replace($search, $replace, $row->content),

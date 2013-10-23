@@ -66,9 +66,15 @@
 <input type="text" name="search" value="<?php echo $keyword; ?>" id="input_search" class="input-medium search-query">
 <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary">
 <?php
+    // show add record button
 	if($allow_navigate_backend){
 		echo '<a href="'.$backend_url.'/add/" class="btn add_record">Add</a>'.PHP_EOL;
 	}
+
+    // show error message if any
+    if(!$success){
+        echo '<div class="alert alert-danger">'.$error_message.'</div>';
+    }
 ?>
 <div id="record_content">
     <?php
@@ -101,15 +107,12 @@
             // comment
             $odd_row = TRUE;
             foreach($article['comments'] as $comment){
-                if($odd_row){
-                    $row_class = 'row-odd';
-                }else{
-                    $row_class = 'row-even';
+                echo '<div class="comment-item well">';
+                echo '<div class="comment-header">Comment From : '.$comment['name'].', '.$comment['date'];
+                if($comment['website'] != ''){
+                    echo br().anchor($comment['website'], '('.$comment['website'].')');
                 }
-                $odd_row = !$odd_row;
-                echo '<div class="comment-item '.$row_class.'">';
-                echo '<div class="comment-header">Comment From : '.$comment['name'].', '.$comment['date'].br();
-                echo anchor($comment['website'], $comment['website']).'</div>';
+                echo '</div>';
                 echo $comment['content'];
                 echo '</div>';
             }
@@ -119,21 +122,21 @@
                 echo '<b>Add Comments </b>'.br().br();
                 echo form_open();
                 echo form_hidden('article_id', $article['id']);
-                echo form_input(array('name'=>'secret_code', 'value'=>$secret_code, 'class'=>'comment_normal'));
+                //echo form_input(array('name'=>'secret_code', 'value'=>$secret_code, 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'name', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'website', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'content', 'value'=>'', 'class'=>'comment_normal'));
                 if(!$is_user_login){
                     echo form_label('Name :').br();
-                    echo form_input('xname').br();
+                    echo form_input($secret_code.'xname', $name).br();
                     echo form_label('Email :').br();
-                    echo form_input('xemail').br();
+                    echo form_input($secret_code.'xemail', $email).br();
                 }
                 echo form_label('Website :').br();
-                echo form_input('xwebsite').br();
+                echo form_input($secret_code.'xwebsite', $website).br();
                 echo form_label('Comment :').br();
-                echo form_textarea('xcontent').br();
+                echo form_textarea($secret_code.'xcontent', $content).br();
                 echo form_submit('submit', 'Comment');
                 echo form_close();
             }
