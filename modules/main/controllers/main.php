@@ -267,7 +267,7 @@ class Main extends CMS_Controller
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
             $this->cms_do_register($user_name, $email, $real_name, $password);
-            redirect('main/index');
+            //redirect('main/index');
         } else {
             $data = array(
                 "user_name" => $user_name,

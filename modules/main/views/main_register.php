@@ -65,20 +65,20 @@
 <h3>{{ language:Register }}</h3>
 <?php
     echo form_open('main/register');
-    echo form_input(array('name'=>'name', 'value'=>'', 'class'=>'register_input'));
+    echo form_input(array('name'=>'user_name', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'real_name', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'password', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'confirm_password', 'value'=>'', 'class'=>'register_input'));
-    echo form_label('{{ language:User Name }}').br();
+    echo form_label('{{ language:User Name }}');
     echo form_input($secret_code.'user_name', $user_name).br();
-    echo form_label('{{ language:Email }}').br();
+    echo form_label('{{ language:Email }}');
     echo form_input($secret_code.'email', $email).br();
-    echo form_label('{{ language:Real Name }}').br();
+    echo form_label('{{ language:Real Name }}');
     echo form_input($secret_code.'real_name', $real_name).br();
-    echo form_label('{{ language:Password }}').br();
+    echo form_label('{{ language:Password }}');
     echo form_password($secret_code.'password').br();
-    echo form_label('{{ language:Confirm Password }}').br();
+    echo form_label('{{ language:Confirm Password }}');
     echo form_password($secret_code.'confirm_password').br();
     echo form_submit('register', $register_caption);
     echo form_close();
