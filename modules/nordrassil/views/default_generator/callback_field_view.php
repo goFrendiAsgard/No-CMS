@@ -49,11 +49,11 @@
         width:80px;
     }
     #<?php echo $table_id; ?>_container{
-        overflow-x: auto;
-        overflow-y:hidden;
+        /*overflow-x: auto;
+        overflow-y:visible;*/
     }
     #<?php echo $table_id; ?> th:last-child, #<?php echo $table_id; ?> td:last-child{
-        width: 125px;
+        width: 60px;
     }
 </style>
 

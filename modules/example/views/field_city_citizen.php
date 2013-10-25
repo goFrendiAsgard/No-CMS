@@ -8,11 +8,11 @@
         width:80px;
     }
     #md_table_citizen_container{
-        overflow-x: auto;
-        overflow-y:hidden;
+        /*overflow-x: auto;
+        overflow-y:visible;*/
     }
     #md_table_citizen th:last-child, #md_table_citizen td:last-child{
-        width: 125px;
+        width: 60px;
     }
 </style>
 

@@ -100,8 +100,13 @@ class Install extends CMS_Module_Installer {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
+        if($module_path == 'blog'){
+            $parent_url = 'blog';
+        }else{
+            $parent_url = $module_path.'/blog';
+        }
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
-            $module_path.'/blog', $this->PRIV_EVERYONE);
+            $parent_url, $this->PRIV_EVERYONE);
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',

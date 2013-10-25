@@ -17,14 +17,6 @@
     max-width: 100%;
 }
 
-#__section-content{
-    overflow-x:auto;
-    overflow-y:hidden;
-}
-.crud-form{
-    padding-bottom:165px;
-}
-
 body {
 	padding-bottom:40px;
 	padding-right:0px;
