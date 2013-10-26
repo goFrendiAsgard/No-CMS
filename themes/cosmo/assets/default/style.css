@@ -27,6 +27,12 @@ footer{
 	padding: 10px;
 }
 
+#__section-content{
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 30px;
+}
+
 /* grocery-CRUD flexigrid */
 .pGroup select#per_page
 {
