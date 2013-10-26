@@ -49,8 +49,9 @@
         width:80px;
     }
     #<?php echo $table_id; ?>_container{
-        /*overflow-x: auto;
-        overflow-y:visible;*/
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 30px;
     }
     #<?php echo $table_id; ?> th:last-child, #<?php echo $table_id; ?> td:last-child{
         width: 60px;

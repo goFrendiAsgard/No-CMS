@@ -27,6 +27,15 @@ footer{
 	padding: 10px;
 }
 
+/* grocery-CRUD flexigrid */
+.pGroup select#per_page
+{
+    max-width: 54px;
+}
+.chzn-results{
+    max-height:70px!important;
+}
+/* end of grocery-CRUD flexigrid */
 
 /* Landscape phones and down */
 @media (max-width: 480px){    

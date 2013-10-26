@@ -153,6 +153,10 @@
   border-bottom-color: #111111;
 }
 /* start */
+.navbar-inner{
+    min-height:45px;
+}
+
 .not_shown{
     display: none;
 }
@@ -217,6 +221,16 @@ footer{
     /* Proposed W3C Markup */ 
     background-image: linear-gradient(top left, white 0%, #EEEEEE 100%);
 }
+
+/* grocery-CRUD flexigrid */
+.pGroup select#per_page
+{
+    max-width: 54px;
+}
+.chzn-results{
+    max-height:70px!important;
+}
+/* end of grocery-CRUD flexigrid */
 
 
 /* Landscape phones and down */
