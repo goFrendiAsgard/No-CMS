@@ -45,6 +45,7 @@
     div.edit_delete_record_container{
         margin-bottom:45px;
     }
+    textarea[name="<?php echo $secret_code; ?>xcontent"]{width:90%;}
 </style>
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 
@@ -90,11 +91,13 @@
             }
             echo '</div>';
             // edit and delete button
-            if($allow_navigate_backend){
+            if($allow_navigate_backend){                
                 echo '<div class="edit_delete_record_container">';
-                echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';
-                echo '&nbsp;';
-                echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+                if($is_super_admin || $article['author_user_id'] == $user_id){
+                    echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';
+                    echo '&nbsp;';
+                    echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+                }
                 echo '</div>';
             }
             echo '<script type="text/javascript">
@@ -133,16 +136,16 @@
                 echo form_input(array('name'=>'website', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'content', 'value'=>'', 'class'=>'comment_normal'));
                 if(!$is_user_login){
-                    echo form_label('Name :').br();
+                    echo form_label('Name :');
                     echo form_input($secret_code.'xname', $name).br();
-                    echo form_label('Email :').br();
+                    echo form_label('Email :');
                     echo form_input($secret_code.'xemail', $email).br();
                 }
-                echo form_label('Website :').br();
+                echo form_label('Website :');
                 echo form_input($secret_code.'xwebsite', $website).br();
-                echo form_label('Comment :').br();
+                echo form_label('Comment :');
                 echo form_textarea($secret_code.'xcontent', $content).br();
-                echo form_submit('submit', 'Comment');
+                echo form_submit('submit', 'Comment', 'class="btn btn-primary"');
                 echo form_close();
             }
             echo '</div>';

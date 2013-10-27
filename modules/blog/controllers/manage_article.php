@@ -9,12 +9,55 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
+    public function redirect($redirect){
+        if($redirect){
+            redirect($this->cms_module_path.'/blog/manage_article/index');
+        }
+    }
+
     public function index(){
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // initialize groceryCRUD
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = $this->new_crud();
         $crud->unset_jquery();
+
+        // check state
+        $state = $crud->getState();
+        $state_info = $crud->getStateInfo();
+        $primary_key = isset($state_info->primary_key)? $state_info->primary_key : NULL;
+
+        $allow_continue = TRUE;
+        if($this->cms_user_id() != 1 && !in_array(1, $this->cms_user_group_id()) && isset($primary_key) && $primary_key !== NULL){
+            $query = $this->db->select('author_user_id')
+                ->from($this->cms_complete_table_name('article'))
+                ->where(array('article_id'=> $primary_key, 'author_user_id'=> $this->cms_user_id()))
+                ->get();
+            if($query->num_rows() == 0){
+                $allow_continue = FALSE;
+            }
+        }
+
+        switch($state){
+            case 'unknown': break;
+            case 'list' : break;
+            case 'add' :  break;
+            case 'edit' : $this->redirect(!$allow_continue); break;
+            case 'delete' : $this->redirect(!$allow_continue); break;
+            case 'insert' : $this->redirect(!$allow_continue); break;
+            case 'update' : break;
+            case 'ajax_list' : break;
+            case 'ajax_list_info': break;
+            case 'insert_validation': break;
+            case 'update_validation': break;
+            case 'upload_file': break;
+            case 'delete_file': break;
+            case 'ajax_relation': break;
+            case 'ajax_relation_n_n': break;
+            case 'success': break;
+            case 'export': break;
+            case 'print': break;
+        }
 
         // set model
         $crud->set_model($this->cms_module_path().'/grocerycrud_article_model');
@@ -24,6 +67,10 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 
         // table name
         $crud->set_table($this->cms_complete_table_name('article'));
+        // only super admin can edit other's article
+        if($this->cms_user_id() <> 1 && !in_array(1, $this->cms_user_group_id())){
+            $crud->where('author_user_id', $this->cms_user_id());
+        }
 
         // set subject
         $crud->set_subject('Article');

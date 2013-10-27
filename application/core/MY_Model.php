@@ -173,6 +173,23 @@ class CMS_Model extends CI_Model
 
     /**
      * @author goFrendiAsgard
+     * @return array
+     * @desc   get group list of current user
+     */
+    public function cms_user_group_id(){
+        $query = $this->db->select('group_id')
+            ->from(cms_table_name('main_group_user'))
+            ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
+            ->get();
+        $group_id = array();
+        foreach($query->result() as $row){
+            $group_id[] = $row->group_id;
+        }
+        return $group_id;
+    }
+
+    /**
+     * @author goFrendiAsgard
      * @return boolean
      * @desc   TRUE if current user is super admin, FALSE otherwise
      */

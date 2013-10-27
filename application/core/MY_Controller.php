@@ -178,6 +178,14 @@ class CMS_Controller extends MX_Controller
 
     /**
      * @author goFrendiAsgard
+     * @return array
+     */
+    protected function cms_user_group_id(){        
+        return $this->No_CMS_Model->cms_user_group_id();
+    }
+
+    /**
+     * @author goFrendiAsgard
      * @return boolean
      * @desc   TRUE if current user is super admin, FALSE otherwise
      */

@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_Hobby
+ * Description of Manage_Message
  *
  * @author No-CMS Module Generator
  */
-class Manage_Hobby extends CMS_Priv_Strict_Controller {
+class Manage_Message extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
@@ -45,37 +45,39 @@ class Manage_Hobby extends CMS_Priv_Strict_Controller {
         
         // unset things 
         $crud->unset_jquery();
-        $crud->unset_read();
-        // $crud->unset_add();
-        // $crud->unset_edit();
+        // $crud->unset_read();
+        $crud->unset_add();
+        $crud->unset_edit();
         // $crud->unset_list();
         // $crud->unset_back_to_list();
         // $crud->unset_print();
         // $crud->unset_export();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_hobby_model');
+        $crud->set_model($this->cms_module_path().'/grocerycrud_message_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('hobby'));
+        $crud->set_table($this->cms_complete_table_name('message'));
 
         // set subject
-        $crud->set_subject('Hobby');
+        $crud->set_subject('Message');
 
         // displayed columns on list
-        $crud->columns('name');
+        $crud->columns('name','email','content');
         // displayed columns on edit operation
-        $crud->edit_fields('name');
+        $crud->edit_fields('name','email','content');
         // displayed columns on add operation
-        $crud->add_fields('name');
+        $crud->add_fields('name','email','content');
         
         
 
         // caption of each columns
         $crud->display_as('name','Name');
+        $crud->display_as('content','Content');
+        $crud->display_as('email','Email');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -83,7 +85,7 @@ class Manage_Hobby extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->required_fields('name');
+        $crud->required_fields('name', 'content', 'email');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -91,7 +93,7 @@ class Manage_Hobby extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->unique_fields('name');
+        
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -99,6 +101,7 @@ class Manage_Hobby extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->set_rules( $field_name , $caption, $filter );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $crud->set_rules('email', 'Email', 'valid_email');
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,8 +156,8 @@ class Manage_Hobby extends CMS_Priv_Strict_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
-        $this->view($this->cms_module_path().'/manage_hobby_view', $output,
-            $this->cms_complete_navigation_name('manage_hobby'));
+        $this->view($this->cms_module_path().'/manage_message_view', $output,
+            $this->cms_complete_navigation_name('manage_message'));
 
     }
 

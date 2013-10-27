@@ -77,7 +77,7 @@ class Article_Model extends  CMS_Model{
         $SQL = "
             SELECT
                 article_id, article_title, article_url, content, date, allow_comment,
-                real_name AS author
+                real_name AS author, author_user_id
             FROM ".$this->cms_complete_table_name('article')."
             LEFT JOIN ".cms_table_name('main_user')." ON (".cms_table_name('main_user').".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
             WHERE $where_article_url";
@@ -91,6 +91,7 @@ class Article_Model extends  CMS_Model{
                     "id" => $row->article_id,
                     "title" => $row->article_title,
                     "article_url" => $row->article_url,
+                    "author_user_id" => $row->author_user_id,
                     "content" => $this->cms_parse_keyword($content),
                     "author" => $row->author,
                     "date" => $row->date,
@@ -128,7 +129,7 @@ class Article_Model extends  CMS_Model{
         $offset = $page * $limit;
         $SQL = "
             SELECT
-                article_id, article_title, article_url, content, date, allow_comment,
+                article_id, article_title, article_url, content, date, allow_comment, author_user_id,
                 real_name AS author,
                 (
                   SELECT COUNT(comment_id) FROM ".$this->cms_complete_table_name('comment')."
@@ -152,6 +153,7 @@ class Article_Model extends  CMS_Model{
                     "id" => $row->article_id,
                     "title" => $row->article_title,
                     "article_url" => $row->article_url,
+                    "author_user_id" => $row->author_user_id,
                     "content" => $this->cms_parse_keyword($content),
                     "author" => $row->author,
                     "date" => $row->date,

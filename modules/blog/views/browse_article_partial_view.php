@@ -1,8 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 foreach($articles as $article){
+    $article_url = $module_path=='blog'? 'blog/index/': '{{ module_path }}/blog/index/';
+    $article_url .= $article['article_url'];
+
     echo '<div id="record_'.$article['id'].'">';
-    echo anchor(site_url('{{ module_path }}/blog/index/'.$article['article_url']),
-                '<h2>'.$article['title'].'</h2>');
+    echo anchor($article_url, '<h2>'.$article['title'].'</h2>');
     echo '('.$article['author'].', '.$article['date'].')';
     echo '<div>';
     echo $article['content'];
@@ -25,15 +27,16 @@ foreach($articles as $article){
         default : $comment_count_caption = ' ('.$comment_count.' comments)';
     }
 
-    echo '<div class="edit_delete_record_container">';
-    echo anchor('{{ module_path }}/blog/index/'.$article['article_url'],
+    echo '<div class="edit_delete_record_container">';    
+    echo anchor($article_url,
                 'read more'.$comment_count_caption, array("class"=>"btn btn-primary"));
     if($allow_navigate_backend){
-        echo '&nbsp;';
-        echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';
-        echo '&nbsp;';
-        echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
-
+        if($is_super_admin || $article['author_user_id'] == $user_id){
+            echo '&nbsp;';
+            echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';
+            echo '&nbsp;';
+            echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+        }
     }
     echo '</div>';
     echo '</div>';

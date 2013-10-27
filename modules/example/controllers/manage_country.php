@@ -17,6 +17,31 @@ class Manage_Country extends CMS_Priv_Strict_Controller {
         // this is just for code completion
         if (FALSE) $crud = new Extended_Grocery_CRUD();
 
+        // check state & get primary_key
+        $state = $crud->getState();
+        $state = $crud->getState();
+        $state_info = $crud->getStateInfo();
+        $primary_key = isset($state_info->primary_key)? $state_info->primary_key : NULL;
+        switch($state){
+            case 'unknown': break;
+            case 'list' : break;
+            case 'add' : break;
+            case 'edit' : break;
+            case 'delete' : break;
+            case 'insert' : break;
+            case 'update' : break;
+            case 'ajax_list' : break;
+            case 'ajax_list_info': break;
+            case 'insert_validation': break;
+            case 'update_validation': break;
+            case 'upload_file': break;
+            case 'delete_file': break;
+            case 'ajax_relation': break;
+            case 'ajax_relation_n_n': break;
+            case 'success': break;
+            case 'export': break;
+            case 'print': break;
+        }
         
         // unset things 
         $crud->unset_jquery();
@@ -134,7 +159,7 @@ class Manage_Country extends CMS_Priv_Strict_Controller {
     }
 
     public function before_insert($post_array){
-        return TRUE;
+        return $post_array;
     }
 
     public function after_insert($post_array, $primary_key){
@@ -143,7 +168,7 @@ class Manage_Country extends CMS_Priv_Strict_Controller {
     }
 
     public function before_update($post_array, $primary_key){
-        return TRUE;
+        return $post_array;
     }
 
     public function after_update($post_array, $primary_key){

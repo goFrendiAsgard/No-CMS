@@ -78,7 +78,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             'chosen_category' => $this->input->get('category'),
             'keyword' => $this->input->get('keyword'),
             'module_path' => $this->cms_module_path(),
-            'is_user_login' => $this->cms_user_id()>0,
+            'is_user_login' => $this->cms_user_id()>0,            
             'secret_code' => $secret_code,
             "success" => $success,
             "error_message" => $error_message,
@@ -86,6 +86,9 @@ class Blog extends CMS_Priv_Strict_Controller {
             "email" => $email,
             "website" => $website,
             "content" => $content,
+            'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
+            'module_path' => $this->cms_module_path(),
+            'user_id' => $this->cms_user_id(),
         );
 
 
@@ -115,6 +118,9 @@ class Blog extends CMS_Priv_Strict_Controller {
             'articles'=>$result,
             'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article')),
             'backend_url' => site_url($this->cms_module_path().'/manage_article/index'),
+            'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
+            'module_path' => $this->cms_module_path(),
+            'user_id' => $this->cms_user_id(),
         );
         $config = array('only_content'=>TRUE);
         $this->view($this->cms_module_path().'/browse_article_partial_view',$data,

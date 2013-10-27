@@ -80,7 +80,7 @@
     echo form_password($secret_code.'password').br();
     echo form_label('{{ language:Confirm Password }}');
     echo form_password($secret_code.'confirm_password').br();
-    echo form_submit('register', $register_caption);
+    echo form_submit('register', $register_caption, 'class="btn btn-primary"');
     echo form_close();
     echo br();
 ?>
