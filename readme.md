@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.5 stable, October, 27, 2013
+- v0.6.5 stable, October, 29, 2013
 
 
 Server Requirements
@@ -885,3 +885,6 @@ v0.6.6
 + (done, tested) Secure comment
 + (done, tested) Blog writer (which is not super admin) can only edit/delete his own article
 + (done, tested) working `overflow-x` and smaller `chzn-results`
++ (done, not tested) fix hardcoded sql that contain ```
++ (proposed) IP Deny manager
++ (proposed) Fix layout for small device

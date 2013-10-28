@@ -1787,11 +1787,13 @@ class CMS_Module_Installer extends CMS_Controller
             $this->db->query($query);
         }
     }
-    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL)
+    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph_icon=NULL)
     {
         //get parent's navigation_id
-        $SQL   = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_name='" . addslashes($parent_name) . "'";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $parent_name)
+            ->get();
         $row   = $query->row();
 
         $parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
@@ -1803,10 +1805,13 @@ class CMS_Module_Installer extends CMS_Controller
             } else {
                 $whereParentId = "(parent_id IS NULL)";
             }
-            $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_navigation')."` WHERE $whereParentId";
-            $query = $this->db->query($SQL);
+            $query = $this->db->select_max('index')
+                ->from(cms_table_name('main_navigation'))
+                ->$this->db->where($whereParentId)
+                ->get();
             if ($query->num_rows() > 0) {
                 $row   = $query->row();
+                $index = $row->index+1;
                 $index = $row->newIndex;
             }
             if (!isset($index))
@@ -1843,6 +1848,7 @@ class CMS_Module_Installer extends CMS_Controller
             "index" => $index,
             "description" => $description,
             "active"=>1,
+            "bootstrap_glyph_icon"=>$bootstrap_glyph_icon,
         );
         if (isset($parent_id)) {
             $data['parent_id'] = $parent_id;
@@ -1852,8 +1858,10 @@ class CMS_Module_Installer extends CMS_Controller
     protected final function remove_navigation($navigation_name)
     {
         //get navigation_id
-        $SQL           = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_name='" . addslashes($navigation_name) . "'";
-        $query         = $this->db->query($SQL);
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
         if ($query->num_rows() > 0) {
             $row           = $query->row();
             $navigation_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
@@ -2004,15 +2012,17 @@ class CMS_Module_Installer extends CMS_Controller
         //if it is null, index = max index+1
         if (!isset($index)) {
             if (isset($slug)) {
-                $whereSlug = "(slug = '$slug')";
+                $whereSlug = "(slug = '".addslashes($slug)."')";
             } else {
                 $whereSlug = "(slug IS NULL)";
             }
-            $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_widget')."` WHERE $whereSlug";
-            $query = $this->db->query($SQL);
+            $query = $this->db->select_max('index')
+                ->from(cms_table_name('main_widget'))
+                ->where($whereSlug)
+                ->get();
             if ($query->num_rows() > 0) {
                 $row   = $query->row();
-                $index = $row->newIndex;
+                $index = $row->index+1;
             }
 
             if (!isset($index))
@@ -2063,10 +2073,11 @@ class CMS_Module_Installer extends CMS_Controller
             $row           = $query->row();
             $navigation_id = $row->navigation_id;
             // index = max index+1
-            $SQL           = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_quicklink')."`";
-            $query         = $this->db->query($SQL);
+            $query = $this->db->select_max('index')
+                ->from(cms_table_name('main_quicklink'))
+                ->get();
             $row           = $query->row();
-            $index         = $row->newIndex;
+            $index         = $row->index+1;
             if (!isset($index))
                 $index = 0;
 
