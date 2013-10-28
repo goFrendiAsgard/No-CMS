@@ -887,4 +887,4 @@ v0.6.6
 + (done, tested) working `overflow-x` and smaller `chzn-results`
 + (done, not tested) fix hardcoded sql that contain ```
 + (proposed) IP Deny manager
-+ (proposed) Fix layout for small device
++ (done, tested) Fix layout for small device
