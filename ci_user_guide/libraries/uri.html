@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>URI Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="User Agent Class" href="user_agent.html" />
+	    <link rel="prev" title="Unit Testing Class" href="unit_testing.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3f764c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>URI Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="uri-class">
+<h1>URI Class<a class="headerlink" href="#uri-class" title="Permalink to this headline">¶</a></h1>
+<p>The URI Class provides functions that help you retrieve information from
+your URI strings. If you use URI routing, you can also retrieve
+information about the re-routed segments.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This class is initialized automatically by the system so there
+is no need to do it manually.</p>
+</div>
+<div class="section" id="this-uri-segment-n">
+<h2>$this-&gt;uri-&gt;segment(n)<a class="headerlink" href="#this-uri-segment-n" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to retrieve a specific segment. Where n is the segment
+number you wish to retrieve. Segments are numbered from left to right.
+For example, if your full URL is this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">http</span><span class="o">://</span><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">news</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="nx">metro</span><span class="o">/</span><span class="nx">crime_is_up</span>
+</pre></div>
+</div>
+<p>The segment numbers would be this:</p>
+<ol class="arabic simple">
+<li>news</li>
+<li>local</li>
+<li>metro</li>
+<li>crime_is_up</li>
+</ol>
+<p>By default the function returns NULL if the segment does not
+exist. There is an optional second parameter that permits you to set
+your own default value if the segment is missing. For example, this
+would tell the function to return the number zero in the event of
+failure:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$product_id</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>It helps avoid having to write code like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">===</span> <span class="k">FALSE</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="nv">$product_id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+    <span class="nv">$product_id</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-uri-rsegment-n">
+<h2>$this-&gt;uri-&gt;rsegment(n)<a class="headerlink" href="#this-uri-rsegment-n" title="Permalink to this headline">¶</a></h2>
+<p>This function is identical to the previous one, except that it lets you
+retrieve a specific segment from your re-routed URI in the event you are
+using CodeIgniter&#8217;s <a class="reference internal" href="../general/routing.html"><em>URI Routing</em></a> feature.</p>
+</div>
+<div class="section" id="this-uri-slash-segment-n">
+<h2>$this-&gt;uri-&gt;slash_segment(n)<a class="headerlink" href="#this-uri-slash-segment-n" title="Permalink to this headline">¶</a></h2>
+<p>This function is almost identical to $this-&gt;uri-&gt;segment(), except it
+adds a trailing and/or leading slash based on the second parameter. If
+the parameter is not used, a trailing slash added. Examples:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">slash_segment</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">slash_segment</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;leading&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">slash_segment</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Returns:</p>
+<ol class="arabic simple">
+<li>segment/</li>
+<li>/segment</li>
+<li>/segment/</li>
+</ol>
+</div>
+<div class="section" id="this-uri-slash-rsegment-n">
+<h2>$this-&gt;uri-&gt;slash_rsegment(n)<a class="headerlink" href="#this-uri-slash-rsegment-n" title="Permalink to this headline">¶</a></h2>
+<p>This function is identical to the previous one, except that it lets you
+add slashes a specific segment from your re-routed URI in the event you
+are using CodeIgniter&#8217;s <a class="reference internal" href="../general/routing.html"><em>URI Routing</em></a>
+feature.</p>
+</div>
+<div class="section" id="this-uri-uri-to-assoc-n">
+<h2>$this-&gt;uri-&gt;uri_to_assoc(n)<a class="headerlink" href="#this-uri-uri-to-assoc-n" title="Permalink to this headline">¶</a></h2>
+<p>This function lets you turn URI segments into and associative array of
+key/value pairs. Consider this URI:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">user</span><span class="o">/</span><span class="nx">search</span><span class="o">/</span><span class="nx">name</span><span class="o">/</span><span class="nx">joe</span><span class="o">/</span><span class="nx">location</span><span class="o">/</span><span class="nx">UK</span><span class="o">/</span><span class="nx">gender</span><span class="o">/</span><span class="nx">male</span>
+</pre></div>
+</div>
+<p>Using this function you can turn the URI into an associative array with
+this prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="p">[</span><span class="k">array</span><span class="p">]</span>
+<span class="p">(</span>
+    <span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;joe&#39;</span>
+    <span class="s1">&#39;location&#39;</span>  <span class="o">=&gt;</span> <span class="s1">&#39;UK&#39;</span>
+    <span class="s1">&#39;gender&#39;</span>    <span class="o">=&gt;</span> <span class="s1">&#39;male&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The first parameter of the function lets you set an offset. By default
+it is set to 3 since your URI will normally contain a
+controller/function in the first and second segments. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$array</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">uri_to_assoc</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+<span class="k">echo</span> <span class="nv">$array</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+</pre></div>
+</div>
+<p>The second parameter lets you set default key names, so that the array
+returned by the function will always contain expected indexes, even if
+missing from the URI. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$default</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;sort&#39;</span><span class="p">);</span>
+
+<span class="nv">$array</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">uri_to_assoc</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nv">$default</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If the URI does not contain a value in your default, an array index will
+be set to that name, with a value of FALSE.</p>
+<p>Lastly, if a corresponding value is not found for a given key (if there
+is an odd number of URI segments) the value will be set to FALSE
+(boolean).</p>
+</div>
+<div class="section" id="this-uri-ruri-to-assoc-n">
+<h2>$this-&gt;uri-&gt;ruri_to_assoc(n)<a class="headerlink" href="#this-uri-ruri-to-assoc-n" title="Permalink to this headline">¶</a></h2>
+<p>This function is identical to the previous one, except that it creates
+an associative array using the re-routed URI in the event you are using
+CodeIgniter&#8217;s <a class="reference internal" href="../general/routing.html"><em>URI Routing</em></a> feature.</p>
+</div>
+<div class="section" id="this-uri-assoc-to-uri">
+<h2>$this-&gt;uri-&gt;assoc_to_uri()<a class="headerlink" href="#this-uri-assoc-to-uri" title="Permalink to this headline">¶</a></h2>
+<p>Takes an associative array as input and generates a URI string from it.
+The array keys will be included in the string. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$array</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;product&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;shoes&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;red&#39;</span><span class="p">);</span>
+
+<span class="nv">$str</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">assoc_to_uri</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+
+<span class="c1">// Produces: product/shoes/size/large/color/red</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-uri-uri-string">
+<h2>$this-&gt;uri-&gt;uri_string()<a class="headerlink" href="#this-uri-uri-string" title="Permalink to this headline">¶</a></h2>
+<p>Returns a string with the complete URI. For example, if this is your
+full URL:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">http</span><span class="o">://</span><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">news</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="mi">345</span>
+</pre></div>
+</div>
+<p>The function would return this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">news</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="mi">345</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-uri-ruri-string">
+<h2>$this-&gt;uri-&gt;ruri_string()<a class="headerlink" href="#this-uri-ruri-string" title="Permalink to this headline">¶</a></h2>
+<p>This function is identical to the previous one, except that it returns
+the re-routed URI in the event you are using CodeIgniter&#8217;s <a class="reference internal" href="../general/routing.html"><em>URI
+Routing</em></a> feature.</p>
+</div>
+<div class="section" id="this-uri-total-segments">
+<h2>$this-&gt;uri-&gt;total_segments()<a class="headerlink" href="#this-uri-total-segments" title="Permalink to this headline">¶</a></h2>
+<p>Returns the total number of segments.</p>
+</div>
+<div class="section" id="this-uri-total-rsegments">
+<h2>$this-&gt;uri-&gt;total_rsegments()<a class="headerlink" href="#this-uri-total-rsegments" title="Permalink to this headline">¶</a></h2>
+<p>This function is identical to the previous one, except that it returns
+the total number of segments in your re-routed URI in the event you are
+using CodeIgniter&#8217;s <a class="reference internal" href="../general/routing.html"><em>URI Routing</em></a> feature.</p>
+</div>
+<div class="section" id="this-uri-segment-array">
+<h2>$this-&gt;uri-&gt;segment_array()<a class="headerlink" href="#this-uri-segment-array" title="Permalink to this headline">¶</a></h2>
+<p>Returns an array containing the URI segments. For example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$segs</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="o">-&gt;</span><span class="na">segment_array</span><span class="p">();</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$segs</span> <span class="k">as</span> <span class="nv">$segment</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$segment</span><span class="p">;</span>
+    <span class="k">echo</span> <span class="s1">&#39;&lt;br /&gt;&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-uri-rsegment-array">
+<h2>$this-&gt;uri-&gt;rsegment_array()<a class="headerlink" href="#this-uri-rsegment-array" title="Permalink to this headline">¶</a></h2>
+<p>This function is identical to the previous one, except that it returns
+the array of segments in your re-routed URI in the event you are using
+CodeIgniter&#8217;s <a class="reference internal" href="../general/routing.html"><em>URI Routing</em></a> feature.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

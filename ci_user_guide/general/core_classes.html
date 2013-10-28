@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Creating Core System Classes &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Creating Ancillary Classes" href="ancillary_classes.html" />
+	    <link rel="prev" title="Creating Drivers" href="creating_drivers.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa48b844>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Creating Core System Classes</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="creating-core-system-classes">
+<h1>Creating Core System Classes<a class="headerlink" href="#creating-core-system-classes" title="Permalink to this headline">¶</a></h1>
+<p>Every time CodeIgniter runs there are several base classes that are
+initialized automatically as part of the core framework. It is possible,
+however, to swap any of the core system classes with your own versions
+or even extend the core versions.</p>
+<p><strong>Most users will never have any need to do this, but the option to
+replace or extend them does exist for those who would like to
+significantly alter the CodeIgniter core.</strong></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Messing with a core system class has a lot of implications, so
+make sure you know what you are doing before attempting it.</p>
+</div>
+<div class="section" id="system-class-list">
+<h2>System Class List<a class="headerlink" href="#system-class-list" title="Permalink to this headline">¶</a></h2>
+<p>The following is a list of the core system files that are invoked every
+time CodeIgniter runs:</p>
+<ul class="simple">
+<li>Benchmark</li>
+<li>Config</li>
+<li>Controller</li>
+<li>Exceptions</li>
+<li>Hooks</li>
+<li>Input</li>
+<li>Language</li>
+<li>Loader</li>
+<li>Log</li>
+<li>Output</li>
+<li>Router</li>
+<li>Security</li>
+<li>URI</li>
+<li>Utf8</li>
+</ul>
+</div>
+<div class="section" id="replacing-core-classes">
+<h2>Replacing Core Classes<a class="headerlink" href="#replacing-core-classes" title="Permalink to this headline">¶</a></h2>
+<p>To use one of your own system classes instead of a default one simply
+place your version inside your local <em>application/core/</em> directory:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">application</span><span class="o">/</span><span class="nx">core</span><span class="o">/</span><span class="nx">some_class</span><span class="o">.</span><span class="nx">php</span>
+</pre></div>
+</div>
+<p>If this directory does not exist you can create it.</p>
+<p>Any file named identically to one from the list above will be used
+instead of the one normally used.</p>
+<p>Please note that your class must use CI as a prefix. For example, if
+your file is named Input.php the class will be named:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CI_Input</span> <span class="p">{</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="extending-core-class">
+<h2>Extending Core Class<a class="headerlink" href="#extending-core-class" title="Permalink to this headline">¶</a></h2>
+<p>If all you need to do is add some functionality to an existing library -
+perhaps add a method or two - then it&#8217;s overkill to replace the entire
+library with your version. In this case it&#8217;s better to simply extend the
+class. Extending a class is nearly identical to replacing a class with a
+couple exceptions:</p>
+<ul class="simple">
+<li>The class declaration must extend the parent class.</li>
+<li>Your new class name and filename must be prefixed with MY_ (this
+item is configurable. See below.).</li>
+</ul>
+<p>For example, to extend the native Input class you&#8217;ll create a file named
+application/core/MY_Input.php, and declare your class with:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MY_Input</span> <span class="k">extends</span> <span class="nx">CI_Input</span> <span class="p">{</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If you need to use a constructor in your class make sure you
+extend the parent constructor:</p>
+<div class="last highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MY_Input</span> <span class="k">extends</span> <span class="nx">CI_Input</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p><strong>Tip:</strong> Any functions in your class that are named identically to the
+methods in the parent class will be used instead of the native ones
+(this is known as &#8220;method overriding&#8221;). This allows you to substantially
+alter the CodeIgniter core.</p>
+<p>If you are extending the Controller core class, then be sure to extend
+your new class in your application controller&#8217;s constructors.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Welcome</span> <span class="k">extends</span> <span class="nx">MY_Controller</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;welcome_message&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="setting-your-own-prefix">
+<h3>Setting Your Own Prefix<a class="headerlink" href="#setting-your-own-prefix" title="Permalink to this headline">¶</a></h3>
+<p>To set your own sub-class prefix, open your
+<em>application/config/config.php</em> file and look for this item:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;subclass_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MY_&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Please note that all native CodeIgniter libraries are prefixed
+with CI_ so DO NOT use that as your prefix.</p>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>File Uploading Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Form Validation" href="form_validation.html" />
+	    <link rel="prev" title="Encryption Class" href="encryption.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa808d14>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>File Uploading Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="file-uploading-class">
+<h1>File Uploading Class<a class="headerlink" href="#file-uploading-class" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter&#8217;s File Uploading Class permits files to be uploaded. You can
+set various preferences, restricting the type and size of the files.</p>
+<div class="section" id="the-process">
+<h2>The Process<a class="headerlink" href="#the-process" title="Permalink to this headline">¶</a></h2>
+<p>Uploading a file involves the following general process:</p>
+<ul class="simple">
+<li>An upload form is displayed, allowing a user to select a file and
+upload it.</li>
+<li>When the form is submitted, the file is uploaded to the destination
+you specify.</li>
+<li>Along the way, the file is validated to make sure it is allowed to be
+uploaded based on the preferences you set.</li>
+<li>Once uploaded, the user will be shown a success message.</li>
+</ul>
+<p>To demonstrate this process here is brief tutorial. Afterward you&#8217;ll
+find reference information.</p>
+<div class="section" id="creating-the-upload-form">
+<h3>Creating the Upload Form<a class="headerlink" href="#creating-the-upload-form" title="Permalink to this headline">¶</a></h3>
+<p>Using a text editor, create a form called upload_form.php. In it, place
+this code and save it to your <strong>application/views/</strong> directory:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">head</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">title</span><span class="o">&gt;</span><span class="nx">Upload</span> <span class="nx">Form</span><span class="o">&lt;/</span><span class="nx">title</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">head</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">body</span><span class="o">&gt;</span>
+
+<span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nv">$error</span><span class="p">;</span><span class="cp">?&gt;</span>
+
+<span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nx">form_open_multipart</span><span class="p">(</span><span class="s1">&#39;upload/do_upload&#39;</span><span class="p">);</span><span class="cp">?&gt;</span>
+
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;file&quot;</span> <span class="na">name=</span><span class="s">&quot;userfile&quot;</span> <span class="na">size=</span><span class="s">&quot;20&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;br</span> <span class="nt">/&gt;&lt;br</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">value=</span><span class="s">&quot;upload&quot;</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;/form&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+<p>You&#8217;ll notice we are using a form helper to create the opening form tag.
+File uploads require a multipart form, so the helper creates the proper
+syntax for you. You&#8217;ll also notice we have an $error variable. This is
+so we can show error messages in the event the user does something
+wrong.</p>
+</div>
+<div class="section" id="the-success-page">
+<h3>The Success Page<a class="headerlink" href="#the-success-page" title="Permalink to this headline">¶</a></h3>
+<p>Using a text editor, create a form called upload_success.php. In it,
+place this code and save it to your <strong>application/views/</strong> directory:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">head</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">title</span><span class="o">&gt;</span><span class="nx">Upload</span> <span class="nx">Form</span><span class="o">&lt;/</span><span class="nx">title</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="nx">head</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">body</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">h3</span><span class="o">&gt;</span><span class="nx">Your</span> <span class="nb">file</span> <span class="nx">was</span> <span class="nx">successfully</span> <span class="nx">uploaded</span><span class="o">!&lt;/</span><span class="nx">h3</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="nx">ul</span><span class="o">&gt;</span>
+<span class="o">&lt;?</span><span class="nx">php</span> <span class="k">foreach</span> <span class="p">(</span><span class="nv">$upload_data</span> <span class="k">as</span> <span class="nv">$item</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span><span class="o">:?&gt;</span>
+<span class="o">&lt;</span><span class="nx">li</span><span class="o">&gt;&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nv">$item</span><span class="p">;</span><span class="cp">?&gt;</span>: <span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$value</span><span class="p">;</span><span class="cp">?&gt;</span><span class="nt">&lt;/li&gt;</span>
+<span class="cp">&lt;?php</span> <span class="k">endforeach</span><span class="p">;</span> <span class="cp">?&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+
+<span class="nt">&lt;p&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nx">anchor</span><span class="p">(</span><span class="s1">&#39;upload&#39;</span><span class="p">,</span> <span class="s1">&#39;Upload Another File!&#39;</span><span class="p">);</span> <span class="cp">?&gt;</span><span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-controller">
+<h3>The Controller<a class="headerlink" href="#the-controller" title="Permalink to this headline">¶</a></h3>
+<p>Using a text editor, create a controller called upload.php. In it, place
+this code and save it to your <strong>application/controllers/</strong> directory:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="k">class</span> <span class="nc">Upload</span> <span class="k">extends</span> <span class="nx">CI_Controller</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">();</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">));</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;upload_form&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;error&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39; &#39;</span> <span class="p">));</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">do_upload</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;upload_path&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="s1">&#39;./uploads/&#39;</span><span class="p">;</span>
+                <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;allowed_types&#39;</span><span class="p">]</span>        <span class="o">=</span> <span class="s1">&#39;gif|jpg|png&#39;</span><span class="p">;</span>
+                <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;max_size&#39;</span><span class="p">]</span>             <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+                <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;max_width&#39;</span><span class="p">]</span>            <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+                <span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;max_height&#39;</span><span class="p">]</span>           <span class="o">=</span> <span class="mi">768</span><span class="p">;</span>
+
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;upload&#39;</span><span class="p">,</span> <span class="nv">$config</span><span class="p">);</span>
+
+                <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">do_upload</span><span class="p">())</span>
+                <span class="p">{</span>
+                        <span class="nv">$error</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;error&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">display_errors</span><span class="p">());</span>
+
+                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;upload_form&#39;</span><span class="p">,</span> <span class="nv">$error</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span>
+                <span class="p">{</span>
+                        <span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;upload_data&#39;</span> <span class="o">=&gt;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">());</span>
+
+                        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;upload_success&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-upload-directory">
+<h3>The Upload Directory<a class="headerlink" href="#the-upload-directory" title="Permalink to this headline">¶</a></h3>
+<p>You&#8217;ll need a destination directory for your uploaded images. Create a
+directory at the root of your CodeIgniter installation called uploads
+and set its file permissions to 777.</p>
+</div>
+<div class="section" id="try-it">
+<h3>Try it!<a class="headerlink" href="#try-it" title="Permalink to this headline">¶</a></h3>
+<p>To try your form, visit your site using a URL similar to this one:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">upload</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>You should see an upload form. Try uploading an image file (either a
+jpg, gif, or png). If the path in your controller is correct it should
+work.</p>
+</div>
+</div>
+<div class="section" id="reference-guide">
+<h2>Reference Guide<a class="headerlink" href="#reference-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="initializing-the-upload-class">
+<h3>Initializing the Upload Class<a class="headerlink" href="#initializing-the-upload-class" title="Permalink to this headline">¶</a></h3>
+<p>Like most other classes in CodeIgniter, the Upload class is initialized
+in your controller using the <tt class="docutils literal"><span class="pre">$this-&gt;load-&gt;library()</span></tt> method:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;upload&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once the Upload class is loaded, the object will be available using:
+$this-&gt;upload</p>
+</div>
+<div class="section" id="setting-preferences">
+<h3>Setting Preferences<a class="headerlink" href="#setting-preferences" title="Permalink to this headline">¶</a></h3>
+<p>Similar to other libraries, you&#8217;ll control what is allowed to be upload
+based on your preferences. In the controller you built above you set the
+following preferences:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;upload_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;./uploads/&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;allowed_types&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;gif|jpg|png&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;max_size&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="s1">&#39;100&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;max_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1024&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;max_height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;768&#39;</span><span class="p">;</span>
+
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;upload&#39;</span><span class="p">,</span> <span class="nv">$config</span><span class="p">);</span>
+
+<span class="c1">// Alternately you can set preferences by calling the ``initialize()`` method. Useful if you auto-load the class:</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">initialize</span><span class="p">(</span><span class="nv">$config</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The above preferences should be fairly self-explanatory. Below is a
+table describing all available preferences.</p>
+</div>
+<div class="section" id="preferences">
+<h3>Preferences<a class="headerlink" href="#preferences" title="Permalink to this headline">¶</a></h3>
+<p>The following preferences are available. The default value indicates
+what will be used if you do not specify that preference.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="12%" />
+<col width="16%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Preference</th>
+<th class="head">Default Value</th>
+<th class="head">Options</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>upload_path</strong></td>
+<td>None</td>
+<td>None</td>
+<td>The path to the directory where the upload should be placed. The
+directory must be writable and the path can be absolute or relative.</td>
+</tr>
+<tr class="row-odd"><td><strong>allowed_types</strong></td>
+<td>None</td>
+<td>None</td>
+<td>The mime types corresponding to the types of files you allow to be
+uploaded. Usually the file extension can be used as the mime type.
+Separate multiple types with a pipe.</td>
+</tr>
+<tr class="row-even"><td><strong>file_name</strong></td>
+<td>None</td>
+<td>Desired file name</td>
+<td>If set CodeIgniter will rename the uploaded file to this name. The
+extension provided in the file name must also be an allowed file type.
+If no extension is provided in the original file_name will be used.</td>
+</tr>
+<tr class="row-odd"><td><strong>file_ext_tolower</strong></td>
+<td>FALSE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>If set to TRUE, the file extension will be forced to lower case</td>
+</tr>
+<tr class="row-even"><td><strong>overwrite</strong></td>
+<td>FALSE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>If set to true, if a file with the same name as the one you are
+uploading exists, it will be overwritten. If set to false, a number will
+be appended to the filename if another with the same name exists.</td>
+</tr>
+<tr class="row-odd"><td><strong>max_size</strong></td>
+<td>0</td>
+<td>None</td>
+<td>The maximum size (in kilobytes) that the file can be. Set to zero for no
+limit. Note: Most PHP installations have their own limit, as specified
+in the php.ini file. Usually 2 MB (or 2048 KB) by default.</td>
+</tr>
+<tr class="row-even"><td><strong>max_width</strong></td>
+<td>0</td>
+<td>None</td>
+<td>The maximum width (in pixels) that the image can be. Set to zero for no
+limit.</td>
+</tr>
+<tr class="row-odd"><td><strong>max_height</strong></td>
+<td>0</td>
+<td>None</td>
+<td>The maximum height (in pixels) that the image can be. Set to zero for no
+limit.</td>
+</tr>
+<tr class="row-even"><td><strong>min_width</strong></td>
+<td>0</td>
+<td>None</td>
+<td>The minimum width (in pixels) that the image can be. Set to zero for no
+limit.</td>
+</tr>
+<tr class="row-odd"><td><strong>min_height</strong></td>
+<td>0</td>
+<td>None</td>
+<td>The minimum height (in pixels) that the image can be. Set to zero for no
+limit.</td>
+</tr>
+<tr class="row-even"><td><strong>max_filename</strong></td>
+<td>0</td>
+<td>None</td>
+<td>The maximum length that a file name can be. Set to zero for no limit.</td>
+</tr>
+<tr class="row-odd"><td><strong>max_filename_increment</strong></td>
+<td>100</td>
+<td>None</td>
+<td>When overwrite is set to FALSE, use this to set the maximum filename
+increment for CodeIgniter to append to the filename.</td>
+</tr>
+<tr class="row-even"><td><strong>encrypt_name</strong></td>
+<td>FALSE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>If set to TRUE the file name will be converted to a random encrypted
+string. This can be useful if you would like the file saved with a name
+that can not be discerned by the person uploading it.</td>
+</tr>
+<tr class="row-odd"><td><strong>remove_spaces</strong></td>
+<td>TRUE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>If set to TRUE, any spaces in the file name will be converted to
+underscores. This is recommended.</td>
+</tr>
+<tr class="row-even"><td><strong>detect_mime</strong></td>
+<td>TRUE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>If set to TRUE, a server side detection of the file type will be
+performed to avoid code injection attacks. DO NOT disable this option
+unless you have no other option as that would cause a security risk.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="setting-preferences-in-a-config-file">
+<h3>Setting preferences in a config file<a class="headerlink" href="#setting-preferences-in-a-config-file" title="Permalink to this headline">¶</a></h3>
+<p>If you prefer not to set preferences using the above method, you can
+instead put them into a config file. Simply create a new file called the
+upload.php, add the $config array in that file. Then save the file in:
+<strong>config/upload.php</strong> and it will be used automatically. You will NOT
+need to use the <tt class="docutils literal"><span class="pre">$this-&gt;upload-&gt;initialize()</span></tt> method if you save your
+preferences in a config file.</p>
+</div>
+</div>
+<div class="section" id="class-reference">
+<h2>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h2>
+<p>The following methods are available:</p>
+<div class="section" id="this-upload-do-upload">
+<h3>$this-&gt;upload-&gt;do_upload()<a class="headerlink" href="#this-upload-do-upload" title="Permalink to this headline">¶</a></h3>
+<p>Performs the upload based on the preferences you&#8217;ve set.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">By default the upload routine expects the file to come from
+a form field called userfile, and the form must be of type
+&#8220;multipart&#8221;.</p>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">form</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&quot;post&quot;</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&quot;some_action&quot;</span> <span class="nx">enctype</span><span class="o">=</span><span class="s2">&quot;multipart/form-data&quot;</span> <span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>If you would like to set your own field name simply pass its value to
+the <tt class="docutils literal"><span class="pre">do_upload()</span></tt> method:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$field_name</span> <span class="o">=</span> <span class="s2">&quot;some_field_name&quot;</span><span class="p">;</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">do_upload</span><span class="p">(</span><span class="nv">$field_name</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-upload-display-errors">
+<h3>$this-&gt;upload-&gt;display_errors()<a class="headerlink" href="#this-upload-display-errors" title="Permalink to this headline">¶</a></h3>
+<p>Retrieves any error messages if the <tt class="docutils literal"><span class="pre">do_upload()</span></tt> method returned
+false. The method does not echo automatically, it returns the data so
+you can assign it however you need.</p>
+<div class="section" id="formatting-errors">
+<h4>Formatting Errors<a class="headerlink" href="#formatting-errors" title="Permalink to this headline">¶</a></h4>
+<p>By default the above method wraps any errors within &lt;p&gt; tags. You can
+set your own delimiters like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">display_errors</span><span class="p">(</span><span class="s1">&#39;&lt;p&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="this-upload-data">
+<h3>$this-&gt;upload-&gt;data()<a class="headerlink" href="#this-upload-data" title="Permalink to this headline">¶</a></h3>
+<p>This is a helper method that returns an array containing all of the
+data related to the file you uploaded. Here is the array prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">Array</span>
+<span class="p">(</span>
+        <span class="p">[</span><span class="nx">file_name</span><span class="p">]</span>     <span class="o">=&gt;</span> <span class="nx">mypic</span><span class="o">.</span><span class="nx">jpg</span>
+        <span class="p">[</span><span class="nx">file_type</span><span class="p">]</span>     <span class="o">=&gt;</span> <span class="nx">image</span><span class="o">/</span><span class="nx">jpeg</span>
+        <span class="p">[</span><span class="nx">file_path</span><span class="p">]</span>     <span class="o">=&gt;</span> <span class="o">/</span><span class="nx">path</span><span class="o">/</span><span class="nx">to</span><span class="o">/</span><span class="nx">your</span><span class="o">/</span><span class="nx">upload</span><span class="o">/</span>
+        <span class="p">[</span><span class="nx">full_path</span><span class="p">]</span>     <span class="o">=&gt;</span> <span class="o">/</span><span class="nx">path</span><span class="o">/</span><span class="nx">to</span><span class="o">/</span><span class="nx">your</span><span class="o">/</span><span class="nx">upload</span><span class="o">/</span><span class="nx">jpg</span><span class="o">.</span><span class="nx">jpg</span>
+        <span class="p">[</span><span class="nx">raw_name</span><span class="p">]</span>      <span class="o">=&gt;</span> <span class="nx">mypic</span>
+        <span class="p">[</span><span class="nx">orig_name</span><span class="p">]</span>     <span class="o">=&gt;</span> <span class="nx">mypic</span><span class="o">.</span><span class="nx">jpg</span>
+        <span class="p">[</span><span class="nx">client_name</span><span class="p">]</span>   <span class="o">=&gt;</span> <span class="nx">mypic</span><span class="o">.</span><span class="nx">jpg</span>
+        <span class="p">[</span><span class="nx">file_ext</span><span class="p">]</span>      <span class="o">=&gt;</span> <span class="o">.</span><span class="nx">jpg</span>
+        <span class="p">[</span><span class="nx">file_size</span><span class="p">]</span>     <span class="o">=&gt;</span> <span class="mf">22.2</span>
+        <span class="p">[</span><span class="nx">is_image</span><span class="p">]</span>      <span class="o">=&gt;</span> <span class="mi">1</span>
+        <span class="p">[</span><span class="nx">image_width</span><span class="p">]</span>   <span class="o">=&gt;</span> <span class="mi">800</span>
+        <span class="p">[</span><span class="nx">image_height</span><span class="p">]</span>  <span class="o">=&gt;</span> <span class="mi">600</span>
+        <span class="p">[</span><span class="nx">image_type</span><span class="p">]</span>    <span class="o">=&gt;</span> <span class="nx">jpeg</span>
+        <span class="p">[</span><span class="nx">image_size_str</span><span class="p">]</span> <span class="o">=&gt;</span> <span class="nx">width</span><span class="o">=</span><span class="s2">&quot;800&quot;</span> <span class="nx">height</span><span class="o">=</span><span class="s2">&quot;200&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>To return one element from the array:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">(</span><span class="s1">&#39;file_name&#39;</span><span class="p">);</span>       <span class="c1">// Returns: mypic.jpg</span>
+</pre></div>
+</div>
+<div class="section" id="explanation">
+<h4>Explanation<a class="headerlink" href="#explanation" title="Permalink to this headline">¶</a></h4>
+<p>Here is an explanation of the above array items.</p>
+<p>Item
+Description
+<strong>file_name</strong>
+The name of the file that was uploaded including the file extension.
+<strong>file_type</strong>
+The file&#8217;s Mime type
+<strong>file_path</strong>
+The absolute server path to the file
+<strong>full_path</strong>
+The absolute server path including the file name
+<strong>raw_name</strong>
+The file name without the extension
+<strong>orig_name</strong>
+The original file name. This is only useful if you use the encrypted
+name option.
+<strong>client_name</strong>
+The file name as supplied by the client user agent, prior to any file
+name preparation or incrementing.
+<strong>file_ext</strong>
+The file extension with period
+<strong>file_size</strong>
+The file size in kilobytes
+<strong>is_image</strong>
+Whether the file is an image or not. 1 = image. 0 = not.
+<strong>image_width</strong>
+Image width.
+<strong>image_height</strong>
+Image height
+<strong>image_type</strong>
+Image type. Typically the file extension without the period.
+<strong>image_size_str</strong>
+A string containing the width and height. Useful to put into an image
+tag.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

@@ -1,0 +1,254 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Encryption Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="File Uploading Class" href="file_uploading.html" />
+	    <link rel="prev" title="Email Class" href="email.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb38702c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Encryption Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="encryption-class">
+<h1>Encryption Class<a class="headerlink" href="#encryption-class" title="Permalink to this headline">¶</a></h1>
+<p>The Encryption Class provides two-way data encryption. It uses a scheme
+that either compiles the message using a randomly hashed bitwise XOR
+encoding scheme, or is encrypted using the Mcrypt library. If Mcrypt is
+not available on your server the encoded message will still provide a
+reasonable degree of security for encrypted sessions or other such
+&#8220;light&#8221; purposes. If Mcrypt is available, you&#8217;ll be provided with a high
+degree of security appropriate for storage.</p>
+<div class="section" id="setting-your-key">
+<h2>Setting your Key<a class="headerlink" href="#setting-your-key" title="Permalink to this headline">¶</a></h2>
+<p>A <em>key</em> is a piece of information that controls the cryptographic
+process and permits an encrypted string to be decoded. In fact, the key
+you chose will provide the <strong>only</strong> means to decode data that was
+encrypted with that key, so not only must you choose the key carefully,
+you must never change it if you intend use it for persistent data.</p>
+<p>It goes without saying that you should guard your key carefully. Should
+someone gain access to your key, the data will be easily decoded. If
+your server is not totally under your control it&#8217;s impossible to ensure
+key security so you may want to think carefully before using it for
+anything that requires high security, like storing credit card numbers.</p>
+<p>To take maximum advantage of the encryption algorithm, your key should
+be 32 characters in length (256 bits). The key should be as random a
+string as you can concoct, with numbers and uppercase and lowercase
+letters. Your key should <strong>not</strong> be a simple text string. In order to be
+cryptographically secure it needs to be as random as possible.</p>
+<p>Your key can be either stored in your <strong>application/config/config.php</strong>, or
+you can design your own storage mechanism and pass the key dynamically
+when encoding/decoding.</p>
+<p>To save your key to your <strong>application/config/config.php</strong>, open the file
+and set:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;encryption_key&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;YOUR KEY&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="message-length">
+<h2>Message Length<a class="headerlink" href="#message-length" title="Permalink to this headline">¶</a></h2>
+<p>It&#8217;s important for you to know that the encoded messages the encryption
+function generates will be approximately 2.6 times longer than the
+original message. For example, if you encrypt the string &#8220;my super
+secret data&#8221;, which is 21 characters in length, you&#8217;ll end up with an
+encoded string that is roughly 55 characters (we say &#8220;roughly&#8221; because
+the encoded string length increments in 64 bit clusters, so it&#8217;s not
+exactly linear). Keep this information in mind when selecting your data
+storage mechanism. Cookies, for example, can only hold 4K of
+information.</p>
+</div>
+<div class="section" id="initializing-the-class">
+<h2>Initializing the Class<a class="headerlink" href="#initializing-the-class" title="Permalink to this headline">¶</a></h2>
+<p>Like most other classes in CodeIgniter, the Encryption class is
+initialized in your controller using the <strong>$this-&gt;load-&gt;library</strong> function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;encrypt&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Once loaded, the Encrypt library object will be available using:
+$this-&gt;encrypt</p>
+</div>
+<div class="section" id="this-encrypt-encode">
+<h2>$this-&gt;encrypt-&gt;encode()<a class="headerlink" href="#this-encrypt-encode" title="Permalink to this headline">¶</a></h2>
+<p>Performs the data encryption and returns it as a string. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$msg</span> <span class="o">=</span> <span class="s1">&#39;My secret message&#39;</span><span class="p">;</span>
+
+<span class="nv">$encrypted_string</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="o">-&gt;</span><span class="na">encode</span><span class="p">(</span><span class="nv">$msg</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can optionally pass your encryption key via the second parameter if
+you don&#8217;t want to use the one in your config file:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$msg</span> <span class="o">=</span> <span class="s1">&#39;My secret message&#39;</span><span class="p">;</span>
+<span class="nv">$key</span> <span class="o">=</span> <span class="s1">&#39;super-secret-key&#39;</span><span class="p">;</span>
+
+<span class="nv">$encrypted_string</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="o">-&gt;</span><span class="na">encode</span><span class="p">(</span><span class="nv">$msg</span><span class="p">,</span> <span class="nv">$key</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-encrypt-decode">
+<h2>$this-&gt;encrypt-&gt;decode()<a class="headerlink" href="#this-encrypt-decode" title="Permalink to this headline">¶</a></h2>
+<p>Decrypts an encoded string. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$encrypted_string</span> <span class="o">=</span> <span class="s1">&#39;APANtByIGI1BpVXZTJgcsAG8GZl8pdwwa84&#39;</span><span class="p">;</span>
+
+<span class="nv">$plaintext_string</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="o">-&gt;</span><span class="na">decode</span><span class="p">(</span><span class="nv">$encrypted_string</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>You can optionally pass your encryption key via the second parameter if
+you don&#8217;t want to use the one in your config file:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$msg</span> <span class="o">=</span> <span class="s1">&#39;My secret message&#39;</span><span class="p">;</span>
+<span class="nv">$key</span> <span class="o">=</span> <span class="s1">&#39;super-secret-key&#39;</span><span class="p">;</span>
+
+<span class="nv">$encrypted_string</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="o">-&gt;</span><span class="na">decode</span><span class="p">(</span><span class="nv">$msg</span><span class="p">,</span> <span class="nv">$key</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-encrypt-set-cipher">
+<h2>$this-&gt;encrypt-&gt;set_cipher();<a class="headerlink" href="#this-encrypt-set-cipher" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to set an Mcrypt cipher. By default it uses
+<strong>MCRYPT_RIJNDAEL_256</strong>. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="o">-&gt;</span><span class="na">set_cipher</span><span class="p">(</span><span class="nx">MCRYPT_BLOWFISH</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Please visit php.net for a list of <a class="reference external" href="http://php.net/mcrypt">available
+ciphers</a>.</p>
+<p>If you&#8217;d like to manually test whether your server supports Mcrypt you
+can use:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">echo</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;mcrypt_encrypt&#39;</span><span class="p">))</span> <span class="o">?</span> <span class="s1">&#39;Nope&#39;</span> <span class="o">:</span> <span class="s1">&#39;Yup&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="this-encrypt-set-mode">
+<h2>$this-&gt;encrypt-&gt;set_mode();<a class="headerlink" href="#this-encrypt-set-mode" title="Permalink to this headline">¶</a></h2>
+<p>Permits you to set an Mcrypt mode. By default it uses <strong>MCRYPT_MODE_CBC</strong>.
+Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="o">-&gt;</span><span class="na">set_mode</span><span class="p">(</span><span class="nx">MCRYPT_MODE_CFB</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Please visit php.net for a list of <a class="reference external" href="http://php.net/mcrypt">available
+modes</a>.</p>
+</div>
+<div class="section" id="this-encrypt-encode-from-legacy-orig-data-legacy-mode-mcrypt-mode-ecb-key">
+<h2>$this-&gt;encrypt-&gt;encode_from_legacy($orig_data, $legacy_mode = MCRYPT_MODE_ECB, $key = &#8216;&#8217;);<a class="headerlink" href="#this-encrypt-encode-from-legacy-orig-data-legacy-mode-mcrypt-mode-ecb-key" title="Permalink to this headline">¶</a></h2>
+<p>Enables you to re-encode data that was originally encrypted with
+CodeIgniter 1.x to be compatible with the Encryption library in
+CodeIgniter 2.x. It is only necessary to use this method if you have
+encrypted data stored permanently such as in a file or database and are
+on a server that supports Mcrypt. &#8220;Light&#8221; use encryption such as
+encrypted session data or transitory encrypted flashdata require no
+intervention on your part. However, existing encrypted Sessions will be
+destroyed since data encrypted prior to 2.x will not be decoded.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last"><strong>Why only a method to re-encode the data instead of maintaining legacy
+methods for both encoding and decoding?</strong> The algorithms in the
+Encryption library have improved in CodeIgniter 2.x both for performance
+and security, and we do not wish to encourage continued use of the older
+methods. You can of course extend the Encryption library if you wish and
+replace the new methods with the old and retain seamless compatibility
+with CodeIgniter 1.x encrypted data, but this a decision that a
+developer should make cautiously and deliberately, if at all.</p>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$new_data</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="o">-&gt;</span><span class="na">encode_from_legacy</span><span class="p">(</span><span class="nv">$old_encrypted_string</span><span class="p">);</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="14%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>$orig_data</strong></td>
+<td>n/a</td>
+<td>The original encrypted data from CodeIgniter 1.x&#8217;s Encryption library</td>
+</tr>
+<tr class="row-odd"><td><strong>$legacy_mode</strong></td>
+<td>MCRYPT_MODE_ECB</td>
+<td>The Mcrypt mode that was used to generate the original encrypted data.
+CodeIgniter 1.x&#8217;s default was MCRYPT_MODE_ECB, and it will assume that
+to be the case unless overridden by this parameter.</td>
+</tr>
+<tr class="row-even"><td><strong>$key</strong></td>
+<td>n/a</td>
+<td>The encryption key. This it typically specified in your config file as
+outlined above.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

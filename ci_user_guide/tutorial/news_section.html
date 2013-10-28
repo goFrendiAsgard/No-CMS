@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>News section &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Tutorial" href="index.html" />
+	    <link rel="next" title="Create news items" href="create_news_items.html" />
+	    <link rel="prev" title="Static pages" href="static_pages.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb38717c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Tutorial</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>News section</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="news-section">
+<h1>News section<a class="headerlink" href="#news-section" title="Permalink to this headline">¶</a></h1>
+<p>In the last section, we went over some basic concepts of the framework
+by writing a class that includes static pages. We cleaned up the URI by
+adding custom routing rules. Now it&#8217;s time to introduce dynamic content
+and start using a database.</p>
+<div class="section" id="setting-up-your-model">
+<h2>Setting up your model<a class="headerlink" href="#setting-up-your-model" title="Permalink to this headline">¶</a></h2>
+<p>Instead of writing database operations right in the controller, queries
+should be placed in a model, so they can easily be reused later. Models
+are the place where you retrieve, insert, and update information in your
+database or other data stores. They represent your data.</p>
+<p>Open up the application/models directory and create a new file called
+news_model.php and add the following code. Make sure you&#8217;ve configured
+your database properly as described
+<a class="reference external" href="../database/configuration.html">here</a>.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">class</span> <span class="nc">News_model</span> <span class="k">extends</span> <span class="nx">CI_Model</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">database</span><span class="p">();</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code looks similar to the controller code that was used earlier. It
+creates a new model by extending <tt class="docutils literal"><span class="pre">CI_Model</span></tt> and loads the database
+library. This will make the database class available through the
+<tt class="docutils literal"><span class="pre">$this-&gt;db</span></tt> object.</p>
+<p>Before querying the database, a database schema has to be created.
+Connect to your database and run the SQL command below. Also add some
+seed records.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">CREATE</span> <span class="nx">TABLE</span> <span class="nx">news</span> <span class="p">(</span>
+        <span class="nx">id</span> <span class="nx">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="nx">AUTO_INCREMENT</span><span class="p">,</span>
+        <span class="nx">title</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">slug</span> <span class="nx">varchar</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">text</span> <span class="nx">text</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+        <span class="nx">PRIMARY</span> <span class="nx">KEY</span> <span class="p">(</span><span class="nx">id</span><span class="p">),</span>
+        <span class="nx">KEY</span> <span class="nx">slug</span> <span class="p">(</span><span class="nx">slug</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>Now that the database and a model have been set up, you&#8217;ll need a method
+to get all of our posts from our database. To do this, the database
+abstraction layer that is included with CodeIgniter — <a class="reference external" href="../database/query_builder.html">Active
+Record</a> — is used. This makes it
+possible to write your &#8216;queries&#8217; once and make them work on <a class="reference external" href="../general/requirements.html">all
+supported database systems</a>. Add the
+following code to your model.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">public</span> <span class="k">function</span> <span class="nf">get_news</span><span class="p">(</span><span class="nv">$slug</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$slug</span> <span class="o">===</span> <span class="k">FALSE</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;news&#39;</span><span class="p">);</span>
+                <span class="k">return</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">result_array</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">get_where</span><span class="p">(</span><span class="s1">&#39;news&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;slug&#39;</span> <span class="o">=&gt;</span> <span class="nv">$slug</span><span class="p">));</span>
+        <span class="k">return</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">row_array</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>With this code you can perform two different queries. You can get all
+news records, or get a news item by its <a class="reference external" href="#">slug</a>. You might have
+noticed that the $slug variable wasn&#8217;t sanitized before running the
+query; <a class="reference internal" href="../database/query_builder.html"><em>Query Builder</em></a> does this for you.</p>
+</div>
+<div class="section" id="display-the-news">
+<h2>Display the news<a class="headerlink" href="#display-the-news" title="Permalink to this headline">¶</a></h2>
+<p>Now that the queries are written, the model should be tied to the views
+that are going to display the news items to the user. This could be done
+in our pages controller created earlier, but for the sake of clarity, a
+new &#8220;news&#8221; controller is defined. Create the new controller at
+application/controllers/news.php.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">class</span> <span class="nc">News</span> <span class="k">extends</span> <span class="nx">CI_Controller</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">();</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">model</span><span class="p">(</span><span class="s1">&#39;news_model&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;news&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">news_model</span><span class="o">-&gt;</span><span class="na">get_news</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">view</span><span class="p">(</span><span class="nv">$slug</span> <span class="o">=</span> <span class="k">NULL</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;news_item&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">news_model</span><span class="o">-&gt;</span><span class="na">get_news</span><span class="p">(</span><span class="nv">$slug</span><span class="p">);</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Looking at the code, you may see some similarity with the files we
+created earlier. First, the <tt class="docutils literal"><span class="pre">__construct()</span></tt> method: it calls the
+constructor of its parent class (<tt class="docutils literal"><span class="pre">CI_Controller</span></tt>) and loads the model,
+so it can be used in all other methods in this controller.</p>
+<p>Next, there are two methods to view all news items and one for a
+specific news item. You can see that the $slug variable is passed to the
+model&#8217;s method in the second method. The model is using this slug to
+identify the news item to be returned.</p>
+<p>Now the data is retrieved by the controller through our model, but
+nothing is displayed yet. The next thing to do is passing this data to
+the views.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">public</span> <span class="k">function</span> <span class="nf">index</span><span class="p">()</span>
+<span class="p">{</span>
+        <span class="nx">data</span><span class="p">[</span><span class="s1">&#39;news&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">news_model</span><span class="o">-&gt;</span><span class="na">get_news</span><span class="p">();</span>
+        <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;News archive&#39;</span><span class="p">;</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;templates/header&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;news/index&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;templates/footer&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The code above gets all news records from the model and assigns it to a
+variable. The value for the title is also assigned to the $data[&#8216;title&#8217;]
+element and all data is passed to the views. You now need to create a
+view to render the news items. Create application/views/news/index.php
+and add the next piece of code.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span> <span class="k">foreach</span> <span class="p">(</span><span class="nv">$news</span> <span class="k">as</span> <span class="nv">$news_item</span><span class="p">)</span><span class="o">:</span> <span class="cp">?&gt;</span>
+
+        <span class="nt">&lt;h2&gt;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$news_item</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="cp">?&gt;</span><span class="nt">&lt;/h2&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;main&quot;</span><span class="nt">&gt;</span>
+                <span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$news_item</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="cp">?&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;p&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;</span><span class="cp">&lt;?php</span> <span class="k">echo</span> <span class="nv">$news_item</span><span class="p">[</span><span class="s1">&#39;slug&#39;</span><span class="p">]</span> <span class="cp">?&gt;</span><span class="s">&quot;</span><span class="nt">&gt;</span>View article<span class="nt">&lt;/a&gt;&lt;/p&gt;</span>
+
+<span class="cp">&lt;?php</span> <span class="k">endforeach</span> <span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<p>Here, each news item is looped and displayed to the user. You can see we
+wrote our template in PHP mixed with HTML. If you prefer to use a
+template language, you can use CodeIgniter&#8217;s <a class="reference external" href="../libraries/parser">Template
+Parser</a> class or a third party parser.</p>
+<p>The news overview page is now done, but a page to display individual
+news items is still absent. The model created earlier is made in such
+way that it can easily be used for this functionality. You only need to
+add some code to the controller and create a new view. Go back to the
+news controller and update <tt class="docutils literal"><span class="pre">view()</span></tt> with the following:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">public</span> <span class="k">function</span> <span class="nf">view</span><span class="p">(</span><span class="nv">$slug</span> <span class="o">=</span> <span class="k">NULL</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;news_item&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">news_model</span><span class="o">-&gt;</span><span class="na">get_news</span><span class="p">(</span><span class="nv">$slug</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;news_item&#39;</span><span class="p">]))</span>
+        <span class="p">{</span>
+                <span class="nx">show_404</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$data</span><span class="p">[</span><span class="s1">&#39;news_item&#39;</span><span class="p">][</span><span class="s1">&#39;title&#39;</span><span class="p">];</span>
+
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;templates/header&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;news/view&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">view</span><span class="p">(</span><span class="s1">&#39;templates/footer&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Instead of calling the <tt class="docutils literal"><span class="pre">get_news()</span></tt> method without a parameter, the
+<tt class="docutils literal"><span class="pre">$slug</span></tt> variable is passed, so it will return the specific news item.
+The only things left to do is create the corresponding view at
+<em>application/views/news/view.php</em>. Put the following code in this file.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+<span class="k">echo</span> <span class="s1">&#39;&lt;h2&gt;&#39;</span><span class="o">.</span><span class="nv">$news_item</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span><span class="o">.</span><span class="s1">&#39;&lt;/h2&gt;&#39;</span><span class="p">;</span>
+<span class="k">echo</span> <span class="nv">$news_item</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">];</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="routing">
+<h2>Routing<a class="headerlink" href="#routing" title="Permalink to this headline">¶</a></h2>
+<p>Because of the wildcard routing rule created earlier, you need need an
+extra route to view the controller that you just made. Modify your
+routing file (application/config/routes.php) so it looks as follows.
+This makes sure the requests reaches the news controller instead of
+going directly to the pages controller. The first line routes URI&#8217;s with
+a slug to the view method in the news controller.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;news/(:any)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;news/view/$1&#39;</span><span class="p">;</span>
+<span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;news&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;news&#39;</span><span class="p">;</span>
+<span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;(:any)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pages/view/$1&#39;</span><span class="p">;</span>
+<span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;default_controller&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pages/view&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Point your browser to your document root, followed by index.php/news and
+watch your news page.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

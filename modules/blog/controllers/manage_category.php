@@ -13,7 +13,7 @@ class Manage_Category extends CMS_Priv_Strict_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize groceryCRUD
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         // set model
@@ -35,7 +35,9 @@ class Manage_Category extends CMS_Priv_Strict_Controller {
         // displayed columns on add operation
         $crud->add_fields('category_name','description','articles');
         // required field
-        $crud->required_fields('category_name');
+        $crud->required_fields('category_name');        
+        $crud->unique_fields('category_name');
+        $crud->unset_read();
 
         // caption of each columns
         $crud->display_as('category_name','Category Name');

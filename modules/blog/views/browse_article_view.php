@@ -42,12 +42,10 @@
         font-size : small;
         font-weight: bold;
     }
-    div.row-odd{
-        background-color: #DDDDFF;
-    }
     div.edit_delete_record_container{
         margin-bottom:45px;
     }
+    textarea[name="<?php echo $secret_code; ?>xcontent"]{width:90%;}
 </style>
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 
@@ -66,9 +64,15 @@
 <input type="text" name="search" value="<?php echo $keyword; ?>" id="input_search" class="input-medium search-query">
 <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary">
 <?php
+    // show add record button
 	if($allow_navigate_backend){
 		echo '<a href="'.$backend_url.'/add/" class="btn add_record">Add</a>'.PHP_EOL;
 	}
+
+    // show error message if any
+    if(!$success){
+        echo '<div class="alert alert-danger">'.$error_message.'</div>';
+    }
 ?>
 <div id="record_content">
     <?php
@@ -87,11 +91,13 @@
             }
             echo '</div>';
             // edit and delete button
-            if($allow_navigate_backend){
+            if($allow_navigate_backend){                
                 echo '<div class="edit_delete_record_container">';
-                echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';
-                echo '&nbsp;';
-                echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+                if($is_super_admin || $article['author_user_id'] == $user_id){
+                    echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';
+                    echo '&nbsp;';
+                    echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+                }
                 echo '</div>';
             }
             echo '<script type="text/javascript">
@@ -101,16 +107,21 @@
             // comment
             $odd_row = TRUE;
             foreach($article['comments'] as $comment){
-                if($odd_row){
-                    $row_class = 'row-odd';
+                echo '<div class="comment-item well">';
+                echo '<div class="comment-header">';
+                echo '<img style="margin-right:20px; margin-bottom:5px; margin-top:5px; float:left;" src="'.$comment['gravatar_url'].'" />';
+                echo '<span stylel="float:left;">';
+                echo $comment['name'].', '.$comment['date'].br();
+                if($comment['website'] != ''){
+                    echo anchor($comment['website'], '('.$comment['website'].')');
                 }else{
-                    $row_class = 'row-even';
+                    echo '(website not available)';
                 }
-                $odd_row = !$odd_row;
-                echo '<div class="comment-item '.$row_class.'">';
-                echo '<div class="comment-header">Comment From : '.$comment['name'].', '.$comment['date'].br();
-                echo anchor($comment['website'], $comment['website']).'</div>';
+                echo '</span>';
+                echo '</div>';
+                echo '<div style="clear:both; margin-top:10px;">';
                 echo $comment['content'];
+                echo '</div>';
                 echo '</div>';
             }
             echo br();
@@ -119,22 +130,22 @@
                 echo '<b>Add Comments </b>'.br().br();
                 echo form_open();
                 echo form_hidden('article_id', $article['id']);
-                echo form_input(array('name'=>'secret_code', 'value'=>$secret_code, 'class'=>'comment_normal'));
+                //echo form_input(array('name'=>'secret_code', 'value'=>$secret_code, 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'name', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'website', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'content', 'value'=>'', 'class'=>'comment_normal'));
                 if(!$is_user_login){
-                    echo form_label('Name :').br();
-                    echo form_input('xname').br();
-                    echo form_label('Email :').br();
-                    echo form_input('xemail').br();
+                    echo form_label('Name :');
+                    echo form_input($secret_code.'xname', $name).br();
+                    echo form_label('Email :');
+                    echo form_input($secret_code.'xemail', $email).br();
                 }
-                echo form_label('Website :').br();
-                echo form_input('xwebsite').br();
-                echo form_label('Comment :').br();
-                echo form_textarea('xcontent').br();
-                echo form_submit('submit', 'Comment');
+                echo form_label('Website :');
+                echo form_input($secret_code.'xwebsite', $website).br();
+                echo form_label('Comment :');
+                echo form_textarea($secret_code.'xcontent', $content).br();
+                echo form_submit('submit', 'Comment', 'class="btn btn-primary"');
                 echo form_close();
             }
             echo '</div>';

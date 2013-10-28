@@ -9,7 +9,7 @@ class nds extends CMS_Controller {
 
     public function template(){
     	$this->cms_guard_page($this->cms_complete_navigation_name('template'));
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Generator Template');
@@ -23,6 +23,11 @@ class nds extends CMS_Controller {
         $crud->edit_fields('name','generator_path','options');
         // displayed columns on add operation
         $crud->add_fields('name','generator_path');
+        
+        $crud->unset_read();
+
+        $crud->required_fields('name','generator_path');
+        $crud->unique_fields('name');
 
         // caption of each columns
         $crud->display_as('name','Name');
@@ -78,7 +83,7 @@ class nds extends CMS_Controller {
 
     public function template_option($template_id=NULL){
     	$this->cms_guard_page($this->cms_complete_navigation_name('template'));
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
         // table name
@@ -90,6 +95,8 @@ class nds extends CMS_Controller {
         $crud->edit_fields('template_id','name','description','option_type');
         // displayed columns on add operation
         $crud->add_fields('template_id','name','description','option_type');
+
+        $crud->required_fields('name','option_type');
 
         // caption of each columns
         $crud->display_as('template_id','Template');
@@ -135,7 +142,7 @@ class nds extends CMS_Controller {
 
     public function project(){
     	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Project');
@@ -149,6 +156,11 @@ class nds extends CMS_Controller {
         $crud->edit_fields('template_id','name','options','db_server','db_port','db_schema','db_user','db_password','db_table_prefix','tables');
         // displayed columns on add operation
         $crud->add_fields('template_id','name','options','db_server','db_port','db_schema','db_user','db_password','db_table_prefix');
+
+        $crud->required_fields('template_id','name');
+        $crud->unique_fields('name');
+        
+        $crud->unset_read();
 
         // caption of each columns
         $crud->display_as('template_id','Template');
@@ -224,7 +236,7 @@ class nds extends CMS_Controller {
 
     public function table($project_id = NULL){
     	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Table');
@@ -241,10 +253,16 @@ class nds extends CMS_Controller {
         	$crud->columns('project_id','name','caption','priority','options','columns','manage_columns');
     	}
 
+        $crud->required_fields('name','caption');
+        
+        $crud->unset_read();
+
         // displayed columns on edit operation
         $crud->edit_fields('project_id','name','caption','priority','options','columns');
         // displayed columns on add operation
         $crud->add_fields('project_id','name','caption','priority','options');
+
+        $crud->set_rules('priority','Priority','numeric');
 
         // caption of each columns
         $crud->display_as('project_id','Project');
@@ -323,7 +341,7 @@ class nds extends CMS_Controller {
     public function column($table_id=NULL){
     	$this->cms_guard_page($this->cms_complete_navigation_name('project'));
     	$this->load->model($this->cms_module_path().'/data/nds_model');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
 		$crud->unset_jquery();
 
 		$crud->set_subject('Column');
@@ -339,6 +357,10 @@ class nds extends CMS_Controller {
         	$crud->columns('table_id','name','caption','role','data_type','data_size','options','priority');
     	}
 
+        $crud->required_fields('name','caption');
+        
+        $crud->unset_read();
+
         // displayed columns on edit operation
         $crud->edit_fields('table_id','name','caption','role','data_type','data_size','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
         	'relation_selection_column_id','relation_priority_column_id','selection_table_id','selection_column_id');
@@ -346,6 +368,8 @@ class nds extends CMS_Controller {
         $crud->add_fields('table_id','name','caption','role','data_type','data_size','value_selection_mode','value_selection_item','options','priority','lookup_table_id','lookup_column_id','relation_table_id','relation_table_column_id',
         	'relation_selection_column_id','relation_priority_column_id','selection_table_id','selection_column_id');
 
+        $crud->set_rules('priority','Priority','numeric');
+        
         // caption of each columns
         $crud->display_as('table_id','Table');
 		$crud->display_as('name','Name');

@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Helper Functions &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Using CodeIgniter Libraries" href="libraries.html" />
+	    <link rel="prev" title="Models" href="models.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xabf087c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Helper Functions</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="helper-functions">
+<h1>Helper Functions<a class="headerlink" href="#helper-functions" title="Permalink to this headline">¶</a></h1>
+<p>Helpers, as the name suggests, help you with tasks. Each helper file is
+simply a collection of functions in a particular category. There are <strong>URL
+Helpers</strong>, that assist in creating links, there are Form Helpers that help
+you create form elements, <strong>Text Helpers</strong> perform various text formatting
+routines, <strong>Cookie Helpers</strong> set and read cookies, File Helpers help you
+deal with files, etc.</p>
+<p>Unlike most other systems in CodeIgniter, Helpers are not written in an
+Object Oriented format. They are simple, procedural functions. Each
+helper function performs one specific task, with no dependence on other
+functions.</p>
+<p>CodeIgniter does not load Helper Files by default, so the first step in
+using a Helper is to load it. Once loaded, it becomes globally available
+in your <a class="reference internal" href="controllers.html"><em>controller</em></a> and
+<a class="reference internal" href="views.html"><em>views</em></a>.</p>
+<p>Helpers are typically stored in your <strong>system/helpers</strong>, or
+<strong>application/helpers directory</strong>. CodeIgniter will look first in your
+<strong>application/helpers directory</strong>. If the directory does not exist or the
+specified helper is not located there CI will instead look in your
+global <em>system/helpers/</em> directory.</p>
+<div class="section" id="loading-a-helper">
+<h2>Loading a Helper<a class="headerlink" href="#loading-a-helper" title="Permalink to this headline">¶</a></h2>
+<p>Loading a helper file is quite simple using the following method:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where <strong>name</strong> is the file name of the helper, without the .php file
+extension or the &#8220;helper&#8221; part.</p>
+<p>For example, to load the <strong>URL Helper</strong> file, which is named
+<strong>url_helper.php</strong>, you would do this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>A helper can be loaded anywhere within your controller methods (or
+even within your View files, although that&#8217;s not a good practice), as
+long as you load it before you use it. You can load your helpers in your
+controller constructor so that they become available automatically in
+any function, or you can load a helper in a specific function that needs
+it.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The Helper loading method above does not return a value, so
+don&#8217;t try to assign it to a variable. Just use it as shown.</p>
+</div>
+</div>
+<div class="section" id="loading-multiple-helpers">
+<h2>Loading Multiple Helpers<a class="headerlink" href="#loading-multiple-helpers" title="Permalink to this headline">¶</a></h2>
+<p>If you need to load more than one helper you can specify them in an
+array, like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span>
+        <span class="k">array</span><span class="p">(</span><span class="s1">&#39;helper1&#39;</span><span class="p">,</span> <span class="s1">&#39;helper2&#39;</span><span class="p">,</span> <span class="s1">&#39;helper3&#39;</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="auto-loading-helpers">
+<h2>Auto-loading Helpers<a class="headerlink" href="#auto-loading-helpers" title="Permalink to this headline">¶</a></h2>
+<p>If you find that you need a particular helper globally throughout your
+application, you can tell CodeIgniter to auto-load it during system
+initialization. This is done by opening the <strong>application/config/autoload.php</strong>
+file and adding the helper to the autoload array.</p>
+</div>
+<div class="section" id="using-a-helper">
+<h2>Using a Helper<a class="headerlink" href="#using-a-helper" title="Permalink to this headline">¶</a></h2>
+<p>Once you&#8217;ve loaded the Helper File containing the function you intend to
+use, you&#8217;ll call it the way you would a standard PHP function.</p>
+<p>For example, to create a link using the <tt class="docutils literal"><span class="pre">anchor()</span></tt> function in one of
+your view files you would do this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nx">anchor</span><span class="p">(</span><span class="s1">&#39;blog/comments&#39;</span><span class="p">,</span> <span class="s1">&#39;Click Here&#39;</span><span class="p">);</span><span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<p>Where &#8220;Click Here&#8221; is the name of the link, and &#8220;blog/comments&#8221; is the
+URI to the controller/method you wish to link to.</p>
+</div>
+<div class="section" id="extending-helpers">
+<h2>&#8220;Extending&#8221; Helpers<a class="headerlink" href="#extending-helpers" title="Permalink to this headline">¶</a></h2>
+<p>To &#8220;extend&#8221; Helpers, create a file in your <strong>application/helpers/</strong> folder
+with an identical name to the existing Helper, but prefixed with <strong>MY_</strong>
+(this item is configurable. See below.).</p>
+<p>If all you need to do is add some functionality to an existing helper -
+perhaps add a function or two, or change how a particular helper
+function operates - then it&#8217;s overkill to replace the entire helper with
+your version. In this case it&#8217;s better to simply &#8220;extend&#8221; the Helper.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The term &#8220;extend&#8221; is used loosely since Helper functions are
+procedural and discrete and cannot be extended in the traditional
+programmatic sense. Under the hood, this gives you the ability to
+add to or or to replace the functions a Helper provides.</p>
+</div>
+<p>For example, to extend the native <strong>Array Helper</strong> you&#8217;ll create a file
+named <strong>application/helpers/MY_array_helper.php</strong>, and add or override
+functions:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// any_in_array() is not in the Array Helper, so it defines a new function</span>
+<span class="k">function</span> <span class="nf">any_in_array</span><span class="p">(</span><span class="nv">$needle</span><span class="p">,</span> <span class="nv">$haystack</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nv">$needle</span> <span class="o">=</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$needle</span><span class="p">)</span> <span class="o">?</span> <span class="nv">$needle</span> <span class="o">:</span> <span class="k">array</span><span class="p">(</span><span class="nv">$needle</span><span class="p">);</span>
+
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$needle</span> <span class="k">as</span> <span class="nv">$item</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$item</span><span class="p">,</span> <span class="nv">$haystack</span><span class="p">))</span>
+                <span class="p">{</span>
+                        <span class="k">return</span> <span class="k">TRUE</span><span class="p">;</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">FALSE</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// random_element() is included in Array Helper, so it overrides the native function</span>
+<span class="k">function</span> <span class="nf">random_element</span><span class="p">(</span><span class="nv">$array</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nb">shuffle</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nb">array_pop</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="setting-your-own-prefix">
+<h3>Setting Your Own Prefix<a class="headerlink" href="#setting-your-own-prefix" title="Permalink to this headline">¶</a></h3>
+<p>The filename prefix for &#8220;extending&#8221; Helpers is the same used to extend
+libraries and core classes. To set your own prefix, open your
+<strong>application/config/config.php</strong> file and look for this item:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;subclass_prefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MY_&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Please note that all native CodeIgniter libraries are prefixed with <strong>CI_</strong>
+so DO NOT use that as your prefix.</p>
+</div>
+</div>
+<div class="section" id="now-what">
+<h2>Now What?<a class="headerlink" href="#now-what" title="Permalink to this headline">¶</a></h2>
+<p>In the Table of Contents you&#8217;ll find a list of all the available Helper
+Files. Browse each one to see what they do.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

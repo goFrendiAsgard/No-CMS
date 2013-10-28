@@ -27,8 +27,6 @@ class Install extends CMS_Module_Installer {
 
     // DEACTIVATION
     protected function do_deactivate(){
-        $module_path = $this->cms_module_path();
-
         $this->backup_database(array(
             {{ table_list }}
         ));
@@ -77,11 +75,9 @@ class Install extends CMS_Module_Installer {
 
         // remove parent of all navigations
         $this->remove_navigation($this->cms_complete_navigation_name('{{ navigation_parent_name }}'));
-
-        // import uninstall.sql
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/uninstall.sql');
-
+        
+        // drop tables
+        {{ drop_table_forge }}
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -94,49 +90,46 @@ class Install extends CMS_Module_Installer {
 
         // add navigations
 {{ add_navigations }}
-
-        // import install.sql
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/install.sql');
-    }
-
-    // IMPORT SQL FILE
-    private function import_sql($file_name){
-        $this->execute_SQL(file_get_contents($file_name), '/*split*/');
+        
+        // create tables
+        {{ create_table_forge }}
+        
     }
 
     // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){
-        $module_path = $this->cms_module_path();
+    private function backup_database($table_names, $limit = 100){         
+        if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
+            $module_path = $this->cms_module_path();
+            $this->load->dbutil();
+            $sql = '';
+            
+            // create DROP TABLE syntax
+            for($i=count($table_names)-1; $i>=0; $i--){
+                $table_name = $table_names[$i];
+                $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
+            }
+            if($sql !='')$sql.= PHP_EOL;
 
-        $this->load->dbutil();
-        $sql = '';
+            // create CREATE TABLE and INSERT syntax 
+            
+            $prefs = array(
+                    'tables'      => $table_names,
+                    'ignore'      => array(),
+                    'format'      => 'txt',
+                    'filename'    => 'mybackup.sql',
+                    'add_drop'    => FALSE,
+                    'add_insert'  => TRUE,
+                    'newline'     => PHP_EOL
+                  );
+            $sql.= @$this->dbutil->backup($prefs);        
 
-        // create DROP TABLE syntax
-        for($i=count($table_names)-1; $i>=0; $i--){
-            $table_name = $table_names[$i];
-            $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-        }
-        if($sql !='')$sql.= PHP_EOL;
-
-        // create CREATE TABLE and INSERT syntax
-        $prefs = array(
-                'tables'      => $table_names,
-                'ignore'      => array(),
-                'format'      => 'txt',
-                'filename'    => 'mybackup.sql',
-                'add_drop'    => FALSE,
-                'add_insert'  => TRUE,
-                'newline'     => PHP_EOL
-              );
-        $sql.= $this->dbutil->backup($prefs);
-
-        //write file
-        $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
-        file_put_contents(
-                BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-                $sql
-            );
+            //write file
+            $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
+            file_put_contents(
+                    BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
+                    $sql
+                );
+        }       
 
     }
 }

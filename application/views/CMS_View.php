@@ -1,2 +1,4 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-echo $cms_content;
+if(isset($cms_content)){
+    echo $cms_content;
+}

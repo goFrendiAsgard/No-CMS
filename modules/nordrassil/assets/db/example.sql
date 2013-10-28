@@ -1,5 +1,5 @@
 INSERT INTO {{ complete_table_name:project }} (`project_id`, `template_id`, `name`, `db_server`, `db_port`, `db_schema`, `db_user`, `db_password`, `db_table_prefix`) VALUES 
-(1, 1, 'example', 'localhost', '3306', 'town', 'root', 'toor', '');
+(1, 1, 'example', 'localhost', '3306', 'town', 'root', 'toor', 'twn');
 /*split*/
 INSERT INTO {{ complete_table_name:table }} (`table_id`, `project_id`, `name`, `caption`, `priority`) VALUES 
 (1, 1, 'twn_citizen', 'Citizen', 0),
@@ -53,3 +53,19 @@ INSERT INTO {{ complete_table_name:column }} (`column_id`, `table_id`, `name`, `
 (30, 4, 'priority', 'Priority', 'int', 10, '', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL),
 (31, 3, 'commodity', 'Commodity', '', NULL, 'detail many to many', 0, NULL, 4, 13, 14, 30, 6, 19, 0, NULL, NULL),
 (32, 3, 'citizen', 'Citizen', '', NULL, 'detail one to many', 0, NULL, 1, 2, NULL, NULL, NULL, NULL, 0, NULL, NULL);
+/*split*/
+INSERT INTO {{ complete_table_name:column_option }} (`id`, `column_id`, `option_id`) VALUES 
+(1, 3, 5),
+(2, 3, 6),
+(3, 11, 5),
+(4, 11, 6),
+(5, 19, 5),
+(6, 19, 6),
+(7, 21, 5),
+(8, 21, 6),
+(9, 23, 5),
+(10, 23, 6),
+(11, 25, 5),
+(12, 25, 6),
+(13, 27, 5),
+(14, 27, 6);

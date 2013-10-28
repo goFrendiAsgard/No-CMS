@@ -1,0 +1,714 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>PHP Style Guide &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Libraries" href="../libraries/index.html" />
+	    <link rel="prev" title="Security" href="security.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa40abfc>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>PHP Style Guide</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="php-style-guide">
+<h1><a class="toc-backref" href="#id1">PHP Style Guide</a><a class="headerlink" href="#php-style-guide" title="Permalink to this headline">¶</a></h1>
+<p>The following page describes the coding styles adhered to when
+contributing to the development of CodeIgniter. There is no requirement
+to use these styles in your own CodeIgniter application, though they
+are recommended.</p>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#php-style-guide" id="id1">PHP Style Guide</a><ul>
+<li><a class="reference internal" href="#file-format" id="id2">File Format</a><ul>
+<li><a class="reference internal" href="#textmate" id="id3">TextMate</a></li>
+<li><a class="reference internal" href="#bbedit" id="id4">BBEdit</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#php-closing-tag" id="id5">PHP Closing Tag</a></li>
+<li><a class="reference internal" href="#class-and-method-naming" id="id6">Class and Method Naming</a></li>
+<li><a class="reference internal" href="#variable-names" id="id7">Variable Names</a></li>
+<li><a class="reference internal" href="#commenting" id="id8">Commenting</a></li>
+<li><a class="reference internal" href="#constants" id="id9">Constants</a></li>
+<li><a class="reference internal" href="#true-false-and-null" id="id10">TRUE, FALSE, and NULL</a></li>
+<li><a class="reference internal" href="#logical-operators" id="id11">Logical Operators</a></li>
+<li><a class="reference internal" href="#comparing-return-values-and-typecasting" id="id12">Comparing Return Values and Typecasting</a></li>
+<li><a class="reference internal" href="#debugging-code" id="id13">Debugging Code</a></li>
+<li><a class="reference internal" href="#whitespace-in-files" id="id14">Whitespace in Files</a></li>
+<li><a class="reference internal" href="#compatibility" id="id15">Compatibility</a></li>
+<li><a class="reference internal" href="#one-file-per-class" id="id16">One File per Class</a></li>
+<li><a class="reference internal" href="#whitespace" id="id17">Whitespace</a></li>
+<li><a class="reference internal" href="#line-breaks" id="id18">Line Breaks</a></li>
+<li><a class="reference internal" href="#code-indenting" id="id19">Code Indenting</a></li>
+<li><a class="reference internal" href="#bracket-and-parenthetic-spacing" id="id20">Bracket and Parenthetic Spacing</a></li>
+<li><a class="reference internal" href="#localized-text" id="id21">Localized Text</a></li>
+<li><a class="reference internal" href="#private-methods-and-variables" id="id22">Private Methods and Variables</a></li>
+<li><a class="reference internal" href="#php-errors" id="id23">PHP Errors</a></li>
+<li><a class="reference internal" href="#short-open-tags" id="id24">Short Open Tags</a></li>
+<li><a class="reference internal" href="#one-statement-per-line" id="id25">One Statement Per Line</a></li>
+<li><a class="reference internal" href="#strings" id="id26">Strings</a></li>
+<li><a class="reference internal" href="#sql-queries" id="id27">SQL Queries</a></li>
+<li><a class="reference internal" href="#default-function-arguments" id="id28">Default Function Arguments</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="file-format">
+<h2><a class="toc-backref" href="#id2">File Format</a><a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
+<p>Files should be saved with Unicode (UTF-8) encoding. The BOM should
+<em>not</em> be used. Unlike UTF-16 and UTF-32, there&#8217;s no byte order to
+indicate in a UTF-8 encoded file, and the BOM can have a negative side
+effect in PHP of sending output, preventing the application from being
+able to set its own headers. Unix line endings should be used (LF).</p>
+<p>Here is how to apply these settings in some of the more common text
+editors. Instructions for your text editor may vary; check your text
+editor&#8217;s documentation.</p>
+<div class="section" id="textmate">
+<h3><a class="toc-backref" href="#id3">TextMate</a><a class="headerlink" href="#textmate" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Open the Application Preferences</li>
+<li>Click Advanced, and then the &#8220;Saving&#8221; tab</li>
+<li>In &#8220;File Encoding&#8221;, select &#8220;UTF-8 (recommended)&#8221;</li>
+<li>In &#8220;Line Endings&#8221;, select &#8220;LF (recommended)&#8221;</li>
+<li><em>Optional:</em> Check &#8220;Use for existing files as well&#8221; if you wish to
+modify the line endings of files you open to your new preference.</li>
+</ol>
+</div>
+<div class="section" id="bbedit">
+<h3><a class="toc-backref" href="#id4">BBEdit</a><a class="headerlink" href="#bbedit" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Open the Application Preferences</li>
+<li>Select &#8220;Text Encodings&#8221; on the left.</li>
+<li>In &#8220;Default text encoding for new documents&#8221;, select &#8220;Unicode (UTF-8,
+no BOM)&#8221;</li>
+<li><em>Optional:</em> In &#8220;If file&#8217;s encoding can&#8217;t be guessed, use&#8221;, select
+&#8220;Unicode (UTF-8, no BOM)&#8221;</li>
+<li>Select &#8220;Text Files&#8221; on the left.</li>
+<li>In &#8220;Default line breaks&#8221;, select &#8220;Mac OS X and Unix (LF)&#8221;</li>
+</ol>
+</div>
+</div>
+<div class="section" id="php-closing-tag">
+<h2><a class="toc-backref" href="#id5">PHP Closing Tag</a><a class="headerlink" href="#php-closing-tag" title="Permalink to this headline">¶</a></h2>
+<p>The PHP closing tag on a PHP document <strong>?&gt;</strong> is optional to the PHP
+parser. However, if used, any whitespace following the closing tag,
+whether introduced by the developer, user, or an FTP application, can
+cause unwanted output, PHP errors, or if the latter are suppressed,
+blank pages. For this reason, all PHP files should <strong>OMIT</strong> the closing
+PHP tag, and instead use a comment block to mark the end of file and
+its location relative to the application root. This allows you to still
+identify a file as being complete and not truncated.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="k">echo</span> <span class="s2">&quot;Here&#39;s my code!&quot;</span><span class="p">;</span>
+
+<span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
+
+<span class="k">echo</span> <span class="s2">&quot;Here&#39;s my code!&quot;</span><span class="p">;</span>
+
+<span class="cm">/* End of file myfile.php */</span>
+<span class="cm">/* Location: ./system/modules/mymodule/myfile.php */</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There should be no empty line or newline character(s) following
+the closing comments. If you happen to see one when
+submitting a pull request, please check your IDE settings and fix it.</p>
+</div>
+</div>
+<div class="section" id="class-and-method-naming">
+<h2><a class="toc-backref" href="#id6">Class and Method Naming</a><a class="headerlink" href="#class-and-method-naming" title="Permalink to this headline">¶</a></h2>
+<p>Class names should always start with an uppercase letter. Multiple words
+should be separated with an underscore, and not CamelCased.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">superclass</span>
+<span class="k">class</span> <span class="nc">SuperClass</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Super_class</span>
+</pre></div>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Super_class</span> <span class="p">{</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Class methods should be entirely lowercased and named to clearly
+indicate their function, preferably including a verb. Try to avoid
+overly long and verbose names. Multiple words should be separated
+with an underscore.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">fileproperties</span><span class="p">()</span>               <span class="c1">// not descriptive and needs underscore separator</span>
+<span class="k">function</span> <span class="nf">fileProperties</span><span class="p">()</span>               <span class="c1">// not descriptive and uses CamelCase</span>
+<span class="k">function</span> <span class="nf">getfileproperties</span><span class="p">()</span>            <span class="c1">// Better!  But still missing underscore separator</span>
+<span class="k">function</span> <span class="nf">getFileProperties</span><span class="p">()</span>            <span class="c1">// uses CamelCase</span>
+<span class="k">function</span> <span class="nf">get_the_file_properties_from_the_file</span><span class="p">()</span>        <span class="c1">// wordy</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">get_file_properties</span><span class="p">()</span>  <span class="c1">// descriptive, underscore separator, and all lowercase letters</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="variable-names">
+<h2><a class="toc-backref" href="#id7">Variable Names</a><a class="headerlink" href="#variable-names" title="Permalink to this headline">¶</a></h2>
+<p>The guidelines for variable naming are very similar to those used for
+class methods. Variables should contain only lowercase letters,
+use underscore separators, and be reasonably named to indicate their
+purpose and contents. Very short, non-word variables should only be used
+as iterators in for() loops.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$j</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span><span class="p">;</span>             <span class="c1">// single letter variables should only be used in for() loops</span>
+<span class="nv">$Str</span>                    <span class="c1">// contains uppercase letters</span>
+<span class="nv">$bufferedText</span>           <span class="c1">// uses CamelCasing, and could be shortened without losing semantic meaning</span>
+<span class="nv">$groupid</span>                <span class="c1">// multiple words, needs underscore separator</span>
+<span class="nv">$name_of_last_city_used</span> <span class="c1">// too long</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">for</span> <span class="p">(</span><span class="nv">$j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$j</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$j</span><span class="o">++</span><span class="p">)</span>
+<span class="nv">$str</span>
+<span class="nv">$buffer</span>
+<span class="nv">$group_id</span>
+<span class="nv">$last_city</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="commenting">
+<h2><a class="toc-backref" href="#id8">Commenting</a><a class="headerlink" href="#commenting" title="Permalink to this headline">¶</a></h2>
+<p>In general, code should be commented prolifically. It not only helps
+describe the flow and intent of the code for less experienced
+programmers, but can prove invaluable when returning to your own code
+months down the line. There is not a required format for comments, but
+the following are recommended.</p>
+<p><a class="reference external" href="http://manual.phpdoc.org/HTMLSmartyConverter/HandS/phpDocumentor/tutorial_phpDocumentor.howto.pkg.html#basics.docblock">DocBlock</a>
+style comments preceding class, method, and property declarations so they can be
+picked up by IDEs:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="sd">/**</span>
+<span class="sd"> * Super Class</span>
+<span class="sd"> *</span>
+<span class="sd"> * @package     Package Name</span>
+<span class="sd"> * @subpackage  Subpackage</span>
+<span class="sd"> * @category    Category</span>
+<span class="sd"> * @author      Author Name</span>
+<span class="sd"> * @link        http://example.com</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">Super_class</span> <span class="p">{</span>
+</pre></div>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="sd">/**</span>
+<span class="sd"> * Encodes string for use in XML</span>
+<span class="sd"> *</span>
+<span class="sd"> * @param       string  $str    Input string</span>
+<span class="sd"> * @return      string</span>
+<span class="sd"> */</span>
+<span class="k">function</span> <span class="nf">xml_encode</span><span class="p">(</span><span class="nv">$str</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ci"><div class="highlight"><pre><span class="sd">/**</span>
+<span class="sd"> * Data for class manipulation</span>
+<span class="sd"> *</span>
+<span class="sd"> * @var array</span>
+<span class="sd"> */</span>
+<span class="k">public</span> <span class="nv">$data</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Use single line comments within code, leaving a blank line between large
+comment blocks and code.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// break up the string by newlines</span>
+<span class="nv">$parts</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nv">$str</span><span class="p">);</span>
+
+<span class="c1">// A longer comment that needs to give greater detail on what is</span>
+<span class="c1">// occurring and why can use multiple single-line comments.  Try to</span>
+<span class="c1">// keep the width reasonable, around 70 characters is the easiest to</span>
+<span class="c1">// read.  Don&#39;t hesitate to link to permanent external resources</span>
+<span class="c1">// that may provide greater detail:</span>
+<span class="c1">//</span>
+<span class="c1">// http://example.com/information_about_something/in_particular/</span>
+
+<span class="nv">$parts</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">foo</span><span class="p">(</span><span class="nv">$parts</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="constants">
+<h2><a class="toc-backref" href="#id9">Constants</a><a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<p>Constants follow the same guidelines as do variables, except constants
+should always be fully uppercase. <em>Always use CodeIgniter constants when
+appropriate, i.e. SLASH, LD, RD, PATH_CACHE, etc.</em></p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">myConstant</span>      <span class="c1">// missing underscore separator and not fully uppercase</span>
+<span class="nx">N</span>               <span class="c1">// no single-letter constants</span>
+<span class="nx">S_C_VER</span>         <span class="c1">// not descriptive</span>
+<span class="nv">$str</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="s1">&#39;{foo}&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="nv">$str</span><span class="p">);</span>       <span class="c1">// should use LD and RD constants</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">MY_CONSTANT</span>
+<span class="nx">NEWLINE</span>
+<span class="nx">SUPER_CLASS_VERSION</span>
+<span class="nv">$str</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="nx">LD</span><span class="o">.</span><span class="s1">&#39;foo&#39;</span><span class="o">.</span><span class="nx">RD</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="nv">$str</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="true-false-and-null">
+<h2><a class="toc-backref" href="#id10">TRUE, FALSE, and NULL</a><a class="headerlink" href="#true-false-and-null" title="Permalink to this headline">¶</a></h2>
+<p><strong>TRUE</strong>, <strong>FALSE</strong>, and <strong>NULL</strong> keywords should always be fully
+uppercase.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$foo</span> <span class="o">==</span> <span class="k">true</span><span class="p">)</span>
+<span class="nv">$bar</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+<span class="k">function</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">$bar</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$foo</span> <span class="o">==</span> <span class="k">TRUE</span><span class="p">)</span>
+<span class="nv">$bar</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>
+<span class="k">function</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">$bar</span> <span class="o">=</span> <span class="k">NULL</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="logical-operators">
+<h2><a class="toc-backref" href="#id11">Logical Operators</a><a class="headerlink" href="#logical-operators" title="Permalink to this headline">¶</a></h2>
+<p>Use of the <tt class="docutils literal"><span class="pre">||</span></tt> &#8220;or&#8221; comparison operator is discouraged, as its clarity
+on some output devices is low (looking like the number 11, for instance).
+<tt class="docutils literal"><span class="pre">&amp;&amp;</span></tt> is preferred over <tt class="docutils literal"><span class="pre">AND</span></tt> but either are acceptable, and a space should
+always precede and follow <tt class="docutils literal"><span class="pre">!</span></tt>.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$foo</span> <span class="o">||</span> <span class="nv">$bar</span><span class="p">)</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$foo</span> <span class="k">AND</span> <span class="nv">$bar</span><span class="p">)</span>  <span class="c1">// okay but not recommended for common syntax highlighting applications</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$foo</span><span class="p">)</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$foo</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nv">$foo</span> <span class="k">OR</span> <span class="nv">$bar</span><span class="p">)</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$foo</span> <span class="o">&amp;&amp;</span> <span class="nv">$bar</span><span class="p">)</span> <span class="c1">// recommended</span>
+<span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$foo</span><span class="p">)</span>
+<span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$foo</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="comparing-return-values-and-typecasting">
+<h2><a class="toc-backref" href="#id12">Comparing Return Values and Typecasting</a><a class="headerlink" href="#comparing-return-values-and-typecasting" title="Permalink to this headline">¶</a></h2>
+<p>Some PHP functions return FALSE on failure, but may also have a valid
+return value of &#8220;&#8221; or 0, which would evaluate to FALSE in loose
+comparisons. Be explicit by comparing the variable type when using these
+return values in conditionals to ensure the return value is indeed what
+you expect, and not a value that has an equivalent loose-type
+evaluation.</p>
+<p>Use the same stringency in returning and checking your own variables.
+Use <strong>===</strong> and <strong>!==</strong> as necessary.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// If &#39;foo&#39; is at the beginning of the string, strpos will return a 0,</span>
+<span class="c1">// resulting in this conditional evaluating as TRUE</span>
+<span class="k">if</span> <span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$str</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="k">FALSE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$str</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="o">===</span> <span class="k">FALSE</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">build_string</span><span class="p">(</span><span class="nv">$str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$str</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="c1">// uh-oh!  What if FALSE or the integer 0 is passed as an argument?</span>
+        <span class="p">{</span>
+
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">build_string</span><span class="p">(</span><span class="nv">$str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$str</span> <span class="o">===</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="p">{</span>
+
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>See also information regarding <a class="reference external" href="http://php.net/manual/en/language.types.type-juggling.php#language.types.typecasting">typecasting</a>,
+which can be quite useful. Typecasting has a slightly different effect
+which may be desirable. When casting a variable as a string, for
+instance, NULL and boolean FALSE variables become empty strings, 0 (and
+other numbers) become strings of digits, and boolean TRUE becomes &#8220;1&#8221;:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$str</span> <span class="o">=</span> <span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="nv">$str</span><span class="p">;</span> <span class="c1">// cast $str as a string</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="debugging-code">
+<h2><a class="toc-backref" href="#id13">Debugging Code</a><a class="headerlink" href="#debugging-code" title="Permalink to this headline">¶</a></h2>
+<p>Do not leave debugging code in your submissions, even when commented out.
+Things such as <tt class="docutils literal"><span class="pre">var_dump()</span></tt>, <tt class="docutils literal"><span class="pre">print_r()</span></tt>, <tt class="docutils literal"><span class="pre">die()</span></tt>/<tt class="docutils literal"><span class="pre">exit()</span></tt> should not be included
+in your code unless it serves a specific purpose other than debugging.</p>
+</div>
+<div class="section" id="whitespace-in-files">
+<h2><a class="toc-backref" href="#id14">Whitespace in Files</a><a class="headerlink" href="#whitespace-in-files" title="Permalink to this headline">¶</a></h2>
+<p>No whitespace can precede the opening PHP tag or follow the closing PHP
+tag. Output is buffered, so whitespace in your files can cause output to
+begin before CodeIgniter outputs its content, leading to errors and an
+inability for CodeIgniter to send proper headers.</p>
+</div>
+<div class="section" id="compatibility">
+<h2><a class="toc-backref" href="#id15">Compatibility</a><a class="headerlink" href="#compatibility" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter requires a minimum PHP version of 5.2.4. Your code must either
+be compatible with this minimum requirement, provide a suitable fallback,
+or be an optional feature that dies quietly without affecting a user&#8217;s
+application.</p>
+<p>Additionally, do not use PHP functions that require non-default libraries
+to be installed unless your code contains an alternative method when the
+function is not available.</p>
+</div>
+<div class="section" id="one-file-per-class">
+<h2><a class="toc-backref" href="#id16">One File per Class</a><a class="headerlink" href="#one-file-per-class" title="Permalink to this headline">¶</a></h2>
+<p>Use separate files for each class, unless the classes are <em>closely related</em>.
+An example of a CodeIgniter file that contains multiple classes is the
+Xmlrpc library file.</p>
+</div>
+<div class="section" id="whitespace">
+<h2><a class="toc-backref" href="#id17">Whitespace</a><a class="headerlink" href="#whitespace" title="Permalink to this headline">¶</a></h2>
+<p>Use tabs for whitespace in your code, not spaces. This may seem like a
+small thing, but using tabs instead of whitespace allows the developer
+looking at your code to have indentation at levels that they prefer and
+customize in whatever application they use. And as a side benefit, it
+results in (slightly) more compact files, storing one tab character
+versus, say, four space characters.</p>
+</div>
+<div class="section" id="line-breaks">
+<h2><a class="toc-backref" href="#id18">Line Breaks</a><a class="headerlink" href="#line-breaks" title="Permalink to this headline">¶</a></h2>
+<p>Files must be saved with Unix line breaks. This is more of an issue for
+developers who work in Windows, but in any case ensure that your text
+editor is setup to save files with Unix line breaks.</p>
+</div>
+<div class="section" id="code-indenting">
+<h2><a class="toc-backref" href="#id19">Code Indenting</a><a class="headerlink" href="#code-indenting" title="Permalink to this headline">¶</a></h2>
+<p>Use Allman style indenting. With the exception of Class declarations,
+braces are always placed on a line by themselves, and indented at the
+same level as the control statement that &#8220;owns&#8221; them.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">$bar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$arr</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$foo</span> <span class="o">==</span> <span class="nv">$bar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nv">$j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$j</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$j</span><span class="o">++</span><span class="p">)</span>
+                <span class="p">{</span>
+                <span class="c1">// ...</span>
+                <span class="p">}</span>
+        <span class="p">}</span>
+
+<span class="k">try</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+<span class="k">catch</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">$bar</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="k">foreach</span> <span class="p">(</span><span class="nv">$arr</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$val</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$foo</span> <span class="o">==</span> <span class="nv">$bar</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nv">$j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$j</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+                <span class="c1">// ...</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">try</span>
+<span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+<span class="k">catch</span><span class="p">()</span>
+<span class="p">{</span>
+        <span class="c1">// ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bracket-and-parenthetic-spacing">
+<h2><a class="toc-backref" href="#id20">Bracket and Parenthetic Spacing</a><a class="headerlink" href="#bracket-and-parenthetic-spacing" title="Permalink to this headline">¶</a></h2>
+<p>In general, parenthesis and brackets should not use any additional
+spaces. The exception is that a space should always follow PHP control
+structures that accept arguments with parenthesis (declare, do-while,
+elseif, for, foreach, if, switch, while), to help distinguish them from
+functions and increase readability.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$arr</span><span class="p">[</span> <span class="nv">$foo</span> <span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$arr</span><span class="p">[</span><span class="nv">$foo</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span><span class="p">;</span> <span class="c1">// no spaces around array keys</span>
+</pre></div>
+</div>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">foo</span> <span class="p">(</span> <span class="nv">$bar</span> <span class="p">)</span>
+<span class="p">{</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">$bar</span><span class="p">)</span> <span class="c1">// no spaces around parenthesis in function declarations</span>
+<span class="p">{</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">foreach</span><span class="p">(</span> <span class="nv">$query</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$row</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">foreach</span> <span class="p">(</span><span class="nv">$query</span><span class="o">-&gt;</span><span class="na">result</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$row</span><span class="p">)</span> <span class="c1">// single space following PHP control structures, but not in interior parenthesis</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="localized-text">
+<h2><a class="toc-backref" href="#id21">Localized Text</a><a class="headerlink" href="#localized-text" title="Permalink to this headline">¶</a></h2>
+<p>CodeIgniter libraries should take advantage of corresponding language files
+whenever possible.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">return</span> <span class="s2">&quot;Invalid Selection&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">lang</span><span class="o">-&gt;</span><span class="na">line</span><span class="p">(</span><span class="s1">&#39;invalid_selection&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="private-methods-and-variables">
+<h2><a class="toc-backref" href="#id22">Private Methods and Variables</a><a class="headerlink" href="#private-methods-and-variables" title="Permalink to this headline">¶</a></h2>
+<p>Methods and variables that are only accessed internally,
+such as utility and helper functions that your public methods use for
+code abstraction, should be prefixed with an underscore.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">public</span> <span class="k">function</span> <span class="nf">convert_text</span><span class="p">()</span>
+<span class="k">private</span> <span class="k">function</span> <span class="nf">_convert_text</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="php-errors">
+<h2><a class="toc-backref" href="#id23">PHP Errors</a><a class="headerlink" href="#php-errors" title="Permalink to this headline">¶</a></h2>
+<p>Code must run error free and not rely on warnings and notices to be
+hidden to meet this requirement. For instance, never access a variable
+that you did not set yourself (such as <tt class="docutils literal"><span class="pre">$_POST</span></tt> array keys) without first
+checking to see that it <tt class="docutils literal"><span class="pre">isset()</span></tt>.</p>
+<p>Make sure that your dev environment has error reporting enabled
+for ALL users, and that display_errors is enabled in the PHP
+environment. You can check this setting with:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="nb">ini_get</span><span class="p">(</span><span class="s1">&#39;display_errors&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">exit</span> <span class="s2">&quot;Enabled&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>On some servers where <em>display_errors</em> is disabled, and you do not have
+the ability to change this in the php.ini, you can often enable it with:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nb">ini_set</span><span class="p">(</span><span class="s1">&#39;display_errors&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Setting the <a class="reference external" href="http://php.net/manual/en/ref.errorfunc.php#ini.display-errors">display_errors</a>
+setting with <tt class="docutils literal"><span class="pre">ini_set()</span></tt> at runtime is not identical to having
+it enabled in the PHP environment. Namely, it will not have any
+effect if the script has fatal errors.</p>
+</div>
+</div>
+<div class="section" id="short-open-tags">
+<h2><a class="toc-backref" href="#id24">Short Open Tags</a><a class="headerlink" href="#short-open-tags" title="Permalink to this headline">¶</a></h2>
+<p>Always use full PHP opening tags, in case a server does not have
+<em>short_open_tag</em> enabled.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span> <span class="k">echo</span> <span class="nv">$foo</span><span class="p">;</span> <span class="cp">?&gt;</span>
+
+<span class="cp">&lt;?</span><span class="o">=</span><span class="nv">$foo</span><span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span> <span class="k">echo</span> <span class="nv">$foo</span><span class="p">;</span> <span class="cp">?&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">PHP 5.4 will always have the <strong>&lt;?=</strong> tag available.</p>
+</div>
+</div>
+<div class="section" id="one-statement-per-line">
+<h2><a class="toc-backref" href="#id25">One Statement Per Line</a><a class="headerlink" href="#one-statement-per-line" title="Permalink to this headline">¶</a></h2>
+<p>Never combine statements on one line.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$foo</span> <span class="o">=</span> <span class="s1">&#39;this&#39;</span><span class="p">;</span> <span class="nv">$bar</span> <span class="o">=</span> <span class="s1">&#39;that&#39;</span><span class="p">;</span> <span class="nv">$bat</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="nv">$foo</span><span class="p">,</span> <span class="nv">$bar</span><span class="p">,</span> <span class="nv">$bag</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$foo</span> <span class="o">=</span> <span class="s1">&#39;this&#39;</span><span class="p">;</span>
+<span class="nv">$bar</span> <span class="o">=</span> <span class="s1">&#39;that&#39;</span><span class="p">;</span>
+<span class="nv">$bat</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="nv">$foo</span><span class="p">,</span> <span class="nv">$bar</span><span class="p">,</span> <span class="nv">$bag</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="strings">
+<h2><a class="toc-backref" href="#id26">Strings</a><a class="headerlink" href="#strings" title="Permalink to this headline">¶</a></h2>
+<p>Always use single quoted strings unless you need variables parsed, and
+in cases where you do need variables parsed, use braces to prevent
+greedy token parsing. You may also use double-quoted strings if the
+string contains single quotes, so you do not have to use escape
+characters.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="s2">&quot;My String&quot;</span>                                     <span class="c1">// no variable parsing, so no use for double quotes</span>
+<span class="s2">&quot;My string </span><span class="si">$foo</span><span class="s2">&quot;</span>                                <span class="c1">// needs braces</span>
+<span class="s1">&#39;SELECT foo FROM bar WHERE baz = \&#39;bag\&#39;&#39;</span>       <span class="c1">// ugly</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="s1">&#39;My String&#39;</span>
+<span class="s2">&quot;My string </span><span class="si">{</span><span class="nv">$foo</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">&quot;SELECT foo FROM bar WHERE baz = &#39;bag&#39;&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sql-queries">
+<h2><a class="toc-backref" href="#id27">SQL Queries</a><a class="headerlink" href="#sql-queries" title="Permalink to this headline">¶</a></h2>
+<p>SQL keywords are always capitalized: SELECT, INSERT, UPDATE, WHERE,
+AS, JOIN, ON, IN, etc.</p>
+<p>Break up long queries into multiple lines for legibility, preferably
+breaking for each clause.</p>
+<p><strong>INCORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// keywords are lowercase and query is too long for</span>
+<span class="c1">// a single line (... indicates continuation of line)</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;select foo, bar, baz, foofoo, foobar as raboof, foobaz from exp_pre_email_addresses</span>
+<span class="s2">...where foo != &#39;oof&#39; and baz != &#39;zab&#39; order by foobaz limit 5, 100&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>CORRECT</strong>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$query</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SELECT foo, bar, baz, foofoo, foobar AS raboof, foobaz</span>
+<span class="s2">                                FROM exp_pre_email_addresses</span>
+<span class="s2">                                WHERE foo != &#39;oof&#39;</span>
+<span class="s2">                                AND baz != &#39;zab&#39;</span>
+<span class="s2">                                ORDER BY foobaz</span>
+<span class="s2">                                LIMIT 5, 100&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="default-function-arguments">
+<h2><a class="toc-backref" href="#id28">Default Function Arguments</a><a class="headerlink" href="#default-function-arguments" title="Permalink to this headline">¶</a></h2>
+<p>Whenever appropriate, provide function argument defaults, which helps
+prevent PHP errors with mistaken calls and provides common fallback
+values which can save a few lines of code. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">function</span> <span class="nf">foo</span><span class="p">(</span><span class="nv">$bar</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$baz</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

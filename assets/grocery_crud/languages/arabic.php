@@ -53,8 +53,8 @@
 	/* Added in version 1.2.1 */
 	$lang['set_relation_title']		= 'اختر {field_display_as}';
 	$lang['list_record']			= 'سجل';
-	$lang['form_inactive']			= 'لا';
-	$lang['form_active']			= 'نعم';
+	$lang['form_inactive']			= 'غير فعال';
+	$lang['form_active']			= 'فعال';
 
 	/* Added in version 1.2.2 */
 	$lang['form_save_and_go_back']	= 'حفظ والعودة للقائمة الرئيسية';
@@ -72,6 +72,10 @@
 	$lang['error_min_file_size'] 		= "لا يمكنك رفع ملف فارغ .";
 
 	/* Added in version 1.3.1 */
-	$lang['list_export'] 	= "Export";
-	$lang['list_print'] 	= "Print";
-	$lang['minimize_maximize'] = 'Minimize/Maximize';
+	$lang['list_export'] 	= "استخراج";
+	$lang['list_print'] 	= "اطبع";
+	$lang['minimize_maximize'] = 'تكبير\تصغير';
+
+
+	/* Added in version 1.4 */
+	$lang['list_view'] = 'View';

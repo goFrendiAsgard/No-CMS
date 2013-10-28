@@ -7,6 +7,23 @@
  */
 class Main extends CMS_Controller
 {
+    private function unique_field_name($field_name)
+    {
+        return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
+    }
+
+    private function __random_string($length=10)
+    {
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+        $size = strlen( $chars );
+        $str = '';
+        for( $i = 0; $i < $length; $i++ ){
+            $str .= $chars[ rand( 0, $size - 1 ) ];
+        }
+        return $str;
+    }
+
     protected function upload($upload_path, $input_file_name = 'userfile', $submit_name = 'upload')
     {
         $data = array(
@@ -50,7 +67,8 @@ class Main extends CMS_Controller
 
         // show the view
         $data['modules'] = $this->cms_get_module_list();
-        $this->view('main/module_management', $data, 'main_module_management');
+        $data['upload_new_module_caption'] = $this->cms_lang('Upload New Module');
+        $this->view('main/main_module_management', $data, 'main_module_management');
     }
 
     public function change_theme($theme = NULL)
@@ -65,7 +83,8 @@ class Main extends CMS_Controller
             redirect('main/change_theme');
         } else {
             $data['themes'] = $this->cms_get_layout_list();
-            $this->view('main/change_theme', $data, 'main_change_theme');
+            $data['upload_new_theme_caption'] = $this->cms_lang('Upload New Theme');
+            $this->view('main/main_change_theme', $data, 'main_change_theme');
         }
     }
 
@@ -93,29 +112,51 @@ class Main extends CMS_Controller
         if ($this->form_validation->run()) {
             if ($this->cms_do_login($identity, $password)) {
                 //if old_url exist, redirect to old_url, else redirect to main/index
-                if (!is_bool($old_url)) {
+                if (isset($old_url)) {
+                    $this->session->set_flashdata('cms_old_url', NULL);
+                    // seek for the closest url that exist in navigation table to avoid something like manage_x/index/edit/1/error to be appeared
+                    $old_url_part = explode('/', $old_url);
+                    while(count($old_url_part)>0){
+                        $query = $this->db->select('url')
+                            ->from(cms_table_name('main_navigation'))
+                            ->like('url', implode('/', $old_url_part))
+                            ->get();
+                        if($query->num_rows()>0){
+                            $row = $query->row();
+                            $old_url = $row->url;
+                            break;
+                        }else{
+                            $new_old_url_part = array();
+                            for($i=0; $i<count($old_url_part)-1; $i++){
+                                $new_old_url_part[] = $old_url_part[$i];
+                            }
+                            $old_url_part = $new_old_url_part;
+                        }
+                    }
                     redirect($old_url);
                 } else {
-                    redirect('main/index');
+                    redirect('');
                 }
             } else {
                 //the login process failed
                 //save the old_url again
-                if (!is_bool($old_url)) {
+                if (isset($old_url)) {
                     $this->session->keep_flashdata('cms_old_url');
                 }
 
                 //view login again
                 $data = array(
                     "identity" => $identity,
-                    "message" => 'Error: Login Failed',
-                    "providers" => $this->cms_third_party_providers()
+                    "message" => '{{ language:Error }}: {{ language:Login Failed }}',
+                    "providers" => $this->cms_third_party_providers(),
+                    "login_caption" => $this->cms_lang("Login"),
+                    "register_caption" => $this->cms_lang("Register"),
                 );
-                $this->view('main/login', $data, 'main_login');
+                $this->view('main/main_login', $data, 'main_login');
             }
         } else {
             //save the old_url again
-            if (!is_bool($old_url)) {
+            if (isset($old_url)) {
                 $this->session->keep_flashdata('cms_old_url');
             }
 
@@ -123,9 +164,11 @@ class Main extends CMS_Controller
             $data = array(
                 "identity" => $identity,
                 "message" => '',
-                "providers" => $this->cms_third_party_providers()
+                "providers" => $this->cms_third_party_providers(),
+                "login_caption" => $this->cms_lang("Login"),
+                "register_caption" => $this->cms_lang("Register"),
             );
-            $this->view('main/login', $data, 'main_login');
+            $this->view('main/main_login', $data, 'main_login');
         }
     }
 
@@ -154,9 +197,10 @@ class Main extends CMS_Controller
                 }
             } else {
                 $data = array(
-                    "activation_code" => $activation_code
+                    "activation_code" => $activation_code,
+                    "change_caption" => $this->cms_lang('Change'),
                 );
-                $this->view('main/forgot_change_password', $data, 'main_forgot');
+                $this->view('main/main_forgot_change_password', $data, 'main_forgot');
             }
         } else {
             //get user input
@@ -170,15 +214,17 @@ class Main extends CMS_Controller
                     redirect('main/index');
                 } else {
                     $data = array(
-                        "identity" => $identity
+                        "identity" => $identity,
+                        "send_activation_code_caption"=> $this->cms_lang('Send activation code to my email'),
                     );
-                    $this->view('main/forgot_fill_identity', $data, 'main_forgot');
+                    $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
                 }
             } else {
                 $data = array(
-                    "identity" => $identity
+                    "identity" => $identity,
+                    "send_activation_code_caption"=> $this->cms_lang('Send activation code to my email'),
                 );
-                $this->view('main/forgot_fill_identity', $data, 'main_forgot');
+                $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
             }
         }
     }
@@ -186,20 +232,39 @@ class Main extends CMS_Controller
     public function register()
     {
         $this->cms_guard_page('main_register');
+
+        // the honey_pot, every fake input should be empty
+        $honey_pot_pass = (strlen($this->input->post('user_name', ''))==0) &&
+            (strlen($this->input->post('email', ''))==0) &&
+            (strlen($this->input->post('real_name', ''))==0) &&
+            (strlen($this->input->post('password', ''))==0) &&
+            (strlen($this->input->post('confirm_password'))==0);
+        if(!$honey_pot_pass){
+            show_404();
+            die();
+        }
+
+        $previous_secret_code = $this->session->userdata('__main_registration_secret_code');
+        if($previous_secret_code === NULL){
+            $previous_secret_code = $this->__random_string();
+        }
         //get user input
-        $user_name        = $this->input->post('user_name');
-        $email            = $this->input->post('email');
-        $real_name        = $this->input->post('real_name');
-        $password         = $this->input->post('password');
-        $confirm_password = $this->input->post('confirm_password');
+        $user_name        = $this->input->post($previous_secret_code.'user_name');
+        $email            = $this->input->post($previous_secret_code.'email');
+        $real_name        = $this->input->post($previous_secret_code.'real_name');
+        $password         = $this->input->post($previous_secret_code.'password');
+        $confirm_password = $this->input->post($previous_secret_code.'confirm_password');
 
         //set validation rule
-        $this->form_validation->set_rules('user_name', 'User Name', 'required|xss_clean');
-        $this->form_validation->set_rules('email', 'E mail', 'required|xss_clean|valid_email');
-        $this->form_validation->set_rules('real_name', 'Real Name', 'required|xss_clean');
-        $this->form_validation->set_rules('password', 'Password', 'required|xss_clean|matches[confirm_password]');
-        $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required|xss_clean');
+        $this->form_validation->set_rules($previous_secret_code.'user_name', 'User Name', 'required|xss_clean');
+        $this->form_validation->set_rules($previous_secret_code.'email', 'E mail', 'required|xss_clean|valid_email');
+        $this->form_validation->set_rules($previous_secret_code.'real_name', 'Real Name', 'required|xss_clean');
+        $this->form_validation->set_rules($previous_secret_code.'password', 'Password', 'required|xss_clean|matches['.$previous_secret_code.'confirm_password]');
+        $this->form_validation->set_rules($previous_secret_code.'confirm_password', 'Password Confirmation', 'required|xss_clean');
 
+        // generate new secret code
+        $secret_code = $this->__random_string();
+        $this->session->set_userdata('__main_registration_secret_code', $secret_code);
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
             $this->cms_do_register($user_name, $email, $real_name, $password);
             redirect('main/index');
@@ -207,9 +272,11 @@ class Main extends CMS_Controller
             $data = array(
                 "user_name" => $user_name,
                 "email" => $email,
-                "real_name" => $real_name
+                "real_name" => $real_name,
+                "register_caption" => $this->cms_lang('Register'),
+                "secret_code" => $secret_code,
             );
-            $this->view('main/register', $data, 'main_register');
+            $this->view('main/main_register', $data, 'main_register');
         }
     }
 
@@ -217,15 +284,24 @@ class Main extends CMS_Controller
     {
         if ($this->input->is_ajax_request()) {
             $user_name = $this->input->post('user_name');
+            $email = $this->input->post('email');
             $exists    = $this->cms_is_user_exists($user_name);
+            $valid_email = preg_match('/@.+\./', $email);
             $message   = "";
+            $error = FALSE;
             if ($user_name == "") {
                 $message = $this->cms_lang("Username is empty");
+                $error = TRUE;
             } else if ($exists) {
                 $message = $this->cms_lang("Username already exists");
+                $error = TRUE;
+            } else if (!$valid_email){
+                $message = $this->cms_lang("Invalid email address");
+                $error = TRUE;
             }
             $data = array(
                 "exists" => $exists,
+                "error" => $error,
                 "message" => $message
             );
             $this->cms_show_json($data);
@@ -236,15 +312,24 @@ class Main extends CMS_Controller
     {
         if ($this->input->is_ajax_request()) {
             $user_name = $this->input->post('user_name');
+            $email = $this->input->post('email');
             $exists    = $this->cms_is_user_exists($user_name) && $user_name != $this->cms_user_name();
+            $valid_email = preg_match('/@.+\./', $email);
             $message   = "";
+            $error = FALSE;
             if ($user_name == "") {
                 $message = $this->cms_lang("Username is empty");
+                $error = TRUE;
             } else if ($exists) {
                 $message = $this->cms_lang("Username already exists");
+                $error = TRUE;
+            } else if (!$valid_email){
+                $message = $this->cms_lang("Invalid email address");
+                $error = TRUE;
             }
             $data = array(
                 "exists" => $exists,
+                "error" => $error,
                 "message" => $message
             );
             $this->cms_show_json($data);
@@ -290,25 +375,26 @@ class Main extends CMS_Controller
             $data = array(
                 "user_name" => $user_name,
                 "email" => $email,
-                "real_name" => $real_name
+                "real_name" => $real_name,
+                "change_profile_caption" => $this->cms_lang('Change Profile'),
             );
-            $this->view('main/change_profile', $data, 'main_change_profile');
+            $this->view('main/main_change_profile', $data, 'main_change_profile');
         }
     }
 
     public function logout()
     {
         $this->cms_do_logout();
-        redirect('main/index');
+        redirect('');
     }
 
     public function index()
-    {
-        $this->cms_guard_page('main_index');
+    {        
+        //$this->cms_guard_page('main_index');
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen(NULL)
         );
-        $this->view('main/index', $data);//, 'main_index');
+        $this->view('main/main_index', $data, 'main_index');
     }
 
     public function management()
@@ -317,7 +403,7 @@ class Main extends CMS_Controller
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen('main_management')
         );
-        $this->view('main/management', $data, 'main_management');
+        $this->view('main/main_management', $data, 'main_management');
     }
 
     public function language($language = NULL)
@@ -330,14 +416,14 @@ class Main extends CMS_Controller
             $data = array(
                 "language_list" => $this->cms_language_list()
             );
-            $this->view('main/language', $data, 'main_language');
+            $this->view('main/main_language', $data, 'main_language');
         }
     }
 
     // AUTHORIZATION ===========================================================
     public function authorization()
     {
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_authorization'));
@@ -353,6 +439,9 @@ class Main extends CMS_Controller
         $crud->unset_add();
         $crud->unset_delete();
         $crud->unset_edit();
+        $crud->required_fields('authorization_name');        
+        $crud->unique_fields('authorization_name');
+        $crud->unset_read();
 
         $crud->set_language($this->cms_language());
 
@@ -365,20 +454,26 @@ class Main extends CMS_Controller
     public function user()
     {
         $this->cms_guard_page('main_user_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_user'));
-        $crud->set_subject('User');
+        $crud->set_subject($this->cms_lang('User'));
 
-        $crud->required_fields('user_name');
+        $crud->required_fields('user_name','password');        
+        $crud->unique_fields('user_name');
+        $crud->unset_read();
 
         $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
         $crud->edit_fields('user_name', 'email', 'real_name', 'active', 'groups');
         $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups');
         $crud->field_type('active', 'true_false');
 
-        $crud->display_as('user_name', 'User Name')->display_as('email', 'E mail')->display_as('real_name', 'Real Name')->display_as('active', 'Active')->display_as('groups', 'Groups');
+        $crud->display_as('user_name', $this->cms_lang('User Name'))
+            ->display_as('email', $this->cms_lang('Email'))
+            ->display_as('real_name', $this->cms_lang('Real Name'))
+            ->display_as('active', $this->cms_lang('Active'))
+            ->display_as('groups', $this->cms_lang('Groups'));
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_user'), cms_table_name('main_group'), 'user_id', 'group_id', 'group_name');
         $crud->callback_before_insert(array(
@@ -407,7 +502,7 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/user', $output, 'main_user_management');
+        $this->view('main/main_user', $output, 'main_user_management');
     }
 
     public function read_only_user_active($value, $row)
@@ -436,18 +531,24 @@ class Main extends CMS_Controller
     public function group()
     {
         $this->cms_guard_page('main_group_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_group'));
-        $crud->set_subject('User Group');
+        $crud->set_subject($this->cms_lang('User Group'));
 
-        $crud->required_fields('group_name');
+        $crud->required_fields('group_name');       
+        $crud->unique_fields('group_name');
+        $crud->unset_read();
 
         $crud->columns('group_name', 'description');
         $crud->edit_fields('group_name', 'description', 'users', 'navigations', 'privileges');
         $crud->add_fields('group_name', 'description', 'users', 'navigations', 'privileges');
-        $crud->display_as('group_name', 'Group')->display_as('description', 'Description')->display_as('users', 'Users')->display_as('navigations', 'Navigations')->display_as('privileges', 'Privileges');
+        $crud->display_as('group_name', $this->cms_lang('Group'))
+            ->display_as('description', $this->cms_lang('Description'))
+            ->display_as('users', $this->cms_lang('Users '))
+            ->display_as('navigations', $this->cms_lang('Navigations'))
+            ->display_as('privileges', $this->cms_lang('Privileges'));
 
 
         $crud->set_relation_n_n('users', cms_table_name('main_group_user'), cms_table_name('main_user'), 'group_id', 'user_id', 'user_name');
@@ -461,13 +562,13 @@ class Main extends CMS_Controller
         $crud->unset_texteditor('description');
 
 
-        $crud->set_lang_string('delete_error_message', 'You cannot delete Admin group or group which is not empty, please empty the group first');
+        $crud->set_lang_string('delete_error_message', $this->cms_lang('You cannot delete admin group or group which is not empty, please empty the group first'));
 
         $crud->set_language($this->cms_language());
 
         $output = $crud->render();
 
-        $this->view('main/group', $output, 'main_group_management');
+        $this->view('main/main_group', $output, 'main_group_management');
     }
 
     public function before_delete_group($primary_key)
@@ -484,20 +585,23 @@ class Main extends CMS_Controller
     }
 
     // NAVIGATION ==============================================================
-    public function navigation()
+    public function navigation($parent_id=NULL)
     {
         $this->cms_guard_page('main_navigation_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
+
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_navigation'));
-        $crud->set_subject('Navigation (Page)');
+        $crud->set_subject($this->cms_lang('Navigation (Page)'));
 
-        $crud->required_fields('navigation_name');
+        $crud->required_fields('navigation_name', 'title');
+        $crud->unique_fields('navigation_name', 'title', 'url');
+        $crud->unset_read();
 
-        $crud->columns('navigation_name', 'parent_id', 'title', 'active', 'only_content', 'is_static', 'authorization_id', 'groups');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
+        $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
@@ -507,21 +611,57 @@ class Main extends CMS_Controller
             $theme_path[] = $theme['path'];
         }
         $crud->field_type('default_theme', 'enum', $theme_path);
-        $crud->display_as('navigation_name', 'Navigation Code')->display_as('is_root', 'Is Root')->display_as('parent_id', 'Parent')->display_as('title', 'Navigation Title (What visitor see)')->display_as('page_title', 'Page Title')->display_as('page_keyword', 'Page Keyword (Comma Separated)')->display_as('description', 'Description')->display_as('url', 'URL (Where is it point to)')->display_as('active', 'Active')->display_as('is_static', 'Static')->display_as('static_content', 'Static Content')->display_as('authorization_id', 'Authorization')->display_as('groups', 'Groups')->display_as('only_content', 'Only show content')->display_as('default_theme', 'Default Theme');
+        $crud->display_as('navigation_name', $this->cms_lang('Navigation Code'))
+            ->display_as('is_root', $this->cms_lang('Is Root'))
+            ->display_as('navigation_child', $this->cms_lang('Children'))
+            ->display_as('parent_id', $this->cms_lang('Parent'))
+            ->display_as('title', $this->cms_lang('Navigation Title (What visitor see)'))
+            ->display_as('page_title', $this->cms_lang('Page Title'))
+            ->display_as('page_keyword', $this->cms_lang('Page Keyword (Comma Separated)'))
+            ->display_as('description', $this->cms_lang('Description'))
+            ->display_as('url', $this->cms_lang('URL (Where is it point to)'))
+            ->display_as('active', $this->cms_lang('Active'))
+            ->display_as('is_static', $this->cms_lang('Static'))
+            ->display_as('static_content', $this->cms_lang('Static Content'))
+            ->display_as('authorization_id', $this->cms_lang('Authorization'))
+            ->display_as('groups', $this->cms_lang('Groups'))
+            ->display_as('only_content', $this->cms_lang('Only show content'))
+            ->display_as('default_theme', $this->cms_lang('Default Theme'));
 
         $crud->order_by('parent_id, index', 'asc');
 
         $crud->unset_texteditor('description');
         $crud->field_type('only_content', 'true_false');
 
-        $crud->set_relation('parent_id', cms_table_name('main_navigation'), '`navigation_name`');
+        $crud->field_type('bootstrap_glyph','enum',array('icon-glass', 'icon-music', 'icon-search', 'icon-envelope', 'icon-heart', 'icon-star', 'icon-star-empty', 'icon-user', 'icon-film', 'icon-th-large', 'icon-th', 'icon-th-list', 'icon-ok', 'icon-remove', 'icon-zoom-in', 'icon-zoom-out', 'icon-off', 'icon-signal', 'icon-cog', 'icon-trash', 'icon-home', 'icon-file', 'icon-time', 'icon-road', 'icon-download-alt', 'icon-download', 'icon-upload', 'icon-inbox', 'icon-play-circle', 'icon-repeat', 'icon-refresh', 'icon-list-alt', 'icon-lock', 'icon-flag', 'icon-headphones', 'icon-volume-off', 'icon-volume-down', 'icon-volume-up', 'icon-qrcode', 'icon-barcode', 'icon-tag', 'icon-tags', 'icon-book', 'icon-bookmark', 'icon-print', 'icon-camera', 'icon-font', 'icon-bold', 'icon-italic', 'icon-text-height', 'icon-text-width', 'icon-align-left', 'icon-align-center', 'icon-align-right', 'icon-align-justify', 'icon-list', 'icon-indent-left', 'icon-indent-right', 'icon-facetime-video', 'icon-picture', 'icon-pencil', 'icon-map-marker', 'icon-adjust', 'icon-tint', 'icon-edit', 'icon-share', 'icon-check', 'icon-move', 'icon-step-backward', 'icon-fast-backward', 'icon-backward', 'icon-play', 'icon-pause', 'icon-stop', 'icon-forward', 'icon-fast-forward', 'icon-step-forward', 'icon-eject', 'icon-chevron-left', 'icon-chevron-right', 'icon-plus-sign', 'icon-minus-sign', 'icon-remove-sign', 'icon-ok-sign', 'icon-question-sign', 'icon-info-sign', 'icon-screenshot', 'icon-remove-circle', 'icon-ok-circle', 'icon-ban-circle', 'icon-arrow-left', 'icon-arrow-right', 'icon-arrow-up', 'icon-arrow-down', 'icon-share-alt', 'icon-resize-full', 'icon-resize-small', 'icon-plus', 'icon-minus', 'icon-asterisk', 'icon-exclamation-sign', 'icon-gift', 'icon-leaf', 'icon-fire', 'icon-eye-open', 'icon-eye-close', 'icon-warning-sign', 'icon-plane', 'icon-calendar', 'icon-random', 'icon-comment', 'icon-magnet', 'icon-chevron-up', 'icon-chevron-down', 'icon-retweet', 'icon-shopping-cart', 'icon-folder-close', 'icon-folder-open', 'icon-resize-vertical', 'icon-resize-horizontal', 'icon-hdd', 'icon-bullhorn', 'icon-bell', 'icon-certificate', 'icon-thumbs-up', 'icon-thumbs-down', 'icon-hand-right', 'icon-hand-left', 'icon-hand-up', 'icon-hand-down', 'icon-circle-arrow-right', 'icon-circle-arrow-left', 'icon-circle-arrow-up', 'icon-circle-arrow-down', 'icon-globe', 'icon-wrench', 'icon-tasks', 'icon-filter', 'icon-briefcase', 'icon-fullscreen'));
+
+        $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
         $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name');
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_navigation'), cms_table_name('main_group'), 'navigation_id', 'group_id', 'group_name');
 
+        if(isset($parent_id) && intval($parent_id)>0){
+            $crud->where(cms_table_name('main_navigation').'.parent_id', $parent_id);
+            $state = $crud->getState();
+            if($state == 'add'){
+                $crud->field_type('parent_id', 'hidden', $parent_id);
+            }
+        }else{
+            $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
+        }
+        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
+            site_url($this->cms_module_path().'/action_navigation_move_up').'/');
+        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
+            site_url($this->cms_module_path().'/action_navigation_move_down').'/');
+
         $crud->callback_column('active', array(
             $this,
             'column_navigation_active'
+        ));
+
+        $crud->callback_column('navigation_child', array(
+            $this,
+            'column_navigation_child'
         ));
 
         $crud->callback_before_insert(array(
@@ -537,7 +677,61 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/navigation', $output, 'main_navigation_management');
+        $navigation_path = array();
+        if(isset($parent_id) && intval($parent_id)>0){
+            $this->db->select('navigation_name')
+                ->from(cms_table_name('main_navigation'))
+                ->where('navigation_id', $parent_id);
+            $query = $this->db->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $navigation_name = $row->navigation_name;
+                $navigation_path = $this->cms_get_navigation_path($navigation_name);
+            }
+        }
+        $output->navigation_path = $navigation_path;
+
+        $this->view('main/main_navigation', $output, 'main_navigation_management');
+    }
+
+    public function action_navigation_move_up($primary_key){
+        $query = $this->db->select('navigation_name, parent_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $navigation_name = $row->navigation_name;
+        $parent_id = $row->parent_id;
+
+        // move up
+        $this->cms_do_move_up_navigation($navigation_name);
+
+        // redirect
+        if(isset($parent_id)){
+            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key);
+        }else{
+            redirect('main/navigation'.'#record_'.$primary_key);
+        }
+    }
+
+    public function action_navigation_move_down($primary_key){
+        $query = $this->db->select('navigation_name, parent_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $navigation_name = $row->navigation_name;
+        $parent_id = $row->parent_id;
+
+        // move down
+        $this->cms_do_move_down_navigation($navigation_name);
+
+        // redirect
+        if(isset($parent_id)){
+            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key);
+        }else{
+            redirect('main/navigation'.'#record_'.$primary_key);
+        }
     }
 
     public function before_insert_navigation($post_array)
@@ -555,12 +749,12 @@ class Main extends CMS_Controller
         } else {
             $whereParentId = "(parent_id IS NULL)";
         }
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_navigation')."` WHERE $whereParentId";
+        $SQL   = "SELECT max(".$this->db->protect_identifiers('index').")+1 AS newIndex FROM ".cms_table_name('main_navigation')." WHERE $whereParentId";
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
         if (!isset($index))
-            $index = 0;
+            $index = 1;
 
         $post_array['index'] = $index;
 
@@ -580,12 +774,35 @@ class Main extends CMS_Controller
 
     public function column_navigation_active($value, $row)
     {
+        $html = '<a name="record_'.$row->navigation_id.'">&nbsp;</a>';
         $target = site_url($this->cms_module_path() . '/toggle_navigation_active/' . $row->navigation_id);
         if ($value == 0) {
-            return '<span target="' . $target . '" class="navigation_active">Inactive</span>';
+            $html .= '<span target="' . $target . '" class="navigation_active">Inactive</span>';
         } else {
-            return '<span target="' . $target . '" class="navigation_active">Active</span>';
+            $html .= '<span target="' . $target . '" class="navigation_active">Active</span>';
         }
+        return $html;
+    }
+
+    public function column_navigation_child($value, $row)
+    {
+        $html = '';
+        $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('parent_id', $row->navigation_id);
+        $query = $this->db->get();
+        $child_count = $query->num_rows();
+        if($child_count<=0){
+            $html .= $this->cms_lang('No Child');
+        }else{
+            $html .= '<a href="'.site_url($this->cms_module_path().'/navigation/'.$row->navigation_id).'">'.
+                $this->cms_lang('Manage Children')
+                .'</a>';
+        }
+        $html .= '&nbsp;|&nbsp;<a href="'.site_url($this->cms_module_path().'/navigation/'.$row->navigation_id).'/add">'.
+            $this->cms_lang('Add Child')
+            .'</a>';
+        return $html;
     }
 
     public function toggle_navigation_active($navigation_id)
@@ -616,19 +833,21 @@ class Main extends CMS_Controller
     public function quicklink()
     {
         $this->cms_guard_page('main_quicklink_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_quicklink'));
-        $crud->set_subject('Quick Link');
+        $crud->set_subject($this->cms_lang('Quick Link'));
 
-        $crud->required_fields('navigation_id');
+        $crud->required_fields('navigation_id');       
+        $crud->unique_fields('navigation_id');
+        $crud->unset_read();
 
         $crud->columns('navigation_id');
         $crud->edit_fields('navigation_id');
         $crud->add_fields('navigation_id');
 
-        $crud->display_as('navigation_id', 'Navigation Code');
+        $crud->display_as('navigation_id', $this->cms_lang('Navigation Code'));
 
         $crud->order_by('index', 'asc');
 
@@ -637,6 +856,16 @@ class Main extends CMS_Controller
         $crud->callback_before_insert(array(
             $this,
             'before_insert_quicklink'
+        ));
+
+        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
+            site_url($this->cms_module_path().'/action_quicklink_move_up').'/');
+        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
+            site_url($this->cms_module_path().'/action_quicklink_move_down').'/');
+
+        $crud->callback_column($this->unique_field_name('navigation_id'), array(
+            $this,
+            'column_quicklink_navigation_id'
         ));
 
         $crud->set_language($this->cms_language());
@@ -648,36 +877,83 @@ class Main extends CMS_Controller
 
     public function before_insert_quicklink($post_array)
     {
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_quicklink')."`";
+        $SQL   = "SELECT max(".$this->db->protect_identifiers('index').")+1 AS newIndex FROM ".cms_table_name('main_quicklink');
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
 
         if (!isset($index))
-            $index = 0;
+            $index = 1;
 
         $post_array['index'] = $index;
 
         return $post_array;
     }
 
+    public function column_quicklink_navigation_id($value, $row)
+    {
+        $html = '<a name="record_'.$row->quicklink_id.'">&nbsp;</a>';
+        $html .= $value;
+        return $html;
+    }
+
+    public function action_quicklink_move_up($primary_key){
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_quicklink'))
+            ->where('quicklink_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $navigation_id = $row->navigation_id;
+
+        // move up
+        $this->cms_do_move_up_quicklink($navigation_id);
+
+        // redirect
+        redirect('main/quicklink'.'#record_'.$primary_key);
+    }
+
+    public function action_quicklink_move_down($primary_key){
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_quicklink'))
+            ->where('quicklink_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $navigation_id = $row->navigation_id;
+
+        // move up
+        $this->cms_do_move_down_quicklink($navigation_id);
+
+        // redirect
+        redirect('main/quicklink'.'#record_'.$primary_key);
+    }
+
     // PRIVILEGE ===============================================================
     public function privilege()
     {
         $this->cms_guard_page('main_privilege_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_privilege'));
-        $crud->set_subject('Privilege');
+        $crud->set_subject($this->cms_lang('Privilege'));
 
-        $crud->required_fields('privilege_name');
+        $crud->required_fields('privilege_name');        
+        $crud->unique_fields('privilege_name');
+        $crud->unset_read();
+
+        $crud->columns('privilege_name','title','description');
+        $crud->edit_fields('privilege_name','title','description','authorization_id','groups');
+        $crud->add_fields('privilege_name','title','description','authorization_id','groups');
 
         $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name'); //, 'groups');
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_privilege'), cms_table_name('main_group'), 'privilege_id', 'group_id', 'group_name');
 
-        $crud->display_as('authorization_id', 'Authorization');
+        $crud->display_as('authorization_id', $this->cms_lang('Authorization'))
+            ->display_as('groups', $this->cms_lang('Groups'))
+            ->display_as('privilege_name', $this->cms_lang('Privilege Code'))
+            ->display_as('title', $this->cms_lang('Title'))
+            ->display_as('description', $this->cms_lang('Description'));
 
         $crud->unset_texteditor('description');
 
@@ -685,29 +961,43 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/privilege', $output, 'main_privilege_management');
+        $this->view('main/main_privilege', $output, 'main_privilege_management');
     }
 
     // WIDGET ==================================================================
     public function widget()
     {
         $this->cms_guard_page('main_widget_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_widget'));
-        $crud->set_subject('Widget');
+        $crud->set_subject($this->cms_lang('Widget'));
 
-        $crud->required_fields('widget_name');
+        $crud->required_fields('widget_name');        
+        $crud->unique_fields('widget_name');
+        $crud->unset_read();
 
-        $crud->columns('widget_name', 'title', 'active', 'is_static', 'description', 'authorization_id', 'slug', 'groups');
+        $crud->columns('widget_name', 'title', 'active', 'slug');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         $crud->field_type('index', 'integer');
 
-        $crud->display_as('widget_name', 'Widget Code')->display_as('title', 'Title (What visitor see)')->display_as('active', 'Active')->display_as('description', 'Description')->display_as('url', 'URL (Where is it point to)')->display_as('index', 'Order')->display_as('is_static', 'Static')->display_as('static_content', 'Static Content')->display_as('slug', 'Slug')->display_as('authorization_id', 'Authorization')->display_as('groups', 'Groups');
+        $crud->display_as('widget_name', $this->cms_lang('Widget Code'))
+            ->display_as('title', $this->cms_lang('Title (What visitor see)'))
+            ->display_as('active', $this->cms_lang('Active'))
+            ->display_as('description', $this->cms_lang('Description'))
+            ->display_as('url', $this->cms_lang('URL (Where is it point to)'))
+            ->display_as('index', $this->cms_lang('Order'))
+            ->display_as('is_static', $this->cms_lang('Static'))
+            ->display_as('static_content', $this->cms_lang('Static Content'))
+            ->display_as('slug', $this->cms_lang('Slug'))
+            ->display_as('authorization_id', $this->cms_lang('Authorization'))
+            ->display_as('groups', $this->cms_lang('Groups'));
+
+        $crud->order_by('index, slug', 'asc');
 
         $crud->unset_texteditor('static_content');
         $crud->unset_texteditor('description');
@@ -721,6 +1011,11 @@ class Main extends CMS_Controller
             'before_insert_widget'
         ));
 
+        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
+            site_url($this->cms_module_path().'/action_widget_move_up').'/');
+        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
+            site_url($this->cms_module_path().'/action_widget_move_down').'/');
+
         $crud->callback_column('active', array(
             $this,
             'column_widget_active'
@@ -730,23 +1025,18 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/widget', $output, 'main_widget_management');
+        $this->view('main/main_widget', $output, 'main_widget_management');
     }
 
     public function before_insert_widget($post_array)
     {
-        if (isset($post_array['slug'])) {
-            $whereSlug = "(slug = '" . $post_array['slug'] . "')";
-        } else {
-            $whereSlug = "(slug IS NULL)";
-        }
-        $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_widget')."` WHERE $whereSlug";
+        $SQL   = "SELECT max(".$this->db->protect_identifiers('index').")+1 AS newIndex FROM ".cms_table_name('main_widget');
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $index = $row->newIndex;
 
         if (!isset($index))
-            $index = 0;
+            $index = 1;
 
         $post_array['index'] = $index;
 
@@ -759,12 +1049,14 @@ class Main extends CMS_Controller
 
     public function column_widget_active($value, $row)
     {
+        $html = '<a name="record_'.$row->widget_id.'">&nbsp;</a>';
         $target = site_url($this->cms_module_path() . '/toggle_widget_active/' . $row->widget_id);
         if ($value == 0) {
-            return '<span target="' . $target . '" class="widget_active">Inactive</span>';
+            $html.= '<span target="' . $target . '" class="widget_active">Inactive</span>';
         } else {
-            return '<span target="' . $target . '" class="widget_active">Active</span>';
+            $html.= '<span target="' . $target . '" class="widget_active">Active</span>';
         }
+        return $html;
     }
 
     public function toggle_widget_active($widget_id)
@@ -791,25 +1083,57 @@ class Main extends CMS_Controller
         }
     }
 
+    public function action_widget_move_up($primary_key){
+        $query = $this->db->select('widget_name')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $widget_name = $row->widget_name;
+
+        // move up
+        $this->cms_do_move_up_widget($widget_name);
+
+        // redirect
+        redirect('main/widget'.'#record_'.$primary_key);
+    }
+
+    public function action_widget_move_down($primary_key){
+        $query = $this->db->select('widget_name')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_id', $primary_key)
+            ->get();
+        $row = $query->row();
+        $widget_name = $row->widget_name;
+
+        // move up
+        $this->cms_do_move_down_widget($widget_name);
+
+        // redirect
+        redirect('main/widget'.'#record_'.$primary_key);
+    }
+
     // CONFIG ==================================================================
     public function config()
     {
         $this->cms_guard_page('main_config_management');
-        $crud = new grocery_CRUD();
+        $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_table(cms_table_name('main_config'));
-        $crud->set_subject('Configuration');
+        $crud->set_subject($this->cms_lang('Configuration'));
+        
+        $crud->required_fields('config_name');        
+        $crud->unique_fields('config_name');
+        $crud->unset_read();
 
-
-
-        $crud->columns('config_name', 'value', 'description');
+        $crud->columns('config_name', 'value');
         $crud->edit_fields('config_name', 'value', 'description');
         $crud->add_fields('config_name', 'value', 'description');
 
-        $crud->display_as('config_name', 'Configuration Key')
-            ->display_as('value', 'Configuration Value')
-            ->display_as('description', 'Description');
+        $crud->display_as('config_name', $this->cms_lang('Configuration Key'))
+            ->display_as('value', $this->cms_lang('Configuration Value'))
+            ->display_as('description', $this->cms_lang('Description'));
 
         $crud->unset_texteditor('description');
         $crud->unset_texteditor('value');
@@ -840,7 +1164,7 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/config', $output, 'main_config_management');
+        $this->view('main/main_config', $output, 'main_config_management');
     }
 
     public function after_insert_config($post_array, $primary_key){
@@ -878,7 +1202,7 @@ class Main extends CMS_Controller
             "welcome_lang" => $this->cms_lang('Welcome'),
             "logout_lang" => $this->cms_lang('Logout')
         );
-        $this->view('main/widget_logout', $data);
+        $this->view('main/main_widget_logout', $data);
     }
 
     public function widget_login()
@@ -924,57 +1248,132 @@ class Main extends CMS_Controller
         }
     }
 
-    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $navigations = NULL){
-        if(!isset($navigations)){
-            $navigations = $this->cms_navigations();
-        }
-        if(count($navigations) == 0) return '';
-
+    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $no_complete_menu=FALSE, $no_quicklink=FALSE, $navigations = NULL){
         $result = '';
-        $result .= '<ul class="dropdown-menu">';
-        foreach($navigations as $navigation){
-            if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
-                // make text
-                if($navigation['allowed'] && $navigation['active']){
-                    $text = '<a href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
-                }else{
-                    $text = '<a href="#">'.$navigation['title'].'</a>';
-                }
+        $caption = $this->cms_lang($caption);
 
-                if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
-                    $result .= '<li class="dropdown-submenu">'.$text.$this->widget_top_nav($caption, FALSE, $navigation['child']).'</li>';
-                }else{
-                    $result .= '<li>'.$text.'</li>';
+        if(!$no_complete_menu){
+            if(!isset($navigations)){
+                $navigations = $this->cms_navigations();
+            }
+            if(count($navigations) == 0) return '';
+
+
+            $result .= '<ul class="dropdown-menu">';
+            foreach($navigations as $navigation){
+                if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                    $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == ''? 'icon-white': $navigation['bootstrap_glyph'];
+                    // make text
+                    if($navigation['allowed'] && $navigation['active']){
+                        $text = '<a href="'.$navigation['url'].'"><i class="'.$navigation['bootstrap_glyph'].'">&nbsp;</i>&nbsp;'.$navigation['title'].'</a>';
+                    }else{
+                        $text = '<a href="#"><i class="'.$navigation['bootstrap_glyph'].'">&nbsp;</i>&nbsp;'.$navigation['title'].'</a>';
+                    }
+
+                    if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
+                        $result .= '<li class="dropdown-submenu">'.
+                            $text.$this->widget_top_nav($caption, FALSE, $no_complete_menu, $no_quicklink, $navigation['child']).'</li>';
+                    }else{
+                        $result .= '<li>'.$text.'</li>';
+                    }
                 }
             }
+            $result .= '</ul>';
         }
-        $result .= '</ul>';
-        if($first){
-            $result = '<ul class="nav"><li class="dropdown">'.
-                '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
-                $result.
-                '</li></ul>';
-        }
+
         // show up
         if($first){
+            if(!$no_complete_menu){
+                $result = '<li class="dropdown">'.
+                    '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
+                    $result.'</li>';
+            }
+            if(!$no_quicklink){
+                $result .= $this->build_quicklink();
+            }
+            $result = '
+            <div class="navbar navbar-fixed-top">
+              <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="#">
+                        <img src ="{{ site_logo }}" style="max-height:20px; max-width:20px;" />
+                    </a>
+                    <div class="nav-collapse in collapse" id="main-menu">
+                        <ul class="nav">'.$result.'</ul>
+                    </div>
+                </div>
+              </div>
+            </div>';
             $this->cms_show_html($result);
-            $this->widget_quicklink();
         }else{
             return $result;
         }
     }
 
-    private function widget_quicklink(){
-        $quicklinks = $this->cms_quicklinks();
-        if(count($quicklinks) == 0) return '';
-        $html = '<ul class="nav">';
-        foreach($quicklinks as $quicklink){
-            $html.= '<li>';
-            $html.= anchor($quicklink['url'], $quicklink['title']);
-            $html.= '</li>';
+    public function widget_top_nav_no_quicklink($caption = 'Complete Menu'){
+        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, NULL);
+    }
+
+    public function widget_quicklink(){
+        $this->widget_top_nav('', TRUE, TRUE, FALSE, NULL);
+    }
+
+    private function build_quicklink($quicklinks = NULL,$first = TRUE){
+        if(!isset($quicklinks)){
+            $quicklinks = $this->cms_quicklinks();
         }
-        $html.= '</ul>';
-        $this->cms_show_html($html);
+        if(count($quicklinks) == 0) return '';
+        $html = '';
+
+        foreach($quicklinks as $quicklink){
+        	// if navigation is not active then skip it
+        	if(!$quicklink['active']){
+        		continue;
+        	}
+			// create icon if needed
+            $icon = '';            
+            if($first){
+                $icon_class = $quicklink['bootstrap_glyph'].' icon-white';
+            }else{
+                $icon_class = $quicklink['bootstrap_glyph'];
+            }
+            if($quicklink['bootstrap_glyph'] != '' || !$first){
+                $icon_class = $icon_class==''? 'icon-white': $icon_class;
+                $icon = '<i class="'.$icon_class.'">&nbsp;</i>&nbsp;';
+            }
+            // create li based on child availability
+            if(count($quicklink['child'])==0){
+                $html.= '<li>';
+                $html.= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].'</span>');
+                $html.= '</li>';
+            }else{
+                if($first){
+                    $html.= '<li class="dropdown">';
+                    $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
+                        '<span onclick="if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;window.location = \''.$quicklink['url'].'\'">'.
+                        $icon.$quicklink['title'].'</span>'.
+                        '&nbsp;<span class="caret"></span></a>';
+                    $html.= $this->build_quicklink($quicklink['child'],FALSE);
+                    $html.= '</li>';
+                }else{
+                    $html.= '<li class="dropdown-submenu">';
+                    $html.= '<a href="'.$quicklink['url'].'">'.
+                        '<span>'.$icon.$quicklink['title'].'</span></a>';
+                    $html.= $this->build_quicklink($quicklink['child'],FALSE);
+                    $html.= '</li>';
+                }
+            }
+        }
+
+        if(!$first){
+            $html = '<ul class="dropdown-menu">'.$html.'</ul>';
+        }
+        return $html;
     }
 
 }

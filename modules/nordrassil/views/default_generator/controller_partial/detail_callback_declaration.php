@@ -106,7 +106,7 @@
 			echo '		$query = $this->db->select(\''.$selection_table_primary_key.','.$selection_column_name.'\')'.PHP_EOL;
 			echo '           ->from($this->cms_complete_table_name(\''.$selection_table_name.'\'))->get();'.PHP_EOL;
 			echo '		foreach($query->result() as $row){'.PHP_EOL;
-			echo '			$options[\''.$name.'\'][] = array(\'value\' => $row->'.$selection_table_primary_key.', \'caption\' => $row->'.$selection_column_name.');'.PHP_EOL;
+			echo '			$options[\''.$name.'\'][] = array(\'value\' => $row->'.$selection_table_primary_key.', \'caption\' => strip_tags($row->'.$selection_column_name.'));'.PHP_EOL;
 			echo '		}'.PHP_EOL;
 		}
 	}

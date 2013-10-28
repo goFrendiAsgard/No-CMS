@@ -12,51 +12,32 @@
 
     <!-- Le styles -->
     <?php
-        $asset = new CMS_Asset();
-        $asset->add_themes_css('style.css', 'minimal', 'default');
-        $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
-        echo $asset->compile_css();
-
-        $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
-        $asset->add_themes_js('script.js', 'minimal', 'default');
-        echo $asset->compile_js(TRUE);
-    ?>
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+	    $asset = new CMS_Asset();	    
+	    $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
+        $asset->add_themes_css('style.css', '{{ used_theme }}', 'default');
+	    echo $asset->compile_css();
+	?>
 
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="{{ site_favicon }}">
   </head>
   <body>
-    <div class="navbar navbar-fixed-top navbar-inverse">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-            <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <a class="brand" href="#">
-                <img src ="{{ site_logo }}" style="max-height:20px; max-width:20px;" />
-            </a>
-            <div class="nav-collapse in collapse" id="main-menu">
-                {{ widget_name:top_navigation }}
-            </div>
-        </div>
-      </div>
-    </div>
-
+    <?php
+        $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
+        $asset->add_themes_js('script.js', '{{ used_theme }}', 'default');
+        echo $asset->compile_js();
+    ?>
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    {{ widget_name:section_top_fix }}
     <div class="container">
-      <div class="layout-content">
-    	<?php echo $template['body'];?>
+      <div class="row-fluid">
+    	<div id="__section-content" class="span12"><?php echo $template['body'];?></div>
       </div><!--/row-->
       <hr>
-      <footer>{{ site_footer }}</footer>
+      <footer>{{ widget_name:section_bottom }}</footer>
     </div><!--/.fluid-container-->
-
   </body>
 </html>
-

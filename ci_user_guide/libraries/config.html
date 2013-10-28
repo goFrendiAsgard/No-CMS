@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Config Class &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Libraries" href="index.html" />
+	    <link rel="next" title="Email Class" href="email.html" />
+	    <link rel="prev" title="Shopping Cart Class" href="cart.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb3b48ec>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Config Class</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="config-class">
+<h1><a class="toc-backref" href="#id1">Config Class</a><a class="headerlink" href="#config-class" title="Permalink to this headline">¶</a></h1>
+<p>The Config class provides a means to retrieve configuration preferences.
+These preferences can come from the default config file
+(application/config/config.php) or from your own custom config files.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This class is initialized automatically by the system so there
+is no need to do it manually.</p>
+</div>
+<div class="contents topic" id="page-contents">
+<p class="topic-title first">Page Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#config-class" id="id1">Config Class</a><ul>
+<li><a class="reference internal" href="#anatomy-of-a-config-file" id="id2">Anatomy of a Config File</a></li>
+<li><a class="reference internal" href="#loading-a-config-file" id="id3">Loading a Config File</a><ul>
+<li><a class="reference internal" href="#manual-loading" id="id4">Manual Loading</a></li>
+<li><a class="reference internal" href="#auto-loading" id="id5">Auto-loading</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fetching-config-items" id="id6">Fetching Config Items</a></li>
+<li><a class="reference internal" href="#setting-a-config-item" id="id7">Setting a Config Item</a></li>
+<li><a class="reference internal" href="#environments" id="id8">Environments</a></li>
+<li><a class="reference internal" href="#helper-functions" id="id9">Helper Functions</a><ul>
+<li><a class="reference internal" href="#this-config-site-url" id="id10">$this-&gt;config-&gt;site_url();</a></li>
+<li><a class="reference internal" href="#this-config-base-url" id="id11">$this-&gt;config-&gt;base_url();</a></li>
+<li><a class="reference internal" href="#this-config-system-url" id="id12">$this-&gt;config-&gt;system_url();</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="anatomy-of-a-config-file">
+<h2><a class="toc-backref" href="#id2">Anatomy of a Config File</a><a class="headerlink" href="#anatomy-of-a-config-file" title="Permalink to this headline">¶</a></h2>
+<p>By default, CodeIgniter has one primary config file, located at
+application/config/config.php. If you open the file using your text
+editor you&#8217;ll see that config items are stored in an array called
+$config.</p>
+<p>You can add your own config items to this file, or if you prefer to keep
+your configuration items separate (assuming you even need config items),
+simply create your own file and save it in config folder.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you do create your own config files use the same format as
+the primary one, storing your items in an array called $config.
+CodeIgniter will intelligently manage these files so there will be no
+conflict even though the array has the same name (assuming an array
+index is not named the same as another).</p>
+</div>
+</div>
+<div class="section" id="loading-a-config-file">
+<h2><a class="toc-backref" href="#id3">Loading a Config File</a><a class="headerlink" href="#loading-a-config-file" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">CodeIgniter automatically loads the primary config file
+(application/config/config.php), so you will only need to load a config
+file if you have created your own.</p>
+</div>
+<p>There are two ways to load a config file:</p>
+<div class="section" id="manual-loading">
+<h3><a class="toc-backref" href="#id4">Manual Loading</a><a class="headerlink" href="#manual-loading" title="Permalink to this headline">¶</a></h3>
+<p>To load one of your custom config files you will use the following
+function within the <a class="reference internal" href="../general/controllers.html"><em>controller</em></a> that
+needs it:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where filename is the name of your config file, without the .php file
+extension.</p>
+<p>If you need to load multiple config files normally they will be
+merged into one master config array. Name collisions can occur,
+however, if you have identically named array indexes in different
+config files. To avoid collisions you can set the second parameter to
+TRUE and each config file will be stored in an array index
+corresponding to the name of the config file. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Stored in an array with this prototype: $this-&gt;config[&#39;blog_settings&#39;] = $config</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;blog_settings&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Please see the section entitled Fetching Config Items below to learn
+how to retrieve config items set this way.</p>
+<p>The third parameter allows you to suppress errors in the event that a
+config file does not exist:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;blog_settings&#39;</span><span class="p">,</span> <span class="k">FALSE</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="auto-loading">
+<h3><a class="toc-backref" href="#id5">Auto-loading</a><a class="headerlink" href="#auto-loading" title="Permalink to this headline">¶</a></h3>
+<p>If you find that you need a particular config file globally, you can
+have it loaded automatically by the system. To do this, open the
+<strong>autoload.php</strong> file, located at application/config/autoload.php,
+and add your config file as indicated in the file.</p>
+</div>
+</div>
+<div class="section" id="fetching-config-items">
+<h2><a class="toc-backref" href="#id6">Fetching Config Items</a><a class="headerlink" href="#fetching-config-items" title="Permalink to this headline">¶</a></h2>
+<p>To retrieve an item from your config file, use the following function:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">item</span><span class="p">(</span><span class="s1">&#39;item name&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where item name is the $config array index you want to retrieve. For
+example, to fetch your language choice you&#8217;ll do this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$lang</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">item</span><span class="p">(</span><span class="s1">&#39;language&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The function returns FALSE (boolean) if the item you are trying to fetch
+does not exist.</p>
+<p>If you are using the second parameter of the $this-&gt;config-&gt;load
+function in order to assign your config items to a specific index you
+can retrieve it by specifying the index name in the second parameter of
+the $this-&gt;config-&gt;item() function. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1">// Loads a config file named blog_settings.php and assigns it to an index named &quot;blog_settings&quot;</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">load</span><span class="p">(</span><span class="s1">&#39;blog_settings&#39;</span><span class="p">,</span> <span class="k">TRUE</span><span class="p">);</span>
+
+<span class="c1">// Retrieve a config item named site_name contained within the blog_settings array</span>
+<span class="nv">$site_name</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">item</span><span class="p">(</span><span class="s1">&#39;site_name&#39;</span><span class="p">,</span> <span class="s1">&#39;blog_settings&#39;</span><span class="p">);</span>
+
+<span class="c1">// An alternate way to specify the same item:</span>
+<span class="nv">$blog_config</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">item</span><span class="p">(</span><span class="s1">&#39;blog_settings&#39;</span><span class="p">);</span>
+<span class="nv">$site_name</span> <span class="o">=</span> <span class="nv">$blog_config</span><span class="p">[</span><span class="s1">&#39;site_name&#39;</span><span class="p">];</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-a-config-item">
+<h2><a class="toc-backref" href="#id7">Setting a Config Item</a><a class="headerlink" href="#setting-a-config-item" title="Permalink to this headline">¶</a></h2>
+<p>If you would like to dynamically set a config item or change an existing
+one, you can do so using:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">set_item</span><span class="p">(</span><span class="s1">&#39;item_name&#39;</span><span class="p">,</span> <span class="s1">&#39;item_value&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Where item_name is the $config array index you want to change, and
+item_value is its value.</p>
+</div>
+<div class="section" id="environments">
+<span id="config-environments"></span><h2><a class="toc-backref" href="#id8">Environments</a><a class="headerlink" href="#environments" title="Permalink to this headline">¶</a></h2>
+<p>You may load different configuration files depending on the current
+environment. The ENVIRONMENT constant is defined in index.php, and is
+described in detail in the <a class="reference internal" href="../general/environments.html"><em>Handling
+Environments</em></a> section.</p>
+<p>To create an environment-specific configuration file, create or copy a
+configuration file in application/config/{ENVIRONMENT}/{FILENAME}.php</p>
+<p>For example, to create a production-only config.php, you would:</p>
+<ol class="arabic simple">
+<li>Create the directory application/config/production/</li>
+<li>Copy your existing config.php into the above directory</li>
+<li>Edit application/config/production/config.php so it contains your
+production settings</li>
+</ol>
+<p>When you set the ENVIRONMENT constant to &#8216;production&#8217;, the settings for
+your new production-only config.php will be loaded.</p>
+<p>You can place the following configuration files in environment-specific
+folders:</p>
+<ul class="simple">
+<li>Default CodeIgniter configuration files</li>
+<li>Your own custom configuration files</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">CodeIgniter always loads the global config file first (i.e., the one in application/config/),
+then tries to load the configuration files for the current environment.
+This means you are not obligated to place <strong>all</strong> of your configuration files in an
+environment folder. Only the files that change per environment. Additionally you don&#8217;t
+have to copy <strong>all</strong> the config items in the environment config file. Only the config items
+that you wish to change for your environment. The config items declared in your environment
+folders always overwrite those in your global config files.</p>
+</div>
+</div>
+<div class="section" id="helper-functions">
+<h2><a class="toc-backref" href="#id9">Helper Functions</a><a class="headerlink" href="#helper-functions" title="Permalink to this headline">¶</a></h2>
+<p>The config class has the following helper functions:</p>
+<div class="section" id="this-config-site-url">
+<h3><a class="toc-backref" href="#id10">$this-&gt;config-&gt;site_url();</a><a class="headerlink" href="#this-config-site-url" title="Permalink to this headline">¶</a></h3>
+<p>This function retrieves the URL to your site, along with the &#8220;index&#8221;
+value you&#8217;ve specified in the config file.</p>
+</div>
+<div class="section" id="this-config-base-url">
+<h3><a class="toc-backref" href="#id11">$this-&gt;config-&gt;base_url();</a><a class="headerlink" href="#this-config-base-url" title="Permalink to this headline">¶</a></h3>
+<p>This function retrieves the URL to your site, plus an optional path such
+as to a stylesheet or image.</p>
+<p>The two functions above are normally accessed via the corresponding
+functions in the <a class="reference internal" href="../helpers/url_helper.html"><em>URL Helper</em></a>.</p>
+</div>
+<div class="section" id="this-config-system-url">
+<h3><a class="toc-backref" href="#id12">$this-&gt;config-&gt;system_url();</a><a class="headerlink" href="#this-config-system-url" title="Permalink to this headline">¶</a></h3>
+<p>This function retrieves the URL to your system folder.</p>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

@@ -3,7 +3,8 @@ What is No-CMS?
 
 No-CMS is a CMS-framework.
 
-No-CMS is a basic CMS with some default features such as user authorization, menu, module and theme management.
+No-CMS is a basic and "less-assumption" CMS with some default features such as user authorization (including third party authentication), 
+menu, module and theme management.
 It is fully customizable and extensible, you can make your own module and your own themes.
 It provide freedom to make your very own CMS, which is not provided very well by any other CMS.
 
@@ -20,47 +21,26 @@ No-CMS will be good for you if you say yes for majority of these statement:
 * You are familiar with HMVC plugins, and you think it is one of "should be exists" feature in CodeIgniter.
 * You are in tight deadline, at least you need to provide the prototype to your client.
 
-No-CMS as CMS
---------------
-No-CMS is a "less assumption" CMS. It is different from Wordpress, Drupal, Joomla, Moodle or Zencart. Those CMS are built by developers for users with some special purpose in mind (e.g: blog, news, e-learning, e-commerce).
-No-CMS is built by developer for developers, although everyone else can still use it as well. It already has some basic features such as authentication/authorization, widget and page management. You are free to use them or just get rid of them and make your custom code
-The main purpose of this CMS is to provide a good start of web application project, especially for CodeIgniter developer.
-
-No-CMS as Application development framework
+Batteries Included
 --------------------------------------------
-No-CMS is not just another CMS. No-CMS allows you to make your own module and your own themes.
-This means that you (as developer) can make a module (e.g: forum module, FAQ module, etc) that can be used for several different project.
-
-No-CMS takes advantages of CodeIgniter as its core.
-It provides rich set of libraries for commonly needed task,
-as well as a simple interface and logical structure to access these libraries.
-The main advantage of CodeIgniter is you can creatively focus on your project
-by minimizing the amount of code needed or a given task.
-
-No-CMS is also take advantages of several popular plugins such as
+No-CMS come with several batteries included:
 
 * HMVC, to make fully modular separation
 * Phil Sturgeon's Template, to make customizable themes
 * groceryCRUD, to build CRUD application in a minute
 * HybridAuth, to provide third party authentication (e.g: facebook, twitter, openID etc)
-
-Out of all, No-CMS also provide some common features:
-
-* Authentication & Authorization by using group, privilege, and user management.
-  Not like other CMS, there is no backend-frontend in No-CMS.
-  You have freedom to choose how different groups of users can access pages and modules differently.
-* Change Theme.
-  You can change the theme easily.
-* Install/Un-install Module
-  You can install/un-install module easily.
-
-In short, if you are familiar with CodeIgniter, No-CMS is a good kickstart to make your web application
+* Widget system
+* Navigation system
+* Module system
+* Custom Theme system
+* Custom language
+* tagging system
 
 
 Release Information
 ===================
 
-- v0.6.2 stable, May, 16, 2013
+- v0.6.5 stable, October, 27, 2013
 
 
 Server Requirements
@@ -203,7 +183,39 @@ Themes are located at `/themes/` folder. With such a structure:
                                 |--- /default
                                 |--- /other_layout
 ```
-For more information about themes, please refer to the documentation provided.
+In your `default.php`, you can several variables:
+
+* `$template['body']` : This variable contains your page content.
+* `$template['title']` : This variable contains your page title
+* `$template['metadata']` : This variable contains everything including JQuery, meta keyword, and language information
+* `$template['partials']['header']` : Including `/views/partials/default/header.php`.
+
+You can also use several tags such as:
+* `{{ site_logo }}` : Your logo path
+* `{{ site_slogan }}` : Slogan
+* `{{ site_footer }}` : Your footer
+* `{{ widget_name:top_navigation }}` : A widget contains bootstrap styled top navigation
+* `{{ widget_name:left_navigation }}` : A widget contains bootstrap styled top navigation
+* And many others, see documentation for more information
+
+Here is a very simple example of `default.php`:
+```php
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><?php echo $template['title']; ?></title>
+        <?php echo $template['metadata']; ?>
+    </head>
+    <body>
+        <h1><img src=”{{ site_logo }}” /><?php echo $template['title']; ?></h1>
+        <div class="nav-collapse in collapse" id="main-menu" style="height: auto; ">
+            {{ widget_name:top_navigation }}
+        </div>
+        <?php echo $template['body']; ?>
+    </body>
+    <footer>{{ site_footer }}</footer>
+</html>
+```
 
 Tutorial 04: Modules
 ====================
@@ -397,14 +409,14 @@ You want to show list of pokemons based on the table content.
 Now edit your `/modules/new_module/models/pokemon_model.php` into this:
 ```php
     <?php
-    class Pokemon_Model extends CMS_Controller{
+    class Pokemon_Model extends CMS_Model{
 
         function get(){
             $query = $this->db->get('pokemons');
             // or you can use this too:
-            //  $query = $this->db->query('SELECT * FROM pokemons')->get();
+            //  $query = $this->db->query('SELECT * FROM pokemons');
             $pokemon_list = array();
-            foreach($query->row() as $row){
+            foreach($query->result() as $row){
                 $pokemon_list[] = $row->name;
             }
             return $pokemon_list;
@@ -631,9 +643,33 @@ Tutorial 05: Module Generator (Nordrassil)
 ==========================================
 
 * Go to `CMS Management | Module Generator`
-* Make a new project. (You can make a project based on database)
-* Edit tables and columns of your project
+* Make a new project. (You can make a project based on already exists database)
+* Edit or make tables and columns for your project
 * Click generate, and it is.
+* Go to `CMS Management | Module Management`, activate your module
+
+Tutorial 06: Migration
+======================
+
+In case of you want to No-CMS into the newest version, you can safely overwrite everything except:
+* `/application/config/` directory
+* `/modules/` directory
+* `/.htaccess` file
+
+In case of you test No-CMS in local computer and want to upload it into public server, you need to change these parts:
+* `RewriteBase` in `/.htaccess`
+* Database configuration in `/application/config/database.php`
+
+RewriteBase should be `/` if you put No-CMS in top public directory (eg: * If your web address is http://some_domain.com, then you should edit RewriteBase into `RewriteBase /`).
+
+RewriteBase should be `/your_folder` if you put No-CMS inside a directory in your public directory (eg: * If your web address is http://some_domain.com/portal/, then you should edit RewriteBase into `RewriteBase /portal/`)
+
+Tutorial 07: Translation
+========================
+
+To make additional language translation, you can copy `/assets/nocms/languages/english.php` to `/assets/nocms/languages/your_language.php`.
+
+Beside that, No-CMS also support per-module translation. Go to `modules/assets/languages/` directory and make your translation file.
 
 Contributing
 ============
@@ -703,6 +739,10 @@ Here are some names of considerable contributors:
 * Glenn Bennett <-- Kindly provide free hosting for http://www.getnocms.com
 * Abu Tuffah Bayashoot <-- Find bug on configuration management at v0.6.1, and propose solution
 * Ann Low <-- Spain translation contributor
+* shakespam <-- nordrassil null field fix
+* heruprambadi <-- reporting several bugs, in 0.6.5 development version
+* Toni, Dani & Umar (aftinya@gmail.com, ragiel87@gmail.com, dlastpart@yahoo.com) <-- My students, make static_accessories widget
+* Cesarliws <-- Portuguese translation
 * Everyone who was involved by creating issue & pull requests in github. I cannot write every names there. But No-CMS can't be better without them :)
 
 
@@ -816,5 +856,32 @@ v0.6.2
 + (done, tested) bugfix: Editing configuration doesn't change `config/cms_config.php` automatically
 + (done, tested) bugfix: nordrassil generated script shown weird when using one-to-many detail without any "chosen" component in master table
 
-v0.6.3
-+ (proposed) automatically create thumbnail in wysiwyg, use better uploader library
+v0.6.5
++ (cancelled) automatically create thumbnail in wysiwyg, use better uploader library <-- there is no more WYSIWYG
++ (done, tested) make language and module list sorted
++ (done, tested) support PDO, use groceryCRUD that support PDO, use CodeIgniter 3.0
++ (done, tested) new installer that will also support PDO
++ (done, but not tested for enum & set) make nordrassil generated code also support PDO
++ (done, tested) change all default module to use dbforge on installation
++ (done, tested) make navigation management more intuitive
++ (done, tested) allowing widget inside widget
++ (done, tested) remove WYSIWYG, use layout management instead.
++ (done, tested) use APPPATH to fetch language & modules in case of the user move index.php. Thanks to Petr Valenta
++ (done, tested) fix infinite redirection potential in cms_redirect if combined with dynamic widget
++ (done, tested) rename `widget.php` at blog & static_accessories to avoid conflict
++ (done, tested) use AJAX when load widget via `Modules::run` failed
+
+v0.6.6
++ (proposed) Navigation: move to anywhere.
++ (done, tested) Add icon for navigation and quicklink.
++ (done, tested) Make set_rule callback of groceryCRUD works.
++ (done, tested) Fix bug: nordrassil generate buggy one to many input.
++ (done, tested) Add old Mysql & Mysqli driver again.
++ (done, tested) Check email on registration & change profile.
++ (done, tested) Better redirection in case of user accidentally logged out but still do `edit` or `add` on GroceryCRUD generated form. Once he logged in again, he should be redirected to the grid, not to the error message
++ (done, tested) Gravatar integration at blog comment
++ (done, tested) Make "Contact Us" module, and make it secure
++ (done, tested) Secure Registration form
++ (done, tested) Secure comment
++ (done, tested) Blog writer (which is not super admin) can only edit/delete his own article
++ (done, tested) working `overflow-x` and smaller `chzn-results`

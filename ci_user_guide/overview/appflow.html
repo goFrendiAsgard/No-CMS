@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Application Flow Chart &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="CodeIgniter Overview" href="index.html" />
+	    <link rel="next" title="Model-View-Controller" href="mvc.html" />
+	    <link rel="prev" title="CodeIgniter Features" href="features.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xb387684>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">CodeIgniter Overview</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Application Flow Chart</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="application-flow-chart">
+<h1>Application Flow Chart<a class="headerlink" href="#application-flow-chart" title="Permalink to this headline">¶</a></h1>
+<p>The following graphic illustrates how data flows throughout the system:</p>
+<p><img alt="CodeIgniter application flow" src="../_images/appflowchart.gif" /></p>
+<ol class="arabic simple">
+<li>The index.php serves as the front controller, initializing the base
+resources needed to run CodeIgniter.</li>
+<li>The Router examines the HTTP request to determine what should be done
+with it.</li>
+<li>If a cache file exists, it is sent directly to the browser, bypassing
+the normal system execution.</li>
+<li>Security. Before the application controller is loaded, the HTTP
+request and any user submitted data is filtered for security.</li>
+<li>The Controller loads the model, core libraries, helpers, and any
+other resources needed to process the specific request.</li>
+<li>The finalized View is rendered then sent to the web browser to be
+seen. If caching is enabled, the view is cached first so that on
+subsequent requests it can be served.</li>
+</ol>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

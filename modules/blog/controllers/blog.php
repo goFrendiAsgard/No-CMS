@@ -27,30 +27,48 @@ class Blog extends CMS_Priv_Strict_Controller {
     public function index($article_url = NULL){
         $this->load->model($this->cms_module_path().'/article_model');
 
-        // add comment
-        // TODO: add scenario as in http://stackoverflow.com/a/10948623/755319
-        // or call "Kay Nine" :)
-        $article_id = $this->input->post('article_id', TRUE);
-        $name = $this->input->post('xname', TRUE);
-        $email = $this->input->post('xemail', TRUE);
-        $website = $this->input->post('xwebsite', TRUE);
-        $content = $this->input->post('xcontent', TRUE);
-        $secret_code = $this->input->post('secret_code', TRUE);
         // the honey_pot, every fake input should be empty
         $honey_pot_pass = (strlen($this->input->post('name', ''))==0) &&
             (strlen($this->input->post('email', ''))==0) &&
             (strlen($this->input->post('website', ''))==0) &&
             (strlen($this->input->post('content', ''))==0);
+        if(!$honey_pot_pass){
+            show_404();
+            die();
+        }
+
+        // get previously generated secret code
+        $previous_secret_code = $this->session->flashdata('__blog_comment_secret_code');
+        if($previous_secret_code === NULL){
+            $previous_secret_code = $this->__random_string();
+        }
+
+        $success = TRUE;
+        $error_message = "";
+        $article_id = $this->input->post('article_id', TRUE);
+        $name = $this->input->post($previous_secret_code.'xname', TRUE);
+        $email = $this->input->post($previous_secret_code.'xemail', TRUE);
+        $website = $this->input->post($previous_secret_code.'xwebsite', TRUE);
+        $content = $this->input->post($previous_secret_code.'xcontent', TRUE);
+        
         if($content && $honey_pot_pass){
-            $previous_secret_code = $this->session->flashdata('secret_code');
-            if($secret_code === $previous_secret_code){
+            $valid_email = preg_match('/@.+\./', $email);
+            if(!$valid_email){
+                $success = FALSE;
+                $error_message = "Invalid email";
+            }
+            if($success){
                 $this->article_model->add_comment($article_id, $name, $email, $website, $content);
+                $name = '';
+                $email = '';
+                $website = '';
+                $content = '';
             }
         }
 
         // generate new secret code
         $secret_code = $this->__random_string();
-        $this->session->set_flashdata('secret_code', $secret_code);
+        $this->session->set_flashdata('__blog_comment_secret_code', $secret_code);
 
         $data = array(
             'submenu_screen' => $this->cms_submenu_screen($this->cms_complete_navigation_name('index')),
@@ -60,8 +78,17 @@ class Blog extends CMS_Priv_Strict_Controller {
             'chosen_category' => $this->input->get('category'),
             'keyword' => $this->input->get('keyword'),
             'module_path' => $this->cms_module_path(),
-            'is_user_login' => $this->cms_user_id()>0,
+            'is_user_login' => $this->cms_user_id()>0,            
             'secret_code' => $secret_code,
+            "success" => $success,
+            "error_message" => $error_message,
+            "name" => $name,
+            "email" => $email,
+            "website" => $website,
+            "content" => $content,
+            'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
+            'module_path' => $this->cms_module_path(),
+            'user_id' => $this->cms_user_id(),
         );
 
 
@@ -91,6 +118,9 @@ class Blog extends CMS_Priv_Strict_Controller {
             'articles'=>$result,
             'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article')),
             'backend_url' => site_url($this->cms_module_path().'/manage_article/index'),
+            'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
+            'module_path' => $this->cms_module_path(),
+            'user_id' => $this->cms_user_id(),
         );
         $config = array('only_content'=>TRUE);
         $this->view($this->cms_module_path().'/browse_article_partial_view',$data,

@@ -1,16 +1,18 @@
 <?php
-    function strip_table_prefix($table_name, $table_prefix){
-        if(!isset($table_prefix) || $table_prefix == ''){
-            return $table_name;
-        }
-        if(strpos($table_name, $table_prefix) === 0){
-            $table_name = substr($table_name, strlen($table_prefix));
-        }
-        if($table_name[0]=='_'){
-            $table_name = substr($table_name,1);
-        }
-        return $table_name;
-    }
+	if(!function_exists('strip_table_prefix')){
+	    function strip_table_prefix($table_name, $table_prefix){
+	        if(!isset($table_prefix) || $table_prefix == ''){
+	            return $table_name;
+	        }
+	        if(strpos($table_name, $table_prefix) === 0){
+	            $table_name = substr($table_name, strlen($table_prefix));
+	        }
+	        if($table_name[0]=='_'){
+	            $table_name = substr($table_name,1);
+	        }
+	        return $table_name;
+	    }
+	}
 
     $stripped_table_name = strip_table_prefix($table_name, $table_prefix);
 
@@ -31,7 +33,7 @@
 			$lookup_column_name = $column['lookup_column_name'];
 			$lookup_table_primary_key = $column['lookup_table_primary_key'];
 			$select_array[] = $stripped_lookup_table_name.'.'.$lookup_column_name.' as '.$stripped_lookup_table_name.'_'.$lookup_column_name;
-			$join_array[] = '$this->cms_complete_table_name(\''.$stripped_lookup_table_name.'\').\' as '.$stripped_lookup_table_name.' \', \''.$stripped_table_name.'.'.$column_name.'='.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_table_primary_key.'\', \'left\'';
+			$join_array[] = '$this->cms_complete_table_name(\''.$stripped_lookup_table_name.'\').\' as '.$stripped_lookup_table_name.'\', \''.$stripped_table_name.'.'.$column_name.'='.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_table_primary_key.'\', \'left\'';
 			$like_array[] = '\''.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_column_name.'\', $keyword';
 		}
 	}

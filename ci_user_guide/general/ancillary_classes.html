@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Creating Ancillary Classes &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Hooks - Extending the Framework Core" href="hooks.html" />
+	    <link rel="prev" title="Creating Core System Classes" href="core_classes.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa808294>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Creating Ancillary Classes</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="creating-ancillary-classes">
+<h1>Creating Ancillary Classes<a class="headerlink" href="#creating-ancillary-classes" title="Permalink to this headline">¶</a></h1>
+<p>In some cases you may want to develop classes that exist apart from your
+controllers but have the ability to utilize all of CodeIgniter&#8217;s
+resources. This is easily possible as you&#8217;ll see.</p>
+<div class="section" id="get-instance">
+<h2>get_instance()<a class="headerlink" href="#get-instance" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="get_instance">
+<tt class="descname">get_instance</tt><big>(</big><big>)</big><a class="headerlink" href="#get_instance" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">object of class CI_Controller</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p><strong>Any class that you instantiate within your controller methods can
+access CodeIgniter&#8217;s native resources</strong> simply by using the
+<tt class="docutils literal"><span class="pre">get_instance()</span></tt> function. This function returns the main
+CodeIgniter object.</p>
+<p>Normally, to call any of the available CodeIgniter methods requires
+you to use the <tt class="docutils literal"><span class="pre">$this</span></tt> construct:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;session&#39;</span><span class="p">);</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">item</span><span class="p">(</span><span class="s1">&#39;base_url&#39;</span><span class="p">);</span>
+<span class="c1">// etc.</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">$this</span></tt>, however, only works within your controllers, your models,
+or your views. If you would like to use CodeIgniter&#8217;s classes from
+within your own custom classes you can do so as follows:</p>
+<p>First, assign the CodeIgniter object to a variable:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$CI</span> <span class="o">=&amp;</span> <span class="nx">get_instance</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Once you&#8217;ve assigned the object to a variable, you&#8217;ll use that variable
+<em>instead</em> of <tt class="docutils literal"><span class="pre">$this</span></tt>:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$CI</span> <span class="o">=&amp;</span> <span class="nx">get_instance</span><span class="p">();</span>
+
+<span class="nv">$CI</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">);</span>
+<span class="nv">$CI</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;session&#39;</span><span class="p">);</span>
+<span class="nv">$CI</span><span class="o">-&gt;</span><span class="na">config</span><span class="o">-&gt;</span><span class="na">item</span><span class="p">(</span><span class="s1">&#39;base_url&#39;</span><span class="p">);</span>
+<span class="c1">// etc.</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>You&#8217;ll notice that the above get_instance() <tt class="docutils literal"><span class="pre">function</span></tt> is being
+passed by reference:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$CI</span> <span class="o">=&amp;</span> <span class="nx">get_instance</span><span class="p">();</span>
+</pre></div>
+</div>
+<p class="last">This is very important. Assigning by reference allows you to use the
+original CodeIgniter object rather than creating a copy of it.</p>
+</div>
+<p>Furthermore, if you&#8217;ll be using <tt class="docutils literal"><span class="pre">get_intance()</span></tt> inside anoter class,
+then it would be better if you assign it to a property. This way, you
+won&#8217;t need to call <tt class="docutils literal"><span class="pre">get_instance()</span></tt> in every single method.</p>
+<p>Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Example</span> <span class="p">{</span>
+
+        <span class="k">protected</span> <span class="nv">$CI</span><span class="p">;</span>
+
+        <span class="c1">// We&#39;ll use a constructor, as you can&#39;t directly call a function</span>
+        <span class="c1">// from a property definition.</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="c1">// Assign the CodeIgniter super-object</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">CI</span> <span class="o">=&amp;</span> <span class="nx">get_instance</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">foo</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">CI</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">helper</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">);</span>
+                <span class="nx">redirect</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">bar</span><span class="p">()</span>
+        <span class="p">{</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">CI</span><span class="o">-&gt;</span><span class="na">config_item</span><span class="p">(</span><span class="s1">&#39;base_url&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In the above example, both methods <tt class="docutils literal"><span class="pre">foo()</span></tt> and <tt class="docutils literal"><span class="pre">bar()</span></tt> will work
+after you instantiate the Example class, without the need to call
+<tt class="docutils literal"><span class="pre">get_instance()</span></tt> in each of them.</p>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

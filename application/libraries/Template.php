@@ -61,7 +61,7 @@ class Template
 			$this->initialize($config);
 		}
 
-		log_message('debug', 'Template class Initialized');
+		log_message('debug', 'Template Class Initialized');
 	}
 
 	// --------------------------------------------------------------------
@@ -102,7 +102,7 @@ class Template
 		// If the parse is going to be used, best make sure it's loaded
 		if ($this->_parser_enabled === TRUE)
 		{
-			class_exists('CI_Parser') OR $this->_ci->load->library('parser');
+			$this->_ci->load->library('parser');
 		}
 
 		// Modular Separation / Modular Extensions has been detected
@@ -116,7 +116,7 @@ class Template
 		$this->_method 		= $this->_ci->router->fetch_method();
 
 		// Load user agent library if not loaded
-		class_exists('CI_User_agent') OR $this->_ci->load->library('user_agent');
+		$this->_ci->load->library('user_agent');
 
 		// We'll want to know this later
 		$this->_is_mobile	= $this->_ci->agent->is_mobile();
@@ -278,8 +278,9 @@ class Template
 	public function title()
 	{
 		// If we have some segments passed
-		if ($title_segments =& func_get_args())
+		if (func_num_args() >= 1)
 		{
+			$title_segments = func_get_args();
 			$this->_title = implode($this->_title_separator, $title_segments);
 		}
 
@@ -371,6 +372,17 @@ class Template
 
 		return $this;
 	}
+
+	/**
+	 * Get the current theme
+	 *
+	 * @access public
+	 * @return string	The current theme
+	 */
+	 public function get_theme()
+	 {
+	 	return $this->_theme;
+	 }
 
 	/**
 	 * Get the current theme path
@@ -619,6 +631,20 @@ class Template
 		return file_exists(self::_find_view_folder().'layouts/' . $layout . self::_ext($layout));
 	}
 
+	/**
+	 * load_view
+	 * Load views from theme paths if they exist.
+	 *
+	 * @access	public
+	 * @param	string	$view
+	 * @param	mixed	$data
+	 * @return	array
+	 */
+	public function load_view($view, $data = array())
+	{
+		return $this->_find_view($view, (array)$data);
+	}
+
 	// find layout files, they could be mobile or web
 	private function _find_view_folder()
 	{
@@ -699,7 +725,7 @@ class Template
 				$content = $this->_ci->parser->parse_string($this->_ci->load->file(
 					$override_view_path.$view.self::_ext($view), 
 					TRUE
-				), $data);
+				), $data, TRUE);
 			}
 
 			else

@@ -4,6 +4,9 @@
 		visibility: hidden;
 	}
 </style>
+<p class="alert-warning alert">
+    Import database only works for MySQL.
+</p>
 <?php
 	$asset = new CMS_Asset();
 	foreach($css_files as $file){
@@ -32,6 +35,19 @@
 		$("select#field-"+changing_field).change(function(){
 			adjust(changing_field, affected_field, get_restricted_path);
 		});
+
+        // auto fill
+        var autofill = [
+                ['db_server', 'localhost'],
+                ['db_port', '3306'],
+                ['db_user', 'root']
+            ];
+        for(var i=0; i<autofill.length; i++){
+            if($("#field-"+autofill[i][0]).val()==''){
+                $("#field-"+autofill[i][0]).val(autofill[i][1]);
+            }
+        }
+        
 	});
 
 

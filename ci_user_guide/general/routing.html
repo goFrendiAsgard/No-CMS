@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>URI Routing &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Error Handling" href="errors.html" />
+	    <link rel="prev" title="Common Functions" href="common_functions.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa1faa74>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>URI Routing</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="uri-routing">
+<h1>URI Routing<a class="headerlink" href="#uri-routing" title="Permalink to this headline">¶</a></h1>
+<p>Typically there is a one-to-one relationship between a URL string and
+its corresponding controller class/method. The segments in a URI
+normally follow this pattern:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">class</span><span class="o">/</span><span class="nx">function</span><span class="o">/</span><span class="nx">id</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>In some instances, however, you may want to remap this relationship so
+that a different class/method can be called instead of the one
+corresponding to the URL.</p>
+<p>For example, let&#8217;s say you want your URLs to have this prototype:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">product</span><span class="o">/</span><span class="mi">1</span><span class="o">/</span>
+<span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">product</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span>
+<span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">product</span><span class="o">/</span><span class="mi">3</span><span class="o">/</span>
+<span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">product</span><span class="o">/</span><span class="mi">4</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Normally the second segment of the URL is reserved for the method
+name, but in the example above it instead has a product ID. To
+overcome this, CodeIgniter allows you to remap the URI handler.</p>
+<div class="section" id="setting-your-own-routing-rules">
+<h2>Setting your own routing rules<a class="headerlink" href="#setting-your-own-routing-rules" title="Permalink to this headline">¶</a></h2>
+<p>Routing rules are defined in your <em>application/config/routes.php</em> file.
+In it you&#8217;ll see an array called <tt class="docutils literal"><span class="pre">$route</span></tt> that permits you to specify
+your own routing criteria. Routes can either be specified using wildcards
+or Regular Expressions.</p>
+</div>
+<div class="section" id="wildcards">
+<h2>Wildcards<a class="headerlink" href="#wildcards" title="Permalink to this headline">¶</a></h2>
+<p>A typical wildcard route might look something like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;product/:num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;catalog/product_lookup&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>In a route, the array key contains the URI to be matched, while the
+array value contains the destination it should be re-routed to. In the
+above example, if the literal word &#8220;product&#8221; is found in the first
+segment of the URL, and a number is found in the second segment, the
+&#8220;catalog&#8221; class and the &#8220;product_lookup&#8221; method are instead used.</p>
+<p>You can match literal values or you can use two wildcard types:</p>
+<p><strong>(:num)</strong> will match a segment containing only numbers.
+<strong>(:any)</strong> will match a segment containing any character (except for &#8216;/&#8217;, which is the segment delimiter).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Wildcards are actually aliases for regular expressions, with
+<strong>:any</strong> being translated to <strong>[^/]+</strong> and <strong>:num</strong> to <strong>[0-9]+</strong>,
+respectively.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Routes will run in the order they are defined. Higher routes
+will always take precedence over lower ones.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Route rules are not filters! Setting a rule of e.g.
+&#8216;foo/bar/(:num)&#8217; will not prevent controller <em>Foo</em> and method
+<em>bar</em> to be called with a non-numeric value if that is a valid
+route.</p>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Here are a few routing examples:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;journals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;blogs&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>A URL containing the word &#8220;journals&#8221; in the first segment will be
+remapped to the &#8220;blogs&#8221; class.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;blog/joe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;blogs/users/34&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>A URL containing the segments blog/joe will be remapped to the &#8220;blogs&#8221;
+class and the &#8220;users&#8221; method. The ID will be set to &#8220;34&#8221;.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;product/(:any)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;catalog/product_lookup&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>A URL with &#8220;product&#8221; as the first segment, and anything in the second
+will be remapped to the &#8220;catalog&#8221; class and the &#8220;product_lookup&#8221;
+method.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;product/(:num)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;catalog/product_lookup_by_id/$1&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>A URL with &#8220;product&#8221; as the first segment, and a number in the second
+will be remapped to the &#8220;catalog&#8221; class and the
+&#8220;product_lookup_by_id&#8221; method passing in the match as a variable to
+the method.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Do not use leading/trailing slashes.</p>
+</div>
+</div>
+<div class="section" id="regular-expressions">
+<h2>Regular Expressions<a class="headerlink" href="#regular-expressions" title="Permalink to this headline">¶</a></h2>
+<p>If you prefer you can use regular expressions to define your routing
+rules. Any valid regular expression is allowed, as are back-references.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you use back-references you must use the dollar syntax
+rather than the double backslash syntax.</p>
+</div>
+<p>A typical RegEx route might look something like this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;products/([a-z]+)/(\d+)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;$1/id_$2&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>In the above example, a URI similar to products/shirts/123 would instead
+call the &#8220;shirts&#8221; controller class and the &#8220;id_123&#8221; method.</p>
+<p>With regular expressions, you can also catch a segment containing a
+forward slash (&#8216;/&#8217;), which would usually represent the delimiter between
+multiple segments.
+For example, if a user accesses a password protected area of your web
+application and you wish to be able to redirect them back to the same
+page after they log in, you may find this example useful:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;login/(.+)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;auth/login/$1&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>That will call the &#8220;auth&#8221; controller class and its <tt class="docutils literal"><span class="pre">login()</span></tt> method,
+passing everything contained in the URI after <em>login/</em> as a parameter.</p>
+<p>For those of you who don&#8217;t know regular expressions and want to learn
+more about them, <cite>regular-expressions.info &lt;http://www.regular-expressions.info/&gt;</cite>
+might be a good starting point.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can also mix and match wildcards with regular expressions.</p>
+</div>
+</div>
+<div class="section" id="callbacks">
+<h2>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this headline">¶</a></h2>
+<p>If you are using PHP &gt;= 5.3 you can use callbacks in place of the normal
+routing rules to process the back-references. Example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;products/([a-zA-Z]+)/edit/(\d+)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$product_type</span><span class="p">,</span> <span class="nv">$id</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;catalog/product_edit/&#39;</span> <span class="o">.</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$product_type</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;/&#39;</span> <span class="o">.</span> <span class="nv">$id</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reserved-routes">
+<h2>Reserved Routes<a class="headerlink" href="#reserved-routes" title="Permalink to this headline">¶</a></h2>
+<p>There are two reserved routes:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;default_controller&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;welcome&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This route indicates which controller class should be loaded if the URI
+contains no data, which will be the case when people load your root URL.
+In the above example, the &#8220;welcome&#8221; class would be loaded. You are
+encouraged to always have a default route otherwise a 404 page will
+appear by default.</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$route</span><span class="p">[</span><span class="s1">&#39;404_override&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This route indicates which controller class should be loaded if the
+requested controller is not found. It will override the default 404
+error page. It won&#8217;t affect to the <tt class="docutils literal"><span class="pre">show_404()</span></tt> function, which will
+continue loading the default <em>error_404.php</em> file at
+<em>application/views/errors/error_404.php</em>.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The reserved routes must come before any wildcard or
+regular expression routes.</p>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

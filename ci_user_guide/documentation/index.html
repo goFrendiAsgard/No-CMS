@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Writing CodeIgniter Documentation &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="next" title="Tutorial" href="../tutorial/index.html" />
+	    <link rel="prev" title="Database Utility Class" href="../database/utilities.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa808c6c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><strong>Writing CodeIgniter Documentation</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="writing-codeigniter-documentation">
+<h1><a class="toc-backref" href="#id1">Writing CodeIgniter Documentation</a><a class="headerlink" href="#writing-codeigniter-documentation" title="Permalink to this headline">¶</a></h1>
+<p>CodeIgniter uses Sphinx to generate its documentation in a variety of formats,
+using reStructuredText to handle the formatting.  If you are familiar with
+Markdown or Textile, you will quickly grasp reStructuredText.  The focus is
+on readability, user friendliness, and an &#8220;I&#8217;ve got your hand, baby&#8221; feel.
+While they can be quite technical, we always write for humans!</p>
+<p>A table of contents should always be included like the one below.
+It is created automatically by inserting the <tt class="docutils literal"><span class="pre">..</span> <span class="pre">contents::</span></tt>
+directive on a line by itself.</p>
+<div class="contents topic" id="page-contents">
+<p class="topic-title first">Page Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#writing-codeigniter-documentation" id="id1">Writing CodeIgniter Documentation</a><ul>
+<li><a class="reference internal" href="#tools-required" id="id2">Tools Required</a></li>
+<li><a class="reference internal" href="#page-and-section-headings-and-subheadings" id="id3">Page and Section Headings and Subheadings</a></li>
+<li><a class="reference internal" href="#method-documentation" id="id4">Method Documentation</a><ul>
+<li><a class="reference internal" href="#some-method" id="id5">some_method()</a></li>
+<li><a class="reference internal" href="#should-do-something" id="id6">should_do_something()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="tools-required">
+<h2><a class="toc-backref" href="#id2">Tools Required</a><a class="headerlink" href="#tools-required" title="Permalink to this headline">¶</a></h2>
+<p>To see the rendered HTML, ePub, PDF, etc., you will need to install Sphinx
+along with the PHP domain extension for Sphinx.  The underlying requirement
+is to have Python installed.  Lastly, you will install the CI Lexer for
+Pygments, so that code blocks can be properly highlighted.</p>
+<div class="highlight-bash"><div class="highlight"><pre>easy_install sphinx
+easy_install sphinxcontrib-phpdomain
+</pre></div>
+</div>
+<p>Then follow the directions in the README file in the <tt class="samp docutils literal"><span class="pre">cilexer</span></tt> folder
+inside the documentation repository to install the CI Lexer.</p>
+</div>
+<div class="section" id="page-and-section-headings-and-subheadings">
+<h2><a class="toc-backref" href="#id3">Page and Section Headings and Subheadings</a><a class="headerlink" href="#page-and-section-headings-and-subheadings" title="Permalink to this headline">¶</a></h2>
+<p>Headings not only provide order and sections within a page, but they also
+are used to automatically build both the page and document table of contents.
+Headings are formed by using certain characters as underlines for a bit of
+text.  Major headings, like page titles and section headings also use
+overlines.  Other headings just use underlines, with the following hierarchy:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="c1"># with overline for page titles</span>
+<span class="o">*</span> <span class="nx">with</span> <span class="nx">overline</span> <span class="k">for</span> <span class="nx">major</span> <span class="nx">sections</span>
+<span class="o">=</span> <span class="k">for</span> <span class="nx">subsections</span>
+<span class="o">-</span> <span class="k">for</span> <span class="nx">subsubsections</span>
+<span class="o">^</span> <span class="k">for</span> <span class="nx">subsubsubsections</span>
+<span class="s2">&quot; for subsubsubsubsections (!)</span>
+</pre></div>
+</div>
+<p>The <a class="reference download internal" href="../_downloads/ELDocs.tmbundle.zip"><tt class="xref download docutils literal"><span class="pre">TextMate</span> <span class="pre">ELDocs</span> <span class="pre">Bundle</span></tt></a> can help you
+create these with the following tab triggers:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">title</span><span class="o">-&gt;</span>
+
+        <span class="c1">##########</span>
+        <span class="nx">Page</span> <span class="nx">Title</span>
+        <span class="c1">##########</span>
+
+<span class="nx">sec</span><span class="o">-&gt;</span>
+
+        <span class="o">*************</span>
+        <span class="nx">Major</span> <span class="nx">Section</span>
+        <span class="o">*************</span>
+
+<span class="nx">sub</span><span class="o">-&gt;</span>
+
+        <span class="na">Subsection</span>
+        <span class="o">==========</span>
+
+<span class="nx">sss</span><span class="o">-&gt;</span>
+
+        <span class="na">SubSubSection</span>
+        <span class="o">-------------</span>
+
+<span class="nx">ssss</span><span class="o">-&gt;</span>
+
+        <span class="na">SubSubSubSection</span>
+        <span class="o">^^^^^^^^^^^^^^^^</span>
+
+<span class="nx">sssss</span><span class="o">-&gt;</span>
+
+        <span class="na">SubSubSubSubSection</span> <span class="p">(</span><span class="o">!</span><span class="p">)</span>
+        <span class="s2">&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="method-documentation">
+<h2><a class="toc-backref" href="#id4">Method Documentation</a><a class="headerlink" href="#method-documentation" title="Permalink to this headline">¶</a></h2>
+<p>When documenting class methods for third party developers, Sphinx provides
+directives to assist and keep things simple.  For example, consider the following
+ReST:</p>
+<div class="highlight-rst"><div class="highlight"><pre><span class="p">..</span> <span class="ow">php:class</span><span class="p">::</span> Some_class
+
+<span class="gh">some_method()</span>
+<span class="gh">=============</span>
+
+<span class="p">        ..</span> <span class="ow">php:method</span><span class="p">::</span> some_method ( $foo [, $bar [, $bat]])
+
+                This function will perform some action. The <span class="s">``$bar``</span> array must contain
+                a something and something else, and along with <span class="s">``$bat``</span> is an optional
+                parameter.
+
+                <span class="nc">:param int $foo:</span> <span class="nf">the foo id to do something in</span>
+                :param mixed $bar: A data array that must contain aa something and something else
+                <span class="nc">:param bool $bat:</span> <span class="nf">whether or not to do something</span>
+                <span class="nc">:returns:</span> <span class="nf">FALSE on failure, TRUE if successful</span>
+                <span class="nc">:rtype:</span> <span class="nf">Boolean</span>
+
+                <span class="se">::</span>
+
+<span class="s">                        $this-&gt;load-&gt;library(&#39;some_class&#39;);</span>
+
+<span class="s">                        $bar = array(</span>
+<span class="s">                                &#39;something&#39;             =&gt; &#39;Here is this parameter!&#39;,</span>
+<span class="s">                                &#39;something_else&#39;        =&gt; 42</span>
+<span class="s">                        );</span>
+
+<span class="s">                        $bat = $this-&gt;some_class-&gt;should_do_something();</span>
+
+<span class="s">                        if ($this-&gt;some_class-&gt;some_method(4, $bar, $bat) === FALSE)</span>
+<span class="s">                        {</span>
+<span class="s">                                show_error(&#39;An Error Occurred Doing Some Method&#39;);</span>
+<span class="s">                        }</span>
+
+<span class="p">                ..</span> <span class="ow">note</span><span class="p">::</span> Here is something that you should be aware of when using some_method().
+                                For real.
+
+                See also <span class="na">:php:meth:</span><span class="nv">`Some_class::should_do_something`</span>
+
+<span class="gh">should_do_something()</span>
+<span class="gh">=====================</span>
+
+<span class="p">        ..</span> <span class="ow">php:method</span><span class="p">::</span> should_do_something()
+
+                <span class="nc">:returns:</span> <span class="nf">whether or something should be done or not</span>
+                :rtype: Boolean
+</pre></div>
+</div>
+<p>It creates the following display:</p>
+<dl class="class">
+<dt id="Some_class">
+<em class="property">class </em><tt class="descname">Some_class</tt><a class="headerlink" href="#Some_class" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="section" id="some-method">
+<h3><a class="toc-backref" href="#id5">some_method()</a><a class="headerlink" href="#some-method" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="method">
+<dt id="Some_class::some_method">
+<tt class="descclassname">Some_class::</tt><tt class="descname">some_method</tt><big>(</big><em>$foo</em><span class="optional">[</span>, <em>$bar</em><span class="optional">[</span>, <em>$bat</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#Some_class::some_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will perform some action. The <tt class="docutils literal"><span class="pre">$bar</span></tt> array must contain
+a something and something else, and along with <tt class="docutils literal"><span class="pre">$bat</span></tt> is an optional
+parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$foo</strong> (<em>int</em>) &#8211; the foo id to do something in</li>
+<li><strong>$bar</strong> (<em>mixed</em>) &#8211; A data array that must contain aa something and something else</li>
+<li><strong>$bat</strong> (<em>bool</em>) &#8211; whether or not to do something</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">FALSE on failure, TRUE if successful</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;some_class&#39;</span><span class="p">);</span>
+
+<span class="nv">$bar</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+        <span class="s1">&#39;something&#39;</span>             <span class="o">=&gt;</span> <span class="s1">&#39;Here is this parameter!&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;something_else&#39;</span>        <span class="o">=&gt;</span> <span class="mi">42</span>
+<span class="p">);</span>
+
+<span class="nv">$bat</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">some_class</span><span class="o">-&gt;</span><span class="na">should_do_something</span><span class="p">();</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">some_class</span><span class="o">-&gt;</span><span class="na">some_method</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nv">$bar</span><span class="p">,</span> <span class="nv">$bat</span><span class="p">)</span> <span class="o">===</span> <span class="k">FALSE</span><span class="p">)</span>
+<span class="p">{</span>
+        <span class="nx">show_error</span><span class="p">(</span><span class="s1">&#39;An Error Occurred Doing Some Method&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Here is something that you should be aware of when using some_method().
+For real.</p>
+</div>
+<p>See also <a class="reference internal" href="#Some_class::should_do_something" title="Some_class::should_do_something"><tt class="xref php php-meth docutils literal"><span class="pre">Some_class::should_do_something</span></tt></a></p>
+</dd></dl>
+
+</div></blockquote>
+</div>
+<div class="section" id="should-do-something">
+<h3><a class="toc-backref" href="#id6">should_do_something()</a><a class="headerlink" href="#should-do-something" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><dl class="method">
+<dt id="Some_class::should_do_something">
+<tt class="descclassname">Some_class::</tt><tt class="descname">should_do_something</tt><big>(</big><big>)</big><a class="headerlink" href="#Some_class::should_do_something" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">whether or something should be done or not</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

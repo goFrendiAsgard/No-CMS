@@ -2,6 +2,7 @@
 $lang['language_alias'] = 'gr';
 $lang['Home'] = 'Αρχική';
 $lang['Language'] = 'Γλώσσα';
+$lang['Third Party Authentication'] = 'Third Party Authentication';
 $lang['Login'] = 'Είσοδος Χρήστη';
 $lang['Logout'] = 'Έξοδος Χρήστη';
 $lang['Forgot Password'] = 'Νέο Συνθηματικό';

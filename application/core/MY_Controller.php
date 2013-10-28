@@ -12,6 +12,8 @@ class CMS_Controller extends MX_Controller
     public $PRIV_NOT_AUTHENTICATED  = 2;
     public $PRIV_AUTHENTICATED      = 3;
     public $PRIV_AUTHORIZED         = 4;
+    
+    protected $__cms_dynamic_widget = FALSE;
 
     private $__cms_widgets          = NULL;
     private $__cms_navigations      = NULL;
@@ -32,22 +34,53 @@ class CMS_Controller extends MX_Controller
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
+        $this->load->helper('string');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
-
-        // if there is old_url, then save it
-        $this->load->library('session');
-        $old_url = $this->session->flashdata('cms_old_url');
-        if (!is_bool($old_url)) {
-            $this->session->keep_flashdata('cms_old_url');
+        $this->form_validation->CI =& $this;
+        $this->load->driver('session');
+        
+        // get dynamic widget status
+        if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
+            $this->__cms_dynamic_widget = TRUE;
         }
-        /* ------------------ */
+        
+        if(!$this->__cms_dynamic_widget){
+            // if there is old_url, then save it            
+            $old_url = $this->session->flashdata('cms_old_url');
+            if (isset($old_url)) {
+                $this->session->keep_flashdata('cms_old_url');
+            }
+        }        
 
-        $this->load->library('grocery_CRUD');
+        $this->load->library('Extended_Grocery_CRUD');
         $this->load->library('template');
 
-        // just for autocompletion, never run
+        // just for autocompletion, never executed
         if(false) $this->No_CMS_Model = new No_CMS_Model();
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @return Grocery_CRUD
+     * @desc   return Grocery_CRUD
+     */
+    public function new_crud(){
+        $db_driver = $this->db->platform();
+        $model_name = 'grocery_crud_model_'.$db_driver;
+        $model_alias = 'm'.substr(md5(rand()), 0, rand(4,15) );
+
+        $this->load->library('Extended_Grocery_CRUD');
+        $crud = new Extended_Grocery_CRUD();
+        if (file_exists(APPPATH.'/models/'.$model_name.'.php')){
+            $this->load->model('grocery_crud_model');
+            $this->load->model('grocery_crud_generic_model');
+            $this->load->model($model_name,$model_alias);
+            $crud->basic_model = $this->{$model_alias};
+        }
+        // resolve HMVC set rule callback problem
+        $crud->form_validation = $this->form_validation;
+        return $crud;
     }
 
     /**
@@ -133,6 +166,85 @@ class CMS_Controller extends MX_Controller
     protected function cms_user_id($user_id = NULL)
     {
         return $this->No_CMS_Model->cms_user_id($user_id);
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @return array
+     */
+    protected function cms_user_group(){        
+        return $this->No_CMS_Model->cms_user_group();
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @return array
+     */
+    protected function cms_user_group_id(){        
+        return $this->No_CMS_Model->cms_user_group_id();
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @return boolean
+     * @desc   TRUE if current user is super admin, FALSE otherwise
+     */
+    protected function cms_user_is_super_admin(){
+        return $this->No_CMS_Model->cms_user_is_super_admin();
+    }  
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @desc    move navigation up
+     */
+    public function cms_do_move_up_navigation($navigation_name){
+        $this->No_CMS_Model->cms_do_move_up_navigation($navigation_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @desc    move navigation down
+     */
+    public function cms_do_move_down_navigation($navigation_name){
+        $this->No_CMS_Model->cms_do_move_down_navigation($navigation_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string widget_name
+     * @desc    move widget up
+     */
+    public function cms_do_move_up_widget($widget_name){
+        $this->No_CMS_Model->cms_do_move_up_widget($widget_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string widget_name
+     * @desc    move widget down
+     */
+    public function cms_do_move_down_widget($widget_name){
+        $this->No_CMS_Model->cms_do_move_down_widget($widget_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   int navigation id
+     * @desc    move quicklink up
+     */
+    public function cms_do_move_up_quicklink($navigation_id){
+        $this->No_CMS_Model->cms_do_move_up_quicklink($navigation_id);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   int navigation id
+     * @desc    move quicklink down
+     */
+    public function cms_do_move_down_quicklink($navigation_id){
+        $this->No_CMS_Model->cms_do_move_down_quicklink($navigation_id);
     }
 
     /**
@@ -469,10 +581,7 @@ class CMS_Controller extends MX_Controller
     protected function cms_navigation_name($url_string = NULL)
     {
         if (!isset($url_string)) {
-            $url_string = $this->uri->ruri_string();
-            if(strlen($url_string)>0 && $url_string[0]){
-                $url_string = substr($url_string, 1);
-            }
+            $url_string = $this->uri->uri_string();
         }
         $SQL             = "SELECT navigation_name
         	FROM ".cms_table_name('main_navigation')."
@@ -498,11 +607,14 @@ class CMS_Controller extends MX_Controller
     {
         $uriString = $this->uri->uri_string();
         $old_url   = $this->session->flashdata('old_url');
-        if (is_bool($old_url)) {
-            $this->session->set_flashdata('cms_old_url', $uriString);
+        if (!isset($old_url)) {
+            // AJAX request should not be used for redirection
+            if(!$this->input->is_ajax_request()){
+                $this->session->set_flashdata('cms_old_url', $uriString);
+            }
         }
-
-        if ($this->cms_allow_navigate('main_login')) {
+        
+        if ($this->cms_allow_navigate('main_login') && ($uriString != 'main/login')) {
             redirect('main/login');
         } else {
             $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller']);
@@ -510,11 +622,13 @@ class CMS_Controller extends MX_Controller
                 $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'] . '/index');
             }
             // redirect to default controller
-            if (isset($navigation_name) && $this->cms_allow_navigate($navigation_name)) {
+            if (isset($navigation_name) && $this->cms_allow_navigate($navigation_name) && 
+            ($uriString != '') && ($uriString != $this->router->routes['default_controller']) &&
+            ($uriString != $this->router->routes['default_controller'].'/index')) {
                 redirect('');
             } else {
                 show_404();
-            }
+            }            
         }
     }
 
@@ -527,7 +641,6 @@ class CMS_Controller extends MX_Controller
     public function cms_guard_page($navigation_name = NULL, $privilege_required = NULL)
     {
         $privilege_required = isset($privilege_required) ? $privilege_required : array();
-
         // check if allowed
         if (!isset($navigation_name) || $this->cms_allow_navigate($navigation_name)) {
             if (!isset($privilege_required)) {
@@ -567,7 +680,19 @@ class CMS_Controller extends MX_Controller
     {
         $result   = NULL;
         $view_url = $this->cms_parse_keyword($view_url);
-
+        
+        /**
+         * PREPARE PARAMETERS *********************************************************************************************
+         */
+        // get dynamic widget status 
+        // (this is necessary since sometime the function called directly without run the constructor, i.e: when using Modules::run)
+        if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
+            $this->__cms_dynamic_widget = TRUE;
+        }
+        $this->cms_unset_ci_session('cms_dynamic_widget');
+        
+        
+        
         /**
          * PREPARE PARAMETERS *********************************************************************************************
          */
@@ -600,16 +725,12 @@ class CMS_Controller extends MX_Controller
         $layout_suffix      = isset($config['layout_suffix']) ? $config['layout_suffix'] : '';
 
         /**
-         * CHECK IF IT IS WIDGET
-         */
-        $dynamic_widget = $this->cms_ci_session('cms_dynamic_widget');
-        $this->cms_unset_ci_session('cms_dynamic_widget');
-
-        /**
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
          */
-        if (!$dynamic_widget && !isset($navigation_name)) {
+        $navigation_name_provided = TRUE;
+        if (!isset($navigation_name)) {
             $navigation_name = $this->cms_navigation_name();
+            $navigation_name_provided = FALSE;
         }
 
         /**
@@ -623,11 +744,11 @@ class CMS_Controller extends MX_Controller
          * CHECK IF THE PAGE IS STATIC  **********************************************************************************
          */
         $data = (array) $data;
-        if (isset($navigation_name) && !isset($data['_content'])) {
-            $SQL   = "SELECT static_content FROM ".cms_table_name('main_navigation').
-                " WHERE is_static=1 AND navigation_name='".addslashes($navigation_name)."'
-                  AND (ISNULL(url) OR navigation_name='".addslashes($this->cms_navigation_name())."')";
-            $query = $this->db->query($SQL);
+        if ($navigation_name_provided && !isset($data['_content'])) {
+            $query = $this->db->select('static_content')
+                ->from(cms_table_name('main_navigation'))
+                ->where(array('is_static'=>1, 'navigation_name'=>$navigation_name))
+                ->get();
             if ($query->num_rows() > 0) {
                 $row            = $query->row();
                 $static_content = $row->static_content;
@@ -654,9 +775,11 @@ class CMS_Controller extends MX_Controller
         $default_theme = NULL;
         $page_title    = NULL;
         $page_keyword  = NULL;
-        if (isset($navigation_name)) {
-            $SQL   = "SELECT title, page_title, page_keyword, default_theme, only_content FROM ".cms_table_name('main_navigation')." WHERE navigation_name = '" . addslashes($navigation_name) . "'";
-            $query = $this->db->query($SQL);
+        if ($navigation_name_provided) {
+            $query = $this->db->select('title, page_title, page_keyword, default_theme, only_content')
+                ->from(cms_table_name('main_navigation'))
+                ->where(array('navigation_name'=>$navigation_name))
+                ->get();
             // get default_theme, and default_title of this page
             if ($query->num_rows() > 0) {
                 $row           = $query->row();
@@ -741,15 +864,9 @@ class CMS_Controller extends MX_Controller
             $layout = $layout . '_' . $layout_suffix;
         }
 
-        // IT'S SHOW TIME
-        if ($only_content || $dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
+        // IT'S SHOW TIME        
+        if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            
             $result = $this->load->view($view_url, $data, TRUE);
-            $result = $this->cms_parse_keyword($result);
-            if ($return_as_string) {
-                return $result;
-            } else {
-                $this->cms_show_html($result);
-            }
         } else {
             // set theme, layout and title
             $this->template->title($title);
@@ -812,58 +929,81 @@ class CMS_Controller extends MX_Controller
                 }
             }
 
-            $result = $this->template->build($view_url, $data, TRUE);
-            // parse keyword
-            $result = $this->cms_parse_keyword($result);
+            $result = $this->template->build($view_url, $data, TRUE); 
+        }
 
-            $result = $this->No_CMS_Model->cms_escape_template($result);
+        // parse keyword
+        $result = $this->cms_parse_keyword($result);
 
+        // parse widgets used_theme & navigation_path
+        $result = $this->__cms_parse_widget_theme_path($result, $theme, $navigation_name);
+        
+        if ($return_as_string) {
+            return $result;
+        } else {
+            $this->cms_show_html($result);
+        }
+    }
+
+    private function __cms_parse_widget_theme_path($html, $theme, $navigation_name, $recursive_level = 5){
+        if(strpos($html, '{{ ') !== FALSE){
+            $html = $this->No_CMS_Model->cms_escape_template($html);
+    
             // parse widget
-            $pattern  = '/\{\{ widget:(.*?) \}\}/si';
-            // execute regex
-            $result   = preg_replace_callback($pattern, array(
-                $this,
-                '__cms_preg_replace_callback_widget'
-            ), $result);
-
+            if(strpos($html, '{{ ') !== FALSE){
+                $pattern  = '/\{\{ widget:(.*?) \}\}/si';
+                // execute regex
+                $html   = preg_replace_callback($pattern, array(
+                    $this,
+                    '__cms_preg_replace_callback_widget'
+                ), $html);
+            }
+    
             // parse widget by name
-            $pattern  = '/\{\{ widget_name:(.*?) \}\}/si';
-            // execute regex
-            $result   = preg_replace_callback($pattern, array(
-                $this,
-                '__cms_preg_replace_callback_widget_by_name'
-            ), $result);
-
+            if(strpos($html, '{{ ') !== FALSE){
+                $pattern  = '/\{\{ widget_name:(.*?) \}\}/si';
+                // execute regex
+                $html   = preg_replace_callback($pattern, array(
+                    $this,
+                    '__cms_preg_replace_callback_widget_by_name'
+                ), $html);
+            }
+    
             // parse widget by slug
-            $pattern  = '/\{\{ widget_slug:(.*?) \}\}/si';
-            // execute regex
-            $result   = preg_replace_callback($pattern, array(
-                $this,
-                '__cms_preg_replace_callback_widget_by_slug'
-            ), $result);
-
-            // prepare pattern and replacement
-            $pattern     = array();
-            $replacement = array();
-
-            // theme
-            $pattern[]     = "/\{\{ used_theme \}\}/si";
-            $replacement[] = $theme;
-            $nav_path   = $this->__cms_build_nav_path($navigation_name);
-            $pattern[]     = "/\{\{ navigation_path \}\}/si";
-            $replacement[] = $nav_path;
-
-            $result = preg_replace($pattern, $replacement, $result);
-
-            $result = $this->No_CMS_Model->cms_unescape_template($result);
-
-
-            if ($return_as_string) {
-                return $result;
-            } else {
-                $this->cms_show_html($result);
+            if(strpos($html, '{{ ') !== FALSE){
+                $pattern  = '/\{\{ widget_slug:(.*?) \}\}/si';
+                // execute regex
+                $html   = preg_replace_callback($pattern, array(
+                    $this,
+                    '__cms_preg_replace_callback_widget_by_slug'
+                ), $html);
+            }
+    
+            // prepare pattern and replacement for theme and path
+            if(strpos($html, '{{ ') !== FALSE){
+                $pattern     = array();
+                $replacement = array();
+        
+                // theme
+                $pattern[]     = "/\{\{ used_theme \}\}/si";
+                $replacement[] = $theme;
+                $nav_path   = $this->__cms_build_nav_path($navigation_name);
+                $pattern[]     = "/\{\{ navigation_path \}\}/si";
+                $replacement[] = $nav_path;
+        
+                $html = preg_replace($pattern, $replacement, $html);
+        
+                $html = $this->No_CMS_Model->cms_unescape_template($html); 
+            }
+            
+            $recursive_level --;
+            // recursively search widget inside widget
+            if(strpos($html, '{{ ') !== FALSE && $recursive_level>0){
+                $html = $this->__cms_parse_widget_theme_path($html, $theme, $navigation_name, $recursive_level);
             }
         }
+        
+        return $html;
     }
 
     private function __cms_build_left_nav($navigations = NULL, $first = TRUE){
@@ -1189,7 +1329,7 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
             $navigation_name = $this->cms_navigation_name($uriString);
         }
         $this->cms_guard_page($navigation_name);
-        if (!$this->ALLOW_UNKNOWN_NAVIGATION_NAME && !isset($navigation_name)) {
+        if (!$this->__cms_dynamic_widget && $uriString != '' && !$this->ALLOW_UNKNOWN_NAVIGATION_NAME && !isset($navigation_name)) {
             if ($this->input->is_ajax_request()) {
                 $response = array(
                     'success' => FALSE,
@@ -1233,11 +1373,141 @@ class CMS_Module_Installer extends CMS_Controller
     protected $DEPENDENCIES  = array();
     protected $NAME          = '';
     protected $VERSION       = '0.0.0';
-    protected $DESCRIPTION   = 'Just another module ...';
+    protected $DESCRIPTION   = NULL;
     protected $IS_ACTIVE     = FALSE;
     protected $IS_OLD        = FALSE;
     protected $OLD_VERSION   = '';
     protected $ERROR_MESSAGE = '';
+
+    protected $TYPE_INT_UNSIGNED_AUTO_INCREMENT = array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+                'auto_increment' => TRUE,
+        );
+    protected $TYPE_INT_UNSIGNED_NOTNULL = array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+                'null' => FALSE,
+        );
+    protected $TYPE_INT_SIGNED_NOTNULL = array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'null' => FALSE,
+        );
+    protected $TYPE_INT_UNSIGNED_NULL = array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+        );
+    protected $TYPE_INT_SIGNED_NULL = array(
+                'type' => 'INT',
+                'constraint' => 20,
+        );
+    protected $TYPE_DATETIME_NOTNULL = array(
+                'type' => 'DATETIME',
+                'null' => FALSE,
+        );
+    protected $TYPE_DATE_NOTNULL = array(
+                'type' => 'DATE',
+                'null' => FALSE,
+        );
+    protected $TYPE_DATETIME_NULL = array(
+                'type' => 'DATETIME',
+        );
+    protected $TYPE_DATE_NULL = array(
+                'type' => 'DATE',
+        );
+    protected $TYPE_FLOAT_NOTNULL = array(
+                'type' => 'FLOAT',
+                'null' => FALSE,
+        );
+    protected $TYPE_DOUBLE_NOTNULL = array(
+                'type' => 'DOUBLE',
+                'null' => FALSE,
+        );
+    protected $TYPE_FLOAT_NULL = array(
+                'type' => 'FLOAT',
+        );
+    protected $TYPE_DOUBLE_NULL = array(
+                'type' => 'DOUBLE',
+        );
+    protected $TYPE_TEXT = array(
+                'type' => 'TEXT',
+        );
+    protected $TYPE_VARCHAR_5_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 5,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_10_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 10,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_20_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 20,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_50_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 50,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_100_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_150_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 150,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_200_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 200,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_250_NOTNULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 250,
+                'null' => FALSE,
+        );
+    protected $TYPE_VARCHAR_5_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 5,
+        );
+    protected $TYPE_VARCHAR_10_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 10,
+        );
+    protected $TYPE_VARCHAR_20_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 20,
+        );
+    protected $TYPE_VARCHAR_50_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 50,
+        );
+    protected $TYPE_VARCHAR_100_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+        );
+    protected $TYPE_VARCHAR_150_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 150,
+        );
+    protected $TYPE_VARCHAR_200_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 200,
+        );
+    protected $TYPE_VARCHAR_250_NULL = array(
+                'type' => 'VARCHAR',
+                'constraint' => 250,
+        );
 
     public function __construct(){
         parent::__construct();
@@ -1265,9 +1535,13 @@ class CMS_Module_Installer extends CMS_Controller
                 $this->IS_OLD = FALSE;
             }
         }
+        $this->load->dbforge();
     }
 
     public function status(){
+        if(!isset($this->DESCRIPTION)){
+            $this->DESCRIPTION = $this->cms_lang('Just another module');
+        }
         $result = array(
             'active'=>$this->IS_ACTIVE,
             'old'=>$this->IS_OLD,
@@ -1358,7 +1632,7 @@ class CMS_Module_Installer extends CMS_Controller
         } else if($result['success']) {
             redirect('main/module_management');
         } else {
-            $this->view('main/module_activation_error', $result, 'main_module_management');
+            $this->view('main/main_module_activation_error', $result, 'main_module_management');
         }
     }
 
@@ -1415,7 +1689,7 @@ class CMS_Module_Installer extends CMS_Controller
         if($result['success']) {
             redirect('main/module_management');
         } else {
-            $this->view('main/module_deactivation_error', $result, 'main_module_management');
+            $this->view('main/main_module_deactivation_error', $result, 'main_module_management');
         }
     }
 
@@ -1531,10 +1805,33 @@ class CMS_Module_Installer extends CMS_Controller
             }
             $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_navigation')."` WHERE $whereParentId";
             $query = $this->db->query($SQL);
-            $row   = $query->row();
-            $index = $row->newIndex;
+            if ($query->num_rows() > 0) {
+                $row   = $query->row();
+                $index = $row->newIndex;
+            }
             if (!isset($index))
                 $index = 0;
+        }
+
+        // is there any navigation with the same name?
+        $dont_insert = FALSE;
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)->get();
+        if($query->num_rows()>0){
+            $dont_insert = TRUE;
+        }
+
+        // is there any navigation with same url
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('url', $url)->get();
+        if($query->num_rows()>0){
+            $dont_insert = TRUE;
+        }
+
+        if($dont_insert){
+            $error = 'Navigation already exists';
+            throw new Exception($error);
+            return NULL;
         }
 
         //insert it :D
@@ -1544,7 +1841,8 @@ class CMS_Module_Installer extends CMS_Controller
             "url" => $url,
             "authorization_id" => $authorization_id,
             "index" => $index,
-            "description" => $description
+            "description" => $description,
+            "active"=>1,
         );
         if (isset($parent_id)) {
             $data['parent_id'] = $parent_id;
@@ -1556,8 +1854,10 @@ class CMS_Module_Installer extends CMS_Controller
         //get navigation_id
         $SQL           = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_name='" . addslashes($navigation_name) . "'";
         $query         = $this->db->query($SQL);
-        $row           = $query->row();
-        $navigation_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+        if ($query->num_rows() > 0) {
+            $row           = $query->row();
+            $navigation_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+        }
 
         if (isset($navigation_id)) {
             //delete quicklink
@@ -1624,21 +1924,25 @@ class CMS_Module_Installer extends CMS_Controller
         //get current cms_module_id as child_id
         $SQL      = "SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($this->NAME) . "'";
         $query    = $this->db->query($SQL);
-        $row      = $query->row();
-        $child_id = $row->module_id;
+        if ($query->num_rows() > 0) {
+            $row      = $query->row();
+            $child_id = $row->module_id;
+        }
 
         //get parent_id
         if (isset($child_id)) {
             foreach ($this->DEPENDENCIES as $dependency) {
                 $SQL       = "SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($dependency) . "'";
                 $query     = $this->db->query($SQL);
-                $row       = $query->row();
-                $parent_id = $row->module_id;
-                $data      = array(
-                    "parent_id" => $parent_id,
-                    "child_id" => $child_id
-                );
-                $this->db->insert(cms_table_name('main_module_dependency'), $data);
+                if ($query->num_rows() > 0) {
+                    $row       = $query->row();
+                    $parent_id = $row->module_id;
+                    $data      = array(
+                        "parent_id" => $parent_id,
+                        "module_id" => $child_id
+                    );
+                    $this->db->insert(cms_table_name('main_module_dependency'), $data);
+                }
 
             }
         }
@@ -1649,26 +1953,28 @@ class CMS_Module_Installer extends CMS_Controller
         //get current cms_module_id as child_id
         $SQL      = "SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($this->NAME) . "'";
         $query    = $this->db->query($SQL);
-        $row      = $query->row();
-        $child_id = $row->module_id;
+        if ($query->num_rows() > 0) {
+            $row      = $query->row();
+            $child_id = $row->module_id;
 
-        $where = array(
-            'child_id' => $child_id
-        );
-        $this->db->delete(cms_table_name('main_module_dependency'), $where);
+            $where = array(
+                'module_id' => $child_id
+            );
+            $this->db->delete(cms_table_name('main_module_dependency'), $where);
 
-        $where = array(
-            'module_path' => $this->cms_module_path()
-        );
-        $this->db->delete(cms_table_name('main_module'), $where);
+            $where = array(
+                'module_path' => $this->cms_module_path()
+            );
+            $this->db->delete(cms_table_name('main_module'), $where);
+        }
     }
 
     private final function child_module()
     {
         $SQL   = "SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($this->NAME) . "'";
         $query = $this->db->query($SQL);
-        $row   = $query->row();
         if ($query->num_rows() > 0) {
+            $row   = $query->row();
             $parent_id = $row->module_id;
 
             $SQL    = "
@@ -1677,7 +1983,7 @@ class CMS_Module_Installer extends CMS_Controller
 	                ".cms_table_name('main_module_dependency').",
 	                ".cms_table_name('main_module')."
 	            WHERE
-	                module_id = child_id AND
+	                ".cms_table_name('main_module').".module_id = ".cms_table_name('main_module_dependency').".module_id AND
 	                parent_id=" . $parent_id;
             $query  = $this->db->query($SQL);
             $result = array();
@@ -1693,7 +1999,7 @@ class CMS_Module_Installer extends CMS_Controller
         }
     }
 
-    protected final function add_widget($widget_name, $title, $authorization_id = 1, $url = NULL, $slug = NULL, $index = NULL, $description = NULL)
+    protected final function add_widget($widget_name, $title=NULL, $authorization_id = 1, $url = NULL, $slug = NULL, $index = NULL, $description = NULL)
     {
         //if it is null, index = max index+1
         if (!isset($index)) {
@@ -1704,8 +2010,10 @@ class CMS_Module_Installer extends CMS_Controller
             }
             $SQL   = "SELECT max(`index`)+1 AS newIndex FROM `".cms_table_name('main_widget')."` WHERE $whereSlug";
             $query = $this->db->query($SQL);
-            $row   = $query->row();
-            $index = $row->newIndex;
+            if ($query->num_rows() > 0) {
+                $row   = $query->row();
+                $index = $row->newIndex;
+            }
 
             if (!isset($index))
                 $index = 0;
@@ -1726,21 +2034,25 @@ class CMS_Module_Installer extends CMS_Controller
     {
         $SQL       = "SELECT widget_id FROM ".cms_table_name('main_widget')." WHERE widget_name='" . addslashes($widget_name) . "'";
         $query     = $this->db->query($SQL);
-        $row       = $query->row();
-        $widget_id = $row->widget_id;
+        if($query->num_rows()>0){
+            $row       = $query->row();
+            $widget_id = $row->widget_id;
 
-        if (isset($widget_id)) {
-            //delete cms_group_privilege
-            $where = array(
-                "widget_id" => $widget_id
-            );
-            $this->db->delete(cms_table_name('main_group_widget'), $where);
-            //delete cms_privilege
-            $where = array(
-                "widget_id" => $widget_id
-            );
-            $this->db->delete(cms_table_name('main_widget'), $where);
+            if (isset($widget_id)) {
+                //delete cms_group_privilege
+                $where = array(
+                    "widget_id" => $widget_id
+                );
+                $this->db->delete(cms_table_name('main_group_widget'), $where);
+                //delete cms_privilege
+                $where = array(
+                    "widget_id" => $widget_id
+                );
+                $this->db->delete(cms_table_name('main_widget'), $where);
+            }
+
         }
+
     }
 
     protected final function add_quicklink($navigation_name)
@@ -1784,6 +2096,6 @@ class CMS_Module_Installer extends CMS_Controller
     }
 }
 
-class MY_Controller extends CMS_Controller
+class MY_Controller extends CI_Controller
 {
 }

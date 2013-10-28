@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>CodeIgniter URLs &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="General Topics" href="index.html" />
+	    <link rel="next" title="Controllers" href="controllers.html" />
+	    <link rel="prev" title="General Topics" href="index.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa0dadf4>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">General Topics</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>CodeIgniter URLs</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="codeigniter-urls">
+<h1>CodeIgniter URLs<a class="headerlink" href="#codeigniter-urls" title="Permalink to this headline">¶</a></h1>
+<p>By default, URLs in CodeIgniter are designed to be search-engine and
+human friendly. Rather than using the standard &#8220;query string&#8221; approach
+to URLs that is synonymous with dynamic systems, CodeIgniter uses a
+<strong>segment-based</strong> approach:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">news</span><span class="o">/</span><span class="nx">article</span><span class="o">/</span><span class="nx">my_article</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Query string URLs can be optionally enabled, as described
+below.</p>
+</div>
+<div class="section" id="uri-segments">
+<h2>URI Segments<a class="headerlink" href="#uri-segments" title="Permalink to this headline">¶</a></h2>
+<p>The segments in the URL, in following with the Model-View-Controller
+approach, usually represent:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">class</span><span class="o">/</span><span class="nx">function</span><span class="o">/</span><span class="nx">ID</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>The first segment represents the controller <strong>class</strong> that should be
+invoked.</li>
+<li>The second segment represents the class <strong>function</strong>, or method, that
+should be called.</li>
+<li>The third, and any additional segments, represent the ID and any
+variables that will be passed to the controller.</li>
+</ol>
+<p>The <a class="reference internal" href="../libraries/uri.html"><em>URI Library</em></a> and the <a class="reference internal" href="../helpers/url_helper.html"><em>URL Helper</em></a> contain functions that make it easy to work
+with your URI data. In addition, your URLs can be remapped using the
+<a class="reference internal" href="routing.html"><em>URI Routing</em></a> feature for more flexibility.</p>
+</div>
+<div class="section" id="friendly-urls">
+<h2>Friendly URLs<a class="headerlink" href="#friendly-urls" title="Permalink to this headline">¶</a></h2>
+<p>As you might guess, since there&#8217;s a straight relationship between
+URI segments and the controller/method pair that&#8217;s being called,
+those two determining segments must represent a valid class and
+method name.
+You may however also use dashes in the class/method-representing
+segments, and they will automatically be translated to underscores
+in order to be valid routed segments.</p>
+<p>For example:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">my</span><span class="o">-</span><span class="nx">settings</span><span class="o">/</span><span class="nx">change</span><span class="o">-</span><span class="nx">password</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>The above example will route to the <tt class="docutils literal"><span class="pre">My_settings</span></tt> controller and
+its method <tt class="docutils literal"><span class="pre">change_password()</span></tt>.</p>
+</div>
+<div class="section" id="removing-the-index-php-file">
+<h2>Removing the index.php file<a class="headerlink" href="#removing-the-index-php-file" title="Permalink to this headline">¶</a></h2>
+<p>By default, the <strong>index.php</strong> file will be included in your URLs:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">news</span><span class="o">/</span><span class="nx">article</span><span class="o">/</span><span class="nx">my_article</span>
+</pre></div>
+</div>
+<p>If your Apache server has <em>mod_rewrite</em> enabled, you can easily remove this
+file by using a .htaccess file with some simple rules. Here is an example
+of such a file, using the &#8220;negative&#8221; method in which everything is redirected
+except the specified items:</p>
+<div class="highlight-ci"><pre>RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]</pre>
+</div>
+<p>In the above example, any HTTP request other than those for existing
+directories and existing files is treated as a request for your index.php file.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These specific rules might not work for all server configurations.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Make sure to also exclude from the above rule any assets that you
+might need to be accessible from the outside world.</p>
+</div>
+</div>
+<div class="section" id="adding-a-url-suffix">
+<h2>Adding a URL Suffix<a class="headerlink" href="#adding-a-url-suffix" title="Permalink to this headline">¶</a></h2>
+<p>In your <strong>config/config.php</strong> file you can specify a suffix that will be
+added to all URLs generated by CodeIgniter. For example, if a URL is
+this:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">products</span><span class="o">/</span><span class="nx">view</span><span class="o">/</span><span class="nx">shoes</span>
+</pre></div>
+</div>
+<p>You can optionally add a suffix, like <strong>.html,</strong> making the page appear to
+be of a certain type:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">products</span><span class="o">/</span><span class="nx">view</span><span class="o">/</span><span class="nx">shoes</span><span class="o">.</span><span class="nx">html</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="enabling-query-strings">
+<h2>Enabling Query Strings<a class="headerlink" href="#enabling-query-strings" title="Permalink to this headline">¶</a></h2>
+<p>In some cases you might prefer to use query strings URLs:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">?</span><span class="nx">c</span><span class="o">=</span><span class="nx">products</span><span class="o">&amp;</span><span class="nx">m</span><span class="o">=</span><span class="nx">view</span><span class="o">&amp;</span><span class="nx">id</span><span class="o">=</span><span class="mi">345</span>
+</pre></div>
+</div>
+<p>CodeIgniter optionally supports this capability, which can be enabled in
+your <strong>application/config.php</strong> file. If you open your config file you&#8217;ll
+see these items:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;enable_query_strings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;controller_trigger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;c&#39;</span><span class="p">;</span>
+<span class="nv">$config</span><span class="p">[</span><span class="s1">&#39;function_trigger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>If you change &#8220;enable_query_strings&#8221; to TRUE this feature will become
+active. Your controllers and functions will then be accessible using the
+&#8220;trigger&#8221; words you&#8217;ve set to invoke your controllers and methods:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">?</span><span class="nx">c</span><span class="o">=</span><span class="nx">controller</span><span class="o">&amp;</span><span class="nx">m</span><span class="o">=</span><span class="nx">method</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are using query strings you will have to build your own
+URLs, rather than utilizing the URL helpers (and other helpers
+that generate URLs, like some of the form helpers) as these are
+designed to work with segment based URLs.</p>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

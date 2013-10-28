@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+
+
+<html>
+	<head>
+		<meta charset="utf-8">
+	    
+	    <title>Upgrading from 2.0.2 to 2.0.3 &mdash; CodeIgniter 3.0-dev documentation</title>
+
+	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
+	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+	    <script type="text/javascript">
+	      var DOCUMENTATION_OPTIONS = {
+	        URL_ROOT:    '../',
+	        VERSION:     '3.0-dev',
+	        COLLAPSE_INDEX: false,
+	        FILE_SUFFIX: '.html',
+	        HAS_SOURCE:  false
+	      };
+	    </script>
+	    <script type="text/javascript" src="../_static/jquery.js"></script>
+	    <script type="text/javascript" src="../_static/underscore.js"></script>
+	    <script type="text/javascript" src="../_static/doctools.js"></script>
+	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
+	    <link rel="up" title="Installation Instructions" href="index.html" />
+	    <link rel="next" title="Upgrading from 2.0.3 to 2.1.0" href="upgrade_210.html" />
+	    <link rel="prev" title="Upgrading from 2.0.1 to 2.0.2" href="upgrade_202.html" /> 
+	</head>
+	<body>
+		<div id="table-contents">
+			<div class="toctree-wrapper compound">
+			<function <lambda> at 0xa80810c>
+			</div>
+		</div>
+
+		<div id="brand" class="ci">
+			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
+			<p>3.0-dev User Guide</p>
+		</div><!-- /#brand -->
+
+		<div id="header"><!--
+	--------------------------------
+	Original Google search box block
+	--------------------------------
+	
+<form method="get" action="http://www.google.com/search">
+	<fieldset>
+		<input type="text" name="q" id="q" value="">
+		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
+		<input class="grades" type="submit" value="search">
+	</fieldset>
+</form>
+-->
+
+
+<form class="search" action="../search.html" method="get">
+  <input type="text" name="q" id="q" value="" />
+  <input type="submit" value="search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+			<ul>
+				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
+				<li><a href="index.html" accesskey="U">Installation Instructions</a>&nbsp;&nbsp;  &rsaquo;</li>
+				<li><strong>Upgrading from 2.0.2 to 2.0.3</strong></li>
+			</ul>
+		</div><!-- /#header -->
+
+		<div class="section body" id="content">
+  <div class="section" id="upgrading-from-2-0-2-to-2-0-3">
+<h1>Upgrading from 2.0.2 to 2.0.3<a class="headerlink" href="#upgrading-from-2-0-2-to-2-0-3" title="Permalink to this headline">¶</a></h1>
+<p>Before performing an update you should take your site offline by
+replacing the index.php file with a static one.</p>
+<div class="section" id="step-1-update-your-codeigniter-files">
+<h2>Step 1: Update your CodeIgniter files<a class="headerlink" href="#step-1-update-your-codeigniter-files" title="Permalink to this headline">¶</a></h2>
+<p>Replace all files and directories in your &#8220;system&#8221; folder and replace
+your index.php file. If any modifications were made to your index.php
+they will need to be made fresh in this new one.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have any custom developed files in these folders please
+make copies of them first.</p>
+</div>
+</div>
+<div class="section" id="step-2-update-your-main-index-php-file">
+<h2>Step 2: Update your main index.php file<a class="headerlink" href="#step-2-update-your-main-index-php-file" title="Permalink to this headline">¶</a></h2>
+<p>If you are running a stock index.php file simply replace your version
+with the new one.</p>
+<p>If your index.php file has internal modifications, please add your
+modifications to the new file and use it.</p>
+</div>
+<div class="section" id="step-3-replace-config-user-agents-php">
+<h2>Step 3: Replace config/user_agents.php<a class="headerlink" href="#step-3-replace-config-user-agents-php" title="Permalink to this headline">¶</a></h2>
+<p>This config file has been updated to contain more user agent types,
+please copy it to application/config/user_agents.php.</p>
+</div>
+<div class="section" id="step-4-change-references-of-the-ext-constant-to-php">
+<h2>Step 4: Change references of the EXT constant to &#8221;.php&#8221;<a class="headerlink" href="#step-4-change-references-of-the-ext-constant-to-php" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The EXT Constant has been marked as deprecated, but has not
+been removed from the application. You are encouraged to make the
+changes sooner rather than later.</p>
+</div>
+</div>
+<div class="section" id="step-5-remove-apppath-third-party-from-autoload-php">
+<h2>Step 5: Remove APPPATH.&#8217;third_party&#8217; from autoload.php<a class="headerlink" href="#step-5-remove-apppath-third-party-from-autoload-php" title="Permalink to this headline">¶</a></h2>
+<p>Open application/config/autoload.php, and look for the following:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$autoload</span><span class="p">[</span><span class="s1">&#39;packages&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="nx">APPPATH</span><span class="o">.</span><span class="s1">&#39;third_party&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>If you have not chosen to load any additional packages, that line can be
+changed to:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nv">$autoload</span><span class="p">[</span><span class="s1">&#39;packages&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Which should provide for nominal performance gains if not autoloading
+packages.</p>
+</div>
+<div class="section" id="update-sessions-database-tables">
+<h2>Update Sessions Database Tables<a class="headerlink" href="#update-sessions-database-tables" title="Permalink to this headline">¶</a></h2>
+<p>If you are using database sessions with the CI Session Library, please
+update your ci_sessions database table as follows:</p>
+<div class="highlight-ci"><div class="highlight"><pre><span class="nx">CREATE</span> <span class="nx">INDEX</span> <span class="nx">last_activity_idx</span> <span class="nx">ON</span> <span class="nx">ci_sessions</span><span class="p">(</span><span class="nx">last_activity</span><span class="p">);</span>
+<span class="nx">ALTER</span> <span class="nx">TABLE</span> <span class="nx">ci_sessions</span> <span class="nx">MODIFY</span> <span class="nx">user_agent</span> <span class="nx">VARCHAR</span><span class="p">(</span><span class="mi">120</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+		</div>
+
+		<!-- {user_guide_comments} -->
+					
+		<div id="footer">
+			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
+			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
+		</div><!-- /#footer -->
+	</body>
+</html>

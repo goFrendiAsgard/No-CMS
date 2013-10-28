@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	$("#field-authorization_id").change(function(){
 	    adjust_component_view();
-	})
+	});
 });
 
 function adjust_component_view(){
