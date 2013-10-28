@@ -62,7 +62,7 @@
                                        <option value="mysql">MySQL/MariaDB (with mysql driver)</option>
                                        <option selected value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
                                        <option value="pdo_mysql">MySQL/MariaDB (with PDO driver)</option>
-                                       <option value="pdo_pgsql">PosgreSQL (with PDO driver)</option>
+                                       <option value="pdo_pgsql">PostgreSQL (with PDO driver)</option>
                                        <option value="pdo_sqlite">SQLite (with PDO driver)</option>
                                    </select>
                                    <p class="help-block">Choose database protocol</p>
@@ -533,9 +533,9 @@
         $("#db_protocol").change(function(){
             var protocol = $("#db_protocol").val();
             var port = '';
-            if(protocol == 'mysql'){
+            if(protocol == 'mysql' || protocol == 'mysqli' || protocol == 'pdo_mysql'){
                 port = '3306';
-            }else if (protocol == 'pgsql'){
+            }else if (protocol == 'pdo_pgsql'){
                 port = '5432';
             }else{
                 port = '';
