@@ -19,6 +19,8 @@ $lang['Module Management'] = 'Gerenciar Módulos';
 $lang['Change Theme'] = 'Alterar Tema';
 $lang['Quick Link Management'] = 'Gerenciar Links Rápidos';
 $lang['Configuration Management'] = 'Gerenciar Configuração';
+$lang['Complete Menu'] = 'Menu';
+
 
 $lang['User Info'] = 'Informação do Usuário';
 $lang['Share This Page !!'] = 'Compartilhar esta Página !!';
