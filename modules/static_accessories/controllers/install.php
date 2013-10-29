@@ -152,7 +152,7 @@ class Install extends CMS_Module_Installer {
         $fields = array(
             'counter_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
             'ip'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
-            'time'=> array("type"=>'datetime', "null"=>TRUE),
+            'time'=> $this->TYPE_DATETIME_NULL,
             'agent'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);

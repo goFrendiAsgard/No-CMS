@@ -888,3 +888,4 @@ v0.6.6
 + (done, not tested) fix hardcoded sql that contain ```
 + (proposed) IP Deny manager
 + (done, tested) Fix layout for small device
++ (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre

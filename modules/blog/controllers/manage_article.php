@@ -60,7 +60,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         }
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_article_model');
+        //$crud->set_model($this->cms_module_path().'/grocerycrud_article_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());

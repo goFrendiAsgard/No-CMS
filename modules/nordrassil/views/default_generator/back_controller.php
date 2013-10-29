@@ -54,7 +54,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
         // $crud->unset_export();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/{{ model_import_name }}');
+        // $crud->set_model($this->cms_module_path().'/{{ model_import_name }}');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());
