@@ -386,7 +386,7 @@ class Install_Model extends CI_Model{
         }
         if(!trim($this->db_table_prefix) == ''){
             $table_name = $this->db_table_prefix.'_'.$table_name;
-        }
+        }        
         $this->db_no_error = $this->dbforge->create_table($table_name) && $this->db_no_error;
         return $this->db->last_query();
     }
@@ -915,6 +915,10 @@ class Install_Model extends CI_Model{
             $sql_list = array_merge($sql_list, $create_table_sql_list);
             $sql_list = array_merge($sql_list, $insert_sql_list);
             $success = !$this->db_no_error;
+        }
+
+        if($this->db_protocol == 'pdo_sqlite'){
+            @chmod(FCPATH.'db.sqlite', 0777);
         }
 
         return array(

@@ -72,7 +72,7 @@ class Article_Model extends  CMS_Model{
 
     public function get_single_article($article_url){
         $where_article_url = isset($article_url)?
-            "article_url = '".addslashes($article_url)."'":"TRUE";
+            "article_url = '".addslashes($article_url)."'":"(1=1)";
 
         $SQL = "
             SELECT
@@ -114,7 +114,7 @@ class Article_Model extends  CMS_Model{
             (SELECT article_id FROM ".$this->cms_complete_table_name('category_article').", ".$this->cms_complete_table_name('category')."
             WHERE ".$this->cms_complete_table_name('category').".category_id = ".$this->cms_complete_table_name('category_article').".category_id
             AND category_name ='".addslashes($category)."'
-            )" : "TRUE";
+            )" : "(1=1)";
 
         if($search){
             $where_search = "(FALSE ";
@@ -123,7 +123,7 @@ class Article_Model extends  CMS_Model{
             }
             $where_search .=")";
         }else{
-            $where_search = "TRUE";
+            $where_search = "(1=1)";
         }
 
         $offset = $page * $limit;

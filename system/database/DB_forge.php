@@ -333,7 +333,6 @@ abstract class CI_DB_forge {
 		}
 
 		$sql = $this->_create_table($table, $if_not_exists);
-
 		if (is_bool($sql))
 		{
 			$this->_reset();

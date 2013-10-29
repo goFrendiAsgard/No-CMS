@@ -583,14 +583,21 @@ class CMS_Controller extends MX_Controller
         if (!isset($url_string)) {
             $url_string = $this->uri->uri_string();
         }
+        
+        if($this->db->platform()=='pdo' && $this->db->subdriver=='sqlite'){
+            $url_pattern = "url || '%'";
+        }else{
+            $url_pattern = "CONCAT(url, '%')";    
+        }
         $SQL             = "SELECT navigation_name
         	FROM ".cms_table_name('main_navigation')."
-        	WHERE '" . addslashes($url_string) . "' LIKE CONCAT(url,'%')
-        		OR '/" . addslashes($url_string) . "/' LIKE CONCAT(url,'%')
-        		OR '/" . addslashes($url_string) . "' LIKE CONCAT(url,'%')
-        		OR '" . addslashes($url_string) . "/' LIKE CONCAT(url,'%')
+        	WHERE '" . addslashes($url_string) . "' LIKE ".$url_pattern."
+        		OR '/" . addslashes($url_string) . "/' LIKE ".$url_pattern."
+        		OR '/" . addslashes($url_string) . "' LIKE ".$url_pattern."
+        		OR '" . addslashes($url_string) . "/' LIKE ".$url_pattern."
         	ORDER BY LENGTH(url) DESC";
         $query           = $this->db->query($SQL);
+
         $navigation_name = NULL;
         if ($query->num_rows() > 0) {
             $row             = $query->row();
