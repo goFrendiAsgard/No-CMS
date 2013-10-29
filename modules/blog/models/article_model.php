@@ -142,7 +142,7 @@ class Article_Model extends  CMS_Model{
                 $where_category AND
                 $where_search
             ORDER BY date DESC, article_id DESC
-            LIMIT $offset, $limit";
+            LIMIT $limit OFFSET $offset";
 
         $query = $this->db->query($SQL);
         foreach($query->result() as $row){

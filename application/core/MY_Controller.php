@@ -1406,7 +1406,7 @@ class CMS_Module_Installer extends CMS_Controller
                 'constraint' => 20,
         );
     protected $TYPE_DATETIME_NOTNULL = array(
-                'type' => 'DATETIME',
+                'type' => 'TIMESTAMP',
                 'null' => FALSE,
         );
     protected $TYPE_DATE_NOTNULL = array(
@@ -1414,7 +1414,7 @@ class CMS_Module_Installer extends CMS_Controller
                 'null' => FALSE,
         );
     protected $TYPE_DATETIME_NULL = array(
-                'type' => 'DATETIME',
+                'type' => 'TIMESTAMP',
         );
     protected $TYPE_DATE_NULL = array(
                 'type' => 'DATE',
@@ -1787,7 +1787,7 @@ class CMS_Module_Installer extends CMS_Controller
             $this->db->query($query);
         }
     }
-    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph_icon=NULL)
+    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL)
     {
         //get parent's navigation_id
         $query = $this->db->select('navigation_id')
@@ -1807,12 +1807,11 @@ class CMS_Module_Installer extends CMS_Controller
             }
             $query = $this->db->select_max('index')
                 ->from(cms_table_name('main_navigation'))
-                ->$this->db->where($whereParentId)
+                ->where($whereParentId)
                 ->get();
             if ($query->num_rows() > 0) {
                 $row   = $query->row();
                 $index = $row->index+1;
-                $index = $row->newIndex;
             }
             if (!isset($index))
                 $index = 0;
@@ -1848,7 +1847,7 @@ class CMS_Module_Installer extends CMS_Controller
             "index" => $index,
             "description" => $description,
             "active"=>1,
-            "bootstrap_glyph_icon"=>$bootstrap_glyph_icon,
+            "bootstrap_glyph"=>$bootstrap_glyph,
         );
         if (isset($parent_id)) {
             $data['parent_id'] = $parent_id;
