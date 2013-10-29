@@ -1525,7 +1525,8 @@ class CMS_Module_Installer extends CMS_Controller
         } else {
             $this->IS_ACTIVE = TRUE;
             $row = $query->row();
-            $this->OLD_VERSION = $row->version;
+            // TODO: the suck sqlite returning array
+            //$row = json_decode(json_encode($row), FALSE);
             if($this->OLD_VERSION == ''){
                 $this->OLD_VERSION = '0.0.0';
             }

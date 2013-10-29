@@ -889,3 +889,4 @@ v0.6.6
 + (proposed) IP Deny manager
 + (done, tested) Fix layout for small device
 + (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre
++ (proposed) fix this bug: Something wrong with pdo sqlite driver, sometime `$this->db->row()` return an array instead of object
