@@ -218,9 +218,9 @@ class CMS_Model extends CI_Model
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
         $user_id    = $user_id == ''?0:$user_id;
-        $not_login  = !$user_name ? "TRUE" : "FALSE";
-        $login      = $user_name ? "TRUE" : "FALSE";
-        $super_user = $user_id == 1 ? "TRUE" : "FALSE";
+        $not_login  = !$user_name ? "(1=1)" : "(1=2)";
+        $login      = $user_name ? "(1=1)" : "(1=2)";
+        $super_user = ($user_id == 1 || in_array(1,$this->cms_user_group_id())) ? "(1=1)" : "(1=2)";
 
         //get max_menu_depth from configuration
         if (!isset($max_menu_depth)) {
@@ -301,9 +301,9 @@ class CMS_Model extends CI_Model
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
         $user_id    = $user_id == ''?0:$user_id;
-        $not_login  = !$user_name ? "TRUE" : "FALSE";
-        $login      = $user_name ? "TRUE" : "FALSE";
-        $super_user = $user_id == 1 ? "TRUE" : "FALSE";
+        $not_login  = !$user_name ? "(1=1)" : "(1=2)";
+        $login      = $user_name ? "(1=1)" : "(1=2)";
+        $super_user = ($user_id == 1 || in_array(1,$this->cms_user_group_id())) ? "(1=1)" : "(1=2)";
 
         $query  = $this->db->query("SELECT q.navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, active
                         FROM
@@ -379,10 +379,11 @@ class CMS_Model extends CI_Model
         // get user_name, user_id, etc
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
-        $user_id    = !isset($user_id)||is_null($user_id)?0:$user_id;
-        $not_login  = !$user_name ? "TRUE" : "FALSE";
-        $login      = $user_name ? "TRUE" : "FALSE";
-        $super_user = $user_id == 1 ? "TRUE" : "FALSE";
+        $user_id    = $user_id == ''?0:$user_id;
+        $not_login  = !$user_name ? "(1=1)" : "(1=2)";
+        $login      = $user_name ? "(1=1)" : "(1=2)";
+        $super_user = ($user_id == 1 || in_array(1,$this->cms_user_group_id())) ? "(1=1)" : "(1=2)";
+        
         $slug_where = isset($slug)?
             "(((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%')) AND active=1)" :
             "1=1";
