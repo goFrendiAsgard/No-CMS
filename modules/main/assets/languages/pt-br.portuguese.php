@@ -45,7 +45,7 @@ $lang['Uninstallation Failed'] = 'Erro na Desinstalação';
 $lang['Cannot deactivate'] = 'Não é possível Desativar';
 
 // module_management.php
-$lang['Activate'] = 'Ativatar';
+$lang['Activate'] = 'Ativar';
 $lang['Upgrade'] = 'Atualizar';
 $lang['Deactivate'] = 'Desativar';
 $lang['Settings'] = 'Configurações';
