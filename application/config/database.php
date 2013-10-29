@@ -80,12 +80,12 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-    'dsn'        => '',
+    'dsn'        => 'sqlite:/home/gofrendiasgard/public_html/No-CMS/db.sqlite',
     'hostname'   => 'localhost',
-    'username'   => '',
+    'username'   => 'root',
     'password'   => '',
-    'database'   => '',
-    'dbdriver'   => 'mysqli',
+    'database'   => 'no_cms',
+    'dbdriver'   => 'pdo',
     'dbprefix'   => '',
     'pconnect'   => TRUE,
     'db_debug'   => TRUE,

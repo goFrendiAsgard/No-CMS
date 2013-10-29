@@ -118,9 +118,9 @@ class CI_DB_result {
 	 */
 	public function num_rows()
 	{
-		if (is_int($this->num_rows))
+        if (is_int($this->num_rows))
 		{
-			return $this->num_rows;
+            return $this->num_rows;
 		}
 		elseif (count($this->result_array) > 0)
 		{

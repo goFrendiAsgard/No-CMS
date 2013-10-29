@@ -7,6 +7,15 @@
  */
 class Main extends CMS_Controller
 {
+    public function test(){
+        $query = $this->db->get('cms_main_module');
+        echo '<pre>';
+        var_dump($query->num_rows());
+        echo '</pre>';
+        echo '<pre>';
+        var_dump($query->row());
+        echo '</pre>';
+    }
     private function unique_field_name($field_name)
     {
         return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
