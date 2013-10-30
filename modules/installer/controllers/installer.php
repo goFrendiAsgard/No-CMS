@@ -2,7 +2,7 @@
 
 class Installer extends CI_Controller{
 
-    public $ALLOW_INSTALL = FALSE;
+    public $ALLOW_INSTALL = TRUE;
 
     public function __construct(){
         parent::__construct();
