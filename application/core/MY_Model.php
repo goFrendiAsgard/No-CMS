@@ -260,7 +260,7 @@ class CMS_Model extends CI_Model
             $children              = $this->cms_navigations($row->navigation_id, $max_menu_depth);
             $have_allowed_children = false;
             foreach ($children as $child) {
-                if ($child["allowed"]) {
+                if ($child["allowed"] && $child["active"]) {
                     $have_allowed_children = true;
                     break;
                 }
