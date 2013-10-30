@@ -44,14 +44,6 @@ class CI_DB_pdo_result extends CI_DB_result {
 	 * @return	int
 	 */
 	public function num_rows()
-<<<<<<< HEAD
-	{	
-        // TODO: strange thing, rowCount >0, but result_array length is zero
-        //var_dump($this->result_id->rowCount());
-        //var_dump($this->result_array());
-
-        if (is_int($this->num_rows))
-=======
 	{
 
         if (is_int($this->num_rows))
@@ -69,7 +61,6 @@ class CI_DB_pdo_result extends CI_DB_result {
 
         /*
         if (is_int($this->num_rows))
->>>>>>> 1248e558c62ab3329acd68c58dda3f578fd72a96
 		{
 			return $this->num_rows;
 		}
@@ -85,13 +76,8 @@ class CI_DB_pdo_result extends CI_DB_result {
 		elseif (($num_rows = $this->result_id->rowCount()) > 0)
 		{
 			return $this->num_rows = $num_rows;
-<<<<<<< HEAD
 		}*/
         
-=======
-		}
-        */
->>>>>>> 1248e558c62ab3329acd68c58dda3f578fd72a96
 
 		return $this->num_rows = count($this->result_array());
 	}
