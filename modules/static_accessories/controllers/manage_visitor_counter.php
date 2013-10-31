@@ -20,7 +20,7 @@ class Manage_Visitor_Counter extends CMS_Priv_Strict_Controller {
         $crud->unset_delete();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_visitor_counter_model');
+        //$crud->set_model($this->cms_module_path().'/grocerycrud_visitor_counter_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());

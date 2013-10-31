@@ -9,7 +9,11 @@ if(!$IS_ACTIVE){
     echo form_submit('submit','Save Setting');
     echo form_close();
 }else{
-    echo 'No setting available';
+    echo form_open(site_url($module_directory.'/install/setting'));
+    echo form_label('Slideshow Height').br();
+    echo form_input('slideshow_height', $slideshow_height).br();
+    echo form_submit('submit','Save Setting');
+    echo form_close();
 }
 echo br();
 echo anchor(site_url('main/module_management'),'Back to module management');

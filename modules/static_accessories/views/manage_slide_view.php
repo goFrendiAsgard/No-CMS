@@ -1,3 +1,8 @@
+<style type="text/css">
+    a.image-thumbnail img{
+        max-width:200px;
+    }
+</style>
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
 $asset = new CMS_Asset(); 

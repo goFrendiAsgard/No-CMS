@@ -62,6 +62,11 @@ class Install extends CMS_Module_Installer {
             // get values
             $data['module_table_prefix'] = cms_module_config($module_directory, 'module_table_prefix');
             $data['module_prefix']       = cms_module_prefix($module_directory);
+        }else{
+            $slideshow_height = $this->input->post('slideshow_height');
+            if(isset($slideshow_height) && $slideshow_height !== FALSE){
+                cms_module_config($module_directory, 'slideshow_height', $slideshow_height);
+            }
         }
         $this->view($module_directory.'/install_setting', $data, 'main_module_management');
     }

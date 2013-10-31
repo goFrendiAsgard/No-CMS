@@ -17,7 +17,7 @@ class Manage_Tab_Content extends CMS_Priv_Strict_Controller {
         $crud->unset_jquery();
 
         // set model
-        $crud->set_model($this->cms_module_path().'/grocerycrud_tab_content_model');
+        //$crud->set_model($this->cms_module_path().'/grocerycrud_tab_content_model');
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());

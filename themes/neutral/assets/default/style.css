@@ -173,7 +173,7 @@ footer{
 	padding: 10px;
 }
 
-#__section-banner>div{
+#__section-banner div.well{
     padding: 15px;
     border-radius:10px;
 
