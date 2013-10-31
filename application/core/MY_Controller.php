@@ -885,8 +885,8 @@ class CMS_Controller extends MX_Controller
                 $keyword_metadata = '<meta name="keyword" content="' . $keyword . '">';
                 $this->template->append_metadata($keyword_metadata);
             }
-
-            $jquery_path = base_url('assets/nocms/js/jquery.tools.min.js');
+            // always use grocerycrud's jquery for maximum compatibility
+            $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
             $this->template->append_metadata('<script type="text/javascript" src="' . $jquery_path . '"></script>');
 
             // google analytic

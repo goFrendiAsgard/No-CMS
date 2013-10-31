@@ -1300,19 +1300,19 @@ class Main extends CMS_Controller
             if(!$no_quicklink){
                 $result .= $this->build_quicklink();
             }
-            $result = '
-            <div class="navbar navbar-fixed-top">
+            $result = 
+            '<div class="navbar navbar-fixed-top">
               <div class="navbar-inner">
-                <div class="container-fluid">
-                    <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
+                <div class="container">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
-                    </a>
+                    </button>
                     <a class="brand" href="#">
                         <img src ="{{ site_logo }}" style="max-height:20px; max-width:20px;" />
                     </a>
-                    <div class="nav-collapse in collapse" id="main-menu">
+                    <div class="nav-collapse collapse" id="main-menu">
                         <ul class="nav">'.$result.'</ul>
                     </div>
                 </div>

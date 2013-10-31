@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.5 stable, October, 29, 2013
+- v0.6.5 stable, November, 01, 2013
 
 
 Server Requirements
@@ -890,3 +890,4 @@ v0.6.6
 + (done, tested) Fix layout for small device
 + (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre
 + (proposed) fix this bug: Something wrong with pdo sqlite driver, sometime `$this->db->row()` return an array instead of object
++ (done, tested) Fix bug: when screen resized to smaller width, the button cannot be clicked
