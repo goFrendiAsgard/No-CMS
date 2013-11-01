@@ -67,6 +67,8 @@ class Install extends CMS_Module_Installer {
             if(isset($slideshow_height) && $slideshow_height !== FALSE){
                 cms_module_config($module_directory, 'slideshow_height', $slideshow_height);
             }
+            // get values
+            $data['slideshow_height'] = cms_module_config($module_directory, 'slideshow_height');
         }
         $this->view($module_directory.'/install_setting', $data, 'main_module_management');
     }

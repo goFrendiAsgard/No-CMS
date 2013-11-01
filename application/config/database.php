@@ -80,11 +80,11 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-    'dsn'        => '',
+    'dsn'        => 'mysql:host=localhost;port=3306;dbname=no_cms',
     'hostname'   => 'localhost',
-    'username'   => '',
-    'password'   => '',
-    'database'   => '',
+    'username'   => 'root',
+    'password'   => 'toor',
+    'database'   => 'no_cms',
     'dbdriver'   => 'mysqli',
     'dbprefix'   => '',
     'pconnect'   => TRUE,

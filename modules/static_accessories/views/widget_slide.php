@@ -10,7 +10,7 @@ for($i=0; $i<count($slide_list); $i++){
         $class = '';
     }
     $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';
-    $div_item_list[] = '<div class="item '.$class.'" style="height:350px; background-color:#AAAAAA; padding:5px;">'.
+    $div_item_list[] = '<div class="item '.$class.'" style="height:'.$slide_height.'; background-color:#AAAAAA; padding:5px;">'.
             '<img style="max-height:100%; max-width:100%; display: block; margin-left: auto; margin-right: auto;" 
             src ="'.base_url('modules/{{ module_path }}/assets/images/slides/'.$slide['image_url']).'" />'.
             '<div class="carousel-caption">'.$slide['content'].'</div>'.

@@ -4,6 +4,7 @@ class Static_Accessories_Widget extends CMS_Controller {
     public function slide(){
         $this->load->model('slide_model');
         $data['slide_list'] = $this->slide_model->get();
+        $data['slide_height'] = cms_module_config($module_directory, 'slideshow_height');
         $this->view($this->cms_module_path().'/widget_slide', $data);
     }
     

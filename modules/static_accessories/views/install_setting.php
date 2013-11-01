@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-echo '<h3>Setting '.$module_directory.'</h3>';
+echo '<h3>Static Acessories Setting</h3>';
 if(!$IS_ACTIVE){
     echo form_open(site_url($module_directory.'/install/setting'));
     echo form_label('Table Prefix').br();
