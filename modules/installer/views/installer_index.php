@@ -24,7 +24,7 @@
         }
     </style>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css'); ?>" />
-    <script type="text/javascript" src="<?php echo base_url('assets/nocms/js/jquery.tools.min.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery-1.10.2.min.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js'); ?>"></script>
 </head>
 <body>
