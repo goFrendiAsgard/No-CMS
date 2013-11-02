@@ -9,7 +9,7 @@ class Visitor_Counter_Model extends CMS_Model{
             $this->load->helper('date');
             $this->db->insert($this->cms_complete_table_name('visitor_counter'), array(
                     'ip'=>$this->input->ip_address(),
-                    'time'=>now(),
+                    'time'=>date('Y-m-d H:i:s'),
                     'agent'=>$this->agent->agent_string()
                 ));
         }

@@ -27,13 +27,6 @@ class Install extends CMS_Module_Installer {
 
     // DEACTIVATION
     protected function do_deactivate(){
-	    /* This doesn't work with PDO
-        $this->backup_database(array(
-            $this->cms_complete_table_name('slide'),
-            $this->cms_complete_table_name('tab_content'),
-            $this->cms_complete_table_name('visitor_counter')
-        ));
-	    */
         $this->remove_all();
     }
 
@@ -70,7 +63,11 @@ class Install extends CMS_Module_Installer {
             // get values
             $data['slideshow_height'] = cms_module_config($module_directory, 'slideshow_height');
         }
-        $this->view($module_directory.'/install_setting', $data, 'main_module_management');
+        $navigation_name = $this->cms_navigation_name($module_directory.'/install/setting');
+        if($navigation_name === NULL || $navigation_name == ''){
+            $navigation_name = 'main_module_management';
+        }
+        $this->view($module_directory.'/install_setting', $data, $navigation_name);
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -90,6 +87,7 @@ class Install extends CMS_Module_Installer {
         $this->remove_navigation($this->cms_complete_navigation_name('manage_visitor_counter'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_tab_content'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_slide'));
+        $this->remove_navigation($this->cms_complete_navigation_name('setting'));
 
 
         // remove parent of all navigations
@@ -99,12 +97,6 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->drop_table($this->cms_complete_table_name('visitor_counter'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('tab_content'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('slide'), TRUE);
-        
-        /*
-        // import uninstall.sql (this is only works for MySQL)
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/uninstall.sql');
-        */
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -124,6 +116,9 @@ class Install extends CMS_Module_Installer {
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_visitor_counter'), 'Visitor',
             $module_path.'/manage_visitor_counter', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        );
+        $this->add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
+            $module_path.'/install/setting', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
         
         $this->add_widget($this->cms_complete_navigation_name('slideshow'), 'Slide Show',
@@ -160,64 +155,16 @@ class Install extends CMS_Module_Installer {
             'counter_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
             'ip'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
             'time'=> $this->TYPE_DATETIME_NULL,
-            'agent'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE)
+            'agent'=> array("type"=>'varchar', "constraint"=>300, "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('counter_id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('visitor_counter'));
 
-        
-        /*
-        // import install.sql (this only works for MySQL)
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/install.sql');
-        */
-    }
+        $data = array('image_url'=>'01.jpg','content'=>'<h4>The first slide image</h4><p>Some awesome descriptions</p>');
+        $this->db->insert($this->cms_complete_table_name('slide'),$data);
 
-    // IMPORT SQL FILE
-    private function import_sql($file_name){
-        $this->execute_SQL(file_get_contents($file_name), '/*split*/');
-    }
-
-    // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){
-        
-	    /* this doesn't work with PDO
-	     
-	    
-        $module_path = $this->cms_module_path();
-        $this->load->dbutil();
-        $sql = '';
-        
-        
-
-        // create DROP TABLE syntax
-        for($i=count($table_names)-1; $i>=0; $i--){
-            $table_name = $table_names[$i];
-            $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-        }
-        if($sql !='')$sql.= PHP_EOL;
-
-        // create CREATE TABLE and INSERT syntax 
-        
-        $prefs = array(
-                'tables'      => $table_names,
-                'ignore'      => array(),
-                'format'      => 'txt',
-                'filename'    => 'mybackup.sql',
-                'add_drop'    => FALSE,
-                'add_insert'  => TRUE,
-                'newline'     => PHP_EOL
-              );
-        $sql.= $this->dbutil->backup($prefs);        
-
-        //write file
-        $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
-        file_put_contents(
-                BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-                $sql
-            );
-        */
-
+        $data = array('image_url'=>'02.jpg','content'=>'<h4>The second slide image</h4><p>Another awesome description</p>');
+        $this->db->insert($this->cms_complete_table_name('slide'),$data);
     }
 }

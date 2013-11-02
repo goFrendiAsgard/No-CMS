@@ -358,13 +358,13 @@ body{
 /* normal desktop */
 @media (min-width: 979px) and (max-width: 1199px)  {
     body {
-        padding-top: 60px;
+        padding-top: 50px;
     }
 }
 
 /* Large desktop */
 @media (min-width: 1200px) {
     body {
-        padding-top: 60px;
+        padding-top: 50px;
     }
 }

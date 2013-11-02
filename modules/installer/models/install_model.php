@@ -836,7 +836,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_quicklink(2, 2);
         $sql_list[] = $this->insert_quicklink(4, 3);
         // widget
-        $sql_list[] = $this->insert_widget('section_top_fix', 'Top Fix Section', '', '', 1, 1, 1, 1, '{{ widget_name:top_navigation }}', NULL);
+        $sql_list[] = $this->insert_widget('section_top_fix', 'Top Fix Section', '', '', 1, 1, 1, 1, '{{ widget_name:top_navigation }}'.PHP_EOL.'{{ widget_name:static_accessories_slideshow }}', NULL);
         $sql_list[] = $this->insert_widget('section_banner', 'Banner Section', '', '', 1, 1, 2, 1, '<div class="well hidden-phone span12">'.PHP_EOL.'  <div class="span2">'.PHP_EOL.'    <img src ="{{ site_logo }}" />'.PHP_EOL.'  </div>'.PHP_EOL.'  <div class="span10">'.PHP_EOL.'    <h1>{{ site_name }}</h1>'.PHP_EOL.'    <p>{{ site_slogan }}</p>'.PHP_EOL.'  </div>'.PHP_EOL.'</div>', NULL);
         $sql_list[] = $this->insert_widget('section_left', 'Left Section', '', '', 1, 1, 3, 1, '', NULL);
         $sql_list[] = $this->insert_widget('section_right', 'Right Section', '', '', 1, 1, 4, 1, '{{ widget_slug:sidebar }}<hr />{{ widget_slug:advertisement }}', NULL);

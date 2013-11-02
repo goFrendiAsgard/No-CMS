@@ -1,5 +1,4 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
 $li_indicator_list = array();
 $div_item_list = array();
 for($i=0; $i<count($slide_list); $i++){
@@ -10,14 +9,23 @@ for($i=0; $i<count($slide_list); $i++){
         $class = '';
     }
     $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';
-    $div_item_list[] = '<div class="item '.$class.'" style="height:'.$slide_height.'; background-color:#AAAAAA; padding:5px;">'.
-            '<img style="max-height:100%; max-width:100%; display: block; margin-left: auto; margin-right: auto;" 
-            src ="'.base_url('modules/{{ module_path }}/assets/images/slides/'.$slide['image_url']).'" />'.
+    $div_item_list[] = 
+            '<div class="item '.$class.'">'.
+            '<img src="'.base_url('modules/'.$module_path.'/assets/images/slides/'.$slide['image_url']).'" alt="">'.
             '<div class="carousel-caption">'.$slide['content'].'</div>'.
             '</div>';
 }
-
 ?>
+<style type="text/css">
+    div.carousel-inner div.item{
+        height: <?=$slide_height?>;
+        max-height:<?=$slide_height?>;
+    }
+    .carousel-control [class^="icon-"], .carousel-control [class*=" icon-"]{
+        line-height: 30px!important;
+        vertical-align:text-top!important;
+    }
+</style>
 <div class="carousel slide hidden-phone" id="slideshow-widget">
     <!-- Indicators -->
     <ol class="carousel-indicators">

@@ -39,6 +39,8 @@ class Manage_Slide extends CMS_Priv_Strict_Controller {
         $crud->display_as('image_url','Image Url');
         $crud->display_as('content','Content');
 
+        $crud->required_fields('image_url');
+
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// HINT: Put set relation (lookup) codes here
 		// (documentation: http://www.grocerycrud.com/documentation/options_functions/set_relation)

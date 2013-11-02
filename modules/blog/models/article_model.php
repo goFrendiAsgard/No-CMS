@@ -165,9 +165,11 @@ class Article_Model extends  CMS_Model{
     }
 
     public function add_comment($article_id, $name, $email, $website, $content){
-        $SQL = "SELECT allow_comment FROM ".$this->cms_complete_table_name('article').
-        " WHERE article_id = $article_id";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('allow_comment')
+            ->from($this->cms_complete_table_name('article'))
+            ->where('article_id', $article_id)
+            ->order_by('date')
+            ->get();
         $row = $query->row();
         if(isset($row->allow_comment) && ($row->allow_comment == 1)){
             $cms_user_id = $this->cms_user_id();
@@ -188,8 +190,10 @@ class Article_Model extends  CMS_Model{
     }
 
     public function get_photos($article_id){
-        $SQL = "SELECT url FROM ".$this->cms_complete_table_name('photo')." WHERE article_id = '".$article_id."'";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('url')
+            ->from($this->cms_complete_table_name('photo'))
+            ->where('article_id', $article_id)
+            ->get();
 
         $data = array();
         foreach($query->result() as $row){
