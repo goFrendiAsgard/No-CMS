@@ -7,15 +7,6 @@
  */
 class Main extends CMS_Controller
 {
-    public function test(){
-        $query = $this->db->get('cms_main_module');
-        echo '<pre>';
-        var_dump($query->num_rows());
-        echo '</pre>';
-        echo '<pre>';
-        var_dump($query->row());
-        echo '</pre>';
-    }
     private function unique_field_name($field_name)
     {
         return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
@@ -609,8 +600,8 @@ class Main extends CMS_Controller
         $crud->unset_read();
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'default_theme', 'url', 'authorization_id', 'groups');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups', 'index');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
@@ -643,6 +634,7 @@ class Main extends CMS_Controller
         $crud->field_type('only_content', 'true_false');
 
         $crud->field_type('bootstrap_glyph','enum',array('icon-glass', 'icon-music', 'icon-search', 'icon-envelope', 'icon-heart', 'icon-star', 'icon-star-empty', 'icon-user', 'icon-film', 'icon-th-large', 'icon-th', 'icon-th-list', 'icon-ok', 'icon-remove', 'icon-zoom-in', 'icon-zoom-out', 'icon-off', 'icon-signal', 'icon-cog', 'icon-trash', 'icon-home', 'icon-file', 'icon-time', 'icon-road', 'icon-download-alt', 'icon-download', 'icon-upload', 'icon-inbox', 'icon-play-circle', 'icon-repeat', 'icon-refresh', 'icon-list-alt', 'icon-lock', 'icon-flag', 'icon-headphones', 'icon-volume-off', 'icon-volume-down', 'icon-volume-up', 'icon-qrcode', 'icon-barcode', 'icon-tag', 'icon-tags', 'icon-book', 'icon-bookmark', 'icon-print', 'icon-camera', 'icon-font', 'icon-bold', 'icon-italic', 'icon-text-height', 'icon-text-width', 'icon-align-left', 'icon-align-center', 'icon-align-right', 'icon-align-justify', 'icon-list', 'icon-indent-left', 'icon-indent-right', 'icon-facetime-video', 'icon-picture', 'icon-pencil', 'icon-map-marker', 'icon-adjust', 'icon-tint', 'icon-edit', 'icon-share', 'icon-check', 'icon-move', 'icon-step-backward', 'icon-fast-backward', 'icon-backward', 'icon-play', 'icon-pause', 'icon-stop', 'icon-forward', 'icon-fast-forward', 'icon-step-forward', 'icon-eject', 'icon-chevron-left', 'icon-chevron-right', 'icon-plus-sign', 'icon-minus-sign', 'icon-remove-sign', 'icon-ok-sign', 'icon-question-sign', 'icon-info-sign', 'icon-screenshot', 'icon-remove-circle', 'icon-ok-circle', 'icon-ban-circle', 'icon-arrow-left', 'icon-arrow-right', 'icon-arrow-up', 'icon-arrow-down', 'icon-share-alt', 'icon-resize-full', 'icon-resize-small', 'icon-plus', 'icon-minus', 'icon-asterisk', 'icon-exclamation-sign', 'icon-gift', 'icon-leaf', 'icon-fire', 'icon-eye-open', 'icon-eye-close', 'icon-warning-sign', 'icon-plane', 'icon-calendar', 'icon-random', 'icon-comment', 'icon-magnet', 'icon-chevron-up', 'icon-chevron-down', 'icon-retweet', 'icon-shopping-cart', 'icon-folder-close', 'icon-folder-open', 'icon-resize-vertical', 'icon-resize-horizontal', 'icon-hdd', 'icon-bullhorn', 'icon-bell', 'icon-certificate', 'icon-thumbs-up', 'icon-thumbs-down', 'icon-hand-right', 'icon-hand-left', 'icon-hand-up', 'icon-hand-down', 'icon-circle-arrow-right', 'icon-circle-arrow-left', 'icon-circle-arrow-up', 'icon-circle-arrow-down', 'icon-globe', 'icon-wrench', 'icon-tasks', 'icon-filter', 'icon-briefcase', 'icon-fullscreen'));
+        $crud->field_type('index','hidden');
 
         $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
         $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name');
@@ -746,24 +738,26 @@ class Main extends CMS_Controller
     public function before_insert_navigation($post_array)
     {
         //get parent's navigation_id
-        $SQL   = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_id='" . $post_array['parent_id'] . "'";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_id', $post_array['parent_id'])
+            ->get();
         $row   = $query->row();
 
         $parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
 
         //index = max index+1
-        if (isset($parent_id)) {
-            $whereParentId = "(parent_id = $parent_id)";
-        } else {
-            $whereParentId = "(parent_id IS NULL)";
-        }
-        $SQL   = "SELECT max(".$this->db->protect_identifiers('index').")+1 AS newIndex FROM ".cms_table_name('main_navigation')." WHERE $whereParentId";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select_max('index')
+            ->from(cms_table_name('main_navigation'))
+            ->where('parent_id', $parent_id)
+            ->get();
         $row   = $query->row();
-        $index = $row->newIndex;
-        if (!isset($index))
+        $index = $row->index;
+        if (!isset($index)){
             $index = 1;
+        }else{
+            $index = $index+1;
+        }
 
         $post_array['index'] = $index;
 
@@ -853,7 +847,7 @@ class Main extends CMS_Controller
         $crud->unset_read();
 
         $crud->columns('navigation_id');
-        $crud->edit_fields('navigation_id');
+        $crud->edit_fields('navigation_id', 'index');
         $crud->add_fields('navigation_id');
 
         $crud->display_as('navigation_id', $this->cms_lang('Navigation Code'));
@@ -861,6 +855,7 @@ class Main extends CMS_Controller
         $crud->order_by('index', 'asc');
 
         $crud->set_relation('navigation_id', cms_table_name('main_navigation'), 'navigation_name');
+        $crud->field_type('index','hidden');
 
         $crud->callback_before_insert(array(
             $this,
@@ -886,13 +881,16 @@ class Main extends CMS_Controller
 
     public function before_insert_quicklink($post_array)
     {
-        $SQL   = "SELECT max(".$this->db->protect_identifiers('index').")+1 AS newIndex FROM ".cms_table_name('main_quicklink');
-        $query = $this->db->query($SQL);
+        $query = $this->db->select_max('index')
+            ->from(cms_table_name('main_quicklink'))
+            ->get();
         $row   = $query->row();
-        $index = $row->newIndex;
-
-        if (!isset($index))
+        $index = $row->index;
+        if (!isset($index)){
             $index = 1;
+        }else{
+            $index = $index+1;
+        }
 
         $post_array['index'] = $index;
 
@@ -989,10 +987,10 @@ class Main extends CMS_Controller
 
         $crud->columns('widget_name', 'title', 'active', 'slug');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
-        $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
+        $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
-        $crud->field_type('index', 'integer');
+        $crud->field_type('index', 'hidden');
 
         $crud->display_as('widget_name', $this->cms_lang('Widget Code'))
             ->display_as('title', $this->cms_lang('Title (What visitor see)'))
@@ -1039,13 +1037,16 @@ class Main extends CMS_Controller
 
     public function before_insert_widget($post_array)
     {
-        $SQL   = "SELECT max(".$this->db->protect_identifiers('index').")+1 AS newIndex FROM ".cms_table_name('main_widget');
-        $query = $this->db->query($SQL);
+        $query = $this->db->select_max('index')
+            ->from(cms_table_name('main_widget'))
+            ->get();
         $row   = $query->row();
-        $index = $row->newIndex;
-
-        if (!isset($index))
+        $index = $row->index;
+        if (!isset($index)){
             $index = 1;
+        }else{
+            $index = $index+1;
+        }
 
         $post_array['index'] = $index;
 

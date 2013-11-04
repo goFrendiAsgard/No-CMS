@@ -161,6 +161,110 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
         }
     }
 
+    // fix issue of NULL unique field (it is possible). The property_exists function is more robbust than isset
+    protected function db_update_validation()
+    {
+        $validation_result = (object)array('success'=>false);
+
+        $field_types = $this->get_field_types();
+        $required_fields = $this->required_fields;
+        $unique_fields = $this->_unique_fields;
+        $edit_fields = $this->get_edit_fields();
+
+        if(!empty($required_fields))
+        {
+            foreach($edit_fields as $edit_field)
+            {
+                $field_name = $edit_field->field_name;
+                if(!isset($this->validation_rules[$field_name]) && in_array( $field_name, $required_fields) )
+                {
+                    $this->set_rules( $field_name, $field_types[$field_name]->display_as, 'required');
+                }
+            }
+        }
+
+
+        /** Checking for unique fields. If the field value is not unique then
+         * return a validation error straight away, if not continue... */
+        if(!empty($unique_fields))
+        {
+            $form_validation = $this->form_validation();
+
+            $form_validation_check = false;
+
+            foreach($edit_fields as $edit_field)
+            {
+                $field_name = $edit_field->field_name;
+                if(in_array( $field_name, $unique_fields) )
+                {
+                    $state_info = $this->getStateInfo();
+                    $primary_key = $this->get_primary_key();
+                    $field_name_value = $_POST[$field_name];
+
+                    $this->basic_model->where($primary_key,$state_info->primary_key);
+                    $row = $this->basic_model->get_row();
+
+                    if(!property_exists($row,'url')) {
+                        throw new Exception("The field name doesn't exist in the database. ".
+                                            "Please use the unique fields only for fields ".
+                                            "that exist in the database");
+                    }
+
+                    $previous_field_name_value = $row->$field_name;
+
+                    if(!empty($previous_field_name_value) && $previous_field_name_value != $field_name_value) {
+                        $form_validation->set_rules( $field_name,
+                                $field_types[$field_name]->display_as,
+                                'is_unique['.$this->basic_db_table.'.'.$field_name.']');
+
+                        $form_validation_check = true;
+                    }
+                }
+            }
+
+            if($form_validation_check && !$form_validation->run())
+            {
+                $validation_result->error_message = $form_validation->error_string();
+                $validation_result->error_fields = $form_validation->_error_array;
+
+                return $validation_result;
+            }
+        }
+
+        if(!empty($this->validation_rules))
+        {
+            $form_validation = $this->form_validation();
+
+            $edit_fields = $this->get_edit_fields();
+
+            foreach($edit_fields as $edit_field)
+            {
+                $field_name = $edit_field->field_name;
+                if(isset($this->validation_rules[$field_name]))
+                {
+                    $rule = $this->validation_rules[$field_name];
+                    $form_validation->set_rules($rule['field'],$rule['label'],$rule['rules']);
+                }
+            }
+
+            if($form_validation->run())
+            {
+                $validation_result->success = true;
+            }
+            else
+            {
+                $validation_result->error_message = $form_validation->error_string();
+                $validation_result->error_fields = $form_validation->_error_array;
+            }
+        }
+        else
+        {
+            $validation_result->success = true;
+        }
+
+        return $validation_result;
+    }
+
     /**********************/
 
     /* Soft Delete Setter
