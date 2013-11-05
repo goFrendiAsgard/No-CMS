@@ -78,7 +78,7 @@ I made No-CMS, but you can make it better. There are many way you can do to make
 
 - __Bug report:__ I usually check and test my code carefully before publish it on github. However I am just a mere mortal, and can do mistakes. Whenever you see any unexpected behavior when using No-CMS, you can always open an issue on github, make a post on No-CMS forum, or email me directly. This will not only help you, but also help everyone using No-CMS for their projects (including me)
 
-- __Code contribution:__ I am not an almighty-super-genius-coder. Sometime I make mistakes, and to make it worse, I do not know how to fix those mistakes (It is a rare case however). If you are also a PHP coder, and you know how to fix things or make things better, just submit an issue or [Pull Request](http://help.github.com/send-pull-requests/) on [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS/) on GitHub.
+- __Code contribution:__ Sometime I make mistakes, and to make it worse, sometime I do not even know how to fix those mistakes (It is a rare case however). If you are also a PHP coder, and you know how to fix things or make things better, just submit an issue or [Pull Request](http://help.github.com/send-pull-requests/) on [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS/) on GitHub.
 
 - __Translation:__ I know several programming languages, but human natural languages is much more harder to learn. If you want your native language to be available in No-CMS, please do some translation and submit a pull request on github. However, if github scare you, do not worry. Just email me directly.
 

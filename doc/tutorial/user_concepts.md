@@ -1,7 +1,5 @@
 [Up](../tutorial.md)
 
-In this section you will understand what is what.
-
 Installation
 ============
 Installation is a process to install No-CMS into server, so that it become accessible by visitors (or at least by yourself). There are several things done in installation process:
@@ -63,4 +61,4 @@ __PS :__ if a user is a member of "Super Admin" user-group, he/she will always b
 
 User And Group
 ==============
-In No-CMS any authenticated user should has a user account. The user account contains at username and password. A user account can be a part of several user-group, and vice-versa, a user-group can contains several user-account. Authorization is based on user group.
+In No-CMS any authenticated user should has a user account. The user account contains username and password. A user account can be a part of several user-group, and vice-versa, a user-group can contains several user-account. Authorization is based on user group.

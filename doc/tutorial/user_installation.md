@@ -26,6 +26,7 @@ into:
 ```php
     define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
 ```
+This will save extra step, so that the program doesn't need to check existance of `/application/config/database.php`
 
 * If you are using linux, please do this:
 ```
@@ -34,3 +35,4 @@ into:
     chown -R your_user ./application/config
     chmod ./application/config 744 -R
 ```
+This will make your site more secure (does not mean invulnerable)
