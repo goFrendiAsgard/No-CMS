@@ -25,15 +25,16 @@ local.properties
 # PDT-specific
 .buildpath
 
+# installation specific file
 assets/caches/*.js
 assets/caches/*.css
 modules/.git
-application/logs/*.php
+application/config/*.php
+.htaccess
 
-# No-CMS user guide odt
-No-CMS-User-Guide.odt
-
+# the sql
 modules/*/assets/db/backup*.sql
+no_cms.sql
 
 # my private modules
 modules/gis

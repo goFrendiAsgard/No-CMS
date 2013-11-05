@@ -2,11 +2,9 @@
 
 class Installer extends CI_Controller{
 
-    public $ALLOW_INSTALL = TRUE;
-
     public function __construct(){
         parent::__construct();
-        if(!$this->ALLOW_INSTALL){
+        if(ENVIRONMENT != 'first-time'){
             show_404();
         }
         $this->load->helper('url');

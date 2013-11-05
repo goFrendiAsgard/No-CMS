@@ -42,7 +42,11 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	if(!file_exists('./application/config/database.php')){
+        define('ENVIRONMENT', 'first-time');
+    }else{
+        define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+    }
 
 /*
  *---------------------------------------------------------------
@@ -59,6 +63,7 @@ switch (ENVIRONMENT)
 		ini_set('display_errors', 1);
 	break;
 
+    case 'first-time':
 	case 'testing':
 	case 'production':
 		error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
