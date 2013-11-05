@@ -29,7 +29,7 @@ local.properties
 assets/caches/*.js
 assets/caches/*.css
 modules/.git
-
+application/config/*.php
 .htaccess
 
 # the sql
