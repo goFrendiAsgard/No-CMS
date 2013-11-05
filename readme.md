@@ -46,22 +46,12 @@ Release Information
 Server Requirements
 ===================
 
--  PHP version 5.3.2 or newer.
-
-
-Contributing
-============
-
-I made No-CMS, but you can make it better. There are many way you can do to make No-CMS better
-
-- __Donate few amount of money:__ I make No-CMS freely available, but electricity, food, and internet access is not provided for free. I need them to keep alive so that I can continue the development of No-CMS. I also need to invest several time to develop, debug, and add features to No-CMS. If No-CMS help you to save your time and money, please consider to click this cute yellow button, and keep No-CMS's development: [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YDES6RTA9QJQL)
-
-- __Bug report:__ I usually check and test my code carefully before publish it on github. However I am just a mere mortal, and can do mistakes. Whenever you see any unexpected behavior when using No-CMS, you can always open an issue on github, make a post on No-CMS forum, or email me directly. This will not only help you, but also help everyone using No-CMS for their projects (including me)
-
-- __Code contribution:__ I am not an almighty-super-genius-coder. Sometime I make mistakes, and to make it worse, I do not know how to fix those mistakes (It is a rare case however). If you are also a PHP coder, and you know how to fix things or make things better, just submit an issue or [Pull Request](http://help.github.com/send-pull-requests/) on [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS/) on GitHub.
-
-- __Translation:__ I know several programming languages, but human natural languages is much more harder to learn. If you want your native language to be available in No-CMS, please do some translation and submit a pull request on github. However, if github scare you, do not worry. Just email me directly.
-
+- PHP version 5.3.2 or newer.
+- Apache 2
+- MySQL 5 or PostgreSQL 8.4 (depend on your database choice). Sqlite is still experimental
+- php-curl extension
+- mod-rewrite extension (optional)
+- php-pdo or php-mysql extension (depend on your database choice)
 
 License
 =======
@@ -77,3 +67,19 @@ Links
 - [Blog](http://www.getnocms.com/blog)
 - [Community Forum](http://www.getnocms.com/forum)
 - [Facebook Page](http://facebook.com/nocms)
+
+
+Contributing
+============
+
+I made No-CMS, but you can make it better. There are many way you can do to make No-CMS better:
+
+- __Donate few amount of money:__ I make No-CMS freely available, but electricity, food, and internet access is not provided for free. I need them to keep alive so that I can continue the development of No-CMS. I also need to invest several time to develop, debug, and add features to No-CMS. If No-CMS help you to save your time and money, please consider to click this cute yellow button, and keep No-CMS's development: [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YDES6RTA9QJQL)
+
+- __Bug report:__ I usually check and test my code carefully before publish it on github. However I am just a mere mortal, and can do mistakes. Whenever you see any unexpected behavior when using No-CMS, you can always open an issue on github, make a post on No-CMS forum, or email me directly. This will not only help you, but also help everyone using No-CMS for their projects (including me)
+
+- __Code contribution:__ I am not an almighty-super-genius-coder. Sometime I make mistakes, and to make it worse, I do not know how to fix those mistakes (It is a rare case however). If you are also a PHP coder, and you know how to fix things or make things better, just submit an issue or [Pull Request](http://help.github.com/send-pull-requests/) on [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS/) on GitHub.
+
+- __Translation:__ I know several programming languages, but human natural languages is much more harder to learn. If you want your native language to be available in No-CMS, please do some translation and submit a pull request on github. However, if github scare you, do not worry. Just email me directly.
+
+- __Tell your friends:__ If you think No-CMS is great, tell your friend. With more users & contributors, No-CMS will surely become better since there will be many people test it on different environments.
