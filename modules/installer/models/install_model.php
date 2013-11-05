@@ -203,29 +203,19 @@ class Install_Model extends CI_Model{
             $error_list[] = 'Admin password confirmation doesn\'t match';
         }
         // No-CMS directory
-        if (!is_writable(dirname(APPPATH))) {
+        if (!is_writable(FCPATH)) {
             $success  = FALSE;
-            $error_list[] = dirname(APPPATH).' is not writable';
+            $error_list[] = FCPATH.' is not writable';
         }
         // assets/caches
-        if (!is_writable(dirname(APPPATH).'/assets/caches')) {
+        if (!is_writable(FCPATH.'assets/caches')) {
             $success  = FALSE;
-            $error_list[] = "Asset cache directory (".dirname(APPPATH)."/assets/caches) is not writable";
+            $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
         }
-        // application/config/config.php
-        if (!is_writable(APPPATH.'config/config.php')) {
+        // application/config/
+        if (!is_writable(APPPATH.'config')) {
             $success  = FALSE;
-            $error_list[] = APPPATH."config/config.php is not writable";
-        }
-        // application/config/cms_config.php
-        if (!is_writable(APPPATH.'config/cms_config.php')) {
-            $success  = FALSE;
-            $error_list[] = APPPATH."config/cms_config.php is not writable";
-        }
-        // application/config/database.php
-        if (!is_writable(APPPATH.'config/database.php')) {
-            $success  = FALSE;
-            $error_list[] = APPPATH."config/database.php is not writable";
+            $error_list[] = "Config directory (".APPPATH."config) is not writable";
         }
         // third party authentication activated
         if ($this->auth_enable_facebook || $this->auth_enable_twitter || $this->auth_enable_google || $this->auth_enable_yahoo || $this->auth_enable_linkedin || $this->auth_enable_myspace || $this->auth_enable_foursquare || $this->auth_enable_windows_live || $this->auth_enable_open_id || $this->auth_enable_aol ) {
@@ -360,11 +350,6 @@ class Install_Model extends CI_Model{
         if (!is_writable(APPPATH.'logs')) {
             $success  = FALSE;
             $error_list[] = APPPATH."logs is not writable";
-        }
-        // installer controller
-        if (!is_writable(dirname(APPPATH).'/modules/installer/controllers/installer.php')) {
-            $success  = FALSE;
-            $error_list[] = dirname(APPPATH)."/modules/installer/controllers/installer.php is not writable";
         }
         return array(
                 'success' => $success,
@@ -951,6 +936,12 @@ class Install_Model extends CI_Model{
     }
 
     public function build_configuration(){
+        // copy everything from /application/config/first-time.php into /application/config/
+        $file_list = scandir(APPPATH.'config/first-time', 1);
+        foreach($file_list as $file){
+            copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$file);
+        }
+
         // database config
         $file_name = APPPATH.'config/database.php';
         $key_prefix = "'";

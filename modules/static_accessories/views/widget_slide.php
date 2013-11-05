@@ -11,7 +11,7 @@ for($i=0; $i<count($slide_list); $i++){
     $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';
     $div_item_list[] = 
             '<div class="item '.$class.'">'.
-            '<img src="'.base_url('modules/'.$module_path.'/assets/images/slides/'.$slide['image_url']).'" alt="">'.
+            '<img class="item-image" real-src="'.base_url('modules/'.$module_path.'/assets/images/slides/'.$slide['image_url']).'" alt="">'.
             '<div class="carousel-caption">'.$slide['content'].'</div>'.
             '</div>';
 }
@@ -26,7 +26,7 @@ for($i=0; $i<count($slide_list); $i++){
         vertical-align:text-top!important;
     }
 </style>
-<div class="carousel slide hidden-phone" id="slideshow-widget">
+<div class="carousel slide hidden-phone hidden-tablet" id="slideshow-widget">
     <!-- Indicators -->
     <ol class="carousel-indicators">
         <?php foreach($li_indicator_list as $li_indicator){ echo $li_indicator;} ?>
@@ -48,5 +48,9 @@ for($i=0; $i<count($slide_list); $i++){
 <script type ="text/javascript">
     $(document).ready(function(){
         $('#slideshow-widget').carousel('cycle');
+        // Don't let the slideshow block everything
+        $('img.item-image').each(function(){
+            $(this).attr('src', $(this).attr('real-src'));
+        });
     });    
 </script>

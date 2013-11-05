@@ -1167,7 +1167,10 @@ class CMS_Model extends CI_Model
      */
     public function cms_is_module_active($module_name)
     {
-        $query = $this->db->query("SELECT module_id FROM ".cms_table_name('main_module')." WHERE module_name = '" . addslashes($module_name) . "'");
+        $query = $this->db->select('module_id')
+            ->from(cms_table_name('main_module'))
+            ->where('module_name', $module_name)
+            ->get();
         if ($query->num_rows() > 0) {
             return true;
         } else {

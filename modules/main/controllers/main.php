@@ -175,7 +175,7 @@ class Main extends CMS_Controller
     public function activate($activation_code)
     {
         $this->cms_activate_account($activation_code);
-        redirect('main/index');
+        redirect('');
     }
 
     public function forgot($activation_code = NULL)
@@ -191,7 +191,7 @@ class Main extends CMS_Controller
             if ($this->form_validation->run()) {
                 if ($this->cms_valid_activation_code($activation_code)) {
                     $this->cms_activate_account($activation_code, $password);
-                    redirect('main/index');
+                    redirect('');
                 } else {
                     redirect('main/forgot');
                 }
@@ -211,7 +211,7 @@ class Main extends CMS_Controller
 
             if ($this->form_validation->run()) {
                 if ($this->cms_generate_activation_code($identity, TRUE, 'FORGOT')) {
-                    redirect('main/index');
+                    redirect('');
                 } else {
                     $data = array(
                         "identity" => $identity,
@@ -267,7 +267,7 @@ class Main extends CMS_Controller
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
             $this->cms_do_register($user_name, $email, $real_name, $password);
-            redirect('main/index');
+            redirect('');
         } else {
             $data = array(
                 "user_name" => $user_name,
@@ -370,7 +370,7 @@ class Main extends CMS_Controller
 
         if ($this->form_validation->run()) {
             $this->cms_do_change_profile($user_name, $email, $real_name, $password);
-            redirect('main/index');
+            redirect('');
         } else {
             $data = array(
                 "user_name" => $user_name,
@@ -411,7 +411,7 @@ class Main extends CMS_Controller
         $this->cms_guard_page('main_language');
         if (isset($language)) {
             $this->cms_language($language);
-            redirect('main/index');
+            redirect('');
         } else {
             $data = array(
                 "language_list" => $this->cms_language_list()
@@ -1294,7 +1294,7 @@ class Main extends CMS_Controller
         // show up
         if($first){
             if(!$no_complete_menu){
-                $result = '<li class="dropdown">'.
+                $result = '<li class="dropdown hidden-phone hidden-tablet">'.
                     '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
                     $result.'</li>';
             }
@@ -1304,7 +1304,7 @@ class Main extends CMS_Controller
             $result = 
             '<div class="navbar navbar-fixed-top">
               <div class="navbar-inner">
-                <div class="container">
+                <div style="padding-left:20px;">
                     <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -1318,7 +1318,30 @@ class Main extends CMS_Controller
                     </div>
                 </div>
               </div>
-            </div>';
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    // override bootstrap default behavior on dropdown click
+                    $("a.dropdown-toggle span.anchor-text").click(function(){
+                        if(event.stopPropagation){
+                            event.stopPropagation();
+                        }
+                        event.cancelBubble=true;
+                        window.location = $(this).parent().attr("href");
+                    });
+                    // override bootstrap default behavior on dropdown click. There should be no dropdown for tablet & phone
+                    $("a.dropdown-toggle").click(function(){
+                        var screen_width = $("body").width();
+                        if(screen_width<=978){
+                            if(event.stopPropagation){
+                                event.stopPropagation();
+                            }
+                            event.cancelBubble=true;
+                            window.location = $(this).attr("href");
+                        }
+                    });
+                });
+            </script>';
             $this->cms_show_html($result);
         }else{
             return $result;
@@ -1365,9 +1388,8 @@ class Main extends CMS_Controller
                 if($first){
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
-                        '<span onclick="if(event.stopPropagation){event.stopPropagation();}event.cancelBubble=true;window.location = \''.$quicklink['url'].'\'">'.
-                        $icon.$quicklink['title'].'</span>'.
-                        '&nbsp;<span class="caret"></span></a>';
+                        '<span class="anchor-text">'.$icon.$quicklink['title'].'</span>'.
+                        '&nbsp;<span class="caret hidden-phone hidden-tablet"></span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{

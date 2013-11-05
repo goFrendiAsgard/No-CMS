@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.5 stable, November, 02, 2013
+- v0.6.5 stable, November, 05, 2013
 
 
 Server Requirements
@@ -651,10 +651,17 @@ Tutorial 05: Module Generator (Nordrassil)
 Tutorial 06: Migration
 ======================
 
-In case of you want to No-CMS into the newest version, you can safely overwrite everything except:
+Update 
+------
+If you have git installed, updating No-CMS to the newest version is going to be easy. As easy as you type:
+```git fetch origin master```
+
+For non git user, you can just download the newest and safely overwrite everything except:
 * `/application/config/` directory
-* `/modules/` directory
 * `/.htaccess` file
+
+From local computer to server
+-----------------------------
 
 In case of you test No-CMS in local computer and want to upload it into public server, you need to change these parts:
 * `RewriteBase` in `/.htaccess`
@@ -891,3 +898,4 @@ v0.6.6
 + (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre
 + (done, tested) Fix bug: when screen resized to smaller width, the button cannot be clicked
 + (proposed) Use newest CodeIgniter 3.0.0 and modify the rule so that the old naming convention still works
++ (done, tested) Make `/application/config/first-time` and `first-time` environment as suggested by cesarliws (https://github.com/goFrendiAsgard/No-CMS/issues/79)
