@@ -27,4 +27,4 @@ For programmers
 
 FAQ
 ====
-This section has not been written yet
+This section has not been written yet.
