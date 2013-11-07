@@ -4,18 +4,27 @@ Installation
 ============
 
 * Download No-CMS from [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS) on GitHub
+
 * Copy and extract it on your web server directory (If you use windows, you might want to try it locally via xampp, in this case, your server directory is `c:\xampp\htdocs`. If you use linux, the web server directory is usually `/var/www`)
+
 * Access the url (If you use xampp in your local computer, the url should be http://localhost/No-CMS)
+
 * Click "Install No-CMS"
   ![Install No-CMS button](images/user_installation_install_no_cms.png "Figure 1. Install No-CMS button")
+
 * Fill database information
   ![Fill Database Information](images/user_installation_database_information.png "Figure 2. Fill Database Information")
+
 * Click "Next", and fill CMS Setting information, especially administrator information. If your server has `mod_rewrite` installed, it is recommended to hide index.php
   ![Fill CMS Setting Information](images/user_installation_cms_setting.png "Figure 3. Fill CMS Setting")
+
 * You can also optionally add several third party authentication by clicking the corresponding tabs.
-* If there is no error, click `Install now` button
+
+* If there is no error, click `Install now` button.
   ![Install Now](images/user_installation_install_now.png "Figure 4. Install now button")
+
 * Wait for several seconds, the installer will do everything for you (including creating database, make config files, and install several default modules)
+
 * Once installation finished, you can do several things to enchance performance & security
 
 __PS:__ Git user can do this instead of typical download-and-extract:
