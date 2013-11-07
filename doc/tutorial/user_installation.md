@@ -45,6 +45,7 @@ into:
     define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
 ```
 This will save extra step, so that the program doesn't need to check existance of `/application/config/database.php`
+
 __PS__: When you update No-CMS this changes will be overriden.
 
 * If you are using linux, please do this:
