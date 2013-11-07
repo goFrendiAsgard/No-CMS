@@ -11,7 +11,7 @@ No-CMS allow you to make your own page:
 
 * Login to No-CMS with your admin user.
 * Open `Complete Menu | CMS Management | Navigation Management` or `CMS Management | Navigation Management`, you will be able to see several navigation menu. Every navigation (page) can has several `children-page`.
-  ![Navigation Management](images/user_navigation_navigation_example.png "Figure 2. Navigation Management")
+  ![Navigation Management](images/user_navigation_navigation_management.png "Figure 2. Navigation Management")
 * Add a new page by clicking `Add Navigation (Page)`
 * Set `Navigation Code` into `new_page`
 * Set `Navigation Title` into `My Page`
