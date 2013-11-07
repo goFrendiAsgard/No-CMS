@@ -15,15 +15,13 @@ Installation
 * Fill database information
   ![Fill Database Information](images/user_installation_database_information.png "Figure 2. Fill Database Information")
 
-* Click "Next", and fill CMS Setting information, especially administrator information. If your server has `mod_rewrite` installed, it is recommended to hide index.php
+* Click "Next", and fill CMS Setting information, especially administrator information. If your server has `mod_rewrite` installed, it is recommended to `hide index.php`. 
   ![Fill CMS Setting Information](images/user_installation_cms_setting.png "Figure 3. Fill CMS Setting")
 
 * You can also optionally add several third party authentication by clicking the corresponding tabs.
 
-* If there is no error, click `Install now` button.
+* If there is no error, click `Install now` button. Wait for several seconds until the installation finished, the installer will do everything for you (including creating database, make config files, and install several default modules)
   ![Install Now](images/user_installation_install_now.png "Figure 4. Install now button")
-
-* Wait for several seconds, the installer will do everything for you (including creating database, make config files, and install several default modules)
 
 * Once installation finished, you can do several things to enchance performance & security
 
@@ -47,6 +45,7 @@ into:
     define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
 ```
 This will save extra step, so that the program doesn't need to check existance of `/application/config/database.php`
+__PS__: When you update No-CMS this changes will be overriden.
 
 * If you are using linux, please do this:
 ```
