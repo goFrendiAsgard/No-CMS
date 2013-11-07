@@ -1,7 +1,7 @@
 [Up](../tutorial.md)
 
-Navigation (Pages) & Quicklinks
-==============================
+Navigation (Pages)
+==================
 
 A website is actually collection of web-pages. Making a page is a very crucial feature in every common-used CMS.
 Usually, a website has a navigation so that a user can jump among pages.
@@ -46,6 +46,11 @@ Let's add another page as sub-page:
 * Click `Save and Go Back to List`
 
 You can access this page by clicking `Complete Menu | My Page | My Subpage`
+
+__PS:__ So far you have learn how to make static page. However, there is another page type called `dynamic page`. To make a dynamic page, you must set `static` into `inactive` and fill the url with coresponding url (`module_name/controller_name/function_name`). If you are not familiar with CodeIgniter and HMVC extension, please look for [CodeIgniter documentation](../../ci_user_guide) or [HMVC extension documentation](https://bitbucket.org/wiredesignz/codeigniter-modular-extensions-hmvc) first.
+
+Quicklinks
+==========
 
 As your application grow, some frequently accessed page might be burried down in the navigation hierarchy.
 No-CMS has `quick link` to solve such a problem.
