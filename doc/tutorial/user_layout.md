@@ -17,9 +17,9 @@ There are three tabs available in layout management:
   ![Layout Section](images/user_layout_section.png "Figure 1. Layout Section")
 
 * Image
-  Here you can change Site logo and favicon. Actually you can also use [Configuration Management](user_configuration.md) to change site logo and favicon setting.
+  Here you can change Site logo and favicon. Alternatively, you can also use [Configuration Management](user_configuration.md) to change site logo and favicon setting.
   ![Image Section](images/user_layout_image.png "Figure 2. Image Section")
 
 * Configuration
-  Here you can change several layout-related configuration value, such as: Site title, Site slogan, and site footer
+  Here you can change several layout-related configuration value, such as: Site title, Site slogan, and site footer. Alternatively, you can also use [Configuration Management](user_configuration.md) to change site title, slogan and footer.
   ![Configuration Section](images/user_layout_configuration.png "Figure 3. Configuration Section")
