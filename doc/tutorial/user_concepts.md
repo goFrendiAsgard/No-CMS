@@ -9,7 +9,7 @@ Installation is a process to install No-CMS into server, so that it become acces
 * Creating .htaccess files.
 
 If you don't understand any of the above, just relax, No-CMS installation wizard will do everything for you.
-For more detail explanation about installation, please click [here](tutorial/user_installation.md)
+For more detail explanation about installation, please click [here](user_installation.md)
 
 Update & Migration
 ==================
@@ -17,27 +17,27 @@ Update & Migration
 * Migration is a process to migrate No-CMS into another server (e.g: from your local computer to your hosting server)
 
 Update & Migration require a bit work. It is basically easy, just make sure to be careful so that you do not break things.
-For more detail explanation about update and migration, please click [here](tutorial/user_update_and_migration.md)
+For more detail explanation about update and migration, please click [here](user_update_and_migration.md)
 
 Themes
 ======
 Themes are just a visual matter. You can choose a suitable theme for your website. No-CMS come with several themes to choose. If you cannot find any suitable theme for you, please consider to hire a profesional designer, or make a theme by yourself (require some knowledge of CSS and basic HTML).
-For more detail explanation about installation, please click [here](tutorial/user_themes.md). If you are a web designer, you might also like to visit [themes guide for designer](tutorial/designer_themes.md).
+For more detail explanation about installation, please click [here](user_themes.md). If you are a web designer, you might also like to visit [themes guide for designer](designer_themes.md).
 
 Layout Management
 =================
 With layout management, you can put correct widget in the correct position. You can also change logo, favicon, site title and jargon using layout management.
-For more detail explanation about layout management, please click [here](tutorial/user_layout.md).
+For more detail explanation about layout management, please click [here](user_layout.md).
 
 Widget
 ======
 Widget is a partial part that can be attached to your pages. Top navigation is an example of a widget.
-For more detail explanation about widget, please click [here](tutorial/user_widget.md).
+For more detail explanation about widget, please click [here](user_widget.md).
 
 Configuration
 =============
 Bunch of dynamic values that can be set to change the behavior of No-CMS.
-For more detail explanation about configuration, please click [here](tutorial/user_configuration.md).
+For more detail explanation about configuration, please click [here](user_configuration.md).
 
 Authorization
 ==============
@@ -67,4 +67,4 @@ __PS :__ if a user is a member of "Super Admin" user-group, he/she will always b
 User And Group
 ==============
 In No-CMS any authenticated user should has a user account. The user account contains username and password. A user account can be a part of several user-group, and vice-versa, a user-group can contains several user-account. Authorization is based on user group.
-For more detail explanation about user and group, please click [here](tutorial/user_and_group.md).
+For more detail explanation about user and group, please click [here](user_and_group.md).
