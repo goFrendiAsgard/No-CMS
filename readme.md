@@ -80,6 +80,8 @@ I made No-CMS, but you can make it better. There are many way you can do to make
 
 - __Code contribution:__ Sometime I make mistakes, and to make it worse, sometime I do not even know how to fix those mistakes (It is a rare case however). If you are also a PHP coder, and you know how to fix things or make things better, just submit an issue or [Pull Request](http://help.github.com/send-pull-requests/) on the [__development branch of No-CMS repository__](https://github.com/goFrendiAsgard/No-CMS/tree/development) on GitHub.
 
+- __Improve user guide:__ I am not a native English speaker. Sometime I also find dificulty to explain things. If you think you can improve No-CMS's user guide, please have a visit [here](https://github.com/goFrendiAsgard/No-CMS/blob/development/doc/tutorial.md) and edit things.
+
 - __Translation:__ I know several programming languages, but human natural languages is much more harder to learn. If you want your native language to be available in No-CMS, please do some translation and submit a pull request on github. However, if github scare you, do not worry. Just email me directly.
 
 - __Tell your friends:__ If you think No-CMS is great, tell your friend. With more users & contributors, No-CMS will surely become better since there will be many people test it on different environments.
