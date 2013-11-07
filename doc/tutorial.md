@@ -8,7 +8,7 @@ For mere users and everyone
 * [Update & Migration](tutorial/user_update_and_migration.md)
 * [Themes](tutorial/user_themes.md)
 * [Layout](tutorial/user_layout.md)
-* [User & Groups](tutoral/user_user_and_group.md)
+* [User & Groups](tutorial/user_user_and_group.md)
 * [Navigation & Pages](tutorial/user_navigation.md)
 * [Widgets](tutorial/user_widget.md)
 * [Modules](tutorial/user_modules.md)

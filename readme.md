@@ -62,7 +62,7 @@ Links
 =====
 - [Change Logs](doc/change_log.md)
 - [Contributor List](doc/contributors.md)
-- [User Guide And Tutorials](doc/tutorial.md)
+- [__User Guide And Tutorials__](doc/tutorial.md)
 - [Official Website](http://www.getnocms.com)
 - [Blog](http://www.getnocms.com/blog)
 - [Community Forum](http://www.getnocms.com/forum)
