@@ -68,3 +68,8 @@ User And Group
 ==============
 In No-CMS any authenticated user should has a user account. The user account contains username and password. A user account can be a part of several user-group, and vice-versa, a user-group can contains several user-account. Authorization is based on user group.
 For more detail explanation about user and group, please click [here](user_and_group.md).
+
+Modules
+=======
+Modules are the biggest power of No-CMS. Imagine it as wordpress plugin. Every module can contains several pages or widgets. This will surely enrich your website to unlimited potential.
+For more detail explanation about module, please click [here](user_modules.md). If you are a programmer, you might also want to make your own module. Click [here](programmer_modules.md) to understand the structure of a module, and click [here](programmer_module_generator) to learn how to use module generator and make your life easier.
