@@ -33,26 +33,26 @@ __PS:__ Git user can do this instead of typical download-and-extract:
 Performance & Security Enchancement
 ===================================
 * Go to `index.php`, change these code:
-```php
-    if(!file_exists('./application/config/database.php')){
-        define('ENVIRONMENT', 'first-time');
-    }else{
-        define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
-    }
-```
-into:
-```php
-    define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
-```
-This will save extra step, so that the program doesn't need to check existance of `/application/config/database.php`
+    ```php
+        if(!file_exists('./application/config/database.php')){
+            define('ENVIRONMENT', 'first-time');
+        }else{
+            define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+        }
+    ```
+    into:
+    ```php
+        define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
+    ```
+    This will save extra step, so that the program doesn't need to check existance of `/application/config/database.php`
 
-__PS__: When you update No-CMS this changes will be overriden.
+    __PS__: When you update No-CMS this changes will be overriden.
 
 * If you are using linux, please do this:
-```
-    chown your_user .htaccess
-    chmod ./reset-installation.sh 600
-    chown -R your_user ./application/config
-    chmod ./application/config 744 -R
-```
-This will make your site more secure (does not mean invulnerable)
+    ```
+        chown your_user .htaccess
+        chmod ./reset-installation.sh 600
+        chown -R your_user ./application/config
+        chmod ./application/config 744 -R
+    ```
+    This will make your site more secure (does not mean invulnerable)
