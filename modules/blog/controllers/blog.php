@@ -52,10 +52,12 @@ class Blog extends CMS_Priv_Strict_Controller {
         $content = $this->input->post($previous_secret_code.'xcontent', TRUE);
         
         if($content && $honey_pot_pass){
-            $valid_email = preg_match('/@.+\./', $email);
-            if(!$valid_email){
-                $success = FALSE;
-                $error_message = "Invalid email";
+            if(!($this->cms_user_id()>0)){
+                $valid_email = preg_match('/@.+\./', $email);
+                if(!$valid_email){
+                    $success = FALSE;
+                    $error_message = "Invalid email";
+                }
             }
             if($success){
                 $this->article_model->add_comment($article_id, $name, $email, $website, $content);

@@ -120,7 +120,7 @@
                 echo '</span>';
                 echo '</div>';
                 echo '<div style="clear:both; margin-top:10px;">';
-                echo $comment['content'];
+                echo str_replace(PHP_EOL, '<br />', $comment['content']);
                 echo '</div>';
                 echo '</div>';
             }

@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.5 stable, November, 05, 2013
+- v0.6.5 stable, November, 06, 2013
 
 
 Server Requirements
@@ -62,7 +62,7 @@ Links
 =====
 - [Change Logs](doc/change_log.md)
 - [Contributor List](doc/contributors.md)
-- [User Guide And Tutorials](doc/tutorial.md)
+- [__User Guide And Tutorials__](doc/tutorial.md)
 - [Official Website](http://www.getnocms.com)
 - [Blog](http://www.getnocms.com/blog)
 - [Community Forum](http://www.getnocms.com/forum)
@@ -78,7 +78,9 @@ I made No-CMS, but you can make it better. There are many way you can do to make
 
 - __Bug report:__ I usually check and test my code carefully before publish it on github. However I am just a mere mortal, and can do mistakes. Whenever you see any unexpected behavior when using No-CMS, you can always open an issue on github, make a post on No-CMS forum, or email me directly. This will not only help you, but also help everyone using No-CMS for their projects (including me)
 
-- __Code contribution:__ Sometime I make mistakes, and to make it worse, sometime I do not even know how to fix those mistakes (It is a rare case however). If you are also a PHP coder, and you know how to fix things or make things better, just submit an issue or [Pull Request](http://help.github.com/send-pull-requests/) on [No-CMS repository](https://github.com/goFrendiAsgard/No-CMS/) on GitHub.
+- __Code contribution:__ Sometime I make mistakes, and to make it worse, sometime I do not even know how to fix those mistakes (It is a rare case however). If you are also a PHP coder, and you know how to fix things or make things better, just submit an issue or [Pull Request](http://help.github.com/send-pull-requests/) on the [__development branch of No-CMS repository__](https://github.com/goFrendiAsgard/No-CMS/tree/development) on GitHub.
+
+- __Improve user guide:__ I am not a native English speaker. Sometime I also find dificulty to explain things. If you think you can improve No-CMS's user guide, please have a visit [here](https://github.com/goFrendiAsgard/No-CMS/blob/development/doc/tutorial.md) and edit things.
 
 - __Translation:__ I know several programming languages, but human natural languages is much more harder to learn. If you want your native language to be available in No-CMS, please do some translation and submit a pull request on github. However, if github scare you, do not worry. Just email me directly.
 
