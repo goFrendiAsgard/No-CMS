@@ -38,7 +38,7 @@ Git Commands
 * Revert
 
         git  reset --hard
-        
+
 
 HOW TO MAKE NO-CMS 
 ===================
@@ -66,10 +66,13 @@ HOW TO MAKE NO-CMS
     - Move `/application/config/*` into `/application/config/first-time/*`
     - Edit `/application/config/first-time/config.php`, add `encryption_key`
     - Edit `/application/third_party/MX/Ci.php` line `46` into
+
         ```php
             self::$APP = CMS_Controller::get_instance();
         ```
+
     - Edit `/application/config/config.php`, add this code:
+
         ```php
             /*
             |--------------------------------------------------------------------------
@@ -99,19 +102,25 @@ HOW TO MAKE NO-CMS
                 APPPATH.'themes/',
             );
         ```
+
 * Edit `/application/third_party/MX/Base.php`, use `isinstanceof` instead of `is_a`
+
     ```php
         //if ( ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
         //if ( ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
         if ( ! ($LANG instanceof MX_Lang)) $LANG = new MX_Lang;
         if ( ! ($CFG instanceof MX_Config)) $CFG = new MX_Config;
     ```
+
 * Edit `/application/third_party/MX/Loader.php`
+
     ```php
         // if (is_a($controller, 'MX_Controller')) {
         if ($controller instanceof MX_Controller) {
     ```
+
 * Edit `/index.php`, replace the beginning part into this:
+
     ```php
         if(!file_exists('./application/config/database.php')){
             define('ENVIRONMENT', 'first-time');
@@ -147,6 +156,7 @@ HOW TO MAKE NO-CMS
                 exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
         }
     ```
+    
 * Edit /system/CodeIgniter.php (Look this for better reference: https://github.com/EllisLab/CodeIgniter/commit/20292311636837e120d205e470e41826820feb46)
 * Edit /system/Loader.php (Look this for better reference: https://github.com/EllisLab/CodeIgniter/commit/20292311636837e120d205e470e41826820feb46)
 * Edit /system/Router.php (Look this for better reference: https://github.com/EllisLab/CodeIgniter/commit/20292311636837e120d205e470e41826820feb46)
