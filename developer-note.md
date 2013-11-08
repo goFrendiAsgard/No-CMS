@@ -2,12 +2,12 @@ Git Commands
 ============
 
 * Set up git
-    ```bash
+
         git config --global user.name "goFrendiAsgard"
         git config --global user.email goFrendiAsgard@gmail.com
-    ```
+
 * Init git repo (Just here for historical purpose):
-    ```bash
+
         mkdir No-CMS
         cd No-CMS
         git init
@@ -16,29 +16,29 @@ Git Commands
         git commit -m 'first commit'
         git remote add origin git@github.com:goFrendiAsgard/No-CMS.git
         git push -u origin master
-    ```
-* Something wrong with my computer (e.g: after re-install OS)     
-    ```bash
+
+* Something wrong with my computer (e.g: after re-install OS)
+
         cd No-CMS
         git remote add origin git@github.com:goFrendiAsgard/No-CMS.git
         git push -u origin master
-    ```
+
 * Commit changes
-    ```bash     
+
         git add . -A
         git commit -m 'the comment'
         git tag -a v1.4 -m 'version 1.4'
         git push -u origin master --tags
-    ```
+
 * Wrong tag
-    ```bash
+
         git tag -d 7.x-3.x-alpha3
         git push origin :refs/tags/7.x-3.x-alpha3
-    ```      
+
 * Revert
-    ```bash
+
         git  reset --hard
-    ```
+        
 
 HOW TO MAKE NO-CMS 
 ===================
