@@ -93,11 +93,11 @@ HOW TO MAKE NO-CMS
             |
             | Where should we expect to see themes?
             |
-            |	Default: array(APPPATH.'themes/' => '../themes/')
+            |   Default: array(APPPATH.'themes/' => '../themes/')
             |
             */
 
-            $config['theme_locations'] = array(	
+            $config['theme_locations'] = array( 
                 APPPATH.'../themes/',
                 APPPATH.'themes/',
             );
@@ -297,12 +297,12 @@ HOW TO MAKE NO-CMS
                     }
 
                     if(file_exists($mod_path.'models/'.$path.ucfirst($model).'.php')){
-                        require_once($mod_path.'models/'.$path.ucfirst($model).'.php');  
-                        $CI->$name = new ucfirst($model)();  
+                        require_once($mod_path.'models/'.$path.ucfirst($model).'.php');                 
+                        $model = ucfirst($model);  
                     }else{
-                        require_once($mod_path.'models/'.$path.$model.'.php');
-                        $CI->$name = new $model();
+                        require_once($mod_path.'models/'.$path.$model.'.php');                
                     }
+                    $CI->$name = new $model();
                     
                     $this->_ci_models[] = $name;
                     return;
@@ -323,7 +323,7 @@ HOW TO MAKE NO-CMS
             // the original code of CI_Router
         }
 
-        class CI_Loader extends Original_CI_Router {
+        class CI_Router extends Original_CI_Router {
             /**
              * Validate request
              *
