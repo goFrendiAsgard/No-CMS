@@ -40,8 +40,8 @@ Git Commands
         git  reset --hard
     ```
 
-HOW TO MAKE NO-CMS (Psst, this is my `krabby patty ingredients`)
-================================================================
+HOW TO MAKE NO-CMS 
+===================
 
 * Ingredients:
     - CodeIgniter: http://codeigniter.com/
