@@ -2,12 +2,12 @@ Git Commands
 ============
 
 * Set up git
-    ```
+    ```bash
         git config --global user.name "goFrendiAsgard"
         git config --global user.email goFrendiAsgard@gmail.com
     ```
 * Init git repo (Just here for historical purpose):
-    ```
+    ```bash
         mkdir No-CMS
         cd No-CMS
         git init
@@ -18,25 +18,25 @@ Git Commands
         git push -u origin master
     ```
 * Something wrong with my computer (e.g: after re-install OS)     
-    ```
+    ```bash
         cd No-CMS
         git remote add origin git@github.com:goFrendiAsgard/No-CMS.git
         git push -u origin master
     ```
 * Commit changes
-    ```     
+    ```bash     
         git add . -A
         git commit -m 'the comment'
         git tag -a v1.4 -m 'version 1.4'
         git push -u origin master --tags
     ```
 * Wrong tag
-    ```
+    ```bash
         git tag -d 7.x-3.x-alpha3
         git push origin :refs/tags/7.x-3.x-alpha3
     ```      
 * Revert
-    ```
+    ```bash
         git  reset --hard
     ```
 
@@ -50,19 +50,17 @@ HOW TO MAKE NO-CMS (Psst, this is my `krabby patty ingredients`)
     - GroceryCRUD: http://www.grocerycrud.com/downloads
     - Phil Sturgeon unzip library: https://github.com/philsturgeon/codeigniter-unzip
     - Some No-CMS specially written files:
-        ```
-            - /assets/
-            - /themes/
-            - /modules/
-            - /license/
-            - /readme.md
-            - /developer-note.md
-            - /reset-installation.sh
-            - /application/core/*
-            - /application/models/*
-            - /application/views/*
-            - /application/libraries/*
-        ```
+        - /assets/
+        - /themes/
+        - /modules/
+        - /license/
+        - /readme.md
+        - /developer-note.md
+        - /reset-installation.sh
+        - /application/core/*
+        - /application/models/*
+        - /application/views/*
+        - /application/libraries/*
 * Steps:
     - Put CodeIgniter and ingredients all together. Don't overwrite autoload.php (beware of Phil's template)
     - Move `/application/config/*` into `/application/config/first-time/*`
