@@ -6,6 +6,7 @@ Widgets
 Widget is everything that can be injected into your page. It can be a simple javascript, or even another page. You can manage widget by accessing `CMS Management | Widget Management`. As pages, you can also define widget's authorization type. A widget can has several slugs (separated by comma). The slugs are used to group and identify widgets.
 
 No-CMS has several built-in widgets.
+
 | Widget name/Code                 | Slugs                | Description                                              |
 | :------------------------------- | :------------------: | -------------------------------------------------------: |
 | section_top_fix                  | None                 | Top section ([Layout Management](user_layout.md))        |
