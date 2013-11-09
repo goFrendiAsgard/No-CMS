@@ -36,7 +36,7 @@ You can also use several tags such as:
 * `{{ site_footer }}` : Your footer
 * `{{ widget_name:top_navigation }}` : A widget contains bootstrap styled top navigation
 * `{{ widget_name:left_navigation }}` : A widget contains bootstrap styled top navigation
-* And many others, see documentation for more information
+* And many others, see [designer tag's guide](designer_tags.md) for more information
 
 Here is a very simple example of `default.php`:
 ```php
@@ -56,3 +56,41 @@ Here is a very simple example of `default.php`:
     <footer>{{ site_footer }}</footer>
 </html>
 ```
+
+Partials
+========
+For modularity sake, you might want to separate your layout into several part (e.g: header, footer, etc). Phil Sturgeon's template library (which is used in No-CMS) already support this. You can make as many partials as you need, and access it by using `$template['partials']['your_partial_name']` variable. Partial files should be located at /themes/your_theme_name/views/partials/default/. The previous example layout can be separated into several partials:
+
+Content of `/themes/your_theme_name/views/layouts/default.php`:
+
+```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title><?php echo $template['title']; ?></title>
+        <?php echo $template['metadata']; ?>
+    </head>
+    <body>
+        <?php echo $template['partials']['header']; ?>
+        <?php echo $template['body']; ?>
+        <?php echo $template['partials']['footer']; ?>
+    </body>    
+    </html>
+```
+
+Content of `/themes/your_theme_name/views/partials/default/header.php`:
+
+```html
+    <h1><img src=”{{ site_logo }}” /><?php echo $template['title']; ?></h1>
+    <div class="nav-collapse in collapse" id="main-menu" style="height: auto; ">
+        {{ navigation_top_quicklink }}
+    </div>
+```
+
+Content of `/themes/your_theme_name/views/partials/default/footer.php`:
+
+```html
+    <footer>{{ site_footer }}</footer>
+```
+
+__PS:__ The above example is a very minimalistic example to explain the concept. Please take a look at `/themes` folder to see the real `themes` example.
