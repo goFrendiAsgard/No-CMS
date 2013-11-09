@@ -7,7 +7,41 @@ A website is actually collection of web-pages. Making a page is a very crucial f
 Usually, a website has a navigation so that a user can jump among pages.
 ![Navigation Example](images/user_navigation_navigation_example.png "Figure 1. Navigation Example")
 
-No-CMS allow you to make your own page:
+To create, add, edit, and delete navigation or pages you can use `CMS Management | Navigation Management`
+
+Page has several common properties including
+* Navigation Code (required, and should be unique)
+    This is the identifier of a page
+* Navigation Title
+    This will be appeared in Navigation Menu
+* Page Title
+    The title of the page. It will be appeared in your browser's tab. This is also useful for SEO, so it is recommended to give an appropriate title to make your website search-engine friendly.
+* Page Keyword
+    Some old web-crawler still use meta tag. This is not very useful now a day, since several search engine use title and page content to do crawl activities.
+* Authorization
+    One of No-CMS best feature is page authorization. You have full control of what page can be accessed by certain user group. This can be easily done by changing “authorization” value of a page in Navigation management. Four authorization type is provided for this purpose: Everyone, authenticated, unauthenticated and authorized (See Authorization in [basic concepts section](user_concepts.md#authorization)). If you choose authorized, you should also provide user-group.
+* Default Theme
+    Every page can has custom theme different to theme choosen on [change theme menu](user_theme.md). To do this, you can choose an appropriate “Default Theme”. This will overwrite No-CMS default theme setting. Normally you can access a page by using navigation menu. It is natural to have some grouped pages. You can change “Navigation Parent Code” to make a page nested in another page.
+* Static
+    If activated, your page will be `static`, otherwise it will be `dynamic`.
+
+There are two page types available in No-CMS:
+
+* Static page
+    Static pages are only contains of HTML and CSS without any need of server-side programming. This is the easiest one to create. You can create new static page without even know any programming knowledge. If you are already familiar with MS word, Libre-Office write or any word-processor program, then you already have everything to make static page. To make a new static page, you need to change the activate “static” option. Once you activate static option, a word-editor-like input will be appeared. Do your editing there.
+* Dynamic page
+    Dynamic pages are more than just static page. There are some server-side programming involved. A normal user might don't need to mess up with this. Navigation Management, user management and group management are some example of dynamic page. When you deactivate static option, you will be asked for the URL.
+
+Quicklinks
+==========
+
+As your application grow, some frequently accessed page might be burried down in the navigation hierarchy.
+No-CMS has `quicklink` to solve such a problem. To create, add, and delete quicklink, you can access `CMS Management | Quicklink Management`
+
+Tutorial
+========
+
+Below is a bit tutorial about how to make your own page, sub-page & quicklink:
 
 * Login to No-CMS with your admin user.
 * Open `Complete Menu | CMS Management | Navigation Management` or `CMS Management | Navigation Management`, you will be able to see several navigation menu. Every navigation (page) can has several `children-page`.
@@ -20,7 +54,6 @@ No-CMS allow you to make your own page:
 * Set `Static Content` into `Hello World !!!`
 * Set `Authorization` into `Everyone`
 * Click `Save and Go Back to List`
-
 
 
 You can access your new page by clicking `Complete Menu | My Page`.
@@ -49,11 +82,7 @@ You can access this page by clicking `Complete Menu | My Page | My Subpage`
 
 __PS:__ So far you have learn how to make static page. However, there is another page type called `dynamic page`. To make a dynamic page, you must set `static` into `inactive` and fill the url with coresponding url (`module_name/controller_name/function_name`). If you are not familiar with CodeIgniter and HMVC extension, please look for [CodeIgniter documentation](../../ci_user_guide) or [HMVC extension documentation](https://bitbucket.org/wiredesignz/codeigniter-modular-extensions-hmvc) first.
 
-Quicklinks
-==========
 
-As your application grow, some frequently accessed page might be burried down in the navigation hierarchy.
-No-CMS has `quick link` to solve such a problem.
 
 Now let's make a quick link:
 
