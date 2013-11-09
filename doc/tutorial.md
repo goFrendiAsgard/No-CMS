@@ -64,4 +64,4 @@ FAQ
     Yes I know CodeIgniter sucks, but I never think that other framework is better (no offense here). I have try several PHP frameworks and always come back to CodeIgniter. However, I also try to write a better framework called [kokoropy](https://github.com/goFrendiAsgard/kokoropy) in Python.
 
 * __Will you stop No-CMS development?__
-    I don't have any intention to stop the development. Some of my job is still related to `PHP`-`Mysql` stuff (although I think `Python` is better). And No-CMS works well so far.
+    I don't have any intention to stop the development. Some of my job is still related to `PHP`-`Mysql` stuff (although I think `Python` is better). Most server is still use PHP & MySQL. This is the biggest market trend. And No-CMS works well so far. People seems to look for PHP program since there are a lot of PHP developer out there. CodeIgniter is still one of big player here.
