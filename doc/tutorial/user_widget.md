@@ -8,7 +8,7 @@ Widget is everything that can be injected into your page. It can be a simple jav
 No-CMS has several built-in widgets.
 
 | Widget name/Code                 | Slugs                | Description                                              |
-| :------------------------------- | :------------------: | -------------------------------------------------------: |
+| :------------------------------- | :------------------- | -------------------------------------------------------- |
 | section_top_fix                  | None                 | Top section ([Layout Management](user_layout.md))        |
 | section_banner                   | None                 | Banner ([Layout Management](user_layout.md)              |
 | section_left                     | None                 | Left Section ([Layout Management](user_layout.md))       |
