@@ -5,7 +5,8 @@ Layout Management
 You can access layout management by clicking `CMS Management | Layout Management`
 There are three tabs available in layout management:
 
-* Section
+* __Section__
+
   Here you can put widget/text to be appeared in each section of your page. Basically every page has 4 section (__Note:__ Minimal theme only use Navigation Section):
 
   - Top Navigation Section (This is where your navigation & slideshow appeared)
@@ -16,10 +17,12 @@ There are three tabs available in layout management:
 
   ![Layout Section](images/user_layout_section.png "Figure 1. Layout Section")
 
-* Image
+* __Image__
+
   Here you can change Site logo and favicon. Alternatively, you can also use [Configuration Management](user_configuration.md) to change site logo and favicon setting.
   ![Image Section](images/user_layout_image.png "Figure 2. Image Section")
 
-* Configuration
+* __Configuration__
+
   Here you can change several layout-related configuration value, such as: Site title, Site slogan, and site footer. Alternatively, you can also use [Configuration Management](user_configuration.md) to change site title, slogan and footer.
   ![Configuration Section](images/user_layout_configuration.png "Figure 3. Configuration Section")

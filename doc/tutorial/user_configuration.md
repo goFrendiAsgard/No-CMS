@@ -6,4 +6,7 @@ There are a lot of “hidden” configuration to be managed here. If you are fam
 
 Delete it or give a wrong value will make your entire website doesn't work. With configuration management you can manage several things, including automatic e mail sending, google analyticaccount, etc.
 
-You can access Configuration management by clicking `CMS Management | Configuration Management`. Just make sure to be very careful
+You can access Configuration management by clicking `CMS Management | Configuration Management`. Just make sure to be very careful.
+![Configuration Management](images/user_configuration_configuration_management.png "Figure 1. Configuration Management")
+
+Also, if you want to activate "forgot-password" and "sign-up" activation, you need to modify several configuration value. More about it, please click on [FAQ](../faq/technical.md#email-sending)

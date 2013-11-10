@@ -16,6 +16,7 @@ For mere users and everyone
 * [Layout](tutorial/user_layout.md)
 * [User & Groups](tutorial/user_user_and_group.md)
 * [Navigation & Pages](tutorial/user_navigation.md)
+* [Privilege](tutorial/user_privilege.md)
 * [Widgets](tutorial/user_widget.md)
 * [Modules](tutorial/user_modules.md)
 * [Configuration](tutorial/user_configuration.md)
