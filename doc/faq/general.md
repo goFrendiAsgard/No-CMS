@@ -3,7 +3,7 @@
 General FAQ
 ===========
 
-__PS:__ For technical FAQ, please click [here](general.md)
+__PS:__ For technical FAQ, please click [here](technical.md)
 
 * __Why do you make No-CMS?__
 
