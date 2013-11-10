@@ -6,7 +6,8 @@ Installation
 * __I got this warning message on installation:__
 
     ```
-        Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk
+        Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. 
+        If you are sure that your mod_rewrite is activated, you can continue at your own risk
     ```
     __I ignore it, and the installation was succeed, but now I cannot open any page. How to fix it?__
 
@@ -26,14 +27,15 @@ Installation
 * __I got this warning message on installation:__
 
     ```
-        Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk
+        Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. 
+        If you are sure that your mod_rewrite is activated, you can continue at your own risk
     ```
     __I really want to hide index.php. I have a ssh access to the server since I own it by myself. How can I install mod_rewrite?__
 
-        Do this:
+    Do this:
 
-            sudo a2enmod rewrite
-            sudo service apache2 restart
+        sudo a2enmod rewrite
+        sudo service apache2 restart
 
 
 Third Party Authentication
