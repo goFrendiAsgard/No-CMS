@@ -204,7 +204,7 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
                     $this->basic_model->where($primary_key,$state_info->primary_key);
                     $row = $this->basic_model->get_row();
 
-                    if(!property_exists($row,'url')) {
+                    if(!property_exists($row, $field_name)) {
                         throw new Exception("The field name doesn't exist in the database. ".
                                             "Please use the unique fields only for fields ".
                                             "that exist in the database");
