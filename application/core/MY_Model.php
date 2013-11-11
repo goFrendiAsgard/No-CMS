@@ -756,11 +756,58 @@ class CMS_Model extends CI_Model
                     (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
                     password = '" . md5($password) . "' AND
                     active = 1");
-        foreach ($query->result() as $row) {
-            $this->cms_user_name($row->user_name);
-            $this->cms_user_id($row->user_id);
-            $this->cms_user_real_name($row->real_name);
-            $this->cms_user_email($row->email);
+        $user_name = NULL;
+        $user_id = NULL;
+        $user_real_name = NULL;
+        $user_email = NULL;
+        $login_succeed = FALSE;
+        if($query->num_rows()>0){
+            $row            = $query->row();
+            $user_name      = $row->user_name;
+            $user_id        = $row->user_id;
+            $user_real_name = $row->real_name;
+            $user_email     = $row->email;
+            $login_succeed  = TRUE;
+        }else{
+            require_once(APPPATH.'config/cms_extended_login.php');
+            if(function_exists('extended_login')){
+                $extended_login_result = extended_login($identity, $password);
+                if($extended_login_result !== FALSE){
+                    $query = $this->db->select('user_id, user_name')
+                        ->from(cms_table_name('main_user'))
+                        ->where('user_name', $identity)
+                        ->get();
+                    // if already exists in database
+                    if($query->num_rows()>0){
+                        $row = $query->row();
+                        $user_id = $row->user_id;
+                        $user_name = $row->user_name;
+                        $login_succeed = TRUE;
+                    }else{
+                        $data = array();
+                        $data['user_name'] = $identity;
+                        $data['password'] = NULL;
+                        $login_succeed = $this->db->insert(cms_table_name('main_user'), $data);
+                        if($login_succeed){
+                            $user_id = $this->db->insert_id();
+                            $user_name = $identity;
+                        }
+                    }
+                    if($login_succeed && is_array($extended_login_result)){
+                        if(count($extended_login_result)>1){
+                            $user_real_name = $extended_login_result[0];
+                            $user_email = $extended_login_result[1];
+                        }
+                    }
+                }
+            }
+        }
+
+        if($login_succeed){
+            $this->cms_user_name($user_name);
+            $this->cms_user_id($user_id);
+            $this->cms_user_real_name($user_real_name);
+            $this->cms_user_email($user_email);
             return TRUE;
         }
         return FALSE;
