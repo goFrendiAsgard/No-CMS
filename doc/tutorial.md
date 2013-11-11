@@ -1,3 +1,9 @@
+How to see this user guide offline?
+===================================
+Since No-CMS pdf-format documentation is no longer exists, you can use various markdown-previewer program to see this documentation offline. Once you download No-CMS, you can find this documentation located at `/doc/tutorial.md`.
+
+If you use chrome browser, you can install an extension called [Markdown Preview](https://chrome.google.com/webstore/detail/markdown-preview/jmchmkecamhbiokiopfpnfgbidieafmd?hl=en). Once you install the extension, go to [chrome://extensions](chrome://extensions) and activate `Allow access to file urls`. Open up the documentation by using google chrome, and enjoy.
+
 User Guide & Tutorials
 =======================
 
@@ -10,6 +16,7 @@ For mere users and everyone
 * [Layout](tutorial/user_layout.md)
 * [User & Groups](tutorial/user_user_and_group.md)
 * [Navigation & Pages](tutorial/user_navigation.md)
+* [Privilege](tutorial/user_privilege.md)
 * [Widgets](tutorial/user_widget.md)
 * [Modules](tutorial/user_modules.md)
 * [Configuration](tutorial/user_configuration.md)
@@ -28,4 +35,5 @@ For programmers
 
 FAQ
 ====
-This section has not been written yet.
+* [General FAQ](faq/general.md)
+* [Technical FAQ](faq/technical.md)
