@@ -45,22 +45,7 @@ class CI_DB_pdo_result extends CI_DB_result {
 	 */
 	public function num_rows()
 	{
-
-        if (is_int($this->num_rows))
-        {
-            return $this->num_rows;
-        }
-        elseif (count($this->result_array) > 0)
-        {
-            return $this->num_rows = count($this->result_array);
-        }
-        elseif (count($this->result_object) > 0)
-        {
-            return $this->num_rows = count($this->result_object);
-        }
-
-        /*
-        if (is_int($this->num_rows))
+		if (is_int($this->num_rows))
 		{
 			return $this->num_rows;
 		}
@@ -72,12 +57,10 @@ class CI_DB_pdo_result extends CI_DB_result {
 		{
 			return $this->num_rows = count($this->result_object);
 		}
-        /*
 		elseif (($num_rows = $this->result_id->rowCount()) > 0)
 		{
 			return $this->num_rows = $num_rows;
-		}*/
-        
+		}
 
 		return $this->num_rows = count($this->result_array());
 	}

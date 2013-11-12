@@ -54,3 +54,4 @@ ERROR - 2013-11-12 19:19:27 --> 404 Page Not Found -->
 ERROR - 2013-11-12 19:20:18 --> 404 Page Not Found --> 
 ERROR - 2013-11-12 19:23:45 --> 404 Page Not Found --> 
 ERROR - 2013-11-12 19:24:36 --> 404 Page Not Found --> 
+ERROR - 2013-11-12 19:46:31 --> Severity: Warning  --> date() expects parameter 2 to be long, object given /home/gofrendiasgard/public_html/No-CMS/modules/pendaftaran_wisuda/views/manage_calon_wisudawan_view.php 29
