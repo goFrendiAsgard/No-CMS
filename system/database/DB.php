@@ -191,9 +191,10 @@ function &DB($params = '', $query_builder_override = NULL)
 	}
 
 	require_once($driver_file);
+    
 
 	// Instantiate the DB adapter
-	$driver = 'CI_DB_'.$params['dbdriver'].'_driver';
+    $driver = 'CI_DB_'.$params['dbdriver'].'_driver';
 	$DB = new $driver($params);
 
 	// Check for a subdriver
@@ -204,7 +205,8 @@ function &DB($params = '', $query_builder_override = NULL)
 		if (file_exists($driver_file))
 		{
 			require_once($driver_file);
-			$driver = 'CI_DB_'.$DB->dbdriver.'_'.$DB->subdriver.'_driver';
+
+            $driver = 'CI_DB_'.$DB->dbdriver.'_'.$DB->subdriver.'_driver';
 			$DB = new $driver($params);
 		}
 	}

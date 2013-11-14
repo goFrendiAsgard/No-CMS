@@ -39,4 +39,5 @@ Here are some names of considerable contributors:
 * heruprambadi <-- reporting several bugs, in 0.6.5 development version
 * Toni, Dani & Umar (aftinya@gmail.com, ragiel87@gmail.com, dlastpart@yahoo.com) <-- My students, make static_accessories widget
 * Cesarliws <-- Portuguese translation
+* Ivan Tcholakov <-- make things works with latest CI 3.0
 * Everyone who was involved by creating issue & pull requests in github. I cannot write every names there. But No-CMS can't be better without them :)

@@ -61,6 +61,7 @@ HOW TO MAKE NO-CMS
         - /application/models/*
         - /application/views/*
         - /application/libraries/*
+        - /application/database/*
 * Steps:
     - Put CodeIgniter and ingredients all together. Don't overwrite autoload.php (beware of Phil's template)
     - Move `/application/config/*` into `/application/config/first-time/*`
@@ -69,6 +70,13 @@ HOW TO MAKE NO-CMS
 
         ```php
             self::$APP = CMS_Controller::get_instance();
+        ```
+
+    - Edit `/application/third_party/MX/Base.php` around line `55` and `/application/third_party/MX/Ci.php` around line `54` into:
+
+        ```php
+            if ( @ ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
+            if ( @ ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
         ```
 
     - Edit `/application/config/config.php`, add this code:
@@ -156,163 +164,10 @@ HOW TO MAKE NO-CMS
                 exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
         }
     ```
-    
-* Edit `/system/CodeIgniter.php` into a backward compatible code (Look this for better reference: https://github.com/EllisLab/CodeIgniter/commit/20292311636837e120d205e470e41826820feb46)
-
+    and replace the ending part into:
     ```php
-        // Load the local application controller
-        // Note: The Router class automatically validates the controller path using the router->_validate_request().
-        // If this include fails it means that the default controller in the Routes.php file is not resolving to something valid.
-        
-        /* ORIGINAL CODE:
-        $class = ucfirst($RTR->class);
-        if ( ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
-        {
-            show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
-        }
-
-        include(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
-        */
-
-        // MY BACKWARD COMPATIBLE CODE:
-        $class = $RTR->class;
-        if ( ! file_exists(APPPATH.'controllers/'.$RTR->directory.ucfirst($class).'.php'))
-        {
-            if ( ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
-            {
-                show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
-            }
-        }else{
-            $class = ucfirst($class);
-        }
-        include(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
-        // END OF MY BACKWARD COMPATIBLE CODE
+        require_once APPPATH.'core/MY_CodeIgniter.php';
     ```
+    Thanks Ivan !!! :)
 
-* Edit `/system/Router.php` (Look this for better reference: https://github.com/EllisLab/CodeIgniter/commit/20292311636837e120d205e470e41826820feb46), NOTE TO MYSELF: Actually this is not used, but so far everything is alright
-
-    ```php
-
-        class Original_CI_Router{
-            // the original code of CI_Router
-        }
-
-        class CI_Router extends Original_CI_Router {
-            /**
-             * Validate request
-             *
-             * Attempts validate the URI request and determine the controller path.
-             *
-             * @param   array   $segments   URI segments
-             * @return  array   URI segments
-             */
-            protected function _validate_request($segments)
-            {
-                if (count($segments) === 0)
-                {
-                    return $segments;
-                }
-
-                /* ORIGINAL CODE:
-                $test = ucfirst($this->translate_uri_dashes === TRUE ? str_replace('-', '_', $segments[0]) : $segments[0]);
-
-                // Does the requested controller exist in the root folder?
-                if (file_exists(APPPATH.'controllers/'.$test.'.php'))
-                {
-                    return $segments;
-                }
-                */
-
-                // MY BACKWARD COMPATIBLE CODE:
-                $test = $this->translate_uri_dashes === TRUE ? str_replace('-', '_', $segments[0]) : $segments[0];
-                // Does the requested controller exist in the root folder?
-                if (file_exists(APPPATH.'controllers/'.ucfirst($test).'.php') || file_exists(APPPATH.'controllers/'.$test.'.php'))
-                {
-                    return $segments;
-                }
-                // END OF MY BACKWARD COMPATIBLE CODE
-
-                // Is the controller in a sub-folder?
-                if (is_dir(APPPATH.'controllers/'.$segments[0]))
-                {
-                    // Set the directory and remove it from the segment array
-                    $this->set_directory(array_shift($segments));
-                    if (count($segments) > 0)
-                    {    
-                        /* ORIGINAL CODE:
-                        $test = ucfirst($this->translate_uri_dashes === TRUE ? str_replace('-', '_', $segments[0]) : $segments[0]);
-
-                        // Does the requested controller exist in the sub-directory?
-                        if ( ! file_exists(APPPATH.'controllers/'.$this->directory.$test.'.php'))
-                        {
-                            if ( ! empty($this->routes['404_override']))
-                            {
-                                $this->directory = '';
-                                return explode('/', $this->routes['404_override'], 2);
-                            }
-                            else
-                            {
-                                show_404($this->directory.$segments[0]);
-                            }
-                        }
-                        */
-                        // MY BACKWARD COMPATIBLE CODE:
-                        $test = $this->translate_uri_dashes === TRUE ? str_replace('-', '_', $segments[0]) : $segments[0];
-
-                        // Does the requested controller exist in the sub-directory?
-                        if ( ! file_exists(APPPATH.'controllers/'.$this->directory.ucfirst($test).'.php') && ! file_exists(APPPATH.'controllers/'.$this->directory.$test.'.php'))
-                        {
-                            if ( ! empty($this->routes['404_override']))
-                            {
-                                $this->directory = '';
-                                return explode('/', $this->routes['404_override'], 2);
-                            }
-                            else
-                            {
-                                show_404($this->directory.$segments[0]);
-                            }
-                        }
-                        // END OF MY BACKWARD COMPATIBLE CODE
-
-                    }
-                    else
-                    {
-                        // Is the method being specified in the route?
-
-                        /* ORIGINAL CODE:
-                        $segments = explode('/', $this->default_controller);
-                        if ( ! file_exists(APPPATH.'controllers/'.$this->directory.ucfirst($segments[0]).'.php'))
-                        {
-                            $this->directory = '';
-                        }
-                        */
-
-                        // MY BACKWARD COMPATIBLE CODE:
-                        $segments = explode('/', $this->default_controller);
-                        if ( ! file_exists(APPPATH.'controllers/'.$this->directory.ucfirst($segments[0]).'.php') && ! file_exists(APPPATH.'controllers/'.$this->directory.$segments[0].'.php'))
-                        {
-                            $this->directory = '';
-                        }
-                        // END OF MY BACKWARD COMPATIBLE CODE
-                    }
-
-                    return $segments;
-                }
-
-                // If we've gotten this far it means that the URI does not correlate to a valid
-                // controller class. We will now see if there is an override
-                if ( ! empty($this->routes['404_override']))
-                {
-                    if (sscanf($this->routes['404_override'], '%[^/]/%s', $class, $method) !== 2)
-                    {
-                        $method = 'index';
-                    }
-
-                    return array($class, $method);
-                }
-
-                // Nothing else to do at this point but show a 404
-                show_404($segments[0]);
-            }
-        }
-    ```
+* For the rest, refer to this: https://github.com/goFrendiAsgard/No-CMS/commit/fb16b2c905e631745e918fc579c007be2f39eb27

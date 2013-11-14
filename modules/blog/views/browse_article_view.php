@@ -68,7 +68,6 @@
 </select>
 <input type="text" name="search" value="<?php echo $keyword; ?>" id="input_search" class="input-medium search-query">
 <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary">
-<div class="clear"></div>
 <?php
     // show add record button
 	if($allow_navigate_backend){
@@ -80,6 +79,7 @@
         echo '<div class="alert alert-danger">'.$error_message.'</div>';
     }
 ?>
+<div class="clear"></div>
 <div id="record_content">
     <?php
         if(isset($article) && $article !== FALSE){

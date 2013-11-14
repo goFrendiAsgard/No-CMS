@@ -1406,10 +1406,12 @@ class CMS_Module_Installer extends CMS_Controller
                 'type' => 'INT',
                 'constraint' => 20,
                 'unsigned' => TRUE,
+                'null'=>TRUE,
         );
     protected $TYPE_INT_SIGNED_NULL = array(
                 'type' => 'INT',
                 'constraint' => 20,
+                'null'=>TRUE,
         );
     protected $TYPE_DATETIME_NOTNULL = array(
                 'type' => 'TIMESTAMP',
@@ -1421,9 +1423,11 @@ class CMS_Module_Installer extends CMS_Controller
         );
     protected $TYPE_DATETIME_NULL = array(
                 'type' => 'TIMESTAMP',
+                'null'=>TRUE,
         );
     protected $TYPE_DATE_NULL = array(
                 'type' => 'DATE',
+                'null'=>TRUE,
         );
     protected $TYPE_FLOAT_NOTNULL = array(
                 'type' => 'FLOAT',
@@ -1435,12 +1439,15 @@ class CMS_Module_Installer extends CMS_Controller
         );
     protected $TYPE_FLOAT_NULL = array(
                 'type' => 'FLOAT',
+                'null'=>TRUE,
         );
     protected $TYPE_DOUBLE_NULL = array(
                 'type' => 'DOUBLE',
+                'null'=>TRUE,
         );
     protected $TYPE_TEXT = array(
                 'type' => 'TEXT',
+                'null'=> TRUE,
         );
     protected $TYPE_VARCHAR_5_NOTNULL = array(
                 'type' => 'VARCHAR',
@@ -1485,34 +1492,42 @@ class CMS_Module_Installer extends CMS_Controller
     protected $TYPE_VARCHAR_5_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 5,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_10_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 10,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_20_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 20,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_50_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 50,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_100_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 100,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_150_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 150,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_200_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 200,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_250_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 250,
+                'null'=>TRUE,
         );
 
     public function __construct(){
