@@ -36,8 +36,11 @@ footer{
 {
     max-width: 54px;
 }
+#crudForm{
+    padding-bottom: 125px;
+}
 .chzn-results{
-    max-height:70px!important;
+    max-height: 200px!important;
 }
 /* end of grocery-CRUD flexigrid */
 

@@ -46,6 +46,11 @@
         margin-bottom:45px;
     }
     textarea[name="<?php echo $secret_code; ?>xcontent"]{width:90%;}
+    #input_category_chzn, #input_search, #btn_search{
+        float:left;
+        margin-right:10px;
+    }
+    .clear{clear:both;}
 </style>
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 
@@ -63,6 +68,7 @@
 </select>
 <input type="text" name="search" value="<?php echo $keyword; ?>" id="input_search" class="input-medium search-query">
 <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary">
+<div class="clear"></div>
 <?php
     // show add record button
 	if($allow_navigate_backend){
