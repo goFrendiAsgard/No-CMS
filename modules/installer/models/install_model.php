@@ -394,7 +394,8 @@ class Install_Model extends CI_Model{
         $type_foreign_key = array(
                 'type' => 'INT',
                 'constraint' => 5,
-                'unsigned' => TRUE
+                'unsigned' => TRUE,
+                'null' => TRUE,
             );
         $type_foreign_key_not_null = array(
                 'type' => 'INT',
@@ -552,7 +553,7 @@ class Install_Model extends CI_Model{
         $fields = array(
                 'user_id' => $type_primary_key,
                 'user_name' => $type_varchar_small_strict,
-                'email' => $type_varchar_small_strict,
+                'email' => $type_varchar_small,
                 'password' => $type_password,
                 'activation_code' => $type_varchar_small,
                 'real_name' => $type_varchar_large,

@@ -608,7 +608,7 @@ class CMS_Controller extends MX_Controller
 
     /**
      * @author goFrendiAsgard
-     * @desc   redirect to login/main page
+     * @desc   redirect to main/login page
      */
     protected function cms_redirect()
     {
@@ -624,14 +624,14 @@ class CMS_Controller extends MX_Controller
         if ($this->cms_allow_navigate('main_login') && ($uriString != 'main/login')) {
             redirect('main/login');
         } else {
-            $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller']);
+            $navigation_name = $this->cms_navigation_name($this->router->default_controller);
             if (!isset($navigation_name)) {
-                $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'] . '/index');
+                $navigation_name = $this->cms_navigation_name($this->router->default_controller . '/index');
             }
             // redirect to default controller
             if (isset($navigation_name) && $this->cms_allow_navigate($navigation_name) && 
-            ($uriString != '') && ($uriString != $this->router->routes['default_controller']) &&
-            ($uriString != $this->router->routes['default_controller'].'/index')) {
+            ($uriString != '') && ($uriString != $this->router->default_controller) &&
+            ($uriString != $this->router->default_controller.'/index')) {
                 redirect('');
             } else {
                 show_404();
@@ -666,7 +666,6 @@ class CMS_Controller extends MX_Controller
         } else {
             $allowed = false;
         }
-
         // if not allowed then redirect
         if (!$allowed) {
             $this->cms_redirect();
