@@ -239,30 +239,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	// Load the local application controller
 	// Note: The Router class automatically validates the controller path using the router->_validate_request().
 	// If this include fails it means that the default controller in the Routes.php file is not resolving to something valid.
-	
-    /* ORIGINAL CODE:
-    $class = ucfirst($RTR->class);
+	$class = ucfirst($RTR->class);
 	if ( ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
 	{
 		show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
 	}
 
 	include(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
-    */
-
-    // MY BACKWARD COMPATIBLE CODE:
-    $class = $RTR->class;
-    if ( ! file_exists(APPPATH.'controllers/'.$RTR->directory.ucfirst($class).'.php'))
-    {
-        if ( ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
-        {
-            show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
-        }
-    }else{
-        $class = ucfirst($class);
-    }
-    include(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
-    // END OF MY BACKWARD COMPATIBLE CODE
 
 	// Set a mark point for benchmarking
 	$BM->mark('loading_time:_base_classes_end');

@@ -94,10 +94,21 @@ class Modules
 			if (empty($class)) return;
 	
 			/* set the module directory */
-			$path = APPPATH.'controllers/'.CI::$APP->router->fetch_directory();
+			$path = APPPATH.'controllers/'.CI::$APP->router->directory;
 			
 			/* load the controller class */
-			$class = $class.CI::$APP->config->item('controller_suffix');
+            // Modified by Ivan Tcholakov, 28-FEB-2012.
+            //$class = $class.CI::$APP->config->item('controller_suffix');
+            if (self::test_load_file(ucfirst($class).CI::$APP->config->item('controller_suffix'), $path)) {
+                $class = ucfirst($class).CI::$APP->config->item('controller_suffix');
+            }
+            elseif (self::test_load_file($class.CI::$APP->config->item('controller_suffix'), $path)) {
+                $class = $class.CI::$APP->config->item('controller_suffix');
+            }
+            elseif (self::test_load_file(ucfirst($class), $path)) {
+                $class = ucfirst($class);
+            }
+            //
 			self::load_file($class, $path);
 			
 			/* create and register the new controller */
@@ -159,6 +170,17 @@ class Modules
 		return $result;
 	}
 
+    // Added by Ivan Tcholakov, FEB-2012.
+    protected static function test_load_file($file, $path) {
+        $file = str_replace(EXT, '', $file);
+        $location = $path.$file.EXT;
+        if (class_exists($file, FALSE))    {
+            return true;
+        }
+        return is_file($location);
+    }
+    //
+
 	/** 
 	* Find a file
 	* Scans for files located within modules directories.
@@ -190,6 +212,13 @@ class Modules
 			}
 		}
 		
+        /* is the file in an application directory? */
+        if ($base == 'views/') {
+            if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);
+            show_error("Unable to locate the {$base} file: {$path}{$file_ext}");
+        }
+
+        log_message('debug', "Unable to locate the {$base} file: {$path}{$file_ext}");
 		return array(FALSE, $file);	
 	}
 	
@@ -207,7 +236,10 @@ class Modules
 		/* parse module routes */
 		foreach (self::$routes[$module] as $key => $val) {						
 					
-			$key = str_replace(array(':any', ':num'), array('.+', '[0-9]+'), $key);
+            // Modified by Ivan Tcholakov, 31-OCT-2012.
+            //$key = str_replace(array(':any', ':num'), array('.+', '[0-9]+'), $key);
+            $key = str_replace(array(':any', ':num'), array('[^/]+', '[0-9]+'), $key);
+            //
 			
 			if (preg_match('#^'.$key.'$#', $uri)) {							
 				if (strpos($val, '$') !== FALSE AND strpos($key, '(') !== FALSE) {
