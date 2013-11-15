@@ -44,42 +44,85 @@ HOW TO MAKE NO-CMS
 ===================
 
 * Ingredients:
-    - CodeIgniter: http://codeigniter.com/
+    - CodeIgniter development branch: http://github.com/ellislab/codeigniter/tree/develop
     - Phil Sturgeon Template: https://github.com/philsturgeon/codeigniter-template
-    - HMVC template: https://bitbucket.org/wiredesignz/codeigniter-modular-extensions-hmvc/src
+    - HMVC: https://bitbucket.org/wiredesignz/codeigniter-modular-extensions-hmvc/src
     - GroceryCRUD: http://www.grocerycrud.com/downloads
     - Phil Sturgeon unzip library: https://github.com/philsturgeon/codeigniter-unzip
+    - Phil Sturgeon Format Library
+    - Image_moo library
+    - jsmin.php
+    - CodeIgniter HybridAuth Library
     - Some No-CMS specially written files:
-        - /assets/
-        - /themes/
-        - /modules/
-        - /license/
-        - /readme.md
-        - /developer-note.md
-        - /reset-installation.sh
-        - /application/core/*
-        - /application/models/*
-        - /application/views/*
-        - /application/libraries/*
-        - /application/database/*
+        - `/assets/nocms/*`
+        - `/assets/bootstrap/*`
+        - `/assets/languages/*`
+        - `/assets/navigation_icon/*`
+        - `/themes/*`
+        - `/modules/*`
+        - `/license/license-No-CMS.txt`
+        - `/license/license-grocery-crud.txt`
+        - `/license/license-codeigniter.txt`
+        - `/license/license-gpl3.txt`
+        - `/license/license-mit.txt`
+        - `/readme.md`
+        - `/developer-note.md`
+        - `/reset-installation.sh`
+        - `/application/core/MY_CodeIgniter.php` 
+
+            This one overwrite `system/core/CodeIgniter.php` 
+
+        - `/application/core/MY_Lang.php`
+
+            This one overwrite `system/core/Lang.php`
+
+        - `/application/core/MY_Loader.php`
+
+            This one overwrite `system/core/Loader.php`
+
+        - `/application/core/MY_Router.php`
+
+            This one overwrite `system/core/Router.php`
+
+        - `/application/core/MY_Controller.php`
+        - `/application/core/MY_Model.php`
+        - `/application/models/no_cms_model.php`
+        - `/application/models/grocery_crud_generic_model.php`
+        - `/application/models/grocery_crud_model_*.php`
+        - `/application/views/CMS_View.php`
+        - `/application/views/grocery_CRUD.php`
+        - `/application/views/welcome_message.php`
+        - `/application/libraries/CMS_Asset.php`
+        - `/application/libraries/Extended_Grocery_CRUD.php`
+
+            Sometime grocery_crud is lack of things. I usually apply bug-fix here before add pull request to main groceryCRUD repository.
+
+        - `/application/libraries/fake/*`
+
+            This is for intelisense purpose (i.e: if user use eclipse or aptana)
+
+        - `/application/database/*`
+
+            Sometime I need to overwrite CodeIgniter DB Driver. Here are the files. By default CodeIgniter doesn't support to extend DB Driver.
+
+        - `/application/config/cms_config.php`
+
+            Contains some default configuration
+
+        - `/application/helpers/cms_helper.php`
+
+            Contains some functions such as `cms_table_name`
+
 * Steps:
     - Put CodeIgniter and ingredients all together. Don't overwrite autoload.php (beware of Phil's template)
     - Move `/application/config/*` into `/application/config/first-time/*`
-    - Edit `/application/config/first-time/config.php`, add `encryption_key`
-    - Edit `/application/third_party/MX/Ci.php` line `46` into
+    - Edit `/application/config/first-time/config.php`, modify `encryption_key` value
 
         ```php
-            self::$APP = CMS_Controller::get_instance();
+            $config['encryption_key'] = 'namidanoregret';
         ```
 
-    - Edit `/application/third_party/MX/Base.php` around line `55` and `/application/third_party/MX/Ci.php` around line `54` into:
-
-        ```php
-            if ( @ ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
-            if ( @ ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
-        ```
-
-    - Edit `/application/config/config.php`, add this code:
+    - Edit `/application/config/first-time/config.php`, add this code:
 
         ```php
             /*
@@ -91,9 +134,11 @@ HOW TO MAKE NO-CMS
             |
             */
             $config['modules_locations'] = array(APPPATH . '../modules/' => '../../modules/');
-            ```
-        - Edit `/application/config/template.php`, change the last part into:
-            ```php
+        ```
+
+    - Edit `/application/config/template.php`, change the last part into:
+
+        ```php
             /*
             |--------------------------------------------------------------------------
             | Theme
@@ -111,63 +156,263 @@ HOW TO MAKE NO-CMS
             );
         ```
 
-* Edit `/application/third_party/MX/Base.php`, use `isinstanceof` instead of `is_a`
+    - Edit `/application/third_party/MX/Base.php` around line `51` into:
 
-    ```php
-        //if ( ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
-        //if ( ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
-        if ( ! ($LANG instanceof MX_Lang)) $LANG = new MX_Lang;
-        if ( ! ($CFG instanceof MX_Config)) $CFG = new MX_Config;
-    ```
+        ```php
+            /* re-assign language and config for modules */
+            // Modified by Ivan Tcholakov, 28-SEP-2012.
+            //if ( ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
+            //if ( ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
+            if ( @ ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
+            if ( @ ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
+            //
+        ```
 
-* Edit `/application/third_party/MX/Loader.php`
+    - Edit `/application/third_party/MX/Ci.php` line `46` into
 
-    ```php
-        // if (is_a($controller, 'MX_Controller')) {
-        if ($controller instanceof MX_Controller) {
-    ```
+        ```php
+            self::$APP = MY_Controller::get_instance();
+        ```    
 
-* Edit `/index.php`, replace the beginning part into this:
+     - Edit `/application/third_party/MX/Ci.php` around line `50` into:
 
-    ```php
-        if(!file_exists('./application/config/database.php')){
-            define('ENVIRONMENT', 'first-time');
-        }else{
-            define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
-        }
+        ```php
+            /* re-assign language and config for modules */
+            // Modified by Ivan Tcholakov, 28-SEP-2012.
+            //if ( ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
+            //if ( ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
+            if ( @ ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
+            if ( @ ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
+            //
+        ```
 
-        /*
-         *---------------------------------------------------------------
-         * ERROR REPORTING
-         *---------------------------------------------------------------
-         *
-         * Different environments will require different levels of error reporting.
-         * By default development will show errors but testing and live will hide them.
-         */
-        switch (ENVIRONMENT)
+    - Edit `/application/third_party/MX/Loader.php` around line `49` (function initialize)
+
+        ```php
+            // Modified by Ivan Tcholakov, 28-SEP-2012.
+            //if (is_a($controller, 'MX_Controller')) {
+            if (@ is_a($controller, 'MX_Controller')) {
+            //
+        ```
+
+    - Edit `/application/third_party/MX/Loader.php` around line `159` (function library)
+
+        ```php
+            // Modified by Ivan Tcholakov, 26-JUL-2013.
+            //if (isset($this->_ci_classes[$class]) AND $_alias = $this->_ci_classes[$class])
+            //    return CI::$APP->$_alias;
+            //    
+            //($_alias = strtolower($object_name)) OR $_alias = $class;
+            if (isset($this->_ci_classes[$class])) {
+
+                $_alias = $this->_ci_classes[$class];
+
+                if ($_alias) {
+
+                    return CI::$APP->$_alias;
+                }
+            }
+
+            $_alias = strtolower($object_name);
+
+            if (!$_alias) {
+
+                $_alias = $class;
+            }
+            //
+        ```
+
+    - Edit `/application/third_party/MX/Loader.php` around line `228` (function model)
+
+        ```php
+            /* check application & packages */
+            // Modified by Ivan Tcholakov, 30-OCT-2013.
+            //parent::model($model, $object_name, $connect);
+            $this->_ci_model($model, $object_name, $connect);
+            //
+        ```
+
+    - Edit `/application/third_party/MX/Loader.php` around line `255` add function `_ci_model`. This function is actually copy-pasted from `/system/core/Loader.php`.
+
+        ```php
+        // Added by Ivan Tcholakov, 30-OCT-2013.
+        protected function _ci_model($model, $name = '', $db_conn = FALSE)
         {
-            case 'development':
-                error_reporting(-1);
-                ini_set('display_errors', 1);
-            break;
+            if (empty($model))
+            {
+                return;
+            }
+            elseif (is_array($model))
+            {
+                foreach ($model as $key => $value)
+                {
+                    $this->model(is_int($key) ? $value : $key, $value);
+                }
+                return;
+            }
 
-            case 'first-time':
-            case 'testing':
-            case 'production':
-                error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
-                ini_set('display_errors', 0);
-            break;
+            $path = '';
 
-            default:
-                header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-                echo 'The application environment is not set correctly.';
-                exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
+            // Is the model in a sub-folder? If so, parse out the filename and path.
+            if (($last_slash = strrpos($model, '/')) !== FALSE)
+            {
+                // The path is in front of the last slash
+                $path = substr($model, 0, ++$last_slash);
+
+                // And the model name behind it
+                $model = substr($model, $last_slash);
+            }
+
+            if (empty($name))
+            {
+                $name = $model;
+            }
+
+            if (in_array($name, $this->_ci_models, TRUE))
+            {
+                return;
+            }
+
+            $CI =& get_instance();
+            if (isset($CI->$name))
+            {
+                show_error('The model name you are loading is the name of a resource that is already being used: '.$name);
+            }
+
+            if ($db_conn !== FALSE && ! class_exists('CI_DB', FALSE))
+            {
+                if ($db_conn === TRUE)
+                {
+                    $db_conn = '';
+                }
+
+                $CI->load->database($db_conn, FALSE, TRUE);
+            }
+
+            if ( ! class_exists('CI_Model', FALSE))
+            {
+                load_class('Model', 'core');
+            }
+
+            $model = ucfirst(strtolower($model));
+
+            foreach ($this->_ci_model_paths as $mod_path)
+            {
+                if ( ! file_exists($mod_path.'models/'.$path.$model.'.php'))
+                {
+                    if (file_exists($mod_path.'models/'.$path.lcfirst($model).'.php'))
+                    {
+                        $model = lcfirst($model);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                require_once($mod_path.'models/'.$path.$model.'.php');
+
+                // Added by Ivan Tcholakov, 25-JUL-2013.
+                $model = ucfirst($model);
+                //
+                $CI->$name = new $model();
+                $this->_ci_models[] = $name;
+                return;
+            }
+
+            // couldn't find the model
+            show_error('Unable to locate the model you have specified: '.$model);
         }
-    ```
-    and replace the ending part into:
-    ```php
-        require_once APPPATH.'core/MY_CodeIgniter.php';
-    ```
-    Thanks Ivan !!! :)
+        ```
 
-* For the rest, refer to this: https://github.com/goFrendiAsgard/No-CMS/commit/fb16b2c905e631745e918fc579c007be2f39eb27
+    - Edit `/application/MX/Modules.php` around line `99` (function load)
+
+        ```php
+            /* load the controller class */
+            // Modified by Ivan Tcholakov, 28-FEB-2012.
+            //$class = $class.CI::$APP->config->item('controller_suffix');
+            if (self::test_load_file(ucfirst($class).CI::$APP->config->item('controller_suffix'), $path)) {
+                $class = ucfirst($class).CI::$APP->config->item('controller_suffix');
+            }
+            elseif (self::test_load_file($class.CI::$APP->config->item('controller_suffix'), $path)) {
+                $class = $class.CI::$APP->config->item('controller_suffix');
+            }
+            elseif (self::test_load_file(ucfirst($class), $path)) {
+                $class = ucfirst($class);
+            }
+            //
+        ```
+
+    - Edit `/application/MX/Modules.php` around line `99` (function load)
+
+        ```php
+            /* load the controller class */
+            // Modified by Ivan Tcholakov, 28-FEB-2012.
+            //$class = $class.CI::$APP->config->item('controller_suffix');
+            if (self::test_load_file(ucfirst($class).CI::$APP->config->item('controller_suffix'), $path)) {
+                $class = ucfirst($class).CI::$APP->config->item('controller_suffix');
+            }
+            elseif (self::test_load_file($class.CI::$APP->config->item('controller_suffix'), $path)) {
+                $class = $class.CI::$APP->config->item('controller_suffix');
+            }
+            elseif (self::test_load_file(ucfirst($class), $path)) {
+                $class = ucfirst($class);
+            }
+            //
+        ```
+
+    - Edit `/application/MX/Modules.php` around line `239` (function parse_routes)
+
+        ```php
+            // Modified by Ivan Tcholakov, 31-OCT-2012.
+            //$key = str_replace(array(':any', ':num'), array('.+', '[0-9]+'), $key);
+            $key = str_replace(array(':any', ':num'), array('[^/]+', '[0-9]+'), $key);
+            //
+        ```
+
+    - Edit `/index.php`, replace the beginning part into this:
+
+        ```php
+            if(!file_exists('./application/config/database.php')){
+                define('ENVIRONMENT', 'first-time');
+            }else{
+                define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+            }
+
+            /*
+             *---------------------------------------------------------------
+             * ERROR REPORTING
+             *---------------------------------------------------------------
+             *
+             * Different environments will require different levels of error reporting.
+             * By default development will show errors but testing and live will hide them.
+             */
+            switch (ENVIRONMENT)
+            {
+                case 'development':
+                    error_reporting(-1);
+                    ini_set('display_errors', 1);
+                break;
+
+                case 'first-time':
+                case 'testing':
+                case 'production':
+                    error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
+                    ini_set('display_errors', 0);
+                break;
+
+                default:
+                    header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+                    echo 'The application environment is not set correctly.';
+                    exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
+            }
+        ```
+
+        and replace the ending part into:
+
+        ```php
+            require_once APPPATH.'core/MY_CodeIgniter.php';
+        ```
+        Thanks Ivan !!! :)
+
+    - For the rest, refer to this: https://github.com/goFrendiAsgard/No-CMS/commit/fb16b2c905e631745e918fc579c007be2f39eb27
