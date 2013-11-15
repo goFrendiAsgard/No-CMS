@@ -1133,7 +1133,6 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_config'));
         $crud->set_subject($this->cms_lang('Configuration'));
         
-        $crud->required_fields('config_name');        
         $crud->unique_fields('config_name');
         $crud->unset_read();
 
