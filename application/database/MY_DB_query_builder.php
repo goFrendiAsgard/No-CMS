@@ -15,6 +15,7 @@
 class MY_DB_query_builder extends CI_DB_query_builder {
 
     // below code are copy-pasted from MY_DB_driver. This is necessary since CI_DB_query_builder extends CI_DB_Driver which is overrided by MY_DB_Driver. This is also the reason I like multiple-inheritance and hate PHP :(
+    // if multiple inheritence works, this class should be MY_DB_query_builder extends CI_DB_query_builder, MY_DB_Driver
 
     public function query($sql, $binds = FALSE, $return_object = NULL)
     {

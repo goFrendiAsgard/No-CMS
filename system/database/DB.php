@@ -50,10 +50,6 @@ function &DB($params = '', $query_builder_override = NULL)
 		}
 
 		include($file_path);
-		// Added by Ivan Tcholakov, 27-APR-2013.
-		if (is_object(get_instance()))
-		{
-		//
 		// Make packages contain database config files
 		foreach (get_instance()->load->get_package_paths() as $path)
 		{
@@ -69,9 +65,6 @@ function &DB($params = '', $query_builder_override = NULL)
 				}
 			}
 		}
-		//
-		}
-		//
 
 		if ( ! isset($db) OR count($db) === 0)
 		{
@@ -96,7 +89,6 @@ function &DB($params = '', $query_builder_override = NULL)
 	}
 	elseif (is_string($params))
 	{
-
 		/**
 		 * Parse the URL from the DSN string
 		 * Database settings can be passed as discreet
@@ -191,10 +183,9 @@ function &DB($params = '', $query_builder_override = NULL)
 	}
 
 	require_once($driver_file);
-    
 
 	// Instantiate the DB adapter
-    $driver = 'CI_DB_'.$params['dbdriver'].'_driver';
+	$driver = 'CI_DB_'.$params['dbdriver'].'_driver';
 	$DB = new $driver($params);
 
 	// Check for a subdriver
@@ -205,8 +196,7 @@ function &DB($params = '', $query_builder_override = NULL)
 		if (file_exists($driver_file))
 		{
 			require_once($driver_file);
-
-            $driver = 'CI_DB_'.$DB->dbdriver.'_'.$DB->subdriver.'_driver';
+			$driver = 'CI_DB_'.$DB->dbdriver.'_'.$DB->subdriver.'_driver';
 			$DB = new $driver($params);
 		}
 	}

@@ -965,7 +965,9 @@ class Install_Model extends CI_Model{
         // copy everything from /application/config/first-time.php into /application/config/
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
-            copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$file);
+            if(!is_dir(APPPATH.'config/first-time/'.$file)){
+                copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$file);
+            }
         }
 
         // database config

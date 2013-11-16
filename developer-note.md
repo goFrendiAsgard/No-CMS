@@ -44,7 +44,7 @@ HOW TO MAKE NO-CMS
 ===================
 
 * Ingredients:
-    - CodeIgniter development branch: http://github.com/ellislab/codeigniter/tree/develop
+    - CodeIgniter development branch: https://github.com/EllisLab/CodeIgniter/tree/fb2ac41b6c914fd55b539337e381860bfcc2cf7b
     - Phil Sturgeon Template: https://github.com/philsturgeon/codeigniter-template
     - HMVC: https://bitbucket.org/wiredesignz/codeigniter-modular-extensions-hmvc/src
     - GroceryCRUD: http://www.grocerycrud.com/downloads
@@ -115,6 +115,7 @@ HOW TO MAKE NO-CMS
 
 * Steps:
     - Put CodeIgniter and ingredients all together. Don't overwrite autoload.php (beware of Phil's template)
+    - Download jquery min.map (adjust with the one used by groceryCRUD, in current case 1.10.2, from http://jquery.com/download/) and put it on `/assets/grocery_crud/js`
     - Move `/application/config/*` into `/application/config/first-time/*`
     - Edit `/application/config/first-time/config.php`, modify `encryption_key` value
 

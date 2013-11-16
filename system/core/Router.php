@@ -104,9 +104,7 @@ class CI_Router {
 	{
 		$this->config =& load_class('Config', 'core');
 		$this->uri =& load_class('URI', 'core');
-		// Removed by Ivan Tcholakov, 25-JUL-2013.
-		//$this->_set_routing();
-		//
+		$this->_set_routing();
 		log_message('debug', 'Router Class Initialized');
 	}
 
@@ -120,10 +118,7 @@ class CI_Router {
 	 *
 	 * @return	void
 	 */
-	// Modified by Ivan Tcholakov, 25-JUL-2013.
-	//protected function _set_routing()
-	public function _set_routing()
-	//
+	protected function _set_routing()
 	{
 		// Are query strings enabled in the config file? Normally CI doesn't utilize query strings
 		// since URI segments are more search-engine friendly, but they can optionally be used.

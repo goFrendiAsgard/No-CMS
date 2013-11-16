@@ -601,7 +601,7 @@ class Main extends CMS_Controller
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
@@ -736,11 +736,11 @@ class Main extends CMS_Controller
     }
 
     public function before_insert_navigation($post_array)
-    {
+    {        
         //get parent's navigation_id
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
-            ->where('navigation_id', $post_array['parent_id'])
+            ->where('navigation_id', is_int($post_array['parent_id'])? $post_array['parent_id']: NULL)
             ->get();
         $row   = $query->row();
 
@@ -848,7 +848,7 @@ class Main extends CMS_Controller
 
         $crud->columns('navigation_id');
         $crud->edit_fields('navigation_id', 'index');
-        $crud->add_fields('navigation_id');
+        $crud->add_fields('navigation_id', 'index');
 
         $crud->display_as('navigation_id', $this->cms_lang('Navigation Code'));
 
@@ -986,7 +986,7 @@ class Main extends CMS_Controller
         $crud->unset_read();
 
         $crud->columns('widget_name', 'title', 'active', 'slug');
-        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
+        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups', 'index');
         $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');

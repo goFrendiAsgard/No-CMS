@@ -115,10 +115,6 @@ class CI_Lang {
 		}
 		else
 		{
-			// Added by Ivan Tcholakov, 18-APR-2013.
-			if (is_object(get_instance()))
-			{
-			//
 			foreach (get_instance()->load->get_package_paths(TRUE) as $package_path)
 			{
 				$package_path .= 'language/'.$idiom.'/'.$langfile;
@@ -129,9 +125,6 @@ class CI_Lang {
 					break;
 				}
 			}
-			//
-			}
-			//
 		}
 
 		if ($found !== TRUE)

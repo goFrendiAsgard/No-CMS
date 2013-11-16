@@ -174,7 +174,7 @@ $URI =& load_class('URI', 'core');
  */
 $RTR =& load_class('Router', 'core');
 // Added by Ivan Tcholakov, 25-JUL-2013.
-$RTR->_set_routing();
+// $RTR->_set_routing();
 //
 
 // Set any routing overrides that may exist in the main index file
