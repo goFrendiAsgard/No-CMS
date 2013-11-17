@@ -25,4 +25,5 @@ $(document).ready(function(){
     if($.trim($('__section-banner').html()) == ''){
         $('__section-banner').remove();
     }
+    
 });

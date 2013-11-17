@@ -5,6 +5,21 @@
     Description:
         Purpose of the stylesheet follows.
 */
+.carousel-caption {
+    background:rgba(255,255,255,0)!important;
+    background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1))!important;
+    background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1))!important;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0.4)), to(rgba(255, 255, 255, 1)))!important;
+    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1))!important;
+    background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1))!important;
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1))!important;
+    background-repeat: repeat-y;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='rgba(0, 0, 0, 0)', endColorstr='rgba(255, 255, 255, 1)', GradientType=1)!important;
+    padding-top: 150px!important;
+}
+.carousel-caption h4, .carousel-caption p{
+    color:#444!important;
+}
 .not_shown{
 	display: none;
 }
