@@ -97,6 +97,8 @@ class Main extends CMS_Controller
     public function login()
     {
         $this->cms_guard_page('main_login');
+        // Is registration allowed
+        $allow_register = $this->cms_allow_navigate('main_register');
         //retrieve old_url from flashdata if exists
         $this->load->library('session');
         $old_url = $this->session->flashdata('cms_old_url');
@@ -151,6 +153,7 @@ class Main extends CMS_Controller
                     "providers" => $this->cms_third_party_providers(),
                     "login_caption" => $this->cms_lang("Login"),
                     "register_caption" => $this->cms_lang("Register"),
+                    "allow_register"=> $allow_register,
                 );
                 $this->view('main/main_login', $data, 'main_login');
             }
@@ -167,6 +170,7 @@ class Main extends CMS_Controller
                 "providers" => $this->cms_third_party_providers(),
                 "login_caption" => $this->cms_lang("Login"),
                 "register_caption" => $this->cms_lang("Register"),
+                "allow_register" => $allow_register,
             );
             $this->view('main/main_login', $data, 'main_login');
         }
@@ -390,7 +394,7 @@ class Main extends CMS_Controller
 
     public function index()
     {        
-        //$this->cms_guard_page('main_index');
+        $this->cms_guard_page('main_index');
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen(NULL)
         );
@@ -1310,7 +1314,7 @@ class Main extends CMS_Controller
                         <span class="icon-bar"></span>
                     </button>
                     <a class="brand" href="#">
-                        <img src ="{{ site_logo }}" style="max-height:20px; max-width:20px;" />
+                        <img src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" />
                     </a>
                     <div class="nav-collapse collapse" id="main-menu">
                         <ul class="nav">'.$result.'</ul>

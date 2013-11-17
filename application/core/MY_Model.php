@@ -719,7 +719,7 @@ class CMS_Model extends CI_Model
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
         for ($i = 0; $i < count($navigations); $i++) {
-            if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"] == 1) {
+            if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]['active'] && $navigations[$i]["allowed"] == 1) {
                 return true;
             } else if ($this->cms_allow_navigate($navigation_name, $navigations[$i]["child"])) {
                 return true;

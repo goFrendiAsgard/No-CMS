@@ -734,9 +734,11 @@ class CMS_Controller extends MX_Controller
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
          */
         $navigation_name_provided = TRUE;
-        if (!isset($navigation_name)) {
+        if (!isset($navigation_name) && !$this->__cms_dynamic_widget) {
             $navigation_name = $this->cms_navigation_name();
-            $navigation_name_provided = FALSE;
+            if(!$navigation_name){
+                $navigation_name_provided = FALSE;
+            }
         }
 
         /**

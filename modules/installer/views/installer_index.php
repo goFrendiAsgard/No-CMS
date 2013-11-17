@@ -71,7 +71,7 @@
                             <div class="control-group">
                                <label class="control-label" for="db_host">Server</label>
                                <div class="controls">
-                                   <input type="text" id="db_host" name="db_host" value="localhost" class="input-xlarge input" />
+                                   <input type="text" id="db_host" name="db_host" value="127.0.0.1" class="input-xlarge input" />
                                    <p class="help-block">Server name (e.g: 'localhost', '127.0.0.1', 'http://yourDatabaseServer.com')</p>
                                </div>
                             </div>

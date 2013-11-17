@@ -70,6 +70,8 @@ class Install extends CMS_Module_Installer {
     private function remove_all(){
         $module_path = $this->cms_module_path();
 
+        $this->remove_quicklink($this->cms_complete_navigation_name('index'));
+
         // remove navigations
         $this->remove_navigation($this->cms_complete_navigation_name('manage_message'));
 
@@ -93,6 +95,8 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation($this->cms_complete_navigation_name('manage_message'), 'Manage Message',
             $module_path.'/manage_message', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
+
+        $this->add_quicklink($this->cms_complete_navigation_name('index'));
 
         
         // create tables

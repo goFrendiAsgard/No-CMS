@@ -1015,6 +1015,7 @@ class Install_Model extends CI_Model{
         $value_prefix = "";
         $value_suffix = ";";
         $compress_output = $this->gzip_compression?'TRUE':'FALSE';
+        $this->change_config($file_name, "minify_output", 'TRUE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "compress_output", $compress_output, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "sess_use_database", 'TRUE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "sess_expiration", '86400', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);

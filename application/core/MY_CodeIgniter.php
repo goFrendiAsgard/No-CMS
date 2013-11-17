@@ -259,7 +259,15 @@ $class = $RTR->class;
 //
 if ( ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
 {
-    show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
+    // Modified by Go Frendi Gunawan, 11-NOV-2013
+    // show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
+    if ( ! file_exists(APPPATH.'controllers/'.$RTR->directory.ucfirst($class).'.php'))
+    {
+        show_error('Unable to load your default controller. Please make sure the controller specified in your Routes.php file is valid.');
+    }else{
+        $class = ucfirst($class);
+    }
+    //
 }
 
 include(APPPATH.'controllers/'.$RTR->directory.$class.'.php');

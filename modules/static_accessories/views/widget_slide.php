@@ -48,9 +48,20 @@ for($i=0; $i<count($slide_list); $i++){
 <script type ="text/javascript">
     $(document).ready(function(){
         $('#slideshow-widget').carousel('cycle');
-        // Don't let the slideshow block everything
-        $('img.item-image').each(function(){
-            $(this).attr('src', $(this).attr('real-src'));
-        });
-    });    
+        __load_slide();        
+    });
+
+    $(window).resize(function(){__load_slide();});
+
+    function __load_slide(){
+        var body_width = $('body').width();
+        if(body_width>=978){
+            $('img.item-image').each(function(){
+                if($(this).attr('src') !== ''){
+                    $(this).attr('src', $(this).attr('real-src'));
+                }
+            });    
+        }
+    }
+
 </script>

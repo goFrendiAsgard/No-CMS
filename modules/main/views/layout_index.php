@@ -30,8 +30,10 @@
 <style type="text/css">
     .text-area-section{
         resize: none;
-        white-space: nowrap; 
-        overflow: auto;
+        word-wrap: no-wrap;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        width:95%;
         min-width: 385px!important;
         min-height: 75px!important;
         margin-top: 10px!important;
@@ -156,6 +158,7 @@
         <input type="submit" class="btn btn-primary btn-large" value="Apply Changes" />
     </form>
 </div>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <script type="text/javascript">
     // magic to do insertAtCaret
     $.fn.extend({
@@ -185,13 +188,17 @@
       });
     }
     });
-    
-    // 
-    $('.btn-tag-add').click(function(){
-        var select_component = $(this).parent().children('select');
-        var text_area_component = $(this).parent().parent().children('.text-area-section');
-        var selected_item = select_component.val();
-        text_area_component.insertAtCaret(selected_item);
-        return false;
+
+    $(document).ready(function(){
+        $('.text-area-section').autosize();
+
+        // add widget or whatever to the section at current caret
+        $('.btn-tag-add').click(function(){
+            var select_component = $(this).parent().children('select');
+            var text_area_component = $(this).parent().parent().children('.text-area-section');
+            var selected_item = select_component.val();
+            text_area_component.insertAtCaret(selected_item);
+            return false;
+        });
     })
 </script>
