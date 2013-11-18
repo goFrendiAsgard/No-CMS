@@ -1332,7 +1332,6 @@ class Main extends CMS_Controller
                         event.cancelBubble=true;
                         window.location = $(this).parent().attr("href");
                     });
-
                     // override bootstrap default behavior on dropdown click. There should be no dropdown for tablet & phone
                     $("a.dropdown-toggle").click(function(){
                         var screen_width = $("body").width();
@@ -1343,36 +1342,6 @@ class Main extends CMS_Controller
                             event.cancelBubble=true;
                             window.location = $(this).attr("href");
                         }
-                    });
-                    
-                    // adjust the menu
-                    var MAX_HEIGHT = 72;
-                    var MIN_FONT_SIZE = 12;
-                    function adjust_top_nav(){
-                        $("ul.nav>li>a").css("font-size", "");
-                        $("ul.nav>li").removeClass("hidden-desktop");
-                        if($(window).width()>768){
-                            while($(".navbar-fixed-top").height()>MAX_HEIGHT){
-                                var currentFontSize = $("ul.nav>li>a").css("font-size");
-                                var currentFontSizeNum = parseInt(currentFontSize, 10);
-                                var newFontSize = Math.ceil(currentFontSizeNum-1);
-                                if(newFontSize < MIN_FONT_SIZE){
-                                    break;
-                                }
-                                $("ul.nav>li>a").css("font-size", newFontSize);            
-                            } 
-                            var last_index = 1;
-                            while($(".navbar-fixed-top").height()>MAX_HEIGHT && last_index<10){
-                                $("ul.nav>li:nth-last-child("+last_index+")").addClass("hidden-desktop");
-                                last_index ++;
-                            }
-                        }                        
-                    }
-
-                    // trigger menu adjustment
-                    adjust_top_nav();
-                    $(window).resize(function(){
-                        adjust_top_nav();
                     });
                 });
             </script>';

@@ -141,7 +141,7 @@
             echo '        /////////////////////////////////////////////////////////////////////////////////////////////////////'.PHP_EOL;
             echo '        //    FIELD "'.$name.'"'.PHP_EOL;
             echo '        /////////////////////////////////////////////////////////////////////////////////////////////////////'.PHP_EOL;
-            echo '        var field_value = \'\''.PHP_EOL;
+            echo '        var field_value = \'\';'.PHP_EOL;
             echo '        if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
             if($data_type=='date'){
                 echo '          field_value = php_date_to_js(value.'.$name.');'.PHP_EOL;
@@ -193,7 +193,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><span class="delete-icon <?php echo $delete_button_class; ?>" record_index="'+<?php echo $var_record_index; ?>+'"></span></td>'
+        component += '<td><span class="delete-icon <?php echo $delete_button_class; ?>" record_index="'+<?php echo $var_record_index; ?>+'"></span></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -445,19 +445,19 @@
         var year = '';
         var php_date = '';
         if(DATE_FORMAT == 'uk-date'){
-            var date_array = js_date.split('/')
+            var date_array = js_date.split('/');
             day = date_array[0];
             month = date_array[1];
             year = date_array[2];
             php_date = year+'-'+month+'-'+day;
         }else if(DATE_FORMAT == 'us-date'){
-            var date_array = js_date.split('/')
+            var date_array = js_date.split('/');
             day = date_array[1];
             month = date_array[0];
             year = date_array[2];
             php_date = year+'-'+month+'-'+day;
         }else if(DATE_FORMAT == 'sql-date'){
-            var date_array = js_date.split('-')
+            var date_array = js_date.split('-');
             day = date_array[2];
             month = date_array[1];
             year = date_array[0];
