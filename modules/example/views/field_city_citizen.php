@@ -80,7 +80,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "name"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var field_value = ''
+        var field_value = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('name')){
           field_value = value.name;
         }
@@ -92,7 +92,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "birthdate"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var field_value = ''
+        var field_value = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('birthdate')){
           field_value = php_date_to_js(value.birthdate);
         }
@@ -105,7 +105,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "job_id"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var field_value = ''
+        var field_value = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('job_id')){
           field_value = value.job_id;
         }
@@ -128,7 +128,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "hobby"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var field_value = ''
+        var field_value = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('hobby')){
           field_value = value.hobby;
         }
@@ -152,7 +152,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><span class="delete-icon md_field_citizen_delete" record_index="'+RECORD_INDEX_citizen+'"></span></td>'
+        component += '<td><span class="delete-icon md_field_citizen_delete" record_index="'+RECORD_INDEX_citizen+'"></span></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -404,19 +404,19 @@
         var year = '';
         var php_date = '';
         if(DATE_FORMAT == 'uk-date'){
-            var date_array = js_date.split('/')
+            var date_array = js_date.split('/');
             day = date_array[0];
             month = date_array[1];
             year = date_array[2];
             php_date = year+'-'+month+'-'+day;
         }else if(DATE_FORMAT == 'us-date'){
-            var date_array = js_date.split('/')
+            var date_array = js_date.split('/');
             day = date_array[1];
             month = date_array[0];
             year = date_array[2];
             php_date = year+'-'+month+'-'+day;
         }else if(DATE_FORMAT == 'sql-date'){
-            var date_array = js_date.split('-')
+            var date_array = js_date.split('-');
             day = date_array[2];
             month = date_array[1];
             year = date_array[0];

@@ -65,14 +65,14 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "date"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var comment_date = ''
+        var comment_date = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('date')){
             comment_date = value.date;
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "name"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var comment_name = 'anonymous'
+        var comment_name = 'anonymous';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('name')){
             comment_name = value.name;
         }
@@ -80,7 +80,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "email"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var comment_email = ''
+        var comment_email = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('email')){
             comment_email = value.email;
         }
@@ -89,7 +89,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "website"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var comment_website = ''
+        var comment_website = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('website')){
             comment_website = value.website;
         }
@@ -98,7 +98,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "content"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var comment_content = ''
+        var comment_content = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('content')){
             comment_content = value.content;
         }
@@ -246,19 +246,19 @@
         var year = '';
         var php_date = '';
         if(DATE_FORMAT == 'uk-date'){
-            var date_array = js_date.split('/')
+            var date_array = js_date.split('/');
             day = date_array[0];
             month = date_array[1];
             year = date_array[2];
             php_date = year+'-'+month+'-'+day;
         }else if(DATE_FORMAT == 'us-date'){
-            var date_array = js_date.split('/')
+            var date_array = js_date.split('/');
             day = date_array[1];
             month = date_array[0];
             year = date_array[2];
             php_date = year+'-'+month+'-'+day;
         }else if(DATE_FORMAT == 'sql-date'){
-            var date_array = js_date.split('-')
+            var date_array = js_date.split('-');
             day = date_array[2];
             month = date_array[1];
             year = date_array[0];
