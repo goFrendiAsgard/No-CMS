@@ -228,8 +228,8 @@
                             var inputCount = ds[0].input.length;
                             var targetCount = ds[0].target.length;
                             var outputCount = targetCount;
-                            str+= '<table>';
-                            str+= '<tr><td colspan="'+inputCount+'">Input</td><td colspan="'+targetCount+'">Target</td><td colspan="'+outputCount+'">Output</td></tr>';
+                            str+= '<table class="table">';
+                            str+= '<tr><th colspan="'+inputCount+'">Input</th><th colspan="'+targetCount+'">Target</th><th colspan="'+outputCount+'">Output</th></tr>';
                             for(var i=0; i<ds.length; i++){
                                 str+= '<tr>';
                                 for(var j=0; j<inputCount; j++){

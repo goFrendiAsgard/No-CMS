@@ -55,8 +55,8 @@ class AI_GA_For_NN extends AI_Genetics_Algorithm{
     public function defineDataSet($dataSet){
         $this->dataSet = $dataSet;
     }
-    
-    public function set($individuCount = 100, $maxLoop = 1000, $minFitness = 1000,
+
+    public function set($individuCount = 100, $chromosomeLength=20, $maxLoop = 1000, $minFitness = 1000,
             $mutationRate = 0.3, $crossoverRate = 0.4, $reproductionRate = 0.3, $elitismRate = 0.2)
     {
         $chromosomeLength = 0;
@@ -120,7 +120,7 @@ class AI_NNGA extends AI_Neural_Network {
             $crossoverRate = 0.4, $reproductionRate = 0.3, $elitismRate = 0.2)
     {
         parent::set($dataSet, $neuronCount, $learningRate, $maxMSE, $maxLoop);
-        $this->GA->set($individuCount, $maxGALoop, $minFitness, $mutationRate, $crossoverRate, $reproductionRate, $elitismRate);
+        $this->GA->set($individuCount, 20, $maxGALoop, $minFitness, $mutationRate, $crossoverRate, $reproductionRate, $elitismRate);
     }
     
     public function train($dataSet, $use_GA = TRUE){        
