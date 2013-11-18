@@ -225,6 +225,10 @@ class CMS_Model extends CI_Model
         //get max_menu_depth from configuration
         if (!isset($max_menu_depth)) {
             $max_menu_depth = $this->cms_get_config('max_menu_depth');
+            if(!isset($max_menu_depth)){
+                $max_menu_depth = 10;
+                $this->cms_set_config('max_menu_depth', $max_menu_depth);
+            }
         }
 
         if ($max_menu_depth > 0) {
@@ -715,7 +719,7 @@ class CMS_Model extends CI_Model
         if (!isset($navigations))
             $navigations = $this->cms_navigations();
         for ($i = 0; $i < count($navigations); $i++) {
-            if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]["allowed"] == 1) {
+            if ($navigation_name == $navigations[$i]["navigation_name"] && $navigations[$i]['active'] && $navigations[$i]["allowed"] == 1) {
                 return true;
             } else if ($this->cms_allow_navigate($navigation_name, $navigations[$i]["child"])) {
                 return true;
@@ -1547,10 +1551,12 @@ class CMS_Model extends CI_Model
     public function cms_get_config($name, $raw = FALSE)
     {
         $value = cms_config($name);
-        if($value === FALSE){
+        if($value === NULL || !$value){
             if (!isset($this->__cms_model_properties['config'][$name])) {
-                $query  = $this->db->query("SELECT ".$this->db->protect_identifiers('value')." FROM ".cms_table_name('main_config')." WHERE
-                            config_name = '" . addslashes($name) . "'");
+                $query = $this->db->select('value')
+                    ->from(cms_table_name('main_config'))
+                    ->where('config_name', $name)
+                    ->get();
                 if($query->num_rows()>0){
                     $row    = $query->row();
                     $value  = $row->value;

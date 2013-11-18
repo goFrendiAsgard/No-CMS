@@ -129,36 +129,61 @@ class Install_Model extends CI_Model{
 
     protected function load_database(){
         $db_config = $this->build_db_config();
-        $db = $this->load->database($db_config, TRUE);       
+        $db = $this->load->database($db_config, TRUE); 
+
+        $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
+        $allow_create = FALSE;
+        $allow_drop = FALSE; 
+        if($is_mysql){
+            // get the "allow_create" and "allow_drop" privileges
+            @mysql_connect($this->db_host.':'.$this->db_port , $this->db_username, $this->db_password);
+            $result = @mysql_query('SHOW GRANTS FOR CURRENT_USER;');
+            if($result !== NULL){                    
+                while($row = mysql_fetch_row($result)){
+                    if(strpos($row[0], 'ALL PRIVILEGES')){
+                        $allow_drop = TRUE;
+                        $allow_create = TRUE;
+                        break;
+                    }
+                    if(strpos($row[0], 'CREATE')){
+                        $allow_create = TRUE;
+                    }
+                    if(strpos($row[0], 'DROP')){
+                        $allow_drop = TRUE;
+                    }
+                    if($allow_create && $allow_drop){
+                        break;
+                    }
+                }
+            }
+        } 
+
+        if($is_mysql){
+            // try to drop the previously created database
+            if($allow_drop && isset($_SESSION['created_db']) && $_SESSION['created_db'] != '' && $_SESSION['created_db'] != $this->db_name){
+                @mysql_query('DROP DATABASE IF EXISTS '.$_SESSION['created_db']);
+                unset($_SESSION['created_db']);
+            }              
+        }
 
         $success = TRUE;
         if($db->conn_id === FALSE){
             $success = FALSE;
             // if it is MySQL, try to make database
-            if($this->db_protocol=='mysql' || $this->db_protocol=='mysqli'){
-                // try to not use db_name
-                $db_name = $this->db_name;
-                $this->db_name = '';
-                $db_config = $this->build_db_config();
-                $db = $this->load->database($db_config, TRUE);
-                if($db->conn_id !== FALSE){
-                    // try to make the database and drop the previously created database
-                    if(isset($_SESSION['created_db'])){
-                        $db->query('DROP DATABASE '.$_SESSION['created_db']);
+            if($is_mysql){                
+                if($allow_create && (!isset($_SESSION['created_db']) || $_SESSION['created_db'] != $this->db_name ) ){
+                    $result = @mysql_query('CREATE DATABASE ' . $this->db_name . ' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;');
+                    // save the created database
+                    if($result){
+                        $_SESSION['created_db'] = $this->db_name;
                     }
-                    $result = $db->query('CREATE DATABASE ' . $db_name . ' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;');
-                }
-                $this->db_name = $db_name;
+                } 
+                // try to connect again
                 $db_config = $this->build_db_config();
                 $db = $this->load->database($db_config, TRUE);
                 if($db->conn_id !== FALSE){
                     $success = TRUE;
-                }
-                
-                // save the created database
-                if($success){
-                    $_SESSION['created_db'] = $this->db_name;
-                }
+                }                
             }
         }
 
@@ -394,7 +419,8 @@ class Install_Model extends CI_Model{
         $type_foreign_key = array(
                 'type' => 'INT',
                 'constraint' => 5,
-                'unsigned' => TRUE
+                'unsigned' => TRUE,
+                'null' => TRUE,
             );
         $type_foreign_key_not_null = array(
                 'type' => 'INT',
@@ -552,7 +578,7 @@ class Install_Model extends CI_Model{
         $fields = array(
                 'user_id' => $type_primary_key,
                 'user_name' => $type_varchar_small_strict,
-                'email' => $type_varchar_small_strict,
+                'email' => $type_varchar_small,
                 'password' => $type_password,
                 'activation_code' => $type_varchar_small,
                 'real_name' => $type_varchar_large,
@@ -939,7 +965,9 @@ class Install_Model extends CI_Model{
         // copy everything from /application/config/first-time.php into /application/config/
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
-            copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$file);
+            if(!is_dir(APPPATH.'config/first-time/'.$file)){
+                copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$file);
+            }
         }
 
         // database config
@@ -987,6 +1015,7 @@ class Install_Model extends CI_Model{
         $value_prefix = "";
         $value_suffix = ";";
         $compress_output = $this->gzip_compression?'TRUE':'FALSE';
+        $this->change_config($file_name, "minify_output", 'TRUE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "compress_output", $compress_output, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "sess_use_database", 'TRUE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "sess_expiration", '86400', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);

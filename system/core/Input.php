@@ -47,7 +47,7 @@ class CI_Input {
 	public $ip_address = FALSE;
 
 	/**
-	 * User agent strin
+	 * User agent string
 	 *
 	 * @var	string
 	 */
@@ -261,11 +261,27 @@ class CI_Input {
 	 * @param	bool	$xss_clean	Whether to apply XSS filtering
 	 * @return	mixed
 	 */
-	public function get_post($index = '', $xss_clean = FALSE)
+	public function post_get($index = '', $xss_clean = FALSE)
 	{
 		return isset($_POST[$index])
 			? $this->post($index, $xss_clean)
 			: $this->get($index, $xss_clean);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Fetch an item from GET data with fallback to POST
+	 *
+	 * @param	string	$index		Index for item to be fetched from $_GET or $_POST
+	 * @param	bool	$xss_clean	Whether to apply XSS filtering
+	 * @return	mixed
+	 */
+	public function get_post($index = '', $xss_clean = FALSE)
+	{
+		return isset($_GET[$index])
+			? $this->get($index, $xss_clean)
+			: $this->post($index, $xss_clean);
 	}
 
 	// --------------------------------------------------------------------
@@ -677,7 +693,14 @@ class CI_Input {
 
 			foreach ($_COOKIE as $key => $val)
 			{
-				$_COOKIE[$this->_clean_input_keys($key)] = $this->_clean_input_data($val);
+				if (($cookie_key = $this->_clean_input_keys($key)) !== FALSE)
+				{
+					$_COOKIE[$cookie_key] = $this->_clean_input_data($val);
+				}
+				else
+				{
+					unset($_COOKIE[$key]);
+				}
 			}
 		}
 
@@ -685,12 +708,12 @@ class CI_Input {
 		$_SERVER['PHP_SELF'] = strip_tags($_SERVER['PHP_SELF']);
 
 		// CSRF Protection check
-		if ($this->_enable_csrf === TRUE && ! $this->is_cli_request())
+		if ($this->_enable_csrf === TRUE && ! is_cli())
 		{
 			$this->security->csrf_verify();
 		}
 
-		log_message('debug', 'Global POST and COOKIE data sanitized');
+		log_message('debug', 'Global POST, GET and COOKIE data sanitized');
 	}
 
 	// --------------------------------------------------------------------
@@ -760,15 +783,25 @@ class CI_Input {
 	 * only named with alpha-numeric text and a few other items.
 	 *
 	 * @param	string	$str	Input string
-	 * @return	string
+	 * @param	string	$fatal	Whether to terminate script exection
+	 *				or to return FALSE if an invalid
+	 *				key is encountered
+	 * @return	string|bool
 	 */
-	protected function _clean_input_keys($str)
+	protected function _clean_input_keys($str, $fatal = TRUE)
 	{
 		if ( ! preg_match('/^[a-z0-9:_\/|-]+$/i', $str))
 		{
-			set_status_header(503);
-			echo 'Disallowed Key Characters.';
-			exit(EXIT_USER_INPUT);
+			if ($fatal === TRUE)
+			{
+				return FALSE;
+			}
+			else
+			{
+				set_status_header(503);
+				echo 'Disallowed Key Characters.';
+				exit(EXIT_USER_INPUT);
+			}
 		}
 
 		// Clean UTF-8 if supported
@@ -868,11 +901,12 @@ class CI_Input {
 	 *
 	 * Test to see if a request was made from the command line.
 	 *
-	 * @return 	bool
+	 * @deprecated	3.0.0	Use is_cli() instead
+	 * @return      bool
 	 */
 	public function is_cli_request()
 	{
-		return (php_sapi_name() === 'cli' OR defined('STDIN'));
+		return is_cli();
 	}
 
 	// --------------------------------------------------------------------

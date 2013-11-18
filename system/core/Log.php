@@ -140,10 +140,9 @@ class CI_Log {
 	 *
 	 * @param	string	the error level: 'error', 'debug' or 'info'
 	 * @param	string	the error message
-	 * @param	bool	whether the error is a native PHP error
 	 * @return	bool
 	 */
-	public function write_log($level, $msg, $php_error = FALSE)
+	public function write_log($level, $msg)
 	{
 		if ($this->_enabled === FALSE)
 		{

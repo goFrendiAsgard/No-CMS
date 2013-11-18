@@ -608,7 +608,7 @@ class CMS_Controller extends MX_Controller
 
     /**
      * @author goFrendiAsgard
-     * @desc   redirect to login/main page
+     * @desc   redirect to main/login page
      */
     protected function cms_redirect()
     {
@@ -624,14 +624,14 @@ class CMS_Controller extends MX_Controller
         if ($this->cms_allow_navigate('main_login') && ($uriString != 'main/login')) {
             redirect('main/login');
         } else {
-            $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller']);
+            $navigation_name = $this->cms_navigation_name($this->router->default_controller);
             if (!isset($navigation_name)) {
-                $navigation_name = $this->cms_navigation_name($this->router->routes['default_controller'] . '/index');
+                $navigation_name = $this->cms_navigation_name($this->router->default_controller . '/index');
             }
             // redirect to default controller
             if (isset($navigation_name) && $this->cms_allow_navigate($navigation_name) && 
-            ($uriString != '') && ($uriString != $this->router->routes['default_controller']) &&
-            ($uriString != $this->router->routes['default_controller'].'/index')) {
+            ($uriString != '') && ($uriString != $this->router->default_controller) &&
+            ($uriString != $this->router->default_controller.'/index')) {
                 redirect('');
             } else {
                 show_404();
@@ -666,7 +666,6 @@ class CMS_Controller extends MX_Controller
         } else {
             $allowed = false;
         }
-
         // if not allowed then redirect
         if (!$allowed) {
             $this->cms_redirect();
@@ -735,9 +734,11 @@ class CMS_Controller extends MX_Controller
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
          */
         $navigation_name_provided = TRUE;
-        if (!isset($navigation_name)) {
+        if (!isset($navigation_name) && !$this->__cms_dynamic_widget) {
             $navigation_name = $this->cms_navigation_name();
-            $navigation_name_provided = FALSE;
+            if(!$navigation_name){
+                $navigation_name_provided = FALSE;
+            }
         }
 
         /**
@@ -1407,10 +1408,12 @@ class CMS_Module_Installer extends CMS_Controller
                 'type' => 'INT',
                 'constraint' => 20,
                 'unsigned' => TRUE,
+                'null'=>TRUE,
         );
     protected $TYPE_INT_SIGNED_NULL = array(
                 'type' => 'INT',
                 'constraint' => 20,
+                'null'=>TRUE,
         );
     protected $TYPE_DATETIME_NOTNULL = array(
                 'type' => 'TIMESTAMP',
@@ -1422,9 +1425,11 @@ class CMS_Module_Installer extends CMS_Controller
         );
     protected $TYPE_DATETIME_NULL = array(
                 'type' => 'TIMESTAMP',
+                'null'=>TRUE,
         );
     protected $TYPE_DATE_NULL = array(
                 'type' => 'DATE',
+                'null'=>TRUE,
         );
     protected $TYPE_FLOAT_NOTNULL = array(
                 'type' => 'FLOAT',
@@ -1436,12 +1441,15 @@ class CMS_Module_Installer extends CMS_Controller
         );
     protected $TYPE_FLOAT_NULL = array(
                 'type' => 'FLOAT',
+                'null'=>TRUE,
         );
     protected $TYPE_DOUBLE_NULL = array(
                 'type' => 'DOUBLE',
+                'null'=>TRUE,
         );
     protected $TYPE_TEXT = array(
                 'type' => 'TEXT',
+                'null'=> TRUE,
         );
     protected $TYPE_VARCHAR_5_NOTNULL = array(
                 'type' => 'VARCHAR',
@@ -1486,34 +1494,42 @@ class CMS_Module_Installer extends CMS_Controller
     protected $TYPE_VARCHAR_5_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 5,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_10_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 10,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_20_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 20,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_50_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 50,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_100_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 100,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_150_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 150,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_200_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 200,
+                'null'=>TRUE,
         );
     protected $TYPE_VARCHAR_250_NULL = array(
                 'type' => 'VARCHAR',
                 'constraint' => 250,
+                'null'=>TRUE,
         );
 
     public function __construct(){

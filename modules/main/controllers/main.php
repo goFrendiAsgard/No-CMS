@@ -97,6 +97,8 @@ class Main extends CMS_Controller
     public function login()
     {
         $this->cms_guard_page('main_login');
+        // Is registration allowed
+        $allow_register = $this->cms_allow_navigate('main_register');
         //retrieve old_url from flashdata if exists
         $this->load->library('session');
         $old_url = $this->session->flashdata('cms_old_url');
@@ -151,6 +153,7 @@ class Main extends CMS_Controller
                     "providers" => $this->cms_third_party_providers(),
                     "login_caption" => $this->cms_lang("Login"),
                     "register_caption" => $this->cms_lang("Register"),
+                    "allow_register"=> $allow_register,
                 );
                 $this->view('main/main_login', $data, 'main_login');
             }
@@ -167,6 +170,7 @@ class Main extends CMS_Controller
                 "providers" => $this->cms_third_party_providers(),
                 "login_caption" => $this->cms_lang("Login"),
                 "register_caption" => $this->cms_lang("Register"),
+                "allow_register" => $allow_register,
             );
             $this->view('main/main_login', $data, 'main_login');
         }
@@ -390,7 +394,7 @@ class Main extends CMS_Controller
 
     public function index()
     {        
-        //$this->cms_guard_page('main_index');
+        $this->cms_guard_page('main_index');
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen(NULL)
         );
@@ -601,7 +605,7 @@ class Main extends CMS_Controller
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
@@ -736,11 +740,11 @@ class Main extends CMS_Controller
     }
 
     public function before_insert_navigation($post_array)
-    {
+    {        
         //get parent's navigation_id
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
-            ->where('navigation_id', $post_array['parent_id'])
+            ->where('navigation_id', is_int($post_array['parent_id'])? $post_array['parent_id']: NULL)
             ->get();
         $row   = $query->row();
 
@@ -848,7 +852,7 @@ class Main extends CMS_Controller
 
         $crud->columns('navigation_id');
         $crud->edit_fields('navigation_id', 'index');
-        $crud->add_fields('navigation_id');
+        $crud->add_fields('navigation_id', 'index');
 
         $crud->display_as('navigation_id', $this->cms_lang('Navigation Code'));
 
@@ -986,7 +990,7 @@ class Main extends CMS_Controller
         $crud->unset_read();
 
         $crud->columns('widget_name', 'title', 'active', 'slug');
-        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups');
+        $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups', 'index');
         $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
@@ -1133,7 +1137,6 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_config'));
         $crud->set_subject($this->cms_lang('Configuration'));
         
-        $crud->required_fields('config_name');        
         $crud->unique_fields('config_name');
         $crud->unset_read();
 
@@ -1311,7 +1314,7 @@ class Main extends CMS_Controller
                         <span class="icon-bar"></span>
                     </button>
                     <a class="brand" href="#">
-                        <img src ="{{ site_logo }}" style="max-height:20px; max-width:20px;" />
+                        <img src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" />
                     </a>
                     <div class="nav-collapse collapse" id="main-menu">
                         <ul class="nav">'.$result.'</ul>
@@ -1329,6 +1332,7 @@ class Main extends CMS_Controller
                         event.cancelBubble=true;
                         window.location = $(this).parent().attr("href");
                     });
+
                     // override bootstrap default behavior on dropdown click. There should be no dropdown for tablet & phone
                     $("a.dropdown-toggle").click(function(){
                         var screen_width = $("body").width();
@@ -1339,6 +1343,36 @@ class Main extends CMS_Controller
                             event.cancelBubble=true;
                             window.location = $(this).attr("href");
                         }
+                    });
+                    
+                    // adjust the menu
+                    var MAX_HEIGHT = 72;
+                    var MIN_FONT_SIZE = 12;
+                    function adjust_top_nav(){
+                        $("ul.nav>li>a").css("font-size", "");
+                        $("ul.nav>li").removeClass("hidden-desktop");
+                        if($(window).width()>768){
+                            while($(".navbar-fixed-top").height()>MAX_HEIGHT){
+                                var currentFontSize = $("ul.nav>li>a").css("font-size");
+                                var currentFontSizeNum = parseInt(currentFontSize, 10);
+                                var newFontSize = Math.ceil(currentFontSizeNum-1);
+                                if(newFontSize < MIN_FONT_SIZE){
+                                    break;
+                                }
+                                $("ul.nav>li>a").css("font-size", newFontSize);            
+                            } 
+                            var last_index = 1;
+                            while($(".navbar-fixed-top").height()>MAX_HEIGHT && last_index<10){
+                                $("ul.nav>li:nth-last-child("+last_index+")").addClass("hidden-desktop");
+                                last_index ++;
+                            }
+                        }                        
+                    }
+
+                    // trigger menu adjustment
+                    adjust_top_nav();
+                    $(window).resize(function(){
+                        adjust_top_nav();
                     });
                 });
             </script>';

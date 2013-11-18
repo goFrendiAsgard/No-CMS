@@ -140,7 +140,7 @@ v0.6.6
 + (done, not tested) fix hardcoded sql that contain ```
 + (proposed) IP Deny manager
 + (done, tested) Fix layout for small device
-+ (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre
++ (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre <-- The first one seems to be fixed
 + (done, tested) Fix bug: when screen resized to smaller width, the button cannot be clicked
-+ (proposed) Use newest CodeIgniter 3.0.0 and modify the rule so that the old naming convention still works
++ (done, tested) Use newest CodeIgniter 3.0.0 and modify the rule so that the old naming convention still works (Thanks Ivan)
 + (done, tested) Make `/application/config/first-time` and `first-time` environment as suggested by cesarliws (https://github.com/goFrendiAsgard/No-CMS/issues/79)

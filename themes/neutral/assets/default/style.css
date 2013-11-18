@@ -223,7 +223,13 @@ footer{
 #__section-content{
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 30px;
+    padding-bottom:10px;
+}
+#crudForm{
+    padding-bottom: 125px;
+}
+.chzn-results{
+    max-height: 200px!important;
 }
 
 body{
@@ -256,9 +262,6 @@ body{
 .pGroup select#per_page
 {
     max-width: 54px;
-}
-.chzn-results{
-    max-height:70px!important;
 }
 
 /* end of grocery-CRUD flexigrid */

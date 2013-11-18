@@ -6,7 +6,23 @@
         Purpose of the stylesheet follows.
 */
 .icon-white, .nav-pills>.active>a>[class^="icon-"], .nav-pills>.active>a>[class*=" icon-"], .nav-list>.active>a>[class^="icon-"], .nav-list>.active>a>[class*=" icon-"], .navbar-inverse .nav>.active>a>[class^="icon-"], .navbar-inverse .nav>.active>a>[class*=" icon-"], .dropdown-menu>li>a:hover>[class^="icon-"], .dropdown-menu>li>a:focus>[class^="icon-"], .dropdown-menu>li>a:hover>[class*=" icon-"], .dropdown-menu>li>a:focus>[class*=" icon-"], .dropdown-menu>.active>a>[class^="icon-"], .dropdown-menu>.active>a>[class*=" icon-"], .dropdown-submenu:hover>a>[class^="icon-"], .dropdown-submenu:focus>a>[class^="icon-"], .dropdown-submenu:hover>a>[class*=" icon-"], .dropdown-submenu:focus>a>[class*=" icon-"]{
-    background-image: url("../../../../assets/bootstrap/img/glyphicons-halflings.png");}
+    background-image: url("../../../../assets/bootstrap/img/glyphicons-halflings.png");
+}
+
+.carousel-caption {
+    background:rgba(255,255,255,0);
+    background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1));
+    background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0.4)), to(rgba(255, 255, 255, 1)));
+    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1));
+    background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1));
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1));
+    background-repeat: repeat-y;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='rgba(0, 0, 0, 0)', endColorstr='rgba(255, 255, 255, 1)', GradientType=1);
+    padding-top: 150px;
+}
+.carousel-caption h4, .carousel-caption p{
+    color:#444;
 }
 .not_shown{
 	display: none;
@@ -22,6 +38,7 @@
 
 body { 
 	padding-bottom:40px;
+    color:#555;
 }
 
 footer{
@@ -39,8 +56,11 @@ footer{
 {
     max-width: 54px;
 }
+#crudForm{
+    padding-bottom: 125px;
+}
 .chzn-results{
-    max-height:70px!important;
+    max-height: 200px!important;
 }
 /* end of grocery-CRUD flexigrid */
 

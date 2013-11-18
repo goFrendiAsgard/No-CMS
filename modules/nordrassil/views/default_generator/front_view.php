@@ -47,7 +47,7 @@
 	var ALLOW_NAVIGATE_BACKEND = &lt;?php echo $allow_navigate_backend ? "true" : "false"; ?&gt;;
 	var BACKEND_URL = '&lt;?php echo $backend_url; ?&gt;';
 	var LOADING = false;
-	var REQUEST
+	var REQUEST;
     var RUNNING_REQUEST = false;
 
 	function fetch_more_data(async){
