@@ -49,7 +49,7 @@
     echo form_input('ga_crossover_rate', $ga_crossover_rate).br();
     echo form_label('Reproduction Rate');
     echo form_input('ga_reproduction_rate', $ga_reproduction_rate).br();
-    echo form_submit('set', 'SET');
+    echo form_submit('set', 'SET', 'class="btn btn-primary"');
 ?>
 </div>
 <?php echo form_close();

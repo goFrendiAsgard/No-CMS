@@ -292,10 +292,9 @@
     });
 </script>
 <div id="control">
-    <input type="button" id="btn_train_nn" value="Train Neural Network" />
-    <input type="button" id="btn_train_nnga" value="Train Neural Network with Genetics Algorithm" />
-    <input type="checkbox" id="chk_watch" checked="true" />
-    <label>Watch the progress</label>
+    <input type="button" id="btn_train_nn" class="btn btn-primary" value="Train Neural Network" />
+    <input type="button" id="btn_train_nnga" class="btn btn-primary" value="Train Neural Network with Genetics Algorithm" />
+    <input type="checkbox" id="chk_watch" checked="true" /><span>&nbsp;Watch the progress</span>
 </div>
 <div id="graphic">
     <canvas id="canvas" width="500px" height="600px"></canvas>
