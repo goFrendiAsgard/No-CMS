@@ -20,6 +20,11 @@
 .carousel-caption h4, .carousel-caption p{
     color:#444!important;
 }
+.navbar-text{
+    color:#ffffff!important;
+    font-family: 'Telex',sans-serif;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2)!important;
+}
 .not_shown{
 	display: none;
 }
