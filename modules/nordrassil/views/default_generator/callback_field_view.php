@@ -282,7 +282,7 @@
                 for(var i=0; i<<?php echo $var_data; ?>.update.length; i++){
                     if(<?php echo $var_data; ?>.update[i].record_index == record_index){
                         record_index_found = true;
-                        var primary_key = <?php echo $var_data; ?>.update[i].primary_key
+                        var primary_key = <?php echo $var_data; ?>.update[i].primary_key;
                         // delete element from update
                         <?php echo $var_data; ?>.update.splice(i,1);
                         // add it to delete

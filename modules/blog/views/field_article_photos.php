@@ -170,7 +170,7 @@
                 for(var i=0; i<DATA_photos.update.length; i++){
                     if(DATA_photos.update[i].record_index == record_index){
                         record_index_found = true;
-                        var primary_key = DATA_photos.update[i].primary_key
+                        var primary_key = DATA_photos.update[i].primary_key;
                         // delete element from update
                         DATA_photos.update.splice(i,1);
                         // add it to delete
