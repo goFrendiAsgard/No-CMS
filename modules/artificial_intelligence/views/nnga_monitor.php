@@ -228,8 +228,8 @@
                             var inputCount = ds[0].input.length;
                             var targetCount = ds[0].target.length;
                             var outputCount = targetCount;
-                            str+= '<table>';
-                            str+= '<tr><td colspan="'+inputCount+'">Input</td><td colspan="'+targetCount+'">Target</td><td colspan="'+outputCount+'">Output</td></tr>';
+                            str+= '<table class="table">';
+                            str+= '<tr><th colspan="'+inputCount+'">Input</th><th colspan="'+targetCount+'">Target</th><th colspan="'+outputCount+'">Output</th></tr>';
                             for(var i=0; i<ds.length; i++){
                                 str+= '<tr>';
                                 for(var j=0; j<inputCount; j++){
@@ -292,10 +292,9 @@
     });
 </script>
 <div id="control">
-    <input type="button" id="btn_train_nn" value="Train Neural Network" />
-    <input type="button" id="btn_train_nnga" value="Train Neural Network with Genetics Algorithm" />
-    <input type="checkbox" id="chk_watch" checked="true" />
-    <label>Watch the progress</label>
+    <input type="button" id="btn_train_nn" class="btn btn-primary" value="Train Neural Network" />
+    <input type="button" id="btn_train_nnga" class="btn btn-primary" value="Train Neural Network with Genetics Algorithm" />
+    <input type="checkbox" id="chk_watch" checked="true" /><span>&nbsp;Watch the progress</span>
 </div>
 <div id="graphic">
     <canvas id="canvas" width="500px" height="600px"></canvas>

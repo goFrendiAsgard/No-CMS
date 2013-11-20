@@ -5,6 +5,9 @@
     Description:
         Purpose of the stylesheet follows.
 */
+.navbar-text{
+    color: #adafae!important;
+}
 .not_shown{
 	display: none;
 }

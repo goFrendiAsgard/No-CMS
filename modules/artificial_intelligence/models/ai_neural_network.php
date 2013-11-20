@@ -258,7 +258,7 @@ class AI_Neural_Network extends AI_Core {
         
     }
     
-    public function train($dataSet=NULL){
+    public function train($dataSet, $use_GA=TRUE){
         
         set_time_limit(0);                   // ignore php timeout
         ignore_user_abort(true);             // keep on going even if user pulls the plug*

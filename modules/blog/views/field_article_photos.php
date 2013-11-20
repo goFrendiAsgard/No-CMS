@@ -69,7 +69,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "url"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        var field_value = ''
+        var field_value = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('url')){
             field_value = value.url;
         }
@@ -170,7 +170,7 @@
                 for(var i=0; i<DATA_photos.update.length; i++){
                     if(DATA_photos.update[i].record_index == record_index){
                         record_index_found = true;
-                        var primary_key = DATA_photos.update[i].primary_key
+                        var primary_key = DATA_photos.update[i].primary_key;
                         // delete element from update
                         DATA_photos.update.splice(i,1);
                         // add it to delete
@@ -274,19 +274,19 @@
         var year = '';
         var php_date = '';
         if(DATE_FORMAT == 'uk-date'){
-            var date_array = js_date.split('/')
+            var date_array = js_date.split('/');
             day = date_array[0];
             month = date_array[1];
             year = date_array[2];
             php_date = year+'-'+month+'-'+day;
         }else if(DATE_FORMAT == 'us-date'){
-            var date_array = js_date.split('/')
+            var date_array = js_date.split('/');
             day = date_array[1];
             month = date_array[0];
             year = date_array[2];
             php_date = year+'-'+month+'-'+day;
         }else if(DATE_FORMAT == 'sql-date'){
-            var date_array = js_date.split('-')
+            var date_array = js_date.split('-');
             day = date_array[2];
             month = date_array[1];
             year = date_array[0];

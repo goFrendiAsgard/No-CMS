@@ -31,6 +31,7 @@ assets/caches/*.css
 modules/.git
 application/config/*.php
 .htaccess
+application/logs/log*.php
 
 # the sql
 modules/*/assets/db/backup*.sql
@@ -50,4 +51,4 @@ modules/year_book
 modules/stiki_ibk
 modules/pendaftaran_wisuda
 modules/library_app
-application/logs/
+modules/artificial_intelligence/assets/data/1_*

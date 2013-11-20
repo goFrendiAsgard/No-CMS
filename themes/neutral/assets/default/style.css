@@ -153,6 +153,9 @@
   border-bottom-color: #111111;
 }
 /* start */
+.navbar-text{
+    color:#ffffff!important;
+}
 .not_shown{
 	display: none;
 }

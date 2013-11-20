@@ -53,15 +53,25 @@
                                 
             <div class="tab-pane active" id="tab1">                
                 <div class="control-group">
-                   <label class="control-label" for="section_top_fix">Top Navigation Section</label>
+                   <label class="control-label" for="section_top_fix">Top Section</label>
                    <div class="controls">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
                        <textarea id="section_top_fix" name="section_top_fix" class="text-area-section"><?php echo $section_widget_list['section_top_fix']['static_content']; ?></textarea>                       
-                       <p class="help-block">HTML &amp; tags of top navigation section</p>
+                       <p class="help-block">HTML &amp; tags of top section</p>
                    </div>
-                </div>                
+                </div> 
+                <div class="control-group">
+                   <label class="control-label" for="section_top_fix">Navigation Bar's Right Partial</label>
+                   <div class="controls">
+                       <div class="div-normal-widget">
+                           <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                       </div>
+                       <textarea id="navigation_right_partial" name="navigation_right_partial" class="text-area-section"><?php echo $section_widget_list['navigation_right_partial']['static_content']; ?></textarea>                       
+                       <p class="help-block">HTML &amp; tags of navigation bar's right partial (don't put too much thing here)</p>
+                   </div>
+                </div>               
                 <div class="control-group">
                    <label class="control-label" for="section_banner">Banner Section</label>
                    <div class="controls">
@@ -92,7 +102,7 @@
                        <p class="help-block">HTML &amp; tags of right section</p>
                    </div>
                 </div>                
-                <div class="control-group" style="height:290px;">
+                <div class="control-group" style="height:260px;">
                    <label class="control-label" for="section_bottom">Bottom Section</label>
                    <div class="controls">
                        <div class="div-normal-widget">
