@@ -34,7 +34,7 @@ class Article_Model extends  CMS_Model{
 
     public function __construct(){
         parent::__construct();
-        $this->page_break_separator = '/(<div style=\"page-break-after: always;\">\s*<span style=\"display: none;\">&nbsp;<\/span><\/div>)/i';
+        $this->page_break_separator = '/(<div style=\"page-break-after: always;\">\s*<span style=\"display: none;\">\s*&nbsp;\s*<\/span>\s*<\/div>)/i';
     }
 
     public function get_count_article_url($article_url){

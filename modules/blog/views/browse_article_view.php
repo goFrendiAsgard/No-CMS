@@ -86,8 +86,8 @@
 <div id="record_content">
     <?php
         if(isset($article) && $article !== FALSE){
-            echo '<h2>'.$article['title'].'</h2>'.br();
-            echo '('.$article['author'].', '.$article['date'].')';
+            echo '<h2>'.$article['title'].'</h2>';
+            echo '('.$article['author'].', '.$article['date'].')'.br();
             echo '<div>';
             echo $article['content'];
             echo '</div>';

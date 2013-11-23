@@ -53,6 +53,7 @@ HOW TO MAKE NO-CMS
     - Image_moo library
     - jsmin.php
     - CodeIgniter HybridAuth Library
+    - kcfinder
     - Some No-CMS specially written files:
         - `/assets/nocms/*`
         - `/assets/bootstrap/*`
@@ -68,6 +69,7 @@ HOW TO MAKE NO-CMS
         - `/readme.md`
         - `/developer-note.md`
         - `/reset-installation.sh`
+        - `/application/config/first-time/third_party_config/*`
         - `/application/core/MY_CodeIgniter.php` 
 
             This one overwrite `system/core/CodeIgniter.php` 
@@ -114,8 +116,65 @@ HOW TO MAKE NO-CMS
             Contains some functions such as `cms_table_name`
 
 * Steps:
-    - Put CodeIgniter and ingredients all together. Don't overwrite autoload.php (beware of Phil's template)
+    - Put CodeIgniter and ingredients all together. Don't overwrite autoload.php (beware of Phil's template). Put KCFinder under `/assets` directory
     - Download jquery min.map (adjust with the one used by groceryCRUD, in current case 1.10.2, from http://jquery.com/download/) and put it on `/assets/grocery_crud/js`
+    - Download newest CKEditor, replace groceryCRUD's CKEditor with that one
+    - Rename `/assets/kcfinder/config.php` into `/assets/kcfinder/config-ori.php`
+    - Rename `/assets/grocery_crud/texteditor/ckeditor/config.js` into `/assets/grocery_crud/texteditor/ckeditor/config-ori.js` 
+    - Modify `/assets/kcfinder/core/uploader.php`
+
+        ```php
+                protected function get_htaccess() {
+                    // Modified by Go Frendi Gunawan, 23 Nov 2013
+                    return '';
+                    //
+                    /**
+                    return "<IfModule mod_php4.c>
+              php_value engine off
+            </IfModule>
+            <IfModule mod_php5.c>
+              php_value engine off
+            </IfModule>
+            ";
+                   **/
+                }
+        ```
+
+        and (line 138)
+
+
+        ```php
+            switch ($this->cms) {
+                case "drupal": break;
+                // Modified by Go Frendi Gunawan, 23 Nov 2013
+                default: if(!isset($_SESSION))session_start(); break;
+                //
+                //default: session_start(); break;
+            }
+        ```
+
+    - Edit `/assets/grocery_crud/themes/flexigrid/css/flexigrid.css`
+
+        ```css
+            .flexigrid div.form-div textarea
+            {
+                font-size: 15px;
+                border: 1px solid #AAA;
+                padding: 5px 5px 5px 5px;
+                background: #fafafa;
+            }
+        ```
+        into
+        ```css
+            .flexigrid div.form-div
+            {
+                font-size: 15px;
+                border: 1px solid #AAA;
+                padding: 5px 5px 5px 5px;
+                background: #fafafa;
+            }
+        ```
+
     - Move `/application/config/*` into `/application/config/first-time/*`
     - Edit `/application/config/first-time/config.php`, modify `encryption_key` value
 
@@ -326,7 +385,7 @@ HOW TO MAKE NO-CMS
         }
         ```
 
-    - Edit `/application/MX/Modules.php` around line `99` (function load)
+    - Edit `/application/third_party/MX/Modules.php` around line `99` (function load)
 
         ```php
             /* load the controller class */
@@ -344,7 +403,7 @@ HOW TO MAKE NO-CMS
             //
         ```
 
-    - Edit `/application/MX/Modules.php` around line `99` (function load)
+    - Edit `/application/third_party/MX/Modules.php` around line `99` (function load)
 
         ```php
             /* load the controller class */
