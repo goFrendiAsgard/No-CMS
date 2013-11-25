@@ -812,6 +812,13 @@ class CMS_Model extends CI_Model
             $this->cms_user_id($user_id);
             $this->cms_user_real_name($user_real_name);
             $this->cms_user_email($user_email);
+            // needed by kcfinder
+            if(!isset($_SESSION)){
+                session_start();
+            }
+            if(!isset($_SESSION['__cms_user_id'])){
+                $_SESSION['__cms_user_id'] = $user_id;
+            }
             return TRUE;
         }
         return FALSE;
@@ -827,6 +834,10 @@ class CMS_Model extends CI_Model
         $this->cms_unset_ci_session('cms_user_id');
         $this->cms_unset_ci_session('cms_user_real_name');
         $this->cms_unset_ci_session('cms_user_email');
+        // needed by kcfinder
+        if(isset($_SESSION)){
+            session_unset('__cms_user_id');
+        }
     }
 
     /**

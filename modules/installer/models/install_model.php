@@ -226,11 +226,26 @@ class Install_Model extends CI_Model{
         }else if ($this->admin_password != $this->admin_confirm_password){
             $success = FALSE;
             $error_list[] = 'Admin password confirmation doesn\'t match';
-        }
+        }        
         // No-CMS directory
         if (!is_writable(FCPATH)) {
             $success  = FALSE;
             $error_list[] = FCPATH.' is not writable';
+        }
+        // kcfinder upload
+        if (!is_writable(FCPATH.'assets/kcfinder/upload')){
+            $success = FALSE;
+            $error_list[] = FCPATH.'assets/kcfinder/upload is not writable';
+        }
+        // kcfinder config
+        if (!is_writable(FCPATH.'assets/kcfinder')){
+            $success = FALSE;
+            $error_list[] = FCPATH.'assets/kcfinder is not writable';
+        }
+        // ckeditor config
+        if (!is_writable(FCPATH.'assets/grocery_crud/texteditor/ckeditor')){
+            $success = FALSE;
+            $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor';
         }
         // assets/caches
         if (!is_writable(FCPATH.'assets/caches')) {
@@ -962,6 +977,12 @@ class Install_Model extends CI_Model{
         @file_put_contents($file_name, $str);
     }
 
+    public function replace_tag($file_name, $tag, $value){
+        $content = file_get_contents($file_name);
+        $content = str_replace('{{ '.$tag.' }}', $value, $content);
+        file_put_contents($file_name, $content);
+    }
+
     public function build_configuration(){
         // copy everything from /application/config/first-time.php into /application/config/
         $file_list = scandir(APPPATH.'config/first-time', 1);
@@ -970,6 +991,17 @@ class Install_Model extends CI_Model{
                 copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$file);
             }
         }
+
+        // ckeditor config
+        copy(APPPATH.'config/first-time/third_party_config/ckeditor_config.js', 
+            FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js');
+        $this->replace_tag(FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js', 'BASE_URL', base_url());
+
+        // kcfinder config
+        copy(APPPATH.'config/first-time/third_party_config/kcfinder_config.php', 
+            FCPATH.'assets/kcfinder/config.php');
+        $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'BASE_URL', base_url());
+        $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', FCPATH);
 
         // database config
         $file_name = APPPATH.'config/database.php';

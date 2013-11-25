@@ -144,3 +144,5 @@ v0.6.6
 + (done, tested) Fix bug: when screen resized to smaller width, the button cannot be clicked
 + (done, tested) Use newest CodeIgniter 3.0.0 and modify the rule so that the old naming convention still works (Thanks Ivan)
 + (done, tested) Make `/application/config/first-time` and `first-time` environment as suggested by cesarliws (https://github.com/goFrendiAsgard/No-CMS/issues/79)
++ (done, tested) Update CKEditor of groceryCRUD, add kcfinder.
++ (proposed) Use bootstrap 3.0 
