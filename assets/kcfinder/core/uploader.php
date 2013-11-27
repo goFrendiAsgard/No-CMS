@@ -225,8 +225,10 @@ class uploader {
             $this->typeDir = "{$this->config['uploadDir']}/{$this->type}";
             $this->typeURL = "{$this->config['uploadURL']}/{$this->type}";
         }
-        if (!is_dir($this->config['uploadDir']))
+        if (!is_dir($this->config['uploadDir'])){
             @mkdir($this->config['uploadDir'], $this->config['dirPerms']);
+            @file_put_contents($this->config['uploadDir'].'index.html', 'Directory Access is forbidden');
+        }
 
         // HOST APPLICATIONS INIT
         if (isset($this->get['CKEditorFuncNum']))

@@ -153,6 +153,15 @@ HOW TO MAKE NO-CMS
             }
         ```
 
+        and (line 228)
+
+        ```php
+            if (!is_dir($this->config['uploadDir'])){
+                @mkdir($this->config['uploadDir'], $this->config['dirPerms']);
+                @file_put_contents($this->config['uploadDir'].'index.html', 'Directory Access is forbidden');
+            }
+        ```
+
     - Edit `/assets/grocery_crud/themes/flexigrid/css/flexigrid.css`
 
         ```css
