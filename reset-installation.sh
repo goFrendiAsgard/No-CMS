@@ -6,6 +6,5 @@ sudo rm -f ./application/logs/hybridauth.log
 sudo touch ./application/logs/hybridauth.log
 sudo rm -f ./assets/grocery_crud/texteditor/ckeditor/config.js
 sudo rm -f ./assets/kcfinder/config.php
-sudo rm -Rf ./assets/kcfinder/upload/*
 sudo rm -f ./.htaccess
 sudo chmod 777 . -R
