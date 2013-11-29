@@ -352,11 +352,6 @@ class Install_Model extends CI_Model{
                     $error_list[] = 'Windows Live application secret cannot be empty';
                 }
             }
-            // hybridauthlib configuration file
-            if (!is_writable(APPPATH.'config/hybridauthlib.php')) {
-                $success  = FALSE;
-                $error_list[] = APPPATH."config/hybridauthlib.php is not writable";
-            }
             // hybridauthlib log file
             if (!is_writable(APPPATH.'logs/hybridauth.log')) {
                 $success  = FALSE;

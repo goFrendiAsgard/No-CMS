@@ -52,6 +52,11 @@
                 }
                 REQUEST_EXISTS = false;
                 $("#img_ajax_loader").hide();
+            },
+            error: function(xhr, textStatus, errorThrown){
+                if(textStatus != 'abort'){
+                    setTimeout(check_user_exists, 500);    
+                }
             }
         });
     }
@@ -80,7 +85,7 @@
     echo form_password('password').br();
     echo form_label('{{ language:Confirm Password }}');
     echo form_password('confirm_password').br();
-    echo form_submit('change_profile', $change_profile_caption, 'class="btn btn-primary"');
+    echo form_submit('change_profile', $change_profile_caption, 'class="btn btn-primary" style="display:none;"');
     echo form_close();
 ?>
 <img id="img_ajax_loader" style="display:none;" src="<?php echo base_url('assets/nocms/images/ajax-loader.gif');?>" /><br />
