@@ -652,6 +652,11 @@
                         $("#btn-install").attr('disabled','disabled');
                     }
 
+                },
+                error: function(xhr, textStatus, errorThrown){
+                    if(textStatus != 'abort'){
+                        setTimeout(check, 500);    
+                    }
                 }
             });
         }

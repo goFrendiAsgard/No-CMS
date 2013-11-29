@@ -51,6 +51,11 @@
                 }
                 REQUEST_EXISTS = false;
                 $("#img_ajax_loader").hide();
+            },
+            error: function(xhr, textStatus, errorThrown){
+                if(textStatus != 'abort'){
+                    setTimeout(check_user_exists, 500);    
+                }
             }
         });
     }
@@ -80,7 +85,7 @@
     echo form_password($secret_code.'password').br();
     echo form_label('{{ language:Confirm Password }}');
     echo form_password($secret_code.'confirm_password').br();
-    echo form_submit('register', $register_caption, 'class="btn btn-primary"');
+    echo form_submit('register', $register_caption, 'class="btn btn-primary" style="display:none;"');
     echo form_close();
     echo br();
 ?>
