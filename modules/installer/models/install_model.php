@@ -996,7 +996,7 @@ class Install_Model extends CI_Model{
         copy(APPPATH.'config/first-time/third_party_config/kcfinder_config.php', 
             FCPATH.'assets/kcfinder/config.php');
         $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'BASE_URL', base_url());
-        $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', FCPATH);
+        $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
 
         // database config
         $file_name = APPPATH.'config/database.php';
