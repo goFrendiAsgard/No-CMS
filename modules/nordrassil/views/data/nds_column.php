@@ -85,7 +85,7 @@
 		});
 		$("select#field-data_type").change(function(){
 			adjust_form_by_role_and_data_type();
-		})
+		});
 
 		adjust_form_by_role_and_data_type();
 

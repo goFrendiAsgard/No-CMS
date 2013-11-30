@@ -3,6 +3,9 @@ class Ajax extends CMS_Controller{
 
 	// get restricted project options
 	public function get_restricted_project_option($template_id=0){
+        if(!is_numeric($template_id)){
+            $template_id = 0;
+        }
 		$query = $this->db->select('option_id')
 			->from($this->cms_complete_table_name('template_option'))
 			->where('option_type !=','project')
@@ -17,6 +20,9 @@ class Ajax extends CMS_Controller{
 
 	// get restricted table options
 	public function get_restricted_table_option($project_id=0){
+        if(!is_numeric($project_id)){
+            $project_id = 0;
+        }
 		$SQL = "SELECT option_id
 			FROM ".$this->cms_complete_table_name('template_option')."
 			WHERE option_type <>'table' OR
@@ -31,6 +37,9 @@ class Ajax extends CMS_Controller{
 
 	// get restricted column options
 	public function get_restricted_column_option($table_id=0){
+        if(!is_numeric($table_id)){
+            $table_id = 0;
+        }
 		$SQL = "SELECT option_id
 			FROM ".$this->cms_complete_table_name('template_option')."
 			WHERE option_type <>'column' OR
@@ -49,6 +58,9 @@ class Ajax extends CMS_Controller{
 
 	// get restricted table sibling
 	public function get_restricted_table_sibling($table_id=0){
+        if(!is_numeric($table_id)){
+            $table_id = 0;
+        }
 		$SQL = "SELECT table_id
 			FROM ".$this->cms_complete_table_name('table')."
 			WHERE project_id NOT IN (
@@ -65,6 +77,9 @@ class Ajax extends CMS_Controller{
 
 	// get restricted table sibling
 	public function get_restricted_column($table_id=0){
+        if(!is_numeric($table_id)){
+            $table_id = 0;
+        }
 		$SQL = "SELECT column_id
 			FROM ".$this->cms_complete_table_name('column')."
 			WHERE
