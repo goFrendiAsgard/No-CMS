@@ -1291,10 +1291,13 @@ class CMS_Model extends CI_Model
     public function cms_module_path($module_name = NULL)
     {
         if (!isset($module_name)) {
-            return $this->router->fetch_module();
-        } else {
-            $SQL   = "SELECT module_path FROM ".cms_table_name('main_module')." WHERE module_name='" . addslashes($module_name) . "'";
-            $query = $this->db->query($SQL);
+            $module = $this->router->fetch_module();
+            return $module;
+        } else {            
+            $query = $this->db->select('module_path')
+                ->from(cms_table_name('main_module'))
+                ->where('module_name', $module_name)
+                ->get();
             if ($query->num_rows() > 0) {
                 $row = $query->row();
                 return $row->module_path;
@@ -1312,8 +1315,10 @@ class CMS_Model extends CI_Model
      */
     public function cms_module_name($module_path)
     {
-        $SQL   = "SELECT module_name FROM ".cms_table_name('main_module')." WHERE module_path='" . addslashes($module_path) . "'";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('module_name')
+            ->from(cms_table_name('main_module'))
+            ->where('module_path', $module_path)
+            ->get();
         if ($query->num_rows() > 0) {
             $row = $query->row();
             return $row->module_name;

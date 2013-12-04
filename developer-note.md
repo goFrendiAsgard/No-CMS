@@ -412,22 +412,12 @@ HOW TO MAKE NO-CMS
             //
         ```
 
-    - Edit `/application/third_party/MX/Modules.php` around line `99` (function load)
+    - Edit `/application/MX/Modules.php` around line `89` and respective curly-bracket
 
         ```php
-            /* load the controller class */
-            // Modified by Ivan Tcholakov, 28-FEB-2012.
-            //$class = $class.CI::$APP->config->item('controller_suffix');
-            if (self::test_load_file(ucfirst($class).CI::$APP->config->item('controller_suffix'), $path)) {
-                $class = ucfirst($class).CI::$APP->config->item('controller_suffix');
-            }
-            elseif (self::test_load_file($class.CI::$APP->config->item('controller_suffix'), $path)) {
-                $class = $class.CI::$APP->config->item('controller_suffix');
-            }
-            elseif (self::test_load_file(ucfirst($class), $path)) {
-                $class = ucfirst($class);
-            }
-            //
+            // removed by Go Frendi Gunawan, 04-DEC-2013, since this make widget cannot be called twice if there is another widget call
+            // from another widget
+            //if ( ! isset(self::$registry[$alias])) {
         ```
 
     - Edit `/application/MX/Modules.php` around line `239` (function parse_routes)
