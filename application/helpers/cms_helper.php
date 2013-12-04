@@ -11,8 +11,10 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
         $str = file_get_contents($file_name);
         $str = preg_replace($pattern, $replacement, $str);
         @chmod($file_name,0777);
-        @file_put_contents($file_name, $str);
-        @chmod($file_name,0555);
+        if(strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
+            @file_put_contents($file_name, $str);
+            @chmod($file_name,0555);
+        }
         return FALSE;
     }else{
         if(!isset($value)){
@@ -37,8 +39,10 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
                 $str = preg_replace($pattern, $replacement, $str);
             }
             @chmod($file_name,0777);
-            @file_put_contents($file_name, $str);
-            @chmod($file_name,0555);
+            if(strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
+                @file_put_contents($file_name, $str);
+                @chmod($file_name,0555);
+            }
             return $value;
         }
     }

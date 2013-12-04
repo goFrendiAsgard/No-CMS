@@ -85,7 +85,9 @@ class Modules
 		$alias = strtolower(basename($module));
 
 		/* create or return an existing controller from the registry */
-		if ( ! isset(self::$registry[$alias])) {
+		// removed by Go Frendi Gunawan, 04-DEC-2013, since this make widget cannot be called twice if there is another widget call
+		// from another widget
+		//if ( ! isset(self::$registry[$alias])) {
 			
 			/* find the controller */
 			list($class) = CI::$APP->router->locate(explode('/', $module));
@@ -114,7 +116,9 @@ class Modules
 			/* create and register the new controller */
 			$controller = ucfirst($class);	
 			self::$registry[$alias] = new $controller($params);
-		}
+
+		// removed by Go Frendi Gunawan, 04-DEC-2013
+		//}
 		
 		return self::$registry[$alias];
 	}

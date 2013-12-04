@@ -959,31 +959,11 @@ class CMS_Controller extends MX_Controller
     
             // parse widget
             if(strpos($html, '{{ ') !== FALSE){
-                $pattern  = '/\{\{ widget:(.*?) \}\}/si';
+                $pattern  = '/\{\{ widget([a-zA-Z0-9-_]*?):(.*?) \}\}/si';
                 // execute regex
                 $html   = preg_replace_callback($pattern, array(
                     $this,
                     '__cms_preg_replace_callback_widget'
-                ), $html);
-            }
-    
-            // parse widget by name
-            if(strpos($html, '{{ ') !== FALSE){
-                $pattern  = '/\{\{ widget_name:(.*?) \}\}/si';
-                // execute regex
-                $html   = preg_replace_callback($pattern, array(
-                    $this,
-                    '__cms_preg_replace_callback_widget_by_name'
-                ), $html);
-            }
-    
-            // parse widget by slug
-            if(strpos($html, '{{ ') !== FALSE){
-                $pattern  = '/\{\{ widget_slug:(.*?) \}\}/si';
-                // execute regex
-                $html   = preg_replace_callback($pattern, array(
-                    $this,
-                    '__cms_preg_replace_callback_widget_by_slug'
                 ), $html);
             }
     
@@ -1148,31 +1128,23 @@ class CMS_Controller extends MX_Controller
 
     private function __cms_preg_replace_callback_widget($arr){
         $html = "";
-        if(count($arr)>1){
-            $slug = $arr[1];
-            $html = $this->__cms_build_widget($slug);
+        if(count($arr)>2){
+            $option = $arr[1];
+            $slug = NULL;
+            $widget_name = NULL;
+            if($option == '' || $option == '_slug'){
+                $slug = $arr[2];
+            }else if($option == '_name' || $option == '_code'){
+                $widget_name = $arr[2];
+            }
+            //$slug = $arr[1];
+            //var_dump(array($slug, $widget_name));
+            $html = $this->__cms_build_widget($slug, $widget_name);
         }
         return $html;
     }
 
-    private function __cms_preg_replace_callback_widget_by_name($arr){
-        $html = "";
-        if(count($arr)>1){
-            $widget_name = $arr[1];
-            $html = $this->__cms_build_widget(NULL, $widget_name);
-        }
-        return $html;
-    }
-
-    private function __cms_preg_replace_callback_widget_by_slug($arr){
-        $html = "";
-        if(count($arr)>1){
-            $slug = $arr[1];
-            $html = $this->__cms_build_widget($slug, NULL);
-        }
-        return $html;
-    }
-
+    
     public function cms_layout_exists($theme, $layout)
     {
         return is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php');
