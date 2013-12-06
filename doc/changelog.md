@@ -146,3 +146,4 @@ v0.6.6
 + (done, tested) Make `/application/config/first-time` and `first-time` environment as suggested by cesarliws (https://github.com/goFrendiAsgard/No-CMS/issues/79)
 + (done, tested) Update CKEditor of groceryCRUD, add kcfinder.
 + (proposed) Use bootstrap 3.0 
++ (done, tested) Fix Multiple widget from different modules problem (referenced by missidentified issue: https://github.com/goFrendiAsgard/No-CMS/issues/88)

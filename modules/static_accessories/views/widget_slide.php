@@ -21,6 +21,9 @@ for($i=0; $i<count($slide_list); $i++){
         height: <?=$slide_height?>;
         max-height:<?=$slide_height?>;
     }
+    div.item-image{
+        margin:auto;
+    }
     .carousel-control [class^="icon-"], .carousel-control [class*=" icon-"]{
         line-height: 30px!important;
         vertical-align:text-top!important;
