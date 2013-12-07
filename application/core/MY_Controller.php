@@ -781,10 +781,11 @@ class CMS_Controller extends MX_Controller
         $title         = '';
         $keyword       = '';
         $default_theme = NULL;
+        $default_layout= NULL;
         $page_title    = NULL;
         $page_keyword  = NULL;
         if ($navigation_name_provided) {
-            $query = $this->db->select('title, page_title, page_keyword, default_theme, only_content')
+            $query = $this->db->select('title, page_title, page_keyword, default_theme, default_layout, only_content')
                 ->from(cms_table_name('main_navigation'))
                 ->where(array('navigation_name'=>$navigation_name))
                 ->get();
@@ -792,6 +793,7 @@ class CMS_Controller extends MX_Controller
             if ($query->num_rows() > 0) {
                 $row           = $query->row();
                 $default_theme = $row->default_theme;
+                $default_layout = $row->default_layout;
                 if (isset($row->page_title) && $row->page_title != '') {
                     $page_title = $row->page_title;
                 } else if (isset($row->title) && $row->title != '') {
@@ -847,6 +849,8 @@ class CMS_Controller extends MX_Controller
         // GET THE LAYOUT
         if (isset($custom_layout)) {
             $layout = $custom_layout;
+        } else if (isset($default_layout) && $default_layout != ''){
+            $layout = $default_layout;
         } else {
             $this->load->library('user_agent');
             $layout = $this->agent->is_mobile() ? 'mobile' : 'default';

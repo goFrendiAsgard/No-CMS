@@ -23,3 +23,12 @@
         echo '</div>';
     }
 	echo $output;
+?>
+<script type="text/javascript">
+    // TODO: make layout input a combobox
+    function fetch_layout_option(){
+        $.ajax({
+
+        });
+    }
+</script>

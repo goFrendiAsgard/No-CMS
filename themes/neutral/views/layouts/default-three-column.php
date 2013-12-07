@@ -40,8 +40,8 @@
         	<div id="__section-left-and-content" class="span9">
         		<div>{{ navigation_path }}</div><hr />
         		<div>
-                    <div id="__section-left" class="hidden">{{ widget_name:section_left }}</div>
-                    <div id="__section-content" class="span12"><?php echo $template['body'];?></div>
+                    <div id="__section-left" class="span3">{{ widget_name:section_left }}</div>
+                    <div id="__section-content" class="span9"><?php echo $template['body'];?></div>
                 </div>
             </div><!--/#layout-content-->
             <div id="__section-right" class="span3">
@@ -61,25 +61,10 @@
                     $('.navbar-fixed-top').css({opacity: 1});
                 }
             });
-            // if section-left is empty, remove it
-            if($.trim($('#__section-left').html()) == ''){
-                $('#__section-left').remove();        
-            }else{
-                $('#__section-content').removeClass('span12');
-                $('#__section-content').addClass('span9');
-                $('#__section-left').removeClass('hidden');
-                $('#__section-left').addClass('span3');
-            }
-            // if section-right is empty, remove it
-            if($.trim($('#__section-right').html()) == ''){
-                $('#__section-right').remove();
-                $('#__section-left-and-content').removeClass('span9');
-                $('#__section-left-and-content').addClass('span12');
-            }
             // if section-banner is empty, remove it
             if($.trim($('__section-banner').html()) == ''){
                 $('__section-banner').remove();
-            }            
+            }          
         });
     </script>
   </body>

@@ -21,7 +21,7 @@ for($i=0; $i<count($slide_list); $i++){
         height: <?=$slide_height?>;
         max-height:<?=$slide_height?>;
     }
-    div.item-image{
+    img.item-image{
         margin:auto;
     }
     .carousel-control [class^="icon-"], .carousel-control [class*=" icon-"]{

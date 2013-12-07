@@ -42,7 +42,7 @@
     }
 </style>
 
-<div id="div-body" class="tabbable well"> <!-- Only required for left/right tabs -->
+<div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab1" data-toggle="tab">Sections</a></li>
         <li><a href="#tab2" data-toggle="tab">Images</a></li>

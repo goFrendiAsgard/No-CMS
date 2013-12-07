@@ -206,26 +206,26 @@ class Install_Model extends CI_Model{
         // database connection
         if($db === FALSE){
             $success =  FALSE;
-            $error_list[] = 'Cannot connect using provided database setting';
+            $error_list[] = 'Cannot connect using provided <a class="a-change-tab" href="#" tab="#tab1" component="db_protocol">Database Setting</a>';
         }
         if($this->db_name=='' && $this->db_protocol != 'pdo_sqlite'){
             $success = FALSE;
-            $error_list[] = 'Database schema cannot be empty';
+            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab1" component="db_name">Database schema</a> cannot be empty';
         }        
         if($this->admin_user_name==''){
             $success = FALSE;
-            $error_list[] = 'Admin user name cannot be empty';
+            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_user_name">Super Admin\'s username</a> is empty';
         }
         if($this->admin_real_name==''){
             $success = FALSE;
-            $error_list[] = 'Admin real name cannot be empty';
+            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_real_name">Super Admin\'s real name</a> is empty';
         }
         if($this->admin_password==''){
             $success = FALSE;
-            $error_list[] = 'Admin password is empty';
+            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_password">Super Admin\'s password</a> is empty';
         }else if ($this->admin_password != $this->admin_confirm_password){
             $success = FALSE;
-            $error_list[] = 'Admin password confirmation doesn\'t match';
+            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_confirm_password">Super Admin\'s password confirmation</a> doesn\'t match';
         }        
         // No-CMS directory
         if (!is_writable(FCPATH)) {
@@ -268,88 +268,88 @@ class Install_Model extends CI_Model{
             if($this->auth_enable_facebook){
                 if($this->auth_facebook_app_id == ''){
                     $success = FALSE;
-                    $error_list[] = 'Facebook application id cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab3" component="auth_facebook_app_id">Facebook application id</a> cannot be empty';
                 }
                 if($this->auth_facebook_app_secret == ''){
                     $success = FALSE;
-                    $error_list[] = 'Facebook application secret cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab3" component="auth_facebook_app_secret">Facebook application secret</a> cannot be empty';
                 }
             }
             // twitter
             if($this->auth_enable_twitter){
                 if($this->auth_twitter_app_key == ''){
                     $success = FALSE;
-                    $error_list[] = 'Twitter application key cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab4" component="auth_twitter_app_key">Twitter application key</a> cannot be empty';
                 }
                 if($this->auth_twitter_app_secret == ''){
                     $success = FALSE;
-                    $error_list[] = 'Twitter application secret cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab4" component="auth_twitter_app_secret">Twitter application secret</a> cannot be empty';
                 }
             }
             // google
             if($this->auth_enable_google){
                 if($this->auth_google_app_id == ''){
                     $success = FALSE;
-                    $error_list[] = 'Google application id cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab5" component="auth_google_app_id">Google application id</a> cannot be empty';
                 }
                 if($this->auth_google_app_secret == ''){
                     $success = FALSE;
-                    $error_list[] = 'Google application secret cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab5" component="auth_google_app_secret">Google application secret</a> cannot be empty';
                 }
             }
             // yahoo
             if($this->auth_enable_yahoo){
                 if($this->auth_yahoo_app_id == ''){
                     $success = FALSE;
-                    $error_list[] = 'Yahoo application id cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab6" component="auth_yahoo_app_id">Yahoo application id</a> cannot be empty';
                 }
                 if($this->auth_yahoo_app_secret == ''){
                     $success = FALSE;
-                    $error_list[] = 'Yahoo application secret cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab6" component="auth_yahoo_app_secret">Yahoo application secret</a> cannot be empty';
                 }
             }
             // linkedin
             if($this->auth_enable_linkedin){
                 if($this->auth_linkedin_app_key == ''){
                     $success = FALSE;
-                    $error_list[] = 'Linkedin application key cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab7" component="auth_linkedin_app_key">Linkedin application key</a> cannot be empty';
                 }
                 if($this->auth_linkedin_app_secret == ''){
                     $success = FALSE;
-                    $error_list[] = 'Linkedin application secret cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab7" component="auth_linkedin_app_secret">Linkedin application secret</a> cannot be empty';
                 }
             }
             // myspace
             if($this->auth_enable_myspace){
                 if($this->auth_myspace_app_key == ''){
                     $success = FALSE;
-                    $error_list[] = 'Myspace application key cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab8" component="auth_myspace_app_key">Myspace application key</a> cannot be empty';
                 }
                 if($this->auth_myspace_app_secret == ''){
                     $success = FALSE;
-                    $error_list[] = 'Myspace application secret cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab8" component="auth_myspace_app_secret">Myspace application secret</a> cannot be empty';
                 }
             }
             // foursquare
             if($this->auth_enable_foursquare){
                 if($this->auth_foursquare_app_id == ''){
                     $success = FALSE;
-                    $error_list[] = 'Foursquare application id cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab9" component="auth_foursquare_app_id">Foursquare application id</a> cannot be empty';
                 }
                 if($this->auth_foursquare_app_secret == ''){
                     $success = FALSE;
-                    $error_list[] = 'Foursquare application secret cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab9" component="auth_foursquare_app_secret">Foursquare application secret</a> cannot be empty';
                 }
             }
             // windows_live
             if($this->auth_enable_windows_live){
                 if($this->auth_windows_live_app_id == ''){
                     $success = FALSE;
-                    $error_list[] = 'Windows Live application id cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab10" component="auth_windows_live_app_id">Windows Live application id</a> cannot be empty';
                 }
                 if($this->auth_windows_live_app_secret == ''){
                     $success = FALSE;
-                    $error_list[] = 'Windows Live application secret cannot be empty';
+                    $error_list[] = '<a class="a-change-tab" href="#" tab="#tab10" component="auth_windows_live_app_secret">Windows Live application secret</a> cannot be empty';
                 }
             }
             // hybridauthlib log file
@@ -563,6 +563,7 @@ class Install_Model extends CI_Model{
                 'static_content' => $type_text,
                 'only_content' => $type_boolean_false,
                 'default_theme' => $type_varchar_small,
+                'default_layout' => $type_varchar_small,
             );
         $sql_list[] = $this->create_table('main_navigation',$fields);
 
@@ -718,7 +719,7 @@ class Install_Model extends CI_Model{
         return $this->db->last_query();
     }
 
-    protected function insert_navigation($navigation_name, $parent_id, $title, $page_title, $page_keyword, $description, $url, $authorization_id, $index, $active, $is_static, $static_content, $only_content, $bootstrap_glyph = 'icon-th-large'){
+    protected function insert_navigation($navigation_name, $parent_id, $title, $page_title, $page_keyword, $description, $url, $authorization_id, $index, $active, $is_static, $static_content, $only_content, $bootstrap_glyph = 'icon-th-large', $default_theme=NULL, $default_layout=NULL){
         $array = array(
                 'navigation_name' => $navigation_name,
                 'parent_id' => $parent_id,
@@ -734,6 +735,8 @@ class Install_Model extends CI_Model{
                 'static_content' => $static_content,
                 'only_content' => $only_content,
                 'bootstrap_glyph' => $bootstrap_glyph,
+                'default_theme' => $default_theme,
+                'default_layout' => $default_layout,
             );
         $table_name = 'main_navigation';
         if(!trim($this->db_table_prefix) == ''){
@@ -848,7 +851,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_navigation('main_quicklink_management', 4, 'Quick Link Management', 'Quick Link Management', NULL, 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_config_management', 4, 'Configuration Management', 'Configuration Management', NULL, 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_layout', 4, 'Layout Management', 'Layout Management', NULL, 'Manage Layout', 'main/layout', 4, 9, 1, 0, NULL, 0);
-        $sql_list[] = $this->insert_navigation('main_index', NULL, 'Home', 'Home', NULL, 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h2>'.PHP_EOL.'  Welcome {{ user_name }}</h2>'.PHP_EOL.'<p>'.PHP_EOL.' This is the home page. You have several options to modify this page.</p>'.PHP_EOL.'<ul>'.PHP_EOL.'    <li>'.PHP_EOL.'      <b>Using static page</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'           This is the most recommended way to do.</p>'.PHP_EOL.'   </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Redirect default controller</b>'.PHP_EOL.'        <p>'.PHP_EOL.'           You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />'.PHP_EOL.'            <code>/application/config/routes.php</code>, around line 41.<br />'.PHP_EOL.'            Please make sure that your default controller is valid.<br />'.PHP_EOL.'         This is recommended if you also want your own page to be a default homepage.</p>'.PHP_EOL.'  </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Using dynamic page and edit the view manually</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'          and edit the corresponding view on <code>/modules/main/index.php</code></p>'.PHP_EOL.'   </li>'.PHP_EOL.'</ul>'.PHP_EOL.'<p>'.PHP_EOL.' <div class="alert alert-info"><b>Any other question? : </b><br />'.PHP_EOL.'   Visit No-CMS forum here: <a href="http://getnocms.com/forum">http://getnocms.com/forum</a><br />'.PHP_EOL.'  Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />'.PHP_EOL.'    While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />'.PHP_EOL.'  In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />'.PHP_EOL.' That&#39;s all. Start your new adventure with No-CMS !!!</p>'.PHP_EOL.'</div>', 0, 'icon-home');
+        $sql_list[] = $this->insert_navigation('main_index', NULL, 'Home', 'Home', NULL, 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h2>'.PHP_EOL.'  Welcome {{ user_name }}</h2>'.PHP_EOL.'<p>'.PHP_EOL.' This is the home page. You have several options to modify this page.</p>'.PHP_EOL.'<ul>'.PHP_EOL.'    <li>'.PHP_EOL.'      <b>Using static page</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'           This is the most recommended way to do.</p>'.PHP_EOL.'   </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Redirect default controller</b>'.PHP_EOL.'        <p>'.PHP_EOL.'           You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />'.PHP_EOL.'            <code>/application/config/routes.php</code>, around line 41.<br />'.PHP_EOL.'            Please make sure that your default controller is valid.<br />'.PHP_EOL.'         This is recommended if you also want your own page to be a default homepage.</p>'.PHP_EOL.'  </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Using dynamic page and edit the view manually</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'          and edit the corresponding view on <code>/modules/main/index.php</code></p>'.PHP_EOL.'   </li>'.PHP_EOL.'</ul>'.PHP_EOL.'<p>'.PHP_EOL.' <div class="alert alert-info"><b>Any other question? : </b><br />'.PHP_EOL.'   Visit No-CMS forum here: <a href="http://getnocms.com/forum">http://getnocms.com/forum</a><br />'.PHP_EOL.'  Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />'.PHP_EOL.'    While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />'.PHP_EOL.'  In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />'.PHP_EOL.' That&#39;s all. Start your new adventure with No-CMS !!!</p>'.PHP_EOL.'</div>', 0, 'icon-home', NULL, 'slide');
         $sql_list[] = $this->insert_navigation('main_language', NULL, 'Language', 'Language', NULL, 'Choose the language', 'main/language', 1, 0, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', NULL, 'Third Party Authentication', 'main/hauth/index', 1, 0, 1, 0, NULL, 0);
         // quicklink
@@ -857,8 +860,8 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_quicklink(2, 2);
         $sql_list[] = $this->insert_quicklink(4, 3);
         // widget
-        $sql_list[] = $this->insert_widget('section_top_fix', 'Top Fix Section', '', '', 1, 1, 1, 1, '{{ widget_name:top_navigation }}'.PHP_EOL.'{{ widget_name:static_accessories_slideshow }}', NULL);
-        $sql_list[] = $this->insert_widget('section_banner', 'Banner Section', '', '', 1, 1, 2, 1, '<div class="well hidden-phone span12" style="padding-top:10px;">'.PHP_EOL.'  <div class="span2">'.PHP_EOL.'    <img src ="{{ site_logo }}" />'.PHP_EOL.'  </div>'.PHP_EOL.'  <div class="span10">'.PHP_EOL.'    <h1>{{ site_name }}</h1>'.PHP_EOL.'    <p>{{ site_slogan }}</p>'.PHP_EOL.'  </div>'.PHP_EOL.'</div>', NULL);
+        $sql_list[] = $this->insert_widget('section_top_fix', 'Top Fix Section', '', '', 1, 1, 1, 1, '{{ widget_name:top_navigation }}', NULL);
+        $sql_list[] = $this->insert_widget('section_banner', 'Banner Section', '', '', 1, 1, 2, 1, '<div class="well hidden-phone span12" style="margin-top:10px;">'.PHP_EOL.'  <div class="span2">'.PHP_EOL.'    <img src ="{{ site_logo }}" />'.PHP_EOL.'  </div>'.PHP_EOL.'  <div class="span10">'.PHP_EOL.'    <h1>{{ site_name }}</h1>'.PHP_EOL.'    <p>{{ site_slogan }}</p>'.PHP_EOL.'  </div>'.PHP_EOL.'</div>', NULL);
         $sql_list[] = $this->insert_widget('section_left', 'Left Section', '', '', 1, 1, 3, 1, '', NULL);
         $sql_list[] = $this->insert_widget('section_right', 'Right Section', '', '', 1, 1, 4, 1, '{{ widget_slug:sidebar }}<hr />{{ widget_slug:advertisement }}', NULL);
         $sql_list[] = $this->insert_widget('section_bottom', 'Bottom Section', '', '', 1, 1, 5, 1, '{{ site_footer }}', NULL);
