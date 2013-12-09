@@ -35,7 +35,7 @@
     <div class="container">
       <div class="row-fluid">
     	<div>     
-        	<div id="__section-left-and-content" class="span9">
+        	<div id="__section-left-and-content" class="span12">
         		<div>{{ navigation_path }}</div><hr />
         		<div>
                     <div id="__section-content" class="span12"><?php echo $template['body'];?></div>

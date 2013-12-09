@@ -1,6 +1,6 @@
 <?php
 	$identifier = '';
-	for($i=1; $i<=32; $i++){
+	for($i=1; $i<=33; $i++){
 		$identifier.= 'a[href="'.site_url('{{ module_path }}/config/delete/'.$i).'"]';
 		if($i<32){
 			$identifier.= ',';

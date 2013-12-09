@@ -887,6 +887,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_config('site_favicon', '{{ base_url }}assets/nocms/images/No-CMS-favicon.png', 'Site favicon');
         $sql_list[] = $this->insert_config('site_footer', 'Powered by No-CMS &copy; 2013', 'Site footer');
         $sql_list[] = $this->insert_config('site_theme', 'neutral', 'Site theme');
+        $sql_list[] = $this->insert_config('site_layout', 'default', 'Site layout');
         $sql_list[] = $this->insert_config('site_language', 'english', 'Site language');
         $sql_list[] = $this->insert_config('max_menu_depth', '5', 'Depth of menu recursive');
         $sql_list[] = $this->insert_config('cms_email_reply_address', 'no-reply@No-CMS.com', 'Email address');
