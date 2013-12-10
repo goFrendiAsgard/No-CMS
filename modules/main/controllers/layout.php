@@ -38,6 +38,7 @@ class Layout extends CMS_Controller{
             $this->update_static_content('navigation_right_partial', $this->input->post('navigation_right_partial'));
             // save configurations
             $this->cms_set_config('site_name', $this->input->post('site_name'));
+            $this->cms_set_config('site_layout', $this->input->post('site_layout'));
             $this->cms_set_config('site_slogan', $this->input->post('site_slogan'));
             $this->cms_set_config('site_footer', $this->input->post('site_footer'));
             $this->cms_set_config('site_language', $this->input->post('site_language'));
@@ -73,6 +74,7 @@ class Layout extends CMS_Controller{
         $data['section_widget_list'] = $section_widget_list;
         $data['language_list'] = $language_list;
         $data['config_list'] = $config_list;
+        $data['layout_list'] = array();
         $data['current_language'] = $this->cms_get_config('site_language', True);
         $this->view('layout_index', $data, 'main_layout');
     }
