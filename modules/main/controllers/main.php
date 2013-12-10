@@ -604,8 +604,8 @@ class Main extends CMS_Controller
         $crud->unset_read();
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'authorization_id', 'groups', 'index');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
@@ -630,7 +630,8 @@ class Main extends CMS_Controller
             ->display_as('authorization_id', $this->cms_lang('Authorization'))
             ->display_as('groups', $this->cms_lang('Groups'))
             ->display_as('only_content', $this->cms_lang('Only show content'))
-            ->display_as('default_theme', $this->cms_lang('Default Theme'));
+            ->display_as('default_theme', $this->cms_lang('Default Theme'))
+            ->display_as('default_layout', $this->cms_lang('Default Layout'));
 
         $crud->order_by('parent_id, index', 'asc');
 

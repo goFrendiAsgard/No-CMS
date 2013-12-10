@@ -38,6 +38,7 @@ class Layout extends CMS_Controller{
             $this->update_static_content('navigation_right_partial', $this->input->post('navigation_right_partial'));
             // save configurations
             $this->cms_set_config('site_name', $this->input->post('site_name'));
+            $this->cms_set_config('site_layout', $this->input->post('site_layout'));
             $this->cms_set_config('site_slogan', $this->input->post('site_slogan'));
             $this->cms_set_config('site_footer', $this->input->post('site_footer'));
             $this->cms_set_config('site_language', $this->input->post('site_language'));
@@ -68,11 +69,31 @@ class Layout extends CMS_Controller{
         foreach($query->result_array() as $row){
             $config_list[$row['config_name']] = $row['value'];
         }      
+
+        // layout
+        $layout_list = array();
+        $site_theme = $config_list['site_theme'];
+        $this->load->helper('directory');
+        $files = directory_map('themes/'.$site_theme.'/views/layouts/', 1);
+        sort($files);
+        foreach($files as $file){
+            if(is_dir('themes/'.$site_theme.'/views/layouts/'.$file)){
+                continue;
+            }
+            $file = str_ireplace('.php', '', $file);
+            if($file == $config_list['site_layout']){
+                continue;
+            }
+            $layout_list[] = $file;
+        }
+
+
         // send to the view
         $data['normal_widget_list'] = $normal_widget_list;
         $data['section_widget_list'] = $section_widget_list;
         $data['language_list'] = $language_list;
         $data['config_list'] = $config_list;
+        $data['layout_list'] = $layout_list;
         $data['current_language'] = $this->cms_get_config('site_language', True);
         $this->view('layout_index', $data, 'main_layout');
     }

@@ -3,8 +3,8 @@
     <title>Install No-CMS</title>
     <style type="text/css">
         body {
-            padding-top: 60px;
-            padding-bottom: 40px;
+            padding-top: 50px;
+            padding-bottom: 10px;
         }
         .input-xlarge{
             height: 28px!important;
@@ -15,7 +15,7 @@
         #btn-install, #img-loader, #div-error-message, #div-warning-message, #div-success-message{
             display:none;
         }
-        .btn-next{
+        .btn-change-tab{
             padding-right:10px;
         }
         #div-body{
@@ -24,6 +24,19 @@
         }
         .tab-content{
             overflow:inherit!important;
+        }
+        .help-block, .controls ol{
+            font-size:small;
+        }
+        .a-change-tab, .a-change-tab:visited{
+            color:#b94a48!important;
+            text-decoration: none;
+            font-weight:bold;
+        }
+        .a-change-tab:hover{
+            color:#b94a48!important;
+            text-decoration: underline;
+            font-weight: bold;
         }
     </style>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css'); ?>" />
@@ -35,11 +48,11 @@
         <div class="navbar navbar-fixed-top">
           <div class="navbar-inner">
             <div class="container-fluid">
-                <a class="brand" href="#">Install No-CMS on your server</a>
+                <a class="brand" href="#">No-CMS Installation Wizard</a>
             </div>
           </div>
         </div>
-        <div id="div-body" class="tabbable well"> <!-- Only required for left/right tabs -->
+        <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#tab1" data-toggle="tab">Database Setting</a></li>
                 <li><a href="#tab2" data-toggle="tab">CMS Setting</a></li>
@@ -51,128 +64,116 @@
                 <li><a href="#tab8" data-toggle="tab">MySpace</a></li>
                 <li><a href="#tab9" data-toggle="tab">Foursquare</a></li>
                 <li><a href="#tab10" data-toggle="tab">Windows</a></li>
-                <li><a href="#tab11" data-toggle="tab">OpenID & AOL</a></li>
+                <li><a href="#tab11" data-toggle="tab">OpenID &amp; AOL</a></li>
             </ul>
             <form class="form-horizontal" action="<?php echo site_url('installer/install'); ?>" method="post" accept-charset="utf-8">
-            <div class="span8 well">
+            <div class="span8">
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab1">
-                            <h2>Database Setting</h2>
                             <div class="control-group">
                                <label class="control-label" for="db_protocol">Protocol</label>
                                <div class="controls">
-                                   <select id="db_protocol" name="db_protocol" class="input-xlarge input">
+                                   <select id="db_protocol" name="db_protocol" class="input-xlarge input" placeholder="database driver">
                                        <option value="mysql">MySQL/MariaDB (with mysql driver)</option>
                                        <option selected value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
                                        <option value="pdo_mysql">MySQL/MariaDB (with PDO driver)</option>
-                                       <option value="pdo_pgsql">PostgreSQL (with PDO driver)</option>
-                                       <option value="pdo_sqlite">SQLite (with PDO driver)</option>
+                                       <option value="pdo_pgsql">PostgreSQL (with PDO driver), Experimental</option>
+                                       <option value="pdo_sqlite">SQLite (with PDO driver), Experimental</option>
                                    </select>
-                                   <p class="help-block">Choose database protocol</p>
                                </div>
                             </div>
                             <div class="control-group">
                                <label class="control-label" for="db_host">Server</label>
                                <div class="controls">
-                                   <input type="text" id="db_host" name="db_host" value="127.0.0.1" class="input-xlarge input" />
+                                   <input type="text" id="db_host" name="db_host" value="127.0.0.1" class="input-xlarge input" placeholder="Database Host" />
                                    <p class="help-block">Server name (e.g: 'localhost', '127.0.0.1', 'http://yourDatabaseServer.com')</p>
                                </div>
                             </div>
                             <div class="control-group">
                                <label class="control-label" for="db_port">Port</label>
                                <div class="controls">
-                                   <input type="text" id="db_port" name="db_port" value="3306" class="input-xlarge input" />
+                                   <input type="text" id="db_port" name="db_port" value="3306" class="input-xlarge input" placeholder="Port" />
                                    <p class="help-block">Database port, usually 3306 for MySQL, 5432 for PosgreSQL, and empty for sqlite</p>
                                </div>
                             </div>
                             <div class="control-group">
                                <label class="control-label" for="db_username">Username</label>
                                <div class="controls">
-                                   <input type="text" id="db_username" name="db_username" value="root" class="input-xlarge input" />
-                                   <p class="help-block">Database username</p>
+                                   <input type="text" id="db_username" name="db_username" value="root" class="input-xlarge input" placeholder="Database username" />                                   
                                </div>
                             </div>
                             <div class="control-group">
                                <label class="control-label" for="db_password">Password</label>
                                <div class="controls">
-                                   <input type="password" id="db_password" name="db_password" value="" class="input-xlarge input" />
-                                   <p class="help-block">Database password</p>
+                                   <input type="password" id="db_password" name="db_password" value="" class="input-xlarge input" placeholder="Database password" />                                   
                                </div>
                             </div>
                             <div class="control-group">
                                <label class="control-label" for="db_name">Schema</label>
                                <div class="controls">
-                                   <input type="text" id="db_name" name="db_name" value="no_cms" class="input-xlarge input" />
-                                   <p class="help-block">Database schema (If you are on shared hosting or using PDO driver, the schema should be exists. If you are on local machine or have root privilege and use mysql/mysqli driver, the installer will try to make the schema for you)</p>
+                                   <input type="text" id="db_name" name="db_name" value="no_cms" class="input-xlarge input" placeholder="Database Schema" />
+                                   <p class="help-block">If you have database's root privilege and use mysql/mysqli driver, the installer will try to make the schema for you, otherwise you should ensure that your schema is already exists</p>
                                </div>
                             </div>
                             <div class="control-group">
                                <label class="control-label" for="db_table_prefix">Table Prefix</label>
                                <div class="controls">
-                                   <input type="text" id="db_table_prefix" name="db_table_prefix" value="cms" class="input-xlarge input" />
-                                   <p class="help-block">Database table prefix</p>
+                                   <input type="text" id="db_table_prefix" name="db_table_prefix" value="cms" class="input-xlarge input" placeholder="Table Prefix" />
                                </div>
                             </div>
-                            <a class="btn btn-primary btn-next" href="#tab2">Next</a>
+                            <a class="btn btn-primary btn-change-tab" href="#tab2">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab2">
-                        <h2>CMS Setting</h2>
                         <div class="control-group">
-                           <label class="control-label" for="admin_email">E mail</label>
+                           <label class="control-label" for="admin_email">Super admin's E-mail</label>
                            <div class="controls">
-                               <input type="text" id="admin_email" name="admin_email" value="admin@admin.com" class="input-xlarge input" />
-                               <p class="help-block">No-CMS administrator email</p>
+                               <input type="text" id="admin_email" name="admin_email" value="admin@admin.com" class="input-xlarge input" placeholder="Super admin's email" />                               
                            </div>
                         </div>
                         <div class="control-group">
-                           <label class="control-label" for="admin_user_name">Username</label>
+                           <label class="control-label" for="admin_user_name">Super admin's Username</label>
                            <div class="controls">
-                               <input type="text" id="admin_user_name" name="admin_user_name" value="admin" class="input-xlarge input" />
-                               <p class="help-block">admin's username</p>
+                               <input type="text" id="admin_user_name" name="admin_user_name" value="admin" class="input-xlarge input" placeholder="Super admin's username" />
                            </div>
                         </div>
                         <div class="control-group">
-                           <label class="control-label" for="adm_real_name">Real Name</label>
+                           <label class="control-label" for="adm_real_name">Super admin's Real Name</label>
                            <div class="controls">
-                               <input type="text" id="admin_real_name" name="admin_real_name" value="Rina Suzuki" class="input-xlarge input" />
-                               <p class="help-block">admin's realname</p>
+                               <input type="text" id="admin_real_name" name="admin_real_name" value="Rina Suzuki" class="input-xlarge input" placeholder="Super admin's real name" />
                            </div>
                         </div>
                         <div class="control-group">
-                           <label class="control-label" for="admin_password">Password</label>
+                           <label class="control-label" for="admin_password">Super admin's Password</label>
                            <div class="controls">
-                               <input type="password" id="admin_password" name="admin_password" value="" class="input-xlarge input" />
-                               <p class="help-block">admin's password</p>
+                               <input type="password" id="admin_password" name="admin_password" value="" class="input-xlarge input" placeholder="Super admin's password" />
                            </div>
                         </div>
                         <div class="control-group">
-                           <label class="control-label" for="admin_confirm_password">Confirm Password</label>
+                           <label class="control-label" for="admin_confirm_password">Password Confirmation</label>
                            <div class="controls">
-                               <input type="password" id="admin_confirm_password" name="admin_confirm_password" value="" class="input-xlarge input" />
-                               <p class="help-block">admin's password again</p>
+                               <input type="password" id="admin_confirm_password" name="admin_confirm_password" value="" class="input-xlarge input" placeholder="Super admin's password (again)" />
                            </div>
                         </div>
                         <div class="control-group">
                            <label class="control-label" for="hide_index">Hide Index.php</label>
                            <div class="controls">
-                               <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" value="true" />
-                               <p class="help-block">(Hide 'index.php' from url, please make sure that mod_rewrite is activated)</p>
+                               <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" value="true" >&nbsp; Hide 'index.php' from url</input>
+                               <p class="help-block">Require mod rewrite</p>
                            </div>
                         </div>
                         <div class="control-group">
                            <label class="control-label" for="gzip_compression">Use GZIP compression</label>
                            <div class="controls">
-                               <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input-xlarge input" value="true" />
-                               <p class="help-block">(For compression to work, nothing can be sent before the output buffer is called by the output class.  Do not 'echo' any values with compression enabled)</p>
+                               <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input-xlarge input" value="true" >&nbsp; Compress output</input>
+                               <p class="help-block">For compression to work, nothing can be sent before the output buffer is called by the output class.  Do not 'echo' any values with compression enabled</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab1">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab3">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab1">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab3">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab3">
-                        <h2>Facebook Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_facebook">Allow Facebook Authentication</label>
                            <div class="controls">
@@ -202,12 +203,11 @@
                                <p class="help-block">Facebook Application Secret</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab2">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab4">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab2">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab4">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab4">
-                        <h2>Twitter Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_twitter">Allow Twitter Authentication</label>
                            <div class="controls">
@@ -238,12 +238,11 @@
                                <p class="help-block">Twitter Application Secret</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab3">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab5">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab3">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab5">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab5">
-                        <h2>Google Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_google">Allow Google Authentication</label>
                            <div class="controls">
@@ -274,12 +273,11 @@
                                <p class="help-block">Google Application Secret</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab4">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab6">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab4">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab6">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab6">
-                        <h2>Yahoo Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_yahoo">Allow Yahoo Authentication</label>
                            <div class="controls">
@@ -310,12 +308,11 @@
                                <p class="help-block">Yahoo Application Secret</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab5">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab7">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab5">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab7">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab7">
-                        <h2>LinkedIn Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_linkedin">Allow linkedIn Authentication</label>
                            <div class="controls">
@@ -346,12 +343,11 @@
                                <p class="help-block">LinkedIn Application Secret</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab6">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab8">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab6">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab8">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab8">
-                        <h2>MySpace Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_myspace">Allow MySpace Authentication</label>
                            <div class="controls">
@@ -381,12 +377,11 @@
                                <p class="help-block">MySpace Application Secret</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab7">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab9">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab7">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab9">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab9">
-                        <h2>Foursquare Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_foursquare">Allow Foursquare Authentication</label>
                            <div class="controls">
@@ -416,12 +411,11 @@
                                <p class="help-block">Foursquare Application Secret</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab8">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab10">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab8">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab10">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab10">
-                        <h2>Windows Live Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_windows_live">Allow Windows Live Authentication</label>
                            <div class="controls">
@@ -451,12 +445,11 @@
                                <p class="help-block">Windows Live Application Secret</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab9">Previous</a>
-                        <a class="btn btn-primary btn-next" href="#tab11">Next</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab9">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab11">Next</a>
                     </div>
 
                     <div class="tab-pane" id="tab11">
-                        <h2>OpenID & AOL Authentication</h2>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_open_id">Allow Open Id Authentication</label>
                            <div class="controls">
@@ -471,7 +464,7 @@
                                <p class="help-block">Enable AOL Authentication (No registration required for OpenID based providers)</p>
                            </div>
                         </div>
-                        <a class="btn btn-primary btn-next" href="#tab10">Previous</a>
+                        <a class="btn btn-primary btn-change-tab" href="#tab10">Previous</a>
                     </div>
                 </div>
             </div>
@@ -502,6 +495,10 @@
         var RUNNING_REQUEST = false;
         var SUCCESS = false;
 
+        function adjust_error_warning_message(){
+            $('#div-error-warning-message').width($('#div-body').width()*0.3);
+        }
+
         $(document).ready(function(){
             // just for fun, use one of SCANDAL member as default admin real name
             var real_name_list = new Array('Haruna Ono', 'Tomomi Ogawa', 
@@ -509,21 +506,22 @@
             var real_name_index = Math.floor((Math.random()*4));
             var real_name = real_name_list[real_name_index];
             $('#admin_real_name').val(real_name);
-            $('#div-error-warning-message').append('<img style="width:100%; opacity:0.4;" src="<?php echo base_url('modules/installer/assets'); ?>/'+real_name+'.jpg" />');
+            $('#div-error-warning-message').append('<img style="opacity:0.4; max-width:100%; max-height:70%;" src="<?php echo base_url('modules/installer/assets'); ?>/'+real_name+'.jpg" />');
             // magic :)
             $(document).on('scroll', function(){
                 if ($('#div-error-warning-message')[0].offsetTop < ($(document).scrollTop()+60)){
-                    $('#div-error-warning-message').css({position: "fixed", top:60});
+                    $('#div-error-warning-message').css({position: "fixed", top:70});
                 }else{
                     $('#div-error-warning-message').css({position: "static", top: 0});
                 }
-                $('#div-error-warning-message').width($('#div-body').width()*0.3);
+                adjust_error_warning_message();
             });
+            adjust_error_warning_message();
             // check things
             check();
         });
         $(window).resize(function() {
-            $('#div-error-warning-message').width($('#div-body').width()*0.3);
+            adjust_error_warning_message();
         });
         $("input, select").change(function(){
             check();
@@ -547,13 +545,26 @@
         });
 
         // next or previous step
-        $(".btn-next").click(function(){
+        $(".btn-change-tab").click(function(){
             var href = $(this).attr('href');
             $("ul.nav-tabs li").removeClass('active');
             $("div.tab-pane").removeClass('active');
-            console.log($("ul.nav-tabs li[href='"+href+"']"));
             $("ul.nav-tabs li a[href='"+href+"']").parent().addClass('active');
             $("div.tab-pane[id='"+href.substr(1)+"']").addClass('active');
+            return false;
+        });
+
+        // from error message
+        $(".a-change-tab").live('click', function(){
+            var tab = $(this).attr('tab');
+            var component = $(this).attr('component');
+            $("ul.nav-tabs li").removeClass('active');
+            $("div.tab-pane").removeClass('active');
+            $("ul.nav-tabs li a[href='"+tab+"']").parent().addClass('active');
+            $("div.tab-pane[id='"+tab.substr(1)+"']").addClass('active');
+            if(typeof(component) != 'undefined' && component != ''){
+                $('#'+component).focus();
+            }
             return false;
         });
 

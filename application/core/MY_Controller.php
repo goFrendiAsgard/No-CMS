@@ -781,10 +781,11 @@ class CMS_Controller extends MX_Controller
         $title         = '';
         $keyword       = '';
         $default_theme = NULL;
+        $default_layout= NULL;
         $page_title    = NULL;
         $page_keyword  = NULL;
         if ($navigation_name_provided) {
-            $query = $this->db->select('title, page_title, page_keyword, default_theme, only_content')
+            $query = $this->db->select('title, page_title, page_keyword, default_theme, default_layout, only_content')
                 ->from(cms_table_name('main_navigation'))
                 ->where(array('navigation_name'=>$navigation_name))
                 ->get();
@@ -792,6 +793,7 @@ class CMS_Controller extends MX_Controller
             if ($query->num_rows() > 0) {
                 $row           = $query->row();
                 $default_theme = $row->default_theme;
+                $default_layout = $row->default_layout;
                 if (isset($row->page_title) && $row->page_title != '') {
                     $page_title = $row->page_title;
                 } else if (isset($row->title) && $row->title != '') {
@@ -847,9 +849,11 @@ class CMS_Controller extends MX_Controller
         // GET THE LAYOUT
         if (isset($custom_layout)) {
             $layout = $custom_layout;
+        } else if (isset($default_layout) && $default_layout != ''){
+            $layout = $default_layout;
         } else {
             $this->load->library('user_agent');
-            $layout = $this->agent->is_mobile() ? 'mobile' : 'default';
+            $layout = $this->agent->is_mobile() ? 'mobile' : $this->cms_get_config('site_layout');
         }
 
 
@@ -944,7 +948,7 @@ class CMS_Controller extends MX_Controller
         $result = $this->cms_parse_keyword($result);
 
         // parse widgets used_theme & navigation_path
-        $result = $this->__cms_parse_widget_theme_path($result, $theme, $navigation_name);
+        $result = $this->__cms_parse_widget_theme_path($result, $theme, $layout, $navigation_name);
         
         if ($return_as_string) {
             return $result;
@@ -953,7 +957,7 @@ class CMS_Controller extends MX_Controller
         }
     }
 
-    private function __cms_parse_widget_theme_path($html, $theme, $navigation_name, $recursive_level = 5){
+    private function __cms_parse_widget_theme_path($html, $theme, $layout, $navigation_name, $recursive_level = 5){
         if(strpos($html, '{{ ') !== FALSE){
             $html = $this->No_CMS_Model->cms_escape_template($html);
     
@@ -987,7 +991,7 @@ class CMS_Controller extends MX_Controller
             $recursive_level --;
             // recursively search widget inside widget
             if(strpos($html, '{{ ') !== FALSE && $recursive_level>0){
-                $html = $this->__cms_parse_widget_theme_path($html, $theme, $navigation_name, $recursive_level);
+                $html = $this->__cms_parse_widget_theme_path($html, $theme, $layout, $navigation_name, $recursive_level);
             }
         }
         

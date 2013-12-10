@@ -17,6 +17,13 @@
         $selected = $language == $current_language ? 'selected' : '';
         $option_language .= '<option '.$selected.' value="'.$language.'">'.ucwords($language).'</option>';
     }
+    // option for layouts
+    $option_layout = '<option selected value="'.$config_list['site_layout'].'">'.$config_list['site_layout'].'</option>';
+    foreach($layout_list as $layout){
+        if($layout != $config_list['site_layout']){
+            $option_layout .= '<option value="'.$layout.'">'.$layout.'</option>';
+        }
+    }
     
     $asset = new CMS_Asset();
     $asset->add_cms_css('grocery_crud/css/jquery_plugins/chosen/chosen.css');
@@ -42,16 +49,73 @@
     }
 </style>
 
-<div id="div-body" class="tabbable well"> <!-- Only required for left/right tabs -->
+<div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab1" data-toggle="tab">Sections</a></li>
+        <li class="active"><a href="#tab1" data-toggle="tab">Configurations</a></li>
         <li><a href="#tab2" data-toggle="tab">Images</a></li>
-        <li><a href="#tab3" data-toggle="tab">Configurations</a></li>
+        <li><a href="#tab3" data-toggle="tab">Sections</a></li>
     </ul>
     <form enctype="multipart/form-data" class="form-horizontal" method="post">
         <div class="tab-content">
                                 
             <div class="tab-pane active" id="tab1">                
+                <div class="control-group">
+                   <label class="control-label" for="site_layout">Default Layout</label>
+                   <div class="controls">
+                       <select id="site_language" name="site_layout" ><?php echo $option_layout; ?></select>
+                       <p class="help-block">Default layout used</p>
+                   </div>
+                </div>
+                <div class="control-group">
+                   <label class="control-label" for="site_language">Default Language</label>
+                   <div class="controls">
+                       <select id="site_language" name="site_language" ><?php echo $option_language; ?></select>
+                       <p class="help-block">Default language used</p>
+                   </div>
+                </div>                
+                <div class="control-group">
+                   <label class="control-label" for="site_name">Site Name</label>
+                   <div class="controls">
+                       <input type="text" id="site_name" name="site_name" value="<?php echo $config_list['site_name'] ?>" />
+                       <p class="help-block">Site name (e.g: No-CMS, My Company website, etc)</p>
+                   </div>
+                </div>
+                <div class="control-group">
+                   <label class="control-label" for="site_slogan">Site Slogan</label>
+                   <div class="controls">
+                       <input type="text" id="site_slogan" name="site_slogan" value="<?php echo $config_list['site_slogan'] ?>" />
+                       <p class="help-block">Your site slogan (e.g: "There is no place like home", "Song song and song", etc)</p>
+                   </div>
+                </div>
+                <div class="control-group">
+                   <label class="control-label" for="site_footer">Site Footer</label>
+                   <div class="controls">
+                       <input type="text" id="site_footer" name="site_footer" value="<?php echo $config_list['site_footer'] ?>" />
+                       <p class="help-block">Site footer &amp; attribution (e.g: "Powered by No-CMS &copy; 2013", etc)</p>
+                   </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane" id="tab2">
+                <div class="control-group">
+                   <label class="control-label" for="site_logo">Site Logo</label>
+                   <div class="controls">
+                       <image src="<?php echo $config_list['site_logo'] ?>" /><br />
+                       <input type="file" id="site_logo" name="site_logo" />
+                       <p class="help-block">Image used as site Logo</p>
+                   </div>
+                </div>                
+                <div class="control-group">
+                   <label class="control-label" for="site_favicon">Site Favicon</label>
+                   <div class="controls">
+                       <image src="<?php echo $config_list['site_favicon'] ?>" /><br />
+                       <input type="file" id="site_favicon" name="site_favicon" />
+                       <p class="help-block">Image used as favicon</p>
+                   </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane" id="tab3">
                 <div class="control-group">
                    <label class="control-label" for="section_top_fix">Top Section</label>
                    <div class="controls">
@@ -111,57 +175,7 @@
                        <textarea id="section_bottom" name="section_bottom" class="text-area-section"><?php echo $section_widget_list['section_bottom']['static_content']; ?></textarea>                       
                        <p class="help-block">HTML &amp; tags of bottom section</p>
                    </div>
-                </div> 
-            </div>
-            
-            <div class="tab-pane" id="tab2">
-                <div class="control-group">
-                   <label class="control-label" for="site_logo">Site Logo</label>
-                   <div class="controls">
-                       <image src="<?php echo $config_list['site_logo'] ?>" /><br />
-                       <input type="file" id="site_logo" name="site_logo" />
-                       <p class="help-block">Image used as site Logo</p>
-                   </div>
                 </div>                
-                <div class="control-group">
-                   <label class="control-label" for="site_favicon">Site Favicon</label>
-                   <div class="controls">
-                       <image src="<?php echo $config_list['site_favicon'] ?>" /><br />
-                       <input type="file" id="site_favicon" name="site_favicon" />
-                       <p class="help-block">Image used as favicon</p>
-                   </div>
-                </div>
-            </div>
-            
-            <div class="tab-pane" id="tab3">
-                <div class="control-group">
-                   <label class="control-label" for="site_language">DefaultLanguage</label>
-                   <div class="controls">
-                       <select id="site_language" name="site_language" ><?php echo $option_language; ?></select>
-                       <p class="help-block">Default language used</p>
-                   </div>
-                </div>                
-                <div class="control-group">
-                   <label class="control-label" for="site_name">Site Name</label>
-                   <div class="controls">
-                       <input type="text" id="site_name" name="site_name" value="<?php echo $config_list['site_name'] ?>" />
-                       <p class="help-block">Site name (e.g: No-CMS, My Company website, etc)</p>
-                   </div>
-                </div>
-                <div class="control-group">
-                   <label class="control-label" for="site_slogan">Site Slogan</label>
-                   <div class="controls">
-                       <input type="text" id="site_slogan" name="site_slogan" value="<?php echo $config_list['site_slogan'] ?>" />
-                       <p class="help-block">Your site slogan (e.g: "There is no place like home", "Song song and song", etc)</p>
-                   </div>
-                </div>
-                <div class="control-group">
-                   <label class="control-label" for="site_footer">Site Footer</label>
-                   <div class="controls">
-                       <input type="text" id="site_footer" name="site_footer" value="<?php echo $config_list['site_footer'] ?>" />
-                       <p class="help-block">Site footer &amp; attribution (e.g: "Powered by No-CMS &copy; 2013", etc)</p>
-                   </div>
-                </div>
             </div>
             
         </div>
