@@ -60,7 +60,7 @@ __GPL & MIT License__: In short, you can use No-CMS for whatever purpose, modify
 
 Links
 =====
-- [Change Logs](doc/change_log.md)
+- [Change Logs](doc/changelog.md)
 - [Contributor List](doc/contributors.md)
 - [__User Guide And Tutorials__](doc/tutorial.md)
 - [Official Website](http://www.getnocms.com)
