@@ -312,6 +312,26 @@ class Main extends CMS_Controller
         }
     }
 
+    public function get_layout($theme=''){
+        if($this->input->is_ajax_request()){
+            if($theme == ''){
+                $theme = $this->cms_get_config('site_theme');
+            }
+            $layout_list = array('');
+            $this->load->helper('directory');
+            $files = directory_map('themes/'.$theme.'/views/layouts/', 1);
+            sort($files);
+            foreach($files as $file){
+                if(is_dir('themes/'.$theme.'/views/layouts/'.$file)){
+                    continue;
+                }
+                $file = str_ireplace('.php', '', $file);
+                $layout_list[] = $file;
+            }
+            $this->cms_show_json($layout_list);
+        }
+    }
+
     public function check_change_profile()
     {
         if ($this->input->is_ajax_request()) {
