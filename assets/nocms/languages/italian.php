@@ -1,5 +1,6 @@
 <?php
 $lang['language_alias'] = 'it';
+$lang['Complete Menu'] = 'Menù Completo';
 $lang['Home'] = 'Home';
 $lang['Language'] = 'Lingua';
 $lang['Third Party Authentication'] = 'Autenticazione di terze parti';
