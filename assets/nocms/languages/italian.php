@@ -16,6 +16,7 @@ $lang['Privilege Management'] = 'Gestione Privilegi';
 $lang['Navigation Management'] = 'Gestione Navigazione';
 $lang['Widget Management'] = 'Gestione Widget';
 $lang['Module Management'] = 'Gestione Moduli';
+$lang['Gesetione Layout'] = 'Gestione Layout';
 $lang['Change Theme'] = 'Cambia Tema';
 $lang['Quick Link Management'] = 'Gestione Quick Link';
 $lang['Configuration Management'] = 'Gestione Configurazione';
