@@ -124,7 +124,6 @@ v0.6.5
 + (done, tested) use AJAX when load widget via `Modules::run` failed
 
 v0.6.6
-+ (proposed) Navigation: move to anywhere.
 + (done, tested) Add icon for navigation and quicklink.
 + (done, tested) Make set_rule callback of groceryCRUD works.
 + (done, tested) Fix bug: nordrassil generate buggy one to many input.
@@ -138,12 +137,15 @@ v0.6.6
 + (done, tested) Blog writer (which is not super admin) can only edit/delete his own article
 + (done, tested) working `overflow-x` and smaller `chzn-results`
 + (done, not tested) fix hardcoded sql that contain ```
-+ (proposed) IP Deny manager
-+ (done, tested) Fix layout for small device
-+ (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre <-- The first one seems to be fixed
++ (done, tested) Fix layout for small device.
 + (done, tested) Fix bug: when screen resized to smaller width, the button cannot be clicked
 + (done, tested) Use newest CodeIgniter 3.0.0 and modify the rule so that the old naming convention still works (Thanks Ivan)
 + (done, tested) Make `/application/config/first-time` and `first-time` environment as suggested by cesarliws (https://github.com/goFrendiAsgard/No-CMS/issues/79)
 + (done, tested) Update CKEditor of groceryCRUD, add kcfinder.
-+ (proposed) Use bootstrap 3.0 
 + (done, tested) Fix Multiple widget from different modules problem (referenced by missidentified issue: https://github.com/goFrendiAsgard/No-CMS/issues/88)
++ (done, tested) Not using AJAX anymore to fetch module status on module management
++ (proposed) Multisite management.
++ (proposed) Use bootstrap 3.0.
++ (proposed) IP Deny manager.
++ (proposed) Navigation: move to anywhere.
++ (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre <-- The first one seems to be fixed

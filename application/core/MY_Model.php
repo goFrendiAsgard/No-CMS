@@ -1276,7 +1276,7 @@ class CMS_Model extends CI_Model
                 "module_name" => $module_name,
                 "module_path" => $directory,
                 "active" => $module_name != "",
-                "controllers" => $module_controllers
+                "controllers" => $module_controllers,
             );
         }
         return $module;

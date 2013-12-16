@@ -15,9 +15,10 @@
 </style>
 <h3>{{ language:Module Management }}</h3>
 <?php
-    for($i=0; $i<count($modules); $i++){
+    for($i=0; $i<count($modules); $i++){        
         $module = $modules[$i];
         $str_status = $module['active']?'module_active':'module_not_active';
+        $module_status = $module['status'];
 
         echo '<div class="well span11 row-fluids">';
         echo '<div class="span4 module_icon">';
@@ -40,12 +41,9 @@
         echo '  <div id="div_module_'.$i.'_info" class="span12"></div>';
         echo '</div>';
         echo '</div>';
+
         echo '<script type="text/javascript">';
-        echo '$(document).ready(function(){';
-        echo '  $.ajax({';
-        echo '      url:"'.site_url($module['module_path'].'/install/status').'",';
-        echo '      dataType:"json",';
-        echo '      success:function(response){';
+        echo '          var response = '. $module['status'] .';';
         echo '          var status = "";';
         echo '          if(response.active){';
         echo '              if(response.old){';
@@ -69,9 +67,6 @@
         echo '          html += "<strong>{{ language:Status }}</strong> : "+status;';
         echo '          ';
         echo '          $("#div_module_'.$i.'_info").html(html);';
-        echo '      }';
-        echo '  })';
-        echo '})';
         echo '</script>';
     }
 	echo '<div style="clear:both"></div>';

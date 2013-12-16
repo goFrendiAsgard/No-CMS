@@ -13,7 +13,7 @@ for($i=0; $i<count($tab_list); $i++){
 }
 
 ?>
-<div class="tabbable well" id="tab-widget">
+<div class="tabbable" id="tab-widget">
     <ul class="nav nav-tabs">
         <?php foreach($li_nav_tab_list as $li_nav_tab){echo $li_nav_tab;} ?>
     </ul>

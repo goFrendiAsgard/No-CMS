@@ -66,7 +66,13 @@ class Main extends CMS_Controller
         $data['upload'] = $this->upload('./modules/', 'userfile', 'upload');
 
         // show the view
-        $data['modules'] = $this->cms_get_module_list();
+        $modules = $this->cms_get_module_list();
+        for($i=0; $i<count($modules); $i++){
+            $module = $modules[$i];
+            $module_path = $module['module_path'];
+            $modules[$i]['status'] = @Modules::run($module_path.'/install/status');
+        }
+        $data['modules'] = $modules;
         $data['upload_new_module_caption'] = $this->cms_lang('Upload New Module');
         $this->view('main/main_module_management', $data, 'main_module_management');
     }

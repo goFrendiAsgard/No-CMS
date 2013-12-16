@@ -835,7 +835,7 @@ class Install_Model extends CI_Model{
         // user
         $sql_list[] = $this->insert_user();
         // navigation
-        $sql_list[] = $this->insert_navigation('main_login', NULL, 'Login', 'Login', NULL, 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL, 0);
+        $sql_list[] = $this->insert_navigation('main_login', NULL, 'Login', 'Login', NULL, 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL, 0, 'icon-home', NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_forgot', NULL, 'Forgot Password', 'Forgot', NULL, 'Accidentally forgot password', 'main/forgot', 2, 3, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_logout', NULL, 'Logout', 'Logout', NULL, 'Logout for deauthentication', 'main/logout', 3, 2, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_management', NULL, 'CMS Management', 'CMS Management', NULL, 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 6, 1, 0, NULL, 0);
