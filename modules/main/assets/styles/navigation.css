@@ -14,3 +14,6 @@
 	background-color: white;
 	min-height: 50px;
 }
+#flex1 th:last-child{
+    min-width: 120px!important;
+}

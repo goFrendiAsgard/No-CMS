@@ -1542,7 +1542,7 @@ class CMS_Module_Installer extends CMS_Controller
     }
 
     public function status(){
-        if(!isset($this->DESCRIPTION)){
+        if($this->DESCRIPTION === NULL){
             $this->DESCRIPTION = $this->cms_lang('Just another module');
         }
         $result = array(
@@ -1554,11 +1554,14 @@ class CMS_Module_Installer extends CMS_Controller
             'version'=>$this->VERSION,
             'old_version'=>$this->OLD_VERSION,
         );
+        echo json_encode($result);
+        //$this->cms_show_json($result);
+        /*
         if($this->input->is_ajax_request()){
             $this->cms_show_json($result);
         }else{
             $this->cms_show_variable($result);
-        }
+        }*/
     }
 
     public final function index()
