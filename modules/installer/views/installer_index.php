@@ -1,3 +1,4 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -159,15 +160,33 @@
                         <div class="control-group">
                            <label class="control-label" for="hide_index">Hide Index.php</label>
                            <div class="controls">
-                               <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" value="true" >&nbsp; Hide 'index.php' from url</input>
-                               <p class="help-block">Require mod rewrite</p>
+                               <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" value="true" >&nbsp; Hide 'index.php' from url (recommended)</input>
+                               <p class="help-block">Require mod rewrite. Hide index.php will produce a more SEO-friendly URL (i.e: http://your_domain.com/main/index instead of http://your_domain.com/index.php/main/index)</p>
                            </div>
                         </div>
                         <div class="control-group">
                            <label class="control-label" for="gzip_compression">Use GZIP compression</label>
                            <div class="controls">
                                <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input-xlarge input" value="true" >&nbsp; Compress output</input>
-                               <p class="help-block">For compression to work, nothing can be sent before the output buffer is called by the output class.  Do not 'echo' any values with compression enabled</p>
+                               <p class="help-block">For compression to work, nothing can be sent before the output buffer is called by the output class.  Do not 'echo' any values with compression enabled (some browser might not work well with gzip)</p>
+                           </div>
+                        </div>
+                        <div class="control-group">
+                           <label class="control-label" for="enable_multisite">Multisite</label>
+                           <div class="controls">
+                               <input type="checkbox" id="enable_multisite" name="enable_multisite" class="input-xlarge input" value="true" >&nbsp; Enable Multisite</input>
+                           </div>
+                        </div>
+                        <div class="control-group">
+                           <label class="control-label" for="site_id">Site Id</label>
+                           <div class="controls">
+                               <input type="text" id="site_id" name="site_id" value="" class="input-xlarge input" placeholder="Site Id (e.g: shop)" />                               
+                           </div>
+                        </div>
+                        <div class="control-group">
+                           <label class="control-label" for="site_domain">Site Domain</label>
+                           <div class="controls">
+                               <input type="text" id="site_domain" name="site_domain" value="" class="input-xlarge input" placeholder="Site Domain (e.g: shop.mydomain.com)" />                               
                            </div>
                         </div>
                         <a class="btn btn-primary btn-change-tab" href="#tab1">Previous</a>

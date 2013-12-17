@@ -1,4 +1,4 @@
-<?php
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 session_start();
 class Install_Model extends CI_Model{
 
@@ -18,6 +18,12 @@ class Install_Model extends CI_Model{
 
     public $hide_index       = FALSE;
     public $gzip_compression = FALSE;
+    public $enable_multisite = FALSE;
+
+    public $site_domain = '';
+    public $site_id = '';
+
+    public $is_main_site = TRUE;
 
     public $auth_enable_facebook         = FALSE;
     public $auth_facebook_app_id         = '';
@@ -257,6 +263,11 @@ class Install_Model extends CI_Model{
             $success  = FALSE;
             $error_list[] = "Config directory (".APPPATH."config) is not writable";
         }
+        // hybridauthlib log file
+        if (!is_writable(APPPATH.'logs/hybridauth.log')) {
+            $success  = FALSE;
+            $error_list[] = APPPATH."logs/hybridauth.log is not writable";
+        }
         // third party authentication activated
         if ($this->auth_enable_facebook || $this->auth_enable_twitter || $this->auth_enable_google || $this->auth_enable_yahoo || $this->auth_enable_linkedin || $this->auth_enable_myspace || $this->auth_enable_foursquare || $this->auth_enable_windows_live || $this->auth_enable_open_id || $this->auth_enable_aol ) {
             // curl
@@ -351,12 +362,7 @@ class Install_Model extends CI_Model{
                     $success = FALSE;
                     $error_list[] = '<a class="a-change-tab" href="#" tab="#tab10" component="auth_windows_live_app_secret">Windows Live application secret</a> cannot be empty';
                 }
-            }
-            // hybridauthlib log file
-            if (!is_writable(APPPATH.'logs/hybridauth.log')) {
-                $success  = FALSE;
-                $error_list[] = APPPATH."logs/hybridauth.log is not writable";
-            }
+            }            
         }
         // hide index: mod_rewrite should be active, but there is no way to absolutely determine this
         if($this->hide_index){
@@ -1027,6 +1033,7 @@ class Install_Model extends CI_Model{
         $equal_sign = '=';
 
         $this->change_config($file_name, "cms_table_prefix", $this->db_table_prefix, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "cms_enable_multisite", $this->enable_multisite?'TRUE':'FALSE', $key_prefix, $key_suffix, '',';' $equal_sign);
 
         // config
         $file_name = APPPATH.'config/config.php';
@@ -1122,7 +1129,12 @@ class Install_Model extends CI_Model{
             $view_name = 'installer/htaccess_not_hide_index';
         }
         $htaccess_content = $this->load->view($view_name, $data, TRUE);
-        file_put_contents(APPPATH.'../.htaccess', $htaccess_content);
+        file_put_contents(FCPATH.'.htaccess', $htaccess_content);
+
+        // make site.php
+        $view_name = 'installer/site';
+        $site_content = $this->load->view($view_name, NULL, TRUE);
+        file_put_contents(FCPATH.'site.php', $site_content);
     }
 
     public function disable_installer(){
