@@ -43,7 +43,8 @@
         echo '</div>';
 
         echo '<script type="text/javascript">';
-        echo '          var response = '. $module['status'] .';';
+        echo '$(document).ready(function(){';
+        echo '          var response = '. $module_status .';';
         echo '          var status = "";';
         echo '          if(response.active){';
         echo '              if(response.old){';
@@ -67,6 +68,7 @@
         echo '          html += "<strong>{{ language:Status }}</strong> : "+status;';
         echo '          ';
         echo '          $("#div_module_'.$i.'_info").html(html);';
+        echo '});';
         echo '</script>';
     }
 	echo '<div style="clear:both"></div>';

@@ -171,24 +171,6 @@
                                <p class="help-block">For compression to work, nothing can be sent before the output buffer is called by the output class.  Do not 'echo' any values with compression enabled (some browser might not work well with gzip)</p>
                            </div>
                         </div>
-                        <div class="control-group">
-                           <label class="control-label" for="enable_multisite">Multisite</label>
-                           <div class="controls">
-                               <input type="checkbox" id="enable_multisite" name="enable_multisite" class="input-xlarge input" value="true" >&nbsp; Enable Multisite</input>
-                           </div>
-                        </div>
-                        <div class="control-group">
-                           <label class="control-label" for="site_id">Site Id</label>
-                           <div class="controls">
-                               <input type="text" id="site_id" name="site_id" value="" class="input-xlarge input" placeholder="Site Id (e.g: shop)" />                               
-                           </div>
-                        </div>
-                        <div class="control-group">
-                           <label class="control-label" for="site_domain">Site Domain</label>
-                           <div class="controls">
-                               <input type="text" id="site_domain" name="site_domain" value="" class="input-xlarge input" placeholder="Site Domain (e.g: shop.mydomain.com)" />                               
-                           </div>
-                        </div>
                         <a class="btn btn-primary btn-change-tab" href="#tab1">Previous</a>
                         <a class="btn btn-primary btn-change-tab" href="#tab3">Next</a>
                     </div>
