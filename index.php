@@ -69,7 +69,7 @@ if(!file_exists('./application/config/database.php')){
     }
     // change the environment based on multisite
     define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site_'.CMS_SUBSITE : 'development');
-    var_dump(CMS_SUBSITE);
+    //var_dump(CMS_SUBSITE);
     //define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 }
 
