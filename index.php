@@ -45,6 +45,8 @@
 if(!file_exists('./application/config/database.php')){
     define('ENVIRONMENT', 'first-time');
     define('CMS_SUBSITE', '');
+    define('USE_SUBDOMAIN', FALSE);
+    $available_site = array();
 }else{      
     // multisite, can use GET or subdomain      
     require_once('./site.php');
@@ -52,11 +54,13 @@ if(!file_exists('./application/config/database.php')){
         $cms_subsite = '';
         if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){
             $cms_subsite = $_GET['__cms_subsite'];
+            define('USE_SUBDOMAIN', FALSE);
         }else{
             $host = $_SERVER['HTTP_HOST'];
             if(strlen($host)>0){
                 $host_array = explode('.', $host);
                 $cms_subsite = $host_array[0];
+                define('USE_SUBDOMAIN', TRUE);
             }
         }
         if(in_array($cms_subsite, $available_site)){
@@ -68,9 +72,7 @@ if(!file_exists('./application/config/database.php')){
         define('CMS_SUBSITE', '');
     }
     // change the environment based on multisite
-    define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site_'.CMS_SUBSITE : 'development');
-    //var_dump(CMS_SUBSITE);
-    //define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+    define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site-'.CMS_SUBSITE : 'production');
 }
 
 /*
@@ -96,9 +98,14 @@ switch (ENVIRONMENT)
     break;
 
     default:
-        header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-        echo 'The application environment is not set correctly.';
-        exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
+        if(in_array(CMS_SUBSITE, $available_site)){
+            error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
+            ini_set('display_errors', 0);    
+        }else{
+            header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+            echo 'The application environment is not set correctly.';
+            exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
+        }
 }
 
 /*
