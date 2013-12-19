@@ -11,7 +11,6 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^site-([a-zA-Z0-9]*)$ index.php/?__cms_subsite=$1 [L,QSA]
-    RewriteRule ^site-([a-zA-Z0-9]*)/$ index.php/?__cms_subsite=$1 [L,QSA]
     RewriteRule ^site-([a-zA-Z0-9]*)/(.*)$ index.php/$2?__cms_subsite=$1 [L,QSA]
 
     RewriteCond %{REQUEST_FILENAME} !-f
