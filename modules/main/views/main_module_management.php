@@ -18,8 +18,6 @@
     for($i=0; $i<count($modules); $i++){        
         $module = $modules[$i];
         $str_status = $module['active']?'module_active':'module_not_active';
-        $module_status = $module['status'];
-
         echo '<div class="well span11 row-fluids">';
         echo '<div class="span4 module_icon">';
         echo '<b><i>'.$module['module_path'].'</i></b><br /><br />';
@@ -42,9 +40,12 @@
         echo '</div>';
         echo '</div>';
 
-        echo '<script type="text/javascript">';
-        echo '$(document).ready(function(){';
-        echo '          var response = '. $module_status .';';
+        echo '<script type="text/javascript">'; 
+        echo 'function check_module_status_'.$i.'(){';       
+        echo '  $.ajax({';
+        echo '      url:"'.site_url($module['module_path'].'/install/status').'",';
+        echo '      dataType:"json",';
+        echo '      success:function(response){';
         echo '          var status = "";';
         echo '          if(response.active){';
         echo '              if(response.old){';
@@ -68,7 +69,15 @@
         echo '          html += "<strong>{{ language:Status }}</strong> : "+status;';
         echo '          ';
         echo '          $("#div_module_'.$i.'_info").html(html);';
-        echo '});';
+        echo '      },';
+        echo '      error:function(xhr, textStatus, errorThrown){';
+        echo '          setTimeout(check_module_status_'.$i.', 1000);';    
+        echo '      }';
+        echo '  })';
+        echo '}';
+        echo '$(document).ready(function(){';
+        echo '  check_module_status_'.$i.'();';
+        echo '})';
         echo '</script>';
     }
 	echo '<div style="clear:both"></div>';

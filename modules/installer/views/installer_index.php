@@ -72,6 +72,7 @@
             <div class="span8">
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab1">
+                            <h3>Database Setting</h3>
                             <div class="control-group">
                                <label class="control-label" for="db_protocol">Protocol</label>
                                <div class="controls">
@@ -88,7 +89,7 @@
                                <label class="control-label" for="db_host">Server</label>
                                <div class="controls">
                                    <input type="text" id="db_host" name="db_host" value="127.0.0.1" class="input-xlarge input" placeholder="Database Host" />
-                                   <p class="help-block">Server name (e.g: 'localhost', '127.0.0.1', 'http://yourDatabaseServer.com')</p>
+                                   <p class="help-block">Server name (e.g: 'localhost', '127.0.0.1', 'yourDatabaseServer.com')</p>
                                </div>
                             </div>
                             <div class="control-group">
@@ -127,6 +128,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab2">
+                        <h3>CMS Setting</h3>
                         <div class="control-group">
                            <label class="control-label" for="admin_email">Super admin's E-mail</label>
                            <div class="controls">
@@ -160,7 +162,7 @@
                         <div class="control-group">
                            <label class="control-label" for="hide_index">Hide Index.php</label>
                            <div class="controls">
-                               <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" value="true" >&nbsp; Hide 'index.php' from url (recommended)</input>
+                               <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" value="true" checked >&nbsp; Hide 'index.php' from url (recommended, and required for multisite)</input>
                                <p class="help-block">Require mod rewrite. Hide index.php will produce a more SEO-friendly URL (i.e: http://your_domain.com/main/index instead of http://your_domain.com/index.php/main/index)</p>
                            </div>
                         </div>
@@ -176,6 +178,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab3">
+                        <h3>Facebook Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_facebook">Allow Facebook Authentication</label>
                            <div class="controls">
@@ -210,6 +213,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab4">
+                        <h3>Twitter Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_twitter">Allow Twitter Authentication</label>
                            <div class="controls">
@@ -245,6 +249,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab5">
+                        <h3>Google Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_google">Allow Google Authentication</label>
                            <div class="controls">
@@ -280,6 +285,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab6">
+                        <h3>Yahoo Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_yahoo">Allow Yahoo Authentication</label>
                            <div class="controls">
@@ -315,6 +321,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab7">
+                        <h3>LinkedIn Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_linkedin">Allow linkedIn Authentication</label>
                            <div class="controls">
@@ -350,6 +357,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab8">
+                        <h3>MySpace Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_myspace">Allow MySpace Authentication</label>
                            <div class="controls">
@@ -384,6 +392,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab9">
+                        <h3>Foursquare Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_foursquare">Allow Foursquare Authentication</label>
                            <div class="controls">
@@ -418,6 +427,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab10">
+                        <h3>Windows Live Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_windows_live">Allow Windows Live Authentication</label>
                            <div class="controls">
@@ -452,6 +462,7 @@
                     </div>
 
                     <div class="tab-pane" id="tab11">
+                        <h3>Open ID Authentication</h3>
                         <div class="control-group">
                            <label class="control-label" for="auth_enable_open_id">Allow Open Id Authentication</label>
                            <div class="controls">

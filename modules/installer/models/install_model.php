@@ -1122,6 +1122,11 @@ class Install_Model extends CI_Model{
         }
         $htaccess_content = $this->load->view($view_name, $data, TRUE);
         file_put_contents(FCPATH.'.htaccess', $htaccess_content);
+
+        // site content
+        $view_name = 'installer/site';;
+        $site_content = $this->load->view($view_name, NULL, TRUE);
+        file_put_contents(FCPATH.'site.php', $site_content);
     }
 
 
