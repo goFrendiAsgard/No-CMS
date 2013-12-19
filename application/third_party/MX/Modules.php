@@ -148,6 +148,7 @@ class Modules
 		
 		$file = str_replace(EXT, '', $file);
 		// Modified by Go Frendi Gunawan
+        // $location = $path.$file.EXT;
 		if(!file_exists($path.$file.EXT)){
 			$file_lcase = strtolower($file);
 			$location = $path.$file_lcase.EXT;
@@ -157,7 +158,6 @@ class Modules
 		//
 		
 		if ($type === 'other') {
-			
 			if (class_exists($file, FALSE))	{
 				log_message('debug', "File already loaded: {$location}");				
 				return $result;

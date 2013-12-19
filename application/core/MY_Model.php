@@ -269,7 +269,7 @@ class CMS_Model extends CI_Model
                     break;
                 }
             }
-            if ((!isset($row->url) || $row->url == '') && $row->is_static == 1) {
+            if ((!isset($row->url) || $row->url == '' || strpos(strtoupper($row->url), 'HTTP://') !== FALSE  || strpos(strtoupper($row->url), 'HTTPS://') !== FALSE ) && $row->is_static == 1) {
                 $url = site_url('main/static_page/' . $row->navigation_name);
             } else {
                 if (strpos(strtoupper($row->url), 'HTTP://') !== FALSE || strpos(strtoupper($row->url), 'HTTPS://') !== FALSE) {

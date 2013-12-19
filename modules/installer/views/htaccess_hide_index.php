@@ -3,6 +3,8 @@
     RewriteEngine On
     RewriteBase <?php echo $rewrite_base; ?>
 
+    RewriteRule ^site-([a-zA-Z0-9]*)/(.*)$ $2/?__cms_subsite=$1
+
     #Checks to see if the user is attempting to access a valid file,
     #such as an image or css document, if this isn't true it sends the
     #request to index.php
