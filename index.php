@@ -74,6 +74,11 @@ if(!file_exists('./application/config/database.php')){
     // change the environment based on multisite
     define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site-'.CMS_SUBSITE : 'production');
 }
+// save the subsite to session
+if(!isset($_SESSION)){
+    session_start();
+}
+$_SESSION['__cms_subsite'] = CMS_SUBSITE;
 
 /*
  *---------------------------------------------------------------

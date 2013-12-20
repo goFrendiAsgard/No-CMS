@@ -87,7 +87,7 @@ class MX_Config extends CI_Config
         $base_url = $this->slash_item('base_url');
 
         $index_page = $this->item('index_page');
-        if(CMS_SUBSITE !== '' && !USE_SUBDOMAIN){
+        if(defined('CMS_SUBSITE') && defined('USE_SUBDOMAIN') && CMS_SUBSITE !== '' && !USE_SUBDOMAIN){
             if($index_page == ''){
                 $index_page = 'site-'.CMS_SUBSITE;
             }else{

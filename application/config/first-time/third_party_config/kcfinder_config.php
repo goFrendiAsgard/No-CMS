@@ -23,9 +23,13 @@ $_FCPATH = '{{ FCPATH }}';
 if(!isset($_SESSION)){
     session_start();
 }
+
+// get subsite
+$_cms_subsite = isset($_SESSION['__cms_subsite'])? $_SESSION['__cms_subsite'] : NULL;
 // get user_id
 $_cms_user_id = isset($_SESSION['__cms_user_id'])? $_SESSION['__cms_user_id'] : NULL;
-$_user_dir = $_cms_user_id !== NULL ?  '/'.$_cms_user_id : '/no_user';
+$_user_dir = $_cms_user_id !== NULL ?  $_cms_user_id : 'no_user';
+$_user_dir = $_cms_subsite == ''? '/main-'.$_user_dir : '/site-'.$_cms_subsite.'-'.$_user_id;
 
 if(!is_dir($_FCPATH."assets/kcfinder/upload".$_user_dir)){
     mkdir($_FCPATH."assets/kcfinder/upload".$_user_dir);

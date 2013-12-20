@@ -818,7 +818,7 @@ class CMS_Model extends CI_Model
             }
             if(!isset($_SESSION['__cms_user_id'])){
                 $_SESSION['__cms_user_id'] = $user_id;
-            }
+            }            
             return TRUE;
         }
         return FALSE;
