@@ -125,7 +125,10 @@ class MX_Config extends CI_Config
             }
 
             //return $base_url.$this->slash_item('index_page').$uri;
-            return $base_url.$index_page.'/'.$uri;
+            if($index_page != '' && substr($index_page, -1) != '/'){
+                $index_page .= '/';
+            }
+            return $base_url.$index_page.$uri;
         }
         elseif (strpos($uri, '?') === FALSE)
         {

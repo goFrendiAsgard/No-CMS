@@ -2,6 +2,8 @@
 session_start();
 class Install_Model extends CI_Model{
 
+    public $subsite         = '';
+
     public $db_protocol     = 'mysqli';
     public $db_host         = 'localhost';
     public $db_port         = '3306';
