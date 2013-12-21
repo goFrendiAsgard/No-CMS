@@ -66,6 +66,10 @@ class Install_Model extends CI_Model{
 
     public function __construct(){
         parent::__construct();
+        // automatically set table prefix based on subsite
+        if($this->subsite != ''){
+            $this->db_table_prefix .= '_site_'.$this->subsite;
+        }
     }
 
     protected function build_dsn(){
@@ -984,12 +988,27 @@ class Install_Model extends CI_Model{
         file_put_contents($file_name, $content);
     }
 
+    public function complete_config_file_name($file){
+        if($this->subsite != ''){
+            $file .= 'site-'.$this->subsite.'/'.$file;
+        }
+        return $file;
+    }
+
     public function build_configuration(){
-        // copy everything from /application/config/first-time.php into /application/config/
+        // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite
+        if($this->subsite != ''){
+            // add site entry
+            $content = file_get_contents(FCPATH.'/site.php');
+            @chmod(FCPATH.'/site.php', 0777);
+            @file_put_contents(FCPATH.'/site.php', $content);
+            // make subsite config directory
+            mkdir(APPPATH.'config/site-'.$this->subsite);
+        }
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
-                copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$file);
+                copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
             }
         }
 
@@ -1021,7 +1040,7 @@ class Install_Model extends CI_Model{
         $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
         // cms_config
-        $file_name = APPPATH.'config/cms_config.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('cms_config.php');
         $key_prefix = '$config[\'';
         $key_suffix = "']";
         $value_prefix = "'";
@@ -1030,7 +1049,7 @@ class Install_Model extends CI_Model{
 
         $this->change_config($file_name, "cms_table_prefix", $this->db_table_prefix, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         // config
-        $file_name = APPPATH.'config/config.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('config.php');
         $key_prefix = '$config[\'';
         $key_suffix = "']";
         $value_prefix = "'";
@@ -1055,7 +1074,7 @@ class Install_Model extends CI_Model{
         $this->change_config($file_name, "sess_encrypt_cookie", 'TRUE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
         // routes
-        $file_name = APPPATH.'config/routes.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('routes.php');
         $key_prefix = '$route[\'';
         $key_suffix = "']";
         $value_prefix = "'";
@@ -1065,7 +1084,7 @@ class Install_Model extends CI_Model{
         $this->change_config($file_name, "default_controller", 'main', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
         // hybridauth
-        $file_name = APPPATH.'config/hybridauthlib.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('hybridauthlib.php');
         $key_prefix = '$';
         $key_suffix = "";
         $value_prefix = "";
@@ -1113,22 +1132,23 @@ class Install_Model extends CI_Model{
         $this->change_config($file_name, "auth_foursquare_app_id", $this->auth_foursquare_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "auth_foursquare_app_secret", $this->auth_foursquare_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
+        if($this->subsite == ''){
+            // make htaccess
+            $rewrite_base = str_replace('index.php', '',$_SERVER['SCRIPT_NAME']);
+            $data = array('rewrite_base'=>$rewrite_base);
+            if($this->hide_index){
+                $view_name = 'installer/htaccess_hide_index';
+            }else{
+                $view_name = 'installer/htaccess_not_hide_index';
+            }
+            $htaccess_content = $this->load->view($view_name, $data, TRUE);
+            file_put_contents(FCPATH.'.htaccess', $htaccess_content);
 
-        // make htaccess
-        $rewrite_base = str_replace('index.php', '',$_SERVER['SCRIPT_NAME']);
-        $data = array('rewrite_base'=>$rewrite_base);
-        if($this->hide_index){
-            $view_name = 'installer/htaccess_hide_index';
-        }else{
-            $view_name = 'installer/htaccess_not_hide_index';
+            // site content
+            $view_name = 'installer/site';;
+            $site_content = $this->load->view($view_name, NULL, TRUE);
+            file_put_contents(FCPATH.'site.php', $site_content);
         }
-        $htaccess_content = $this->load->view($view_name, $data, TRUE);
-        file_put_contents(FCPATH.'.htaccess', $htaccess_content);
-
-        // site content
-        $view_name = 'installer/site';;
-        $site_content = $this->load->view($view_name, NULL, TRUE);
-        file_put_contents(FCPATH.'site.php', $site_content);
     }
 
 
