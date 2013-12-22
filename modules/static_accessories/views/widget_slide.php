@@ -12,7 +12,7 @@ for($i=0; $i<count($slide_list); $i++){
     $div_item_list[] = 
             '<div class="item '.$class.'">'.
             '<img class="item-image" real-src="'.base_url('modules/'.$module_path.'/assets/images/slides/'.$slide['image_url']).'" alt="">'.
-            '<div class="carousel-caption">'.$slide['content'].'</div>'.
+            '<div class="container"><div class="carousel-caption">'.$slide['content'].'</div></div>'.
             '</div>';
 }
 ?>
@@ -24,12 +24,11 @@ for($i=0; $i<count($slide_list); $i++){
     img.item-image{
         margin:auto;
     }
-    .carousel-control [class^="icon-"], .carousel-control [class*=" icon-"]{
-        line-height: 30px!important;
-        vertical-align:text-top!important;
+    #slideshow-widget{
+        margin-bottom:20px;
     }
 </style>
-<div class="carousel slide hidden-phone hidden-tablet" id="slideshow-widget">
+<div class="carousel slide hidden-sm hidden-xs" id="slideshow-widget">
     <!-- Indicators -->
     <ol class="carousel-indicators">
         <?php foreach($li_indicator_list as $li_indicator){ echo $li_indicator;} ?>
@@ -41,12 +40,8 @@ for($i=0; $i<count($slide_list); $i++){
     </div>
 
     <!-- Controls -->
-    <a class="left carousel-control" href="#slideshow-widget" data-slide="prev">
-        <span class="icon-prev">&lsaquo;</span>
-    </a>
-    <a class="right carousel-control" href="#slideshow-widget" data-slide="next">
-        <span class="icon-next">&rsaquo;</span>
-    </a>
+    <a class="left carousel-control" href="#slideshow-widget" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+    <a class="right carousel-control" href="#slideshow-widget" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
 </div>
 <script type ="text/javascript">
     $(document).ready(function(){

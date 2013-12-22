@@ -33,31 +33,29 @@
     {{ widget_name:section_top_fix }}
     {{ widget_name:static_accessories_slideshow }}
     <div class="container">
-      <div class="row-fluid">
-    	<div>     
-        	<div id="__section-left-and-content" class="span9">
-        		<div>{{ navigation_path }}</div><hr />
-        		<div>
-                    <div id="__section-content" class="span12"><?php echo $template['body'];?></div>
-                </div>
-            </div><!--/#layout-content-->
-            <div id="__section-right" class="span3">
-                {{ widget_name:section_right }}
-            </div><!--/#layout-widget-->
-        </div>
-      </div><!--/row-->
+        <div class="row-fluid">
+            <div>     
+                <div id="__section-left-and-content" class="col-md-9">
+                    <div>{{ navigation_path }}</div><hr />
+                    <div id="__section-content" class="col-md-12"><?php echo $template['body'];?></div>
+                </div><!--/#layout-content-->
+                <div id="__section-right" class="col-md-3">
+                    {{ widget_name:section_right }}
+                </div><!--/#layout-widget-->
+            </div>
+        </div><!--/row-->
       <hr>
-      <footer>{{ widget_name:section_bottom }}</footer>
     </div><!--/.fluid-container-->
+    <footer>{{ widget_name:section_bottom }}</footer>
     <script type="text/javascript">
         $(document).ready(function(){
             $(document).on('scroll', function(){
                 if ($('body')[0].offsetTop < ($(document).scrollTop()-$('.navbar-fixed-top').height())){
-                    $('.navbar-fixed-top').css({opacity: 0.95});
+                    $('.navbar-fixed-top').css({opacity: 0.85});
                 }else{
                     $('.navbar-fixed-top').css({opacity: 1});
                 }
-            });         
+            });
         });
     </script>
   </body>

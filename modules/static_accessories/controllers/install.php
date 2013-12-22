@@ -161,10 +161,10 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_key('counter_id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('visitor_counter'));
 
-        $data = array('image_url'=>'01.jpg','content'=>'<h4>The first slide image</h4><p>Some awesome descriptions</p>');
+        $data = array('image_url'=>'01.jpg','content'=>'<h1>The first slide image</h1><p>Some awesome descriptions</p>');
         $this->db->insert($this->cms_complete_table_name('slide'),$data);
 
-        $data = array('image_url'=>'02.jpg','content'=>'<h4>The second slide image</h4><p>Another awesome description</p>');
+        $data = array('image_url'=>'02.jpg','content'=>'<h1>The second slide image</h1><p>Another awesome description</p>');
         $this->db->insert($this->cms_complete_table_name('slide'),$data);
     }
 }

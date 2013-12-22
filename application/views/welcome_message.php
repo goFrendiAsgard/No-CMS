@@ -36,42 +36,38 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         ::webkit-selection{ background-color: #E13300; color: white; }
 
         body {
-            padding-top: 60px;
-            padding-bottom: 40px;
+            padding-top: 10px;
+            padding-bottom: 5px;
         }
     </style>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css');?>" />
-    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');?>"></script>
-    <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js');?>"></script>
+    
 </head>
 <body>
-    <div id="container-fluid">
-        <div class="row-fluid">
-            <div class="navbar navbar-fixed-top">
-              <div class="navbar-inner">
-                <div class="container-fluid">
-                    <a class="brand" href="#">Welcome to No-CMS !!!</a>
-                </div>
-              </div>
-            </div>
-            <h1 class="well row-fluid span11">A Free CodeIgniter Based CMS Framework</h1>
-
-            <div class="well row-fluid span11">
-                <p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
-
-                <p>If you would like to edit this page you'll find it located at:</p>
-                <code>application/views/welcome_message.php</code>
-
-                <p>The corresponding controller for this page is found at:</p>
-                <code>application/controllers/welcome.php</code>
-
-                <p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="<?php echo base_url('ci_user_guide') ?>">CodeIgniter User Guide</a>.</p>
-                <p> You can <a class="btn btn-primary" href="<?php echo site_url('installer/index'); ?>"><b>install No-CMS</b></a> anytime you are ready to</p>
-            </div>
-
-            <p class="footer well row-fluid span11">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
+    <div class="container">
+        <div class="jumbotron">
+            <img src="<?php echo base_url('assets/nocms/images/No-CMS-logo.png') ?>" style="float:left; margin-right:10px;" />
+            <h1>Welcome to No-CMS</h1>
+            <h2>A Free CodeIgniter Based CMS Framework</h2>
+            <p> You can <a class="btn btn-primary" href="<?php echo site_url('installer/index'); ?>"><b>install No-CMS</b></a> anytime you are ready to</p>
         </div>
+
+        <div class="well row-fluid col-sm-12">
+            <p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
+
+            <p>If you would like to edit this page you'll find it located at:</p>
+            <code>application/views/welcome_message.php</code>
+
+            <p>The corresponding controller for this page is found at:</p>
+            <code>application/controllers/welcome.php</code>
+
+            <p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="<?php echo base_url('ci_user_guide') ?>">CodeIgniter User Guide</a>.</p>
+        </div>
+
+        <p class="footer well row-fluid col-sm-12">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
     </div>
+    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js');?>"></script>
 
 </body>
 </html>

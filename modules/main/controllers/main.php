@@ -663,8 +663,8 @@ class Main extends CMS_Controller
         $crud->unset_texteditor('description');
         $crud->field_type('only_content', 'true_false');
 
-        $crud->field_type('bootstrap_glyph','enum',array('icon-glass', 'icon-music', 'icon-search', 'icon-envelope', 'icon-heart', 'icon-star', 'icon-star-empty', 'icon-user', 'icon-film', 'icon-th-large', 'icon-th', 'icon-th-list', 'icon-ok', 'icon-remove', 'icon-zoom-in', 'icon-zoom-out', 'icon-off', 'icon-signal', 'icon-cog', 'icon-trash', 'icon-home', 'icon-file', 'icon-time', 'icon-road', 'icon-download-alt', 'icon-download', 'icon-upload', 'icon-inbox', 'icon-play-circle', 'icon-repeat', 'icon-refresh', 'icon-list-alt', 'icon-lock', 'icon-flag', 'icon-headphones', 'icon-volume-off', 'icon-volume-down', 'icon-volume-up', 'icon-qrcode', 'icon-barcode', 'icon-tag', 'icon-tags', 'icon-book', 'icon-bookmark', 'icon-print', 'icon-camera', 'icon-font', 'icon-bold', 'icon-italic', 'icon-text-height', 'icon-text-width', 'icon-align-left', 'icon-align-center', 'icon-align-right', 'icon-align-justify', 'icon-list', 'icon-indent-left', 'icon-indent-right', 'icon-facetime-video', 'icon-picture', 'icon-pencil', 'icon-map-marker', 'icon-adjust', 'icon-tint', 'icon-edit', 'icon-share', 'icon-check', 'icon-move', 'icon-step-backward', 'icon-fast-backward', 'icon-backward', 'icon-play', 'icon-pause', 'icon-stop', 'icon-forward', 'icon-fast-forward', 'icon-step-forward', 'icon-eject', 'icon-chevron-left', 'icon-chevron-right', 'icon-plus-sign', 'icon-minus-sign', 'icon-remove-sign', 'icon-ok-sign', 'icon-question-sign', 'icon-info-sign', 'icon-screenshot', 'icon-remove-circle', 'icon-ok-circle', 'icon-ban-circle', 'icon-arrow-left', 'icon-arrow-right', 'icon-arrow-up', 'icon-arrow-down', 'icon-share-alt', 'icon-resize-full', 'icon-resize-small', 'icon-plus', 'icon-minus', 'icon-asterisk', 'icon-exclamation-sign', 'icon-gift', 'icon-leaf', 'icon-fire', 'icon-eye-open', 'icon-eye-close', 'icon-warning-sign', 'icon-plane', 'icon-calendar', 'icon-random', 'icon-comment', 'icon-magnet', 'icon-chevron-up', 'icon-chevron-down', 'icon-retweet', 'icon-shopping-cart', 'icon-folder-close', 'icon-folder-open', 'icon-resize-vertical', 'icon-resize-horizontal', 'icon-hdd', 'icon-bullhorn', 'icon-bell', 'icon-certificate', 'icon-thumbs-up', 'icon-thumbs-down', 'icon-hand-right', 'icon-hand-left', 'icon-hand-up', 'icon-hand-down', 'icon-circle-arrow-right', 'icon-circle-arrow-left', 'icon-circle-arrow-up', 'icon-circle-arrow-down', 'icon-globe', 'icon-wrench', 'icon-tasks', 'icon-filter', 'icon-briefcase', 'icon-fullscreen'));
-        $crud->field_type('index','hidden');
+        $crud->field_type('bootstrap_glyph','enum',array('glyphicon-adjust', 'glyphicon-align-center', 'glyphicon-align-justify', 'glyphicon-align-left', 'glyphicon-align-right', 'glyphicon-arrow-down', 'glyphicon-arrow-left', 'glyphicon-arrow-right', 'glyphicon-arrow-up', 'glyphicon-asterisk', 'glyphicon-backward', 'glyphicon-ban-circle', 'glyphicon-barcode', 'glyphicon-bell', 'glyphicon-bold', 'glyphicon-book', 'glyphicon-bookmark', 'glyphicon-briefcase', 'glyphicon-bullhorn', 'glyphicon-calendar', 'glyphicon-camera', 'glyphicon-certificate', 'glyphicon-check', 'glyphicon-chevron-down', 'glyphicon-chevron-left', 'glyphicon-chevron-right', 'glyphicon-chevron-up', 'glyphicon-circle-arrow-down', 'glyphicon-circle-arrow-left', 'glyphicon-circle-arrow-right', 'glyphicon-circle-arrow-up', 'glyphicon-cloud', 'glyphicon-cloud-download', 'glyphicon-cloud-upload', 'glyphicon-cog', 'glyphicon-collapse-down', 'glyphicon-collapse-up', 'glyphicon-comment', 'glyphicon-compressed', 'glyphicon-copyright-mark', 'glyphicon-credit-card', 'glyphicon-cutlery', 'glyphicon-dashboard', 'glyphicon-download', 'glyphicon-download-alt', 'glyphicon-earphone', 'glyphicon-edit', 'glyphicon-eject', 'glyphicon-envelope', 'glyphicon-euro', 'glyphicon-exclamation-sign', 'glyphicon-expand', 'glyphicon-export', 'glyphicon-eye-close', 'glyphicon-eye-open', 'glyphicon-facetime-video', 'glyphicon-fast-backward', 'glyphicon-fast-forward', 'glyphicon-file', 'glyphicon-film', 'glyphicon-filter', 'glyphicon-fire', 'glyphicon-flag', 'glyphicon-flash', 'glyphicon-floppy-disk', 'glyphicon-floppy-open', 'glyphicon-floppy-remove', 'glyphicon-floppy-save', 'glyphicon-floppy-saved', 'glyphicon-folder-close', 'glyphicon-folder-open', 'glyphicon-font', 'glyphicon-forward', 'glyphicon-fullscreen', 'glyphicon-gbp', 'glyphicon-gift', 'glyphicon-glass', 'glyphicon-globe', 'glyphicon-hand-down', 'glyphicon-hand-left', 'glyphicon-hand-right', 'glyphicon-hand-up', 'glyphicon-hd-video', 'glyphicon-hdd', 'glyphicon-header', 'glyphicon-headphones', 'glyphicon-heart', 'glyphicon-heart-empty', 'glyphicon-home', 'glyphicon-import', 'glyphicon-inbox', 'glyphicon-indent-left', 'glyphicon-indent-right', 'glyphicon-info-sign', 'glyphicon-italic', 'glyphicon-leaf', 'glyphicon-link', 'glyphicon-list', 'glyphicon-list-alt', 'glyphicon-lock', 'glyphicon-log-in', 'glyphicon-log-out', 'glyphicon-magnet', 'glyphicon-map-marker', 'glyphicon-minus', 'glyphicon-minus-sign', 'glyphicon-move', 'glyphicon-music', 'glyphicon-new-window', 'glyphicon-off', 'glyphicon-ok', 'glyphicon-ok-circle', 'glyphicon-ok-sign', 'glyphicon-open', 'glyphicon-paperclip', 'glyphicon-pause', 'glyphicon-pencil', 'glyphicon-phone', 'glyphicon-phone-alt', 'glyphicon-picture', 'glyphicon-plane', 'glyphicon-play', 'glyphicon-play-circle', 'glyphicon-plus', 'glyphicon-plus-sign', 'glyphicon-print', 'glyphicon-pushpin', 'glyphicon-qrcode', 'glyphicon-question-sign', 'glyphicon-random', 'glyphicon-record', 'glyphicon-refresh', 'glyphicon-registration-mark', 'glyphicon-remove', 'glyphicon-remove-circle', 'glyphicon-remove-sign', 'glyphicon-repeat', 'glyphicon-resize-full', 'glyphicon-resize-horizontal', 'glyphicon-resize-small', 'glyphicon-resize-vertical', 'glyphicon-retweet', 'glyphicon-road', 'glyphicon-save', 'glyphicon-saved', 'glyphicon-screenshot', 'glyphicon-sd-video', 'glyphicon-search', 'glyphicon-send', 'glyphicon-share', 'glyphicon-share-alt', 'glyphicon-shopping-cart', 'glyphicon-signal', 'glyphicon-sort', 'glyphicon-sort-by-alphabet', 'glyphicon-sort-by-alphabet-alt', 'glyphicon-sort-by-attributes', 'glyphicon-sort-by-attributes-alt', 'glyphicon-sort-by-order', 'glyphicon-sort-by-order-alt', 'glyphicon-sound-5-1', 'glyphicon-sound-6-1', 'glyphicon-sound-7-1', 'glyphicon-sound-dolby', 'glyphicon-sound-stereo', 'glyphicon-star', 'glyphicon-star-empty', 'glyphicon-stats', 'glyphicon-step-backward', 'glyphicon-step-forward', 'glyphicon-stop', 'glyphicon-subtitles', 'glyphicon-tag', 'glyphicon-tags', 'glyphicon-tasks', 'glyphicon-text-height', 'glyphicon-text-width', 'glyphicon-th', 'glyphicon-th-large', 'glyphicon-th-list', 'glyphicon-thumbs-down', 'glyphicon-thumbs-up', 'glyphicon-time', 'glyphicon-tint', 'glyphicon-tower', 'glyphicon-transfer', 'glyphicon-trash', 'glyphicon-tree-conifer', 'glyphicon-tree-deciduous', 'glyphicon-unchecked', 'glyphicon-upload', 'glyphicon-usd', 'glyphicon-user', 'glyphicon-volume-down', 'glyphicon-volume-off', 'glyphicon-volume-up', 'glyphicon-warning-sign', 'glyphicon-wrench', 'glyphicon-zoom-in', 'glyphicon-zoom-out'));
+            $crud->field_type('index','hidden');
 
         $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
         $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name');
@@ -1287,7 +1287,7 @@ class Main extends CMS_Controller
         }
     }
 
-    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $no_complete_menu=FALSE, $no_quicklink=FALSE, $navigations = NULL){
+    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $no_complete_menu=FALSE, $no_quicklink=FALSE, $inverse = FALSE, $navigations = NULL){
         $result = '';
         $caption = $this->cms_lang($caption);
 
@@ -1303,15 +1303,18 @@ class Main extends CMS_Controller
                 if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
                     $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == ''? 'icon-white': $navigation['bootstrap_glyph'];
                     // make text
+                    $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
                     if($navigation['allowed'] && $navigation['active']){
-                        $text = '<a href="'.$navigation['url'].'"><i class="'.$navigation['bootstrap_glyph'].'">&nbsp;</i>&nbsp;'.$navigation['title'].'</a>';
+                        $text = '<a href="'.$navigation['url'].'">'.$icon.
+                            $navigation['title'].'</a>';
                     }else{
-                        $text = '<a href="#"><i class="'.$navigation['bootstrap_glyph'].'">&nbsp;</i>&nbsp;'.$navigation['title'].'</a>';
+                        $text = '<a href="#">'.$icon.
+                            $navigation['title'].'</a>';
                     }
 
                     if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
                         $result .= '<li class="dropdown-submenu">'.
-                            $text.$this->widget_top_nav($caption, FALSE, $no_complete_menu, $no_quicklink, $navigation['child']).'</li>';
+                            $text.$this->widget_top_nav($caption, FALSE, $no_complete_menu, $no_quicklink, $inverse, $navigation['child']).'</li>';
                     }else{
                         $result .= '<li>'.$text.'</li>';
                     }
@@ -1323,7 +1326,7 @@ class Main extends CMS_Controller
         // show up
         if($first){
             if(!$no_complete_menu){
-                $result = '<li class="dropdown hidden-phone hidden-tablet">'.
+                $result = '<li class="dropdown hidden-sm hidden-xs">'.
                     '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
                     $result.'</li>';
             }
@@ -1331,23 +1334,71 @@ class Main extends CMS_Controller
                 $result .= $this->build_quicklink();
             }
             $result = 
-            '<div class="navbar navbar-fixed-top">
-              <div class="navbar-inner">
-                <div style="padding-left:20px;">
-                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="brand" href="{{ site_url }}">
-                        <img src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" />
-                    </a>
-                    <div class="nav-collapse collapse" id="main-menu">
-                        <ul class="nav">'.$result.'</ul>                        
+            '<style type="text/css">
+                .dropdown-submenu{
+                    position:relative;
+                }
+                 
+                .dropdown-submenu > .dropdown-menu
+                {
+                    top:0;
+                    left:100%;
+                    margin-top:-6px;
+                    margin-left:-1px;
+                    -webkit-border-radius:0 6px 6px 6px;
+                    -moz-border-radius:0 6px 6px 6px;
+                    border-radius:0 6px 6px 6px;
+                }
+                 
+                .dropdown-submenu:hover > .dropdown-menu{
+                    display:block;
+                }
+                 
+                .dropdown-submenu > a:after{
+                    display:block;
+                    content:" ";
+                    float:right;
+                    width:0;
+                    height:0;
+                    border-color:transparent;
+                    border-style:solid;
+                    border-width:5px 0 5px 5px;
+                    border-left-color:#cccccc;
+                    margin-top:5px;
+                    margin-right:-10px;
+                }
+                 
+                .dropdown-submenu:hover > a:after{
+                    border-left-color:#ffffff;
+                }
+                 
+                .dropdown-submenu .pull-left{
+                    float:none;
+                }
+                 
+                .dropdown-submenu.pull-left > .dropdown-menu{
+                    left:-100%;
+                    margin-left:10px;
+                    -webkit-border-radius:6px 0 6px 6px;
+                    -moz-border-radius:6px 0 6px 6px;
+                    border-radius:6px 0 6px 6px;
+                }
+            </style>
+            <div class="navbar '.($inverse? 'navbar-inverse' : 'navbar-default').' navbar-fixed-top" role="navigation">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="{{ site_url }}"><img src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" /></a>
                     </div>
-                    <div class="pull-right navbar-text hidden-phone hidden-tablet" style="padding-right:20px;">{{ widget_name:navigation_right_partial }}</div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav nav">'.$result.'</ul>
+                    </div><!--/.nav-collapse -->
                 </div>
-              </div>
             </div>
             <script type="text/javascript">
                 $(document).ready(function(){
@@ -1379,12 +1430,25 @@ class Main extends CMS_Controller
     }
 
     public function widget_top_nav_no_quicklink($caption = 'Complete Menu'){
-        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, NULL);
+        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, FALSE, NULL);
     }
 
     public function widget_quicklink(){
-        $this->widget_top_nav('', TRUE, TRUE, FALSE, NULL);
+        $this->widget_top_nav('', TRUE, TRUE, FALSE, FALSE, NULL);
     }
+
+    public function widget_top_nav_inverse($caption = 'Complete Menu'){
+        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, TRUE, NULL);
+    }
+
+    public function widget_top_nav_no_quicklink_inverse($caption = 'Complete Menu'){
+        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, TRUE, NULL);
+    }
+
+    public function widget_quicklink_inverse(){
+        $this->widget_top_nav('', TRUE, TRUE, FALSE, TRUE, NULL);
+    }
+
 
     private function build_quicklink($quicklinks = NULL,$first = TRUE){
         if(!isset($quicklinks)){
@@ -1407,7 +1471,7 @@ class Main extends CMS_Controller
             }
             if($quicklink['bootstrap_glyph'] != '' || !$first){
                 $icon_class = $icon_class==''? 'icon-white': $icon_class;
-                $icon = '<i class="'.$icon_class.'">&nbsp;</i>&nbsp;';
+                $icon = '<span class="glyphicon '.$icon_class.'"></span>&nbsp;';
             }
             // create li based on child availability
             if(count($quicklink['child'])==0){
@@ -1419,7 +1483,7 @@ class Main extends CMS_Controller
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                         '<span class="anchor-text">'.$icon.$quicklink['title'].'</span>'.
-                        '&nbsp;<span class="caret hidden-phone hidden-tablet"></span></a>';
+                        '&nbsp;<span class="caret hidden-sm hidden-xs" style="display:inline-block!important;"></span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{

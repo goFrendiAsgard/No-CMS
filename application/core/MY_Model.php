@@ -567,7 +567,7 @@ class CMS_Model extends CI_Model
             if ($image_file_path == '') {
                 $image_file_path = 'assets/nocms/images/icons/package.png';
             }
-            $html .= '<li class="well" style="width:80px!important; height:90px!important; float:left!important; list-style-type:none;">';
+            $html .= '<li class="well" style="width:140px!important; height:140px!important; margin-right:10px; margin-bottom:10px; text-align:center; float:left!important; list-style-type:none;">';
             $html .= '<a href="' . $url . '" style="width: 100%; height: 100%; display: block;">';
             if ($image_file_path != '') {
                 $html .= '<img style="max-width:32px; max-height:32px;" src="' . base_url($image_file_path) . '" /><br /><br />';

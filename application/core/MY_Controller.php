@@ -1122,14 +1122,12 @@ class CMS_Controller extends MX_Controller
 
     private function __cms_build_nav_path($navigation_name){
         $path = $this->cms_get_navigation_path($navigation_name);
-        $html = "";
+        $html = '<ol class="breadcrumb">';
         for($i=0; $i<count($path); $i++){
             $current_path = $path[$i];
-            $html .= anchor($current_path['url'], $current_path['title']);
-            if($i<count($path)-1){
-                $html .= " >> ";
-            }
+            $html .= '<li>'.anchor($current_path['url'], $current_path['title']).'</li>';
         }
+        $html .= '</ol>';
         return $html;
     }
 
