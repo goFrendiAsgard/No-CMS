@@ -15,26 +15,36 @@
 </style>
 <h3>{{ language:Change Theme }}</h3>
 <?php
-	echo '<ul class="thumbnails row-fluid">';
+	echo '<div class="row">';
     foreach($themes as $theme){
         $str_status = $theme['used']?'used':'not used';
-        echo '<li class=" well module-management-container change-theme-container" style="width:150px!important; height:120px!important; float:left!important; list-style-type:none;">';
+        echo '<div class="col-xs-6 col-md-3">';
+        echo '<div class="thumbnail" style="height:200px; max-height:200px;">';
         if(!$theme['used']){
-        	echo '<a href="'.site_url('main/change_theme/'.$theme['path']).'">{{ language:Use theme }} : ';
-        }else{
-        	echo '{{ language:Currently use theme }} : ';
+        	echo '<a href="'.site_url('main/change_theme/'.$theme['path']).'" style="text-decoration:none;">';
         }
-        echo '<b><i>'.$theme['path'].'</i></b><br /><br />';
         $image_path = base_url('themes/'.$theme['path'].'/preview.png');
         if(@file_get_contents($image_path,0,NULL,0,1)){
-        	echo '<img src="'.$image_path.'" />';
+            echo '<img src="'.$image_path.'" />';
         }else{
-        	echo '{{ language:No Preview }}';
+            echo '{{ language:No Preview }}';
         }
+        echo '<div class="caption">';
+        
+        if($theme['used']){
+            echo '<h4><u>'.$theme['path'].'</u></h4>';
+            echo '<p><u>Currently used</u></p>';
+        }else{
+            echo '<h4>'.$theme['path'].'</h4>';
+            echo '<p>Click to use this theme</p>';
+        }
+        echo '</div>';
+        
         if(!$theme['used']) echo '</a>';
-        echo '</li>';
+        echo '</div>'; // end of div.thumbnail
+        echo '</div>'; // end of div.col-xs-6
     }
-	echo '</ul>';
+	echo '</div>'; // end of div.row
     echo '<div style="clear:both"></div>';
 	if($upload['uploading'] && !$upload['success']){
     	echo '<div id="message" class="alert alert-error">';

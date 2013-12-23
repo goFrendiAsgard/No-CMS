@@ -18,8 +18,8 @@
     for($i=0; $i<count($modules); $i++){        
         $module = $modules[$i];
         $str_status = $module['active']?'module_active':'module_not_active';
-        echo '<div class="well span11 row-fluids">';
-        echo '<div class="span4 module_icon">';
+        echo '<div class="row well">';
+        echo '<div class="col-sm-4 module_icon">';
         echo '<b><i>'.$module['module_path'].'</i></b><br /><br />';
         $image_path = BASEPATH.'../modules/'.$module['module_path'].'/icon.png';
         if(file_exists($image_path)){
@@ -29,14 +29,14 @@
         	echo '<img class="logo" src="'.base_url('assets/nocms/images/icons/package.png').'" />';
         }
         echo '  <br />';
-        echo '  <a id="module_'.$i.'_activate" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'/install/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
-        echo '  <a id="module_'.$i.'_upgrade" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'/install/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
-        echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger btn-mini disabled" href="'.site_url($module['module_path'].'/install/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
-        echo '  <a id="module_'.$i.'_setting" class="btn btn-mini disabled" href="'.site_url($module['module_path'].'/install/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
+        echo '  <a id="module_'.$i.'_activate" class="btn btn-success disabled" href="'.site_url($module['module_path'].'/install/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
+        echo '  <a id="module_'.$i.'_upgrade" class="btn btn-warning disabled" href="'.site_url($module['module_path'].'/install/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
+        echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger disabled" href="'.site_url($module['module_path'].'/install/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
+        echo '  <a id="module_'.$i.'_setting" class="btn btn-warning disabled" href="'.site_url($module['module_path'].'/install/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
         echo '</div>';
-        echo '<div class="span8">';
+        echo '<div class="col-sm-8">';
         echo '  <br />';
-        echo '  <div id="div_module_'.$i.'_info" class="span12"></div>';
+        echo '  <div id="div_module_'.$i.'_info" class="col-sm-12"></div>';
         echo '</div>';
         echo '</div>';
 
