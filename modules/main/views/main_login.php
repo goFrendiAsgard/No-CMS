@@ -7,9 +7,9 @@
 <?php
     echo form_open('main/login');
     echo form_label('{{ language:Identity }}');
-    echo form_input('identity', $identity, 'placeholder="identity"').br();
+    echo form_input('identity', $identity, 'placeholder="identity" class="form-control"').br();
     echo form_label('{{ language:Password }}');
-    echo form_password('password','','placeholder="password"').br();
+    echo form_password('password','','placeholder="password" class="form-control"').br();
     echo form_submit('login', $login_caption, 'class="btn btn-primary"');
     if($allow_register){
         echo '&nbsp';

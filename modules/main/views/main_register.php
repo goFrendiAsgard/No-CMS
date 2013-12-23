@@ -69,25 +69,58 @@
 </script>
 <h3>{{ language:Register }}</h3>
 <?php
-    echo form_open('main/register');
+    echo form_open('main/register', 'class="form form-horizontal"');
     echo form_input(array('name'=>'user_name', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'real_name', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'password', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'confirm_password', 'value'=>'', 'class'=>'register_input'));
-    echo form_label('{{ language:User Name }}');
-    echo form_input($secret_code.'user_name', $user_name).br();
-    echo form_label('{{ language:Email }}');
-    echo form_input($secret_code.'email', $email).br();
-    echo form_label('{{ language:Real Name }}');
-    echo form_input($secret_code.'real_name', $real_name).br();
-    echo form_label('{{ language:Password }}');
-    echo form_password($secret_code.'password').br();
-    echo form_label('{{ language:Confirm Password }}');
-    echo form_password($secret_code.'confirm_password').br();
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:User Name }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input($secret_code.'user_name', $user_name, 
+        'id="'.$secret_code.'user_name" placeholder="User Name" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Email }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input($secret_code.'email', $email, 
+        'id="'.$secret_code.'email" placeholder="Email" class="form-control"');   
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Real Name }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input($secret_code.'real_name', $real_name, 
+        'id="'.$secret_code.'real_name" placeholder="Real Name" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Password }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_password($secret_code.'password', '', 
+        'id="'.$secret_code.'password" placeholder="Password" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Confirm Password }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_password($secret_code.'confirm_password', '', 
+        'id="'.$secret_code.'confirm_password" placeholder="Password (again)" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
+    echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
+    echo '<div id="message" class="alert alert-danger"></div>';
     echo form_submit('register', $register_caption, 'class="btn btn-primary" style="display:none;"');
+    echo '</div></div>';
     echo form_close();
-    echo br();
 ?>
-<img id="img_ajax_loader" style="display:none;" src="<?php echo base_url('assets/nocms/images/ajax-loader.gif');?>" /><br />
-<div id="message" class="alert alert-error"></div>
+

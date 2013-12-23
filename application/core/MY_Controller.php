@@ -567,9 +567,9 @@ class CMS_Controller extends MX_Controller
      * @return bool
      * @desc   check if user already exists
      */
-    public function cms_is_user_exists($username)
+    public function cms_is_user_exists($identity)
     {
-        return $this->No_CMS_Model->cms_is_user_exists($username);
+        return $this->No_CMS_Model->cms_is_user_exists($identity);
     }
 
     /**

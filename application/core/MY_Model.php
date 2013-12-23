@@ -1847,10 +1847,13 @@ class CMS_Model extends CI_Model
      * @return bool
      * @desc   check if user already exists
      */
-    public function cms_is_user_exists($username)
+    public function cms_is_user_exists($identity)
     {
-        $SQL      = "SELECT user_name FROM ".cms_table_name('main_user')." WHERE user_name='" . addslashes($username) . "'";
-        $query    = $this->db->query($SQL);
+        $query    = $this->db->select('user_name')
+            ->from(cms_table_name('main_user'))
+            ->like('user_name', $identity, 'none')
+            ->or_like('email', $identity, 'none')
+            ->get();
         $num_rows = $query->num_rows();
         return $num_rows > 0;
     }
