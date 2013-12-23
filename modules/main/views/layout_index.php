@@ -189,7 +189,7 @@
 <?php
     $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
     $asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
-    echo $asset->compile_js();
+    //echo $asset->compile_js();
 ?>
 <script type="text/javascript">
     // magic to do insertAtCaret

@@ -308,7 +308,7 @@ class Main extends CMS_Controller
             } else if (!$valid_email){
                 $message = $this->cms_lang("Invalid email address");
                 $error = TRUE;
-            }  else if ($email_exists){
+            } else if ($email_exists){
                 $message = $this->cms_lang("Email already used");
                 $error = TRUE;
             }
@@ -346,18 +346,22 @@ class Main extends CMS_Controller
         if ($this->input->is_ajax_request()) {
             $user_name = $this->input->post('user_name');
             $email = $this->input->post('email');
-            $exists    = $this->cms_is_user_exists($user_name) && $user_name != $this->cms_user_name();
+            $user_name_exists    = $this->cms_is_user_exists($user_name) && $user_name != $this->cms_user_name();
+            $email_exists        = $this->cms_is_user_exists($email) && $email != $this->cms_user_email();
             $valid_email = preg_match('/@.+\./', $email);
             $message   = "";
             $error = FALSE;
             if ($user_name == "") {
                 $message = $this->cms_lang("Username is empty");
                 $error = TRUE;
-            } else if ($exists) {
+            } else if ($user_name_exists) {
                 $message = $this->cms_lang("Username already exists");
                 $error = TRUE;
             } else if (!$valid_email){
                 $message = $this->cms_lang("Invalid email address");
+                $error = TRUE;
+            } else if ($email_exists){
+                $message = $this->cms_lang("Email already used");
                 $error = TRUE;
             }
             $data = array(

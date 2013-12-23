@@ -73,20 +73,61 @@
 </script>
 <h3>{{ language:Change Profile }}</h3>
 <?php
-    echo form_open('main/change_profile');
-    echo form_label('{{ language:User Name }}');
-    echo form_input('user_name', $user_name).br();
-    echo form_label('{{ language:Email }}');
-    echo form_input('email', $email).br();
-    echo form_label('{{ language:Real Name }}');
-    echo form_input('real_name', $real_name).br().br();
-	echo form_checkbox('change_password','True',FALSE).' {{ language:Change Password }}'.br().br();
-    echo form_label('{{ language:Password }}');
-    echo form_password('password').br();
-    echo form_label('{{ language:Confirm Password }}');
-    echo form_password('confirm_password').br();
+    echo form_open('main/change_profile', 'class="form form-horizontal"');
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:User Name }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input('user_name', $user_name, 
+        'id="user_name" placeholder="User Name" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Email }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input('email', $email, 
+        'id="email" placeholder="Email" class="form-control"');   
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Real Name }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input('real_name', $real_name, 
+        'id="real_name" placeholder="Real Name" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';    
+    echo '<div class="col-sm-offset-4 col-sm-8">';
+    echo form_checkbox('change_password','True',FALSE);
+    echo form_label('{{ language:Change Password }}', ' for="" class="control-label');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Password }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_password('password', '', 
+        'id="password" placeholder="Password" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Confirm Password }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_password('confirm_password', '', 
+        'id="confirm_password" placeholder="Password (again)" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
+    echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
+    echo '<div id="message" class="alert alert-danger"></div>';
     echo form_submit('change_profile', $change_profile_caption, 'class="btn btn-primary" style="display:none;"');
+    echo '</div></div>';
+    echo form_close();
+
     echo form_close();
 ?>
-<img id="img_ajax_loader" style="display:none;" src="<?php echo base_url('assets/nocms/images/ajax-loader.gif');?>" /><br />
-<div id="message" class="alert alert-error"></div>
