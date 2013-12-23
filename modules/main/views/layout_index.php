@@ -44,7 +44,6 @@
         font-size: small;
     }
 </style>
-
 <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab1" data-toggle="tab">Configurations</a></li>
@@ -54,11 +53,11 @@
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
         <div class="tab-content">
                                 
-            <div class="tab-pane active" id="tab1"> 
-                <h3>Configurations</h3>               
-                <div class="form-group">
-                   <label class="control-label col-md-4" for="site_layout">Default Layout</label>
-                   <div class="controls col-md-8">
+            <div class="tab-pane" id="tab1"> 
+                <h3>Configurations</h3>
+                <div class="form-group">                   
+                   <label class="control-label col-md-4" for="site_layout">Default Layout</label>                   
+                   <div class="controls col-md-8">                       
                        <select id="site_language" name="site_layout" class="form-control"><?php echo $option_layout; ?></select>
                        <p class="help-block">Default layout used</p>
                    </div>
@@ -113,7 +112,7 @@
                 </div>
             </div>
             
-            <div class="tab-pane" id="tab3">
+            <div class="tab-pane active" id="tab3">
                 <h3>Sections</h3>
                 <div class="form-group">
                    <label class="control-label col-md-4" for="section_top_fix">Top Section</label>
@@ -164,7 +163,7 @@
                        <textarea id="section_right" name="section_right" class="text-area-section"><?php echo $section_widget_list['section_right']['static_content']; ?></textarea>                       
                        <p class="help-block">HTML &amp; tags of right section</p>
                    </div>
-                </div>                
+                </div>
                 <div class="form-group" style="height:260px;">
                    <label class="control-label col-md-4" for="section_bottom">Bottom Section</label>
                    <div class="controls col-md-8">
@@ -179,12 +178,12 @@
             
         </div>
         <input type="submit" class="btn btn-primary btn-lg" value="Apply Changes">
-    </form>
+    </form>    
 </div>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <?php
     $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
-    //$asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
+    $asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
     echo $asset->compile_js();
 ?>
 <script type="text/javascript">
@@ -218,6 +217,10 @@
     });
 
     $(document).ready(function(){
+        // when calling chosen, the select should be visible, that's why I need to do this:
+        $('#tab3').removeClass('active');
+        $('#tab1').addClass('active');
+        // make text area autosize
         $('.text-area-section').autosize();
 
         // add widget or whatever to the section at current caret
