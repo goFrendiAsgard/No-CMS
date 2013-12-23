@@ -7,13 +7,13 @@
 <?php
     echo form_open('main/login');
     echo form_label('{{ language:Identity }}');
-    echo form_input('identity', $identity).br();
+    echo form_input('identity', $identity, 'placeholder="identity"').br();
     echo form_label('{{ language:Password }}');
-    echo form_password('password').br();
+    echo form_password('password','','placeholder="password"').br();
     echo form_submit('login', $login_caption, 'class="btn btn-primary"');
     if($allow_register){
         echo '&nbsp';
-        echo anchor(site_url('main/register'), $register_caption, array('class'=>'btn'));
+        echo anchor(site_url('main/register'), $register_caption, array('class'=>'btn btn-default'));
     }
     echo form_close();
     if(count($providers)>0){
