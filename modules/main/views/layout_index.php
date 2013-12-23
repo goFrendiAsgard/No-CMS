@@ -43,13 +43,6 @@
         font-family: Courier;
         font-size: small;
     }
-    #div-body *,
-    #div-body *:before,
-    #div-body *:after {
-        -webkit-box-sizing: content-box;
-        -moz-box-sizing: content-box;
-        box-sizing: content-box;
-    }
 </style>
 
 <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
@@ -58,70 +51,73 @@
         <li><a href="#tab2" data-toggle="tab">Images</a></li>
         <li><a href="#tab3" data-toggle="tab">Sections</a></li>
     </ul>
-    <form enctype="multipart/form-data" class="form-horizontal" method="post">
+    <form enctype="multipart/form-data" class="form form-horizontal" method="post">
         <div class="tab-content">
                                 
-            <div class="tab-pane active" id="tab1">                
-                <div class="control-group">
-                   <label class="control-label" for="site_layout">Default Layout</label>
-                   <div class="controls">
-                       <select id="site_language" name="site_layout" ><?php echo $option_layout; ?></select>
+            <div class="tab-pane active" id="tab1"> 
+                <h3>Configurations</h3>               
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="site_layout">Default Layout</label>
+                   <div class="controls col-md-8">
+                       <select id="site_language" name="site_layout" class="form-control"><?php echo $option_layout; ?></select>
                        <p class="help-block">Default layout used</p>
                    </div>
                 </div>
-                <div class="control-group">
-                   <label class="control-label" for="site_language">Default Language</label>
-                   <div class="controls">
-                       <select id="site_language" name="site_language" ><?php echo $option_language; ?></select>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="site_language">Default Language</label>
+                   <div class="controls col-md-8">
+                       <select id="site_language" name="site_language" class="form-control"><?php echo $option_language; ?></select>
                        <p class="help-block">Default language used</p>
                    </div>
                 </div>                
-                <div class="control-group">
-                   <label class="control-label" for="site_name">Site Name</label>
-                   <div class="controls">
-                       <input type="text" id="site_name" name="site_name" value="<?php echo $config_list['site_name'] ?>" />
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="site_name">Site Name</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="site_name" name="site_name" value="<?php echo $config_list['site_name'] ?>" class="form-control">
                        <p class="help-block">Site name (e.g: No-CMS, My Company website, etc)</p>
                    </div>
                 </div>
-                <div class="control-group">
-                   <label class="control-label" for="site_slogan">Site Slogan</label>
-                   <div class="controls">
-                       <input type="text" id="site_slogan" name="site_slogan" value="<?php echo $config_list['site_slogan'] ?>" />
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="site_slogan">Site Slogan</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="site_slogan" name="site_slogan" value="<?php echo $config_list['site_slogan'] ?>" class="form-control">
                        <p class="help-block">Your site slogan (e.g: "There is no place like home", "Song song and song", etc)</p>
                    </div>
                 </div>
-                <div class="control-group">
-                   <label class="control-label" for="site_footer">Site Footer</label>
-                   <div class="controls">
-                       <input type="text" id="site_footer" name="site_footer" value="<?php echo $config_list['site_footer'] ?>" />
-                       <p class="help-block">Site footer &amp; attribution (e.g: "Powered by No-CMS &copy; 2013", etc)</p>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="site_footer">Site Footer</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="site_footer" name="site_footer" value="<?php echo $config_list['site_footer'] ?>" class="form-control">
+                       <p class="help-block">Site footer &amp; attribution (e.g: "Powered by No-CMS © 2013", etc)</p>
                    </div>
                 </div>
             </div>
             
             <div class="tab-pane" id="tab2">
-                <div class="control-group">
-                   <label class="control-label" for="site_logo">Site Logo</label>
-                   <div class="controls">
-                       <image src="<?php echo $config_list['site_logo'] ?>" /><br />
-                       <input type="file" id="site_logo" name="site_logo" />
+                <h3>Images</h3>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="site_logo">Site Logo</label>
+                   <div class="controls col-md-8">
+                       <img src="<?php echo $config_list['site_logo'] ?>"><br>
+                       <input type="file" id="site_logo" name="site_logo" class="form-control">
                        <p class="help-block">Image used as site Logo</p>
                    </div>
                 </div>                
-                <div class="control-group">
-                   <label class="control-label" for="site_favicon">Site Favicon</label>
-                   <div class="controls">
-                       <image src="<?php echo $config_list['site_favicon'] ?>" /><br />
-                       <input type="file" id="site_favicon" name="site_favicon" />
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="site_favicon">Site Favicon</label>
+                   <div class="controls col-md-8">
+                       <img src="<?php echo $config_list['site_favicon'] ?>"><br>
+                       <input type="file" id="site_favicon" name="site_favicon" class="form-control">
                        <p class="help-block">Image used as favicon</p>
                    </div>
                 </div>
             </div>
             
             <div class="tab-pane" id="tab3">
-                <div class="control-group">
-                   <label class="control-label" for="section_top_fix">Top Section</label>
-                   <div class="controls">
+                <h3>Sections</h3>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="section_top_fix">Top Section</label>
+                   <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
@@ -129,9 +125,9 @@
                        <p class="help-block">HTML &amp; tags of top section</p>
                    </div>
                 </div> 
-                <div class="control-group">
-                   <label class="control-label" for="section_top_fix">Navigation Bar's Right Partial</label>
-                   <div class="controls">
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="section_top_fix">Navigation Bar's Right Partial</label>
+                   <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
@@ -139,9 +135,9 @@
                        <p class="help-block">HTML &amp; tags of navigation bar's right partial (don't put too much thing here)</p>
                    </div>
                 </div>               
-                <div class="control-group">
-                   <label class="control-label" for="section_banner">Banner Section</label>
-                   <div class="controls">
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="section_banner">Banner Section</label>
+                   <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
@@ -149,9 +145,9 @@
                        <p class="help-block">HTML &amp; tags of banner section</p>
                    </div>
                 </div>                
-                <div class="control-group">
-                   <label class="control-label" for="section_left">Left Section</label>
-                   <div class="controls">
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="section_left">Left Section</label>
+                   <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
@@ -159,9 +155,9 @@
                        <p class="help-block">HTML &amp; tags of left Section</p>
                    </div>
                 </div>                
-                <div class="control-group">
-                   <label class="control-label" for="section_right">Right Section</label>
-                   <div class="controls">
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="section_right">Right Section</label>
+                   <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
@@ -169,9 +165,9 @@
                        <p class="help-block">HTML &amp; tags of right section</p>
                    </div>
                 </div>                
-                <div class="control-group" style="height:260px;">
-                   <label class="control-label" for="section_bottom">Bottom Section</label>
-                   <div class="controls">
+                <div class="form-group" style="height:260px;">
+                   <label class="control-label col-md-4" for="section_bottom">Bottom Section</label>
+                   <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
@@ -182,14 +178,14 @@
             </div>
             
         </div>
-        <input type="submit" class="btn btn-primary btn-large" value="Apply Changes" />
+        <input type="submit" class="btn btn-primary btn-lg" value="Apply Changes">
     </form>
 </div>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <?php
     $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
-    $asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
-    //echo $asset->compile_js();
+    //$asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
+    echo $asset->compile_js();
 ?>
 <script type="text/javascript">
     // magic to do insertAtCaret

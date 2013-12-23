@@ -61,7 +61,16 @@
         });
     }
 
+    function toggle_password_input(){
+        if($('input[name="change_password"]').prop('checked')){
+            $('.password-input').show();
+        }else{
+            $('.password-input').hide();
+        }
+    }
+
     $(document).ready(function(){
+        toggle_password_input();
         check_user_exists();
         $('input').keyup(function(){
             check_user_exists();
@@ -69,6 +78,7 @@
         $('input').change(function(){
         	check_user_exists();
         });
+        $('input[name="change_password"]').change(function(){toggle_password_input();});
     })
 </script>
 <h3>{{ language:Change Profile }}</h3>
@@ -106,7 +116,7 @@
     echo '</div>';
     echo '</div>';
 
-    echo '<div class="form-group">';
+    echo '<div class="form-group password-input">';
     echo form_label('{{ language:Password }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
     echo form_password('password', '', 
@@ -114,7 +124,7 @@
     echo '</div>';
     echo '</div>';
 
-    echo '<div class="form-group">';
+    echo '<div class="form-group password-input">';
     echo form_label('{{ language:Confirm Password }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
     echo form_password('confirm_password', '', 

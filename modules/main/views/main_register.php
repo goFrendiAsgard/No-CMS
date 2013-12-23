@@ -3,7 +3,7 @@
     #message:empty{
         display:none;
     }
-    .register_input{
+    #btn-register, .register_input{
         display:none!important;
     }
 </style>
@@ -119,7 +119,7 @@
     echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
     echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
     echo '<div id="message" class="alert alert-danger"></div>';
-    echo form_submit('register', $register_caption, 'class="btn btn-primary" style="display:none;"');
+    echo form_submit('register', $register_caption, 'id="btn-register" class="btn btn-primary" style="display:none;"');
     echo '</div></div>';
     echo form_close();
 ?>
