@@ -105,15 +105,26 @@
 
 /* end of inversing navbar */
 
+.flexigrid *,
+.flexigrid *:before,
+.flexigrid *:after,
+#colorbox,
+#colorbox:before,
+#colorbox:after {
+    -webkit-box-sizing: content-box!important;
+    -moz-box-sizing: content-box!important;
+    box-sizing: content-box!important;
+}
+
 .breadcrumb{
     background-color:inherit!important;
 }
 .not_shown{
-	display: none;
+    display: none;
 }
 
 .clear{
-	clear: both;
+    clear: both;
 }
 
 .layout_widget_container input, .layout_widget_container textarea {

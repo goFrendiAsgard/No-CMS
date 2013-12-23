@@ -1383,6 +1383,11 @@ class Main extends CMS_Controller
                     -moz-border-radius:6px 0 6px 6px;
                     border-radius:6px 0 6px 6px;
                 }
+                @media (min-width: 750px){
+                    .dropdown .caret{
+                        display:inline-block!important;
+                    }
+                }
             </style>
             <div class="navbar '.($inverse? 'navbar-inverse' : 'navbar-default').' navbar-fixed-top" role="navigation">
                 <div class="container">
@@ -1483,7 +1488,7 @@ class Main extends CMS_Controller
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                         '<span class="anchor-text">'.$icon.$quicklink['title'].'</span>'.
-                        '&nbsp;<span class="caret hidden-sm hidden-xs" style="display:inline-block!important;"></span></a>';
+                        '&nbsp;<span class="caret hidden-sm hidden-xs"></span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{

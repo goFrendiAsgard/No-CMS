@@ -1,10 +1,13 @@
-/* 
-    Document   : style
-    Created on : Jan 7, 2012, 12:57:07 PM
-    Author     : gofrendi
-    Description:
-        Purpose of the stylesheet follows.
-*/
+.flexigrid *,
+.flexigrid *:before,
+.flexigrid *:after,
+#colorbox,
+#colorbox:before,
+#colorbox:after {
+    -webkit-box-sizing: content-box!important;
+    -moz-box-sizing: content-box!important;
+    box-sizing: content-box!important;
+}
 .not_shown{
 	display: none;
 }

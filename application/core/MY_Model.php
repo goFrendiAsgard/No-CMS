@@ -516,7 +516,7 @@ class CMS_Model extends CI_Model
             }
         }
 
-        $html = '<ul class="thumbnails row-fluid">';
+        $html = '<div class="row">';
         $module_path = $this->cms_module_path();
         $image_directories = array();
         if($module_path != ''){
@@ -567,15 +567,22 @@ class CMS_Model extends CI_Model
             if ($image_file_path == '') {
                 $image_file_path = 'assets/nocms/images/icons/package.png';
             }
-            $html .= '<li class="well" style="width:140px!important; height:140px!important; margin-right:10px; margin-bottom:10px; text-align:center; float:left!important; list-style-type:none;">';
-            $html .= '<a href="' . $url . '" style="width: 100%; height: 100%; display: block;">';
+            $html .= '<div class="col-xs-6 col-sm-4 col-md-3">';
+            $html .= '<div class="thumbnail" style="height:200px; max-height:200px;">';
+            $html .= '<a href="' . $url . '" style="width: 100%; height: 100%; display: block; text-decoration:none;">';
             if ($image_file_path != '') {
-                $html .= '<img style="max-width:32px; max-height:32px;" src="' . base_url($image_file_path) . '" /><br /><br />';
+                $html .= '<img style="max-width:32px; max-height:32px; margin-top:10px;" src="' . base_url($image_file_path) . '" />';
             }
-            $html .= $title . '</a>';
-            $html .= '</li>';
+            
+            $html .= '<div class="caption">';
+            $html .= '<h4>'.$title.'</h4>';
+            $html .= '<p>'.$description.'</p>';
+            $html .= '</div>'; // end of div.caption            
+            $html .= '</div>'; // end of div.thumbnail
+            $html .= '</a>';
+            $html .= '</div>'; // end of div.col-xs-6 col-sm-4 col-md-3
         }
-        $html .= '</ul>';
+        $html .= '</div>';
         return $html;
     }
 

@@ -29,10 +29,6 @@
     $asset->add_cms_css('grocery_crud/css/jquery_plugins/chosen/chosen.css');
     $asset->add_cms_css('grocery_crud/themes/flexigrid/css/flexigrid.css');
     echo $asset->compile_css();
-
-    $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
-    $asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
-    echo $asset->compile_js();
 ?>
 <style type="text/css">
     .text-area-section{
@@ -46,6 +42,13 @@
         margin-top: 10px!important;
         font-family: Courier;
         font-size: small;
+    }
+    #div-body *,
+    #div-body *:before,
+    #div-body *:after {
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
     }
 </style>
 
@@ -183,6 +186,11 @@
     </form>
 </div>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
+<?php
+    $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
+    $asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
+    echo $asset->compile_js();
+?>
 <script type="text/javascript">
     // magic to do insertAtCaret
     $.fn.extend({
