@@ -1,24 +1,27 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<h4>Generate Project</h4>
+<div class="form form-inline well" style="margin-bottom:20px;">
+    <label>Choose a project </label>
+    <select id="project_list" class="form-control">
+    <?php
+    	$project_generator_path = array(); 
+    	foreach($projects as $project){
+    		$project_id = $project->project_id;
+    		$project_name = $project->name;
+    		$generator_path = $project->generator_path;
+    		$project_generator_path[$project_id] = site_url($generator_path).'/'.$project_id;
+    		echo '<option value="'.$project_id.'">'.$project_name.'</option>';
+    	}
+    ?>	
+    </select>
+    <input id="btn_generate" type="button" value="Generate" class="btn btn-primary"/>
+    or
+    <a href="<?php echo site_url('nordrassil/data/nds/project/add'); ?>" class="btn btn-success">Make a new Project</a>
+</div>
+<div id="status" class="alert alert-info"><b>Hint : </b>Choose project and generate</div>
+
 <h4>Data</h4>
 <?php echo $content; ?>
-<h4>Generate Project</h4>
-<label>Project: </label>
-<select id="project_list">
-<?php
-	$project_generator_path = array(); 
-	foreach($projects as $project){
-		$project_id = $project->project_id;
-		$project_name = $project->name;
-		$generator_path = $project->generator_path;
-		$project_generator_path[$project_id] = site_url($generator_path).'/'.$project_id;
-		echo '<option value="'.$project_id.'">'.$project_name.'</option>';
-	}
-?>	
-</select>
-<input id="btn_generate" type="button" value="Generate" class="btn btn-primary"/>
-or
-<a href="<?php echo site_url('nordrassil/data/nds/project/add'); ?>" class="btn">Make a new Project</a>
-<div id="status" class="alert alert-info"><b>Hint : </b>Choose project and generate</div>
 
 <script type="text/javascript">
 	var GENERATOR_PATH = <?php echo json_encode($project_generator_path); ?>;

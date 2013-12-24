@@ -17,9 +17,9 @@
 <?php
 	echo '<div class="row">';
     foreach($themes as $theme){
-        $str_status = $theme['used']?'used':'not used';
+        $style = $theme['used']? 'opacity:0.5; border:none;' : '';
         echo '<div class="col-xs-6 col-md-3">';
-        echo '<div class="thumbnail" style="height:200px; max-height:200px;">';
+        echo '<div class="thumbnail" style="height:200px; max-height:200px; '.$style.'">';
         if(!$theme['used']){
         	echo '<a href="'.site_url('main/change_theme/'.$theme['path']).'" style="text-decoration:none;">';
         }
@@ -30,12 +30,11 @@
             echo '{{ language:No Preview }}';
         }
         echo '<div class="caption">';
-        
+        echo '<h4>'.$theme['path'].'</h4>';
+
         if($theme['used']){
-            echo '<h4><u>'.$theme['path'].'</u></h4>';
-            echo '<p><u>Currently used</u></p>';
+            echo '<p>Currently used</p>';
         }else{
-            echo '<h4>'.$theme['path'].'</h4>';
             echo '<p>Click to use this theme</p>';
         }
         echo '</div>';
