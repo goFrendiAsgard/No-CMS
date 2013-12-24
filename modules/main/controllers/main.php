@@ -1263,20 +1263,80 @@ class Main extends CMS_Controller
         }
 
         if(count($navigations) == 0) return '';
-
         if($first){
-            $style = 'display: block; position: static; border:none; margin:0px; background-color:light-gray;';
+            $result = '<style type="text/css">
+                .dropdown-submenu{
+                    position:relative;
+                }
+                 
+                .dropdown-submenu > .dropdown-menu
+                {
+                    top:0;
+                    left:100%;
+                    margin-top:-6px;
+                    margin-left:-1px;
+                    -webkit-border-radius:0 6px 6px 6px;
+                    -moz-border-radius:0 6px 6px 6px;
+                    border-radius:0 6px 6px 6px;
+                }
+                 
+                .dropdown-submenu:hover > .dropdown-menu{
+                    display:block;
+                }
+                 
+                .dropdown-submenu > a:after{
+                    display:block;
+                    content:" ";
+                    float:right;
+                    width:0;
+                    height:0;
+                    border-color:transparent;
+                    border-style:solid;
+                    border-width:5px 0 5px 5px;
+                    border-left-color:#cccccc;
+                    margin-top:5px;
+                    margin-right:-10px;
+                }
+                 
+                .dropdown-submenu:hover > a:after{
+                    border-left-color:#ffffff;
+                }
+                 
+                .dropdown-submenu .pull-left{
+                    float:none;
+                }
+                 
+                .dropdown-submenu.pull-left > .dropdown-menu{
+                    left:-100%;
+                    margin-left:10px;
+                    -webkit-border-radius:6px 0 6px 6px;
+                    -moz-border-radius:6px 0 6px 6px;
+                    border-radius:6px 0 6px 6px;
+                }
+                #_first-dropdown{
+                    display:block;
+                    margin:0px;
+                    border:none;
+                }
+                @media (max-width: 750px){
+                    #_first-dropdown{
+                        position:static;
+                    }
+                }
+            }
+            </style>';
         }else{
-            $style = 'background-color:light-gray;';
+            $result = '';
         }
-        $result = '<ul  class="dropdown-menu nav nav-pills nav-stacked" style="'.$style.'">';
+        $result .= '<ul  class="dropdown-menu nav nav-pills nav-stacked" '.($first?'id="_first-dropdown"':'').'>';
         foreach($navigations as $navigation){
             if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
                 // make text
+                $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
                 if($navigation['allowed'] && $navigation['active']){
-                    $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$navigation['title'].'</a>';
+                    $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$icon.$navigation['title'].'</a>';
                 }else{
-                    $text = $navigation['title'];
+                    $text = $icon.$navigation['title'];
                 }
 
                 if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
