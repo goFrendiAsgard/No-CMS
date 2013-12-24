@@ -13,9 +13,9 @@
 </style>
 <div class="form form-inline">
     <div class="form-group">
-        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword">
+        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />    
     </div>
-    <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary">
+    <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
     <?php
         if($allow_navigate_backend){
             echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
@@ -26,7 +26,7 @@
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
     var PAGE = 0;
-    var URL = '<?php echo site_url($module_path."/browse_city/get_data"); ?>';
+    var URL = '<?php echo site_url($module_path."/browse_subsite/get_data"); ?>';
     var ALLOW_NAVIGATE_BACKEND = <?php echo $allow_navigate_backend ? "true" : "false"; ?>;
     var BACKEND_URL = '<?php echo $backend_url; ?>';
     var LOADING = false;
@@ -37,7 +37,7 @@
         if(typeof(async) == 'undefined'){
             async = true;
         }
-        $('#content-bottom').html('Load more City ...');
+        $('#content-bottom').html('Load more Subsite ...');
         var keyword = $('#input_search').val();
         // kill all previous AJAX
         if(RUNNING_REQUEST){
@@ -57,7 +57,7 @@
                 $('#record_content').append(response);
 
                 // show bottom contents
-                var bottom_content = 'No more City to show.';
+                var bottom_content = 'No more Subsite to show.';
                 if(ALLOW_NAVIGATE_BACKEND){
                     bottom_content += '&nbsp; <a href="<?php echo $backend_url; ?>/add/" class="add_record">Add new</a>';
                 }

@@ -33,7 +33,9 @@
     }
 </style>
 <div class="form form-inline">
-    <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />    
+    <div class="form-group">
+        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />    
+    </div>
     <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
     &lt;?php
         if($allow_navigate_backend){
