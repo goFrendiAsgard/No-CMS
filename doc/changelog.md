@@ -144,8 +144,8 @@ v0.6.6
 + (done, tested) Update CKEditor of groceryCRUD, add kcfinder.
 + (done, tested) Fix Multiple widget from different modules problem (referenced by missidentified issue: https://github.com/goFrendiAsgard/No-CMS/issues/88)
 + (cancelled) Not using AJAX anymore to fetch module status on module management. This is impossible since HMVC doesn't allow us to has different classes with the same name.
-+ (proposed) Multisite management.
-+ (proposed) Use bootstrap 3.0.
++ (in progress) Multisite management.
++ (done, tested) Use bootstrap 3.0.
 + (proposed) IP Deny manager.
 + (proposed) Navigation: move to anywhere.
 + (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre <-- The first one seems to be fixed

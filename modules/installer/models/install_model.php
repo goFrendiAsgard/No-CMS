@@ -67,6 +67,11 @@ class Install_Model extends CI_Model{
     public function __construct(){
         parent::__construct();
         // automatically set table prefix based on subsite
+        $this->set_subsite($this->subsite);
+    }
+
+    public function set_subsite($subsite){
+        $this->subsite = $subsite;
         if($this->subsite != ''){
             $this->db_table_prefix .= '_site_'.$this->subsite;
         }
@@ -990,7 +995,7 @@ class Install_Model extends CI_Model{
 
     public function complete_config_file_name($file){
         if($this->subsite != ''){
-            $file .= 'site-'.$this->subsite.'/'.$file;
+            $file = 'site-'.$this->subsite.'/'.$file;
         }
         return $file;
     }
@@ -998,8 +1003,9 @@ class Install_Model extends CI_Model{
     public function build_configuration(){
         // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite
         if($this->subsite != ''){
-            // add site entry
+            // add site.php entry
             $content = file_get_contents(FCPATH.'/site.php');
+            $content .= PHP_EOL.'$available_site[] = \''.$this->subsite.'\';';
             @chmod(FCPATH.'/site.php', 0777);
             @file_put_contents(FCPATH.'/site.php', $content);
             // make subsite config directory
@@ -1024,7 +1030,7 @@ class Install_Model extends CI_Model{
         $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
 
         // database config
-        $file_name = APPPATH.'config/database.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('database.php');
         $key_prefix = "'";
         $key_suffix = "'";
         $value_prefix = "'";

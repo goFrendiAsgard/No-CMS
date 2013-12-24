@@ -9,5 +9,6 @@ sudo rm -f ./assets/kcfinder/config.php
 sudo rm -Rf ./assets/kcfinder/upload/main-*
 sudo rm -Rf ./assets/kcfinder/upload/site-*
 sudo rm -f ./.htaccess
+sudo rm -Rf ./application/config/site-*
 sudo rm -f ./site.php
 sudo chmod 777 . -R

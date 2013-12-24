@@ -75,6 +75,13 @@ class Installer extends CI_Controller{
             $this->install_model->build_database();
             $this->install_model->build_configuration();
         }
+        /*
+        // try to make a dragon subsite
+        $this->install_model->set_subsite('dragon');
+        $this->install_model->build_database();
+        $this->install_model->build_configuration();
+        // end of make a dragon
+        */
         $data['success'] = $success;
         $data['admin_user_name'] = $this->install_model->admin_user_name;
         $data['admin_password'] = $this->install_model->admin_password;
