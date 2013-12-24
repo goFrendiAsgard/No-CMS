@@ -1,6 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/nocms/js/colorbox/colorbox.css';?>"></link>
-<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?>" />
 <style type="text/css">
     .comment_normal{
         display:none!important;
@@ -49,40 +48,56 @@
         width:90%;
         resize:none;
     }
-    #input_category_chzn, #input_search, #btn_search{
-        float:left;
+    #search-form .form-group{
         margin-right:10px;
     }
-    .clear{clear:both;}
+    .text-area-comment{
+        resize: none;
+        word-wrap: no-wrap;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        min-width: 385px!important;
+        min-height: 75px!important;
+        margin-top: 10px!important;
+    }
 </style>
 <script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 
 <div id="submenu_screen"><?php echo $submenu_screen; ?></div>
-<select id="input_category" class="select-category">
-    <?php
-        foreach($categories as $key=>$value){
-            $selected = '';
-            if($key == $chosen_category){
-                $selected = 'selected = "selected"';
-            }
-            echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
-        }
-    ?>
-</select>
-<input type="text" name="search" value="<?php echo isset($keyword)? $keyword: ''; ?>" id="input_search" class="input-medium search-query" />
-<input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
-<?php
-    // show add record button
-	if($allow_navigate_backend){
-		echo '<a href="'.$backend_url.'/add/" class="btn add_record">Add</a>'.PHP_EOL;
-	}
+<form id="search-form" class="form-inline" role="form">
+    <div class="form-group">
+        <label class="sr-only" for="input_category">Category</label>
+        <select id="input_category" class="select-category form-control">
+            <?php
+                foreach($categories as $key=>$value){
+                    $selected = '';
+                    if($key == $chosen_category){
+                        $selected = 'selected = "selected"';
+                    }
+                    echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                }
+            ?>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="sr-only" for="input_search">Keyword</label>
+        <input type="text" name="search" value="<?php echo isset($keyword)? $keyword: ''; ?>" id="input_search" class="input-medium search-query form-control" placeholder="Keyword" />
+    </div>    
+    <div class="form-group">
+        <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
+        <?php
+            // show add record button
+        	if($allow_navigate_backend){
+        		echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
+        	}
 
-    // show error message if any
-    if(!$success){
-        echo '<div class="alert alert-danger">'.$error_message.'</div>';
-    }
-?>
-<div class="clear"></div>
+            // show error message if any
+            if(!$success){
+                echo '<div class="alert alert-danger">'.$error_message.'</div>';
+            }
+        ?>
+    </div>
+</form>
 <div id="record_content">
     <?php
         if(isset($article) && $article !== FALSE){
@@ -103,9 +118,9 @@
             if($allow_navigate_backend){                
                 echo '<div class="edit_delete_record_container">';
                 if($is_super_admin || $article['author_user_id'] == $user_id){
-                    echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';
+                    echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn btn-default edit_record" primary_key = "'.$article['id'].'">Edit</a>';
                     echo '&nbsp;';
-                    echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+                    echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn btn-danger delete_record" primary_key = "'.$article['id'].'">Delete</a>';
                 }
                 echo '</div>';
             }
@@ -136,8 +151,8 @@
             echo br();
             // comment form
             if($article['allow_comment']){
-                echo '<b>Add Comments </b>'.br().br();
-                echo form_open();
+                echo '<h4>Add Comments </h4>';
+                echo form_open('','class="form  form-horizontal"');
                 echo form_hidden('article_id', $article['id']);
                 //echo form_input(array('name'=>'secret_code', 'value'=>$secret_code, 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'name', 'value'=>'', 'class'=>'comment_normal'));
@@ -145,17 +160,42 @@
                 echo form_input(array('name'=>'website', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'content', 'value'=>'', 'class'=>'comment_normal'));
                 if(!$is_user_login){
-                    echo form_label('Name :');
-                    echo form_input($secret_code.'xname', $name).br();
-                    echo form_label('Email :');
-                    echo form_input($secret_code.'xemail', $email).br();
+
+                    echo '<div class="form-group">';
+                    echo form_label('Name', ' for="" class="control-label col-sm-2');
+                    echo '<div class="col-sm-8">';
+                    echo form_input($secret_code.'xname', $name, 
+                        'id="'.$secret_code.'xname" placeholder="Your name" class="form-control"');
+                    echo '</div>';
+                    echo '</div>';
+
+                    echo '<div class="form-group">';
+                    echo form_label('Email', ' for="" class="control-label col-sm-2');
+                    echo '<div class="col-sm-8">';
+                    echo form_input($secret_code.'xemail', $name, 
+                        'id="'.$secret_code.'xemail" placeholder="Your email address" class="form-control"');
+                    echo '</div>';
+                    echo '</div>';
                 }
-                echo form_label('Website :');
-                echo form_input($secret_code.'xwebsite', $website).br();
-                echo form_label('Comment :');
-                echo form_textarea($secret_code.'xcontent', $content).br();
+                echo '<div class="form-group">';
+                echo form_label('Website', ' for="" class="control-label col-sm-2');
+                echo '<div class="col-sm-8">';
+                echo form_input($secret_code.'xwebsite', $name, 
+                    'id="'.$secret_code.'xwebsite" placeholder="Your website" class="form-control"');
+                echo '</div>';
+                echo '</div>';
+
+                echo '<div class="form-group">';
+                echo form_label('Comment', ' for="" class="control-label col-sm-2');
+                echo '<div class="col-sm-8">';
+                echo form_textarea($secret_code.'xcomment', $name, 
+                    'id="'.$secret_code.'xcomment" placeholder="Your Comment" class="form-control text-area-comment"');
+                echo '</div>';
+                echo '</div>';
+
+                echo '<div class="form-group"><div class="col-sm-offset-2 col-sm-8">';
                 echo form_submit('submit', 'Comment', 'class="btn btn-primary"');
-                echo form_close();
+                echo '</div></div>';
             }
             echo '</div>';
         }else if(isset($article) && $article == FALSE){
@@ -164,7 +204,6 @@
     ?>
 </div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?>"></script>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <script type="text/javascript">
     var PAGE = 0;
@@ -209,7 +248,7 @@
                 // show bottom contents
                 var bottom_content = 'No more Article to show.';
                 if(ALLOW_NAVIGATE_BACKEND){
-                    bottom_content += '&nbsp; <a href="<?php echo $backend_url; ?>/add/" class="add_record">Add new</a>';
+                    bottom_content += '&nbsp; <a href="<?php echo $backend_url; ?>/add/" class="add_record btn btn-default">Add new</a>';
                 }
                 $('#record_content_bottom').html(bottom_content);
                 RUNNING_REQUEST = false;
@@ -238,7 +277,6 @@
             reset_content();
             $('#record_content_bottom').show();
         }
-        $(".select-category").chosen();
 
         // delete click
         $('.delete_record').live('click',function(){

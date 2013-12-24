@@ -33,9 +33,9 @@ foreach($articles as $article){
     if($allow_navigate_backend){
         if($is_super_admin || $article['author_user_id'] == $user_id){
             echo '&nbsp;';
-            echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn edit_record" primary_key = "'.$article['id'].'">Edit</a>';
+            echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn btn-default edit_record" primary_key = "'.$article['id'].'">Edit</a>';
             echo '&nbsp;';
-            echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+            echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn btn-danger delete_record" primary_key = "'.$article['id'].'">Delete</a>';
         }
     }
     echo '</div>';

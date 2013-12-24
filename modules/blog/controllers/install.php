@@ -110,10 +110,12 @@ class Install extends CMS_Module_Installer {
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',
-            $module_path.'/manage_article', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_article', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            NULL, 'Add, edit, and delete blog articles'
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
-            $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            NULL, 'Add, edit, and delete categories. Each article can has one or more categories'
         );
 
         $this->add_quicklink($this->cms_complete_navigation_name('index'));
