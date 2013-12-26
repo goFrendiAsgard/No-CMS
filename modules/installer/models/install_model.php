@@ -144,7 +144,7 @@ class Install_Model extends CI_Model{
         $db_config = $this->build_db_config();
 
         // if we make a subsite, use the current database setting
-        if($this->subsite == ''){
+        if($this->subsite != ''){
             return $this->load->database('default', TRUE);
         }
 
@@ -230,9 +230,8 @@ class Install_Model extends CI_Model{
                 $error_list[] = 'Subsite already exists';
             }
         }
-
         // subsite doesn't need to check database
-        if($this->subsite != ''){
+        if($this->subsite == ''){
             // database connection
             if($db === FALSE){
                 $success =  FALSE;
@@ -260,7 +259,7 @@ class Install_Model extends CI_Model{
         }  
 
         // subsite doesn't need this
-        if($this->subsite != ''){      
+        if($this->subsite == ''){      
             // No-CMS directory
             if (!is_writable(FCPATH)) {
                 $success  = FALSE;
@@ -396,7 +395,7 @@ class Install_Model extends CI_Model{
         }
 
         // subsite doesn't need this
-        if($this->subsite != ''){
+        if($this->subsite == ''){
             // hide index: mod_rewrite should be active, but there is no way to absolutely determine this
             if($this->hide_index){
                 $mod_rewrite = FALSE;
