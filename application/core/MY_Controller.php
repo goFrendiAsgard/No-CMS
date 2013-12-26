@@ -1791,7 +1791,7 @@ class CMS_Module_Installer extends CMS_Controller
             $this->db->query($query);
         }
     }
-    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL)
+    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL, $default_theme=NULL, $default_layout=NULL)
     {
         //get parent's navigation_id
         $query = $this->db->select('navigation_id')
@@ -1852,6 +1852,8 @@ class CMS_Module_Installer extends CMS_Controller
             "description" => $description,
             "active"=>1,
             "bootstrap_glyph"=>$bootstrap_glyph,
+            "default_theme"=>$default_theme,
+            "default_layout"=>$default_layout,
         );
         if (isset($parent_id)) {
             $data['parent_id'] = $parent_id;

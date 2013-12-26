@@ -41,7 +41,8 @@
     <div class="">
         <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#tab2" data-toggle="tab">Setting</a></li>
+                <li class="active"><a href="#tab1" data-toggle="tab">Subsite</a></li>
+                <li><a href="#tab2" data-toggle="tab">Admin Setting</a></li>
                 <li><a href="#tab3" data-toggle="tab">Facebook</a></li>
                 <li><a href="#tab4" data-toggle="tab">Twitter</a></li>
                 <li><a href="#tab5" data-toggle="tab">Google</a></li>
@@ -52,11 +53,42 @@
                 <li><a href="#tab10" data-toggle="tab">Windows</a></li>
                 <li><a href="#tab11" data-toggle="tab">OpenID &amp; AOL</a></li>
             </ul>
-            <form class="form-horizontal" action="<?php echo site_url('installer/install'); ?>" method="post" accept-charset="utf-8">
-            <div class="col-sm-7 col-md-7 col-xs-7">
+            <form class="form-horizontal" action="<?php echo site_url('multisite/add_subsite/install'); ?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+            <div class="col-sm-8 col-md-8 col-xs-8">
                 <div class="tab-content">  
-                    <div class="tab-pane active" id="tab2">
-                        <h3>CMS Setting</h3>
+                    <div class="tab-pane active" id="tab1">
+                        <h3>Site Setting</h3>
+                        <div class="form-group">
+                           <label class="control-label col-md-4" for="subsite">Subsite</label>
+                           <div class="controls col-md-8">
+                               <input type="text" id="subsite" name="subsite" value="" class="input form-control" placeholder="Subsite">                               
+                           </div>
+                        </div>
+                        <div class="form-group">
+                           <label class="control-label col-md-4" for="logo">Logo</label>
+                           <div class="controls col-md-8">
+                               <input type="file" id="logo" name="logo" value="" class="input form-control" placeholder="logo">                               
+                           </div>
+                        </div>
+                        <div class="form-group">
+                           <label class="control-label col-md-4" for="description">Description</label>
+                           <div class="controls col-md-8">
+                               <textarea id="description" name="description" class="input form-control" placeholder="description"></textarea>                               
+                           </div>
+                        </div>
+                        <div class="form-group">
+                           <label class="control-label col-md-4" for="use_subdomain">Use Subdomain</label>
+                           <div class="controls col-md-8">
+                               <input type="checkbox" id="use_subdomain" name="use_subdomain" class="input" value="true">
+                               <p class="help-block">
+                                    Use subdomain (e.g: subdomain.maindomain.com). This require some DNS setting. Leave it unchecked if you aren't sure.
+                               </p>
+                           </div>
+                        </div>
+                        <a class="btn btn-primary btn-change-tab" href="#tab2">Next</a>
+                    </div>
+                    <div class="tab-pane" id="tab2">
+                        <h3>Admin Setting</h3>
                         <div class="form-group">
                            <label class="control-label col-md-4" for="admin_email">Super admin's E-mail</label>
                            <div class="controls col-md-8">
@@ -87,6 +119,7 @@
                                <input type="password" id="admin_confirm_password" name="admin_confirm_password" value="" class="input form-control" placeholder="Super admin's password (again)">
                            </div>
                         </div>
+                        <a class="btn btn-primary btn-change-tab" href="#tab1">Previous</a>
                         <a class="btn btn-primary btn-change-tab" href="#tab3">Next</a>
                     </div>
 
@@ -394,7 +427,7 @@
                     </div>
                 </div>
             </div>
-            <div id="div-right-pane" class="col-sm-5 col-md-5 col-xs-5">
+            <div id="div-right-pane" class="col-sm-4 col-md-4 col-xs-4">
                 <div id="div-error-warning-message">
                     <div id="div-error-message" class="alert alert-danger">
                         <strong>ERRORS:</strong>
@@ -405,10 +438,10 @@
                         <ul id="ul-warning-message"></ul>
                     </div>
                     <div id="div-success-message" class="alert alert-success">
-                        <strong>GREAT !!!</strong>, you can now install No-CMS without worrying anything.                        
+                        <strong>GREAT !!!</strong>, you can now install <span id="span-subsite"></span> without worrying anything.                        
                     </div>
                     <div style="margin-top:20px; margin-bottom:20px;">
-                        <input type="submit" id="btn-install" class="btn btn-primary btn-lg" name="Install" disabled="disabled" value="INSTALL NOW">
+                        <input type="submit" id="btn-install" class="btn btn-primary btn-lg" name="Install" disabled="disabled" value="INSTALL SUBSITE NOW">
                         <img id="img-loader" src="<?php echo base_url('modules/installer/assets/ajax-loader.gif'); ?>">
                     </div>                    
                 </div>
@@ -481,6 +514,7 @@
                 dataType: "json",
                 async : true,
                 data : {
+                    subsite                 : $("#subsite").val(),
                     admin_user_name         : $("#admin_user_name").val(),
                     admin_real_name         : $("#admin_real_name").val(),
                     admin_password          : $("#admin_password").val(),
@@ -546,6 +580,15 @@
                     }
                     // show/hide button
                     if(SUCCESS){
+                        var subsite = $("#subsite").val();
+                        var url = '';
+                        if($('#use_subdomain').prop('checked')){
+                            site_url = '{{ SITE_URL }}';
+                            url = site_url.replace('://', '://'+subsite+'.');
+                        }else{
+                            url = '{{ SITE_URL }}site-'+subsite;
+                        }
+                        $('#span-subsite').html('<b>'+subsite + '</b> subsite ('+url+')');
                         $('#btn-install').show();
                         $("#btn-install").removeAttr('disabled');
                     }else{

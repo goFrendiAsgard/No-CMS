@@ -106,7 +106,7 @@ class Install extends CMS_Module_Installer {
             $parent_url = $module_path.'/blog';
         }
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
-            $parent_url, $this->PRIV_EVERYONE);
+            $parent_url, $this->PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil');
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',

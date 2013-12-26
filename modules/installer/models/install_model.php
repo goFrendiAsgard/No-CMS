@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_Model extends CI_Model{
-
+    public $is_subsite      = FALSE;
     public $subsite         = '';
 
     public $db_protocol     = 'mysqli';
@@ -72,9 +72,11 @@ class Install_Model extends CI_Model{
         $this->set_subsite($this->subsite);
     }
 
-    public function set_subsite($subsite){
-        $this->subsite = $subsite;
-        if($this->subsite != ''){
+    public function set_subsite($subsite = NULL){
+        if($subsite !== NULL){
+            $this->subsite = $subsite;
+        }
+        if($this->is_subsite && $this->subsite != ''){
             $this->db_table_prefix .= '_site_'.$this->subsite;
         }
     }
@@ -144,8 +146,12 @@ class Install_Model extends CI_Model{
         $db_config = $this->build_db_config();
 
         // if we make a subsite, use the current database setting
-        if($this->subsite != ''){
-            return $this->load->database('default', TRUE);
+        if($this->is_subsite){
+            $db = $this->load->database('default', TRUE);
+            $this->db = $db;
+            $this->dbutil = $this->load->dbutil($db, TRUE);
+            $this->dbforge = $this->load->dbforge($db, TRUE);
+            return $db;
         }
 
         $db = $this->load->database($db_config, TRUE); 
@@ -223,15 +229,20 @@ class Install_Model extends CI_Model{
         $warning_list = array();
         $db = $this->load_database();
 
-        if($this->subsite != ''){
+        if($this->is_subsite){
             include(FCPATH.'site.php');
+            if($this->subsite == ''){
+                $success = FALSE;
+                $error_list[] = 'Subsite cannot be empty';
+            }
             if(in_array($this->subsite, $available_site)){
                 $success = FALSE;
                 $error_list[] = 'Subsite already exists';
             }
         }
+
         // subsite doesn't need to check database
-        if($this->subsite == ''){
+        if(!$this->is_subsite){
             // database connection
             if($db === FALSE){
                 $success =  FALSE;
@@ -259,7 +270,7 @@ class Install_Model extends CI_Model{
         }  
 
         // subsite doesn't need this
-        if($this->subsite == ''){      
+        if(!$this->is_subsite){      
             // No-CMS directory
             if (!is_writable(FCPATH)) {
                 $success  = FALSE;
@@ -395,7 +406,7 @@ class Install_Model extends CI_Model{
         }
 
         // subsite doesn't need this
-        if($this->subsite == ''){
+        if(!$this->is_subsite){
             // hide index: mod_rewrite should be active, but there is no way to absolutely determine this
             if($this->hide_index){
                 $mod_rewrite = FALSE;
@@ -973,7 +984,7 @@ class Install_Model extends CI_Model{
                 if(!trim($this->db_table_prefix) == ''){
                     $table_name = $this->db_table_prefix.'_'.$table_name;
                 }
-                $this->dbforge->drop_table($table_name);
+                $this->dbforge->drop_table($table_name, TRUE);
             }
             $create_table_sql_list = $this->create_all_table();
             $insert_sql_list = $this->insert_all_data();
@@ -1022,7 +1033,7 @@ class Install_Model extends CI_Model{
     }
 
     public function complete_config_file_name($file){
-        if($this->subsite != ''){
+        if($this->is_subsite){
             $file = 'site-'.$this->subsite.'/'.$file;
         }
         return $file;
@@ -1030,7 +1041,7 @@ class Install_Model extends CI_Model{
 
     public function build_configuration(){
         // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite
-        if($this->subsite != ''){
+        if($this->is_subsite){
             // add site.php entry
             $content = file_get_contents(FCPATH.'/site.php');
             $content .= PHP_EOL.'$available_site[] = \''.$this->subsite.'\';';
@@ -1061,7 +1072,7 @@ class Install_Model extends CI_Model{
         $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
 
         // database config
-        if($this->subsite == ''){
+        if(!$this->is_subsite){
             $file_name = APPPATH.'config/'.$this->complete_config_file_name('database.php');
             $key_prefix = "'";
             $key_suffix = "'";
@@ -1174,7 +1185,7 @@ class Install_Model extends CI_Model{
         $this->change_config($file_name, "auth_foursquare_app_id", $this->auth_foursquare_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "auth_foursquare_app_secret", $this->auth_foursquare_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
-        if($this->subsite == ''){
+        if(!$this->is_subsite){
             // make htaccess
             $rewrite_base = str_replace('index.php', '',$_SERVER['SCRIPT_NAME']);
             $data = array('rewrite_base'=>$rewrite_base);

@@ -29,7 +29,6 @@ class Installer extends CI_Controller{
         $this->install_model->admin_confirm_password       = (string)$this->input->post('admin_confirm_password');
         $this->install_model->hide_index                   = $this->input->post('hide_index')=='true';
         $this->install_model->gzip_compression             = $this->input->post('gzip_compression')=='true';
-        $this->install_model->site_domain                  = $this->input->post('site_domain');
         $this->install_model->auth_enable_facebook         = $this->input->post('auth_enable_facebook')=='true';
         $this->install_model->auth_facebook_app_id         = (string)$this->input->post('auth_facebook_app_id');
         $this->install_model->auth_facebook_app_secret     = $this->input->post('auth_facebook_app_secret');

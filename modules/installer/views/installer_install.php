@@ -41,7 +41,7 @@
     <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js'); ?>"></script>
     <script type="text/javascript">
         $(document).ready(function(){
-            var modules =  ['nordrassil', 'blog', 'static_accessories'];
+            var modules =  ['nordrassil', 'blog', 'static_accessories', 'contact_us', 'multisite'];
             var done = 0;
             for(var i=0; i<modules.length; i++){
                 var module = modules[i];

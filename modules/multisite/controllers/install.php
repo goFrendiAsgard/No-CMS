@@ -70,8 +70,10 @@ class Install extends CMS_Module_Installer {
     private function remove_all(){
         $module_path = $this->cms_module_path();
 
-        // remove navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('add_subsite'));
+        if(CMS_SUBSITE == ''){
+            // remove navigations
+            $this->remove_navigation($this->cms_complete_navigation_name('add_subsite'));
+        }
 
 
         // remove parent of all navigations
@@ -87,12 +89,16 @@ class Install extends CMS_Module_Installer {
 
         // parent of all navigations
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Multisite',
-            ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), $this->PRIV_EVERYONE, 'main_management', NULL, 'Multisite');
+            ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), $this->PRIV_EVERYONE, NULL, 
+            NULL, 'Browse subsites', 'glyphicon-dashboard');
 
-        // add navigations
-        $this->add_navigation($this->cms_complete_navigation_name('add_subsite'), 'Add Subsite',
-            $module_path.'/add_subsite', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
-        );
+        if(CMS_SUBSITE == ''){
+            // add navigations
+            $this->add_navigation($this->cms_complete_navigation_name('add_subsite'), 'Add Subsite',
+                $module_path.'/add_subsite', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                NULL, 'Browse subsites', 'glyphicon-plus', NULL, 'default-one-column'
+            );
+        }
 
         
         // create tables

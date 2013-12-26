@@ -21,16 +21,17 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
     protected function get_input(){
         // get these from old setting
         $this->install_model->db_table_prefix              = cms_table_prefix();
-
+        $this->install_model->is_subsite                   = TRUE;
         $this->install_model->subsite                      = (string)$this->input->post('subsite');
+        $this->install_model->set_subsite();
+
         $this->install_model->admin_email                  = (string)$this->input->post('admin_email');
         $this->install_model->admin_real_name              = (string)$this->input->post('admin_real_name');
         $this->install_model->admin_user_name              = (string)$this->input->post('admin_user_name');
         $this->install_model->admin_password               = (string)$this->input->post('admin_password');
         $this->install_model->admin_confirm_password       = (string)$this->input->post('admin_confirm_password');
-        $this->install_model->hide_index                   = $this->input->post('hide_index')=='true';
-        $this->install_model->gzip_compression             = $this->input->post('gzip_compression')=='true';
-        $this->install_model->site_domain                  = $this->input->post('site_domain');
+        $this->install_model->hide_index                   = TRUE;
+        $this->install_model->gzip_compression             = FALSE;
         $this->install_model->auth_enable_facebook         = $this->input->post('auth_enable_facebook')=='true';
         $this->install_model->auth_facebook_app_id         = (string)$this->input->post('auth_facebook_app_id');
         $this->install_model->auth_facebook_app_secret     = $this->input->post('auth_facebook_app_secret');
@@ -59,29 +60,19 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
         $this->install_model->auth_enable_aol              = $this->input->post('auth_enable_aol')=='true';
     }
 
-    public function index(){        
+    public function index(){     
         $data = NULL;
         $this->view($this->cms_module_path().'/add_subsite_index', $data, $this->cms_complete_navigation_name('add_subsite'));
     }
 
-    protected function check_installation(){
-        $check_installation = $this->install_model->check_installation();
-        if($this->install_model->subsite == ''){
-            $check_installation['success'] = FALSE;
-            $check_installation['error_list'][] = 'Subsite cannot be empty';
-        }
-        return $check_installation;
-    }
-
     public function check(){
         $this->get_input();
-        $check_installation = $this->check_installation();
-        $this->cms_show_json($check_installation);
+        $this->cms_show_json($this->install_model->check_installation());
     }
 
     public function install(){
         $this->get_input();
-        $check_installation = $this->check_installation();
+        $check_installation = $this->install_model->check_installation();
         $success = $check_installation['success'];
         if($success){
             $this->install_model->build_database();
