@@ -1358,6 +1358,23 @@ class CMS_Model extends CI_Model
                 "used" => $this->cms_get_config('site_theme') == $layout_name
             );
         }
+        // the currently used theme should be on the top
+        for($i=0; $i<count($themes); $i++){
+            if($themes[$i]['used']){                
+                if($i != 0){
+                    $new_themes = array();
+                    $current_theme = $themes[$i];
+                    $new_themes[] = $current_theme;
+                    for($j=0; $j<count($themes); $j++){
+                        if($j != $i){
+                            $new_themes[] = $themes[$j];
+                        }
+                    }
+                    $themes = $new_themes;
+                }
+                break;
+            }
+        }
         return $themes;
     }
 

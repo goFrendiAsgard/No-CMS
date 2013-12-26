@@ -71,8 +71,7 @@ class Install extends CMS_Module_Installer {
         $module_path = $this->cms_module_path();
 
         // remove navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('browse_subsite'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_subsite'));
+        $this->remove_navigation($this->cms_complete_navigation_name('add_subsite'));
 
 
         // remove parent of all navigations
@@ -88,14 +87,11 @@ class Install extends CMS_Module_Installer {
 
         // parent of all navigations
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Multisite',
-            $module_path.'/multisite', $this->PRIV_EVERYONE, 'main_management', NULL, 'Multisite');
+            ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), $this->PRIV_EVERYONE, 'main_management', NULL, 'Multisite');
 
         // add navigations
-        $this->add_navigation($this->cms_complete_navigation_name('browse_subsite'), 'Browse Subsite',
-            $module_path.'/browse_subsite', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
-        );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_subsite'), 'Manage Subsite',
-            $module_path.'/manage_subsite', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->add_navigation($this->cms_complete_navigation_name('add_subsite'), 'Add Subsite',
+            $module_path.'/add_subsite', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
         

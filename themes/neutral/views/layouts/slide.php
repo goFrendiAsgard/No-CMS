@@ -23,7 +23,8 @@
   </head>
   <body>
     <?php
-        $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
+        $asset->add_cms_js("bootstrap/js/bootstrap.min.js");        
+        $asset->add_themes_js('script.js', '{{ used_theme }}', 'default');
         echo $asset->compile_js();
     ?>
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -52,13 +53,6 @@
     <footer>{{ widget_name:section_bottom }}</footer>
     <script type="text/javascript">
         $(document).ready(function(){
-            $(document).on('scroll', function(){
-                if ($('body')[0].offsetTop < ($(document).scrollTop()-$('.navbar-fixed-top').height())){
-                    $('.navbar-fixed-top').css({opacity: 0.85});
-                }else{
-                    $('.navbar-fixed-top').css({opacity: 1});
-                }
-            });
             // if section-left is empty, remove it
             if($.trim($('#__section-left').html()) == ''){
                 $('#__section-left').remove();        

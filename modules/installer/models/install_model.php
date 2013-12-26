@@ -1,5 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-session_start();
+if(!isset($_SESSION)){
+    session_start();
+}
 class Install_Model extends CI_Model{
 
     public $subsite         = '';
@@ -140,6 +142,12 @@ class Install_Model extends CI_Model{
 
     protected function load_database(){
         $db_config = $this->build_db_config();
+
+        // if we make a subsite, use the current database setting
+        if($this->subsite == ''){
+            return $this->load->database('default', TRUE);
+        }
+
         $db = $this->load->database($db_config, TRUE); 
 
         $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
@@ -214,15 +222,27 @@ class Install_Model extends CI_Model{
         $error_list = array();
         $warning_list = array();
         $db = $this->load_database();
-        // database connection
-        if($db === FALSE){
-            $success =  FALSE;
-            $error_list[] = 'Cannot connect using provided <a class="a-change-tab" href="#" tab="#tab1" component="db_protocol">Database Setting</a>';
+
+        if($this->subsite != ''){
+            include(FCPATH.'site.php');
+            if(in_array($this->subsite, $available_site)){
+                $success = FALSE;
+                $error_list[] = 'Subsite already exists';
+            }
         }
-        if($this->db_name=='' && $this->db_protocol != 'pdo_sqlite'){
-            $success = FALSE;
-            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab1" component="db_name">Database schema</a> cannot be empty';
-        }        
+
+        // subsite doesn't need to check database
+        if($this->subsite != ''){
+            // database connection
+            if($db === FALSE){
+                $success =  FALSE;
+                $error_list[] = 'Cannot connect using provided <a class="a-change-tab" href="#" tab="#tab1" component="db_protocol">Database Setting</a>';
+            }
+            if($this->db_name=='' && $this->db_protocol != 'pdo_sqlite'){
+                $success = FALSE;
+                $error_list[] = '<a class="a-change-tab" href="#" tab="#tab1" component="db_name">Database schema</a> cannot be empty';
+            } 
+        }       
         if($this->admin_user_name==''){
             $success = FALSE;
             $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_user_name">Super Admin\'s username</a> is empty';
@@ -237,32 +257,37 @@ class Install_Model extends CI_Model{
         }else if ($this->admin_password != $this->admin_confirm_password){
             $success = FALSE;
             $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_confirm_password">Super Admin\'s password confirmation</a> doesn\'t match';
-        }        
-        // No-CMS directory
-        if (!is_writable(FCPATH)) {
-            $success  = FALSE;
-            $error_list[] = FCPATH.' is not writable';
+        }  
+
+        // subsite doesn't need this
+        if($this->subsite != ''){      
+            // No-CMS directory
+            if (!is_writable(FCPATH)) {
+                $success  = FALSE;
+                $error_list[] = FCPATH.' is not writable';
+            }
+            // kcfinder upload
+            if (!is_writable(FCPATH.'assets/kcfinder/upload')){
+                $success = FALSE;
+                $error_list[] = FCPATH.'assets/kcfinder/upload is not writable';
+            }
+            // kcfinder config
+            if (!is_writable(FCPATH.'assets/kcfinder')){
+                $success = FALSE;
+                $error_list[] = FCPATH.'assets/kcfinder is not writable';
+            }
+            // ckeditor config
+            if (!is_writable(FCPATH.'assets/grocery_crud/texteditor/ckeditor')){
+                $success = FALSE;
+                $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor';
+            }
+            // assets/caches
+            if (!is_writable(FCPATH.'assets/caches')) {
+                $success  = FALSE;
+                $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
+            }
         }
-        // kcfinder upload
-        if (!is_writable(FCPATH.'assets/kcfinder/upload')){
-            $success = FALSE;
-            $error_list[] = FCPATH.'assets/kcfinder/upload is not writable';
-        }
-        // kcfinder config
-        if (!is_writable(FCPATH.'assets/kcfinder')){
-            $success = FALSE;
-            $error_list[] = FCPATH.'assets/kcfinder is not writable';
-        }
-        // ckeditor config
-        if (!is_writable(FCPATH.'assets/grocery_crud/texteditor/ckeditor')){
-            $success = FALSE;
-            $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor';
-        }
-        // assets/caches
-        if (!is_writable(FCPATH.'assets/caches')) {
-            $success  = FALSE;
-            $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
-        }
+
         // application/config/
         if (!is_writable(APPPATH.'config')) {
             $success  = FALSE;
@@ -369,33 +394,37 @@ class Install_Model extends CI_Model{
                 }
             }            
         }
-        // hide index: mod_rewrite should be active, but there is no way to absolutely determine this
-        if($this->hide_index){
-            $mod_rewrite = FALSE;
-            if (function_exists('apache_get_modules')) {
-                $modules = apache_get_modules();
-                if (in_array('mod_rewrite', $modules)) {
-                    $mod_rewrite = TRUE;
+
+        // subsite doesn't need this
+        if($this->subsite != ''){
+            // hide index: mod_rewrite should be active, but there is no way to absolutely determine this
+            if($this->hide_index){
+                $mod_rewrite = FALSE;
+                if (function_exists('apache_get_modules')) {
+                    $modules = apache_get_modules();
+                    if (in_array('mod_rewrite', $modules)) {
+                        $mod_rewrite = TRUE;
+                    }
+                }
+                if (!$mod_rewrite && isset($_SERVER["HTTP_MOD_REWRITE"])) {
+                    if (strtoupper($_SERVER["HTTP_MOD_REWRITE"]) == "ON") {
+                        $mod_rewrite = TRUE;
+                    }
+                }
+                if (!$mod_rewrite) {
+                    if (strtoupper(getenv('HTTP_MOD_REWRITE')) == "ON") {
+                        $mod_rewrite = TRUE;
+                    }
+                }
+                if(!$mod_rewrite){
+                    $warning_list[] = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
                 }
             }
-            if (!$mod_rewrite && isset($_SERVER["HTTP_MOD_REWRITE"])) {
-                if (strtoupper($_SERVER["HTTP_MOD_REWRITE"]) == "ON") {
-                    $mod_rewrite = TRUE;
-                }
+            // log directory
+            if (!is_writable(APPPATH.'logs')) {
+                $success  = FALSE;
+                $error_list[] = APPPATH."logs is not writable";
             }
-            if (!$mod_rewrite) {
-                if (strtoupper(getenv('HTTP_MOD_REWRITE')) == "ON") {
-                    $mod_rewrite = TRUE;
-                }
-            }
-            if(!$mod_rewrite){
-                $warning_list[] = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
-            }
-        }
-        // log directory
-        if (!is_writable(APPPATH.'logs')) {
-            $success  = FALSE;
-            $error_list[] = APPPATH."logs is not writable";
         }
         return array(
                 'success' => $success,
@@ -1014,6 +1043,9 @@ class Install_Model extends CI_Model{
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
+                if($file == 'database.php' && $this->subsite != ''){
+                    continue;
+                }
                 copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
             }
         }
@@ -1030,20 +1062,25 @@ class Install_Model extends CI_Model{
         $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
 
         // database config
-        $file_name = APPPATH.'config/'.$this->complete_config_file_name('database.php');
-        $key_prefix = "'";
-        $key_suffix = "'";
-        $value_prefix = "'";
-        $value_suffix = "',";
-        $equal_sign = '=>';
+        if($this->subsite == ''){
+            $file_name = APPPATH.'config/'.$this->complete_config_file_name('database.php');
+            $key_prefix = "'";
+            $key_suffix = "'";
+            $value_prefix = "'";
+            $value_suffix = "',";
+            $equal_sign = '=>';
 
-        $db_driver = $this->get_db_driver();
-        $this->change_config($file_name, "dsn", $this->build_dsn(), $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "hostname", $this->db_host, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "database", $this->db_name, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "username", $this->db_username, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "password", $this->db_password, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $db_driver = $this->get_db_driver();
+            $this->change_config($file_name, "dsn", $this->build_dsn(), $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "hostname", $this->db_host, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "database", $this->db_name, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "username", $this->db_username, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "password", $this->db_password, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        } else {
+            $file = 'database.php';
+            copy(APPPATH.'config/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
+        }
 
         // cms_config
         $file_name = APPPATH.'config/'.$this->complete_config_file_name('cms_config.php');

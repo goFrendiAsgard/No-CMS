@@ -27,94 +27,6 @@
 
 /*
  *---------------------------------------------------------------
- * APPLICATION ENVIRONMENT
- *---------------------------------------------------------------
- *
- * You can load different configurations depending on your
- * current environment. Setting the environment also influences
- * things like logging and error reporting.
- *
- * This can be set to anything, but default usage is:
- *
- *     development
- *     testing
- *     production
- *
- * NOTE: If you change these, also change the error_reporting() code below
- */
-if(!file_exists('./application/config/database.php')){
-    define('ENVIRONMENT', 'first-time');
-    define('CMS_SUBSITE', '');
-    define('USE_SUBDOMAIN', FALSE);
-    $available_site = array();
-}else{      
-    // multisite, can use GET or subdomain      
-    require_once('./site.php');
-    if(isset($available_site) && is_array($available_site)){
-        $cms_subsite = '';
-        if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){
-            $cms_subsite = $_GET['__cms_subsite'];
-            define('USE_SUBDOMAIN', FALSE);
-        }else{
-            $host = $_SERVER['HTTP_HOST'];
-            if(strlen($host)>0){
-                $host_array = explode('.', $host);
-                $cms_subsite = $host_array[0];
-                define('USE_SUBDOMAIN', TRUE);
-            }
-        }
-        if(in_array($cms_subsite, $available_site)){
-            define('CMS_SUBSITE', $cms_subsite);
-        }else{
-            define('CMS_SUBSITE', '');
-        }
-    }else{
-        define('CMS_SUBSITE', '');
-    }
-    // change the environment based on multisite
-    define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site-'.CMS_SUBSITE : 'production');
-}
-// save the subsite to session
-if(!isset($_SESSION)){
-    session_start();
-}
-$_SESSION['__cms_subsite'] = CMS_SUBSITE;
-
-/*
- *---------------------------------------------------------------
- * ERROR REPORTING
- *---------------------------------------------------------------
- *
- * Different environments will require different levels of error reporting.
- * By default development will show errors but testing and live will hide them.
- */
-switch (ENVIRONMENT)
-{
-    case 'development':
-        error_reporting(-1);
-        ini_set('display_errors', 1);
-    break;
-
-    case 'first-time':
-    case 'testing':
-    case 'production':
-        error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
-        ini_set('display_errors', 0);
-    break;
-
-    default:
-        if(in_array(CMS_SUBSITE, $available_site)){
-            error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
-            ini_set('display_errors', 0);    
-        }else{
-            header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-            echo 'The application environment is not set correctly.';
-            exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
-        }
-}
-
-/*
- *---------------------------------------------------------------
  * SYSTEM FOLDER NAME
  *---------------------------------------------------------------
  *
@@ -201,11 +113,107 @@ switch (ENVIRONMENT)
  */
     // $assign_to_config['name_of_config_item'] = 'value of config item';
 
+/*
+ *---------------------------------------------------------------
+ * APPLICATION ENVIRONMENT
+ *---------------------------------------------------------------
+ *
+ * You can load different configurations depending on your
+ * current environment. Setting the environment also influences
+ * things like logging and error reporting.
+ *
+ * This can be set to anything, but default usage is:
+ *
+ *     development
+ *     testing
+ *     production
+ *
+ * NOTE: If you change these, also change the error_reporting() code below
+ */
 
+$environment = 'development';
+
+/*
+ *---------------------------------------------------------------
+ * ERROR REPORTING
+ *---------------------------------------------------------------
+ *
+ * Different environments will require different levels of error reporting.
+ * By default development will show errors but testing and live will hide them.
+ */
+
+switch ($environment)
+{
+    case 'development':
+        error_reporting(-1);
+        ini_set('display_errors', 1);
+    break;
+
+    case 'testing':
+    case 'production':
+        error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
+        ini_set('display_errors', 0);
+    break;
+
+    default:
+        header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+        echo 'The application environment is not set correctly.';
+        exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
+}
 
 // --------------------------------------------------------------------
 // END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
 // --------------------------------------------------------------------
+
+
+if(!file_exists('./'.$application_folder.'/config/database.php')){
+    define('ENVIRONMENT', 'first-time');
+    define('CMS_SUBSITE', '');
+    define('USE_SUBDOMAIN', FALSE);
+    $available_site = array();
+}else{      
+    // multisite, can use GET or subdomain      
+    require_once('./site.php');
+    if(isset($available_site) && is_array($available_site)){
+        $cms_subsite = '';
+        if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){            
+            $cms_subsite = $_GET['__cms_subsite'];
+            define('USE_SUBDOMAIN', FALSE);
+        }else{
+            $host = $_SERVER['HTTP_HOST'];
+            if(strlen($host)>0){
+                $host_array = explode('.', $host);
+                $cms_subsite = $host_array[0];
+                define('USE_SUBDOMAIN', TRUE);
+            }
+        }
+        if(in_array($cms_subsite, $available_site)){
+            define('CMS_SUBSITE', $cms_subsite);
+        }else{
+            define('CMS_SUBSITE', '');
+        }
+    }else{
+        define('CMS_SUBSITE', '');
+    }
+    // change the environment based on multisite
+    define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site-'.CMS_SUBSITE : 'production');
+}
+// save the subsite to session
+if(!isset($_SESSION)){
+    session_start();
+}
+$_SESSION['__cms_subsite'] = CMS_SUBSITE;
+
+if( CMS_SUBSITE != '' && 
+(!in_array(CMS_SUBSITE, $available_site) || !is_dir('./'.$application_folder.'/config/site-'.CMS_SUBSITE)) ){
+    header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+    echo 'Website not found';
+    exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
+}
+
+
+
+
 
 /*
  * ---------------------------------------------------------------

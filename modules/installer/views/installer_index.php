@@ -8,9 +8,6 @@
             padding-top: 60px;
             padding-bottom: 5px;
         }
-        .input-xlarge{
-            height: 28px!important;
-        }
         #div-error-warning-message{
             margin-top:10px;
             position:static;
@@ -44,7 +41,7 @@
     </style>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css'); ?>" />    
 </head>
-
+<body>
     <div class="">
         <div class="navbar navbar-fixed-top navbar-default">
             <div class="navbar-header"><a class="navbar-brand" href="#">No-CMS Installation Wizard</a></div>          
@@ -71,7 +68,7 @@
                             <div class="form-group">
                                <label class="control-label col-md-3" for="db_protocol">Protocol</label>
                                <div class="controls col-md-8">
-                                   <select id="db_protocol" name="db_protocol" class="input-xlarge input form-control" placeholder="database driver">
+                                   <select id="db_protocol" name="db_protocol" class="input form-control" placeholder="database driver">
                                        <option value="mysql">MySQL/MariaDB (with mysql driver)</option>
                                        <option selected="" value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
                                        <option value="pdo_mysql">MySQL/MariaDB (with PDO driver)</option>
@@ -83,39 +80,39 @@
                             <div class="form-group">
                                <label class="control-label col-md-3" for="db_host">Server</label>
                                <div class="controls col-md-8">
-                                   <input type="text" id="db_host" name="db_host" value="127.0.0.1" class="input-xlarge input form-control" placeholder="Server name (e.g: 'localhost', '127.0.0.1', 'yourDatabaseServer.com')">
+                                   <input type="text" id="db_host" name="db_host" value="127.0.0.1" class="input form-control" placeholder="Server name (e.g: 'localhost', '127.0.0.1', 'yourDatabaseServer.com')">
                                </div>
                             </div>
                             <div class="form-group">
                                <label class="control-label col-md-3" for="db_port">Port</label>
                                <div class="controls col-md-8">
-                                   <input type="text" id="db_port" name="db_port" value="3306" class="input-xlarge input form-control" placeholder="Port">
+                                   <input type="text" id="db_port" name="db_port" value="3306" class="input form-control" placeholder="Port">
                                    <p class="help-block">Database port, usually 3306 for MySQL, 5432 for PosgreSQL, and empty for sqlite</p>
                                </div>
                             </div>
                             <div class="form-group">
                                <label class="control-label col-md-3" for="db_username">Username</label>
                                <div class="controls col-md-8">
-                                   <input type="text" id="db_username" name="db_username" value="root" class="input-xlarge input form-control" placeholder="Database username">                                   
+                                   <input type="text" id="db_username" name="db_username" value="root" class="input form-control" placeholder="Database username">                                   
                                </div>
                             </div>
                             <div class="form-group">
                                <label class="control-label col-md-3" for="db_password">Password</label>
                                <div class="controls col-md-8">
-                                   <input type="password" id="db_password" name="db_password" value="" class="input-xlarge input form-control" placeholder="Database password">                                   
+                                   <input type="password" id="db_password" name="db_password" value="" class="input form-control" placeholder="Database password">                                   
                                </div>
                             </div>
                             <div class="form-group">
                                <label class="control-label col-md-3" for="db_name">Schema</label>
                                <div class="controls col-md-8">
-                                   <input type="text" id="db_name" name="db_name" value="no_cms" class="input-xlarge input form-control" placeholder="Database Schema">
+                                   <input type="text" id="db_name" name="db_name" value="no_cms" class="input form-control" placeholder="Database Schema">
                                    <p class="help-block">If you have database's root privilege and use mysql/mysqli driver, the installer will try to make the schema for you, otherwise you should ensure that your schema is already exists</p>
                                </div>
                             </div>
                             <div class="form-group">
                                <label class="control-label col-md-3" for="db_table_prefix">Table Prefix</label>
                                <div class="controls col-md-8">
-                                   <input type="text" id="db_table_prefix" name="db_table_prefix" value="cms" class="input-xlarge input form-control" placeholder="Table Prefix">
+                                   <input type="text" id="db_table_prefix" name="db_table_prefix" value="cms" class="input form-control" placeholder="Table Prefix">
                                </div>
                             </div>
                             <a class="btn btn-primary btn-change-tab" href="#tab2">Next</a>
@@ -126,44 +123,44 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="admin_email">Super admin's E-mail</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="admin_email" name="admin_email" value="admin@admin.com" class="input-xlarge input form-control" placeholder="Super admin's email">                               
+                               <input type="text" id="admin_email" name="admin_email" value="admin@admin.com" class="input form-control" placeholder="Super admin's email">                               
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="admin_user_name">Super admin's Username</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="admin_user_name" name="admin_user_name" value="admin" class="input-xlarge input form-control" placeholder="Super admin's username">
+                               <input type="text" id="admin_user_name" name="admin_user_name" value="admin" class="input form-control" placeholder="Super admin's username">
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="adm_real_name">Super admin's Real Name</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="admin_real_name" name="admin_real_name" value="Rina Suzuki" class="input-xlarge input form-control" placeholder="Super admin's real name">
+                               <input type="text" id="admin_real_name" name="admin_real_name" value="Rina Suzuki" class="input form-control" placeholder="Super admin's real name">
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="admin_password">Super admin's Password</label>
                            <div class="controls col-md-8">
-                               <input type="password" id="admin_password" name="admin_password" value="" class="input-xlarge input form-control" placeholder="Super admin's password">
+                               <input type="password" id="admin_password" name="admin_password" value="" class="input form-control" placeholder="Super admin's password">
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="admin_confirm_password">Password Confirmation</label>
                            <div class="controls col-md-8">
-                               <input type="password" id="admin_confirm_password" name="admin_confirm_password" value="" class="input-xlarge input form-control" placeholder="Super admin's password (again)">
+                               <input type="password" id="admin_confirm_password" name="admin_confirm_password" value="" class="input form-control" placeholder="Super admin's password (again)">
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="hide_index">Hide Index.php</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="hide_index" name="hide_index" class="input-xlarge input" value="true" checked="">&nbsp; Hide 'index.php' from url (recommended, and required for multisite)
+                               <input type="checkbox" id="hide_index" name="hide_index" class="input" value="true" checked="">&nbsp; Hide 'index.php' from url (recommended, and required for multisite)
                                <p class="help-block">Require mod rewrite. Hide index.php will produce a more SEO-friendly URL (i.e: http://your_domain.com/main/index instead of http://your_domain.com/index.php/main/index)</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="gzip_compression">Use GZIP compression</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input-xlarge input" value="true">&nbsp; Compress output
+                               <input type="checkbox" id="gzip_compression" name="gzip_compression" class="input" value="true">&nbsp; Compress output
                                <p class="help-block">For compression to work, nothing can be sent before the output buffer is called by the output class.  Do not 'echo' any values with compression enabled (some browser might not work well with gzip)</p>
                            </div>
                         </div>
@@ -176,13 +173,13 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_facebook">Allow Facebook Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_facebook" name="auth_enable_facebook" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_facebook" name="auth_enable_facebook" class="input" value="true">
                                <p class="help-block">
                                     To Allow Facebook Authentication:
                                     </p><ol>
                                         <li>Go to <a target="__blank" href="https://www.facebook.com/developers/">https://www.facebook.com/developers/</a> and create a new application.</li>
                                         <li>Fill out any required fields such as the application name and description.</li>
-                                        <li>Put your website domain in the <b>Site Url</b> field. It should match with the current hostname (<b><!--?php echo $_SERVER['SERVER_NAME']; ?--></b>)</li>
+                                        <li>Put your website domain in the <b>Site Url</b> field. It should match with the current hostname (<b><?php echo $_SERVER['SERVER_NAME']; ?></b>)</li>
                                         <li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
                                     </ol>
                                <p></p>
@@ -191,14 +188,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_facebook_app_id">Facebook Application ID</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_facebook_app_id" name="auth_facebook_app_id" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_facebook_app_id" name="auth_facebook_app_id" value="" class="input form-control">
                                <p class="help-block">Facebook Application ID</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_facebook_app_secret">Facebook Application Secret</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_facebook_app_secret" name="auth_facebook_app_secret" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_facebook_app_secret" name="auth_facebook_app_secret" value="" class="input form-control">
                                <p class="help-block">Facebook Application Secret</p>
                            </div>
                         </div>
@@ -211,13 +208,13 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_twitter">Allow Twitter Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_twitter" name="auth_enable_twitter" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_twitter" name="auth_enable_twitter" class="input" value="true">
                                <p class="help-block">
                                     To Allow Twitter Authentication:
                                     </p><ol>
                                         <li>Go to <a target="__blank" href="https://dev.twitter.com/apps">https://dev.twitter.com/apps</a> and create a new application.</li>
                                         <li>Fill out any required fields such as the application name and description.</li>
-                                        <li>Put your website domain in the <b>Application Website</b> and <b>Application Callback URL</b> fields. It should match with the current hostname (<b><!--?php echo $_SERVER['SERVER_NAME']; ?--></b>)</li>
+                                        <li>Put your website domain in the <b>Application Website</b> and <b>Application Callback URL</b> fields. It should match with the current hostname (<b><?php echo $_SERVER['SERVER_NAME']; ?></b>)</li>
                                         <li>Set the Default Access Type to <b>Read</b>, <b>Write</b>, and <b>Direct Messages</b>.</li>
                                         <li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
                                     </ol>
@@ -227,14 +224,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_twitter_app_id">Twitter Application Key</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_twitter_app_key" name="auth_twitter_app_key" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_twitter_app_key" name="auth_twitter_app_key" value="" class="input form-control">
                                <p class="help-block">Twitter Application Key</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_twitter_app_secret">Twitter Application Secret</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_twitter_app_secret" name="auth_twitter_app_secret" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_twitter_app_secret" name="auth_twitter_app_secret" value="" class="input form-control">
                                <p class="help-block">Twitter Application Secret</p>
                            </div>
                         </div>
@@ -247,14 +244,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_google">Allow Google Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_google" name="auth_enable_google" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_google" name="auth_enable_google" class="input" value="true">
                                <p class="help-block">
                                     To Allow Google Authentication:
                                     </p><ol>
                                         <li>Go to <a target="_blank" href="https://code.google.com/apis/console/">https://code.google.com/apis/console/</a> and create a new application.</li>
                                         <li>Fill out any required fields such as the application name and description.</li>
                                         <li>On the <b>"Create Client ID"</b> popup switch to advanced settings by clicking on <b>(more options)</b>.</li>
-                                        <li>Provide this URL as the <b>Callback URL</b> for your application: <b><!--?php echo site_url('main/hauth/endpoint/?hauth.done=Google'); ?--></b></li>
+                                        <li>Provide this URL as the <b>Callback URL</b> for your application: <b><?php echo site_url('main/hauth/endpoint/?hauth.done=Google'); ?></b></li>
                                         <li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
                                     </ol>
                                <p></p>
@@ -263,14 +260,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_google_app_id">Google Application ID</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_google_app_id" name="auth_google_app_id" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_google_app_id" name="auth_google_app_id" value="" class="input form-control">
                                <p class="help-block">Google Application ID</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_google_app_secret">Google Application Secret</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_google_app_secret" name="auth_google_app_secret" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_google_app_secret" name="auth_google_app_secret" value="" class="input form-control">
                                <p class="help-block">Google Application Secret</p>
                            </div>
                         </div>
@@ -283,13 +280,13 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_yahoo">Allow Yahoo Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_yahoo" name="auth_enable_yahoo" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_yahoo" name="auth_enable_yahoo" class="input" value="true">
                                <p class="help-block">
                                     To Allow Yahoo Authentication:
                                     </p><ol>
                                         <li>Go to <a target="__blank" href="https://developer.apps.yahoo.com/dashboard/createKey.html">https://developer.apps.yahoo.com/<br>dashboard/createKey.html</a> and create a new application.</li>
                                         <li>Fill out any required fields such as the application name and description.</li>
-                                        <li>Put your website domain in the <b>Application URL</b> and <b>Application Domain</b> fields. It should match with the current hostname (<b><!--?php echo $_SERVER['SERVER_NAME']; ?--></b>)</li>
+                                        <li>Put your website domain in the <b>Application URL</b> and <b>Application Domain</b> fields. It should match with the current hostname (<b><?php echo $_SERVER['SERVER_NAME']; ?></b>)</li>
                                         <li>Set the Kind of Application to <b>Web-based</b>.</li>
                                         <li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
                                     </ol>
@@ -299,14 +296,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_yahoo_app_id">Yahoo Application ID</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_yahoo_app_id" name="auth_yahoo_app_id" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_yahoo_app_id" name="auth_yahoo_app_id" value="" class="input form-control">
                                <p class="help-block">Yahoo Application ID</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_yahoo_app_secret">Yahoo Application Secret</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_yahoo_app_secret" name="auth_yahoo_app_secret" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_yahoo_app_secret" name="auth_yahoo_app_secret" value="" class="input form-control">
                                <p class="help-block">Yahoo Application Secret</p>
                            </div>
                         </div>
@@ -319,13 +316,13 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_linkedin">Allow linkedIn Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_linkedin" name="auth_enable_linkedin" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_linkedin" name="auth_enable_linkedin" class="input" value="true">
                                <p class="help-block">
                                     To Allow LinkedIn Authentication:
                                     </p><ol>
                                         <li>Go to <a target="__blank" href="https://www.linkedin.com/secure/developer">https://www.linkedin.com/secure/developer</a> and create a new application.</li>
                                         <li>Fill out any required fields such as the application name and description.</li>
-                                        <li>Put your website domain in the <b>Integration URL</b> field. It should match with the current hostname (<b><!--?php echo $_SERVER['SERVER_NAME']; ?--></b>)</li>
+                                        <li>Put your website domain in the <b>Integration URL</b> field. It should match with the current hostname (<b><?php echo $_SERVER['SERVER_NAME']; ?></b>)</li>
                                         <li>Set the Application Type to <b>Web Application</b>.</li>
                                         <li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
                                     </ol>
@@ -335,14 +332,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_linkedin_app_key">LinkedIn Application Key</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_linkedin_app_key" name="auth_linkedin_app_key" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_linkedin_app_key" name="auth_linkedin_app_key" value="" class="input form-control">
                                <p class="help-block">LinkedIn Application Key</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_linkedin_app_secret">LinkedIn Application Secret</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_linkedin_app_secret" name="auth_linkedin_app_secret" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_linkedin_app_secret" name="auth_linkedin_app_secret" value="" class="input form-control">
                                <p class="help-block">LinkedIn Application Secret</p>
                            </div>
                         </div>
@@ -355,13 +352,13 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_myspace">Allow MySpace Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_myspace" name="auth_enable_myspace" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_myspace" name="auth_enable_myspace" class="input" value="true">
                                <p class="help-block">
                                     To Allow MySpace Authentication:
                                     </p><ol>
                                         <li>Go to <a target="__blank" href="http://www.developer.myspace.com/">http://www.developer.myspace.com/</a> and create a new application.</li>
                                         <li>Fill out any required fields such as the application name and description.</li>
-                                        <li>Put your website domain in the <b>External Url</b> and <b>External Callback Validation</b> fields. It should match with the current hostname (<b><!--?php echo $_SERVER['SERVER_NAME']; ?--></b>)</li>
+                                        <li>Put your website domain in the <b>External Url</b> and <b>External Callback Validation</b> fields. It should match with the current hostname (<b><?php echo $_SERVER['SERVER_NAME']; ?></b>)</li>
                                         <li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
                                     </ol>
                                <p></p>
@@ -370,14 +367,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_myspace_app_id">MySpace Application Key</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_myspace_app_key" name="auth_myspace_app_key" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_myspace_app_key" name="auth_myspace_app_key" value="" class="input form-control">
                                <p class="help-block">MySpace Application Key</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_myspace_app_secret">MySpace Application Secret</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_myspace_app_secret" name="auth_myspace_app_secret" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_myspace_app_secret" name="auth_myspace_app_secret" value="" class="input form-control">
                                <p class="help-block">MySpace Application Secret</p>
                            </div>
                         </div>
@@ -390,13 +387,13 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_foursquare">Allow Foursquare Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_foursquare" name="auth_enable_foursquare" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_foursquare" name="auth_enable_foursquare" class="input" value="true">
                                <p class="help-block">
                                     To Allow Foursquare Authentication:
                                     </p><ol>
                                         <li>Go to <a target="_blank" href="https://www.foursquare.com/oauth/">https://www.foursquare.com/oauth/</a> and create a new application.</li>
                                         <li>Fill out any required fields such as the application name and description.</li>
-                                        <li>Provide this URL as the <b>Callback URL</b> for your application: <b><!--?php echo site_url('main/hauth/endpoint/?hauth.done=Foursquare'); ?--></b></li>
+                                        <li>Provide this URL as the <b>Callback URL</b> for your application: <b><?php echo site_url('main/hauth/endpoint/?hauth.done=Foursquare'); ?></b></li>
                                         <li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
                                     </ol>
                                <p></p>
@@ -405,14 +402,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_foursquare_app_id">Foursquare Application ID</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_foursquare_app_id" name="auth_foursquare_app_id" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_foursquare_app_id" name="auth_foursquare_app_id" value="" class="input form-control">
                                <p class="help-block">Foursquare Application ID</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_foursquare_app_secret">foursquare Application Secret</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_foursquare_app_secret" name="auth_foursquare_app_secret" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_foursquare_app_secret" name="auth_foursquare_app_secret" value="" class="input form-control">
                                <p class="help-block">Foursquare Application Secret</p>
                            </div>
                         </div>
@@ -425,13 +422,13 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_windows_live">Allow Windows Live Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_windows_live" name="auth_enable_windows_live" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_windows_live" name="auth_enable_windows_live" class="input" value="true">
                                <p class="help-block">
                                     To Allow Windows Live Authentication:
                                     </p><ol>
                                         <li>Go to <a target="__blank" href="https://manage.dev.live.com/ApplicationOverview.aspx">https://manage.dev.live.com/<br>ApplicationOverview.aspx</a> and create a new application.</li>
                                         <li>Fill out any required fields such as the application name and description.</li>
-                                        <li>Put your website domain in the <b>Redirect Domain</b> field. It should match with the current hostname (<b><!--?php $_SERVER['SERVER_NAME'] ?--></b>)</li>
+                                        <li>Put your website domain in the <b>Redirect Domain</b> field. It should match with the current hostname (<b><?php $_SERVER['SERVER_NAME'] ?></b>)</li>
                                         <li>Once you have registered, copy and paste the created application credentials into this setup page.</li>
                                     </ol>
                                <p></p>
@@ -440,14 +437,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_windows_live_app_id">Windows Live Application ID</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_windows_live_app_id" name="auth_windows_live_app_id" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_windows_live_app_id" name="auth_windows_live_app_id" value="" class="input form-control">
                                <p class="help-block">Windows Live Application ID</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_windows_live_app_secret">windows_live Application Secret</label>
                            <div class="controls col-md-8">
-                               <input type="text" id="auth_windows_live_app_secret" name="auth_windows_live_app_secret" value="" class="input-xlarge input form-control">
+                               <input type="text" id="auth_windows_live_app_secret" name="auth_windows_live_app_secret" value="" class="input form-control">
                                <p class="help-block">Windows Live Application Secret</p>
                            </div>
                         </div>
@@ -460,14 +457,14 @@
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_open_id">Allow Open Id Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_open_id" name="auth_enable_open_id" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_open_id" name="auth_enable_open_id" class="input" value="true">
                                <p class="help-block">Enable Open Id Authentication (No registration required for OpenID based providers)</p>
                            </div>
                         </div>
                         <div class="form-group">
                            <label class="control-label col-md-3" for="auth_enable_aol">Allow AOL Authentication</label>
                            <div class="controls col-md-8">
-                               <input type="checkbox" id="auth_enable_aol" name="auth_enable_aol" class="input-xlarge input" value="true">
+                               <input type="checkbox" id="auth_enable_aol" name="auth_enable_aol" class="input" value="true">
                                <p class="help-block">Enable AOL Authentication (No registration required for OpenID based providers)</p>
                            </div>
                         </div>
@@ -500,7 +497,7 @@
     <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery-1.10.2.min.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js'); ?>"></script>
     <script type="text/javascript">
-        var REQUEST
+        var REQUEST;
         var RUNNING_REQUEST = false;
         var SUCCESS = false;
 
@@ -584,7 +581,7 @@
         $("#btn-install").click(function(){
             $(this).hide();
             $("#img-loader").show();
-        })
+        });
 
 
         function check(){

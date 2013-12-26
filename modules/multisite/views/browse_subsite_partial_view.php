@@ -2,24 +2,34 @@
 
 $contents = '';
 for($i=0; $i<count($result); $i++){
-	$record = $result[$i];
-	$contents .= '<div id="record_'.$record->id.'" class="record_container well">';
+    $record = $result[$i];
+    $contents .= '<div class="col-xs-6 col-md-4">';
+    $contents .= '<div id="record_'.$record->id.'" class="record_container thumbnail">';    
 
-	// show columns
-	$contents .= '<b>Name :</b> '.$record->name.'  <br />'; 
-	$contents .= '<b>Use Subdomain :</b> '.$record->use_subdomain.'  <br />'; 
-	$contents .= '<b>Logo :</b> '.$record->logo.'  <br />'; 
-	$contents .= '<b>Description :</b> '.$record->description.'  <br />'; 
+    if($record->use_subdomain){
+        $url = str_replace('://','://'.$record->name.'.', $site_url);
+    }else{
+        $url = $site_url.'site-'.$record->name;
+    }
+    $contents .= '<a href="'.$url.'" style="text-decoration:none;">';
 
-	// edit and delete button
-	if($allow_navigate_backend){
-		$contents .= '<div class="edit_delete_record_container">';
-		$contents .= '<a href="'.$backend_url.'/edit/'.$record->id.'" class="btn edit_record btn-default" primary_key = "'.$record->id.'">Edit</a>';
-		$contents .= '&nbsp;';
-		$contents .= '<a href="'.$backend_url.'/delete/'.$record->id.'" class="btn delete_record btn-danger" primary_key = "'.$record->id.'">Delete</a>';
-		$contents .= '</div>';
-	}
-	$contents .= '</div>';
+    // show columns
+    $image_path = '';
+    if($record->logo === NULL || $record->logo == ''){
+        $image_path = base_url('modules/{{ module_path }}/assets/images/default-logo.png');
+    }else{
+        $image_path = base_url('modules/{{ module_path }}/assets/uploads/'.$record->logo);
+    }
+    $contents .= '<img src="'.$image_path.'" style="max-height:64px; max-width:64px;" />';
+    $contents .= '<div class="caption">';
+    $contents .= '<h3>'.$record->name.'</h3>'; 
+    $contents .= '<p>'.$record->description.'</p>';
+    $contents .= '</div>';
+    $contents .= '</a>';
+
+
+    $contents .= '</div>';
+    $contents .= '</div>';
 }
 
 echo $contents;
