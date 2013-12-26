@@ -78,9 +78,32 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
             $this->install_model->build_database();
             $this->install_model->build_configuration();
         }
+
+        // upload the logo
+        $upload_path = FCPATH.'modules/'.$this->cms_module_path().'/assets/uploads/';
+        if(isset($_FILES['logo']) && isset($_FILES['logo']['name'])){
+            $tmp_name = $_FILES['logo']['tmp_name'];
+            $file_name = $_FILES['logo']['name'];
+            $file_name = $this->randomize_string($file_name).$file_name;
+            move_uploaded_file($tmp_name, $upload_path.$file_name);
+        }
+
+        $data = array(
+            'name'=> $this->install_model->subsite,
+            'logo'=>$file_name,
+            'description'=>$this->input->post('description'),
+            'use_subdomain'=>$this->input->post('use_subdomain')=='true',
+        );
+        $this->db->insert($this->cms_complete_table_name('subsite'), $data);
+
         $data = $check_installation;
         $this->view($this->cms_module_path().'/add_subsite_install', $data, $this->cms_complete_navigation_name('add_subsite'));
 
+    }
+
+    private function randomize_string($value){
+        $time = date('Y:m:d H:i:s');
+        return substr(md5($value.$time),0,6);
     }
 
 }
