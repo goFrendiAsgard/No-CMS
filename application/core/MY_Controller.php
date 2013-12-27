@@ -41,7 +41,12 @@ class CMS_Controller extends MX_Controller
         $this->load->driver('session');
         
         // get dynamic widget status
+        /*
         if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
+            $this->__cms_dynamic_widget = TRUE;
+        }
+        */
+        if(isset($_REQUEST['__cms_dynamic_widget'])){
             $this->__cms_dynamic_widget = TRUE;
         }
         
@@ -692,12 +697,17 @@ class CMS_Controller extends MX_Controller
          */
         // get dynamic widget status 
         // (this is necessary since sometime the function called directly without run the constructor, i.e: when using Modules::run)
+        
+        /*
         if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
             $this->__cms_dynamic_widget = TRUE;
         }
         $this->cms_unset_ci_session('cms_dynamic_widget');
-        
-        
+        */
+
+        if(isset($_REQUEST['__cms_dynamic_widget'])){
+            $this->__cms_dynamic_widget = TRUE;
+        }
         
         /**
          * PREPARE PARAMETERS *********************************************************************************************

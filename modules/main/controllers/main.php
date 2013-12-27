@@ -1313,13 +1313,13 @@ class Main extends CMS_Controller
                     -moz-border-radius:6px 0 6px 6px;
                     border-radius:6px 0 6px 6px;
                 }
-                #_first-dropdown{
+                #_first-left-dropdown{
                     display:block;
                     margin:0px;
                     border:none;
                 }
                 @media (max-width: 750px){
-                    #_first-dropdown{
+                    #_first-left-dropdown{
                         position:static;
                     }
                 }
@@ -1328,7 +1328,7 @@ class Main extends CMS_Controller
         }else{
             $result = '';
         }
-        $result .= '<ul  class="dropdown-menu nav nav-pills nav-stacked" '.($first?'id="_first-dropdown"':'').'>';
+        $result .= '<ul  class="dropdown-menu nav nav-pills nav-stacked" '.($first?'id="_first-left-dropdown"':'').'>';
         foreach($navigations as $navigation){
             if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
                 // make text
@@ -1474,6 +1474,45 @@ class Main extends CMS_Controller
                 </div>
             </div>
             <script type="text/javascript">
+                // function to adjust navbar size so that it will always fit to the screen
+
+                var _NAVBAR_LI_ORIGINAL_PADDING = $(".navbar-nav > li > a").css("padding-right");
+                var _NAVBAR_LI_ORIGINAL_FONTSIZE = $(".navbar-nav > li").css("font-size");
+                function adjust_navbar(){
+                    var li_count = $(".navbar-nav > li").length;
+                    $(".navbar-nav > li > a").css("padding-left", _NAVBAR_LI_ORIGINAL_PADDING);
+                    $(".navbar-nav > li").css("font-size", _NAVBAR_LI_ORIGINAL_FONTSIZE);
+                    if($(document).width()>=750){
+                        var need_transform = true;
+                        while(need_transform){
+                            need_transform = false;
+                            for(var i=0; i<li_count; i++){
+                                var top = $(".navbar-nav > li")[i].offsetTop;
+                                if(top>$(".navbar-brand")[0].offsetTop){
+                                    need_transform = true;
+                                }
+                            }
+                            if(need_transform){
+                                // decrease the padding 
+                                var currentPadding = $(".navbar-nav > li > a").css("padding-right");
+                                var currentPaddingNum = parseFloat(currentPadding, 10);
+                                if(currentPaddingNum>10){
+                                    newPadding = currentPaddingNum-1;
+                                    $(".navbar-nav > li > a").css("padding-right", newPadding);
+                                    $(".navbar-nav > li > a").css("padding-left", newPadding);
+                                }else{
+                                    // decrease the font
+                                    var currentFontSize = $(".navbar-nav > li").css("font-size");
+                                    var currentFontSizeNum = parseFloat(currentFontSize, 10);
+                                    var newFontSize = currentFontSizeNum * 0.8;
+                                    $(".navbar-nav > li").css("font-size", newFontSize);
+                                }
+                            }
+                        }
+                    }                    
+                }
+
+                // MAIN PROGRAM
                 $(document).ready(function(){
                     // override bootstrap default behavior on dropdown click
                     $("a.dropdown-toggle span.anchor-text").click(function(){
@@ -1494,6 +1533,11 @@ class Main extends CMS_Controller
                             window.location = $(this).attr("href");
                         }
                     });
+                    // adjust navbar 
+                    adjust_navbar();
+                    $(window).resize(function() {
+                        adjust_navbar();
+                    });                    
                 });
             </script>';
             $this->cms_show_html($result);

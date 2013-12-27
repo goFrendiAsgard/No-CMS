@@ -453,19 +453,21 @@ class CMS_Model extends CI_Model
                     }
                 } else {                                                 
                     $url = trim_slashes($url);
-                    $this->cms_ci_session('cms_dynamic_widget', TRUE);
+                    //$this->cms_ci_session('cms_dynamic_widget', TRUE);
+                    $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
                     $response = @Modules::run($url);
                     if(strlen($response) == 0){
                         $response = @Modules::run($url.'/index');
-                    }                    
+                    }       
+                    unset($_REQUEST['__cms_dynamic_widget']);              
                     // fallback, Modules::run failed, use AJAX instead
                     if(strlen($response)==0){                        
                         $response = '<script type="text/javascript">';
-                        $response .= '$(document).ready(function(){$("#__cms_widget_' . $row->widget_id . '").load("'.site_url($url).'?_only_content=TRUE");});';
+                        $response .= '$(document).ready(function(){$("#__cms_widget_' . $row->widget_id . '").load("'.site_url($url).'?__cms_dynamic_widget=TRUE");});';
                         $response .= '</script>';
                     }
-                    $content .= $response;                    
-                    $this->cms_unset_ci_session('cms_dynamic_widget');
+                    $content .= $response;
+                    //$this->cms_unset_ci_session('cms_dynamic_widget');
                 }
                 
                 if($slug){

@@ -97,6 +97,9 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
         $this->db->insert($this->cms_complete_table_name('subsite'), $data);
 
         $data = $check_installation;
+        $data['admin_user_name'] = $this->install_model->admin_user_name;
+        $data['admin_password'] = $this->install_model->admin_password;
+        $data['subsite'] = $this->install_model->subsite;
         $this->view($this->cms_module_path().'/add_subsite_install', $data, $this->cms_complete_navigation_name('add_subsite'));
 
     }
