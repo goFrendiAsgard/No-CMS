@@ -1,0 +1,66 @@
+﻿#bottomContainer
+{
+}
+
+#bottomContainer li
+{
+	display:block;
+	line-height:18px;
+}
+
+.sampleContainer
+{
+	min-height:150px;
+	color:#663300;
+	margin-bottom:40px;
+}
+
+.sampleImage
+{
+	float:left;
+	width:304px;
+	height:112px;
+	border:10px solid #beb7a1;
+	background-color:#fff;
+	margin-right:20px;
+}
+
+.topSampleText
+{
+	font-size:14px;
+	font-weight:bold;
+}
+
+.sampleHeader
+{
+	font-size:18px;
+	font-weight:bold;
+	color:#333;
+	margin-bottom:10px;
+}
+
+.sampleText
+{
+	margin-left:344px;
+}
+
+#rightcolumn
+{
+	margin-left:300px;
+	margin-top:20px;
+}
+
+#howdy_bottom
+{
+	position:absolute;
+	margin-left:100px;
+	margin-top:-20px;
+	float:right;
+	visibility:collapse;
+}
+
+#littleMushroomGuy
+{
+	float:left;
+	position:absolute;
+}
