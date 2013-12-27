@@ -81,7 +81,8 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
 
         // upload the logo
         $upload_path = FCPATH.'modules/'.$this->cms_module_path().'/assets/uploads/';
-        if(isset($_FILES['logo']) && isset($_FILES['logo']['name'])){
+        $file_name = NULL
+        if(isset($_FILES['logo']) && isset($_FILES['logo']['name']) && $_FILES['logo']['name'] != ''){
             $tmp_name = $_FILES['logo']['tmp_name'];
             $file_name = $_FILES['logo']['name'];
             $file_name = $this->randomize_string($file_name).$file_name;

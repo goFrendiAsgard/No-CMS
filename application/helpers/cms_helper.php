@@ -57,7 +57,11 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
  * @desc get/set cms configuration value. if delete == TRUE, then the key will be deleted
  */
 function cms_config($key, $value = NULL, $delete = FALSE){
-    $file_name = APPPATH.'config/cms_config.php';
+    if(defined('CMS_SUBSITE') && CMS_SUBSITE != ''){
+        $file_name = APPPATH.'config/site-'.CMS_SUBSITE.'/cms_config.php';
+    }else{
+        $file_name = APPPATH.'config/cms_config.php';
+    }
     $config_load_alias = 'cms_config';
     return __cms_config($key, $value, $delete, $file_name, $config_load_alias);
 }
@@ -70,7 +74,14 @@ function cms_config($key, $value = NULL, $delete = FALSE){
  * @desc get/set module configuration value. if delete == TRUE, then the key will be deleted
  */
 function cms_module_config($module_directory, $key, $value = NULL, $delete = FALSE){
-    $file_name = BASEPATH.'../modules/'.$module_directory.'/config/module_config.php';
+    if(defined('CMS_SUBSITE') && CMS_SUBSITE != ''){
+        $file_name = FCPATH.'modules/'.$module_directory.'/config/module_config_'.CMS_SUBSITE.'.php';
+        if(!file_exists($filename)){
+            copy(FCPATH.'modules/'.$module_directory.'/config/module_config.php', $file_name);
+        }        
+    }else{
+        $file_name = FCPATH.'modules/'.$module_directory.'/config/module_config.php';
+    }
     $config_load_alias = $module_directory.'/module_config';
     return __cms_config($key, $value, $delete, $file_name, $config_load_alias);
 }
