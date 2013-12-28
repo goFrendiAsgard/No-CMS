@@ -1515,15 +1515,16 @@ class Main extends CMS_Controller
                 // MAIN PROGRAM
                 $(document).ready(function(){
                     // override bootstrap default behavior on dropdown click
-                    $("a.dropdown-toggle span.anchor-text").click(function(){
+                    $("a.dropdown-toggle span.anchor-text").on("click touchstart", function(){
                         if(event.stopPropagation){
                             event.stopPropagation();
                         }
                         event.cancelBubble=true;
                         window.location = $(this).parent().attr("href");
                     });
-                    // override bootstrap default behavior on dropdown click. There should be no dropdown for tablet & phone
-                    $("a.dropdown-toggle").click(function(){
+                    // override bootstrap default behavior on dropdown click. 
+                    // There should be no dropdown for tablet & phone
+                    $("a.dropdown-toggle").on("click touchstart", function(){
                         var screen_width = $("body").width();
                         if(screen_width<=978){
                             if(event.stopPropagation){

@@ -569,11 +569,11 @@ class CMS_Model extends CI_Model
             if ($image_file_path == '') {
                 $image_file_path = 'assets/nocms/images/icons/package.png';
             }
-            $html .= '<div class="col-xs-6 col-sm-4 col-md-3">';
-            $html .= '<div class="thumbnail" style="height:200px; max-height:200px;">';
-            $html .= '<a href="' . $url . '" style="width: 100%; height: 100%; display: block; text-decoration:none;">';
+            $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
+            $html .= '<div class="thumbnail">';
+            $html .= '<a href="' . $url . '" style="text-decoration:none;">';
             if ($image_file_path != '') {
-                $html .= '<img style="max-width:32px; max-height:32px; margin-top:10px;" src="' . base_url($image_file_path) . '" />';
+                $html .= '<img style="margin-top:10px; max-height:60px;" src="' . base_url($image_file_path) . '" />';
             }
             
             $html .= '<div class="caption">';
@@ -585,6 +585,38 @@ class CMS_Model extends CI_Model
             $html .= '</div>'; // end of div.col-xs-6 col-sm-4 col-md-3
         }
         $html .= '</div>';
+        $html .= '
+        <script type="text/javascript">
+            $(document).ready(function(){
+                function __adjust_component(identifier){
+                    var max_height = 0;
+                    $(identifier).each(function(){
+                        $(this).css("margin-bottom", 0);
+                        if($(this).height()>max_height){
+                            max_height = $(this).height();
+                        }
+                    });
+                    $(identifier).each(function(){
+                        var margin_bottom = 0;               
+                        if($(this).height()<max_height){
+                            margin_bottom = max_height - $(this).height();
+                        }
+                        margin_bottom += 10;
+                        $(this).css("margin-bottom", margin_bottom);
+                    });
+                }
+                function adjust_thumbnail(){
+                    __adjust_component(".thumbnail img");
+                    __adjust_component(".thumbnail div.caption");
+                }
+                adjust_thumbnail();
+
+                // resize
+                $(window).resize(function(){
+                    adjust_thumbnail();
+                });
+            });
+        </script>';
         return $html;
     }
 

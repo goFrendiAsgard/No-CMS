@@ -33,6 +33,29 @@
     var REQUEST;
     var RUNNING_REQUEST = false;
 
+    function __adjust_component(identifier){
+        var max_height = 0;
+        $(identifier).each(function(){
+            $(this).css("margin-bottom", 0);
+            if($(this).height()>max_height){
+                max_height = $(this).height();
+            }
+        });
+        $(identifier).each(function(){
+            var margin_bottom = 0;               
+            if($(this).height()<max_height){
+                margin_bottom = max_height - $(this).height();
+            }
+            margin_bottom += 10;
+            $(this).css("margin-bottom", margin_bottom);
+        });
+    }
+    function adjust_thumbnail(){
+        __adjust_component(".thumbnail img");
+        __adjust_component(".thumbnail div.caption");
+    }
+    
+
     function fetch_more_data(async){
         if(typeof(async) == 'undefined'){
             async = true;
@@ -55,6 +78,8 @@
             'success'  : function(response){
                 // show contents
                 $('#record_content').append(response);
+
+                adjust_thumbnail();
 
                 // show bottom contents
                 var bottom_content = 'No more Subsite to show.';
@@ -100,6 +125,10 @@
             }
         });
 
-    });
+        // resize
+        $(window).resize(function(){
+            adjust_thumbnail();
+        });        
 
+    });
 </script>
