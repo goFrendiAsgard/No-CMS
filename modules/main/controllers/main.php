@@ -1603,7 +1603,7 @@ class Main extends CMS_Controller
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                         '<span class="anchor-text">'.$icon.$quicklink['title'].'</span>'.
-                        '&nbsp;<span class="caret "></span></a>'; // hidden-sm hidden-xs
+                        '&nbsp;<span class="caret hidden-sm hidden-xs"></span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{

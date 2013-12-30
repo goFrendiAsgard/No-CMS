@@ -34,6 +34,7 @@ application/config/*.php
 application/logs/log*.php
 assets/grocery_crud/texteditor/ckeditor/config.js
 assets/kcfinder/config.php
+site.php
 
 # the sql
 modules/*/assets/db/backup*.sql
