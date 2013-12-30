@@ -78,19 +78,21 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         // displayed columns on list
         $crud->columns('article_title','date','author_user_id','allow_comment','categories','photos','comments');
         // displayed columns on edit operation
-        $crud->edit_fields('article_title','article_url','date','author_user_id','content','allow_comment','categories','photos','comments');
+        $crud->edit_fields('article_title','article_url','date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
         // displayed columns on add operation
-        $crud->add_fields('article_title','article_url','date','author_user_id','content','allow_comment','categories','photos','comments');
+        $crud->add_fields('article_title','article_url','date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
         $crud->required_fields('article_title');        
         $crud->unique_fields('article_title');
         $crud->unset_read();
         
         // caption of each columns
         $crud->display_as('article_title','Article Title');
-        $crud->display_as('article_url','Article Url');
+        $crud->display_as('article_url','Article URL (Permalink)');
         $crud->display_as('date','Created Date');
         $crud->display_as('author_user_id','Author');
         $crud->display_as('content','Content');
+        $crud->display_as('keyword','Keyword metadata (comma separated)');
+        $crud->display_as('description','Description metadata');
         $crud->display_as('allow_comment','Allow Comment');
         $crud->display_as('categories','Categories');
         $crud->display_as('photos','Photos');
@@ -125,8 +127,8 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud->field_type('author_user_id', 'hidden');
         $crud->field_type('date', 'hidden');
-        $crud->field_type('article_url', 'hidden');
         $crud->field_type('allow_comment', 'true_false');
+        $crud->unset_texteditor('description');
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,21 +159,26 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
     public function before_insert($post_array){
         $this->load->helper('url');
         $this->load->model($this->cms_module_path().'/article_model');
-        $url = url_title($post_array['article_title']);
-        $count_url = $this->article_model->get_count_article_url($url);
-        if($count_url>0){
-            $index = $count_url;
-            while($this->article_model->get_count_article_url($url.'_'.$index)>0){
-                $index++;
+        // article url / permalink
+        if($post_array['article_url'] === NULL || trim($post_array['article_url']) == ''){
+            $url = url_title($post_array['article_title']);
+            $count_url = $this->article_model->get_count_article_url($url);
+            if($count_url>0){
+                $index = $count_url;
+                while($this->article_model->get_count_article_url($url.'_'.$index)>0){
+                    $index++;
+                }
+                $url .= '_'.$index;
             }
-            $url .= '_'.$index;
+            $post_array['article_url'] = $url;
         }
+        // default allow comment value
         if(!isset($post_array['allow_comment']) || !in_array($post_array['allow_comment'],array(0,1))){
             $post_array['allow_comment'] = 1;
         }
+        // author and user
         $post_array['author_user_id'] = $this->cms_user_id();
-        $post_array['date'] = date('Y-m-d H:i:s');
-        $post_array['article_url'] = $url;
+        $post_array['date'] = date('Y-m-d H:i:s');        
         return $post_array;
     }
 

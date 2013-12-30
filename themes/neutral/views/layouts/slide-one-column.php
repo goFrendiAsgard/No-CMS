@@ -4,16 +4,13 @@
     <meta charset="utf-8">
     <title><?php echo $template['title'];?></title>
     <?php echo $template['metadata'];?>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
     <link rel="icon" href="{{ site_favicon }}">
 
     <!-- Le styles -->
     <?php
         $asset = new CMS_Asset();       
         $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
+        $asset->add_themes_css('bootstrap.min.css', '{{ used_theme }}', 'default');
         $asset->add_themes_css('style.css', '{{ used_theme }}', 'default');
         echo $asset->compile_css();
     ?>

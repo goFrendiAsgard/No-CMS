@@ -4,10 +4,6 @@
     <meta charset="utf-8">
     <title><?php echo $template['title'];?></title>
     <?php echo $template['metadata'];?>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
     <link rel="icon" href="{{ site_favicon }}">
 
     <!-- Le styles -->
@@ -25,6 +21,7 @@
   <body>
     <?php
         $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
+        $asset->add_themes_js('script.js', '{{ used_theme }}', 'default');
         echo $asset->compile_js();
     ?>
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -55,13 +52,6 @@
     <footer>{{ widget_name:section_bottom }}</footer>
     <script type="text/javascript">
         $(document).ready(function(){
-            $(document).on('scroll', function(){
-                if ($('body')[0].offsetTop < ($(document).scrollTop()-$('.navbar-fixed-top').height())){
-                    $('.navbar-fixed-top').css({opacity: 0.85});
-                }else{
-                    $('.navbar-fixed-top').css({opacity: 1});
-                }
-            });
             // if section-banner is empty, remove it
             if($.trim($('__section-banner').html()) == ''){
                 $('__section-banner').remove();

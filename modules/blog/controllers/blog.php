@@ -92,13 +92,19 @@ class Blog extends CMS_Priv_Strict_Controller {
             'module_path' => $this->cms_module_path(),
             'user_id' => $this->cms_user_id(),
         );
-
-
+        
+        $config = array();
         if(isset($article_url)){
-            $data['article'] = $this->article_model->get_single_article($article_url);
-        }
+            $article = $this->article_model->get_single_article($article_url);
+            $data['article'] = $article;
+            $config['title'] = $article['title'];
+            $config['keyword'] = $article['keyword'];
+            $config['description'] = $article['description'];
+            $config['author'] = $article['author'];
+        }        
+
         $this->view($this->cms_module_path().'/browse_article_view',$data,
-            $this->cms_complete_navigation_name('index'));
+            $this->cms_complete_navigation_name('index'), $config);
     }
 
     public function get_data(){

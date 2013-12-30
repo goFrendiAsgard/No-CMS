@@ -736,6 +736,8 @@ class CMS_Controller extends MX_Controller
         $custom_metadata    = isset($config['metadata']) ? $config['metadata'] : array();
         $custom_partial     = isset($config['partials']) ? $config['partials'] : NULL;
         $custom_keyword     = isset($config['keyword']) ? $config['keyword'] : NULL;
+        $custom_description = isset($config['description'])? $config['description'] : NULL;
+        $custom_author      = isset($config['author'])? $config['author'] : NULL;
         $only_content       = isset($config['only_content']) ? $config['only_content'] : NULL;
         $always_allow       = isset($config['always_allow']) ? $config['always_allow'] : FALSE;
         $layout_suffix      = isset($config['layout_suffix']) ? $config['layout_suffix'] : '';
@@ -787,15 +789,17 @@ class CMS_Controller extends MX_Controller
 
 
         // GET THE THEME, TITLE & ONLY_CONTENT FROM DATABASE
-        $theme         = '';
-        $title         = '';
-        $keyword       = '';
-        $default_theme = NULL;
-        $default_layout= NULL;
-        $page_title    = NULL;
-        $page_keyword  = NULL;
+        $theme              = '';
+        $title              = '';
+        $keyword            = '';
+        $default_theme      = NULL;
+        $default_layout     = NULL;
+        $page_title         = NULL;
+        $page_keyword       = NULL;
+        $page_description   = NULL;
+        $page_author        = NULL;
         if ($navigation_name_provided) {
-            $query = $this->db->select('title, page_title, page_keyword, default_theme, default_layout, only_content')
+            $query = $this->db->select('title, page_title, page_keyword, description, default_theme, default_layout, only_content')
                 ->from(cms_table_name('main_navigation'))
                 ->where(array('navigation_name'=>$navigation_name))
                 ->get();
@@ -804,15 +808,22 @@ class CMS_Controller extends MX_Controller
                 $row           = $query->row();
                 $default_theme = $row->default_theme;
                 $default_layout = $row->default_layout;
-                if (isset($row->page_title) && $row->page_title != '') {
+                // title
+                if (isset($row->page_title) && ($row->page_title !== NULL) && $row->page_title != '') {
                     $page_title = $row->page_title;
-                } else if (isset($row->title) && $row->title != '') {
+                } else if (isset($row->title) && ($row->title !== NULL) && $row->title != '') {
                     $page_title = $row->title;
                 }
-                $page_keyword = isset($row->page_keyword) ? $row->page_keyword : '';
+                $page_title = isset($page_title) && $page_title !== NULL ? $page_title : '';
+                // keyword
+                $page_keyword = isset($row->page_keyword) && $row->page_keyword !== NULL ? $row->page_keyword : '';
+                // keyword
+                $page_description = isset($row->description) && $row->description !== NULL ? $row->description : '';
+                // only content
                 if (!isset($only_content)) {
                     $only_content = ($row->only_content == 1);
                 }
+
             }
         }
         if (!isset($only_content)) {
@@ -820,9 +831,9 @@ class CMS_Controller extends MX_Controller
         }
 
         // ASSIGN THEME
-        if (isset($custom_theme)) {
+        if (isset($custom_theme) && $custom_theme !== NULL && $custom_theme != '') {
             $theme = $custom_theme;
-        } else if (isset($default_theme) && $default_theme != '') {
+        } else if (isset($default_theme) && $default_theme != NULL && $default_theme != '') {
             $themes     = $this->cms_get_layout_list();
             $theme_path = array();
             foreach ($themes as $theme) {
@@ -837,22 +848,52 @@ class CMS_Controller extends MX_Controller
 
         // ASSIGN TITLE
         $title = '';
-        if (isset($custom_title)) {
+        if (isset($custom_title) && $custom_title !== NULL && $custom_title != '') {
             $title = $custom_title;
-        } else if (isset($page_title) && $page_title != '') {
+        } else if (isset($page_title) && $page_title !== NULL && $page_title != '') {
             $title = $page_title;
         } else {
             $title = $this->cms_get_config('site_name');
         }
 
         // ASSIGN KEYWORD
-        if (isset($page_keyword) && $page_keyword != '') {
+        if (isset($custom_keyword) && $custom_keyword != NULL && $custom_keyword != ''){
+            $keyword = $custom_keyword;
+        } else if (isset($page_keyword) && $page_keyword !== NULL && $page_keyword != '') {
             $keyword = $page_keyword;
             if ($custom_keyword != '') {
                 $keyword .= ', ' . $custom_keyword;
             }
         } else {
-            $keyword = $custom_keyword;
+            $keyword = '';
+        }
+
+        // ASSIGN DESCRIPTION
+        if (isset($custom_description) && $custom_description != NULL && $custom_description != ''){
+            $description = $custom_description;
+        } else if (isset($page_description) && $page_description !== NULL && $page_description != '') {
+            $description = $page_description;
+            if ($custom_description != '') {
+                $description .= ', ' . $custom_description;
+            }
+        } else {
+            $description = '';
+        }
+
+        // ASSIGN AUTHOR
+        if (isset($custom_author) && $custom_author != NULL && $custom_author != ''){
+            $author = $custom_author;
+        } else {
+            $query = $this->db->select('real_name')
+                ->from(cms_table_name('main_user'))
+                ->where('user_id', 1)
+                ->get();
+            if($query->num_rows() > 0){
+                $row = $query->row();
+                $author = $row->real_name;
+            }else{
+                $author = '';
+            }
         }
 
 
@@ -900,8 +941,20 @@ class CMS_Controller extends MX_Controller
                 $keyword_metadata = '<meta name="keyword" content="' . $keyword . '">';
                 $this->template->append_metadata($keyword_metadata);
             }
+            // set description metadata
+            if ($description != '') {
+                $description_metadata = '<meta name="description" content="' . $description . '">';
+                $this->template->append_metadata($description_metadata);
+            }
+            // set author metadata
+            if ($author != '') {
+                $author_metadata = '<meta name="author" content="' . $author . '">';
+                $this->template->append_metadata($author_metadata);
+            }
             // add IE compatibility
             $this->template->append_metadata('<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">');
+            // add width
+            $this->template->append_metadata('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
             
             // always use grocerycrud's jquery for maximum compatibility
             $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');

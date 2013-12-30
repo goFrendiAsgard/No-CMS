@@ -76,7 +76,7 @@ class Article_Model extends  CMS_Model{
 
         $SQL = "
             SELECT
-                article_id, article_title, article_url, content, date, allow_comment,
+                article_id, article_title, article_url, content, date, keyword, description, allow_comment,
                 real_name AS author, author_user_id
             FROM ".$this->cms_complete_table_name('article')."
             LEFT JOIN ".cms_table_name('main_user')." ON (".cms_table_name('main_user').".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
@@ -93,6 +93,8 @@ class Article_Model extends  CMS_Model{
                     "article_url" => $row->article_url,
                     "author_user_id" => $row->author_user_id,
                     "content" => $this->cms_parse_keyword($content),
+                    "keyword" => $this->cms_parse_keyword($row->keyword),
+                    "description" => $this->cms_parse_keyword($row->description),
                     "author" => $row->author,
                     "date" => $row->date,
                     "allow_comment" => $row->allow_comment,
