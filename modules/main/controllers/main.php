@@ -313,7 +313,7 @@ class Main extends CMS_Controller
                 $error = TRUE;
             }
             $data = array(
-                "exists" => $exists,
+                "exists" => $user_name_exists || $email_exists,
                 "error" => $error,
                 "message" => $message
             );
@@ -365,7 +365,7 @@ class Main extends CMS_Controller
                 $error = TRUE;
             }
             $data = array(
-                "exists" => $exists,
+                "exists" => $user_name_exists || $email_exists,
                 "error" => $error,
                 "message" => $message
             );
@@ -1394,7 +1394,8 @@ class Main extends CMS_Controller
         // show up
         if($first){
             if(!$no_complete_menu){
-                $result = '<li class="dropdown hidden-sm hidden-xs">'.
+                //  hidden-sm hidden-xs
+                $result = '<li class="dropdown">'.
                     '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
                     $result.'</li>';
             }
@@ -1524,6 +1525,7 @@ class Main extends CMS_Controller
                     });
                     // override bootstrap default behavior on dropdown click. 
                     // There should be no dropdown for tablet & phone
+                    /*
                     $("a.dropdown-toggle").on("click touchstart", function(){
                         var screen_width = $("body").width();
                         if(screen_width<=978){
@@ -1533,7 +1535,7 @@ class Main extends CMS_Controller
                             event.cancelBubble=true;
                             window.location = $(this).attr("href");
                         }
-                    });
+                    });*/
                     // adjust navbar 
                     adjust_navbar();
                     $(window).resize(function() {
@@ -1601,7 +1603,7 @@ class Main extends CMS_Controller
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                         '<span class="anchor-text">'.$icon.$quicklink['title'].'</span>'.
-                        '&nbsp;<span class="caret hidden-sm hidden-xs"></span></a>';
+                        '&nbsp;<span class="caret "></span></a>'; // hidden-sm hidden-xs
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{
