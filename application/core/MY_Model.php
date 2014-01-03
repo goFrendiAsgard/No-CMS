@@ -587,7 +587,7 @@ class CMS_Model extends CI_Model
         $html .= '</div>';
         $html .= '
         <script type="text/javascript">
-            $(document).ready(function(){
+            $(window).load(function(){
                 function __adjust_component(identifier){
                     var max_height = 0;
                     $(identifier).each(function(){

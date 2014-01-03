@@ -59,7 +59,7 @@
     </form>
 </div>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(window).load(function(){
         function __adjust_component(identifier){
             var max_height = 0;
             $(identifier).each(function(){

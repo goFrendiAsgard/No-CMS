@@ -107,12 +107,33 @@ class Install extends CMS_Module_Installer {
             'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
             'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
             'use_subdomain'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'aliases'=> array("type"=>'text', "null"=>TRUE),
             'logo'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
             'description'=> array("type"=>'text', "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('subsite'));
+
+        // subsite_module
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'id_subsite'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'id_module'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('subsite_module'));
+
+        // subsite_theme
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'id_subsite'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'theme'=> array("type"=>'varchar', "constraint"=>30, "null"=>TRUE),
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('subsite_theme'));
 
         
     }

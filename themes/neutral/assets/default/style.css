@@ -133,6 +133,7 @@
 
 body {
 	padding-bottom:40px;
+  padding-top:50px;
 }
 
 footer{
@@ -233,10 +234,7 @@ body{
 /* end of grocery-CRUD flexigrid */
 
 /* Landscape phones and down */
-@media (max-width: 480px){    
-    body {
-        padding-top: 0px;
-    }
+@media (max-width: 480px){ 
     .form-input-box>input, .form-input-box>textarea,
     .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
         width: 250px!important;
@@ -264,10 +262,7 @@ body{
 }
 
 /* Landscape phone to portrait tablet */
-@media (min-width: 481px) and (max-width: 768px)  {  
-    body {
-        padding-top: 0px;
-    }  
+@media (min-width: 481px) and (max-width: 768px)  {
     .form-input-box>input, .form-input-box>textarea,
     .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
         width: 300px!important;
@@ -298,9 +293,6 @@ body{
 
 /* Portrait tablet to landscape and desktop */
 @media (min-width: 769px)  and (max-width: 978px) {
-    body {
-        padding-top: 0px;
-    }
     .flexigrid table td,
     .flexigrid table th{
         display: none!important;
@@ -326,14 +318,8 @@ body{
 
 /* normal desktop */
 @media (min-width: 979px) and (max-width: 1199px)  {
-    body {
-        padding-top: 45px;
-    }
 }
 
 /* Large desktop */
 @media (min-width: 1200px) {
-    body {
-        padding-top: 45px;
-    }
 }

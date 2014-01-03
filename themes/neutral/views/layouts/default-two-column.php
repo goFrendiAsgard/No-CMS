@@ -10,7 +10,6 @@
     <?php
         $asset = new CMS_Asset();       
         $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
-        $asset->add_themes_css('bootstrap.min.css', '{{ used_theme }}', 'default');
         $asset->add_themes_css('style.css', '{{ used_theme }}', 'default');
         echo $asset->compile_css();
     ?>

@@ -4,7 +4,7 @@
         display:none;
     }
     #btn-register, .register_input{
-        display:none!important;
+        display:none;
     }
 </style>
 <script type="text/javascript">
@@ -29,6 +29,7 @@
             	if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
                     $('input[name="register"]').show();
                     $('input[name="register"]').removeAttr('disabled');
+                    console.log($('input[name="register"]'));
                 }else{
                     $('input[name="register"]').hide();
                     $('input[name="register"]').attr('disabled', 'disabled');
