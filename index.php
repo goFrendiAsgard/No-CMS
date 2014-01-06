@@ -211,10 +211,6 @@ if( CMS_SUBSITE != '' &&
     exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
 }
 
-
-
-
-
 /*
  * ---------------------------------------------------------------
  *  Resolve the system path for increased reliability

@@ -83,7 +83,7 @@ function cms_module_config($module_directory, $key, $value = NULL, $delete = FAL
     }
     if(defined('CMS_SUBSITE') && CMS_SUBSITE != ''){
         $file_name = FCPATH.'modules/'.$module_directory.'/config/module_config_'.CMS_SUBSITE.'.php';
-        if(!file_exists($filename)){
+        if(!file_exists($file_name)){
             copy($main_config_file_name, $file_name);
         }        
     }else{

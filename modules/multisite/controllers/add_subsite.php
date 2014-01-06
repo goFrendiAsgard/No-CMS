@@ -24,6 +24,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
         $this->install_model->is_subsite                   = TRUE;
         $this->install_model->subsite                      = (string)$this->input->post('subsite');
         $this->install_model->set_subsite();
+        $this->install_model->subsite_aliases              = (string)$this->input->post('aliases');
 
         $this->install_model->admin_email                  = (string)$this->input->post('admin_email');
         $this->install_model->admin_real_name              = (string)$this->input->post('admin_real_name');
@@ -94,6 +95,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
             'logo'=>$file_name,
             'description'=>$this->input->post('description'),
             'use_subdomain'=>$this->input->post('use_subdomain')=='true',
+            'aliases'=>$this->input->post('aliases'),
         );
         $this->db->insert($this->cms_complete_table_name('subsite'), $data);
 

@@ -65,6 +65,12 @@
                            </div>
                         </div>
                         <div class="form-group">
+                           <label class="control-label col-md-4" for="aliases">Aliases</label>
+                           <div class="controls col-md-8">
+                               <input type="text" id="aliases" name="aliases" value="" class="input form-control" placeholder="Aliases, comma separated (e.g: somedomain.com, other.com)">                               
+                           </div>
+                        </div>
+                        <div class="form-group">
                            <label class="control-label col-md-4" for="logo">Logo</label>
                            <div class="controls col-md-8">
                                <input type="file" id="logo" name="logo" value="" class="input form-control" placeholder="logo">                               

@@ -24,7 +24,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function(){
-        var modules =  ['blog', 'static_accessories', 'contact_us', 'multisite'];
+        var modules =  ['blog', 'static_accessories', 'contact_us'];
         var done = 0;
         for(var i=0; i<modules.length; i++){
             var module = modules[i];
