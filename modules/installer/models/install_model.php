@@ -1056,6 +1056,7 @@ class Install_Model extends CI_Model{
             $alias_list = explode(',', $this->subsite_aliases);
             foreach($alias_list as $alias){
                 $alias = trim(addslashes($alias));
+                if($alias == '') continue;
                 $content .= PHP_EOL.'$site_alias[\''.$alias.'\'] = \''.$this->subsite.'\';';
             }
             @chmod(FCPATH.'/site.php', 0777);

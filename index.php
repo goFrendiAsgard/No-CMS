@@ -181,7 +181,10 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
             define('USE_SUBDOMAIN', FALSE);
         }else{
             $host = $_SERVER['HTTP_HOST'];
-            if(strlen($host)>0){
+            if(isset($site_alias[$host]) && $site_alias[$host] != ''){
+                $cms_subsite = $site_alias[$host];
+                define('USE_SUBDOMAIN', TRUE);
+            } else if (strlen($host)>0){
                 $host_array = explode('.', $host);
                 $cms_subsite = $host_array[0];
                 define('USE_SUBDOMAIN', TRUE);
