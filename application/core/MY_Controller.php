@@ -1418,14 +1418,16 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
  */
 class CMS_Module_Installer extends CMS_Controller
 {
-    protected $DEPENDENCIES  = array();
-    protected $NAME          = '';
-    protected $VERSION       = '0.0.0';
-    protected $DESCRIPTION   = NULL;
-    protected $IS_ACTIVE     = FALSE;
-    protected $IS_OLD        = FALSE;
-    protected $OLD_VERSION   = '';
-    protected $ERROR_MESSAGE = '';
+    protected $DEPENDENCIES    = array();
+    protected $NAME            = '';
+    protected $VERSION         = '0.0.0';
+    protected $DESCRIPTION     = NULL;
+    protected $IS_ACTIVE       = FALSE;
+    protected $IS_OLD          = FALSE;
+    protected $OLD_VERSION     = '';
+    protected $ERROR_MESSAGE   = '';
+    protected $PUBLIC          = TRUE;
+    protected $SUBSITE_ALLOWED = array();
 
     protected $TYPE_INT_UNSIGNED_AUTO_INCREMENT = array(
                 'type' => 'INT',
@@ -1606,6 +1608,11 @@ class CMS_Module_Installer extends CMS_Controller
         if($this->DESCRIPTION === NULL){
             $this->DESCRIPTION = $this->cms_lang('Just another module');
         }
+        $subsite_auth_file = FCPATH.'modules/'.$this->cms_module_path().'/subsite_auth.php';
+        if(file_exists($subsite_auth_file)){
+            include($subsite_auth_file);
+            
+        }
         $result = array(
             'active'=>$this->IS_ACTIVE,
             'old'=>$this->IS_OLD,
@@ -1614,6 +1621,8 @@ class CMS_Module_Installer extends CMS_Controller
             'name'=>$this->NAME,
             'version'=>$this->VERSION,
             'old_version'=>$this->OLD_VERSION,
+            'public'=>$this->PUBLIC,
+            'subsite_allowed'=>$this->SUBSITE_ALLOWED,
         );
         echo json_encode($result);
         //$this->cms_show_json($result);

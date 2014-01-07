@@ -131,7 +131,8 @@
  * NOTE: If you change these, also change the error_reporting() code below
  */
 
-$environment = 'development';
+
+DEFINE('ERROR_REPORTING', 'development');
 
 /*
  *---------------------------------------------------------------
@@ -142,7 +143,7 @@ $environment = 'development';
  * By default development will show errors but testing and live will hide them.
  */
 
-switch ($environment)
+switch (ERROR_REPORTING)
 {
     case 'development':
         error_reporting(-1);
@@ -157,7 +158,7 @@ switch ($environment)
 
     default:
         header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-        echo 'The application environment is not set correctly.';
+        echo 'Error Reporting is not set correctly.';
         exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
 }
 

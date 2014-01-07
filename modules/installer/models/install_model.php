@@ -1051,6 +1051,7 @@ class Install_Model extends CI_Model{
             // add site.php entry
             $content = file_get_contents(FCPATH.'/site.php');
             // available_site
+            $content .= PHP_EOL.PHP_EOL.'// SUBSITE : '.$this->subsite.PHP_EOL;
             $content .= PHP_EOL.'$available_site[] = \''.$this->subsite.'\';';
             // aliases
             $alias_list = explode(',', $this->subsite_aliases);

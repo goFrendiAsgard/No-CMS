@@ -1290,18 +1290,18 @@ class CMS_Model extends CI_Model
     public function cms_get_module_list()
     {
         $this->load->helper('directory');
-        $directories = directory_map(APPPATH.'../modules', 1);
+        $directories = directory_map(FCPATH.'modules', 1);
         sort($directories);
         $module      = array();
         foreach ($directories as $directory) {
             $directory = str_replace(array('/','\\'),'',$directory);
-            if (!is_dir(APPPATH.'../modules/' . $directory))
+            if (!is_dir(FCPATH.'modules/' . $directory))
                 continue;
 
-            if (!file_exists(APPPATH.'../modules/' . $directory . '/controllers/install.php'))
+            if (!file_exists(FCPATH.'modules/' . $directory . '/controllers/install.php'))
                 continue;
 
-            $files              = directory_map(APPPATH.'../modules/' . $directory . '/controllers', 1);
+            $files              = directory_map(FCPATH.'modules/' . $directory . '/controllers', 1);
             $module_controllers = array();
             foreach ($files as $file) {
                 $filename_array = explode('.', $file);
