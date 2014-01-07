@@ -1,4 +1,14 @@
+<<<<<<< HEAD
 <?php defined('BASEPATH') OR exit('No direct script access allowed');?>
+=======
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+echo '<pre>';
+var_dump($success);
+var_dump($error_list);
+var_dump($warning_list);
+echo '</pre>';
+?>
+>>>>>>> 17f4730b89890bf22da80e5ce0d2845dfc10dfbf
 <style type="text/css">
     #btn-continue{
         display:none;
@@ -53,6 +63,7 @@
                             $('#img-loader').hide();
                             $('#span-process-message').hide();
                             $('#span-finish-message').show();                               
+
                         }
                     }
             });

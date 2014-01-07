@@ -54,7 +54,6 @@
         __adjust_component(".thumbnail img");
         __adjust_component(".thumbnail div.caption");
     }
-    
 
     function fetch_more_data(async){
         if(typeof(async) == 'undefined'){
@@ -78,9 +77,7 @@
             'success'  : function(response){
                 // show contents
                 $('#record_content').append(response);
-
                 adjust_thumbnail();
-
                 // show bottom contents
                 var bottom_content = 'No more Subsite to show.';
                 if(ALLOW_NAVIGATE_BACKEND){

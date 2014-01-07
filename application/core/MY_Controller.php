@@ -1610,8 +1610,15 @@ class CMS_Module_Installer extends CMS_Controller
         }
         $subsite_auth_file = FCPATH.'modules/'.$this->cms_module_path().'/subsite_auth.php';
         if(file_exists($subsite_auth_file)){
+            unset($public);
+            unset($subsite_allowed);
             include($subsite_auth_file);
-            
+            if(isset($public) && is_bool($public)){
+                $this->PUBLIC = $public;
+            }
+            if(isset($subsite_allowed) && is_array($subsite_allowed)){
+                $this->SUBSITE_ALLOWED = $subsite_allowed;
+            }
         }
         $result = array(
             'active'=>$this->IS_ACTIVE,

@@ -114,7 +114,6 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('subsite'));
-
         // subsite_module
         $fields = array(
             'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
@@ -134,7 +133,6 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('subsite_theme'));
-
         
     }
 

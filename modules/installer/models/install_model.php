@@ -902,6 +902,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_navigation('main_quicklink_management', 4, 'Quick Link Management', 'Quick Link Management', NULL, 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_config_management', 4, 'Configuration Management', 'Configuration Management', NULL, 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_layout', 4, 'Layout Management', 'Layout Management', NULL, 'Manage Layout', 'main/layout', 4, 9, 1, 0, NULL, 0);
+
         if($this->is_subsite){
             $main_index_content = '<h1>Welcome</h1>Hi, welcome to subsite '.$this->subsite;
         }else{
