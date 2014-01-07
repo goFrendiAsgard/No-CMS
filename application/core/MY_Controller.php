@@ -1576,6 +1576,7 @@ class CMS_Module_Installer extends CMS_Controller
 
     public function __construct(){
         parent::__construct();
+        // get module name & module path
         $query = $this->db->select('version')
             ->from(cms_table_name('main_module'))
             ->where(array(
@@ -1601,13 +1602,9 @@ class CMS_Module_Installer extends CMS_Controller
                 $this->IS_OLD = FALSE;
             }
         }
+        // load dbforge to be used later
         $this->load->dbforge();
-    }
-
-    public function status(){
-        if($this->DESCRIPTION === NULL){
-            $this->DESCRIPTION = $this->cms_lang('Just another module');
-        }
+        // get subsite authorization
         $subsite_auth_file = FCPATH.'modules/'.$this->cms_module_path().'/subsite_auth.php';
         if(file_exists($subsite_auth_file)){
             unset($public);
@@ -1620,6 +1617,12 @@ class CMS_Module_Installer extends CMS_Controller
                 $this->SUBSITE_ALLOWED = $subsite_allowed;
             }
         }
+    }
+
+    public function status(){
+        if($this->DESCRIPTION === NULL){
+            $this->DESCRIPTION = $this->cms_lang('Just another module');
+        }        
         $result = array(
             'active'=>$this->IS_ACTIVE,
             'old'=>$this->IS_OLD,
@@ -1632,13 +1635,6 @@ class CMS_Module_Installer extends CMS_Controller
             'subsite_allowed'=>$this->SUBSITE_ALLOWED,
         );
         echo json_encode($result);
-        //$this->cms_show_json($result);
-        /*
-        if($this->input->is_ajax_request()){
-            $this->cms_show_json($result);
-        }else{
-            $this->cms_show_variable($result);
-        }*/
     }
 
     public final function index()
@@ -1667,6 +1663,11 @@ class CMS_Module_Installer extends CMS_Controller
             'module_path'  => $this->cms_module_path(),
             'dependencies' => $this->DEPENDENCIES,
         );
+
+        if (CMS_SUBSITE != '' && !$this->PUBLIC && !in_array(CMS_SUBSITE, $this->SUBSITE_ALLOWED)){
+            $result['message'][] = 'The module is not published for '.CMS_SUBSITE.' subsite';
+            $result['success']   = FALSE;
+        }
 
         // check for error
         if (!$this->cms_have_privilege('cms_install_module')) {
@@ -1729,6 +1730,11 @@ class CMS_Module_Installer extends CMS_Controller
             'dependencies' => array(),
         );
 
+        if (CMS_SUBSITE != '' && !$this->PUBLIC && !in_array(CMS_SUBSITE, $this->SUBSITE_ALLOWED)){
+            $result['message'][] = 'The module is not published for '.CMS_SUBSITE.' subsite';
+            $result['success']   = FALSE;
+        }
+
         // check for error
         if (!$this->cms_have_privilege('cms_install_module')) {
             $result['message'][] = 'Not enough privilege';
@@ -1785,6 +1791,12 @@ class CMS_Module_Installer extends CMS_Controller
             'module_path'  => $this->cms_module_path(),
             'dependencies' => array(),
         );
+
+        if (CMS_SUBSITE != '' && !$this->PUBLIC && !in_array(CMS_SUBSITE, $this->SUBSITE_ALLOWED)){
+            $result['message'][] = 'The module is not published for '.CMS_SUBSITE.' subsite';
+            $result['success']   = FALSE;
+        }
+        
         if (!$this->cms_have_privilege('cms_install_module')) {
             $result['message'][] = 'Not enough privilege';
             $result['success']   = FALSE;

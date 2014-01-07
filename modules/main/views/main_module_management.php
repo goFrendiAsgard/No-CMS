@@ -50,21 +50,15 @@
         echo '          if(response.active){';
         echo '              if(response.old){';
         echo '                  status += "{{ language:Need upgrade }}";';
-        if(CMS_SUBSITE == ''){
-            echo '                  $("#module_'.$i.'_upgrade").removeClass("disabled");';
-        }
+        echo '                  $("#module_'.$i.'_upgrade").removeClass("disabled");';
         echo '              }else{';
         echo '                  status += "{{ language:Active }}";';
-        if(CMS_SUBSITE == ''){
-            echo '                  $("#module_'.$i.'_setting").removeClass("disabled");';
-        }
+        echo '                  $("#module_'.$i.'_setting").removeClass("disabled");';
         echo '                  $("#module_'.$i.'_deactivate").removeClass("disabled");';
         echo '              }';
         echo '          }else{';
         echo '              status += "{{ language:Inactive }}";';
-        if(CMS_SUBSITE == ''){
-            echo '              $("#module_'.$i.'_setting").removeClass("disabled");';
-        }
+        echo '              $("#module_'.$i.'_setting").removeClass("disabled");';
         echo '              $("#module_'.$i.'_activate").removeClass("disabled");';
         echo '          }';
         echo '          var html = "";';

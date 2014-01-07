@@ -475,15 +475,3 @@ HOW TO MAKE NO-CMS
         Thanks Ivan !!! :)
 
     - For the rest, refer to this: https://github.com/goFrendiAsgard/No-CMS/commit/fb16b2c905e631745e918fc579c007be2f39eb27
-
-
-```
-CONFLICT (add/add): Merge conflict in installer/views/site.php
-Auto-merging installer/models/install_model.php
-CONFLICT (content): Merge conflict in installer/models/install_model.php
-Auto-merging blog/assets/navigation_icon/manage_category.png
-CONFLICT (add/add): Merge conflict in blog/assets/navigation_icon/manage_category.png
-Auto-merging blog/assets/navigation_icon/manage_article.png
-CONFLICT (add/add): Merge conflict in blog/assets/navigation_icon/manage_article.png
-Automatic merge failed; fix conflicts and then commit the result.
-```

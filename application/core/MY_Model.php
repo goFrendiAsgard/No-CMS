@@ -1301,6 +1301,21 @@ class CMS_Model extends CI_Model
             if (!file_exists(FCPATH.'modules/' . $directory . '/controllers/install.php'))
                 continue;
 
+            // unpublished module should not be shown
+            if(CMS_SUBSITE != ''){
+                $subsite_auth_file = FCPATH.'modules/' . $directory . '/subsite_auth.php';
+                if (file_exists($subsite_auth_file)){
+                    unset($public);
+                    unset($subsite_allowed);
+                    include($subsite_auth_file);
+                    if(is_bool($public) && !$public){
+                        if(is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                            continue;
+                        }
+                    }
+                }
+            }
+
             $files              = directory_map(FCPATH.'modules/' . $directory . '/controllers', 1);
             $module_controllers = array();
             foreach ($files as $file) {
