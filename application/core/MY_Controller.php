@@ -23,6 +23,20 @@ class CMS_Controller extends MX_Controller
 
     protected $REFERRER = NULL;
 
+    protected function _guard_controller(){
+        $module_path = $this->cms_module_path();
+        // module is not installed, but the naughty user add navigation manually
+        if($module_path != 'main' && $module_path != ''){
+            $query = $this->db->select('module_path')
+                ->from(cms_table_name('main_module'))
+                ->where('module_path', $module_path)
+                ->get();
+            if($query->num_rows() <= 0){
+                die('Module is not installed');
+            }
+        }
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -56,16 +70,7 @@ class CMS_Controller extends MX_Controller
             }
         }
 
-        // module is not installed, but the naughty user add navigation manually
-        if($module_path != 'main' && $module_path != ''){
-            $query = $this->db->select('module_path')
-                ->from(cms_table_name('main_module'))
-                ->where('module_path', $module_path)
-                ->get();
-            if($query->num_rows() <= 0){
-                die('Module is not installed');
-            }
-        }
+        $this->_guard_controller();        
         
         if(isset($_REQUEST['__cms_dynamic_widget'])){
             $this->__cms_dynamic_widget = TRUE;
@@ -1455,6 +1460,10 @@ class CMS_Module_Installer extends CMS_Controller
     protected $ERROR_MESSAGE   = '';
     protected $PUBLIC          = TRUE;
     protected $SUBSITE_ALLOWED = array();
+
+    protected function _guard_controller(){
+        // Don't do anything, only typical controller need to be guarded.        
+    }
 
     protected $TYPE_INT_UNSIGNED_AUTO_INCREMENT = array(
                 'type' => 'INT',

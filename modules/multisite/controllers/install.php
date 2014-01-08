@@ -80,6 +80,8 @@ class Install extends CMS_Module_Installer {
         $this->remove_navigation($this->cms_complete_navigation_name('index'));
         
         // drop tables
+        $this->dbforge->drop_table($this->cms_complete_table_name('subsite_module'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('subsite_theme'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('subsite'), TRUE);
     }
 
