@@ -26,6 +26,26 @@ class multisite extends CMS_Priv_Strict_Controller {
             $this->cms_complete_navigation_name('index'));
     }
 
+    public function edit($site_name){
+        $data = array(            
+            'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_allow_navigate($this->cms_complete_navigation_name('add_subsite')),
+            'backend_url' => site_url($this->cms_module_path().'/add_subsite/index'),
+            'module_path' => $this->cms_module_path(),
+        );
+        $this->view($this->cms_module_path().'/multisite_index',$data,
+            $this->cms_complete_navigation_name('index'));
+    }
+
+    public function delete(){
+        $data = array(            
+            'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_allow_navigate($this->cms_complete_navigation_name('add_subsite')),
+            'backend_url' => site_url($this->cms_module_path().'/add_subsite/index'),
+            'module_path' => $this->cms_module_path(),
+        );
+        $this->view($this->cms_module_path().'/multisite_index',$data,
+            $this->cms_complete_navigation_name('index'));
+    }
+
     public function get_data(){
         // only accept ajax request
         if(!$this->input->is_ajax_request()) $this->cms_redirect();

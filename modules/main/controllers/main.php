@@ -1173,6 +1173,7 @@ class Main extends CMS_Controller
         
         $crud->unique_fields('config_name');
         $crud->unset_read();
+        $crud->unset_delete();
 
         $crud->columns('config_name', 'value');
         $crud->edit_fields('config_name', 'value', 'description');

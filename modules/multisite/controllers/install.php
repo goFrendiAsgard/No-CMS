@@ -73,6 +73,8 @@ class Install extends CMS_Module_Installer {
         if(CMS_SUBSITE == ''){
             // remove navigations
             $this->remove_navigation($this->cms_complete_navigation_name('add_subsite'));
+            // remove privileges
+            $this->remove_privilege('modify_subsite');
         }
 
 
@@ -80,8 +82,6 @@ class Install extends CMS_Module_Installer {
         $this->remove_navigation($this->cms_complete_navigation_name('index'));
         
         // drop tables
-        $this->dbforge->drop_table($this->cms_complete_table_name('subsite_module'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('subsite_theme'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('subsite'), TRUE);
     }
 
@@ -95,6 +95,8 @@ class Install extends CMS_Module_Installer {
             NULL, 'Browse subsites', 'glyphicon-dashboard');
 
         if(CMS_SUBSITE == ''){
+            // add privileges
+            $this->add_privilege('modify_subsite', 'Modify subsite');
             // add navigations
             $this->add_navigation($this->cms_complete_navigation_name('add_subsite'), 'Add Subsite',
                 $module_path.'/add_subsite', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
@@ -104,37 +106,19 @@ class Install extends CMS_Module_Installer {
 
         
         // create tables
-        // subsite
         $fields = array(
             'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
             'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
             'use_subdomain'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
             'aliases'=> array("type"=>'text', "null"=>TRUE),
             'logo'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
-            'description'=> array("type"=>'text', "null"=>TRUE)
+            'description'=> array("type"=>'text', "null"=>TRUE),
+            'modules'=>array("type"=>'text', "null"=>TRUE),
+            'themes'=>array("type"=>'text', "null"=>TRUE),
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('subsite'));
-        // subsite_module
-        $fields = array(
-            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'id_subsite'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'id_module'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('subsite_module'));
-
-        // subsite_theme
-        $fields = array(
-            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'id_subsite'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'theme'=> array("type"=>'varchar', "constraint"=>30, "null"=>TRUE),
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('subsite_theme'));
         
     }
 
