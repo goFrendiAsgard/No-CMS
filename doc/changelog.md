@@ -147,7 +147,9 @@ v0.6.6
 + (done, tested) Multisite management.
 + (done, tested) Use bootstrap 3.0.
 + (done, tested) Widget rendering is now doesn't depend on session, ommiting possibility of clutter display
-+ (proposed) Per subsite module & theme configuration 
++ (done, tested) Per subsite module & theme configuration 
++ (done, tested) Subsite module & theme privilege mechanism
++ (proposed) namespace
 + (proposed) IP Deny manager.
 + (proposed) Navigation: move to anywhere.
 + (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre <-- The first one seems to be fixed

@@ -1369,8 +1369,11 @@ class CMS_Model extends CI_Model
      * @return  string
      * @desc    get module_name (name space) of specified module_path (folder name)
      */
-    public function cms_module_name($module_path)
+    public function cms_module_name($module_path = NULL)
     {
+        if(!isset($module_path) || is_null($module_path)){
+            $module_path = $this->cms_module_path();
+        }
         $query = $this->db->select('module_name')
             ->from(cms_table_name('main_module'))
             ->where('module_path', $module_path)
@@ -1397,8 +1400,22 @@ class CMS_Model extends CI_Model
         $themes      = array();
         foreach ($directories as $directory) {
             $directory = str_replace(array('/','\\'),'',$directory);
-            if (!is_dir('themes/' . $directory))
+            if (!is_dir(FCPATH.'themes/' . $directory))
                 continue;
+
+            if(CMS_SUBSITE != ''){
+                $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
+                if(file_exists($subsite_auth_file)){
+                    unset($public);
+                    unset($subsite_allowed);
+                    include($subsite_auth_file);
+                    if(isset($public) && is_bool($public) && !$public){
+                        if(isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                            continue;
+                        }
+                    }
+                }
+            }
 
             $layout_name = $directory;
 

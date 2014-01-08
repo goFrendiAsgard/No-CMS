@@ -40,12 +40,33 @@ class CMS_Controller extends MX_Controller
         $this->form_validation->CI =& $this;
         $this->load->driver('session');
         
-        // get dynamic widget status
-        /*
-        if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
-            $this->__cms_dynamic_widget = TRUE;
+        // unpublished modules should never be accessed.
+        $module_path = $this->cms_module_path();
+        if(CMS_SUBSITE != '' && $module_path != 'main' && $module_path != ''){
+            $subsite_auth_file = FCPATH.'modules/'.$module_path.'/subsite_auth.php';
+            if(file_exists($subsite_auth_file)){
+                unset($public);
+                unset($subsite_allowed);
+                include($subsite_auth_file);
+                if(isset($public) && is_bool($public) && !$public){
+                    if(isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                        die('Module is not accessible for '.CMS_SUBSITE.' subsite');
+                    }
+                }                
+            }
         }
-        */
+
+        // module is not installed, but the naughty user add navigation manually
+        if($module_path != 'main' && $module_path != ''){
+            $query = $this->db->select('module_path')
+                ->from(cms_table_name('main_module'))
+                ->where('module_path', $module_path)
+                ->get();
+            if($query->num_rows() <= 0){
+                die('Module is not installed');
+            }
+        }
+        
         if(isset($_REQUEST['__cms_dynamic_widget'])){
             $this->__cms_dynamic_widget = TRUE;
         }
@@ -425,7 +446,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    get module_name (name space) of specified module_path (folder name)
      */
-    public function cms_module_name($path)
+    public function cms_module_name($path = NULL)
     {
         return $this->No_CMS_Model->cms_module_name($path);
     }
@@ -698,13 +719,6 @@ class CMS_Controller extends MX_Controller
         // get dynamic widget status 
         // (this is necessary since sometime the function called directly without run the constructor, i.e: when using Modules::run)
         
-        /*
-        if($this->cms_ci_session('cms_dynamic_widget')===TRUE){
-            $this->__cms_dynamic_widget = TRUE;
-        }
-        $this->cms_unset_ci_session('cms_dynamic_widget');
-        */
-
         if(isset($_REQUEST['__cms_dynamic_widget'])){
             $this->__cms_dynamic_widget = TRUE;
         }
@@ -1215,7 +1229,20 @@ class CMS_Controller extends MX_Controller
     
     public function cms_layout_exists($theme, $layout)
     {
-        return is_file('themes/' . $theme . '/views/layouts/' . $layout . '.php');
+        if(CMS_SUBSITE != ''){
+            $subsite_auth_file = FCPATH.'themes/'.$theme.'/subsite_auth.php';
+            if(file_exists($subsite_auth_file)){
+                unset($public);
+                unset($subsite_allowed);
+                include($subsite_auth_file);
+                if(isset($public) && is_bool($public) && !$public){
+                    if(isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                        return FALSE;
+                    }
+                }
+            }
+        }
+        return is_file(FCPATH.'themes/' . $theme . '/views/layouts/' . $layout . '.php');
     }
 
     private function __cms_cache($time = 5)
