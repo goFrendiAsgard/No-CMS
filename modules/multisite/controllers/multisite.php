@@ -41,11 +41,15 @@ class multisite extends CMS_Priv_Strict_Controller {
 
     public function edit($site_name){
         $this->load->model($this->cms_module_path().'/subsite_model');
+        // get module and theme list
+        $module_list = $this->subsite_model->module_list();
+        $theme_list = $this->subsite_model->theme_list();
+        // if btn_save clicked
         if($this->input->post('btn_save')){
-            $modules = $this->input->post('modules');
-            $themes = $this->input->post('themes');
-            $modules = $modules == NULL? '' : implode(',', $modules);
-            $themes = $themes == NULL? '' : implode(',', $themes);
+            $activated_module_list = $this->input->post('modules');
+            $activated_theme_list = $this->input->post('themes');
+            $modules = $activated_module_list == NULL? '' : implode(',', $activated_module_list);
+            $themes = $activated_theme_list == NULL? '' : implode(',', $activated_theme_list);
             $description = $this->input->post('description');
             $name = $this->input->post('name');
             $use_subdomain = $this->input->post('use_subdomain') == 'True'? 1 : 0;
@@ -65,12 +69,39 @@ class multisite extends CMS_Priv_Strict_Controller {
                     'modules'=>$modules,
                     'themes'=>$themes,
                     'description'=>$description,
+                    'use_subdomain'=>$use_subdomain,
                 );
             if($logo !== NULL){
                 $data['logo'] = $logo;
             }
             $this->db->update($this->cms_complete_table_name('subsite'), $data, array('name'=>$site_name));
+
+            // edit module configuration file
+            foreach($module_list as $module){
+                // get subsite allowed of this module
+                $subsite_auth_file = FCPATH . 'modules/' . $module . '/subsite_auth.php';
+                if (file_exists($subsite_auth_file)){
+                    unset($subsite_allowed);
+                    include($subsite_auth_file);
+                }else{
+                    $subsite_allowed = array();
+                }
+
+                // add if not in subsite allowed
+                $content = file_get_contents($subsite_auth_file);
+                if(in_array($module, $activated_module_list) && !in_array($site_name, $subsite_allowed)){
+                    // to be activated
+                    $content .= PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';';
+                    file_put_contents($subsite_auth_file, $content);
+                }else if(!in_array($module, $activated_module_list) && in_array($site_name, $subsite_allowed)){
+                    // to be deactivated
+                    $content = str_replace( PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';', '', $content);
+                    file_put_contents($content);
+                }
+            }
+
         }
+        // get data
         $subsite = $this->subsite_model->get_one_data($site_name);
         $data = array(
             'edit_url' => $this->cms_module_path() == 'multisite'? 
@@ -82,10 +113,10 @@ class multisite extends CMS_Priv_Strict_Controller {
             'use_subdomain' => $subsite->use_subdomain,
             'modules' => $subsite->modules,
             'themes' => $subsite->themes,
-            'module_list' => $this->make_associative_array($this->subsite_model->module_list()),
-            'theme_list' => $this->make_associative_array($this->subsite_model->theme_list()),
+            'module_list' => $this->make_associative_array($module_list),
+            'theme_list' => $this->make_associative_array($theme_list),
         );
-
+        // show
         $this->view($this->cms_module_path().'/multisite_edit', $data,
             $this->cms_complete_navigation_name('index'));     
     }
