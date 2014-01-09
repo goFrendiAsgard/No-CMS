@@ -48,6 +48,8 @@ class multisite extends CMS_Priv_Strict_Controller {
         if($this->input->post('btn_save')){
             $activated_module_list = $this->input->post('modules');
             $activated_theme_list = $this->input->post('themes');
+            $activated_module_list = $activated_module_list===NULL? array() : $activated_module_list;
+            $activated_theme_list = $activated_theme_list===NULL? array() : $activated_theme_list;
             $modules = $activated_module_list == NULL? '' : implode(',', $activated_module_list);
             $themes = $activated_theme_list == NULL? '' : implode(',', $activated_theme_list);
             $description = $this->input->post('description');
@@ -83,7 +85,8 @@ class multisite extends CMS_Priv_Strict_Controller {
                 if (file_exists($subsite_auth_file)){
                     unset($subsite_allowed);
                     include($subsite_auth_file);
-                }else{
+                }
+                if(!isset($subsite_allowed) || $subsite_allowed == NULL){
                     $subsite_allowed = array();
                 }
 
@@ -92,11 +95,36 @@ class multisite extends CMS_Priv_Strict_Controller {
                 if(in_array($module, $activated_module_list) && !in_array($site_name, $subsite_allowed)){
                     // to be activated
                     $content .= PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';';
-                    file_put_contents($subsite_auth_file, $content);
+                    @file_put_contents($subsite_auth_file, $content);
                 }else if(!in_array($module, $activated_module_list) && in_array($site_name, $subsite_allowed)){
                     // to be deactivated
                     $content = str_replace( PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';', '', $content);
-                    file_put_contents($content);
+                    @file_put_contents($subsite_auth_file, $content);
+                }
+            }
+
+            // edit theme configuration file
+            foreach($theme_list as $theme){
+                // get subsite allowed of this theme
+                $subsite_auth_file = FCPATH . 'themes/' . $theme . '/subsite_auth.php';
+                if (file_exists($subsite_auth_file)){
+                    unset($subsite_allowed);
+                    include($subsite_auth_file);
+                }
+                if(!isset($subsite_allowed) || $subsite_allowed == NULL){
+                    $subsite_allowed = array();
+                }
+
+                // add if not in subsite allowed
+                $content = file_get_contents($subsite_auth_file);
+                if(in_array($theme, $activated_theme_list) && !in_array($site_name, $subsite_allowed)){
+                    // to be activated
+                    $content .= PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';';
+                    @file_put_contents($subsite_auth_file, $content);
+                }else if(!in_array($theme, $activated_theme_list) && in_array($site_name, $subsite_allowed)){
+                    // to be deactivated
+                    $content = str_replace( PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';', '', $content);
+                    @file_put_contents($subsite_auth_file, $content);
                 }
             }
 
