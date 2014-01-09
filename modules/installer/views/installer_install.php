@@ -66,15 +66,11 @@
                     'complete' : function(){
                             done ++;
                             if(done == modules.length){
-                                $.ajax({
-                                    'url' : '<?php echo site_url() ?>/main/logout',
-                                    'success' : function(response){
-                                        $('#btn-continue').show();
-                                        $('#img-loader').hide();
-                                        $('#span-process-message').hide();
-                                        $('#span-finish-message').show();
-                                    }
-                                });                                
+                                $('#btn-continue').show();
+                                $('#img-loader').hide();
+                                $('#span-process-message').hide();
+                                $('#span-finish-message').show();
+
                             }
                         }
                 });

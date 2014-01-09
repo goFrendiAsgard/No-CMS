@@ -461,9 +461,9 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    get layout list
      */
-    protected function cms_get_layout_list()
+    protected function cms_get_theme_list()
     {
-        return $this->No_CMS_Model->cms_get_layout_list();
+        return $this->No_CMS_Model->cms_get_theme_list();
     }
 
     /**
@@ -806,7 +806,6 @@ class CMS_Controller extends MX_Controller
          * SHOW THE PAGE IF IT IS ACCESSIBLE  *****************************************************************************
          */
 
-
         // GET THE THEME, TITLE & ONLY_CONTENT FROM DATABASE
         $theme              = '';
         $title              = '';
@@ -853,7 +852,7 @@ class CMS_Controller extends MX_Controller
         if (isset($custom_theme) && $custom_theme !== NULL && $custom_theme != '') {
             $theme = $custom_theme;
         } else if (isset($default_theme) && $default_theme != NULL && $default_theme != '') {
-            $themes     = $this->cms_get_layout_list();
+            $themes     = $this->cms_get_theme_list();
             $theme_path = array();
             foreach ($themes as $theme) {
                 $theme_path[] = $theme['path'];
@@ -1025,7 +1024,6 @@ class CMS_Controller extends MX_Controller
                     }
                 }
             }
-
             $result = $this->template->build($view_url, $data, TRUE); 
         }
 
@@ -2017,7 +2015,7 @@ class CMS_Module_Installer extends CMS_Controller
             $this->db->delete(cms_table_name('main_navigation'), $where);
         }
     }
-    protected final function add_privilege($privilege_name, $title, $authorization_id = 1, $parent_name = NULL, $description = NULL)
+    protected final function add_privilege($privilege_name, $title, $authorization_id = 1, $description = NULL)
     {
         $data = array(
             "privilege_name" => $privilege_name,

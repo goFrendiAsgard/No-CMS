@@ -137,7 +137,6 @@
     echo '<div id="message" class="alert alert-danger"></div>';
     echo form_submit('change_profile', $change_profile_caption, 'class="btn btn-primary" style="display:none;"');
     echo '</div></div>';
-    echo form_close();
 
     echo form_close();
 ?>

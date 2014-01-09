@@ -87,7 +87,7 @@ class Main extends CMS_Controller
             $this->cms_set_config('site_theme', $theme);
             redirect('main/change_theme');
         } else {
-            $data['themes'] = $this->cms_get_layout_list();
+            $data['themes'] = $this->cms_get_theme_list();
             $data['upload_new_theme_caption'] = $this->cms_lang('Upload New Theme');
             $this->view('main/main_change_theme', $data, 'main_change_theme');
         }
@@ -642,7 +642,7 @@ class Main extends CMS_Controller
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
-        $themes     = $this->cms_get_layout_list();
+        $themes     = $this->cms_get_theme_list();
         $theme_path = array();
         foreach ($themes as $theme) {
             $theme_path[] = $theme['path'];

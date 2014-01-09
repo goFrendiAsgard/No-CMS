@@ -7,11 +7,10 @@ for($i=0; $i<count($result); $i++){
     $contents .= '<div id="record_'.$record->id.'" class="record_container thumbnail">';    
 
     if($record->use_subdomain){
-        $url = str_replace('://','://'.$record->name.'.', $site_url);
+        $subsite_url = str_replace('://','://'.$record->name.'.', $site_url);
     }else{
-        $url = $site_url.'site-'.$record->name;
+        $subsite_url = $site_url.'site-'.$record->name;
     }
-    $contents .= '<a href="'.$url.'" style="text-decoration:none;">';
 
     // show columns
     $image_path = '';
@@ -24,8 +23,11 @@ for($i=0; $i<count($result); $i++){
     $contents .= '<div class="caption">';
     $contents .= '<h3>'.$record->name.'</h3>'; 
     $contents .= '<p>'.$record->description.'</p>';
+    $contents .= '<p>';
+    $contents .= '<a href="'.$subsite_url.'" class="btn btn-primary">Go To Site</a>';
+    $contents .= '&nbsp;<a href="'.$edit_url.'/'.$record->name.'" class="btn btn-default">Edit</a>';
+    $contents .= '</p>';
     $contents .= '</div>';
-    $contents .= '</a>';
 
 
     $contents .= '</div>';

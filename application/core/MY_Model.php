@@ -1308,7 +1308,7 @@ class CMS_Model extends CI_Model
                     unset($public);
                     unset($subsite_allowed);
                     include($subsite_auth_file);
-                    if(is_bool($public) && !$public){
+                    if(isset($public) && is_bool($public) && !$public){
                         if(is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
                             continue;
                         }
@@ -1390,12 +1390,12 @@ class CMS_Model extends CI_Model
     /**
      * @author  goFrendiAsgard
      * @return  mixed
-     * @desc    get layout list
+     * @desc    get theme list
      */
-    public function cms_get_layout_list()
+    public function cms_get_theme_list()
     {
         $this->load->helper('directory');
-        $directories = directory_map('themes', 1);
+        $directories = directory_map(FCPATH.'themes', 1);
         sort($directories);
         $themes      = array();
         foreach ($directories as $directory) {
