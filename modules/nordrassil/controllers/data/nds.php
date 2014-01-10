@@ -252,6 +252,7 @@ class nds extends CMS_Controller {
     		// displayed columns on list
         	$crud->columns('project_id','name','caption','priority','options','columns','manage_columns');
     	}
+    	$crud->order_by('priority');
 
         $crud->required_fields('name','caption');
         
@@ -272,6 +273,7 @@ class nds extends CMS_Controller {
 		$crud->display_as('options','Options');
 		$crud->display_as('columns','Columns');
 		$crud->display_as('manage_columns','Manage Columns');
+		$crud->display_as('priority', 'Order Index');
 
         $crud->set_relation('project_id',$this->cms_complete_table_name('project'),'name');
 		$crud->set_relation_n_n('options',$this->cms_complete_table_name('table_option'),
@@ -356,6 +358,7 @@ class nds extends CMS_Controller {
     		// displayed columns on list
         	$crud->columns('table_id','name','caption','role','data_type','data_size','options','priority');
     	}
+    	$crud->order_by('priority');
 
         $crud->required_fields('name','caption');
         
@@ -387,6 +390,7 @@ class nds extends CMS_Controller {
 		$crud->display_as('selection_column_id','Selection Shown Column');
 		$crud->display_as('value_selection_mode','Selection Mode');
 		$crud->display_as('value_selection_item','Selection Item');
+		$crud->display_as('priority', 'Order Index');
 
 		$crud->field_type('data_type', 'enum', $this->nds_model->available_data_type);
 		$crud->field_type('role', 'enum', array('primary','lookup','detail many to many','detail one to many'));

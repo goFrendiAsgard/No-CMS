@@ -115,7 +115,13 @@ class Nds_Model extends CMS_Model{
 				$table = $row;
 				$table_id = $table['table_id'];
 				unset($table['table_id']);
-				$table['name'] = addslashes($table['name']);
+				// get table name
+				$table['name'] = addslashes($table['name']);				
+	            if($db_table_prefix != '' && $db_table_prefix !== NULL){
+	                if(strpos($table['name'], $db_table_prefix.'_') !== 0){
+	                    $table['name'] = $db_table_prefix.'_'.$table['name'];
+	                }
+	            }
                 $table['stripped_name'] = $this->strip_table_prefix($table['name'], $db_table_prefix);
 				$table['caption'] = addslashes($table['caption']);
 
@@ -137,6 +143,7 @@ class Nds_Model extends CMS_Model{
 					selection_table_id, selection_column_id, value_selection_mode, value_selection_item')
 					->from($this->cms_complete_table_name('column'))
 					->where('table_id', $table_id)
+					->order_by('priority')
 					->get();
 				foreach($query->result_array() as $row){
 					$column = $row;

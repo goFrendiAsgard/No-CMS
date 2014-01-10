@@ -30,19 +30,19 @@
 			var project_id = $('#project_list').val();
 			var url = GENERATOR_PATH[project_id];
 			$('#status').html('Processing ..');
-			$('#status').removeClass('alert-info alert-success alert-error alert-action');
-			$('#status').addClass('alert-action');
+			$('#status').removeClass('alert-info alert-success alert-error alert-warning');
+			$('#status').addClass('alert-warning');
 			$.ajax({
 				'url' : url,
 				'dataType' : 'json',
 				'success': function(response){
 					if(response['success']){
-						$('#status').html('<b>Project has been Generated successfully</b>');
-						$('#status').removeClass('alert-info alert-success alert-error alert-action');
+						$('#status').html('<b>Project has been Generated successfully</b> go to <a class="btn btn-default" href="{{ site_url }}main/module_management">Module Management</a> to activate the module');
+						$('#status').removeClass('alert-info alert-success alert-error alert-warning');
 						$('#status').addClass('alert-success');
 					}else{
 						$('#status').html('<b>Something going wrong : </b><br />'+response['message']);
-						$('#status').removeClass('alert-info alert-success alert-error alert-action');
+						$('#status').removeClass('alert-info alert-success alert-error alert-warning');
 						$('#status').addClass('alert-error');
 					}
 				},
