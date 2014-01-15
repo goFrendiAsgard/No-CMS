@@ -208,9 +208,14 @@ AddDefaultCharset utf-8
 
 <IfModule mod_rewrite.c>
     Options +FollowSymlinks
-  # Options +SymLinksIfOwnerMatch
+    # Options +SymLinksIfOwnerMatch
     RewriteEngine On
-  # RewriteBase /
+    
+    # DO NOT MODIFY UNTIL "END OF DENY IP"
+    # {{ DENY IP }}
+    # {{ END OF DENY IP }}
+    
+    # RewriteBase /
 </IfModule>
 
 # ------------------------------------------------------------------------------
