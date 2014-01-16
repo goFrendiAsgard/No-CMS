@@ -3,9 +3,9 @@
     RewriteEngine On
     RewriteBase <?php echo $rewrite_base; ?>
     
-    # DO NOT MODIFY UNTIL "END OF DENY IP"
-    # {{ DENY IP }}
-    # {{ END OF DENY IP }}
+    # DO NOT MODIFY UNTIL "END OF DENY"
+    # {{ DENY }}
+    # {{ END OF DENY }}
 
     #Checks to see if the user is attempting to access a valid file,
     #such as an image or css document, if this isn't true it sends the

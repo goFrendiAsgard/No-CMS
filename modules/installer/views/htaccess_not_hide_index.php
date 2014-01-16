@@ -212,8 +212,8 @@ AddDefaultCharset utf-8
     RewriteEngine On
     
     # DO NOT MODIFY UNTIL "END OF DENY IP"
-    # {{ DENY IP }}
-    # {{ END OF DENY IP }}
+    # {{ DENY }
+    # {{ END OF DENY }}
     
     # RewriteBase /
 </IfModule>
