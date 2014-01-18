@@ -570,7 +570,7 @@ class CMS_Model extends CI_Model
                 $image_file_path = 'assets/nocms/images/icons/package.png';
             }
             $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
-            $html .= '<div class="thumbnail">';
+            $html .= '<div class="thumbnail thumbnail_submenu">';
             $html .= '<a href="' . $url . '" style="text-decoration:none;">';
             if ($image_file_path != '') {
                 $html .= '<img style="margin-top:10px; max-height:60px;" src="' . base_url($image_file_path) . '" />';
@@ -605,15 +605,15 @@ class CMS_Model extends CI_Model
                         $(this).css("margin-bottom", margin_bottom);
                     });
                 }
-                function adjust_thumbnail(){
-                    __adjust_component(".thumbnail img");
-                    __adjust_component(".thumbnail div.caption");
+                function __adjust_thumbnail_submenu(){
+                    __adjust_component(".thumbnail_submenu img");
+                    __adjust_component(".thumbnail_submenu div.caption");
                 }
-                adjust_thumbnail();
+                __adjust_thumbnail_submenu();
 
                 // resize
                 $(window).resize(function(){
-                    adjust_thumbnail();
+                    __adjust_thumbnail_submenu();
                 });
             });
         </script>';
