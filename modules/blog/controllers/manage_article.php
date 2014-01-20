@@ -242,7 +242,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         foreach($insert_records as $insert_record){
             $this->load->library('image_moo');
-            $upload_path = BASEPATH.'../modules/'.$this->cms_module_path().'/assets/uploads/';
+            $upload_path = FCPATH.'modules/'.$this->cms_module_path().'/assets/uploads/';
 
             $record_index = $insert_record['record_index'];
             $tmp_name = $_FILES['md_field_photos_col_url_'.$record_index]['tmp_name'];
