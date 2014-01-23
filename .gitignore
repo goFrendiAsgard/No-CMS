@@ -56,4 +56,5 @@ modules/stiki_ibk
 modules/pendaftaran_wisuda
 modules/library_app
 modules/shop
+modules/pbfrontend
 modules/artificial_intelligence/assets/data/1_*
