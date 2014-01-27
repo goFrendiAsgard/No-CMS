@@ -82,7 +82,7 @@
     }
 	echo '<div style="clear:both"></div>';
     if($upload['uploading'] && !$upload['success']){
-    	echo '<div id="message" class="alert alert-error">';
+    	echo '<div id="message" class="alert alert-danger">';
     	echo '<b>{{ language:Error }}:</b> '.$upload['message'];
     	echo '</div>';
     }

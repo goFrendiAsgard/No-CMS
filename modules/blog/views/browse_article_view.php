@@ -199,7 +199,7 @@
             }
             echo '</div>';
         }else if(isset($article) && $article == FALSE){
-            echo '<div class="alert alert-error">No article found</div>';
+            echo '<div class="alert alert-danger">No article found</div>';
         }
     ?>
 </div>
