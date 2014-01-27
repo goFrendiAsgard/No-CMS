@@ -40,6 +40,7 @@ class multisite extends CMS_Priv_Strict_Controller {
     }
 
     public function edit($site_name){
+        $this->cms_guard_page($this->cms_complete_navigation_name('index'), 'modify_subsite');
         $this->load->model($this->cms_module_path().'/subsite_model');
         // get module and theme list
         $module_list = $this->subsite_model->module_list();
@@ -77,6 +78,7 @@ class multisite extends CMS_Priv_Strict_Controller {
                 $data['logo'] = $logo;
             }
             $this->db->update($this->cms_complete_table_name('subsite'), $data, array('name'=>$site_name));
+            $this->subsite_model->update_configs();
 
             // edit module configuration file
             foreach($module_list as $module){
@@ -141,12 +143,14 @@ class multisite extends CMS_Priv_Strict_Controller {
             'use_subdomain' => $subsite->use_subdomain,
             'modules' => $subsite->modules,
             'themes' => $subsite->themes,
+            'aliases'=> $subsite->aliases,
             'module_list' => $this->make_associative_array($module_list),
             'theme_list' => $this->make_associative_array($theme_list),
         );
         // show
+        $config = array('privileges'=>array('modify_subsite'));
         $this->view($this->cms_module_path().'/multisite_edit', $data,
-            $this->cms_complete_navigation_name('index'));     
+            $this->cms_complete_navigation_name('index'), $config);
     }
 
     public function get_data(){

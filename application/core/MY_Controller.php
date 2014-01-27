@@ -778,6 +778,8 @@ class CMS_Controller extends MX_Controller
         if (!$always_allow) {
             $this->cms_guard_page($navigation_name, $privilege_required);
         }
+        // privilege is absolute
+        $this->cms_guard_page(NULL, $privilege_required);
 
         /**
          * CHECK IF THE PAGE IS STATIC  **********************************************************************************

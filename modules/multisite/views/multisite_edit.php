@@ -17,6 +17,9 @@
         font-family: Courier;
         font-size: small;
     }
+    .chzn-container-multi .chzn-choices .search-field input{
+        height:28px;
+    }
 </style>
 <?php
     echo '<h3> Edit '.$name.' sub-site</h3>';
@@ -39,6 +42,14 @@
     echo '<div class="col-sm-offset-4 col-sm-8">';
     echo form_checkbox('use_subdomain','True',$use_subdomain==1, 'id="use_subdomain"');
     echo form_label('Use Subdomain', ' for="" class="control-label');
+    echo '</div>';
+    echo '</div>';
+    
+    echo '<div class="form-group">';
+    echo form_label('Aliases', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input('aliases', $aliases, 
+        'id="aliases" placeholder="Aliases (comma separated)" class="form-control"');
     echo '</div>';
     echo '</div>';
 

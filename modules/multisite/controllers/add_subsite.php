@@ -9,7 +9,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
-    public function __construct(){        
+    public function __construct(){
         parent::__construct();
         if(CMS_SUBSITE != ''){
             redirect(($module_path == 'multisite'? $module_path : $module_path.'/multisite'));
@@ -98,6 +98,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
             'aliases'=>$this->input->post('aliases'),
         );
         $this->db->insert($this->cms_complete_table_name('subsite'), $data);
+        $this->subsite_model->update_configs();
 
         $data = $check_installation;
         $data['admin_user_name'] = $this->install_model->admin_user_name;

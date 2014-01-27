@@ -177,7 +177,7 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
     require_once('./site.php');
     if(isset($available_site) && is_array($available_site)){
         $cms_subsite = '';
-        if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){            
+        if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){
             $cms_subsite = $_GET['__cms_subsite'];
             define('USE_SUBDOMAIN', FALSE);
         }else{

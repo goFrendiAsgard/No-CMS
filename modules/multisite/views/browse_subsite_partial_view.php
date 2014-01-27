@@ -25,7 +25,9 @@ for($i=0; $i<count($result); $i++){
     $contents .= '<p>'.$record->description.'</p>';
     $contents .= '<p>';
     $contents .= '<a href="'.$subsite_url.'" class="btn btn-primary">Go To Site</a>';
-    $contents .= '&nbsp;<a href="'.$edit_url.'/'.$record->name.'" class="btn btn-default">Edit</a>';
+    if($allow_navigate_backend){
+        $contents .= '&nbsp;<a href="'.$edit_url.'/'.$record->name.'" class="btn btn-default">Edit</a>';
+    }
     $contents .= '</p>';
     $contents .= '</div>';
 
