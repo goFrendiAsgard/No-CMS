@@ -1,1 +1,0 @@
-        $this->remove_navigation($this->cms_complete_navigation_name('{{ back_navigation_name }}'));
