@@ -28,7 +28,6 @@ local.properties
 # installation specific file
 assets/caches/*.js
 assets/caches/*.css
-modules/.git
 modules/*/config/module_config_*.php
 application/config/*.php
 application/config/site-*
