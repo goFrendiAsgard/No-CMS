@@ -136,21 +136,23 @@ v0.6.6
 + (done, tested) Secure comment
 + (done, tested) Blog writer (which is not super admin) can only edit/delete his own article
 + (done, tested) working `overflow-x` and smaller `chzn-results`
-+ (done, not tested) fix hardcoded sql that contain ```
++ (done, tested) fix hardcoded sql that contain ```
 + (done, tested) Fix layout for small device.
 + (done, tested) Fix bug: when screen resized to smaller width, the button cannot be clicked
 + (done, tested) Use newest CodeIgniter 3.0.0 and modify the rule so that the old naming convention still works (Thanks Ivan)
 + (done, tested) Make `/application/config/first-time` and `first-time` environment as suggested by cesarliws (https://github.com/goFrendiAsgard/No-CMS/issues/79)
 + (done, tested) Update CKEditor of groceryCRUD, add kcfinder.
 + (done, tested) Fix Multiple widget from different modules problem (referenced by missidentified issue: https://github.com/goFrendiAsgard/No-CMS/issues/88)
-+ (cancelled) Not using AJAX anymore to fetch module status on module management. This is impossible since HMVC doesn't allow us to has different classes with the same name.
++ (cancelled) Not using AJAX anymore to fetch module status on module management. This is impossible since HMVC does not allow us to has different classes with the same name.
 + (done, tested) Multisite management.
 + (done, tested) Use bootstrap 3.0.
-+ (done, tested) Widget rendering is now doesn't depend on session, ommiting possibility of clutter display
++ (done, tested) Widget rendering is now does not depend on session, ommiting possibility of clutter display
 + (done, tested) Per subsite module & theme configuration 
-+ (done, tested) Subsite module & theme privilege mechanism
++ (done, tested) module & theme subsite privilege mechanism (subsite_auth)
 + (done, tested) nordrassil priority index and table prefix
-+ (proposed) IP Deny manager.
++ (done, tested) IP Deny manager.
++ (done, tested) New section in layout management: custom script that contains any custom css/js
++ (done, tested) "minimal" layout
 
 v0.6.7
 + (proposed) namespace
