@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+.navigation_active{
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+.input_disable{
+	background-color: lightgray!important;
+}
+#static_content_input_box_shadow{
+	border: 1px solid lightgray;
+	padding: 5px;
+	margin: 5px;
+	background-color: white;
+	min-height: 50px;
+}
+#flex1 th:last-child{
+    min-width: 120px!important;
+}

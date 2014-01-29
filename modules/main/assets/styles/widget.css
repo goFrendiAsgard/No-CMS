@@ -1,0 +1,9 @@
+@CHARSET "UTF-8";
+.widget_active{
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+#flex1 th:last-child{
+    min-width: 120px!important;
+}
