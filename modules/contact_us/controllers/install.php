@@ -89,7 +89,7 @@ class Install extends CMS_Module_Installer {
 
         // parent of all navigations
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Contact Us',
-            $module_path.'/contact_us', $this->PRIV_EVERYONE);
+            $module_path.'/contact_us', $this->PRIV_EVERYONE, NULL, NULL, 'Contact Us Menu', 'glyphicon-envelope');
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('manage_message'), 'Manage Message',

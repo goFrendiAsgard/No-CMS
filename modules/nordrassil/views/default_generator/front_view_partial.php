@@ -52,9 +52,9 @@ for($i=0; $i<count($result); $i++){
 	// edit and delete button
 	if($allow_navigate_backend){
 		$contents .= '<div class="edit_delete_record_container">';
-		$contents .= '<a href="'.$backend_url.'/edit/'.$record-><?php echo $primary_key; ?>.'" class="btn edit_record" primary_key = "'.$record-><?php echo $primary_key; ?>.'">Edit</a>';
+		$contents .= '<a href="'.$backend_url.'/edit/'.$record-><?php echo $primary_key; ?>.'" class="btn edit_record btn-default" primary_key = "'.$record-><?php echo $primary_key; ?>.'">Edit</a>';
 		$contents .= '&nbsp;';
-		$contents .= '<a href="'.$backend_url.'/delete/'.$record-><?php echo $primary_key; ?>.'" class="btn delete_record" primary_key = "'.$record-><?php echo $primary_key; ?>.'">Delete</a>';
+		$contents .= '<a href="'.$backend_url.'/delete/'.$record-><?php echo $primary_key; ?>.'" class="btn delete_record btn-danger" primary_key = "'.$record-><?php echo $primary_key; ?>.'">Delete</a>';
 		$contents .= '</div>';
 	}
 	$contents .= '</div>';

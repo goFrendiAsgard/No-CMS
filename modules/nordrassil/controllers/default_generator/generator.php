@@ -102,18 +102,18 @@ class Generator extends CMS_Controller{
     }
 
     public function index($project_id){
-        $projects = $this->nds->get_project($project_id);
+        $project = $this->nds->get_project($project_id);
         $this->project_id = $project_id;
-        $this->project_name = $projects['name'];
+        $this->project_name = $project['name'];
         $this->save_project_name = underscore($this->project_name);
-        $this->project_db_server = $projects['db_server'];
-        $this->project_db_schema = $projects['db_schema'];
-        $this->project_db_port = $projects['db_port'];
-        $this->project_db_password = $projects['db_password'];
-        $this->project_db_user = $projects['db_user'];
-        $this->project_db_table_prefix = $projects['db_table_prefix'];
-        $this->project_options = $projects['options'];
-        $this->tables = $projects['tables'];
+        $this->project_db_server = $project['db_server'];
+        $this->project_db_schema = $project['db_schema'];
+        $this->project_db_port = $project['db_port'];
+        $this->project_db_password = $project['db_password'];
+        $this->project_db_user = $project['db_user'];
+        $this->project_db_table_prefix = $project['db_table_prefix'];
+        $this->project_options = $project['options'];
+        $this->tables = $project['tables'];
         $this->project_path = dirname(BASEPATH).'/modules/'.underscore($this->project_name).'/';
         $table_prefix_length = strlen($this->project_db_table_prefix);
         if($table_prefix_length==0){
@@ -204,7 +204,7 @@ class Generator extends CMS_Controller{
             $response = array('success'=>$success, 'message'=>$message);
             $this->cms_show_json($response);
         }else{
-            $this->cms_show_variable($projects);
+            $this->cms_show_variable($project);
         }
     }
 

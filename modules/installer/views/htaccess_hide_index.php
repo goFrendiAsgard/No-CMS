@@ -1,11 +1,22 @@
 <IfModule mod_rewrite.c>
-    # Options +FollowSymLinks -Indexes
+    Options +FollowSymLinks -Indexes
     RewriteEngine On
     RewriteBase <?php echo $rewrite_base; ?>
+    
+    # DO NOT MODIFY UNTIL "END OF DENY"
+    # {{ DENY }}
+    # {{ END OF DENY }}
 
     #Checks to see if the user is attempting to access a valid file,
     #such as an image or css document, if this isn't true it sends the
     #request to index.php
+
+    # multisite
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^site-([a-zA-Z0-9]*)$ index.php/?__cms_subsite=$1 [L,QSA]
+    RewriteRule ^site-([a-zA-Z0-9]*)/(.*)$ index.php/$2?__cms_subsite=$1 [L,QSA]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ index.php/$1 [L,QSA]

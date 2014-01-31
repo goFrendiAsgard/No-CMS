@@ -1,21 +1,4 @@
 <?php
-	$identifier = '';
-	for($i=1; $i<=33; $i++){
-		$identifier.= 'a[href="'.site_url('{{ module_path }}/config/delete/'.$i).'"]';
-		if($i<32){
-			$identifier.= ',';
-		}
-	}
-?>
-<style type="text/css">
-	<?php echo $identifier;?>
-	{
-		visibility:hidden;
-		pointer-events: none;
-        cursor: default;
-	}
-</style>
-<?php
 	$asset = new CMS_Asset();
 	foreach($css_files as $file){
 		$asset->add_css($file);

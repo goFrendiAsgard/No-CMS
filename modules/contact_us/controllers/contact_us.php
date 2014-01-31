@@ -83,7 +83,6 @@ class contact_us extends CMS_Priv_Strict_Controller {
         $secret_code = $this->__random_string();
         $this->session->set_flashdata('__contact_us_secret_code', $secret_code);
 
-    	$data['menu'] = $this->cms_submenu_screen($this->cms_complete_navigation_name('index'));
         $data['secret_code'] = $secret_code;
         $data['success'] = $success;
         $data['show_success_message'] = $show_success_message;

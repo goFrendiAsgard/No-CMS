@@ -1,167 +1,130 @@
-/* 
-    Document   : style
-    Created on : Jan 7, 2012, 12:57:07 PM
-    Author     : gofrendi
-    Description:
-        Purpose of the stylesheet follows.
-*/
-.navbar-fixed-top .nav > .active > a > [class^="icon-"],
-.navbar-fixed-top .nav > .active > a > [class*=" icon-"] {
-  background-image: url("../img/glyphicons-halflings-white.png")!important;
+.navbar-default {
+  background-color: #222222;
+  border-color: #080808;
 }
-.navbar-fixed-top {
-  color: #EEEEEE;
-}
-.navbar .nav li.dropdown>a:hover .caret, .navbar .nav li.dropdown>a:focus .caret {
-    border-top-color: #FFFFFF;
-    border-bottom-color: #FFFFFF;
-}
-.navbar-fixed-top .navbar-inner {
-  background-color: #1b1b1b;
-  background-image: -moz-linear-gradient(top, #222222, #111111);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#222222), to(#111111));
-  background-image: -webkit-linear-gradient(top, #222222, #111111);
-  background-image: -o-linear-gradient(top, #222222, #111111);
-  background-image: linear-gradient(to bottom, #222222, #111111);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff222222', endColorstr='#ff111111', GradientType=0);
-  border-color: #252525;
-}
-.navbar-fixed-top .brand,
-.navbar-fixed-top .nav > li > a {
-  color: #EEEEEE;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-}
-.navbar-fixed-top .brand:hover,
-.navbar-fixed-top .nav > li > a:hover {
-  color: #ffffff;
-}
-.navbar-fixed-top .nav > li > a:focus,
-.navbar-fixed-top .nav > li > a:hover {
-  background-color: transparent;
-  color: #ffffff;
-}
-.navbar-fixed-top .nav .active > a,
-.navbar-fixed-top .nav .active > a:hover,
-.navbar-fixed-top .nav .active > a:focus {
-  color: #ffffff;
-  background-color: #111111;
-}
-.navbar-fixed-top .navbar-link {
-  color: #EEEEEE;
-}
-.navbar-fixed-top .navbar-link:hover {
-  color: #ffffff;
-}
-.navbar-fixed-top .divider-vertical {
-  border-left-color: #111111;
-  border-right-color: #222222;
-}
-.navbar-fixed-top .nav li.dropdown.open > .dropdown-toggle,
-.navbar-fixed-top .nav li.dropdown.active > .dropdown-toggle,
-.navbar-fixed-top .nav li.dropdown.open.active > .dropdown-toggle {
-  background-color: #111111;
-  color: #ffffff;
-}
-.navbar-fixed-top .nav li.dropdown > .dropdown-toggle .caret {
-  border-top-color: #EEEEEE;
-  border-bottom-color: #EEEEEE;
-}
-.navbar-fixed-top .nav li.dropdown.open > .dropdown-toggle .caret,
-.navbar-fixed-top .nav li.dropdown.active > .dropdown-toggle .caret,
-.navbar-fixed-top .nav li.dropdown.open.active > .dropdown-toggle .caret {
-  border-top-color: #ffffff;
-  border-bottom-color: #ffffff;
-}
-.navbar-fixed-top .navbar-search .search-query {
-  color: #ffffff;
-  background-color: #515151;
-  border-color: #111111;
-  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15);
-  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0 rgba(255,255,255,.15);
-  -webkit-transition: none;
-  -moz-transition: none;
-  -o-transition: none;
-  transition: none;
-}
-.navbar-fixed-top .navbar-search .search-query:-moz-placeholder {
-  color: #cccccc;
-}
-.navbar-fixed-top .navbar-search .search-query:-ms-input-placeholder {
-  color: #cccccc;
-}
-.navbar-fixed-top .navbar-search .search-query::-webkit-input-placeholder {
-  color: #cccccc;
-}
-.navbar-fixed-top .navbar-search .search-query:focus,
-.navbar-fixed-top .navbar-search .search-query.focused {
-  padding: 5px 15px;
-  color: #333333;
-  text-shadow: 0 1px 0 #ffffff;
-  background-color: #ffffff;
-  border: 0;
-  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.15);
-  outline: 0;
-}
-.navbar-fixed-top .btn-navbar {
-  color: #ffffff;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #0e0e0e;
-  background-image: -moz-linear-gradient(top, #151515, #040404);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#151515), to(#040404));
-  background-image: -webkit-linear-gradient(top, #151515, #040404);
-  background-image: -o-linear-gradient(top, #151515, #040404);
-  background-image: linear-gradient(to bottom, #151515, #040404);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff151515', endColorstr='#ff040404', GradientType=0);
-  border-color: #040404 #040404 #000000;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #040404;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
 
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-}
-.navbar-fixed-top .btn-navbar:hover,
-.navbar-fixed-top .btn-navbar:active,
-.navbar-fixed-top .btn-navbar.active,
-.navbar-fixed-top .btn-navbar.disabled,
-.navbar-fixed-top .btn-navbar[disabled] {
-  color: #ffffff;
-  background-color: #040404;
-  *background-color: #000000;
-}
-.navbar-fixed-top .btn-navbar:active,
-.navbar-fixed-top .btn-navbar.active {
-  background-color: #000000 \9;
-}
-/*
-.navbar-fixed-top .nav-collapse .nav > li > a,
-.navbar-fixed-top .nav-collapse .dropdown-menu a {
+.navbar-default .navbar-brand {
   color: #999999;
 }
-*/
-.navbar-fixed-top .nav-collapse .nav > li > a:hover,
-.navbar-fixed-top .nav-collapse .dropdown-menu a:hover {
-  background-color: #111111;
+
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+  color: #ffffff;
+  background-color: transparent;
 }
-.navbar-fixed-top .nav-collapse .navbar-form,
-.navbar-fixed-top .nav-collapse .navbar-search {
-  border-top-color: #111111;
-  border-bottom-color: #111111;
+
+.navbar-default .navbar-text {
+  color: #999999;
 }
-/* start */
-.navbar-text{
-    color:#ffffff!important;
+
+.navbar-default .navbar-nav > li > a {
+  color: #999999;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #ffffff;
+  background-color: transparent;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #ffffff;
+  background-color: #080808;
+}
+
+.navbar-default .navbar-nav > .disabled > a,
+.navbar-default .navbar-nav > .disabled > a:hover,
+.navbar-default .navbar-nav > .disabled > a:focus {
+  color: #444444;
+  background-color: transparent;
+}
+
+.navbar-default .navbar-toggle {
+  border-color: #333333;
+}
+
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+  background-color: #333333;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #ffffff;
+}
+
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+  border-color: #101010;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: #ffffff;
+  background-color: #080808;
+}
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav .open .dropdown-menu > .dropdown-header {
+    border-color: #080808;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu .divider {
+    background-color: #080808;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #999999;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #ffffff;
+    background-color: transparent;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #ffffff;
+    background-color: #080808;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus {
+    color: #444444;
+    background-color: transparent;
+  }
+}
+
+.navbar-default .navbar-link {
+  color: #999999;
+}
+
+.navbar-default .navbar-link:hover {
+  color: #ffffff;
+}
+
+/* end of inversing navbar */
+
+.flexigrid *,
+.flexigrid *:before,
+.flexigrid *:after,
+#colorbox,
+#colorbox:before,
+#colorbox:after {
+    -webkit-box-sizing: content-box!important;
+    -moz-box-sizing: content-box!important;
+    box-sizing: content-box!important;
+}
+
+.breadcrumb{
+    background-color:inherit!important;
 }
 .not_shown{
-	display: none;
+    display: none;
 }
 
 .clear{
-	clear: both;
+    clear: both;
 }
 
 .layout_widget_container input, .layout_widget_container textarea {
@@ -170,13 +133,14 @@
 
 body {
 	padding-bottom:40px;
+  padding-top:50px;
 }
 
 footer{
 	padding: 10px;
 }
 
-#__section-banner div.well{
+#__section-banner div.jumbotron{
     padding: 15px;
     border-radius:10px;
 
@@ -229,7 +193,7 @@ footer{
     padding-bottom:10px;
 }
 #crudForm{
-    padding-bottom: 125px;
+    padding-bottom: 145px;
 }
 .chzn-results{
     max-height: 200px!important;
@@ -270,10 +234,7 @@ body{
 /* end of grocery-CRUD flexigrid */
 
 /* Landscape phones and down */
-@media (max-width: 480px){    
-    body {
-        padding-top: 0px;
-    }
+@media (max-width: 480px){ 
     .form-input-box>input, .form-input-box>textarea,
     .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
         width: 250px!important;
@@ -301,10 +262,7 @@ body{
 }
 
 /* Landscape phone to portrait tablet */
-@media (min-width: 481px) and (max-width: 768px)  {  
-    body {
-        padding-top: 0px;
-    }  
+@media (min-width: 481px) and (max-width: 768px)  {
     .form-input-box>input, .form-input-box>textarea,
     .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
         width: 300px!important;
@@ -335,9 +293,6 @@ body{
 
 /* Portrait tablet to landscape and desktop */
 @media (min-width: 769px)  and (max-width: 978px) {
-    body {
-        padding-top: 0px;
-    }
     .flexigrid table td,
     .flexigrid table th{
         display: none!important;
@@ -363,14 +318,8 @@ body{
 
 /* normal desktop */
 @media (min-width: 979px) and (max-width: 1199px)  {
-    body {
-        padding-top: 45px;
-    }
 }
 
 /* Large desktop */
 @media (min-width: 1200px) {
-    body {
-        padding-top: 45px;
-    }
 }

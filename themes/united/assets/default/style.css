@@ -1,0 +1,143 @@
+.flexigrid *,
+.flexigrid *:before,
+.flexigrid *:after,
+#colorbox,
+#colorbox:before,
+#colorbox:after {
+    -webkit-box-sizing: content-box!important;
+    -moz-box-sizing: content-box!important;
+    box-sizing: content-box!important;
+}
+.not_shown{
+	display: none;
+}
+
+.clear{
+	clear: both;
+}
+
+.layout_widget_container input, .layout_widget_container textarea {
+    max-width: 100%;
+}
+
+body { 
+	padding-bottom:40px;
+}
+
+footer{
+	padding: 10px;
+}
+
+#__section-content{
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 30px;
+}
+
+/* grocery-CRUD flexigrid */
+.pGroup select#per_page
+{
+    max-width: 54px;
+}
+#crudForm{
+    padding-bottom: 145px;
+}
+.chzn-results{
+    max-height: 200px!important;
+}
+/* end of grocery-CRUD flexigrid */
+
+
+/* Landscape phones and down */
+@media (max-width: 480px){    
+    body {
+        padding-top: 0px;
+    }
+    .form-input-box>input, .form-input-box>textarea,
+    .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
+        width: 250px!important;
+        float: left!important;
+    }
+    .form-display-as-box{
+       width: 100%!important;
+    }
+    
+    .flexigrid table td,
+    .flexigrid table th{
+        display: none!important;
+    }
+    .flexigrid table td:first-child,
+    .flexigrid table th:first-child,
+    .flexigrid table td:last-child,
+    .flexigrid table th:last-child
+    {
+        display: table-cell!important;
+    }
+}
+
+/* Landscape phone to portrait tablet */
+@media (min-width: 481px) and (max-width: 768px)  {  
+    body {
+        padding-top: 0px;
+    }  
+    .form-input-box>input, .form-input-box>textarea,
+    .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
+        width: 300px!important;
+        float: left!important;
+    }
+    .form-display-as-box{
+       width: 100%!important;
+    }
+    
+    .flexigrid table td,
+    .flexigrid table th{
+        display: none!important;
+    }
+    .flexigrid table td:first-child,
+    .flexigrid table th:first-child,
+    .flexigrid table td:last-child,
+    .flexigrid table th:last-child,
+    .flexigrid table td:nth-child(2),
+    .flexigrid table th:nth-child(2)
+    {
+        display: table-cell!important;
+    }
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 769px)  and (max-width: 978px) {
+    body {
+        padding-top: 0px;
+    }
+    .flexigrid table td,
+    .flexigrid table th{
+        display: none!important;
+    }
+    .flexigrid table td:first-child,
+    .flexigrid table th:first-child,
+    .flexigrid table td:last-child,
+    .flexigrid table th:last-child,
+    .flexigrid table td:nth-child(2),
+    .flexigrid table th:nth-child(2),
+    .flexigrid table td:nth-child(3),
+    .flexigrid table th:nth-child(3),
+    .flexigrid table td:nth-child(4),
+    .flexigrid table th:nth-child(4)
+    {
+        display: table-cell!important;
+    }
+}
+
+/* normal desktop */
+@media (min-width: 979px) and (max-width: 1199px)  {
+    body {
+        padding-top: 40px;
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+    body {
+        padding-top: 40px;
+    }
+}

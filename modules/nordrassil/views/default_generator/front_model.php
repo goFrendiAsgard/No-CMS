@@ -4,11 +4,8 @@
 	        if(!isset($table_prefix) || $table_prefix == ''){
 	            return $table_name;
 	        }
-	        if(strpos($table_name, $table_prefix) === 0){
-	            $table_name = substr($table_name, strlen($table_prefix));
-	        }
-	        if($table_name[0]=='_'){
-	            $table_name = substr($table_name,1);
+	        if(strpos($table_name, $table_prefix.'_') === 0){
+	            $table_name = substr($table_name, strlen($table_prefix.'_'));
 	        }
 	        return $table_name;
 	    }

@@ -25,10 +25,43 @@
 	echo $output;
 ?>
 <script type="text/javascript">
+    $(document).ready(function(){
+        // override default_layout view
+        $('#field-default_layout').hide();
+        $('#default_layout_input_box').append('<select id="select-default_layout"></select>');
+        // fetch layout
+        fetch_layout_option();
+        $('#field_default_theme_chzn > div.chzn-drop > ul.chzn-results > li').click(function(){
+            fetch_layout_option();
+        });
+        // adjust real input
+        $('#select-default_layout').live('change', function(){
+            var selected_layout = $('#select-default_layout option:selected').val();
+            $('#field-default_layout').val(selected_layout);
+        });
+    });
     // TODO: make layout input a combobox
     function fetch_layout_option(){
+        var theme = $('#field_default_theme_chzn > div.chzn-drop > ul.chzn-results > li.result-selected').html();
+        if(typeof(theme) == 'undefined'){
+            theme = '';
+        }
+        var current_layout = $('#field-default_layout').val();
         $.ajax({
-
+            url: '{{ site_url }}main/get_layout/'+theme,
+            dataType: 'json',
+            success: function(response){
+                $("#select-default_layout").html('');
+                //$("#select-default_layout").append('<option value="'+current_layout+'" selected>'+current_layout+'</option>');
+                for(var i=0; i<response.length; i++){
+                    var layout = response[i];
+                    if(layout == current_layout){
+                        $("#select-default_layout").append('<option value="'+layout+'" selected>'+layout+'</option>');
+                    }else{
+                        $("#select-default_layout").append('<option value="'+layout+'">'+layout+'</option>');
+                    }
+                }
+            }
         });
     }
 </script>

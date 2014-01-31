@@ -106,14 +106,16 @@ class Install extends CMS_Module_Installer {
             $parent_url = $module_path.'/blog';
         }
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
-            $parent_url, $this->PRIV_EVERYONE);
+            $parent_url, $this->PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil');
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',
-            $module_path.'/manage_article', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_article', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            NULL, 'Add, edit, and delete blog articles'
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
-            $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            NULL, 'Add, edit, and delete categories. Each article can has one or more categories'
         );
 
         $this->add_quicklink($this->cms_complete_navigation_name('index'));
@@ -131,6 +133,8 @@ class Install extends CMS_Module_Installer {
                 'article_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
                 'article_title' => $this->TYPE_VARCHAR_100_NULL,
                 'article_url' => $this->TYPE_VARCHAR_100_NULL,
+                'keyword' => $this->TYPE_VARCHAR_100_NULL,
+                'description' => $this->TYPE_TEXT,
                 'date' => $this->TYPE_DATETIME_NULL,
                 'author_user_id' => $this->TYPE_INT_UNSIGNED_NULL,
                 'content' => $this->TYPE_TEXT,
@@ -201,8 +205,10 @@ class Install extends CMS_Module_Installer {
 
         // article
         $table_name = $this->cms_complete_table_name('article');
-        $data = array('article_title' => 'Scandal',
+        $data = array('article_title' => 'Scandal, A Pop Rock Girl Band From Osaka',
             'article_url' => 'scandal',
+            'keyword' => 'scandal, pop rock, girl, band, osaka',
+            'description' => 'Scandal is a pop rock girl band from Osaka, Japan, formed by four high school girls',
             'date'=>'2013-03-25 09:50:49',
             'author_user_id'=>1,
             'allow_comment'=>1,

@@ -73,7 +73,6 @@ class Installer extends CI_Controller{
         if($success){
             $this->install_model->build_database();
             $this->install_model->build_configuration();
-            $this->install_model->disable_installer();
         }
         $data['success'] = $success;
         $data['admin_user_name'] = $this->install_model->admin_user_name;

@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.6 development, December, 10, 2013
+- v0.6.6 stable, January, 29, 2014
 
 
 Server Requirements
@@ -60,7 +60,7 @@ __GPL & MIT License__: In short, you can use No-CMS for whatever purpose, modify
 
 Links
 =====
-- [Change Logs](doc/change_log.md)
+- [Change Logs](doc/changelog.md)
 - [Contributor List](doc/contributors.md)
 - [__User Guide And Tutorials__](doc/tutorial.md)
 - [Official Website](http://www.getnocms.com)

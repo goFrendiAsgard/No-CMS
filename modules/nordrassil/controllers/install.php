@@ -9,15 +9,29 @@ class Install extends CMS_Module_Installer {
     protected $NAME         = 'gofrendi.noCMS.nordrassil';
     protected $DESCRIPTION  = 'A very cool and easy module generator. Choose your database schema, press the magical "generate" button, and enjoy your life';
     
+    protected function check_subdomain(){
+        if(CMS_SUBSITE != ''){
+            $module_path = $this->cms_module_path();
+            $this->view($module_path.'/install_subsite_fail', NULL, 'main_index');
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+
     //this should be what happen when user install this module
     protected function do_activate(){
-        $this->remove_all();
-        $this->build_all();
+        if(!$this->check_subdomain()){
+            $this->remove_all();
+            $this->build_all();    
+        }        
     }
     //this should be what happen when user uninstall this module
     protected function do_deactivate(){
-        $this->backup_database(array('project','table','column','table_option','column_option'));
-        $this->remove_all();        
+        if(!$this->check_subdomain()){
+            $this->backup_database(array('project','table','column','table_option','column_option'));
+            $this->remove_all();    
+        }               
     }
 
     private function remove_all(){
@@ -51,10 +65,12 @@ class Install extends CMS_Module_Installer {
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('template'), "Generator Template",
-            $module_path."/data/nds/template", 4, "nordrassil_index"
+            $module_path."/data/nds/template", 4, "nordrassil_index",
+            NULL, 'Add, edit, and delete generator template'
         );
         $this->add_navigation($this->cms_complete_navigation_name('project'), "Project",
-            $module_path."/data/nds/project", 4, "nordrassil_index"
+            $module_path."/data/nds/project", 4, "nordrassil_index",
+            NULL, 'Add, edit, and delete project skeleton'
         );
 
 

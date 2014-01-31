@@ -269,7 +269,7 @@ class CMS_Model extends CI_Model
                     break;
                 }
             }
-            if ((!isset($row->url) || $row->url == '') && $row->is_static == 1) {
+            if ((!isset($row->url) || $row->url == '' || strpos(strtoupper($row->url), 'HTTP://') !== FALSE  || strpos(strtoupper($row->url), 'HTTPS://') !== FALSE ) && $row->is_static == 1) {
                 $url = site_url('main/static_page/' . $row->navigation_name);
             } else {
                 if (strpos(strtoupper($row->url), 'HTTP://') !== FALSE || strpos(strtoupper($row->url), 'HTTPS://') !== FALSE) {
@@ -453,19 +453,21 @@ class CMS_Model extends CI_Model
                     }
                 } else {                                                 
                     $url = trim_slashes($url);
-                    $this->cms_ci_session('cms_dynamic_widget', TRUE);
+                    //$this->cms_ci_session('cms_dynamic_widget', TRUE);
+                    $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
                     $response = @Modules::run($url);
                     if(strlen($response) == 0){
                         $response = @Modules::run($url.'/index');
-                    }                    
+                    }       
+                    unset($_REQUEST['__cms_dynamic_widget']);              
                     // fallback, Modules::run failed, use AJAX instead
                     if(strlen($response)==0){                        
                         $response = '<script type="text/javascript">';
-                        $response .= '$(document).ready(function(){$("#__cms_widget_' . $row->widget_id . '").load("'.site_url($url).'?_only_content=TRUE");});';
+                        $response .= '$(document).ready(function(){$("#__cms_widget_' . $row->widget_id . '").load("'.site_url($url).'?__cms_dynamic_widget=TRUE");});';
                         $response .= '</script>';
                     }
-                    $content .= $response;                    
-                    $this->cms_unset_ci_session('cms_dynamic_widget');
+                    $content .= $response;
+                    //$this->cms_unset_ci_session('cms_dynamic_widget');
                 }
                 
                 if($slug){
@@ -516,7 +518,7 @@ class CMS_Model extends CI_Model
             }
         }
 
-        $html = '<ul class="thumbnails row-fluid">';
+        $html = '<div class="row">';
         $module_path = $this->cms_module_path();
         $image_directories = array();
         if($module_path != ''){
@@ -567,15 +569,54 @@ class CMS_Model extends CI_Model
             if ($image_file_path == '') {
                 $image_file_path = 'assets/nocms/images/icons/package.png';
             }
-            $html .= '<li class="well" style="width:80px!important; height:90px!important; float:left!important; list-style-type:none;">';
-            $html .= '<a href="' . $url . '" style="width: 100%; height: 100%; display: block;">';
+            $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
+            $html .= '<div class="thumbnail thumbnail_submenu">';
+            $html .= '<a href="' . $url . '" style="text-decoration:none;">';
             if ($image_file_path != '') {
-                $html .= '<img style="max-width:32px; max-height:32px;" src="' . base_url($image_file_path) . '" /><br /><br />';
+                $html .= '<img style="margin-top:10px; max-height:60px;" src="' . base_url($image_file_path) . '" />';
             }
-            $html .= $title . '</a>';
-            $html .= '</li>';
+            
+            $html .= '<div class="caption">';
+            $html .= '<h4>'.$title.'</h4>';
+            $html .= '<p>'.$description.'</p>';
+            $html .= '</div>'; // end of div.caption            
+            $html .= '</div>'; // end of div.thumbnail
+            $html .= '</a>';
+            $html .= '</div>'; // end of div.col-xs-6 col-sm-4 col-md-3
         }
-        $html .= '</ul>';
+        $html .= '</div>';
+        $html .= '
+        <script type="text/javascript">
+            $(window).load(function(){
+                function __adjust_component(identifier){
+                    var max_height = 0;
+                    $(identifier).each(function(){
+                        $(this).css("margin-bottom", 0);
+                        if($(this).height()>max_height){
+                            max_height = $(this).height();
+                        }
+                    });
+                    $(identifier).each(function(){
+                        var margin_bottom = 0;               
+                        if($(this).height()<max_height){
+                            margin_bottom = max_height - $(this).height();
+                        }
+                        margin_bottom += 10;
+                        $(this).css("margin-bottom", margin_bottom);
+                    });
+                }
+                function __adjust_thumbnail_submenu(){
+                    __adjust_component(".thumbnail_submenu img");
+                    __adjust_component(".thumbnail_submenu div.caption");
+                }
+                __adjust_thumbnail_submenu();
+
+                // resize
+                $(window).resize(function(){
+                    __adjust_thumbnail_submenu();
+                });
+            });
+        </script>';
         return $html;
     }
 
@@ -818,7 +859,7 @@ class CMS_Model extends CI_Model
             }
             if(!isset($_SESSION['__cms_user_id'])){
                 $_SESSION['__cms_user_id'] = $user_id;
-            }
+            }            
             return TRUE;
         }
         return FALSE;
@@ -1249,18 +1290,33 @@ class CMS_Model extends CI_Model
     public function cms_get_module_list()
     {
         $this->load->helper('directory');
-        $directories = directory_map(APPPATH.'../modules', 1);
+        $directories = directory_map(FCPATH.'modules', 1);
         sort($directories);
         $module      = array();
         foreach ($directories as $directory) {
             $directory = str_replace(array('/','\\'),'',$directory);
-            if (!is_dir(APPPATH.'../modules/' . $directory))
+            if (!is_dir(FCPATH.'modules/' . $directory))
                 continue;
 
-            if (!file_exists(APPPATH.'../modules/' . $directory . '/controllers/install.php'))
+            if (!file_exists(FCPATH.'modules/' . $directory . '/controllers/install.php'))
                 continue;
 
-            $files              = directory_map(APPPATH.'../modules/' . $directory . '/controllers', 1);
+            // unpublished module should not be shown
+            if(CMS_SUBSITE != ''){
+                $subsite_auth_file = FCPATH.'modules/' . $directory . '/subsite_auth.php';
+                if (file_exists($subsite_auth_file)){
+                    unset($public);
+                    unset($subsite_allowed);
+                    include($subsite_auth_file);
+                    if(isset($public) && is_bool($public) && !$public){
+                        if(is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            $files              = directory_map(FCPATH.'modules/' . $directory . '/controllers', 1);
             $module_controllers = array();
             foreach ($files as $file) {
                 $filename_array = explode('.', $file);
@@ -1276,7 +1332,7 @@ class CMS_Model extends CI_Model
                 "module_name" => $module_name,
                 "module_path" => $directory,
                 "active" => $module_name != "",
-                "controllers" => $module_controllers
+                "controllers" => $module_controllers,
             );
         }
         return $module;
@@ -1313,8 +1369,11 @@ class CMS_Model extends CI_Model
      * @return  string
      * @desc    get module_name (name space) of specified module_path (folder name)
      */
-    public function cms_module_name($module_path)
+    public function cms_module_name($module_path = NULL)
     {
+        if(!isset($module_path) || is_null($module_path)){
+            $module_path = $this->cms_module_path();
+        }
         $query = $this->db->select('module_name')
             ->from(cms_table_name('main_module'))
             ->where('module_path', $module_path)
@@ -1331,18 +1390,32 @@ class CMS_Model extends CI_Model
     /**
      * @author  goFrendiAsgard
      * @return  mixed
-     * @desc    get layout list
+     * @desc    get theme list
      */
-    public function cms_get_layout_list()
+    public function cms_get_theme_list()
     {
         $this->load->helper('directory');
-        $directories = directory_map('themes', 1);
+        $directories = directory_map(FCPATH.'themes', 1);
         sort($directories);
         $themes      = array();
         foreach ($directories as $directory) {
             $directory = str_replace(array('/','\\'),'',$directory);
-            if (!is_dir('themes/' . $directory))
+            if (!is_dir(FCPATH.'themes/' . $directory))
                 continue;
+
+            if(CMS_SUBSITE != ''){
+                $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
+                if(file_exists($subsite_auth_file)){
+                    unset($public);
+                    unset($subsite_allowed);
+                    include($subsite_auth_file);
+                    if(isset($public) && is_bool($public) && !$public){
+                        if(isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                            continue;
+                        }
+                    }
+                }
+            }
 
             $layout_name = $directory;
 
@@ -1350,6 +1423,23 @@ class CMS_Model extends CI_Model
                 "path" => $directory,
                 "used" => $this->cms_get_config('site_theme') == $layout_name
             );
+        }
+        // the currently used theme should be on the top
+        for($i=0; $i<count($themes); $i++){
+            if($themes[$i]['used']){                
+                if($i != 0){
+                    $new_themes = array();
+                    $current_theme = $themes[$i];
+                    $new_themes[] = $current_theme;
+                    for($j=0; $j<count($themes); $j++){
+                        if($j != $i){
+                            $new_themes[] = $themes[$j];
+                        }
+                    }
+                    $themes = $new_themes;
+                }
+                break;
+            }
         }
         return $themes;
     }
@@ -1840,10 +1930,13 @@ class CMS_Model extends CI_Model
      * @return bool
      * @desc   check if user already exists
      */
-    public function cms_is_user_exists($username)
+    public function cms_is_user_exists($identity)
     {
-        $SQL      = "SELECT user_name FROM ".cms_table_name('main_user')." WHERE user_name='" . addslashes($username) . "'";
-        $query    = $this->db->query($SQL);
+        $query    = $this->db->select('user_name')
+            ->from(cms_table_name('main_user'))
+            ->like('user_name', $identity, 'none')
+            ->or_like('email', $identity, 'none')
+            ->get();
         $num_rows = $query->num_rows();
         return $num_rows > 0;
     }

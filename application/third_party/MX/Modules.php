@@ -61,7 +61,6 @@ class Modules
 			$module = substr($module, 0, $pos);
 		}
 		if($class = self::load($module)) {
-			
 			if (method_exists($class, $method))	{
 				ob_start();
 				$args = func_get_args();
@@ -82,16 +81,15 @@ class Modules
 		(is_array($module)) ? list($module, $params) = each($module) : $params = NULL;	
 		
 		/* get the requested controller class name */
-		$alias = strtolower(basename($module));
+		// Modified by Go Frendi Gunawan, 18-DEC-2013
+		$alias = strtolower(str_replace('/', '_', $module));
 
 		/* create or return an existing controller from the registry */
-		// removed by Go Frendi Gunawan, 04-DEC-2013, since this make widget cannot be called twice if there is another widget call
-		// from another widget
-		//if ( ! isset(self::$registry[$alias])) {
+		if ( ! isset(self::$registry[$alias])) {
 			
 			/* find the controller */
 			list($class) = CI::$APP->router->locate(explode('/', $module));
-	
+
 			/* controller cannot be located */
 			if (empty($class)) return;
 	
@@ -112,13 +110,10 @@ class Modules
             }
             //
 			self::load_file($class, $path);
-			
 			/* create and register the new controller */
 			$controller = ucfirst($class);	
 			self::$registry[$alias] = new $controller($params);
-
-		// removed by Go Frendi Gunawan, 04-DEC-2013
-		//}
+		}
 		
 		return self::$registry[$alias];
 	}
@@ -151,14 +146,23 @@ class Modules
 	/** Load a module file **/
 	public static function load_file($file, $path, $type = 'other', $result = TRUE)	{
 		
-		$file = str_replace(EXT, '', $file);		
-		$location = $path.$file.EXT;
+		$file = str_replace(EXT, '', $file);
+		// Modified by Go Frendi Gunawan
+        // $location = $path.$file.EXT;
+		if(!file_exists($path.$file.EXT)){
+			$file_lcase = strtolower($file);
+			$location = $path.$file_lcase.EXT;
+		}else{		
+			$location = $path.$file.EXT;
+		}
+		//
 		
-		if ($type === 'other') {			
+		if ($type === 'other') {
 			if (class_exists($file, FALSE))	{
 				log_message('debug', "File already loaded: {$location}");				
 				return $result;
-			}	
+			}
+			
 			include_once $location;
 		} else { 
 		

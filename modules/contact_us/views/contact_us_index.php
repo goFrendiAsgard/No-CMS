@@ -1,6 +1,5 @@
 <style type="text/css">
     textarea[name="<?php echo $secret_code; ?>content"]{
-        width:90%;
         resize:none;
     }
 </style>
@@ -13,18 +12,35 @@
         echo '<div class="alert alert-success">Your message has been sent</div>';
     }
     
-    echo form_open();
-    echo form_label('Name *');
-    echo form_input($secret_code.'name', $name).br();
-    echo form_label('Email *');
-    echo form_input($secret_code.'email', $email).br();
-    echo form_label('Message *');
-    echo form_textarea($secret_code.'content', $content).br();
+    echo form_open('', 'class="form form-horizontal"');
+
+    echo '<div class="form-group">';
+    echo form_label('Name *', ' for="" class="control-label col-sm-3');
+    echo '<div class="col-sm-9">';
+    echo form_input($secret_code.'name', $name, 
+        'id="'.$secret_code.'name" placeholder="Your Name" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('Email *', ' for="" class="control-label col-sm-3');
+    echo '<div class="col-sm-9">';
+    echo form_input($secret_code.'email', $email, 
+        'id="'.$secret_code.'email" placeholder="Your Email" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('Message *', ' for="" class="control-label col-sm-3');
+    echo '<div class="col-sm-9">';
+    echo form_textarea($secret_code.'content', $content, 
+        'id="'.$secret_code.'content" placeholder="Your Message" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group"><div class="col-sm-offset-3 col-sm-9">';
     echo form_submit('send', 'Send', 'class="btn btn-primary"');
-    echo form_close();
-    
-    echo '<hr />';
-    echo $menu;
+    echo '</div></div>';
 ?>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <script type="text/javascript">

@@ -1,6 +1,11 @@
-<?php
-session_start();
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+if(!isset($_SESSION)){
+    session_start();
+}
 class Install_Model extends CI_Model{
+    public $is_subsite      = FALSE;
+    public $subsite         = '';
+    public $subsite_aliases = '';
 
     public $db_protocol     = 'mysqli';
     public $db_host         = 'localhost';
@@ -18,7 +23,7 @@ class Install_Model extends CI_Model{
 
     public $hide_index       = FALSE;
     public $gzip_compression = FALSE;
-
+    
     public $auth_enable_facebook         = FALSE;
     public $auth_facebook_app_id         = '';
     public $auth_facebook_app_secret     = '';
@@ -64,6 +69,17 @@ class Install_Model extends CI_Model{
 
     public function __construct(){
         parent::__construct();
+        // automatically set table prefix based on subsite
+        $this->set_subsite($this->subsite);
+    }
+
+    public function set_subsite($subsite = NULL){
+        if($subsite !== NULL){
+            $this->subsite = $subsite;
+        }
+        if($this->is_subsite && $this->subsite != ''){
+            $this->db_table_prefix .= '_site_'.$this->subsite;
+        }
     }
 
     protected function build_dsn(){
@@ -129,6 +145,16 @@ class Install_Model extends CI_Model{
 
     protected function load_database(){
         $db_config = $this->build_db_config();
+
+        // if we make a subsite, use the current database setting
+        if($this->is_subsite){
+            $db = $this->load->database('default', TRUE);
+            $this->db = $db;
+            $this->dbutil = $this->load->dbutil($db, TRUE);
+            $this->dbforge = $this->load->dbforge($db, TRUE);
+            return $db;
+        }
+
         $db = $this->load->database($db_config, TRUE); 
 
         $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
@@ -203,15 +229,31 @@ class Install_Model extends CI_Model{
         $error_list = array();
         $warning_list = array();
         $db = $this->load_database();
-        // database connection
-        if($db === FALSE){
-            $success =  FALSE;
-            $error_list[] = 'Cannot connect using provided <a class="a-change-tab" href="#" tab="#tab1" component="db_protocol">Database Setting</a>';
+
+        if($this->is_subsite){
+            include(FCPATH.'site.php');
+            if($this->subsite == ''){
+                $success = FALSE;
+                $error_list[] = 'Subsite cannot be empty';
+            }
+            if(in_array($this->subsite, $available_site)){
+                $success = FALSE;
+                $error_list[] = 'Subsite already exists';
+            }
         }
-        if($this->db_name=='' && $this->db_protocol != 'pdo_sqlite'){
-            $success = FALSE;
-            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab1" component="db_name">Database schema</a> cannot be empty';
-        }        
+
+        // subsite doesn't need to check database
+        if(!$this->is_subsite){
+            // database connection
+            if($db === FALSE){
+                $success =  FALSE;
+                $error_list[] = 'Cannot connect using provided <a class="a-change-tab" href="#" tab="#tab1" component="db_protocol">Database Setting</a>';
+            }
+            if($this->db_name=='' && $this->db_protocol != 'pdo_sqlite'){
+                $success = FALSE;
+                $error_list[] = '<a class="a-change-tab" href="#" tab="#tab1" component="db_name">Database schema</a> cannot be empty';
+            } 
+        }       
         if($this->admin_user_name==''){
             $success = FALSE;
             $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_user_name">Super Admin\'s username</a> is empty';
@@ -226,36 +268,46 @@ class Install_Model extends CI_Model{
         }else if ($this->admin_password != $this->admin_confirm_password){
             $success = FALSE;
             $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_confirm_password">Super Admin\'s password confirmation</a> doesn\'t match';
-        }        
-        // No-CMS directory
-        if (!is_writable(FCPATH)) {
-            $success  = FALSE;
-            $error_list[] = FCPATH.' is not writable';
+        }  
+
+        // subsite doesn't need this
+        if(!$this->is_subsite){      
+            // No-CMS directory
+            if (!is_writable(FCPATH)) {
+                $success  = FALSE;
+                $error_list[] = FCPATH.' is not writable';
+            }
+            // kcfinder upload
+            if (!is_writable(FCPATH.'assets/kcfinder/upload')){
+                $success = FALSE;
+                $error_list[] = FCPATH.'assets/kcfinder/upload is not writable';
+            }
+            // kcfinder config
+            if (!is_writable(FCPATH.'assets/kcfinder')){
+                $success = FALSE;
+                $error_list[] = FCPATH.'assets/kcfinder is not writable';
+            }
+            // ckeditor config
+            if (!is_writable(FCPATH.'assets/grocery_crud/texteditor/ckeditor')){
+                $success = FALSE;
+                $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor';
+            }
+            // assets/caches
+            if (!is_writable(FCPATH.'assets/caches')) {
+                $success  = FALSE;
+                $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
+            }
         }
-        // kcfinder upload
-        if (!is_writable(FCPATH.'assets/kcfinder/upload')){
-            $success = FALSE;
-            $error_list[] = FCPATH.'assets/kcfinder/upload is not writable';
-        }
-        // kcfinder config
-        if (!is_writable(FCPATH.'assets/kcfinder')){
-            $success = FALSE;
-            $error_list[] = FCPATH.'assets/kcfinder is not writable';
-        }
-        // ckeditor config
-        if (!is_writable(FCPATH.'assets/grocery_crud/texteditor/ckeditor')){
-            $success = FALSE;
-            $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor';
-        }
-        // assets/caches
-        if (!is_writable(FCPATH.'assets/caches')) {
-            $success  = FALSE;
-            $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
-        }
+
         // application/config/
         if (!is_writable(APPPATH.'config')) {
             $success  = FALSE;
             $error_list[] = "Config directory (".APPPATH."config) is not writable";
+        }
+        // hybridauthlib log file
+        if (!is_writable(APPPATH.'logs/hybridauth.log')) {
+            $success  = FALSE;
+            $error_list[] = APPPATH."logs/hybridauth.log is not writable";
         }
         // third party authentication activated
         if ($this->auth_enable_facebook || $this->auth_enable_twitter || $this->auth_enable_google || $this->auth_enable_yahoo || $this->auth_enable_linkedin || $this->auth_enable_myspace || $this->auth_enable_foursquare || $this->auth_enable_windows_live || $this->auth_enable_open_id || $this->auth_enable_aol ) {
@@ -351,40 +403,39 @@ class Install_Model extends CI_Model{
                     $success = FALSE;
                     $error_list[] = '<a class="a-change-tab" href="#" tab="#tab10" component="auth_windows_live_app_secret">Windows Live application secret</a> cannot be empty';
                 }
+            }            
+        }
+
+        // subsite doesn't need this
+        if(!$this->is_subsite){
+            // hide index: mod_rewrite should be active, but there is no way to absolutely determine this
+            if($this->hide_index){
+                $mod_rewrite = FALSE;
+                if (function_exists('apache_get_modules')) {
+                    $modules = apache_get_modules();
+                    if (in_array('mod_rewrite', $modules)) {
+                        $mod_rewrite = TRUE;
+                    }
+                }
+                if (!$mod_rewrite && isset($_SERVER["HTTP_MOD_REWRITE"])) {
+                    if (strtoupper($_SERVER["HTTP_MOD_REWRITE"]) == "ON") {
+                        $mod_rewrite = TRUE;
+                    }
+                }
+                if (!$mod_rewrite) {
+                    if (strtoupper(getenv('HTTP_MOD_REWRITE')) == "ON") {
+                        $mod_rewrite = TRUE;
+                    }
+                }
+                if(!$mod_rewrite){
+                    $warning_list[] = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
+                }
             }
-            // hybridauthlib log file
-            if (!is_writable(APPPATH.'logs/hybridauth.log')) {
+            // log directory
+            if (!is_writable(APPPATH.'logs')) {
                 $success  = FALSE;
-                $error_list[] = APPPATH."logs/hybridauth.log is not writable";
+                $error_list[] = APPPATH."logs is not writable";
             }
-        }
-        // hide index: mod_rewrite should be active, but there is no way to absolutely determine this
-        if($this->hide_index){
-            $mod_rewrite = FALSE;
-            if (function_exists('apache_get_modules')) {
-                $modules = apache_get_modules();
-                if (in_array('mod_rewrite', $modules)) {
-                    $mod_rewrite = TRUE;
-                }
-            }
-            if (!$mod_rewrite && isset($_SERVER["HTTP_MOD_REWRITE"])) {
-                if (strtoupper($_SERVER["HTTP_MOD_REWRITE"]) == "ON") {
-                    $mod_rewrite = TRUE;
-                }
-            }
-            if (!$mod_rewrite) {
-                if (strtoupper(getenv('HTTP_MOD_REWRITE')) == "ON") {
-                    $mod_rewrite = TRUE;
-                }
-            }
-            if(!$mod_rewrite){
-                $warning_list[] = "Rewrite Base is possibly not activated, this is needed when you choose to hide index.php. If you are sure that your mod_rewrite is activated, you can continue at your own risk";
-            }
-        }
-        // log directory
-        if (!is_writable(APPPATH.'logs')) {
-            $success  = FALSE;
-            $error_list[] = APPPATH."logs is not writable";
         }
         return array(
                 'success' => $success,
@@ -719,7 +770,7 @@ class Install_Model extends CI_Model{
         return $this->db->last_query();
     }
 
-    protected function insert_navigation($navigation_name, $parent_id, $title, $page_title, $page_keyword, $description, $url, $authorization_id, $index, $active, $is_static, $static_content, $only_content, $bootstrap_glyph = 'icon-th-large', $default_theme=NULL, $default_layout=NULL){
+    protected function insert_navigation($navigation_name, $parent_id, $title, $page_title, $page_keyword, $description, $url, $authorization_id, $index, $active, $is_static, $static_content, $only_content, $bootstrap_glyph = 'glyphicon-th-large', $default_theme=NULL, $default_layout=NULL){
         $array = array(
                 'navigation_name' => $navigation_name,
                 'parent_id' => $parent_id,
@@ -835,7 +886,7 @@ class Install_Model extends CI_Model{
         // user
         $sql_list[] = $this->insert_user();
         // navigation
-        $sql_list[] = $this->insert_navigation('main_login', NULL, 'Login', 'Login', NULL, 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL, 0);
+        $sql_list[] = $this->insert_navigation('main_login', NULL, 'Login', 'Login', NULL, 'Visitor need to login for authentication', 'main/login', 2, 1, 1, 0, NULL, 0, 'glyphicon-home', NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_forgot', NULL, 'Forgot Password', 'Forgot', NULL, 'Accidentally forgot password', 'main/forgot', 2, 3, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_logout', NULL, 'Logout', 'Logout', NULL, 'Logout for deauthentication', 'main/logout', 3, 2, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_management', NULL, 'CMS Management', 'CMS Management', NULL, 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management', 4, 6, 1, 0, NULL, 0);
@@ -851,7 +902,13 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_navigation('main_quicklink_management', 4, 'Quick Link Management', 'Quick Link Management', NULL, 'Manage Quick Link', 'main/quicklink', 4, 7, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_config_management', 4, 'Configuration Management', 'Configuration Management', NULL, 'Manage Configuration Parameters', 'main/config', 4, 8, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_layout', 4, 'Layout Management', 'Layout Management', NULL, 'Manage Layout', 'main/layout', 4, 9, 1, 0, NULL, 0);
-        $sql_list[] = $this->insert_navigation('main_index', NULL, 'Home', 'Home', NULL, 'There is no place like home :D', 'main/index', 1, 0, 1, 1, '<h2>'.PHP_EOL.'  Welcome {{ user_name }}</h2>'.PHP_EOL.'<p>'.PHP_EOL.' This is the home page. You have several options to modify this page.</p>'.PHP_EOL.'<ul>'.PHP_EOL.'    <li>'.PHP_EOL.'      <b>Using static page</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>activate</em> <strong>static option</strong> and <em>edit</em> the <strong>static content</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'           This is the most recommended way to do.</p>'.PHP_EOL.'   </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Redirect default controller</b>'.PHP_EOL.'        <p>'.PHP_EOL.'           You can modify <code>$route[&#39;default_controller&#39;]</code> variable on<br />'.PHP_EOL.'            <code>/application/config/routes.php</code>, around line 41.<br />'.PHP_EOL.'            Please make sure that your default controller is valid.<br />'.PHP_EOL.'         This is recommended if you also want your own page to be a default homepage.</p>'.PHP_EOL.'  </li>'.PHP_EOL.' <li>'.PHP_EOL.'      <b>Using dynamic page and edit the view manually</b>'.PHP_EOL.'      <p>'.PHP_EOL.'           You can <em>deactivate</em>&nbsp;<strong>static option</strong> by using <a href="{{ site_url }}main/navigation/edit/17">Navigation Management</a><br />'.PHP_EOL.'          and edit the corresponding view on <code>/modules/main/index.php</code></p>'.PHP_EOL.'   </li>'.PHP_EOL.'</ul>'.PHP_EOL.'<p>'.PHP_EOL.' <div class="alert alert-info"><b>Any other question? : </b><br />'.PHP_EOL.'   Visit No-CMS forum here: <a href="http://getnocms.com/forum">http://getnocms.com/forum</a><br />'.PHP_EOL.'  Github user can visit No-CMS repo: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />'.PHP_EOL.'    While normal people can visit No-CMS blog: <a href="http://www.getnocms.com/">http://www.getnocms.com/</a><br />'.PHP_EOL.'  In case of you&#39;ve found a critical bug, you can also email me at <a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />'.PHP_EOL.' That&#39;s all. Start your new adventure with No-CMS !!!</p>'.PHP_EOL.'</div>', 0, 'icon-home', NULL, 'slide');
+
+        if($this->is_subsite){
+            $main_index_content = '<h1>Welcome</h1>Hi, welcome to subsite '.$this->subsite;
+        }else{
+            $main_index_content = '<style type="text/css">body{'.PHP_EOL.'background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, white))!important;'.PHP_EOL.'background-image: -webkit-linear-gradient(top left, white 0%, white 100%)!important;'.PHP_EOL.'background-image: linear-gradient(top left, white 0%, white 100%)!important;'.PHP_EOL.'}'.PHP_EOL.'#__section-left-and-content {'.PHP_EOL.'background-image: -ms-linear-gradient(top left, #EEEEEE 0%, #EEEEEE 100%)!important;'.PHP_EOL.'background-image: -moz-linear-gradient(top left, #EEEEEE 0%, #EEEEEE 100%)!important;'.PHP_EOL.'background-image: -o-linear-gradient(top left, #EEEEEE 0%, #EEEEEE 100%)!important;'.PHP_EOL.'background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, #EEEEEE), color-stop(1, #EEEEEE))!important;'.PHP_EOL.'background-image: -webkit-linear-gradient(top left, #EEEEEE 0%, #EEEEEE 100%)!important;'.PHP_EOL.'background-image: linear-gradient(top left, #EEEEEE 0%, #EEEEEE 100%)!important;'.PHP_EOL.'}'.PHP_EOL.'.thumbnail .caption p{'.PHP_EOL.'font-size:small;'.PHP_EOL.'}'.PHP_EOL.'.thumbnail{'.PHP_EOL.'border:none!important;'.PHP_EOL.'background-color:#EEEEEE!important;'.PHP_EOL.'text-align:center;'.PHP_EOL.'}'.PHP_EOL.'.page-header, .page-header h1{'.PHP_EOL.'margin-top:0px;'.PHP_EOL.'}'.PHP_EOL.'#__section-left-and-content hr, #__section-left-and-content .breadcrumb{'.PHP_EOL.'margin:0px;'.PHP_EOL.'}'.PHP_EOL.'#__section-left-and-content p.lead{'.PHP_EOL.'margin-top:20px;'.PHP_EOL.'}'.PHP_EOL.'</style>'.PHP_EOL.'<div class="page-header">'.PHP_EOL.'    <h1>'.PHP_EOL.'        Welcome to No-CMS<br />'.PHP_EOL.'        <small>A Free CodeIgniter based CMS Framework</small>'.PHP_EOL.'    </h1>'.PHP_EOL.'</div>'.PHP_EOL.'<div class="row col-sm-12 col-md-12 col-xs-12">'.PHP_EOL.'    <a class="btn btn-default col-md-5 col-xs-12" href="https://github.com/goFrendiAsgard/No-CMS/archive/master.zip"><i class="glyphicon glyphicon-thumbs-up">&nbsp;</i>&nbsp;Download Stable Version</a> <a class="btn btn-default col-md-5 col-xs-12 col-md-offset-2" href="https://github.com/goFrendiAsgard/No-CMS/archive/development.zip"><i class="glyphicon glyphicon-wrench">&nbsp;</i>&nbsp;Download Development Version</a> <a class="btn btn-default col-md-5 col-xs-12" href="http://www.getnocms.com//forum"><i class="glyphicon glyphicon-comment">&nbsp;</i>&nbsp;No-CMS Forum</a> <a class="btn btn-default col-md-5 col-xs-12 col-md-offset-2" href="https://github.com/goFrendiAsgard/No-CMS/blob/master/doc/tutorial.md"><i class="glyphicon glyphicon-book">&nbsp;</i>&nbsp;Visit User Guide</a>'.PHP_EOL.'</div>'.PHP_EOL.'<p class="lead row col-sm-12 col-md-12 col-xs-12">'.PHP_EOL.'    No-CMS is not just another CodeIgniter based CMS. There are many things that will make you falling in love with it.'.PHP_EOL.'</p>'.PHP_EOL.'<div class="row col-sm-12 col-md-12 col-xs-12">'.PHP_EOL.'    <div class="col-sm-6 col-md-4">'.PHP_EOL.'        <div class="thumbnail">'.PHP_EOL.'            <img alt="..." src="{{ base_url }}modules/main/assets/images/rocket.png" />'.PHP_EOL.'            <div class="caption">'.PHP_EOL.'                <h3>'.PHP_EOL.'                    Easy Installation'.PHP_EOL.'                </h3>'.PHP_EOL.'                <p>'.PHP_EOL.'                    Installing No-CMS is very easy. It is so straight-forward, so if you are familiar installing wordpress or joomla, you will feel at home. You don&#39;t need to modify any configuration file or mess up with <code>.htaccess</code> or anything. In several cases, you don&#39;t even need to make your own database, since No-CMS will make it for you. To install No-CMS, you don&#39;t need to have VPS or those bleeding-edge technologies, a general-purpose shared hosting is usually enough to run No-CMS.'.PHP_EOL.'                </p>'.PHP_EOL.'            </div>'.PHP_EOL.'        </div>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-sm-6 col-md-4">'.PHP_EOL.'        <div class="thumbnail">'.PHP_EOL.'            <img alt="..." src="{{ base_url }}modules/main/assets/images/profle.png" />'.PHP_EOL.'            <div class="caption">'.PHP_EOL.'                <h3>'.PHP_EOL.'                    Built-in Authentication and Authorization'.PHP_EOL.'                </h3>'.PHP_EOL.'                <p>'.PHP_EOL.'                    No-CMS has a well-designed authentication &amp; authorization system. It doesn&#39;t have any specific &quot;backend&quot; and &quot;frontend&quot; view since you are free to determine accessibility of each page. By default every No-CMS pages can be configured to have one of the following authorization: everyone, unauthenticated, authenticated or authorized. Those four type authorization system can cover almost all system.'.PHP_EOL.'                </p>'.PHP_EOL.'            </div>'.PHP_EOL.'        </div>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-sm-6 col-md-4">'.PHP_EOL.'        <div class="thumbnail">'.PHP_EOL.'            <img alt="..." src="{{ base_url }}modules/main/assets/images/brush-pencil.png" />'.PHP_EOL.'            <div class="caption">'.PHP_EOL.'                <h3>'.PHP_EOL.'                    Customizable Themes'.PHP_EOL.'                </h3>'.PHP_EOL.'                <p>'.PHP_EOL.'                    If you think those <em>twelve-available-by-default-responsive-bootstrap-themes</em> is not enough (which is usually the case), you are free to add your custom theme. Each theme has several layouts (that&#39;s why this home-page has a slideshow, while other pages doesn&#39;t). Start by copying any default theme and do modification as you wish. No-CMS has several designer-friendly tag (we know that sometimes designers hate PHP).'.PHP_EOL.'                </p>'.PHP_EOL.'            </div>'.PHP_EOL.'        </div>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-sm-6 col-md-4">'.PHP_EOL.'        <div class="thumbnail">'.PHP_EOL.'            <img alt="..." src="{{ base_url }}modules/main/assets/images/gear.png" />'.PHP_EOL.'            <div class="caption">'.PHP_EOL.'                <h3>'.PHP_EOL.'                    Modules &amp; Module Generator'.PHP_EOL.'                </h3>'.PHP_EOL.'                <p>'.PHP_EOL.'                    No-CMS is more than just a portal or blog. You can add any module to enrich No-CMS. If you are familiar with CodeIgniter, you can even make your own custom modules. And of course, we don&#39;t stop here. No-CMS was designed with easiness in mind, so it has a very easy to use module generator which is able to make your custom module (like this <a href="{{ site_url }}example">one</a>).'.PHP_EOL.'                </p>'.PHP_EOL.'            </div>'.PHP_EOL.'        </div>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-sm-6 col-md-4">'.PHP_EOL.'        <div class="thumbnail">'.PHP_EOL.'            <img alt="..." src="{{ base_url }}modules/main/assets/images/flame.png" />'.PHP_EOL.'            <div class="caption">'.PHP_EOL.'                <h3>'.PHP_EOL.'                    Developer Friendly'.PHP_EOL.'                </h3>'.PHP_EOL.'                <p>'.PHP_EOL.'                    No-CMS was built on top of CodeIgniter and several famous libraries such as groceryCRUD, bootstrap, HMVC extension, and Phil Sturgeon&#39;s template library. Almost all of PHP-programmer nowadays know about CodeIgniter. It is still a very easy and popular framework with great documentation. However, if you are not programming guy, you will find it easy to hire developers who know about those libraries (which practically means they can do anything with No-CMS)'.PHP_EOL.'                </p>'.PHP_EOL.'            </div>'.PHP_EOL.'        </div>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-sm-6 col-md-4">'.PHP_EOL.'        <div class="thumbnail">'.PHP_EOL.'            <img alt="..." src="{{ base_url }}modules/main/assets/images/frames.png" />'.PHP_EOL.'            <div class="caption">'.PHP_EOL.'                <h3>'.PHP_EOL.'                    Many out-of-the-box features'.PHP_EOL.'                </h3>'.PHP_EOL.'                <p>'.PHP_EOL.'                    No-CMS has a multi-language feature. This feature is not only applied to menu-caption, but also to the contents. No-CMS also support third-party authentication, so that you can let your user log-in by using their already-exists facebook or twitter account. No-CMS also experimentally support multisite feature and several database other than MySQL such as Postgre &amp; sqlite. If you want to add features on No-CMS, please open an issue on github.'.PHP_EOL.'                </p>'.PHP_EOL.'            </div>'.PHP_EOL.'        </div>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<div class="alert alert-info alert-dismissable row col-sm-12 col-md-12 col-xs-12">'.PHP_EOL.'    <button aria-hidden="true" class="close" data-dismiss="alert" type="button">'.PHP_EOL.'        &times;'.PHP_EOL.'    </button>'.PHP_EOL.'    <h2>'.PHP_EOL.'        Site owner, please read these simple howtos !!!'.PHP_EOL.'    </h2>'.PHP_EOL.'    <h3>'.PHP_EOL.'        Modify this home page'.PHP_EOL.'    </h3>'.PHP_EOL.'    <p>'.PHP_EOL.'        Seeing this message means that you&#39;ve just successfully install No-CMS on your server.<br />'.PHP_EOL.'        And, we believe you won&#39;t just stop here. You have several options to modify this homepage:'.PHP_EOL.'    </p>'.PHP_EOL.'    <ul>'.PHP_EOL.'        <li>'.PHP_EOL.'            <b>Using static page</b>'.PHP_EOL.'            <p>'.PHP_EOL.'                Just go to&nbsp;<a class="btn btn-primary" href="{{ site_url }}main/navigation/edit/17">Navigation Management</a> and modify the <b>static content</b>'.PHP_EOL.'            </p>'.PHP_EOL.'        </li>'.PHP_EOL.'        <li>'.PHP_EOL.'            <b>Redirect default controller</b>'.PHP_EOL.'            <p>'.PHP_EOL.'                If you are familiar with CodeIgniter, you can modify&nbsp;<code>$route[&#39;default_controller&#39;]</code>&nbsp;variable on&nbsp;<code>/application/config/routes.php</code>, around line 41.&nbsp;Please make sure that your default controller is valid.&nbsp;This is recommended if you also want your own page to be a default homepage.'.PHP_EOL.'            </p>'.PHP_EOL.'        </li>'.PHP_EOL.'        <li>'.PHP_EOL.'            <b>Using dynamic page</b>'.PHP_EOL.'            <p>'.PHP_EOL.'                You can&nbsp;<em>deactivate</em>&nbsp;<strong>static option</strong>&nbsp;on&nbsp;<a class="btn btn-primary" href="{{ site_url }}main/navigation/edit/17">Navigation Management</a>&nbsp;and edit the corresponding view (<code>/modules/main/views/main_index.php</code>)'.PHP_EOL.'            </p>'.PHP_EOL.'        </li>'.PHP_EOL.'    </ul>'.PHP_EOL.'    <h3>'.PHP_EOL.'        Need helps?'.PHP_EOL.'    </h3>'.PHP_EOL.'    <p>'.PHP_EOL.'        You are welcomed to join No-CMS forum: <a href="http://getnocms.com/forum">http://getnocms.com/forum</a><br />'.PHP_EOL.'        or open an issue on No-CMS github repository: <a href="https://github.com/goFrendiAsgard/No-CMS/">https://github.com/goFrendiAsgard/No-CMS/</a><br />'.PHP_EOL.'        In case of you&#39;ve found a critical bug, you can also directly send email to&nbsp;<a href="mailto:gofrendiasgard@gmail.com">gofrendiasgard@gmail.com</a><br />'.PHP_EOL.'        That&#39;s all. Start your new adventure with No-CMS !!!'.PHP_EOL.'    </p>'.PHP_EOL.'</div>'.PHP_EOL.'<script type="text/javascript">'.PHP_EOL.'    $(window).load(function(){'.PHP_EOL.'        function __adjust_component(identifier){'.PHP_EOL.'            var max_height = 0;'.PHP_EOL.'            $(identifier).each(function(){'.PHP_EOL.'                $(this).css(\'margin-bottom\', 0);'.PHP_EOL.'                if($(this).height()>max_height){'.PHP_EOL.'                    max_height = $(this).height();'.PHP_EOL.'                }'.PHP_EOL.'            });'.PHP_EOL.'            $(identifier).each(function(){'.PHP_EOL.'                var margin_bottom = 0;               '.PHP_EOL.'                if($(this).height()<max_height){'.PHP_EOL.'                    margin_bottom = max_height - $(this).height();'.PHP_EOL.'                }'.PHP_EOL.'                margin_bottom += 10;'.PHP_EOL.'                $(this).css(\'margin-bottom\', margin_bottom);'.PHP_EOL.'            });'.PHP_EOL.'        }'.PHP_EOL.'        function adjust_thumbnail(){'.PHP_EOL.'            __adjust_component(\'.thumbnail img\');'.PHP_EOL.'            __adjust_component(\'.thumbnail div.caption\');'.PHP_EOL.'        }'.PHP_EOL.'        adjust_thumbnail();'.PHP_EOL.''.PHP_EOL.'        // resize'.PHP_EOL.'        $(window).resize(function(){'.PHP_EOL.'            adjust_thumbnail();'.PHP_EOL.'        });'.PHP_EOL.'    });'.PHP_EOL.'</script>';
+        }
+        $sql_list[] = $this->insert_navigation('main_index', NULL, 'Home', 'Home', NULL, 'A Free CodeIgniter Based CMS Framework', 'main/index', 1, 0, 1, 1,$main_index_content, 0, 'glyphicon-home', NULL, 'slide');
         $sql_list[] = $this->insert_navigation('main_language', NULL, 'Language', 'Language', NULL, 'Choose the language', 'main/language', 1, 0, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', NULL, 'Third Party Authentication', 'main/hauth/index', 1, 0, 1, 0, NULL, 0);
         // quicklink
@@ -860,8 +917,9 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_quicklink(2, 2);
         $sql_list[] = $this->insert_quicklink(4, 3);
         // widget
+        $sql_list[] = $this->insert_widget('section_custom_script', 'Script', '', '', 1, 1, 1, 1, '<style type="text/css"></style><script type="text/javascript"></script>', NULL);
         $sql_list[] = $this->insert_widget('section_top_fix', 'Top Fix Section', '', '', 1, 1, 1, 1, '{{ widget_name:top_navigation }}', NULL);
-        $sql_list[] = $this->insert_widget('section_banner', 'Banner Section', '', '', 1, 1, 2, 1, '<div class="well hidden-phone span12" style="margin-top:10px;">'.PHP_EOL.'  <div class="span2">'.PHP_EOL.'    <img src ="{{ site_logo }}" />'.PHP_EOL.'  </div>'.PHP_EOL.'  <div class="span10">'.PHP_EOL.'    <h1>{{ site_name }}</h1>'.PHP_EOL.'    <p>{{ site_slogan }}</p>'.PHP_EOL.'  </div>'.PHP_EOL.'</div>', NULL);
+        $sql_list[] = $this->insert_widget('section_banner', 'Banner Section', '', '', 1, 1, 2, 1, '<div class="jumbotron hidden-xs hidden-sm" style="margin-top:10px;">'.PHP_EOL.'  <img src ="{{ site_logo }}" style="max-width:20%; float:left; margin-right:10px; margin-bottom:10px;" />'.PHP_EOL.'  <h1>{{ site_name }}</h1>'.PHP_EOL.'  <p>{{ site_slogan }}</p>'.PHP_EOL.'</div>', NULL);
         $sql_list[] = $this->insert_widget('section_left', 'Left Section', '', '', 1, 1, 3, 1, '', NULL);
         $sql_list[] = $this->insert_widget('section_right', 'Right Section', '', '', 1, 1, 4, 1, '{{ widget_slug:sidebar }}<hr />{{ widget_slug:advertisement }}', NULL);
         $sql_list[] = $this->insert_widget('section_bottom', 'Bottom Section', '', '', 1, 1, 5, 1, '{{ site_footer }}', NULL);
@@ -934,7 +992,7 @@ class Install_Model extends CI_Model{
                 if(!trim($this->db_table_prefix) == ''){
                     $table_name = $this->db_table_prefix.'_'.$table_name;
                 }
-                $this->dbforge->drop_table($table_name);
+                $this->dbforge->drop_table($table_name, TRUE);
             }
             $create_table_sql_list = $this->create_all_table();
             $insert_sql_list = $this->insert_all_data();
@@ -982,12 +1040,40 @@ class Install_Model extends CI_Model{
         file_put_contents($file_name, $content);
     }
 
+    public function complete_config_file_name($file){
+        if($this->is_subsite){
+            $file = 'site-'.$this->subsite.'/'.$file;
+        }
+        return $file;
+    }
+
     public function build_configuration(){
-        // copy everything from /application/config/first-time.php into /application/config/
+        // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite
+        if($this->is_subsite){
+            // add site.php entry
+            $content = file_get_contents(FCPATH.'/site.php');
+            // available_site
+            $content .= PHP_EOL.PHP_EOL.'// SUBSITE : '.$this->subsite.PHP_EOL;
+            $content .= PHP_EOL.'$available_site[] = \''.$this->subsite.'\';';
+            // aliases
+            $alias_list = explode(',', $this->subsite_aliases);
+            foreach($alias_list as $alias){
+                $alias = trim(addslashes($alias));
+                if($alias == '') continue;
+                $content .= PHP_EOL.'$site_alias[\''.$alias.'\'] = \''.$this->subsite.'\';';
+            }
+            @chmod(FCPATH.'/site.php', 0777);
+            @file_put_contents(FCPATH.'/site.php', $content);
+            // make subsite config directory
+            mkdir(APPPATH.'config/site-'.$this->subsite);
+        }
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
-                copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$file);
+                if($file == 'database.php' && $this->subsite != ''){
+                    continue;
+                }
+                copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
             }
         }
 
@@ -1003,23 +1089,28 @@ class Install_Model extends CI_Model{
         $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
 
         // database config
-        $file_name = APPPATH.'config/database.php';
-        $key_prefix = "'";
-        $key_suffix = "'";
-        $value_prefix = "'";
-        $value_suffix = "',";
-        $equal_sign = '=>';
+        if(!$this->is_subsite){
+            $file_name = APPPATH.'config/'.$this->complete_config_file_name('database.php');
+            $key_prefix = "'";
+            $key_suffix = "'";
+            $value_prefix = "'";
+            $value_suffix = "',";
+            $equal_sign = '=>';
 
-        $db_driver = $this->get_db_driver();
-        $this->change_config($file_name, "dsn", $this->build_dsn(), $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "hostname", $this->db_host, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "database", $this->db_name, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "username", $this->db_username, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "password", $this->db_password, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $db_driver = $this->get_db_driver();
+            $this->change_config($file_name, "dsn", $this->build_dsn(), $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "hostname", $this->db_host, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "database", $this->db_name, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "username", $this->db_username, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "password", $this->db_password, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+            $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        } else {
+            $file = 'database.php';
+            copy(APPPATH.'config/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
+        }
 
         // cms_config
-        $file_name = APPPATH.'config/cms_config.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('cms_config.php');
         $key_prefix = '$config[\'';
         $key_suffix = "']";
         $value_prefix = "'";
@@ -1027,9 +1118,8 @@ class Install_Model extends CI_Model{
         $equal_sign = '=';
 
         $this->change_config($file_name, "cms_table_prefix", $this->db_table_prefix, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-
         // config
-        $file_name = APPPATH.'config/config.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('config.php');
         $key_prefix = '$config[\'';
         $key_suffix = "']";
         $value_prefix = "'";
@@ -1054,7 +1144,7 @@ class Install_Model extends CI_Model{
         $this->change_config($file_name, "sess_encrypt_cookie", 'TRUE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
         // routes
-        $file_name = APPPATH.'config/routes.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('routes.php');
         $key_prefix = '$route[\'';
         $key_suffix = "']";
         $value_prefix = "'";
@@ -1064,7 +1154,7 @@ class Install_Model extends CI_Model{
         $this->change_config($file_name, "default_controller", 'main', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
         // hybridauth
-        $file_name = APPPATH.'config/hybridauthlib.php';
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('hybridauthlib.php');
         $key_prefix = '$';
         $key_suffix = "";
         $value_prefix = "";
@@ -1112,28 +1202,25 @@ class Install_Model extends CI_Model{
         $this->change_config($file_name, "auth_foursquare_app_id", $this->auth_foursquare_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "auth_foursquare_app_secret", $this->auth_foursquare_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
+        if(!$this->is_subsite){
+            // make htaccess
+            $rewrite_base = str_replace('index.php', '',$_SERVER['SCRIPT_NAME']);
+            $data = array('rewrite_base'=>$rewrite_base);
+            if($this->hide_index){
+                $view_name = 'installer/htaccess_hide_index';
+            }else{
+                $view_name = 'installer/htaccess_not_hide_index';
+            }
+            $htaccess_content = $this->load->view($view_name, $data, TRUE);
+            file_put_contents(FCPATH.'.htaccess', $htaccess_content);
 
-        // make htaccess
-        $rewrite_base = str_replace('index.php', '',$_SERVER['SCRIPT_NAME']);
-        $data = array('rewrite_base'=>$rewrite_base);
-        if($this->hide_index){
-            $view_name = 'installer/htaccess_hide_index';
-        }else{
-            $view_name = 'installer/htaccess_not_hide_index';
+            // site content
+            $view_name = 'installer/site';
+            $site_content = $this->load->view($view_name, NULL, TRUE);
+            file_put_contents(FCPATH.'site.php', $site_content);
         }
-        $htaccess_content = $this->load->view($view_name, $data, TRUE);
-        file_put_contents(APPPATH.'../.htaccess', $htaccess_content);
     }
 
-    public function disable_installer(){
-        $file_name = APPPATH.'../modules/installer/controllers/installer.php';
-        $key_prefix = 'public $';
-        $key_suffix = "";
-        $value_prefix = "";
-        $value_suffix = ";";
-        $equal_sign = '=';
-        $this->change_config($file_name, "ALLOW_INSTALL", 'FALSE', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-    }
 
 }
 ?>
