@@ -172,7 +172,7 @@
                     echo '<div class="form-group">';
                     echo form_label('Email', ' for="" class="control-label col-sm-2');
                     echo '<div class="col-sm-8">';
-                    echo form_input($secret_code.'xemail', $name, 
+                    echo form_input($secret_code.'xemail', $email, 
                         'id="'.$secret_code.'xemail" placeholder="Your email address" class="form-control"');
                     echo '</div>';
                     echo '</div>';
@@ -180,7 +180,7 @@
                 echo '<div class="form-group">';
                 echo form_label('Website', ' for="" class="control-label col-sm-2');
                 echo '<div class="col-sm-8">';
-                echo form_input($secret_code.'xwebsite', $name, 
+                echo form_input($secret_code.'xwebsite', $website, 
                     'id="'.$secret_code.'xwebsite" placeholder="Your website" class="form-control"');
                 echo '</div>';
                 echo '</div>';
@@ -188,8 +188,8 @@
                 echo '<div class="form-group">';
                 echo form_label('Comment', ' for="" class="control-label col-sm-2');
                 echo '<div class="col-sm-8">';
-                echo form_textarea($secret_code.'xcomment', $name, 
-                    'id="'.$secret_code.'xcomment" placeholder="Your Comment" class="form-control text-area-comment"');
+                echo form_textarea($secret_code.'xcontent', $content, 
+                    'id="'.$secret_code.'xcontent" placeholder="Your Comment" class="form-control text-area-comment"');
                 echo '</div>';
                 echo '</div>';
 
