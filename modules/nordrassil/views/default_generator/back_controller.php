@@ -132,12 +132,12 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
         // HINT: Put callback here
         // (documentation: httm://www.grocerycrud.com/documentation/options_functions)
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->callback_before_insert(array($this,'before_insert'));
-        $crud->callback_before_update(array($this,'before_update'));
-        $crud->callback_before_delete(array($this,'before_delete'));
-        $crud->callback_after_insert(array($this,'after_insert'));
-        $crud->callback_after_update(array($this,'after_update'));
-        $crud->callback_after_delete(array($this,'after_delete'));
+        $crud->callback_before_insert(array($this,'_before_insert'));
+        $crud->callback_before_update(array($this,'_before_update'));
+        $crud->callback_before_delete(array($this,'_before_delete'));
+        $crud->callback_after_insert(array($this,'_after_insert'));
+        $crud->callback_after_update(array($this,'_after_update'));
+        $crud->callback_after_delete(array($this,'_after_delete'));
 
 {{ detail_callback_call }}
 
@@ -158,34 +158,34 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 
     }
 
-    public function before_insert($post_array){
+    public function _before_insert($post_array){
         return $post_array;
     }
 
-    public function after_insert($post_array, $primary_key){
-        $success = $this->after_insert_or_update($post_array, $primary_key);
+    public function _after_insert($post_array, $primary_key){
+        $success = $this->_after_insert_or_update($post_array, $primary_key);
         return $success;
     }
 
-    public function before_update($post_array, $primary_key){
+    public function _before_update($post_array, $primary_key){
         return $post_array;
     }
 
-    public function after_update($post_array, $primary_key){
-        $success = $this->after_insert_or_update($post_array, $primary_key);
+    public function _after_update($post_array, $primary_key){
+        $success = $this->_after_insert_or_update($post_array, $primary_key);
         return $success;
     }
 
-    public function before_delete($primary_key){
+    public function _before_delete($primary_key){
 {{ detail_before_delete }}
         return TRUE;
     }
 
-    public function after_delete($primary_key){
+    public function _after_delete($primary_key){
         return TRUE;
     }
 
-    public function after_insert_or_update($post_array, $primary_key){
+    public function _after_insert_or_update($post_array, $primary_key){
 {{ detail_after_insert_or_update }}
         return TRUE;
     }
