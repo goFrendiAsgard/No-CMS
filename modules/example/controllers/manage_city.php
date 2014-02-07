@@ -193,7 +193,7 @@ class Manage_City extends CMS_Priv_Strict_Controller {
     public function before_delete($primary_key){
 		// delete corresponding citizen
 		$this->db->delete($this->cms_complete_table_name('citizen'),
-		      array('citizen_id'=>$primary_key));
+		      array('city_id'=>$primary_key));
         return TRUE;
     }
 
