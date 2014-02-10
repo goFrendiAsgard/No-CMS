@@ -98,6 +98,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
             'aliases'=>$this->input->post('aliases'),
         );
         $this->db->insert($this->cms_complete_table_name('subsite'), $data);
+        $this->load->model($this->cms_module_path().'/subsite_model');
         $this->subsite_model->update_configs();
 
         $data = $check_installation;
