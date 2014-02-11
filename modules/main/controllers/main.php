@@ -717,8 +717,8 @@ class Main extends CMS_Controller
         $crud->unset_read();
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
@@ -737,6 +737,7 @@ class Main extends CMS_Controller
             ->display_as('page_keyword', $this->cms_lang('Page Keyword (Comma Separated)'))
             ->display_as('description', $this->cms_lang('Description'))
             ->display_as('url', $this->cms_lang('URL (Where is it point to)'))
+            ->display_as('notif_url', $this->cms_lang('Notification URL'))
             ->display_as('active', $this->cms_lang('Active'))
             ->display_as('is_static', $this->cms_lang('Static'))
             ->display_as('static_content', $this->cms_lang('Static Content'))
@@ -1453,12 +1454,33 @@ class Main extends CMS_Controller
                     $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == ''? 'icon-white': $navigation['bootstrap_glyph'];
                     // make text
                     $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
+                    $badge = '';
+                    if($navigation['notif_url'] != ''){
+                        $badge_id = '__cms_notif_top_nav_'.$navigation['navigation_id'];
+                        $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
+                        $badge.= '<script type="text/javascript">
+                                $(document).ready(function(){
+                                    setInterval(function(){
+                                        $.ajax({
+                                            dataType:"json",
+                                            url: "'.addslashes($navigation['notif_url']).'",
+                                            success: function(response){
+                                                if(response.success){
+                                                    $("#'.$badge_id.'").html(response.notif);
+                                                }
+                                            }
+                                        });
+                                    }, 1000);
+                                });
+                            </script>
+                        ';
+                    }
                     if($navigation['allowed'] && $navigation['active']){
                         $text = '<a href="'.$navigation['url'].'">'.$icon.
-                            $navigation['title'].'</a>';
+                            $navigation['title'].$badge.'</a>';
                     }else{
                         $text = '<a href="#">'.$icon.
-                            $navigation['title'].'</a>';
+                            $navigation['title'].$badge.'</a>';
                     }
 
                     if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
@@ -1659,12 +1681,12 @@ class Main extends CMS_Controller
         $html = '';
 
         foreach($quicklinks as $quicklink){
-        	// if navigation is not active then skip it
-        	if(!$quicklink['active']){
-        		continue;
-        	}
-			// create icon if needed
-            $icon = '';            
+            // if navigation is not active then skip it
+            if(!$quicklink['active']){
+                continue;
+            }
+            // create icon if needed
+            $icon = '';
             if($first){
                 $icon_class = $quicklink['bootstrap_glyph'].' icon-white';
             }else{
@@ -1674,23 +1696,45 @@ class Main extends CMS_Controller
                 $icon_class = $icon_class==''? 'icon-white': $icon_class;
                 $icon = '<span class="glyphicon '.$icon_class.'"></span>&nbsp;';
             }
+            // create badge if needed
+            $badge = '';
+            if($quicklink['notif_url'] != ''){
+                $badge_id = '__cms_notif_quicklink_'.$quicklink['navigation_id'];
+                $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
+                $badge.= '<script type="text/javascript">
+                        $(document).ready(function(){
+                            setInterval(function(){
+                                $.ajax({
+                                    dataType:"json",
+                                    url: "'.addslashes($quicklink['notif_url']).'",
+                                    success: function(response){
+                                        if(response.success){
+                                            $("#'.$badge_id.'").html(response.notif);
+                                        }
+                                    }
+                                });
+                            }, 1000);
+                        });
+                    </script>
+                ';
+            }
             // create li based on child availability
             if(count($quicklink['child'])==0){
                 $html.= '<li>';
-                $html.= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].'</span>');
+                $html.= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].$badge.'</span>');
                 $html.= '</li>';
             }else{
                 if($first){
                     $html.= '<li class="dropdown">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
-                        '<span class="anchor-text">'.$icon.$quicklink['title'].'</span>'.
+                        '<span class="anchor-text">'.$icon.$quicklink['title'].$badge.'</span>'.
                         '&nbsp;<span class="caret"></span></a>'; // hidden-sm hidden-xs
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{
                     $html.= '<li class="dropdown-submenu">';
                     $html.= '<a href="'.$quicklink['url'].'">'.
-                        '<span>'.$icon.$quicklink['title'].'</span></a>';
+                        '<span>'.$icon.$quicklink['title'].$badge.'</span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }
@@ -1702,5 +1746,4 @@ class Main extends CMS_Controller
         }
         return $html;
     }
-
 }

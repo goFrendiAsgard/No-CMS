@@ -196,7 +196,7 @@ class Install_Model extends CI_Model{
         if($db->conn_id === FALSE){
             $success = FALSE;
             // if it is MySQL, try to make database
-            if($is_mysql){                
+            if($is_mysql){
                 if($allow_create && (!isset($_SESSION['created_db']) || $_SESSION['created_db'] != $this->db_name ) ){
                     $result = @mysql_query('CREATE DATABASE ' . $this->db_name . ' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;');
                     // save the created database
@@ -209,12 +209,12 @@ class Install_Model extends CI_Model{
                 $db = $this->load->database($db_config, TRUE);
                 if($db->conn_id !== FALSE){
                     $success = TRUE;
-                }                
+                }
             }
         }
 
         // return value
-        if($success){            
+        if($success){
             $this->db = $db;
             $this->dbutil = $this->load->dbutil($db, TRUE);
             $this->dbforge = $this->load->dbforge($db, TRUE);
@@ -604,7 +604,7 @@ class Install_Model extends CI_Model{
                 'title' => $type_varchar_small_strict,
                 'bootstrap_glyph' => $type_varchar_small,
                 'page_title' => $type_varchar_small,
-                'page_keyword' => $type_varchar_large,                
+                'page_keyword' => $type_varchar_large,
                 'description' => $type_text,
                 'url' => $type_varchar_large,
                 'authorization_id' => $type_foreign_key_default_1,
@@ -615,6 +615,7 @@ class Install_Model extends CI_Model{
                 'only_content' => $type_boolean_false,
                 'default_theme' => $type_varchar_small,
                 'default_layout' => $type_varchar_small,
+                'notif_url'=>$type_varchar_large,
             );
         $sql_list[] = $this->create_table('main_navigation',$fields);
 
