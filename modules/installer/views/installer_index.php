@@ -483,12 +483,15 @@
                         <ul id="ul-warning-message"></ul>
                     </div>
                     <div id="div-success-message" class="alert alert-success">
-                        <strong>GREAT !!!</strong>, you can now install No-CMS without worrying anything.                        
+                        <strong>GREAT !!!</strong>, you can now install No-CMS without worrying anything.
+                    </div>
+                    <div id="div-info-message" class="alert alert-info">
+                        <strong>Checking ...</strong>, please wai for a while
                     </div>
                     <div style="margin-top:20px; margin-bottom:20px;">
                         <input type="submit" id="btn-install" class="btn btn-primary btn-lg" name="Install" disabled="disabled" value="INSTALL NOW">
                         <img id="img-loader" src="<?php echo base_url('modules/installer/assets/ajax-loader.gif'); ?>">
-                    </div>                    
+                    </div>
                 </div>
             </div>
             </form>
@@ -523,7 +526,7 @@
             $('#admin_real_name').val(real_name);
             $('#div-error-warning-message').append('<img style="opacity:0.4; max-width:100%; max-height:70%;" src="<?php echo base_url('modules/installer/assets'); ?>/'+real_name+'.jpg" />');
             // magic :)
-            $(document).on('scroll', function(){                
+            $(document).on('scroll', function(){
                 adjust_error_warning_message();
             });
             adjust_error_warning_message();
@@ -588,6 +591,12 @@
             if(RUNNING_REQUEST){
                 REQUEST.abort();
             }
+            $('#btn-install').hide();
+            $("#btn-install").attr('disabled','disabled');
+            $('#div-success-message').hide();
+            $('#div-warning-message').hide();
+            $('#div-error-message').hide();
+            $('#div-info-message').show();
             RUNNING_REQUEST = true;
             REQUEST = $.ajax({
                 type : "POST",
@@ -637,6 +646,7 @@
                     SUCCESS = response.success;
                     var warning_list = response.warning_list;
                     var error_list = response.error_list;
+                    $('#div-info-message').hide();
                     // show error
                     $('#ul-error-message').html('');
                     if(error_list.length>0){
@@ -672,11 +682,10 @@
                         $('#btn-install').hide();
                         $("#btn-install").attr('disabled','disabled');
                     }
-
                 },
                 error: function(xhr, textStatus, errorThrown){
                     if(textStatus != 'abort'){
-                        setTimeout(check, 1000);    
+                        setTimeout(check, 1000);
                     }
                 }
             });

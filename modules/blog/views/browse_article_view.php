@@ -29,13 +29,11 @@
     div#article-comment{
         margin-top : 30px;
         padding-top : 20px;
-        padding-left: 25px;
         border-top : 1px solid gray;
     }
     div.comment-item{
         padding-top : 10px;
         padding-bottom : 10px;
-        padding-left : 10px;
     }
     div.comment-header{
         font-size : small;

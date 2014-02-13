@@ -183,6 +183,7 @@ class Article_Model extends  CMS_Model{
                     'website' => $website,
                     'content' => $content,
                     'date' => date('Y-m-d H:i:s'),
+                    'read' => 0,
             );
             if(isset($cms_user_id) && ($cms_user_id>0)){
                 $data['author_user_id'] = $cms_user_id;
@@ -246,6 +247,21 @@ class Article_Model extends  CMS_Model{
             $data[] = $result;
         }
         return $data;
+    }
+
+    public function new_comment_num(){
+        $notif = 0;
+        if($this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article'))){
+            $query = $this->db->select('comment_id')
+                ->from($this->cms_complete_table_name('comment'))
+                ->where('read',0)
+                ->get();
+            $num_rows = $query->num_rows();
+            if($num_rows > 0){
+                $notif = $num_rows;
+            }
+        }
+        return $notif;
     }
 
 }

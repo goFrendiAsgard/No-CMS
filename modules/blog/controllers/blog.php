@@ -38,7 +38,7 @@ class Blog extends CMS_Priv_Strict_Controller {
         }
 
         // get previously generated secret code
-        $previous_secret_code = $this->session->flashdata('__blog_comment_secret_code');
+        $previous_secret_code = $this->session->userdata('__blog_comment_secret_code');
         if($previous_secret_code === NULL){
             $previous_secret_code = $this->__random_string();
         }
@@ -50,7 +50,6 @@ class Blog extends CMS_Priv_Strict_Controller {
         $email = $this->input->post($previous_secret_code.'xemail', TRUE);
         $website = $this->input->post($previous_secret_code.'xwebsite', TRUE);
         $content = $this->input->post($previous_secret_code.'xcontent', TRUE);
-        
         if($content && $honey_pot_pass){
             if(!($this->cms_user_id()>0)){
                 $valid_email = preg_match('/@.+\./', $email);
@@ -70,7 +69,7 @@ class Blog extends CMS_Priv_Strict_Controller {
 
         // generate new secret code
         $secret_code = $this->__random_string();
-        $this->session->set_flashdata('__blog_comment_secret_code', $secret_code);
+        $this->session->set_userdata('__blog_comment_secret_code', $secret_code);
 
         $data = array(
             'submenu_screen' => $this->cms_submenu_screen($this->cms_complete_navigation_name('index')),
@@ -80,7 +79,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             'chosen_category' => $this->input->get('category'),
             'keyword' => $this->input->get('keyword'),
             'module_path' => $this->cms_module_path(),
-            'is_user_login' => $this->cms_user_id()>0,            
+            'is_user_login' => $this->cms_user_id()>0,
             'secret_code' => $secret_code,
             "success" => $success,
             "error_message" => $error_message,

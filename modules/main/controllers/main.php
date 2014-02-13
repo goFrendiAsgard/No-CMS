@@ -1705,6 +1705,9 @@ class Main extends CMS_Controller
             $quicklinks = $this->cms_quicklinks();
         }
         if(count($quicklinks) == 0) return '';
+        
+        $current_navigation_name = $this->cms_ci_session('__cms_navigation_name');
+        $current_navigation_path = $this->cms_get_navigation_path($current_navigation_name);
         $html = '';
 
         foreach($quicklinks as $quicklink){
@@ -1747,8 +1750,15 @@ class Main extends CMS_Controller
             }
             // set active class
             $active = '';
-            if($this->cms_ci_session('__cms_navigation_name') == $quicklink['navigation_name']){
+            if($current_navigation_name == $quicklink['navigation_name']){
                 $active = 'active';
+            }else{
+                foreach($current_navigation_path as $navigation_parent){
+                    if($quicklink['navigation_name'] == $navigation_parent['navigation_name']){
+                        $active = 'active';
+                        break;
+                    }
+                }
             }
             // create li based on child availability
             if(count($quicklink['child'])==0){
