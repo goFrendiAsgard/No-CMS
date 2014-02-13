@@ -486,7 +486,7 @@
                         <strong>GREAT !!!</strong>, you can now install No-CMS without worrying anything.
                     </div>
                     <div id="div-info-message" class="alert alert-info">
-                        <strong>Checking ...</strong>, please wai for a while
+                        <strong>Checking ...</strong>, please wait for a while
                     </div>
                     <div style="margin-top:20px; margin-bottom:20px;">
                         <input type="submit" id="btn-install" class="btn btn-primary btn-lg" name="Install" disabled="disabled" value="INSTALL NOW">
