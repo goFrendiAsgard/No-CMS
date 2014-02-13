@@ -68,6 +68,14 @@ class Install_Model extends CI_Model{
         );
 
     public function __construct(){
+        $timezone = @date_default_timezone_get();
+        if (!isset($timezone) || $timezone == '') {
+            $timezone = @ini_get('date.timezone');
+        }
+        if (!isset($timezone) || $timezone == '') {
+            $timezone = 'UTC';
+        }
+        date_default_timezone_set($timezone);
         parent::__construct();
         // automatically set table prefix based on subsite
         $this->set_subsite($this->subsite);
@@ -155,7 +163,7 @@ class Install_Model extends CI_Model{
             return $db;
         }
 
-        $db = $this->load->database($db_config, TRUE); 
+        $db = @$this->load->database($db_config, TRUE); 
 
         $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
         $allow_create = FALSE;
@@ -164,7 +172,7 @@ class Install_Model extends CI_Model{
             // get the "allow_create" and "allow_drop" privileges
             @mysql_connect($this->db_host.':'.$this->db_port , $this->db_username, $this->db_password);
             $result = @mysql_query('SHOW GRANTS FOR CURRENT_USER;');
-            if($result !== NULL){                    
+            if($result !== NULL){
                 while($row = mysql_fetch_row($result)){
                     if(strpos($row[0], 'ALL PRIVILEGES')){
                         $allow_drop = TRUE;
@@ -189,7 +197,7 @@ class Install_Model extends CI_Model{
             if($allow_drop && isset($_SESSION['created_db']) && $_SESSION['created_db'] != '' && $_SESSION['created_db'] != $this->db_name){
                 @mysql_query('DROP DATABASE IF EXISTS '.$_SESSION['created_db']);
                 unset($_SESSION['created_db']);
-            }              
+            }
         }
 
         $success = TRUE;

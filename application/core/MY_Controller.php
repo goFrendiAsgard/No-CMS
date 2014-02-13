@@ -951,6 +951,8 @@ class CMS_Controller extends MX_Controller
         if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            
             $result = $this->load->view($view_url, $data, TRUE);
         } else {
+            // save navigation name
+            $this->cms_ci_session('__cms_navigation_name', $navigation_name);
             // set theme, layout and title
             $this->template->title($title);
             $this->template->set_theme($theme);

@@ -1413,18 +1413,45 @@ class Main extends CMS_Controller
         $result .= '<ul  class="dropdown-menu nav nav-pills nav-stacked" '.($first?'id="_first-left-dropdown"':'').'>';
         foreach($navigations as $navigation){
             if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                // create badge if needed
+                $badge = '';
+                if($quicklink['notif_url'] != ''){
+                    $badge_id = '__cms_notif_left_navigation_'.$quicklink['navigation_id'];
+                    $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
+                    $badge.= '<script type="text/javascript">
+                            $(document).ready(function(){
+                                setInterval(function(){
+                                    $.ajax({
+                                        dataType:"json",
+                                        url: "'.addslashes($quicklink['notif_url']).'",
+                                        success: function(response){
+                                            if(response.success){
+                                                $("#'.$badge_id.'").html(response.notif);
+                                            }
+                                        }
+                                    });
+                                }, 1000);
+                            });
+                        </script>
+                    ';
+                }
+                // set active class
+                $active = '';
+                if($this->cms_ci_session('__cms_navigation_name') == $quicklink['navigation_name']){
+                    $active = 'active';
+                }
                 // make text
                 $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
                 if($navigation['allowed'] && $navigation['active']){
-                    $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$icon.$navigation['title'].'</a>';
+                    $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$icon.$navigation['title'].$badge.'</a>';
                 }else{
-                    $text = $icon.$navigation['title'];
+                    $text = $icon.$navigation['title'].$badge;
                 }
 
                 if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
-                    $result .= '<li class="dropdown-submenu">'.$text.$this->widget_left_nav(FALSE, $navigation['child']).'</li>';
+                    $result .= '<li class="dropdown-submenu '.$active.'">'.$text.$this->widget_left_nav(FALSE, $navigation['child']).'</li>';
                 }else{
-                    $result .= '<li>'.$text.'</li>';
+                    $result .= '<li class="'.$active.'">'.$text.'</li>';
                 }
             }
         }
@@ -1718,21 +1745,26 @@ class Main extends CMS_Controller
                     </script>
                 ';
             }
+            // set active class
+            $active = '';
+            if($this->cms_ci_session('__cms_navigation_name') == $quicklink['navigation_name']){
+                $active = 'active';
+            }
             // create li based on child availability
             if(count($quicklink['child'])==0){
-                $html.= '<li>';
+                $html.= '<li class="'.$active.'">';
                 $html.= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].$badge.'</span>');
                 $html.= '</li>';
             }else{
                 if($first){
-                    $html.= '<li class="dropdown">';
+                    $html.= '<li class="dropdown '.$active.'">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                         '<span class="anchor-text">'.$icon.$quicklink['title'].$badge.'</span>'.
                         '&nbsp;<span class="caret"></span></a>'; // hidden-sm hidden-xs
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{
-                    $html.= '<li class="dropdown-submenu">';
+                    $html.= '<li class="dropdown-submenu '.$active.'">';
                     $html.= '<a href="'.$quicklink['url'].'">'.
                         '<span>'.$icon.$quicklink['title'].$badge.'</span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
