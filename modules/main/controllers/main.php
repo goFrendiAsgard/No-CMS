@@ -184,9 +184,9 @@ class Main extends CMS_Controller
         $this->cms_guard_page('main_login');
         // Is registration allowed
         $allow_register = $this->cms_allow_navigate('main_register');
-        //retrieve old_url from flashdata if exists
+        //retrieve old_url from userdata if exists
         $this->load->library('session');
-        $old_url = $this->session->flashdata('cms_old_url');
+        $old_url = $this->session->userdata('cms_old_url');
 
         //get user input
         $identity = $this->input->post('identity');
@@ -200,7 +200,7 @@ class Main extends CMS_Controller
             if ($this->cms_do_login($identity, $password)) {
                 //if old_url exist, redirect to old_url, else redirect to main/index
                 if (isset($old_url)) {
-                    $this->session->set_flashdata('cms_old_url', NULL);
+                    $this->session->set_userdata('cms_old_url', NULL);
                     // seek for the closest url that exist in navigation table to avoid something like manage_x/index/edit/1/error to be appeared
                     $old_url_part = explode('/', $old_url);
                     while(count($old_url_part)>0){
@@ -225,11 +225,6 @@ class Main extends CMS_Controller
                     redirect('');
                 }
             } else {
-                //the login process failed
-                //save the old_url again
-                if (isset($old_url)) {
-                    $this->session->keep_flashdata('cms_old_url');
-                }
 
                 //view login again
                 $data = array(
@@ -243,11 +238,6 @@ class Main extends CMS_Controller
                 $this->view('main/main_login', $data, 'main_login');
             }
         } else {
-            //save the old_url again
-            if (isset($old_url)) {
-                $this->session->keep_flashdata('cms_old_url');
-            }
-
             //view login again
             $data = array(
                 "identity" => $identity,

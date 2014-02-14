@@ -88,11 +88,6 @@
         	if($allow_navigate_backend){
         		echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
         	}
-
-            // show error message if any
-            if(!$success){
-                echo '<div class="alert alert-danger">'.$error_message.'</div>';
-            }
         ?>
     </div>
 </form>
@@ -113,7 +108,7 @@
             }
             echo '</div>';
             // edit and delete button
-            if($allow_navigate_backend){                
+            if($allow_navigate_backend){
                 echo '<div class="edit_delete_record_container">';
                 if($is_super_admin || $article['author_user_id'] == $user_id){
                     echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn btn-default edit_record" primary_key = "'.$article['id'].'">Edit</a>';
@@ -137,22 +132,34 @@
                 if($comment['website'] != ''){
                     echo anchor($comment['website'], '('.$comment['website'].')');
                 }else{
-                    echo '(website not available)';
+                    echo '&nbsp;';
                 }
                 echo '</span>';
                 echo '</div>';
                 echo '<div style="clear:both; margin-top:10px;">';
                 echo str_replace(PHP_EOL, '<br />', $comment['content']);
                 echo '</div>';
+                echo '<div>';
+                echo '<a class="reply_comment" href="#" comment_id="'.$comment['comment_id'].'">Reply</a>';
+                echo '</div>';
                 echo '</div>';
             }
+            echo '<a name="comment-form">&nbsp;</a>';
             echo br();
-            // comment form
+            // comment form            
             if($article['allow_comment']){
+                echo '<div id="comment-box" style="margin-top: 50px;">';
                 echo '<h4>Add Comments </h4>';
-                echo form_open('','class="form  form-horizontal"');
+                // show error message if any
+                if($success !== NULL){
+                    if(!$success){
+                        echo '<div style="margin-top: 10px;" class="alert alert-danger">'.$error_message.'</div>';
+                    }else{
+                        echo '<div style="margin-top: 10px;" class="alert alert-success">Success</div>';
+                    }
+                }
+                echo form_open($form_url,'class="form  form-horizontal"');
                 echo form_hidden('article_id', $article['id']);
-                //echo form_input(array('name'=>'secret_code', 'value'=>$secret_code, 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'name', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'website', 'value'=>'', 'class'=>'comment_normal'));
@@ -194,6 +201,7 @@
                 echo '<div class="form-group"><div class="col-sm-offset-2 col-sm-8">';
                 echo form_submit('submit', 'Comment', 'class="btn btn-primary"');
                 echo '</div></div>';
+                echo '</div>'; // end of comment-box
             }
             echo '</div>';
         }else if(isset($article) && $article == FALSE){

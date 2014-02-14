@@ -78,11 +78,8 @@ class CMS_Controller extends MX_Controller
         
         if(!$this->__cms_dynamic_widget){
             // if there is old_url, then save it            
-            $old_url = $this->session->flashdata('cms_old_url');
-            if (isset($old_url)) {
-                $this->session->keep_flashdata('cms_old_url');
-            }
-        }        
+            $old_url = $this->session->userdata('cms_old_url');
+        }
 
         $this->load->library('Extended_Grocery_CRUD');
         $this->load->library('template');
@@ -644,11 +641,11 @@ class CMS_Controller extends MX_Controller
     protected function cms_redirect()
     {
         $uriString = $this->uri->uri_string();
-        $old_url   = $this->session->flashdata('old_url');
+        $old_url   = $this->session->userdata('old_url');
         if (!isset($old_url)) {
             // AJAX request should not be used for redirection
             if(!$this->input->is_ajax_request()){
-                $this->session->set_flashdata('cms_old_url', $uriString);
+                $this->session->set_userdata('cms_old_url', $uriString);
             }
         }
         

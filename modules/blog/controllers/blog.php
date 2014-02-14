@@ -43,7 +43,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             $previous_secret_code = $this->__random_string();
         }
 
-        $success = TRUE;
+        $success = NULL;
         $error_message = "";
         $article_id = $this->input->post('article_id', TRUE);
         $name = $this->input->post($previous_secret_code.'xname', TRUE);
@@ -58,7 +58,8 @@ class Blog extends CMS_Priv_Strict_Controller {
                     $error_message = "Invalid email";
                 }
             }
-            if($success){
+            if($success !== FALSE){
+                $success = TRUE;
                 $this->article_model->add_comment($article_id, $name, $email, $website, $content);
                 $name = '';
                 $email = '';
@@ -90,6 +91,9 @@ class Blog extends CMS_Priv_Strict_Controller {
             'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
             'module_path' => $this->cms_module_path(),
             'user_id' => $this->cms_user_id(),
+            'form_url'=> $this->cms_module_path() == 'blog'? 
+                site_url($this->cms_module_path().'/index/'.$article_url.'/#comment-form') : 
+                site_url($this->cms_module_path().'/blog/index/'.$article_url.'/#comment-form'),
         );
         
         $config = array();
@@ -100,7 +104,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             $config['keyword'] = $article['keyword'];
             $config['description'] = $article['description'];
             $config['author'] = $article['author'];
-        }        
+        }
 
         $this->view($this->cms_module_path().'/browse_article_view',$data,
             $this->cms_complete_navigation_name('index'), $config);

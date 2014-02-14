@@ -237,6 +237,7 @@ class Article_Model extends  CMS_Model{
             $website = $row->website === NULL ? '' : $row->website;
             $this->load->helper('url');
             $result = array(
+                    "comment_id" => $row->comment_id,
                     "date" => date('Y-m-d'),
                     "content" => str_replace($search, $replace, $row->content),
                     "name" => $name,
