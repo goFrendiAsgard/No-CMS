@@ -50,6 +50,10 @@ class Blog extends CMS_Priv_Strict_Controller {
         $email = $this->input->post($previous_secret_code.'xemail', TRUE);
         $website = $this->input->post($previous_secret_code.'xwebsite', TRUE);
         $content = $this->input->post($previous_secret_code.'xcontent', TRUE);
+        $parent_comment_id = $this->input->post('parent_comment_id', TRUE);
+        if($parent_comment_id == ''){
+            $parent_comment_id = NULL;
+        }
         if($content && $honey_pot_pass){
             if(!($this->cms_user_id()>0)){
                 $valid_email = preg_match('/@.+\./', $email);
@@ -60,7 +64,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             }
             if($success !== FALSE){
                 $success = TRUE;
-                $this->article_model->add_comment($article_id, $name, $email, $website, $content);
+                $this->article_model->add_comment($article_id, $name, $email, $website, $content, $parent_comment_id);
                 $name = '';
                 $email = '';
                 $website = '';
@@ -88,6 +92,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             "email" => $email,
             "website" => $website,
             "content" => $content,
+            "parent_comment_id" => $parent_comment_id,
             'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
             'module_path' => $this->cms_module_path(),
             'user_id' => $this->cms_user_id(),

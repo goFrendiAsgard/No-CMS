@@ -4,19 +4,19 @@
     .comment_normal{
         display:none!important;
     }
-	#record_content{
-		margin-top: 5px;
-		margin-bottom: 20px;
-	}
+    #record_content{
+        margin-top: 5px;
+        margin-bottom: 20px;
+    }
     #record_content:empty{
         display:none;
     }
-	.record_container{
-		margin:10px;
-	}
-	.edit_delete_record_container{
-		margin-top: 10px;
-	}
+    .record_container{
+        margin:10px;
+    }
+    .edit_delete_record_container{
+        margin-top: 10px;
+    }
     #record_content_bottom{
         margin-top: 5px;
         display:none;
@@ -85,9 +85,9 @@
         <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
         <?php
             // show add record button
-        	if($allow_navigate_backend){
-        		echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
-        	}
+            if($allow_navigate_backend){
+                echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
+            }
         ?>
     </div>
 </form>
@@ -124,7 +124,7 @@
             // comment
             $odd_row = TRUE;
             foreach($article['comments'] as $comment){
-                echo '<div class="comment-item well">';
+                echo '<div class="comment-item well" style="margin-left:'.($comment['level']*20).'px;">';
                 echo '<div class="comment-header">';
                 echo '<img style="margin-right:20px; margin-bottom:5px; margin-top:5px; float:left;" src="'.$comment['gravatar_url'].'" />';
                 echo '<span stylel="float:left;">';
@@ -140,16 +140,18 @@
                 echo str_replace(PHP_EOL, '<br />', $comment['content']);
                 echo '</div>';
                 echo '<div>';
-                echo '<a class="reply_comment" href="#" comment_id="'.$comment['comment_id'].'">Reply</a>';
+                echo '<a id="reply_comment_link_'.$comment['comment_id'].'" class="reply_comment_link" href="#" comment_id="'.$comment['comment_id'].'">Reply</a>';
+                echo '<a id="reply_cancel_link_'.$comment['comment_id'].'" class="reply_cancel_link" style="display:none;" href="#" comment_id="'.$comment['comment_id'].'">Cancel</a>';
                 echo '</div>';
+                echo '<div id="reply_comment_form_'.$comment['comment_id'].'"></div>';
                 echo '</div>';
             }
-            echo '<a name="comment-form">&nbsp;</a>';
             echo br();
             // comment form            
             if($article['allow_comment']){
-                echo '<div id="comment-box" style="margin-top: 50px;">';
-                echo '<h4>Add Comments </h4>';
+                echo '<div id="comment-box">';
+                echo '<a name="comment-form" style="margin-top: 50px;">&nbsp;</a>';
+                echo '<h4>Comment</h4>';
                 // show error message if any
                 if($success !== NULL){
                     if(!$success){
@@ -164,6 +166,7 @@
                 echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'website', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'content', 'value'=>'', 'class'=>'comment_normal'));
+                echo form_input(array('name'=>'parent_comment_id', 'value'=>$parent_comment_id, 'id'=>'parent_comment_id', 'class'=>'comment_normal'));
                 if(!$is_user_login){
 
                     echo '<div class="form-group">';
@@ -272,8 +275,6 @@
         fetch_more_data();
     }
 
-    
-
     // main program
     $(document).ready(function(){
 
@@ -314,6 +315,37 @@
         // input category change
         $('#input_category').change(function(){
             reset_content();
+        });
+        
+        // reply_comment_link
+        $('.reply_comment_link').click(function(){
+            var comment_id = $(this).attr('comment_id');
+            // move the form
+            var html = $('#comment-box').html();
+            $('#reply_comment_form_'+comment_id).html(html);
+            $('#comment-box').html('');
+            // initialize parent_comment_id
+            $('#parent_comment_id').val(comment_id);
+            // hide this, and show that
+            $(this).hide();
+            $('#reply_cancel_link_'+comment_id).show();
+            // that's enough, no redirect please
+            event.preventDefault();
+        });
+        
+        // reply_cancel_link
+        $('.reply_cancel_link').click(function(){
+            var comment_id = $(this).attr('comment_id');
+            // move the form
+            var html = $('#reply_comment_form_'+comment_id).html();
+            $('#comment-box').html(html);
+            $('#reply_comment_form_'+comment_id).html('');
+            // initialize parent_comment_id
+            $('#parent_comment_id').val('');
+            // hide this, and show that
+            $(this).hide();
+            $('#reply_comment_link_'+comment_id).show();
+            event.preventDefault();
         });
 
         // scroll
