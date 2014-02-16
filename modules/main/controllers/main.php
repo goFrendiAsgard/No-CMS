@@ -1372,9 +1372,11 @@ class Main extends CMS_Controller
                             ck_instance.setData(content);
                         }
                     });
-                    
-                    $(document).ajaxComplete(function(){
-                        __adjust_ck_editor();
+
+                    $(document).ajaxComplete(function(event, xhr, settings){
+                        if(settings.url == $("#crudForm").attr("action")){
+                            __adjust_ck_editor();
+                        }
                     });
                 }
             });

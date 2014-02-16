@@ -3,4 +3,4 @@
 // Is the theme published for every subsite?
 $public = FALSE;
 // In case of $public is FALSE, what are subsites allowed to use this module?
-$subsite_allowed = array('coba', 'coba_lagi', 'coba_lagi_lagi');
+$subsite_allowed = array('dragon');
