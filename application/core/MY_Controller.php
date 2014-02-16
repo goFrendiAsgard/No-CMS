@@ -978,7 +978,10 @@ class CMS_Controller extends MX_Controller
             // always use grocerycrud's jquery for maximum compatibility
             $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
             $this->template->append_metadata('<script type="text/javascript" src="' . $jquery_path . '"></script>');
-
+            
+            // ck editor thing
+            $this->template->append_metadata('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
+            
             // google analytic
             $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
             if (trim($analytic_property_id) != '') {

@@ -1313,6 +1313,74 @@ class Main extends CMS_Controller
         }
         return TRUE;
     }
+    
+    public function ck_adjust_script(){
+        $base_url = base_url();
+        $save_base_url = str_replace('/', '\\/', $base_url);
+        $ck_editor_adjust_script = '
+            $(document).ready(function(){
+                if (typeof(CKEDITOR) != "undefined"){
+                    function __adjust_ck_editor(){
+                        for (instance in CKEDITOR.instances) {
+                            // ck_instance
+                            ck_instance = CKEDITOR.instances[instance];
+                            var name = CKEDITOR.instances[instance].name;
+                            var $ck_textarea = $("#cke_"+name+" textarea");
+                            var $ck_iframe = $("#cke_"+name+" iframe");
+                            var data = ck_instance.getData();
+                            if($ck_textarea.length > 0){
+                                content = data.replace(
+                                    /(src=".*?)('.$save_base_url.')(.*?")/gi, 
+                                    "$1{{ base_url }}$3"
+                                );
+                                ck_instance.setData(content);
+                            }else if ($ck_iframe.length > 0){
+                                content = data.replace(
+                                    /(src=".*?)({{ base_url }})(.*?")/gi, 
+                                    "$1'.$base_url.'$3"
+                                );
+                                ck_instance.setData(content);
+                            }
+                            ck_instance.updateElement();
+                        }
+                    }
+                    
+                    // when instance ready & form submit, adjust ck editor
+                    CKEDITOR.on("instanceReady", function(){
+                        __adjust_ck_editor();
+                        for (instance in CKEDITOR.instances) {
+                            // ck_instance
+                            ck_instance = CKEDITOR.instances[instance];
+                            ck_instance.on("mode", function(){
+                                __adjust_ck_editor();
+                            });
+                        }
+                    });
+                    
+                    // when form submit, adjust ck editor
+                    $("form").submit(function(){
+                        for (instance in CKEDITOR.instances) {
+                            // ck_instance
+                            ck_instance = CKEDITOR.instances[instance];
+                            var name = CKEDITOR.instances[instance].name;
+                            var $original_textarea = $("textarea#"+name);
+                            var data = ck_instance.getData();
+                            content = data.replace(
+                                /(src=".*?)('.$save_base_url.')(.*?")/gi, 
+                                "$1{{ base_url }}$3"
+                            );
+                            ck_instance.setData(content);
+                        }
+                    });
+                    
+                    $(document).ajaxComplete(function(){
+                        __adjust_ck_editor();
+                    });
+                }
+            });
+        ';
+        echo $ck_editor_adjust_script;
+    }
 
     public function widget_logout()
     {
