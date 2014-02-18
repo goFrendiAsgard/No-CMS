@@ -8,6 +8,70 @@
 class CMS_Model extends CI_Model
 {
     private $__cms_model_properties;
+    
+    private function __update(){
+        $old_version = cms_config('__cms_version');
+        $current_version = '0.6.6.0';
+        
+        if($old_version !== $current_version){
+            $this->load->dbforge();
+            
+            // create site.php
+            if(!file_exists(FCPATH.'site.php')){
+                $data = '<?php';
+                @file_put_contents(FCPATH.'site.php', $data);
+            }
+            
+            // IF NO OLD VERSION
+            if($old_version === FALSE){
+                
+                // table : main navigation
+                $table_name = cms_table_name('main_navigation');
+                $fields = array(
+                    'notif_url' => array(
+                        'type' => 'VARCHAR',
+                        'constraint' => '100',
+                        'null' => TRUE,
+                    )
+                );
+                $this->dbforge->add_column($table_name, $fields);
+                
+                // navigation: blog_index
+                $navigation_name = cms_module_navigation_name($this->cms_module_path('gofrendi.noCMS.blog'), 'index');
+                $this->db->update($table_name, 
+                    array('notif_url' => $this->cms_module_path('gofrendi.noCMS.blog').'/notif/new_comment'), 
+                    array('navigation_name' => $navigation_name));
+                // navigation: blog_article
+                $navigation_name = cms_module_navigation_name($this->cms_module_path('gofrendi.noCMS.blog'), 'manage_article');
+                $this->db->update($table_name, 
+                    array('notif_url' => $this->cms_module_path('gofrendi.noCMS.blog').'/notif/new_comment'), 
+                    array('navigation_name' => $navigation_name));
+                
+                // table : blog comment
+                $table_name = cms_module_table_name($this->cms_module_path('gofrendi.noCMS.blog'), 'comment');
+                $fields = array(
+                    'parent_comment_id' => array(
+                        'type' => 'INT',
+                        'constraint' => 20,
+                        'unsigned' => TRUE,
+                        'null'=>TRUE,
+                    ),
+                    'read' => array(
+                        'type' => 'INT',
+                        'constraint' => 20,
+                        'unsigned' => TRUE,
+                        'null' => FALSE,
+                        'default' => 0,
+                    )
+                );
+                $this->dbforge->add_column($table_name, $fields);
+                
+            }
+
+            // write new version
+            cms_config('__cms_version', $current_version);
+        }
+    }
 
     public function __construct()
     {
@@ -42,6 +106,7 @@ class CMS_Model extends CI_Model
             'language_dictionary' => array(),
             'config' => array()
         );
+        $this->__update();
 
     }
 
