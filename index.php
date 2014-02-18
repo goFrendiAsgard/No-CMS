@@ -173,7 +173,12 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
     define('USE_SUBDOMAIN', FALSE);
     $available_site = array();
 }else{      
-    // multisite, can use GET or subdomain      
+    // multisite, can use GET or subdomain
+    // create site.php
+    if(!file_exists('./site.php')){
+        $data = '<?php'.PHP_EOL;
+        @file_put_contents('./site.php', $data);
+    }
     require_once('./site.php');
     if(isset($available_site) && is_array($available_site)){
         $cms_subsite = '';

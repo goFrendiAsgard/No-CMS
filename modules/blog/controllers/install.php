@@ -12,7 +12,7 @@ class Install extends CMS_Module_Installer {
     protected $DEPENDENCIES = array();
     protected $NAME         = 'gofrendi.noCMS.blog';
     protected $DESCRIPTION  = 'Write articles, upload photos, allow visitors to give comments, rule the world...';
-    protected $VERSION      = '0.0.0';
+    protected $VERSION      = '0.0.1';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,42 @@ class Install extends CMS_Module_Installer {
 
     // UPGRADE
     protected function do_upgrade($old_version){
-        // Add your migration logic here.
+        // table : blog comment
+        $table_name = $this->cms_complete_table_name('comment');
+        $field_list = $this->db->list_fields($table_name);
+        $missing_fields = array(
+            'parent_comment_id' => array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+                'null'=>TRUE,
+            ),
+            'read' => array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+                'null' => FALSE,
+                'default' => 0,
+            )
+        );
+        $fields = array();
+        foreach($missing_fields as $key=>$value){
+            if(!in_array($key, $field_list)){
+                $fields[$key] = $value;
+            }
+        }
+        $this->dbforge->add_column($table_name, $fields);
+        
+        // navigation: blog_index
+        $navigation_name = $this->cms_complete_navigation_name('index');
+        $this->db->update($table_name, 
+            array('notif_url' => $this->cms_module_path('gofrendi.noCMS.blog').'/notif/new_comment'), 
+            array('navigation_name' => $navigation_name));
+        // navigation: blog_article
+        $navigation_name = $this->cms_complete_navigation_name('manage_article');
+        $this->db->update($table_name, 
+            array('notif_url' => $this->cms_module_path('gofrendi.noCMS.blog').'/notif/new_comment'), 
+            array('navigation_name' => $navigation_name));
     }
 
     // OVERRIDE THIS FUNCTION TO PROVIDE "Module Setting" FEATURE
