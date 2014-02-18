@@ -982,6 +982,27 @@ class CMS_Controller extends MX_Controller
             // ck editor thing
             $this->template->append_metadata('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
             
+            // check login status
+            $login_code = '<script type="text/javascript">';
+            if($this->cms_user_id()>0){
+                $login_code .= 'var __cms_is_login = true;';
+            }else{
+                $login_code .= 'var __cms_is_login = false;';
+            }
+            $login_code .= 'setInterval(function(){
+                $.ajax({
+                    url : "{{ site_url }}main/json_is_login",
+                    dataType: "json",
+                    success: function(response){
+                        if(response.is_login != __cms_is_login){
+                            window.location = $(location).attr("href");
+                        }
+                    }
+                });
+            },10000);';
+            $login_code .= '</script>';
+            $this->template->append_metadata($login_code);
+            
             // google analytic
             $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
             if (trim($analytic_property_id) != '') {

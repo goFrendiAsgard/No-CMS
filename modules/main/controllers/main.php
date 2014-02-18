@@ -1314,6 +1314,11 @@ class Main extends CMS_Controller
         return TRUE;
     }
     
+    public function json_is_login(){
+        $result = array('is_login'=> $this->cms_user_id()>0);
+        $this->cms_show_json($result);
+    }
+    
     public function ck_adjust_script(){
         $base_url = base_url();
         $save_base_url = str_replace('/', '\\/', $base_url);
@@ -1547,7 +1552,7 @@ class Main extends CMS_Controller
                         $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
                         $badge.= '<script type="text/javascript">
                                 $(document).ready(function(){
-                                    setInterval(function(){
+                                    function __top_nav_get_badge_'.$badge_id.'(){
                                         $.ajax({
                                             dataType:"json",
                                             url: "'.addslashes($navigation['notif_url']).'",
@@ -1557,7 +1562,11 @@ class Main extends CMS_Controller
                                                 }
                                             }
                                         });
-                                    }, 1000);
+                                    }
+                                    __top_nav_get_badge_'.$badge_id.'();
+                                    setInterval(function(){
+                                        __top_nav_get_badge_'.$badge_id.'();
+                                    }, 10000);
                                 });
                             </script>
                         ';
@@ -1669,7 +1678,7 @@ class Main extends CMS_Controller
 
                 var _NAVBAR_LI_ORIGINAL_PADDING = $(".navbar-nav > li > a").css("padding-right");
                 var _NAVBAR_LI_ORIGINAL_FONTSIZE = $(".navbar-nav > li").css("font-size");
-                function adjust_navbar(){
+                function __adjust_navbar(){
                     var li_count = $(".navbar-nav > li").length;
                     $(".navbar-nav > li > a").css("padding-left", _NAVBAR_LI_ORIGINAL_PADDING);
                     $(".navbar-nav > li").css("font-size", _NAVBAR_LI_ORIGINAL_FONTSIZE);
@@ -1713,24 +1722,14 @@ class Main extends CMS_Controller
                         event.cancelBubble=true;
                         window.location = $(this).parent().attr("href");
                     });
-                    // override bootstrap default behavior on dropdown click. 
-                    // There should be no dropdown for tablet & phone
-                    /*
-                    $("a.dropdown-toggle").on("click touchstart", function(){
-                        var screen_width = $("body").width();
-                        if(screen_width<=978){
-                            if(event.stopPropagation){
-                                event.stopPropagation();
-                            }
-                            event.cancelBubble=true;
-                            window.location = $(this).attr("href");
-                        }
-                    });*/
                     // adjust navbar 
-                    adjust_navbar();
+                    __adjust_navbar();
                     $(window).resize(function() {
-                        adjust_navbar();
-                    });                    
+                        __adjust_navbar();
+                    });
+                    $(document).ajaxComplete(function(){
+                        __adjust_navbar();
+                    });
                 });
             </script>';
             $this->cms_show_html($result);
@@ -1793,7 +1792,7 @@ class Main extends CMS_Controller
                 $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
                 $badge.= '<script type="text/javascript">
                         $(document).ready(function(){
-                            setInterval(function(){
+                            function __quicklink_get_badge_'.$badge_id.'(){
                                 $.ajax({
                                     dataType:"json",
                                     url: "'.addslashes($quicklink['notif_url']).'",
@@ -1803,7 +1802,11 @@ class Main extends CMS_Controller
                                         }
                                     }
                                 });
-                            }, 1000);
+                            }
+                            __quicklink_get_badge_'.$badge_id.'();
+                            setInterval(function(){
+                                __quicklink_get_badge_'.$badge_id.'();
+                            }, 10000);
                         });
                     </script>
                 ';
