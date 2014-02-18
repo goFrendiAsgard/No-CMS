@@ -59,14 +59,15 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_column($table_name, $fields);
         
         // navigation: blog_index
+        $table_name = cms_table_name('main_navigation');
         $navigation_name = $this->cms_complete_navigation_name('index');
         $this->db->update($table_name, 
-            array('notif_url' => $this->cms_module_path('gofrendi.noCMS.blog').'/notif/new_comment'), 
+            array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'), 
             array('navigation_name' => $navigation_name));
         // navigation: blog_article
         $navigation_name = $this->cms_complete_navigation_name('manage_article');
         $this->db->update($table_name, 
-            array('notif_url' => $this->cms_module_path('gofrendi.noCMS.blog').'/notif/new_comment'), 
+            array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'), 
             array('navigation_name' => $navigation_name));
     }
 

@@ -16,6 +16,10 @@ class CMS_Model extends CI_Model
         if($old_version !== $current_version){
             $this->load->dbforge();
             
+            if($this->cms_get_config('site_layout') == NULL){
+                $this->cms_set_config('site_layout', 'default');
+            }
+            
             // table : main navigation
             $table_name = cms_table_name('main_navigation');
             $field_list = $this->db->list_fields($table_name);

@@ -66,11 +66,11 @@ class CMS_Controller extends MX_Controller
                     if(isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
                         die('Module is not accessible for '.CMS_SUBSITE.' subsite');
                     }
-                }                
+                }
             }
         }
 
-        $this->_guard_controller();        
+        $this->_guard_controller();
         
         if(isset($_REQUEST['__cms_dynamic_widget'])){
             $this->__cms_dynamic_widget = TRUE;
@@ -1871,7 +1871,7 @@ class CMS_Module_Installer extends CMS_Controller
         }
         if($result['success']){
             $this->db->trans_start();
-            if($this->do_upgrade() !== FALSE){
+            if($this->do_upgrade($this->OLD_VERSION) !== FALSE){
                 $data  = array('version' => $this->VERSION);
                 $where = array('module_name' => $this->NAME);
                 $this->db->update(cms_table_name('main_module'), $data, $where);
