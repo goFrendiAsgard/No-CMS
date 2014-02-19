@@ -16,9 +16,19 @@ class CMS_Model extends CI_Model
         if($old_version !== $current_version){
             $this->load->dbforge();
             
+            // make site_layout configuration
             if($this->cms_get_config('site_layout') == NULL){
                 $this->cms_set_config('site_layout', 'default');
             }
+            
+            // copy from grocery_crud config from first-time to current config
+            $source = APPPATH.'config/first-time/grocery_crud.php';
+            if(CMS_SUBSITE == ''){
+                $destination = APPPATH.'config/grocery_crud.php';
+            }else{
+                $destination = APPPATH.'config/site-'.CMS_SUBSITE.'/grocery_crud.php';
+            }
+            copy($source, $destination);
             
             // table : main navigation
             $table_name = cms_table_name('main_navigation');

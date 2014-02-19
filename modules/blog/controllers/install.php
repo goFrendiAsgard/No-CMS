@@ -32,16 +32,26 @@ class Install extends CMS_Module_Installer {
 
     // UPGRADE
     protected function do_upgrade($old_version){
+        // table : blog article
+        $table_name = $this->cms_complete_table_name('article');
+        $field_list = $this->db->list_fields($table_name);
+        $missing_fields = array(
+            'keyword' => $this->TYPE_VARCHAR_100_NULL,
+            'description' => $this->TYPE_TEXT,
+        );
+        $fields = array();
+        foreach($missing_fields as $key=>$value){
+            if(!in_array($key, $field_list)){
+                $fields[$key] = $value;
+            }
+        }
+        $this->dbforge->add_column($table_name, $fields);
+        
         // table : blog comment
         $table_name = $this->cms_complete_table_name('comment');
         $field_list = $this->db->list_fields($table_name);
         $missing_fields = array(
-            'parent_comment_id' => array(
-                'type' => 'INT',
-                'constraint' => 20,
-                'unsigned' => TRUE,
-                'null'=>TRUE,
-            ),
+            'parent_comment_id' => $this->TYPE_INT_UNSIGNED_NULL,
             'read' => array(
                 'type' => 'INT',
                 'constraint' => 20,

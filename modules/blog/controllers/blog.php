@@ -69,6 +69,7 @@ class Blog extends CMS_Priv_Strict_Controller {
                 $email = '';
                 $website = '';
                 $content = '';
+                $parent_comment_id = NULL;
             }
         }
 
