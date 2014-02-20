@@ -9,6 +9,9 @@ For non git user, you can just download the newest and safely overwrite everythi
 
 * `/application/config/` directory
 * `/.htaccess` file
+* `/site.php` file
+* `/assets/kcfinder/config.php`
+* `/assets/grocery_crud/texteditor/ckeditor/config.js`
 
 Migration to server
 ===================

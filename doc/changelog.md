@@ -151,6 +151,8 @@ v0.6.6
 + (done, tested) module & theme subsite privilege mechanism (subsite_auth)
 + (done, tested) nordrassil priority index and table prefix
 + (done, tested) IP Deny manager.
+
+v0.6.6 rev 1
 + (done, tested) New section in layout management: custom script that contains any custom css/js
 + (done, tested) "minimal" layout
 + (done, tested) blog reply comment
@@ -158,7 +160,7 @@ v0.6.6
 + (done, tested) {{ base_url }} fix in ck_editor
 + (done, tested) active menu
 + (done, tested) login/logout change status automatic redirection (e.g: when session expired)
-+ (proposed) seamless update
++ (done, tested) seamless update
 
 v0.6.7
 + (proposed) namespace
