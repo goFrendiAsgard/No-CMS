@@ -1957,7 +1957,7 @@ class CMS_Model extends CI_Model
             $module_path = $this->cms_module_path();
             $module_name = $this->cms_module_name($module_path);
             $module_site_url = site_url($module_path);
-            $module_base_url = base_url($module_path);
+            $module_base_url = base_url('modules/'.$module_path);
             if ($module_site_url[strlen($module_site_url) - 1] != '/')
                 $module_site_url .= '/';
             if ($module_base_url[strlen($module_base_url) - 1] != '/')
