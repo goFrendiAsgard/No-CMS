@@ -6,4 +6,4 @@ $(document).ready(function(){
             $('.navbar-fixed-top').css({opacity: 1});
         }
     });
-})
+});

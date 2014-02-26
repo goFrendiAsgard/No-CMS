@@ -12,7 +12,7 @@ class Install extends CMS_Module_Installer {
     protected $DEPENDENCIES = array();
     protected $NAME         = 'gofrendi.noCMS.blog';
     protected $DESCRIPTION  = 'Write articles, upload photos, allow visitors to give comments, rule the world...';
-    protected $VERSION      = '0.0.0';
+    protected $VERSION      = '0.0.1';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,53 @@ class Install extends CMS_Module_Installer {
 
     // UPGRADE
     protected function do_upgrade($old_version){
-        // Add your migration logic here.
+        // table : blog article
+        $table_name = $this->cms_complete_table_name('article');
+        $field_list = $this->db->list_fields($table_name);
+        $missing_fields = array(
+            'keyword' => $this->TYPE_VARCHAR_100_NULL,
+            'description' => $this->TYPE_TEXT,
+        );
+        $fields = array();
+        foreach($missing_fields as $key=>$value){
+            if(!in_array($key, $field_list)){
+                $fields[$key] = $value;
+            }
+        }
+        $this->dbforge->add_column($table_name, $fields);
+        
+        // table : blog comment
+        $table_name = $this->cms_complete_table_name('comment');
+        $field_list = $this->db->list_fields($table_name);
+        $missing_fields = array(
+            'parent_comment_id' => $this->TYPE_INT_UNSIGNED_NULL,
+            'read' => array(
+                'type' => 'INT',
+                'constraint' => 20,
+                'unsigned' => TRUE,
+                'null' => FALSE,
+                'default' => 0,
+            )
+        );
+        $fields = array();
+        foreach($missing_fields as $key=>$value){
+            if(!in_array($key, $field_list)){
+                $fields[$key] = $value;
+            }
+        }
+        $this->dbforge->add_column($table_name, $fields);
+        
+        // navigation: blog_index
+        $table_name = cms_table_name('main_navigation');
+        $navigation_name = $this->cms_complete_navigation_name('index');
+        $this->db->update($table_name, 
+            array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'), 
+            array('navigation_name' => $navigation_name));
+        // navigation: blog_article
+        $navigation_name = $this->cms_complete_navigation_name('manage_article');
+        $this->db->update($table_name, 
+            array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'), 
+            array('navigation_name' => $navigation_name));
     }
 
     // OVERRIDE THIS FUNCTION TO PROVIDE "Module Setting" FEATURE
@@ -106,12 +152,15 @@ class Install extends CMS_Module_Installer {
             $parent_url = $module_path.'/blog';
         }
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
-            $parent_url, $this->PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil');
+            $parent_url, $this->PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil', NULL, NULL, 
+            $this->cms_module_path().'/notif/new_comment'
+        );
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',
             $module_path.'/manage_article', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
-            NULL, 'Add, edit, and delete blog articles'
+            NULL, 'Add, edit, and delete blog articles', NULL, NULL, NULL,
+            $this->cms_module_path().'/notif/new_comment'
         );
         $this->add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
             $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
@@ -174,6 +223,14 @@ class Install extends CMS_Module_Installer {
                 'email' => $this->TYPE_VARCHAR_50_NULL,
                 'website' => $this->TYPE_VARCHAR_50_NULL,
                 'content' => $this->TYPE_TEXT,
+                'parent_comment_id' => $this->TYPE_INT_UNSIGNED_NULL,
+                'read' => array(
+                    'type' => 'INT',
+                    'constraint' => 20,
+                    'unsigned' => TRUE,
+                    'null' => FALSE,
+                    'default' => 0,
+                )
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('comment_id', TRUE);
@@ -234,9 +291,9 @@ class Install extends CMS_Module_Installer {
         $data = array('article_id'=>1, 'url'=>'38a006scandalbox.jpg');
         $this->db->insert($table_name, $data);
 
-        // photo
+        // comment
         $table_name = $this->cms_complete_table_name('comment');
-        $data = array('article_id'=>1, 'author_user_id'=>1, 'date'=>'2013-03-25 09:53:16', 'content'=>'Great comment for great article');
+        $data = array('article_id'=>1, 'author_user_id'=>1, 'read'=>0, 'date'=>'2013-03-25 09:53:16', 'content'=>'Great comment for great article');
         $this->db->insert($table_name, $data);
 
     }

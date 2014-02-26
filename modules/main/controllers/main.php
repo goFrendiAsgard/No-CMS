@@ -184,9 +184,9 @@ class Main extends CMS_Controller
         $this->cms_guard_page('main_login');
         // Is registration allowed
         $allow_register = $this->cms_allow_navigate('main_register');
-        //retrieve old_url from flashdata if exists
+        //retrieve old_url from userdata if exists
         $this->load->library('session');
-        $old_url = $this->session->flashdata('cms_old_url');
+        $old_url = $this->session->userdata('cms_old_url');
 
         //get user input
         $identity = $this->input->post('identity');
@@ -200,7 +200,7 @@ class Main extends CMS_Controller
             if ($this->cms_do_login($identity, $password)) {
                 //if old_url exist, redirect to old_url, else redirect to main/index
                 if (isset($old_url)) {
-                    $this->session->set_flashdata('cms_old_url', NULL);
+                    $this->session->set_userdata('cms_old_url', NULL);
                     // seek for the closest url that exist in navigation table to avoid something like manage_x/index/edit/1/error to be appeared
                     $old_url_part = explode('/', $old_url);
                     while(count($old_url_part)>0){
@@ -225,11 +225,6 @@ class Main extends CMS_Controller
                     redirect('');
                 }
             } else {
-                //the login process failed
-                //save the old_url again
-                if (isset($old_url)) {
-                    $this->session->keep_flashdata('cms_old_url');
-                }
 
                 //view login again
                 $data = array(
@@ -243,11 +238,6 @@ class Main extends CMS_Controller
                 $this->view('main/main_login', $data, 'main_login');
             }
         } else {
-            //save the old_url again
-            if (isset($old_url)) {
-                $this->session->keep_flashdata('cms_old_url');
-            }
-
             //view login again
             $data = array(
                 "identity" => $identity,
@@ -717,8 +707,8 @@ class Main extends CMS_Controller
         $crud->unset_read();
 
         $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         // get themes to give options for default_theme field
@@ -737,6 +727,7 @@ class Main extends CMS_Controller
             ->display_as('page_keyword', $this->cms_lang('Page Keyword (Comma Separated)'))
             ->display_as('description', $this->cms_lang('Description'))
             ->display_as('url', $this->cms_lang('URL (Where is it point to)'))
+            ->display_as('notif_url', $this->cms_lang('Notification URL'))
             ->display_as('active', $this->cms_lang('Active'))
             ->display_as('is_static', $this->cms_lang('Static'))
             ->display_as('static_content', $this->cms_lang('Static Content'))
@@ -1322,6 +1313,81 @@ class Main extends CMS_Controller
         }
         return TRUE;
     }
+    
+    public function json_is_login(){
+        $result = array('is_login'=> $this->cms_user_id()>0);
+        $this->cms_show_json($result);
+    }
+    
+    public function ck_adjust_script(){
+        $base_url = base_url();
+        $save_base_url = str_replace('/', '\\/', $base_url);
+        $ck_editor_adjust_script = '
+            $(document).ready(function(){
+                if (typeof(CKEDITOR) != "undefined"){
+                    function __adjust_ck_editor(){
+                        for (instance in CKEDITOR.instances) {
+                            // ck_instance
+                            ck_instance = CKEDITOR.instances[instance];
+                            var name = CKEDITOR.instances[instance].name;
+                            var $ck_textarea = $("#cke_"+name+" textarea");
+                            var $ck_iframe = $("#cke_"+name+" iframe");
+                            var data = ck_instance.getData();
+                            if($ck_textarea.length > 0){
+                                content = data.replace(
+                                    /(src=".*?)('.$save_base_url.')(.*?")/gi, 
+                                    "$1{{ base_url }}$3"
+                                );
+                                ck_instance.setData(content);
+                            }else if ($ck_iframe.length > 0){
+                                content = data.replace(
+                                    /(src=".*?)({{ base_url }})(.*?")/gi, 
+                                    "$1'.$base_url.'$3"
+                                );
+                                ck_instance.setData(content);
+                            }
+                            ck_instance.updateElement();
+                        }
+                    }
+                    
+                    // when instance ready & form submit, adjust ck editor
+                    CKEDITOR.on("instanceReady", function(){
+                        __adjust_ck_editor();
+                        for (instance in CKEDITOR.instances) {
+                            // ck_instance
+                            ck_instance = CKEDITOR.instances[instance];
+                            ck_instance.on("mode", function(){
+                                __adjust_ck_editor();
+                            });
+                        }
+                    });
+                    
+                    // when form submit, adjust ck editor
+                    $("form").submit(function(){
+                        for (instance in CKEDITOR.instances) {
+                            // ck_instance
+                            ck_instance = CKEDITOR.instances[instance];
+                            var name = CKEDITOR.instances[instance].name;
+                            var $original_textarea = $("textarea#"+name);
+                            var data = ck_instance.getData();
+                            content = data.replace(
+                                /(src=".*?)('.$save_base_url.')(.*?")/gi, 
+                                "$1{{ base_url }}$3"
+                            );
+                            ck_instance.setData(content);
+                        }
+                    });
+
+                    $(document).ajaxComplete(function(event, xhr, settings){
+                        if(settings.url == $("#crudForm").attr("action")){
+                            __adjust_ck_editor();
+                        }
+                    });
+                }
+            });
+        ';
+        echo $ck_editor_adjust_script;
+    }
 
     public function widget_logout()
     {
@@ -1412,18 +1478,45 @@ class Main extends CMS_Controller
         $result .= '<ul  class="dropdown-menu nav nav-pills nav-stacked" '.($first?'id="_first-left-dropdown"':'').'>';
         foreach($navigations as $navigation){
             if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+                // create badge if needed
+                $badge = '';
+                if($quicklink['notif_url'] != ''){
+                    $badge_id = '__cms_notif_left_navigation_'.$quicklink['navigation_id'];
+                    $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
+                    $badge.= '<script type="text/javascript">
+                            $(document).ready(function(){
+                                setInterval(function(){
+                                    $.ajax({
+                                        dataType:"json",
+                                        url: "'.addslashes($quicklink['notif_url']).'",
+                                        success: function(response){
+                                            if(response.success){
+                                                $("#'.$badge_id.'").html(response.notif);
+                                            }
+                                        }
+                                    });
+                                }, 1000);
+                            });
+                        </script>
+                    ';
+                }
+                // set active class
+                $active = '';
+                if($this->cms_ci_session('__cms_navigation_name') == $quicklink['navigation_name']){
+                    $active = 'active';
+                }
                 // make text
                 $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
                 if($navigation['allowed'] && $navigation['active']){
-                    $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$icon.$navigation['title'].'</a>';
+                    $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$icon.$navigation['title'].$badge.'</a>';
                 }else{
-                    $text = $icon.$navigation['title'];
+                    $text = $icon.$navigation['title'].$badge;
                 }
 
                 if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
-                    $result .= '<li class="dropdown-submenu">'.$text.$this->widget_left_nav(FALSE, $navigation['child']).'</li>';
+                    $result .= '<li class="dropdown-submenu '.$active.'">'.$text.$this->widget_left_nav(FALSE, $navigation['child']).'</li>';
                 }else{
-                    $result .= '<li>'.$text.'</li>';
+                    $result .= '<li class="'.$active.'">'.$text.'</li>';
                 }
             }
         }
@@ -1453,12 +1546,37 @@ class Main extends CMS_Controller
                     $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == ''? 'icon-white': $navigation['bootstrap_glyph'];
                     // make text
                     $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
+                    $badge = '';
+                    if($navigation['notif_url'] != ''){
+                        $badge_id = '__cms_notif_top_nav_'.$navigation['navigation_id'];
+                        $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
+                        $badge.= '<script type="text/javascript">
+                                $(document).ready(function(){
+                                    function __top_nav_get_badge_'.$badge_id.'(){
+                                        $.ajax({
+                                            dataType:"json",
+                                            url: "'.addslashes($navigation['notif_url']).'",
+                                            success: function(response){
+                                                if(response.success){
+                                                    $("#'.$badge_id.'").html(response.notif);
+                                                }
+                                            }
+                                        });
+                                    }
+                                    __top_nav_get_badge_'.$badge_id.'();
+                                    setInterval(function(){
+                                        __top_nav_get_badge_'.$badge_id.'();
+                                    }, 10000);
+                                });
+                            </script>
+                        ';
+                    }
                     if($navigation['allowed'] && $navigation['active']){
                         $text = '<a href="'.$navigation['url'].'">'.$icon.
-                            $navigation['title'].'</a>';
+                            $navigation['title'].$badge.'</a>';
                     }else{
                         $text = '<a href="#">'.$icon.
-                            $navigation['title'].'</a>';
+                            $navigation['title'].$badge.'</a>';
                     }
 
                     if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
@@ -1560,7 +1678,7 @@ class Main extends CMS_Controller
 
                 var _NAVBAR_LI_ORIGINAL_PADDING = $(".navbar-nav > li > a").css("padding-right");
                 var _NAVBAR_LI_ORIGINAL_FONTSIZE = $(".navbar-nav > li").css("font-size");
-                function adjust_navbar(){
+                function __adjust_navbar(){
                     var li_count = $(".navbar-nav > li").length;
                     $(".navbar-nav > li > a").css("padding-left", _NAVBAR_LI_ORIGINAL_PADDING);
                     $(".navbar-nav > li").css("font-size", _NAVBAR_LI_ORIGINAL_FONTSIZE);
@@ -1604,24 +1722,14 @@ class Main extends CMS_Controller
                         event.cancelBubble=true;
                         window.location = $(this).parent().attr("href");
                     });
-                    // override bootstrap default behavior on dropdown click. 
-                    // There should be no dropdown for tablet & phone
-                    /*
-                    $("a.dropdown-toggle").on("click touchstart", function(){
-                        var screen_width = $("body").width();
-                        if(screen_width<=978){
-                            if(event.stopPropagation){
-                                event.stopPropagation();
-                            }
-                            event.cancelBubble=true;
-                            window.location = $(this).attr("href");
-                        }
-                    });*/
                     // adjust navbar 
-                    adjust_navbar();
+                    __adjust_navbar();
                     $(window).resize(function() {
-                        adjust_navbar();
-                    });                    
+                        __adjust_navbar();
+                    });
+                    $(document).ajaxComplete(function(){
+                        __adjust_navbar();
+                    });
                 });
             </script>';
             $this->cms_show_html($result);
@@ -1656,15 +1764,18 @@ class Main extends CMS_Controller
             $quicklinks = $this->cms_quicklinks();
         }
         if(count($quicklinks) == 0) return '';
+        
+        $current_navigation_name = $this->cms_ci_session('__cms_navigation_name');
+        $current_navigation_path = $this->cms_get_navigation_path($current_navigation_name);
         $html = '';
 
         foreach($quicklinks as $quicklink){
-        	// if navigation is not active then skip it
-        	if(!$quicklink['active']){
-        		continue;
-        	}
-			// create icon if needed
-            $icon = '';            
+            // if navigation is not active then skip it
+            if(!$quicklink['active']){
+                continue;
+            }
+            // create icon if needed
+            $icon = '';
             if($first){
                 $icon_class = $quicklink['bootstrap_glyph'].' icon-white';
             }else{
@@ -1674,23 +1785,61 @@ class Main extends CMS_Controller
                 $icon_class = $icon_class==''? 'icon-white': $icon_class;
                 $icon = '<span class="glyphicon '.$icon_class.'"></span>&nbsp;';
             }
+            // create badge if needed
+            $badge = '';
+            if($quicklink['notif_url'] != ''){
+                $badge_id = '__cms_notif_quicklink_'.$quicklink['navigation_id'];
+                $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
+                $badge.= '<script type="text/javascript">
+                        $(document).ready(function(){
+                            function __quicklink_get_badge_'.$badge_id.'(){
+                                $.ajax({
+                                    dataType:"json",
+                                    url: "'.addslashes($quicklink['notif_url']).'",
+                                    success: function(response){
+                                        if(response.success){
+                                            $("#'.$badge_id.'").html(response.notif);
+                                        }
+                                    }
+                                });
+                            }
+                            __quicklink_get_badge_'.$badge_id.'();
+                            setInterval(function(){
+                                __quicklink_get_badge_'.$badge_id.'();
+                            }, 10000);
+                        });
+                    </script>
+                ';
+            }
+            // set active class
+            $active = '';
+            if($current_navigation_name == $quicklink['navigation_name']){
+                $active = 'active';
+            }else{
+                foreach($current_navigation_path as $navigation_parent){
+                    if($quicklink['navigation_name'] == $navigation_parent['navigation_name']){
+                        $active = 'active';
+                        break;
+                    }
+                }
+            }
             // create li based on child availability
             if(count($quicklink['child'])==0){
-                $html.= '<li>';
-                $html.= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].'</span>');
+                $html.= '<li class="'.$active.'">';
+                $html.= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].$badge.'</span>');
                 $html.= '</li>';
             }else{
                 if($first){
-                    $html.= '<li class="dropdown">';
+                    $html.= '<li class="dropdown '.$active.'">';
                     $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
-                        '<span class="anchor-text">'.$icon.$quicklink['title'].'</span>'.
+                        '<span class="anchor-text">'.$icon.$quicklink['title'].$badge.'</span>'.
                         '&nbsp;<span class="caret"></span></a>'; // hidden-sm hidden-xs
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }else{
-                    $html.= '<li class="dropdown-submenu">';
+                    $html.= '<li class="dropdown-submenu '.$active.'">';
                     $html.= '<a href="'.$quicklink['url'].'">'.
-                        '<span>'.$icon.$quicklink['title'].'</span></a>';
+                        '<span>'.$icon.$quicklink['title'].$badge.'</span></a>';
                     $html.= $this->build_quicklink($quicklink['child'],FALSE);
                     $html.= '</li>';
                 }
@@ -1702,5 +1851,4 @@ class Main extends CMS_Controller
         }
         return $html;
     }
-
 }

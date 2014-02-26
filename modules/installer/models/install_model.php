@@ -68,6 +68,14 @@ class Install_Model extends CI_Model{
         );
 
     public function __construct(){
+        $timezone = @date_default_timezone_get();
+        if (!isset($timezone) || $timezone == '') {
+            $timezone = @ini_get('date.timezone');
+        }
+        if (!isset($timezone) || $timezone == '') {
+            $timezone = 'UTC';
+        }
+        date_default_timezone_set($timezone);
         parent::__construct();
         // automatically set table prefix based on subsite
         $this->set_subsite($this->subsite);
@@ -155,7 +163,7 @@ class Install_Model extends CI_Model{
             return $db;
         }
 
-        $db = $this->load->database($db_config, TRUE); 
+        $db = @$this->load->database($db_config, TRUE); 
 
         $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
         $allow_create = FALSE;
@@ -164,7 +172,7 @@ class Install_Model extends CI_Model{
             // get the "allow_create" and "allow_drop" privileges
             @mysql_connect($this->db_host.':'.$this->db_port , $this->db_username, $this->db_password);
             $result = @mysql_query('SHOW GRANTS FOR CURRENT_USER;');
-            if($result !== NULL){                    
+            if($result !== NULL){
                 while($row = mysql_fetch_row($result)){
                     if(strpos($row[0], 'ALL PRIVILEGES')){
                         $allow_drop = TRUE;
@@ -189,14 +197,14 @@ class Install_Model extends CI_Model{
             if($allow_drop && isset($_SESSION['created_db']) && $_SESSION['created_db'] != '' && $_SESSION['created_db'] != $this->db_name){
                 @mysql_query('DROP DATABASE IF EXISTS '.$_SESSION['created_db']);
                 unset($_SESSION['created_db']);
-            }              
+            }
         }
 
         $success = TRUE;
         if($db->conn_id === FALSE){
             $success = FALSE;
             // if it is MySQL, try to make database
-            if($is_mysql){                
+            if($is_mysql){
                 if($allow_create && (!isset($_SESSION['created_db']) || $_SESSION['created_db'] != $this->db_name ) ){
                     $result = @mysql_query('CREATE DATABASE ' . $this->db_name . ' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;');
                     // save the created database
@@ -209,12 +217,12 @@ class Install_Model extends CI_Model{
                 $db = $this->load->database($db_config, TRUE);
                 if($db->conn_id !== FALSE){
                     $success = TRUE;
-                }                
+                }
             }
         }
 
         // return value
-        if($success){            
+        if($success){
             $this->db = $db;
             $this->dbutil = $this->load->dbutil($db, TRUE);
             $this->dbforge = $this->load->dbforge($db, TRUE);
@@ -604,7 +612,7 @@ class Install_Model extends CI_Model{
                 'title' => $type_varchar_small_strict,
                 'bootstrap_glyph' => $type_varchar_small,
                 'page_title' => $type_varchar_small,
-                'page_keyword' => $type_varchar_large,                
+                'page_keyword' => $type_varchar_large,
                 'description' => $type_text,
                 'url' => $type_varchar_large,
                 'authorization_id' => $type_foreign_key_default_1,
@@ -615,6 +623,7 @@ class Install_Model extends CI_Model{
                 'only_content' => $type_boolean_false,
                 'default_theme' => $type_varchar_small,
                 'default_layout' => $type_varchar_small,
+                'notif_url'=>$type_varchar_large,
             );
         $sql_list[] = $this->create_table('main_navigation',$fields);
 

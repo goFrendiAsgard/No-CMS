@@ -166,7 +166,7 @@ class Article_Model extends  CMS_Model{
         return $data;
     }
 
-    public function add_comment($article_id, $name, $email, $website, $content){
+    public function add_comment($article_id, $name, $email, $website, $content, $parent_comment_id=NULL){
         $query = $this->db->select('allow_comment')
             ->from($this->cms_complete_table_name('article'))
             ->where('article_id', $article_id)
@@ -183,6 +183,8 @@ class Article_Model extends  CMS_Model{
                     'website' => $website,
                     'content' => $content,
                     'date' => date('Y-m-d H:i:s'),
+                    'read' => 0,
+                    'parent_comment_id'=>$parent_comment_id,
             );
             if(isset($cms_user_id) && ($cms_user_id>0)){
                 $data['author_user_id'] = $cms_user_id;
@@ -206,46 +208,94 @@ class Article_Model extends  CMS_Model{
         }
         return $data;
     }
-
-    public function get_comments($article_id){
+    
+    private function preprocess_comment($row){
         $search = array('<', '>');
         $replace = array('&lt;', '&gt;');
+        $user_id = $row->author_user_id;
+        if(isset($user_id) && $user_id>0){
+            $query_user = $this->db->select('real_name, user_name, email')
+                ->from(cms_table_name('main_user'))
+                ->where('user_id', $user_id)
+                ->get();
+            $row_user = $query_user->row();
+            $name = trim($row_user->real_name)==''? $row_user->user_name: $row_user->real_name;
+            $email = $row_user->email;
+        }else{
+            $name = $row->name;
+            $email = $row->email;
+        }
+        $email = $email === NULL ? '' : $email;
+        $website = $row->website === NULL ? '' : $row->website;
+        $this->load->helper('url');
+        $result = array(
+                "comment_id" => $row->comment_id,
+                "date" => date('Y-m-d'),
+                "content" => str_replace($search, $replace, $row->content),
+                "name" => $name,
+                "website" => prep_url($website),
+                "email" => $email,
+                "gravatar_url" => 'http://www.gravatar.com/avatar/'.md5($email).'?s=32&r=pg&d=identicon'
+        );
+        return $result;
+    }
 
-        $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content')
+    public function get_comments($article_id, $nested=TRUE){
+        $this->db->select('comment_id, date, author_user_id, name, email, website, content')
             ->from($this->cms_complete_table_name('comment'))
             ->where('article_id', $article_id)
+            ->order_by('date');
+        if($nested){
+            $this->db->where('parent_comment_id', NULL);
+        }
+        $query = $this->db->get();
+
+        $data = array();
+        foreach($query->result() as $row){
+            $result = $this->preprocess_comment($row);
+            $result['level'] = 0;
+            $data[] = $result;
+            $children = $this->get_child_comment($row->comment_id, 0);
+            foreach($children as $child){
+                $data[] = $child;
+            }
+        }
+        return $data;
+    }
+    
+    public function get_child_comment($comment_id, $level){
+        $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content')
+            ->from($this->cms_complete_table_name('comment'))
             ->order_by('date')
+            ->where('parent_comment_id', $comment_id)
             ->get();
 
         $data = array();
         foreach($query->result() as $row){
-            $user_id = $row->author_user_id;
-            if(isset($user_id) && $user_id>0){
-                $query_user = $this->db->select('real_name, user_name, email')
-                    ->from(cms_table_name('main_user'))
-                    ->where('user_id', $user_id)
-                    ->get();
-                $row_user = $query_user->row();
-                $name = trim($row_user->real_name)==''? $row_user->user_name: $row_user->real_name;
-                $email = $row_user->email;
-            }else{
-                $name = $row->name;
-                $email = $row->email;
-            }
-            $email = $email === NULL ? '' : $email;
-            $website = $row->website === NULL ? '' : $row->website;
-            $this->load->helper('url');
-            $result = array(
-                    "date" => date('Y-m-d'),
-                    "content" => str_replace($search, $replace, $row->content),
-                    "name" => $name,
-                    "website" => prep_url($website),
-                    "email" => $email,
-                    "gravatar_url" => 'http://www.gravatar.com/avatar/'.md5($email).'?s=32&r=pg&d=identicon'
-            );
+            $result = $this->preprocess_comment($row);
+            $result['level'] = $level+1;
             $data[] = $result;
+            $children = $this->get_child_comment($row->comment_id, $level+1);
+            foreach($children as $child){
+                $data[] = $child;
+            }
         }
         return $data;
+    }
+
+    public function new_comment_num(){
+        $notif = 0;
+        if($this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article'))){
+            $query = $this->db->select('comment_id')
+                ->from($this->cms_complete_table_name('comment'))
+                ->where('read',0)
+                ->get();
+            $num_rows = $query->num_rows();
+            if($num_rows > 0){
+                $notif = $num_rows;
+            }
+        }
+        return $notif;
     }
 
 }

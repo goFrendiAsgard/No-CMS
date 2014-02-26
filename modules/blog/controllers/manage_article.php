@@ -81,7 +81,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud->edit_fields('article_title','article_url','date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
         // displayed columns on add operation
         $crud->add_fields('article_title','article_url','date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
-        $crud->required_fields('article_title');        
+        $crud->required_fields('article_title');
         $crud->unique_fields('article_title');
         $crud->unset_read();
         
@@ -336,6 +336,11 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
             ->where('article_id', $primary_key)
             ->get();
         $result = $query->result_array();
+        
+        // change the comment status into read
+        $data = array('read'=>1);
+        $where = array('article_id', $primary_key);
+        $this->db->update($this->cms_complete_table_name('comment'), $data, $where);
 
         $search = array('<', '>');
         $replace = array('&lt;', '&gt;');
@@ -374,11 +379,20 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
             ->where('article_id', $row->article_id)
             ->get();
         $num_row = $query->num_rows();
+        $query = $this->db->select('comment_id')
+            ->from($this->cms_complete_table_name('comment'))
+            ->where(array('article_id'=> $row->article_id, 'read'=>0))
+            ->get();
+        $unread_num_row = $query->num_rows();
+        $new_str = '';
+        if($unread_num_row>0){
+            $new_str = ', <b>'.$unread_num_row.' new</b>';
+        }
         // show how many records
         if($num_row>1){
-            return $num_row .' Comments';
+            return $num_row .' Comments'.$new_str;
         }else if($num_row>0){
-            return $num_row .' Comment';
+            return $num_row .' Comment'. $new_str;
         }else{
             return 'No Comment';
         }

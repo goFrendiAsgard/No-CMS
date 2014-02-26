@@ -66,11 +66,11 @@ class CMS_Controller extends MX_Controller
                     if(isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
                         die('Module is not accessible for '.CMS_SUBSITE.' subsite');
                     }
-                }                
+                }
             }
         }
 
-        $this->_guard_controller();        
+        $this->_guard_controller();
         
         if(isset($_REQUEST['__cms_dynamic_widget'])){
             $this->__cms_dynamic_widget = TRUE;
@@ -78,11 +78,8 @@ class CMS_Controller extends MX_Controller
         
         if(!$this->__cms_dynamic_widget){
             // if there is old_url, then save it            
-            $old_url = $this->session->flashdata('cms_old_url');
-            if (isset($old_url)) {
-                $this->session->keep_flashdata('cms_old_url');
-            }
-        }        
+            $old_url = $this->session->userdata('cms_old_url');
+        }
 
         $this->load->library('Extended_Grocery_CRUD');
         $this->load->library('template');
@@ -644,11 +641,11 @@ class CMS_Controller extends MX_Controller
     protected function cms_redirect()
     {
         $uriString = $this->uri->uri_string();
-        $old_url   = $this->session->flashdata('old_url');
+        $old_url   = $this->session->userdata('old_url');
         if (!isset($old_url)) {
             // AJAX request should not be used for redirection
             if(!$this->input->is_ajax_request()){
-                $this->session->set_flashdata('cms_old_url', $uriString);
+                $this->session->set_userdata('cms_old_url', $uriString);
             }
         }
         
@@ -951,6 +948,8 @@ class CMS_Controller extends MX_Controller
         if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {            
             $result = $this->load->view($view_url, $data, TRUE);
         } else {
+            // save navigation name
+            $this->cms_ci_session('__cms_navigation_name', $navigation_name);
             // set theme, layout and title
             $this->template->title($title);
             $this->template->set_theme($theme);
@@ -979,7 +978,31 @@ class CMS_Controller extends MX_Controller
             // always use grocerycrud's jquery for maximum compatibility
             $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
             $this->template->append_metadata('<script type="text/javascript" src="' . $jquery_path . '"></script>');
-
+            
+            // ck editor thing
+            $this->template->append_metadata('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
+            
+            // check login status
+            $login_code = '<script type="text/javascript">';
+            if($this->cms_user_id()>0){
+                $login_code .= 'var __cms_is_login = true;';
+            }else{
+                $login_code .= 'var __cms_is_login = false;';
+            }
+            $login_code .= 'setInterval(function(){
+                $.ajax({
+                    url : "{{ site_url }}main/json_is_login",
+                    dataType: "json",
+                    success: function(response){
+                        if(response.is_login != __cms_is_login){
+                            window.location = $(location).attr("href");
+                        }
+                    }
+                });
+            },10000);';
+            $login_code .= '</script>';
+            $this->template->append_metadata($login_code);
+            
             // google analytic
             $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
             if (trim($analytic_property_id) != '') {
@@ -1628,9 +1651,9 @@ class CMS_Module_Installer extends CMS_Controller
             $this->IS_ACTIVE = TRUE;
             $row = $query->row();
             // TODO: the suck sqlite returning array
-            //$row = json_decode(json_encode($row), FALSE);
+            $row = json_decode(json_encode($row), FALSE);
             if($this->OLD_VERSION == ''){
-                $this->OLD_VERSION = '0.0.0';
+                $this->OLD_VERSION = $row->version;
             }
             if(version_compare($this->VERSION, $this->OLD_VERSION)>0){
                 $this->IS_OLD = TRUE;
@@ -1848,7 +1871,7 @@ class CMS_Module_Installer extends CMS_Controller
         }
         if($result['success']){
             $this->db->trans_start();
-            if($this->do_upgrade() !== FALSE){
+            if($this->do_upgrade($this->OLD_VERSION) !== FALSE){
                 $data  = array('version' => $this->VERSION);
                 $where = array('module_name' => $this->NAME);
                 $this->db->update(cms_table_name('main_module'), $data, $where);
@@ -1918,7 +1941,8 @@ class CMS_Module_Installer extends CMS_Controller
             $this->db->query($query);
         }
     }
-    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL, $default_theme=NULL, $default_layout=NULL)
+    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL, 
+    $default_theme=NULL, $default_layout=NULL, $notif_url=NULL)
     {
         //get parent's navigation_id
         $query = $this->db->select('navigation_id')
@@ -1981,6 +2005,7 @@ class CMS_Module_Installer extends CMS_Controller
             "bootstrap_glyph"=>$bootstrap_glyph,
             "default_theme"=>$default_theme,
             "default_layout"=>$default_layout,
+            "notif_url"=>$notif_url,
         );
         if (isset($parent_id)) {
             $data['parent_id'] = $parent_id;

@@ -38,19 +38,22 @@ class Blog extends CMS_Priv_Strict_Controller {
         }
 
         // get previously generated secret code
-        $previous_secret_code = $this->session->flashdata('__blog_comment_secret_code');
+        $previous_secret_code = $this->session->userdata('__blog_comment_secret_code');
         if($previous_secret_code === NULL){
             $previous_secret_code = $this->__random_string();
         }
 
-        $success = TRUE;
+        $success = NULL;
         $error_message = "";
         $article_id = $this->input->post('article_id', TRUE);
         $name = $this->input->post($previous_secret_code.'xname', TRUE);
         $email = $this->input->post($previous_secret_code.'xemail', TRUE);
         $website = $this->input->post($previous_secret_code.'xwebsite', TRUE);
         $content = $this->input->post($previous_secret_code.'xcontent', TRUE);
-        
+        $parent_comment_id = $this->input->post('parent_comment_id', TRUE);
+        if($parent_comment_id == ''){
+            $parent_comment_id = NULL;
+        }
         if($content && $honey_pot_pass){
             if(!($this->cms_user_id()>0)){
                 $valid_email = preg_match('/@.+\./', $email);
@@ -59,18 +62,20 @@ class Blog extends CMS_Priv_Strict_Controller {
                     $error_message = "Invalid email";
                 }
             }
-            if($success){
-                $this->article_model->add_comment($article_id, $name, $email, $website, $content);
+            if($success !== FALSE){
+                $success = TRUE;
+                $this->article_model->add_comment($article_id, $name, $email, $website, $content, $parent_comment_id);
                 $name = '';
                 $email = '';
                 $website = '';
                 $content = '';
+                $parent_comment_id = NULL;
             }
         }
 
         // generate new secret code
         $secret_code = $this->__random_string();
-        $this->session->set_flashdata('__blog_comment_secret_code', $secret_code);
+        $this->session->set_userdata('__blog_comment_secret_code', $secret_code);
 
         $data = array(
             'submenu_screen' => $this->cms_submenu_screen($this->cms_complete_navigation_name('index')),
@@ -80,7 +85,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             'chosen_category' => $this->input->get('category'),
             'keyword' => $this->input->get('keyword'),
             'module_path' => $this->cms_module_path(),
-            'is_user_login' => $this->cms_user_id()>0,            
+            'is_user_login' => $this->cms_user_id()>0,
             'secret_code' => $secret_code,
             "success" => $success,
             "error_message" => $error_message,
@@ -88,9 +93,13 @@ class Blog extends CMS_Priv_Strict_Controller {
             "email" => $email,
             "website" => $website,
             "content" => $content,
+            "parent_comment_id" => $parent_comment_id,
             'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
             'module_path' => $this->cms_module_path(),
             'user_id' => $this->cms_user_id(),
+            'form_url'=> $this->cms_module_path() == 'blog'? 
+                site_url($this->cms_module_path().'/index/'.$article_url.'/#comment-form') : 
+                site_url($this->cms_module_path().'/blog/index/'.$article_url.'/#comment-form'),
         );
         
         $config = array();
@@ -101,7 +110,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             $config['keyword'] = $article['keyword'];
             $config['description'] = $article['description'];
             $config['author'] = $article['author'];
-        }        
+        }
 
         $this->view($this->cms_module_path().'/browse_article_view',$data,
             $this->cms_complete_navigation_name('index'), $config);

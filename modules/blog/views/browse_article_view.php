@@ -4,19 +4,19 @@
     .comment_normal{
         display:none!important;
     }
-	#record_content{
-		margin-top: 5px;
-		margin-bottom: 20px;
-	}
+    #record_content{
+        margin-top: 5px;
+        margin-bottom: 20px;
+    }
     #record_content:empty{
         display:none;
     }
-	.record_container{
-		margin:10px;
-	}
-	.edit_delete_record_container{
-		margin-top: 10px;
-	}
+    .record_container{
+        margin:10px;
+    }
+    .edit_delete_record_container{
+        margin-top: 10px;
+    }
     #record_content_bottom{
         margin-top: 5px;
         display:none;
@@ -29,13 +29,11 @@
     div#article-comment{
         margin-top : 30px;
         padding-top : 20px;
-        padding-left: 25px;
         border-top : 1px solid gray;
     }
     div.comment-item{
         padding-top : 10px;
         padding-bottom : 10px;
-        padding-left : 10px;
     }
     div.comment-header{
         font-size : small;
@@ -87,13 +85,8 @@
         <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
         <?php
             // show add record button
-        	if($allow_navigate_backend){
-        		echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
-        	}
-
-            // show error message if any
-            if(!$success){
-                echo '<div class="alert alert-danger">'.$error_message.'</div>';
+            if($allow_navigate_backend){
+                echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
             }
         ?>
     </div>
@@ -115,7 +108,7 @@
             }
             echo '</div>';
             // edit and delete button
-            if($allow_navigate_backend){                
+            if($allow_navigate_backend){
                 echo '<div class="edit_delete_record_container">';
                 if($is_super_admin || $article['author_user_id'] == $user_id){
                     echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn btn-default edit_record" primary_key = "'.$article['id'].'">Edit</a>';
@@ -131,7 +124,7 @@
             // comment
             $odd_row = TRUE;
             foreach($article['comments'] as $comment){
-                echo '<div class="comment-item well">';
+                echo '<div class="comment-item well" style="margin-left:'.($comment['level']*20).'px;">';
                 echo '<div class="comment-header">';
                 echo '<img style="margin-right:20px; margin-bottom:5px; margin-top:5px; float:left;" src="'.$comment['gravatar_url'].'" />';
                 echo '<span stylel="float:left;">';
@@ -139,26 +132,41 @@
                 if($comment['website'] != ''){
                     echo anchor($comment['website'], '('.$comment['website'].')');
                 }else{
-                    echo '(website not available)';
+                    echo '&nbsp;';
                 }
                 echo '</span>';
                 echo '</div>';
                 echo '<div style="clear:both; margin-top:10px;">';
                 echo str_replace(PHP_EOL, '<br />', $comment['content']);
                 echo '</div>';
+                echo '<div>';
+                echo '<a id="reply_comment_link_'.$comment['comment_id'].'" class="reply_comment_link" href="#" comment_id="'.$comment['comment_id'].'">Reply</a>';
+                echo '<a id="reply_cancel_link_'.$comment['comment_id'].'" class="reply_cancel_link" style="display:none;" href="#" comment_id="'.$comment['comment_id'].'">Cancel</a>';
+                echo '</div>';
+                echo '<div id="reply_comment_form_'.$comment['comment_id'].'"></div>';
                 echo '</div>';
             }
             echo br();
-            // comment form
+            // comment form            
             if($article['allow_comment']){
-                echo '<h4>Add Comments </h4>';
-                echo form_open('','class="form  form-horizontal"');
+                echo '<div id="comment-box">';
+                echo '<a name="comment-form" style="margin-top: 50px;">&nbsp;</a>';
+                echo '<h4>Comment</h4>';
+                // show error message if any
+                if($success !== NULL){
+                    if(!$success){
+                        echo '<div style="margin-top: 10px;" class="alert alert-danger">'.$error_message.'</div>';
+                    }else{
+                        echo '<div style="margin-top: 10px;" class="alert alert-success">Success</div>';
+                    }
+                }
+                echo form_open($form_url,'class="form  form-horizontal"');
                 echo form_hidden('article_id', $article['id']);
-                //echo form_input(array('name'=>'secret_code', 'value'=>$secret_code, 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'name', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'website', 'value'=>'', 'class'=>'comment_normal'));
                 echo form_input(array('name'=>'content', 'value'=>'', 'class'=>'comment_normal'));
+                echo form_input(array('name'=>'parent_comment_id', 'value'=>$parent_comment_id, 'id'=>'parent_comment_id', 'class'=>'comment_normal'));
                 if(!$is_user_login){
 
                     echo '<div class="form-group">';
@@ -172,7 +180,7 @@
                     echo '<div class="form-group">';
                     echo form_label('Email', ' for="" class="control-label col-sm-2');
                     echo '<div class="col-sm-8">';
-                    echo form_input($secret_code.'xemail', $name, 
+                    echo form_input($secret_code.'xemail', $email, 
                         'id="'.$secret_code.'xemail" placeholder="Your email address" class="form-control"');
                     echo '</div>';
                     echo '</div>';
@@ -180,7 +188,7 @@
                 echo '<div class="form-group">';
                 echo form_label('Website', ' for="" class="control-label col-sm-2');
                 echo '<div class="col-sm-8">';
-                echo form_input($secret_code.'xwebsite', $name, 
+                echo form_input($secret_code.'xwebsite', $website, 
                     'id="'.$secret_code.'xwebsite" placeholder="Your website" class="form-control"');
                 echo '</div>';
                 echo '</div>';
@@ -188,14 +196,15 @@
                 echo '<div class="form-group">';
                 echo form_label('Comment', ' for="" class="control-label col-sm-2');
                 echo '<div class="col-sm-8">';
-                echo form_textarea($secret_code.'xcomment', $name, 
-                    'id="'.$secret_code.'xcomment" placeholder="Your Comment" class="form-control text-area-comment"');
+                echo form_textarea($secret_code.'xcontent', $content, 
+                    'id="'.$secret_code.'xcontent" placeholder="Your Comment" class="form-control text-area-comment"');
                 echo '</div>';
                 echo '</div>';
 
                 echo '<div class="form-group"><div class="col-sm-offset-2 col-sm-8">';
                 echo form_submit('submit', 'Comment', 'class="btn btn-primary"');
                 echo '</div></div>';
+                echo '</div>'; // end of comment-box
             }
             echo '</div>';
         }else if(isset($article) && $article == FALSE){
@@ -266,8 +275,6 @@
         fetch_more_data();
     }
 
-    
-
     // main program
     $(document).ready(function(){
 
@@ -308,6 +315,37 @@
         // input category change
         $('#input_category').change(function(){
             reset_content();
+        });
+        
+        // reply_comment_link
+        $('.reply_comment_link').click(function(){
+            var comment_id = $(this).attr('comment_id');
+            // move the form
+            var html = $('#comment-box').html();
+            $('#reply_comment_form_'+comment_id).html(html);
+            $('#comment-box').html('');
+            // initialize parent_comment_id
+            $('#parent_comment_id').val(comment_id);
+            // hide this, and show that
+            $(this).hide();
+            $('#reply_cancel_link_'+comment_id).show();
+            // that's enough, no redirect please
+            event.preventDefault();
+        });
+        
+        // reply_cancel_link
+        $('.reply_cancel_link').click(function(){
+            var comment_id = $(this).attr('comment_id');
+            // move the form
+            var html = $('#reply_comment_form_'+comment_id).html();
+            $('#comment-box').html(html);
+            $('#reply_comment_form_'+comment_id).html('');
+            // initialize parent_comment_id
+            $('#parent_comment_id').val('');
+            // hide this, and show that
+            $(this).hide();
+            $('#reply_comment_link_'+comment_id).show();
+            event.preventDefault();
         });
 
         // scroll

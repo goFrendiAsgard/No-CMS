@@ -8,6 +8,65 @@
 class CMS_Model extends CI_Model
 {
     private $__cms_model_properties;
+    
+    private function __update(){
+        $old_version = cms_config('__cms_version');
+        $current_version = '0.6.6.0';
+        
+        if($old_version !== $current_version){
+            $this->load->dbforge();
+            
+            // make site_layout configuration
+            if($this->cms_get_config('site_layout') == NULL){
+                $this->cms_set_config('site_layout', 'default');
+            }
+            
+            // copy from grocery_crud config from first-time to current config
+            $source = APPPATH.'config/first-time/grocery_crud.php';
+            if(CMS_SUBSITE == ''){
+                $destination = APPPATH.'config/grocery_crud.php';
+            }else{
+                $destination = APPPATH.'config/site-'.CMS_SUBSITE.'/grocery_crud.php';
+            }
+            copy($source, $destination);
+            
+            // table : main navigation
+            $table_name = cms_table_name('main_navigation');
+            $field_list = $this->db->list_fields($table_name);
+            $missing_fields = array(
+                'notif_url' => array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '100',
+                    'null' => TRUE,
+                ),
+                'bootstrap_glyph' => array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '50',
+                    'null' => TRUE,
+                ),
+                'default_layout' => array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '50',
+                    'null' => TRUE,
+                ),
+                'default_theme' => array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '50',
+                    'null' => TRUE,
+                ),
+            );
+            $fields = array();
+            foreach($missing_fields as $key=>$value){
+                if(!in_array($key, $field_list)){
+                    $fields[$key] = $value;
+                }
+            }
+            $this->dbforge->add_column($table_name, $fields);
+
+            // write new version
+            cms_config('__cms_version', $current_version);
+        }
+    }
 
     public function __construct()
     {
@@ -42,6 +101,7 @@ class CMS_Model extends CI_Model
             'language_dictionary' => array(),
             'config' => array()
         );
+        $this->__update();
 
     }
 
@@ -238,7 +298,7 @@ class CMS_Model extends CI_Model
         }
 
         $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
-        $query         = $this->db->query("SELECT navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, active,
+        $query         = $this->db->query("SELECT navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active,
                     (
                         (authorization_id = 1) OR
                         (authorization_id = 2 AND $not_login) OR
@@ -278,6 +338,13 @@ class CMS_Model extends CI_Model
                     $url = site_url($row->url);
                 }
             }
+            if(trim($row->notif_url) == ''){
+                $notif_url = '';
+            } else if (strpos(strtoupper($row->notif_url), 'HTTP://') !== FALSE || strpos(strtoupper($row->notif_url), 'HTTPS://') !== FALSE) {
+                $notif_url = $row->notif_url;
+            } else {
+                $notif_url = site_url($row->notif_url);
+            }
             $result[] = array(
                 "navigation_id" => $row->navigation_id,
                 "navigation_name" => $row->navigation_name,
@@ -285,6 +352,7 @@ class CMS_Model extends CI_Model
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "url" => $url,
+                "notif_url" => $notif_url,
                 "is_static" => $row->is_static,
                 "active" => $row->active,
                 "child" => $children,
@@ -309,7 +377,7 @@ class CMS_Model extends CI_Model
         $login      = $user_name ? "(1=1)" : "(1=2)";
         $super_user = ($user_id == 1 || in_array(1,$this->cms_user_group_id())) ? "(1=1)" : "(1=2)";
 
-        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, active
+        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active
                         FROM
                             ".cms_table_name('main_navigation')." AS n,
                             ".cms_table_name('main_quicklink')." AS q
@@ -356,6 +424,13 @@ class CMS_Model extends CI_Model
                     $url = site_url($row->url);
                 }
             }
+            if(trim($row->notif_url) == ''){
+                $notif_url = '';
+            } else if (strpos(strtoupper($row->notif_url), 'HTTP://') !== FALSE || strpos(strtoupper($row->notif_url), 'HTTPS://') !== FALSE) {
+                $notif_url = $row->notif_url;
+            } else {
+                $notif_url = site_url($row->notif_url);
+            }
             $result[] = array(
                 "navigation_id" => $row->navigation_id,
                 "navigation_name" => $row->navigation_name,
@@ -363,6 +438,7 @@ class CMS_Model extends CI_Model
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "url" => $url,
+                "notif_url" => $notif_url,
                 "is_static" => $row->is_static,
                 "child" => $children,
                 "active" => $row->active,
@@ -517,8 +593,41 @@ class CMS_Model extends CI_Model
                 $submenus      = $this->cms_navigations($navigation_id, 1);
             }
         }
+        
+        $html = '
+        <script type="text/javascript">
+            function __adjust_component(identifier){
+                var max_height = 0;
+                $(identifier).each(function(){
+                    $(this).css("margin-bottom", 0);
+                    if($(this).height()>max_height){
+                        max_height = $(this).height();
+                    }
+                });
+                $(identifier).each(function(){
+                    var margin_bottom = 0;               
+                    if($(this).height()<max_height){
+                        margin_bottom = max_height - $(this).height();
+                    }
+                    margin_bottom += 10;
+                    $(this).css("margin-bottom", margin_bottom);
+                });
+            }
+            function __adjust_thumbnail_submenu(){
+                __adjust_component(".thumbnail_submenu img");
+                __adjust_component(".thumbnail_submenu div.caption");
+                __adjust_component(".thumbnail_submenu");
+            }
+            $(window).load(function(){
+                __adjust_thumbnail_submenu();
+                // resize
+                $(window).resize(function(){
+                    __adjust_thumbnail_submenu();
+                });
+            });
+        </script>';
 
-        $html = '<div class="row">';
+        $html .= '<div class="row">';
         $module_path = $this->cms_module_path();
         $image_directories = array();
         if($module_path != ''){
@@ -530,11 +639,13 @@ class CMS_Model extends CI_Model
             $image_directories[] = "modules/$other_module_path/assets/navigation_icon";
         }
         foreach ($submenus as $submenu) {
+            $navigation_id   = $submenu["navigation_id"];
             $navigation_name = $submenu["navigation_name"];
             $title           = $submenu["title"];
             $url             = $submenu["url"];
             $description     = $submenu["description"];
             $allowed         = $submenu["allowed"];
+            $notif_url       = $submenu["notif_url"];
             if (!$allowed) continue;
 
             // check image in current module
@@ -563,60 +674,53 @@ class CMS_Model extends CI_Model
                     break;
                 }
             }
+            
+            $badge = '';
+            if($notif_url != ''){
+                $badge_id = '__cms_notif_submenu_screen_'.$navigation_id;
+                $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
+                $badge.= '<script type="text/javascript">
+                        $(window).load(function(){
+                            setInterval(function(){
+                                $.ajax({
+                                    dataType:"json",
+                                    url: "'.addslashes($notif_url).'",
+                                    success: function(response){
+                                        if(response.success){
+                                            $("#'.$badge_id.'").html(response.notif);
+                                        }
+                                        __adjust_thumbnail_submenu();
+                                    }
+                                });
+                            }, 1000);
+                        });
+                    </script>
+                ';
+            }
 
 
             // default icon
             if ($image_file_path == '') {
                 $image_file_path = 'assets/nocms/images/icons/package.png';
             }
+            $html .= '<a href="' . $url . '" style="text-decoration:none;">';
             $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
             $html .= '<div class="thumbnail thumbnail_submenu">';
-            $html .= '<a href="' . $url . '" style="text-decoration:none;">';
+            
             if ($image_file_path != '') {
                 $html .= '<img style="margin-top:10px; max-height:60px;" src="' . base_url($image_file_path) . '" />';
             }
             
             $html .= '<div class="caption">';
-            $html .= '<h4>'.$title.'</h4>';
+            $html .= '<h4>'.$title.$badge.'</h4>';
             $html .= '<p>'.$description.'</p>';
             $html .= '</div>'; // end of div.caption            
             $html .= '</div>'; // end of div.thumbnail
-            $html .= '</a>';
             $html .= '</div>'; // end of div.col-xs-6 col-sm-4 col-md-3
+            $html .= '</a>';
         }
         $html .= '</div>';
-        $html .= '
-        <script type="text/javascript">
-            $(window).load(function(){
-                function __adjust_component(identifier){
-                    var max_height = 0;
-                    $(identifier).each(function(){
-                        $(this).css("margin-bottom", 0);
-                        if($(this).height()>max_height){
-                            max_height = $(this).height();
-                        }
-                    });
-                    $(identifier).each(function(){
-                        var margin_bottom = 0;               
-                        if($(this).height()<max_height){
-                            margin_bottom = max_height - $(this).height();
-                        }
-                        margin_bottom += 10;
-                        $(this).css("margin-bottom", margin_bottom);
-                    });
-                }
-                function __adjust_thumbnail_submenu(){
-                    __adjust_component(".thumbnail_submenu img");
-                    __adjust_component(".thumbnail_submenu div.caption");
-                }
-                __adjust_thumbnail_submenu();
-
-                // resize
-                $(window).resize(function(){
-                    __adjust_thumbnail_submenu();
-                });
-            });
-        </script>';
+        
         return $html;
     }
 
@@ -1853,7 +1957,7 @@ class CMS_Model extends CI_Model
             $module_path = $this->cms_module_path();
             $module_name = $this->cms_module_name($module_path);
             $module_site_url = site_url($module_path);
-            $module_base_url = base_url($module_path);
+            $module_base_url = base_url('modules/'.$module_path);
             if ($module_site_url[strlen($module_site_url) - 1] != '/')
                 $module_site_url .= '/';
             if ($module_base_url[strlen($module_base_url) - 1] != '/')

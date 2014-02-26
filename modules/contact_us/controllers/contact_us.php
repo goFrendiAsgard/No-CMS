@@ -36,7 +36,7 @@ class contact_us extends CMS_Priv_Strict_Controller {
         }
 
         // get previously generated secret code
-        $previous_secret_code = $this->session->flashdata('__contact_us_secret_code');
+        $previous_secret_code = $this->session->userdata('__contact_us_secret_code');
         if($previous_secret_code === NULL){
             $previous_secret_code = $this->__random_string();
         }
@@ -81,7 +81,7 @@ class contact_us extends CMS_Priv_Strict_Controller {
 
         // generate new secret code
         $secret_code = $this->__random_string();
-        $this->session->set_flashdata('__contact_us_secret_code', $secret_code);
+        $this->session->set_userdata('__contact_us_secret_code', $secret_code);
 
         $data['secret_code'] = $secret_code;
         $data['success'] = $success;

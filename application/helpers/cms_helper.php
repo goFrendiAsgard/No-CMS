@@ -24,7 +24,7 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
             return $value;
         }else{
             $str = file_get_contents($file_name);
-            $replacement = '${1}'.$value.'${5}';
+            $replacement = '${1}'.addslashes($value).'${5}';
             $found = FALSE;
             foreach($pattern as $single_pattern){
                 if(preg_match($single_pattern,$str)){
@@ -33,7 +33,7 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
                 }
             }
             if(!$found){
-                $str .= PHP_EOL.'$config[\''.$key.'\'] = \''.$value.'\';';
+                $str .= PHP_EOL.'$config[\''.$key.'\'] = \''.addslashes($value).'\';';
             }
             else{
                 $str = preg_replace($pattern, $replacement, $str);
