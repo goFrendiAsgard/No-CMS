@@ -172,7 +172,7 @@ class Install_Model extends CI_Model{
             // get the "allow_create" and "allow_drop" privileges
             @mysql_connect($this->db_host.':'.$this->db_port , $this->db_username, $this->db_password);
             $result = @mysql_query('SHOW GRANTS FOR CURRENT_USER;');
-            if($result !== NULL){
+            if($result !== NULL && $result !== FALSE){
                 while($row = mysql_fetch_row($result)){
                     if(strpos($row[0], 'ALL PRIVILEGES')){
                         $allow_drop = TRUE;
