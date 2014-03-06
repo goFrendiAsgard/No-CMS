@@ -71,7 +71,7 @@
         echo '          $("#div_module_'.$i.'_info").html(html);';
         echo '      },';
         echo '      error:function(xhr, textStatus, errorThrown){';
-        echo '          setTimeout(check_module_status_'.$i.', 1000);';    
+        echo '          setTimeout(check_module_status_'.$i.', 10000);';    
         echo '      }';
         echo '  })';
         echo '}';

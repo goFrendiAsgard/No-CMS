@@ -1495,7 +1495,7 @@ class Main extends CMS_Controller
                                             }
                                         }
                                     });
-                                }, 1000);
+                                }, 50000);
                             });
                         </script>
                     ';
@@ -1566,7 +1566,7 @@ class Main extends CMS_Controller
                                     __top_nav_get_badge_'.$badge_id.'();
                                     setInterval(function(){
                                         __top_nav_get_badge_'.$badge_id.'();
-                                    }, 10000);
+                                    }, 50000);
                                 });
                             </script>
                         ';
@@ -1806,7 +1806,7 @@ class Main extends CMS_Controller
                             __quicklink_get_badge_'.$badge_id.'();
                             setInterval(function(){
                                 __quicklink_get_badge_'.$badge_id.'();
-                            }, 10000);
+                            }, 50000);
                         });
                     </script>
                 ';

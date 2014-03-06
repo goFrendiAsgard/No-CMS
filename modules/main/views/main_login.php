@@ -23,4 +23,4 @@
         }
     }
 ?>
-<div id="login_message"><?php echo isset($message)?$message:''; ?></div>
+<div id="login_message" class="alert alert-danger"><?php echo isset($message)?$message:''; ?></div>

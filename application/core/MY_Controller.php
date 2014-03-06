@@ -999,7 +999,7 @@ class CMS_Controller extends MX_Controller
                         }
                     }
                 });
-            },10000);';
+            },50000);';
             $login_code .= '</script>';
             $this->template->append_metadata($login_code);
             

@@ -55,7 +55,7 @@
             },
             error: function(xhr, textStatus, errorThrown){
                 if(textStatus != 'abort'){
-                    setTimeout(check_user_exists, 500);    
+                    setTimeout(check_user_exists, 10000);    
                 }
             }
         });

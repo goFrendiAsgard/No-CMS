@@ -685,7 +685,7 @@
                 },
                 error: function(xhr, textStatus, errorThrown){
                     if(textStatus != 'abort'){
-                        setTimeout(check, 1000);
+                        setTimeout(check, 50000);
                     }
                 }
             });
