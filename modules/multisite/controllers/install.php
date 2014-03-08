@@ -12,7 +12,7 @@ class Install extends CMS_Module_Installer {
     protected $DEPENDENCIES = array();
     protected $NAME         = 'admin.multisite';
     protected $DESCRIPTION  = 'One codebase to rule them all ...';
-    protected $VERSION      = '0.0.0';
+    protected $VERSION      = '0.0.1';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -36,6 +36,19 @@ class Install extends CMS_Module_Installer {
     // UPGRADE
     protected function do_upgrade($old_version){
         // Add your migration logic here.
+        // table : subsite
+        $table_name = $this->cms_complete_table_name('subsite');
+        $field_list = $this->db->list_fields($table_name);
+        $missing_fields = array(
+            'user_id'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+        );
+        $fields = array();
+        foreach($missing_fields as $key=>$value){
+            if(!in_array($key, $field_list)){
+                $fields[$key] = $value;
+            }
+        }
+        $this->dbforge->add_column($table_name, $fields);
     }
 
     // OVERRIDE THIS FUNCTION TO PROVIDE "Module Setting" FEATURE
@@ -80,7 +93,7 @@ class Install extends CMS_Module_Installer {
 
         // remove parent of all navigations
         $this->remove_navigation($this->cms_complete_navigation_name('index'));
-        
+
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('subsite'), TRUE);
     }
@@ -91,7 +104,7 @@ class Install extends CMS_Module_Installer {
 
         // parent of all navigations
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Multisite',
-            ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), $this->PRIV_EVERYONE, NULL, 
+            ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), $this->PRIV_EVERYONE, NULL,
             NULL, 'Browse subsites', 'glyphicon-dashboard');
 
         if(CMS_SUBSITE == ''){
@@ -104,7 +117,7 @@ class Install extends CMS_Module_Installer {
             );
         }
 
-        
+
         // create tables
         $fields = array(
             'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
@@ -115,20 +128,21 @@ class Install extends CMS_Module_Installer {
             'description'=> array("type"=>'text', "null"=>TRUE),
             'modules'=>array("type"=>'text', "null"=>TRUE),
             'themes'=>array("type"=>'text', "null"=>TRUE),
+            'user_id'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE),
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('subsite'));
-        
+
     }
 
     // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){         
+    private function backup_database($table_names, $limit = 100){
         if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
             $module_path = $this->cms_module_path();
             $this->load->dbutil();
             $sql = '';
-            
+
             // create DROP TABLE syntax
             for($i=count($table_names)-1; $i>=0; $i--){
                 $table_name = $table_names[$i];
@@ -136,8 +150,8 @@ class Install extends CMS_Module_Installer {
             }
             if($sql !='')$sql.= PHP_EOL;
 
-            // create CREATE TABLE and INSERT syntax 
-            
+            // create CREATE TABLE and INSERT syntax
+
             $prefs = array(
                     'tables'      => $table_names,
                     'ignore'      => array(),
@@ -147,7 +161,7 @@ class Install extends CMS_Module_Installer {
                     'add_insert'  => TRUE,
                     'newline'     => PHP_EOL
                   );
-            $sql.= @$this->dbutil->backup($prefs);        
+            $sql.= @$this->dbutil->backup($prefs);
 
             //write file
             $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
@@ -155,7 +169,7 @@ class Install extends CMS_Module_Installer {
                     BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
                     $sql
                 );
-        }       
+        }
 
     }
 }
