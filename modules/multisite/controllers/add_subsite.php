@@ -61,7 +61,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
         $this->install_model->auth_enable_aol              = $this->input->post('auth_enable_aol')=='true';
     }
 
-    public function index(){     
+    public function index(){
         $data = NULL;
         $this->view($this->cms_module_path().'/add_subsite_index', $data, $this->cms_complete_navigation_name('add_subsite'));
     }
@@ -96,6 +96,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
             'description'=>$this->input->post('description'),
             'use_subdomain'=>$this->input->post('use_subdomain')=='true',
             'aliases'=>$this->input->post('aliases'),
+            'user_id'=>$this->cms_user_id()
         );
         $this->db->insert($this->cms_complete_table_name('subsite'), $data);
         $this->load->model($this->cms_module_path().'/subsite_model');

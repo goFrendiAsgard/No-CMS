@@ -29,8 +29,8 @@ class multisite extends CMS_Priv_Strict_Controller {
         return $new_array;
     }
 
-    public function index(){   
-        $data = array(            
+    public function index(){
+        $data = array(
             'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_allow_navigate($this->cms_complete_navigation_name('add_subsite')),
             'backend_url' => site_url($this->cms_module_path().'/add_subsite/index'),
             'module_path' => $this->cms_module_path(),
@@ -42,17 +42,12 @@ class multisite extends CMS_Priv_Strict_Controller {
     public function edit($site_name){
         $this->cms_guard_page($this->cms_complete_navigation_name('index'), 'modify_subsite');
         $this->load->model($this->cms_module_path().'/subsite_model');
+        $is_super_admin = in_array($this->cms_user_id(), $this->cms_user_group_id());
         // get module and theme list
         $module_list = $this->subsite_model->module_list();
         $theme_list = $this->subsite_model->theme_list();
         // if btn_save clicked
         if($this->input->post('btn_save')){
-            $activated_module_list = $this->input->post('modules');
-            $activated_theme_list = $this->input->post('themes');
-            $activated_module_list = $activated_module_list===NULL? array() : $activated_module_list;
-            $activated_theme_list = $activated_theme_list===NULL? array() : $activated_theme_list;
-            $modules = $activated_module_list == NULL? '' : implode(',', $activated_module_list);
-            $themes = $activated_theme_list == NULL? '' : implode(',', $activated_theme_list);
             $description = $this->input->post('description');
             $name = $this->input->post('name');
             $use_subdomain = $this->input->post('use_subdomain') == 'True'? 1 : 0;
@@ -67,76 +62,33 @@ class multisite extends CMS_Priv_Strict_Controller {
                 move_uploaded_file($tmp_name, $upload_path.$file_name);
             }
             $logo = $file_name;
-            
+
             $data = array(
-                    'modules'=>$modules,
-                    'themes'=>$themes,
                     'description'=>$description,
                     'use_subdomain'=>$use_subdomain,
                 );
             if($logo !== NULL){
                 $data['logo'] = $logo;
             }
+            if($is_super_admin){
+                $activated_module_list = $this->input->post('modules');
+                $activated_theme_list = $this->input->post('themes');
+                $activated_module_list = $activated_module_list===NULL? array() : $activated_module_list;
+                $activated_theme_list = $activated_theme_list===NULL? array() : $activated_theme_list;
+                $modules = $activated_module_list == NULL? '' : implode(',', $activated_module_list);
+                $themes = $activated_theme_list == NULL? '' : implode(',', $activated_theme_list);
+                $data['modules'] = $modules;
+                $data['themes'] = $themes;
+            }
             $this->db->update($this->cms_complete_table_name('subsite'), $data, array('name'=>$site_name));
             $this->subsite_model->update_configs();
-
-            // edit module configuration file
-            foreach($module_list as $module){
-                // get subsite allowed of this module
-                $subsite_auth_file = FCPATH . 'modules/' . $module . '/subsite_auth.php';
-                if (file_exists($subsite_auth_file)){
-                    unset($subsite_allowed);
-                    include($subsite_auth_file);
-                }
-                if(!isset($subsite_allowed) || $subsite_allowed == NULL){
-                    $subsite_allowed = array();
-                }
-
-                // add if not in subsite allowed
-                $content = file_get_contents($subsite_auth_file);
-                if(in_array($module, $activated_module_list) && !in_array($site_name, $subsite_allowed)){
-                    // to be activated
-                    $content .= PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';';
-                    @file_put_contents($subsite_auth_file, $content);
-                }else if(!in_array($module, $activated_module_list) && in_array($site_name, $subsite_allowed)){
-                    // to be deactivated
-                    $content = str_replace( PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';', '', $content);
-                    @file_put_contents($subsite_auth_file, $content);
-                }
-            }
-
-            // edit theme configuration file
-            foreach($theme_list as $theme){
-                // get subsite allowed of this theme
-                $subsite_auth_file = FCPATH . 'themes/' . $theme . '/subsite_auth.php';
-                if (file_exists($subsite_auth_file)){
-                    unset($subsite_allowed);
-                    include($subsite_auth_file);
-                }
-                if(!isset($subsite_allowed) || $subsite_allowed == NULL){
-                    $subsite_allowed = array();
-                }
-
-                // add if not in subsite allowed
-                $content = file_get_contents($subsite_auth_file);
-                if(in_array($theme, $activated_theme_list) && !in_array($site_name, $subsite_allowed)){
-                    // to be activated
-                    $content .= PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';';
-                    @file_put_contents($subsite_auth_file, $content);
-                }else if(!in_array($theme, $activated_theme_list) && in_array($site_name, $subsite_allowed)){
-                    // to be deactivated
-                    $content = str_replace( PHP_EOL.'$subsite_allowed[] = \''.$site_name.'\';', '', $content);
-                    @file_put_contents($subsite_auth_file, $content);
-                }
-            }
-
         }
         // get data
         $subsite = $this->subsite_model->get_one_data($site_name);
         $data = array(
-            'edit_url' => $this->cms_module_path() == 'multisite'? 
+            'edit_url' => $this->cms_module_path() == 'multisite'?
                 site_url($this->cms_module_path().'/edit/'.$site_name) :
-                site_url($this->cms_module_path().'/multisite/edit/'.$site_name),         
+                site_url($this->cms_module_path().'/multisite/edit/'.$site_name),
             'description' => $subsite->description,
             'name' => $subsite->name,
             'logo' => $subsite->logo,
@@ -146,6 +98,7 @@ class multisite extends CMS_Priv_Strict_Controller {
             'aliases'=> $subsite->aliases,
             'module_list' => $this->make_associative_array($module_list),
             'theme_list' => $this->make_associative_array($theme_list),
+            'is_super_admin' => $is_super_admin,
         );
         // show
         $config = array('privileges'=>array('modify_subsite'));
@@ -170,7 +123,7 @@ class multisite extends CMS_Priv_Strict_Controller {
         // get the original site_url (without site-* or subdomain)
         $site_url = site_url();
         // remove any site-*
-        $site_url = preg_replace('/site-.*/', '', $site_url);        
+        $site_url = preg_replace('/site-.*/', '', $site_url);
         // remove any relevant subdomain
         include(FCPATH.'site.php');
         $subdomain_prefixes = $available_site;

@@ -23,7 +23,7 @@
 </style>
 <?php
     echo '<h3> Edit '.$name.' sub-site</h3>';
-    echo form_open_multipart($edit_url, 'class="form form-horizontal"');    
+    echo form_open_multipart($edit_url, 'class="form form-horizontal"');
 
     echo '<div class="form-group">';
     echo form_label('Logo', ' for="" class="control-label col-sm-4');
@@ -38,39 +38,40 @@
     echo '</div>';
     echo '</div>';
 
-    echo '<div class="form-group">';    
+    echo '<div class="form-group">';
     echo '<div class="col-sm-offset-4 col-sm-8">';
     echo form_checkbox('use_subdomain','True',$use_subdomain==1, 'id="use_subdomain"');
     echo form_label('Use Subdomain', ' for="" class="control-label');
     echo '</div>';
     echo '</div>';
-    
+
     echo '<div class="form-group">';
     echo form_label('Aliases', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_input('aliases', $aliases, 
+    echo form_input('aliases', $aliases,
         'id="aliases" placeholder="Aliases (comma separated)" class="form-control"');
     echo '</div>';
     echo '</div>';
+    if($is_super_admin){
+        echo '<div class="form-group">';
+        echo form_label('Private Themes Allowed', ' for="" class="control-label col-sm-4');
+        echo '<div class="col-sm-8">';
+        echo form_dropdown('themes[]', $theme_list, $themes, ' multiple id="themes" placeholder="Allowed Themes" class="form-control chosen-multiple-select"');
+        echo '</div>';
+        echo '</div>';
 
-    echo '<div class="form-group">';
-    echo form_label('Private Themes Allowed', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_dropdown('themes[]', $theme_list, $themes, ' multiple id="themes" placeholder="Allowed Themes" class="form-control chosen-multiple-select"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('Private Modules Allowed', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_dropdown('modules[]', $module_list, $modules, ' multiple id="modules" placeholder="Allowed Themes" class="form-control chosen-multiple-select"');
-    echo '</div>';
-    echo '</div>';
+        echo '<div class="form-group">';
+        echo form_label('Private Modules Allowed', ' for="" class="control-label col-sm-4');
+        echo '<div class="col-sm-8">';
+        echo form_dropdown('modules[]', $module_list, $modules, ' multiple id="modules" placeholder="Allowed Themes" class="form-control chosen-multiple-select"');
+        echo '</div>';
+        echo '</div>';
+    }
 
     echo '<div class="form-group">';
     echo form_label('Description', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_textarea('description', $description, 
+    echo form_textarea('description', $description,
         'id="description" placeholder="Description" class="form-control"');
     echo '</div>';
     echo '</div>';

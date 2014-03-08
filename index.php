@@ -166,13 +166,40 @@ switch (ERROR_REPORTING)
 // END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
 // --------------------------------------------------------------------
 
+// The "domain" function was written by: gustavo.andriulo@vulcabras.com.ar
+// and posted here: http://www.php.net/manual/en/function.parse-url.php
+function domain($domainb)
+{
+    $bits = explode('/', $domainb);
+    if ($bits[0]=='http:' || $bits[0]=='https:')
+    {
+        $domainb= $bits[2];
+    } else {
+        $domainb= $bits[0];
+    }
+    unset($bits);
+    $bits = explode('.', $domainb);
+    $idz=count($bits);
+    $idz-=3;
+    if (strlen($bits[($idz+2)])==2) {
+        $url=$bits[$idz].'.'.$bits[($idz+1)].'.'.$bits[($idz+2)];
+    } else if (strlen($bits[($idz+2)])==0) {
+        $url=$bits[($idz)].'.'.$bits[($idz+1)];
+    } else if($idz>-2) {
+        $url=$bits[($idz+1)].'.'.$bits[($idz+2)];
+    } else{
+        $url=$domainb;
+    }
+    return $url;
+}
 
+// define ENVIRONMENT, CMS_SUBSITE and USE_SUBDOMAIN contants
 if(!file_exists('./'.$application_folder.'/config/database.php')){
     define('ENVIRONMENT', 'first-time');
     define('CMS_SUBSITE', '');
     define('USE_SUBDOMAIN', FALSE);
     $available_site = array();
-}else{      
+}else{
     // multisite, can use GET or subdomain
     // create site.php
     if(!file_exists('./site.php')){
@@ -187,10 +214,11 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
             define('USE_SUBDOMAIN', FALSE);
         }else{
             $host = $_SERVER['HTTP_HOST'];
+            $real_domain_name = domain($host);
             if(isset($site_alias[$host]) && $site_alias[$host] != ''){
                 $cms_subsite = $site_alias[$host];
                 define('USE_SUBDOMAIN', TRUE);
-            } else if (strlen($host)>0){
+            } else if (strlen($host)> 0 && (count(explode('.',$host)) > count(explode('.',$real_domain_name)) )){
                 $host_array = explode('.', $host);
                 $cms_subsite = $host_array[0];
                 define('USE_SUBDOMAIN', TRUE);
@@ -213,7 +241,7 @@ if(!isset($_SESSION)){
 }
 $_SESSION['__cms_subsite'] = CMS_SUBSITE;
 
-if( CMS_SUBSITE != '' && 
+if( CMS_SUBSITE != '' &&
 (!in_array(CMS_SUBSITE, $available_site) || !is_dir('./'.$application_folder.'/config/site-'.CMS_SUBSITE)) ){
     header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
     echo 'Website not found';
