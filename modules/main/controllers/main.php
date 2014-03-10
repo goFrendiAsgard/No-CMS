@@ -58,22 +58,22 @@ class Main extends CMS_Controller
         return $data;
     }
 
-    protected function recurse_copy($src,$dst) { 
-        $dir = opendir($src); 
-        @mkdir($dst); 
-        while(false !== ( $file = readdir($dir)) ) { 
-            if (( $file != '.' ) && ( $file != '..' )) { 
-                if ( is_dir($src . '/' . $file) ) { 
-                    $this->recurse_copy($src . '/' . $file,$dst . '/' . $file); 
-                } 
-                else { 
-                    copy($src . '/' . $file,$dst . '/' . $file); 
-                } 
-            } 
-        } 
-        closedir($dir); 
+    protected function recurse_copy($src,$dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+        while(false !== ( $file = readdir($dir)) ) {
+            if (( $file != '.' ) && ( $file != '..' )) {
+                if ( is_dir($src . '/' . $file) ) {
+                    $this->recurse_copy($src . '/' . $file,$dst . '/' . $file);
+                }
+                else {
+                    copy($src . '/' . $file,$dst . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
     }
-    
+
     protected function rrmdir($dir) {
         foreach(glob($dir . '/*') as $file) {
             if(is_dir($file)){
@@ -83,17 +83,17 @@ class Main extends CMS_Controller
             }
         }
         unlink($dir.'/.htaccess');
-        rmdir($dir); 
+        rmdir($dir);
     }
 
     public function module_management()
     {
         $this->cms_guard_page('main_module_management');
-        
+
         if(isset($_FILES['userfile'])){
-            // upload new module        
+            // upload new module
             $directory = basename($_FILES['userfile']['name'],'.zip');
-            
+
             // subsite_auth
             $subsite_auth_file = FCPATH.'modules/'.$directory.'/subsite_auth.php';
             $backup_subsite_auth_file = FCPATH.'modules/'.$directory.'_subsite_auth.php';
@@ -111,8 +111,8 @@ class Main extends CMS_Controller
                 $config_backup = TRUE;
             }
         }
-        
-        
+
+
         $data['upload'] = $this->upload(FCPATH.'modules/', 'userfile', 'upload');
         if($data['upload']['success']){
             if($subsite_backup){
@@ -140,9 +140,9 @@ class Main extends CMS_Controller
     {
         $this->cms_guard_page('main_change_theme');
         if(isset($_FILES['userfile'])){
-            // upload new module        
+            // upload new module
             $directory = basename($_FILES['userfile']['name'],'.zip');
-            
+
             // subsite_auth
             $subsite_auth_file = FCPATH.'themes'.$directory.'/subsite_auth.php';
             $backup_subsite_auth_file = FCPATH.'themes/'.$directory.'_subsite_auth.php';
@@ -154,7 +154,7 @@ class Main extends CMS_Controller
         }
         // upload new theme
         $data['upload'] = $this->upload('./themes/', 'userfile', 'upload');
-        
+
         if($data['upload']['success']){
             if($subsite_backup){
                 copy($backup_subsite_auth_file, $subsite_auth_file);
@@ -165,7 +165,7 @@ class Main extends CMS_Controller
         // show the view
         if (isset($theme)) {
             $this->cms_set_config('site_theme', $theme);
-            redirect('main/change_theme');
+            redirect('main/change_theme','refresh');
         } else {
             $data['themes'] = $this->cms_get_theme_list();
             $data['upload_new_theme_caption'] = $this->cms_lang('Upload New Theme');
@@ -220,9 +220,9 @@ class Main extends CMS_Controller
                             $old_url_part = $new_old_url_part;
                         }
                     }
-                    redirect($old_url);
+                    redirect($old_url,'refresh');
                 } else {
-                    redirect('');
+                    redirect('','refresh');
                 }
             } else {
 
@@ -254,7 +254,7 @@ class Main extends CMS_Controller
     public function activate($activation_code)
     {
         $this->cms_activate_account($activation_code);
-        redirect('');
+        redirect('','refresh');
     }
 
     public function forgot($activation_code = NULL)
@@ -270,9 +270,9 @@ class Main extends CMS_Controller
             if ($this->form_validation->run()) {
                 if ($this->cms_valid_activation_code($activation_code)) {
                     $this->cms_activate_account($activation_code, $password);
-                    redirect('');
+                    redirect('','refresh');
                 } else {
-                    redirect('main/forgot');
+                    redirect('main/forgot','refresh');
                 }
             } else {
                 $data = array(
@@ -290,7 +290,7 @@ class Main extends CMS_Controller
 
             if ($this->form_validation->run()) {
                 if ($this->cms_generate_activation_code($identity, TRUE, 'FORGOT')) {
-                    redirect('');
+                    redirect('','refresh');
                 } else {
                     $data = array(
                         "identity" => $identity,
@@ -346,7 +346,7 @@ class Main extends CMS_Controller
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
             $this->cms_do_register($user_name, $email, $real_name, $password);
-            redirect('');
+            redirect('','refresh');
         } else {
             $data = array(
                 "user_name" => $user_name,
@@ -477,7 +477,7 @@ class Main extends CMS_Controller
 
         if ($this->form_validation->run()) {
             $this->cms_do_change_profile($user_name, $email, $real_name, $password);
-            redirect('');
+            redirect('','refresh');
         } else {
             $data = array(
                 "user_name" => $user_name,
@@ -492,11 +492,11 @@ class Main extends CMS_Controller
     public function logout()
     {
         $this->cms_do_logout();
-        redirect('');
+        redirect('','refresh');
     }
 
     public function index()
-    {        
+    {
         $this->cms_guard_page('main_index');
         $data = array(
             "submenu_screen" => $this->cms_submenu_screen(NULL)
@@ -518,7 +518,7 @@ class Main extends CMS_Controller
         $this->cms_guard_page('main_language');
         if (isset($language)) {
             $this->cms_language($language);
-            redirect('');
+            redirect('','refresh');
         } else {
             $data = array(
                 "language_list" => $this->cms_language_list()
@@ -546,7 +546,7 @@ class Main extends CMS_Controller
         $crud->unset_add();
         $crud->unset_delete();
         $crud->unset_edit();
-        $crud->required_fields('authorization_name');        
+        $crud->required_fields('authorization_name');
         $crud->unique_fields('authorization_name');
         $crud->unset_read();
 
@@ -567,7 +567,7 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_user'));
         $crud->set_subject($this->cms_lang('User'));
 
-        $crud->required_fields('user_name','password');        
+        $crud->required_fields('user_name','password');
         $crud->unique_fields('user_name');
         $crud->unset_read();
 
@@ -644,7 +644,7 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_group'));
         $crud->set_subject($this->cms_lang('User Group'));
 
-        $crud->required_fields('group_name');       
+        $crud->required_fields('group_name');
         $crud->unique_fields('group_name');
         $crud->unset_read();
 
@@ -818,9 +818,9 @@ class Main extends CMS_Controller
 
         // redirect
         if(isset($parent_id)){
-            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key);
+            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key,'refresh');
         }else{
-            redirect('main/navigation'.'#record_'.$primary_key);
+            redirect('main/navigation'.'#record_'.$primary_key,'refresh');
         }
     }
 
@@ -838,14 +838,14 @@ class Main extends CMS_Controller
 
         // redirect
         if(isset($parent_id)){
-            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key);
+            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key,'refresh');
         }else{
-            redirect('main/navigation'.'#record_'.$primary_key);
+            redirect('main/navigation'.'#record_'.$primary_key,'refresh');
         }
     }
 
     public function before_insert_navigation($post_array)
-    {        
+    {
         //get parent's navigation_id
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
@@ -951,7 +951,7 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_quicklink'));
         $crud->set_subject($this->cms_lang('Quick Link'));
 
-        $crud->required_fields('navigation_id');       
+        $crud->required_fields('navigation_id');
         $crud->unique_fields('navigation_id');
         $crud->unset_read();
 
@@ -1025,7 +1025,7 @@ class Main extends CMS_Controller
         $this->cms_do_move_up_quicklink($navigation_id);
 
         // redirect
-        redirect('main/quicklink'.'#record_'.$primary_key);
+        redirect('main/quicklink'.'#record_'.$primary_key,'refresh');
     }
 
     public function action_quicklink_move_down($primary_key){
@@ -1040,7 +1040,7 @@ class Main extends CMS_Controller
         $this->cms_do_move_down_quicklink($navigation_id);
 
         // redirect
-        redirect('main/quicklink'.'#record_'.$primary_key);
+        redirect('main/quicklink'.'#record_'.$primary_key,'refresh');
     }
 
     // PRIVILEGE ===============================================================
@@ -1053,7 +1053,7 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_privilege'));
         $crud->set_subject($this->cms_lang('Privilege'));
 
-        $crud->required_fields('privilege_name');        
+        $crud->required_fields('privilege_name');
         $crud->unique_fields('privilege_name');
         $crud->unset_read();
 
@@ -1090,7 +1090,7 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_widget'));
         $crud->set_subject($this->cms_lang('Widget'));
 
-        $crud->required_fields('widget_name');        
+        $crud->required_fields('widget_name');
         $crud->unique_fields('widget_name');
         $crud->unset_read();
 
@@ -1214,7 +1214,7 @@ class Main extends CMS_Controller
         $this->cms_do_move_up_widget($widget_name);
 
         // redirect
-        redirect('main/widget'.'#record_'.$primary_key);
+        redirect('main/widget'.'#record_'.$primary_key,'refresh');
     }
 
     public function action_widget_move_down($primary_key){
@@ -1229,7 +1229,7 @@ class Main extends CMS_Controller
         $this->cms_do_move_down_widget($widget_name);
 
         // redirect
-        redirect('main/widget'.'#record_'.$primary_key);
+        redirect('main/widget'.'#record_'.$primary_key,'refresh');
     }
 
     // CONFIG ==================================================================
@@ -1241,7 +1241,7 @@ class Main extends CMS_Controller
 
         $crud->set_table(cms_table_name('main_config'));
         $crud->set_subject($this->cms_lang('Configuration'));
-        
+
         $crud->unique_fields('config_name');
         $crud->unset_read();
         $crud->unset_delete();
@@ -1313,12 +1313,12 @@ class Main extends CMS_Controller
         }
         return TRUE;
     }
-    
+
     public function json_is_login(){
         $result = array('is_login'=> $this->cms_user_id()>0);
         $this->cms_show_json($result);
     }
-    
+
     public function ck_adjust_script(){
         $base_url = base_url();
         $save_base_url = str_replace('/', '\\/', $base_url);
@@ -1335,13 +1335,13 @@ class Main extends CMS_Controller
                             var data = ck_instance.getData();
                             if($ck_textarea.length > 0){
                                 content = data.replace(
-                                    /(src=".*?)('.$save_base_url.')(.*?")/gi, 
+                                    /(src=".*?)('.$save_base_url.')(.*?")/gi,
                                     "$1{{ base_url }}$3"
                                 );
                                 ck_instance.setData(content);
                             }else if ($ck_iframe.length > 0){
                                 content = data.replace(
-                                    /(src=".*?)({{ base_url }})(.*?")/gi, 
+                                    /(src=".*?)({{ base_url }})(.*?")/gi,
                                     "$1'.$base_url.'$3"
                                 );
                                 ck_instance.setData(content);
@@ -1349,7 +1349,7 @@ class Main extends CMS_Controller
                             ck_instance.updateElement();
                         }
                     }
-                    
+
                     // when instance ready & form submit, adjust ck editor
                     CKEDITOR.on("instanceReady", function(){
                         __adjust_ck_editor();
@@ -1361,7 +1361,7 @@ class Main extends CMS_Controller
                             });
                         }
                     });
-                    
+
                     // when form submit, adjust ck editor
                     $("form").submit(function(){
                         for (instance in CKEDITOR.instances) {
@@ -1371,7 +1371,7 @@ class Main extends CMS_Controller
                             var $original_textarea = $("textarea#"+name);
                             var data = ck_instance.getData();
                             content = data.replace(
-                                /(src=".*?)('.$save_base_url.')(.*?")/gi, 
+                                /(src=".*?)('.$save_base_url.')(.*?")/gi,
                                 "$1{{ base_url }}$3"
                             );
                             ck_instance.setData(content);
@@ -1415,7 +1415,7 @@ class Main extends CMS_Controller
                 .dropdown-submenu{
                     position:relative;
                 }
-                 
+
                 .dropdown-submenu > .dropdown-menu
                 {
                     top:0;
@@ -1426,11 +1426,11 @@ class Main extends CMS_Controller
                     -moz-border-radius:0 6px 6px 6px;
                     border-radius:0 6px 6px 6px;
                 }
-                 
+
                 .dropdown-submenu:hover > .dropdown-menu{
                     display:block;
                 }
-                 
+
                 .dropdown-submenu > a:after{
                     display:block;
                     content:" ";
@@ -1444,15 +1444,15 @@ class Main extends CMS_Controller
                     margin-top:5px;
                     margin-right:-10px;
                 }
-                 
+
                 .dropdown-submenu:hover > a:after{
                     border-left-color:#ffffff;
                 }
-                 
+
                 .dropdown-submenu .pull-left{
                     float:none;
                 }
-                 
+
                 .dropdown-submenu.pull-left > .dropdown-menu{
                     left:-100%;
                     margin-left:10px;
@@ -1601,13 +1601,13 @@ class Main extends CMS_Controller
             if(!$no_quicklink){
                 $result .= $this->build_quicklink();
             }
-            $result = 
-            '<style type="text/css">                
+            $result =
+            '<style type="text/css">
                 @media (min-width: 750px){
                     .dropdown-submenu{
                         position:relative;
                     }
-                     
+
                     .dropdown-submenu > .dropdown-menu
                     {
                         top:0;
@@ -1618,11 +1618,11 @@ class Main extends CMS_Controller
                         -moz-border-radius:0 6px 6px 6px;
                         border-radius:0 6px 6px 6px;
                     }
-                     
+
                     .dropdown-submenu:hover > .dropdown-menu{
                         display:block;
                     }
-                     
+
                     .dropdown-submenu > a:after{
                         display:block;
                         content:" ";
@@ -1636,15 +1636,15 @@ class Main extends CMS_Controller
                         margin-top:5px;
                         margin-right:-10px;
                     }
-                     
+
                     .dropdown-submenu:hover > a:after{
                         border-left-color:#ffffff;
                     }
-                     
+
                     .dropdown-submenu .pull-left{
                         float:none;
                     }
-                     
+
                     .dropdown-submenu.pull-left > .dropdown-menu{
                         left:-100%;
                         margin-left:10px;
@@ -1693,7 +1693,7 @@ class Main extends CMS_Controller
                                 }
                             }
                             if(need_transform){
-                                // decrease the padding 
+                                // decrease the padding
                                 var currentPadding = $(".navbar-nav > li > a").css("padding-right");
                                 var currentPaddingNum = parseFloat(currentPadding, 10);
                                 if(currentPaddingNum>10){
@@ -1709,7 +1709,7 @@ class Main extends CMS_Controller
                                 }
                             }
                         }
-                    }                    
+                    }
                 }
 
                 // MAIN PROGRAM
@@ -1722,7 +1722,7 @@ class Main extends CMS_Controller
                         event.cancelBubble=true;
                         window.location = $(this).parent().attr("href");
                     });
-                    // adjust navbar 
+                    // adjust navbar
                     __adjust_navbar();
                     $(window).resize(function() {
                         __adjust_navbar();
@@ -1764,7 +1764,7 @@ class Main extends CMS_Controller
             $quicklinks = $this->cms_quicklinks();
         }
         if(count($quicklinks) == 0) return '';
-        
+
         $current_navigation_name = $this->cms_ci_session('__cms_navigation_name');
         $current_navigation_path = $this->cms_get_navigation_path($current_navigation_name);
         $html = '';

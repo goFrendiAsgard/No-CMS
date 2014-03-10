@@ -8,19 +8,19 @@
 class CMS_Model extends CI_Model
 {
     private $__cms_model_properties;
-    
+
     private function __update(){
         $old_version = cms_config('__cms_version');
         $current_version = '0.6.6.0';
-        
+
         if($old_version !== $current_version){
             $this->load->dbforge();
-            
+
             // make site_layout configuration
             if($this->cms_get_config('site_layout') == NULL){
                 $this->cms_set_config('site_layout', 'default');
             }
-            
+
             // copy from grocery_crud config from first-time to current config
             $source = APPPATH.'config/first-time/grocery_crud.php';
             if(CMS_SUBSITE == ''){
@@ -29,7 +29,7 @@ class CMS_Model extends CI_Model
                 $destination = APPPATH.'config/site-'.CMS_SUBSITE.'/grocery_crud.php';
             }
             copy($source, $destination);
-            
+
             // table : main navigation
             $table_name = cms_table_name('main_navigation');
             $field_list = $this->db->list_fields($table_name);
@@ -264,7 +264,7 @@ class CMS_Model extends CI_Model
             ->where(cms_table_name('main_group').'.group_id', 1)
             ->get();
         return $query->num_rows()>0;
-    }    
+    }
 
     /**
      * @author  goFrendiAsgard
@@ -463,7 +463,7 @@ class CMS_Model extends CI_Model
         $not_login  = !$user_name ? "(1=1)" : "(1=2)";
         $login      = $user_name ? "(1=1)" : "(1=2)";
         $super_user = ($user_id == 1 || in_array(1,$this->cms_user_group_id())) ? "(1=1)" : "(1=2)";
-        
+
         $slug_where = isset($slug)?
             "(((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%')) AND active=1)" :
             "1=1";
@@ -527,17 +527,17 @@ class CMS_Model extends CI_Model
                         $response = preg_replace('#(href|src|action)="([^:"]*)(?:")#', '$1="' . $url . '/$2"', $response);
                         $content .= $response;
                     }
-                } else {                                                 
+                } else {
                     $url = trim_slashes($url);
                     //$this->cms_ci_session('cms_dynamic_widget', TRUE);
                     $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
                     $response = @Modules::run($url);
                     if(strlen($response) == 0){
                         $response = @Modules::run($url.'/index');
-                    }       
-                    unset($_REQUEST['__cms_dynamic_widget']);              
+                    }
+                    unset($_REQUEST['__cms_dynamic_widget']);
                     // fallback, Modules::run failed, use AJAX instead
-                    if(strlen($response)==0){                        
+                    if(strlen($response)==0){
                         $response = '<script type="text/javascript">';
                         $response .= '$(document).ready(function(){$("#__cms_widget_' . $row->widget_id . '").load("'.site_url($url).'?__cms_dynamic_widget=TRUE");});';
                         $response .= '</script>';
@@ -545,7 +545,7 @@ class CMS_Model extends CI_Model
                     $content .= $response;
                     //$this->cms_unset_ci_session('cms_dynamic_widget');
                 }
-                
+
                 if($slug){
                     $content .= '</div>';
                 }else{
@@ -593,7 +593,7 @@ class CMS_Model extends CI_Model
                 $submenus      = $this->cms_navigations($navigation_id, 1);
             }
         }
-        
+
         $html = '
         <script type="text/javascript">
             function __adjust_component(identifier){
@@ -605,7 +605,7 @@ class CMS_Model extends CI_Model
                     }
                 });
                 $(identifier).each(function(){
-                    var margin_bottom = 0;               
+                    var margin_bottom = 0;
                     if($(this).height()<max_height){
                         margin_bottom = max_height - $(this).height();
                     }
@@ -674,7 +674,7 @@ class CMS_Model extends CI_Model
                     break;
                 }
             }
-            
+
             $badge = '';
             if($notif_url != ''){
                 $badge_id = '__cms_notif_submenu_screen_'.$navigation_id;
@@ -706,21 +706,21 @@ class CMS_Model extends CI_Model
             $html .= '<a href="' . $url . '" style="text-decoration:none;">';
             $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
             $html .= '<div class="thumbnail thumbnail_submenu">';
-            
+
             if ($image_file_path != '') {
                 $html .= '<img style="margin-top:10px; max-height:60px;" src="' . base_url($image_file_path) . '" />';
             }
-            
+
             $html .= '<div class="caption">';
             $html .= '<h4>'.$title.$badge.'</h4>';
             $html .= '<p>'.$description.'</p>';
-            $html .= '</div>'; // end of div.caption            
+            $html .= '</div>'; // end of div.caption
             $html .= '</div>'; // end of div.thumbnail
             $html .= '</div>'; // end of div.col-xs-6 col-sm-4 col-md-3
             $html .= '</a>';
         }
         $html .= '</div>';
-        
+
         return $html;
     }
 
@@ -963,7 +963,7 @@ class CMS_Model extends CI_Model
             }
             if(!isset($_SESSION['__cms_user_id'])){
                 $_SESSION['__cms_user_id'] = $user_id;
-            }            
+            }
             return TRUE;
         }
         return FALSE;
@@ -1453,7 +1453,7 @@ class CMS_Model extends CI_Model
         if (!isset($module_name)) {
             $module = $this->router->fetch_module();
             return $module;
-        } else {            
+        } else {
             $query = $this->db->select('module_path')
                 ->from(cms_table_name('main_module'))
                 ->where('module_name', $module_name)
@@ -1530,7 +1530,7 @@ class CMS_Model extends CI_Model
         }
         // the currently used theme should be on the top
         for($i=0; $i<count($themes); $i++){
-            if($themes[$i]['used']){                
+            if($themes[$i]['used']){
                 if($i != 0){
                     $new_themes = array();
                     $current_theme = $themes[$i];
@@ -1917,42 +1917,42 @@ class CMS_Model extends CI_Model
     public function cms_parse_keyword($value)
     {
         $value = $this->cms_escape_template($value);
-        
+
         if(strpos($value, '{{ ') !== FALSE){
-    
+
             $pattern     = array();
             $replacement = array();
-    
+
             // user_name
             $pattern[]     = "/\{\{ user_id \}\}/si";
             $replacement[] = $this->cms_user_id();
-    
+
             // user_name
             $pattern[]     = "/\{\{ user_name \}\}/si";
             $replacement[] = $this->cms_user_name();
-    
+
             // user_real_name
             $pattern[]     = "/\{\{ user_real_name \}\}/si";
             $replacement[] = $this->cms_user_real_name();
-    
+
             // user_email
             $pattern[]     = "/\{\{ user_email \}\}/si";
             $replacement[] = $this->cms_user_email();
-    
+
             // site_url
             $site_url = site_url();
             if ($site_url[strlen($site_url) - 1] != '/')
                 $site_url .= '/';
             $pattern[]     = '/\{\{ site_url \}\}/si';
             $replacement[] = $site_url;
-    
+
             // base_url
             $base_url = base_url();
             if ($base_url[strlen($base_url) - 1] != '/')
                 $base_url .= '/';
             $pattern[]     = '/\{\{ base_url \}\}/si';
             $replacement[] = $base_url;
-    
+
             // module_path & module_name
             $module_path = $this->cms_module_path();
             $module_name = $this->cms_module_name($module_path);
@@ -1970,15 +1970,15 @@ class CMS_Model extends CI_Model
             $replacement[] = $module_base_url;
             $pattern[]     = '/\{\{ module_name \}\}/si';
             $replacement[] = $module_name;
-    
+
             // language
             $pattern[]     = '/\{\{ language \}\}/si';
             $replacement[] = $this->cms_language();
-    
+
             // execute regex
             $value = preg_replace($pattern, $replacement, $value);
-        }       
-        
+        }
+
         // translate language
         if(strpos($value, '{{ ') !== FALSE){
             $pattern = '/\{\{ language:(.*?) \}\}/si';

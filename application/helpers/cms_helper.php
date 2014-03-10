@@ -17,7 +17,7 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
         }
         return FALSE;
     }else{
-        if(!isset($value)){
+        if($value === NULL){
             $CI =& get_instance();
             $CI->config->load($config_load_alias);
             $value = $CI->config->item($key);
@@ -85,7 +85,7 @@ function cms_module_config($module_directory, $key, $value = NULL, $delete = FAL
         $file_name = FCPATH.'modules/'.$module_directory.'/config/module_config_'.CMS_SUBSITE.'.php';
         if(!file_exists($file_name)){
             copy($main_config_file_name, $file_name);
-        }        
+        }
     }else{
         $file_name = $main_config_file_name;
     }

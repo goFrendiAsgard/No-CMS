@@ -1,13 +1,13 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 class Layout extends CMS_Controller{
-    
+
     protected $theme = 'neutral';
-    
+
     public function __construct(){
         parent::__construct();
         $this->theme = $this->cms_get_config('site_theme');
     }
-    
+
     private function update_static_content($widget_name, $content){
         $this->db->update(cms_table_name('main_widget'), array('static_content'=>$content), array('widget_name'=>$widget_name));
     }
@@ -44,11 +44,11 @@ class Layout extends CMS_Controller{
             $this->cms_set_config('site_footer', $this->input->post('site_footer'));
             $this->cms_set_config('site_language', $this->input->post('site_language'));
             $this->cms_language($this->input->post('site_language'));
-            
+
         }
         // redirection
         if(count($_POST)>0 || isset($_FILES['site_logo']) || isset($_FILES['site_favicon'])){
-            redirect('main/layout/index');
+            redirect('main/layout/index','refresh');
         }
         // widgets
         $query = $this->db->select('widget_id, widget_name, static_content')->from(cms_table_name('main_widget'))->get();
@@ -69,7 +69,7 @@ class Layout extends CMS_Controller{
         $config_list = array();
         foreach($query->result_array() as $row){
             $config_list[$row['config_name']] = $row['value'];
-        }      
+        }
 
         // layout
         $layout_list = array();

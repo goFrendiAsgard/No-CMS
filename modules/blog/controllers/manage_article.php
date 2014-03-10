@@ -11,7 +11,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 
     public function redirect($redirect){
         if($redirect){
-            redirect($this->cms_module_path.'/blog/manage_article/index');
+            redirect($this->cms_module_path.'/blog/manage_article/index','refresh');
         }
     }
 
@@ -84,7 +84,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud->required_fields('article_title');
         $crud->unique_fields('article_title');
         $crud->unset_read();
-        
+
         // caption of each columns
         $crud->display_as('article_title','Article Title');
         $crud->display_as('article_url','Article URL (Permalink)');
@@ -178,7 +178,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         }
         // author and user
         $post_array['author_user_id'] = $this->cms_user_id();
-        $post_array['date'] = date('Y-m-d H:i:s');        
+        $post_array['date'] = date('Y-m-d H:i:s');
         return $post_array;
     }
 
@@ -336,7 +336,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
             ->where('article_id', $primary_key)
             ->get();
         $result = $query->result_array();
-        
+
         // change the comment status into read
         $data = array('read'=>1);
         $where = array('article_id', $primary_key);

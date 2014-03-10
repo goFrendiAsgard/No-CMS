@@ -12,7 +12,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
     public function __construct(){
         parent::__construct();
         if(CMS_SUBSITE != ''){
-            redirect(($module_path == 'multisite'? $module_path : $module_path.'/multisite'));
+            redirect(($module_path == 'multisite'? $module_path : $module_path.'/multisite'),'refresh');
         }
         $this->load->model('installer/install_model');
         $this->install_model = new Install_Model();
