@@ -97,11 +97,11 @@ class Blog extends CMS_Priv_Strict_Controller {
             'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
             'module_path' => $this->cms_module_path(),
             'user_id' => $this->cms_user_id(),
-            'form_url'=> $this->cms_module_path() == 'blog'? 
-                site_url($this->cms_module_path().'/index/'.$article_url.'/#comment-form') : 
+            'form_url'=> $this->cms_module_path() == 'blog'?
+                site_url($this->cms_module_path().'/index/'.$article_url.'/#comment-form') :
                 site_url($this->cms_module_path().'/blog/index/'.$article_url.'/#comment-form'),
         );
-        
+
         $config = array();
         if(isset($article_url)){
             $article = $this->article_model->get_single_article($article_url);
