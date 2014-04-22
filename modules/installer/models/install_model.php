@@ -23,7 +23,7 @@ class Install_Model extends CI_Model{
 
     public $hide_index       = FALSE;
     public $gzip_compression = FALSE;
-    
+
     public $auth_enable_facebook         = FALSE;
     public $auth_facebook_app_id         = '';
     public $auth_facebook_app_secret     = '';
@@ -163,11 +163,11 @@ class Install_Model extends CI_Model{
             return $db;
         }
 
-        $db = @$this->load->database($db_config, TRUE); 
+        $db = @$this->load->database($db_config, TRUE);
 
         $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
         $allow_create = FALSE;
-        $allow_drop = FALSE; 
+        $allow_drop = FALSE;
         if($is_mysql){
             // get the "allow_create" and "allow_drop" privileges
             @mysql_connect($this->db_host.':'.$this->db_port , $this->db_username, $this->db_password);
@@ -190,7 +190,7 @@ class Install_Model extends CI_Model{
                     }
                 }
             }
-        } 
+        }
 
         if($is_mysql){
             // try to drop the previously created database
@@ -211,7 +211,7 @@ class Install_Model extends CI_Model{
                     if($result){
                         $_SESSION['created_db'] = $this->db_name;
                     }
-                } 
+                }
                 // try to connect again
                 $db_config = $this->build_db_config();
                 $db = $this->load->database($db_config, TRUE);
@@ -260,8 +260,8 @@ class Install_Model extends CI_Model{
             if($this->db_name=='' && $this->db_protocol != 'pdo_sqlite'){
                 $success = FALSE;
                 $error_list[] = '<a class="a-change-tab" href="#" tab="#tab1" component="db_name">Database schema</a> cannot be empty';
-            } 
-        }       
+            }
+        }
         if($this->admin_user_name==''){
             $success = FALSE;
             $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_user_name">Super Admin\'s username</a> is empty';
@@ -276,10 +276,10 @@ class Install_Model extends CI_Model{
         }else if ($this->admin_password != $this->admin_confirm_password){
             $success = FALSE;
             $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_confirm_password">Super Admin\'s password confirmation</a> doesn\'t match';
-        }  
+        }
 
         // subsite doesn't need this
-        if(!$this->is_subsite){      
+        if(!$this->is_subsite){
             // No-CMS directory
             if (!is_writable(FCPATH)) {
                 $success  = FALSE;
@@ -411,7 +411,7 @@ class Install_Model extends CI_Model{
                     $success = FALSE;
                     $error_list[] = '<a class="a-change-tab" href="#" tab="#tab10" component="auth_windows_live_app_secret">Windows Live application secret</a> cannot be empty';
                 }
-            }            
+            }
         }
 
         // subsite doesn't need this
@@ -465,7 +465,7 @@ class Install_Model extends CI_Model{
         }
         if(!trim($this->db_table_prefix) == ''){
             $table_name = $this->db_table_prefix.'_'.$table_name;
-        }        
+        }
         $this->db_no_error = $this->dbforge->create_table($table_name) && $this->db_no_error;
         return $this->db->last_query();
     }
@@ -1087,12 +1087,12 @@ class Install_Model extends CI_Model{
         }
 
         // ckeditor config
-        copy(APPPATH.'config/first-time/third_party_config/ckeditor_config.js', 
+        copy(APPPATH.'config/first-time/third_party_config/ckeditor_config.js',
             FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js');
         $this->replace_tag(FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js', 'BASE_URL', base_url());
 
         // kcfinder config
-        copy(APPPATH.'config/first-time/third_party_config/kcfinder_config.php', 
+        copy(APPPATH.'config/first-time/third_party_config/kcfinder_config.php',
             FCPATH.'assets/kcfinder/config.php');
         $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'BASE_URL', base_url());
         $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
@@ -1137,7 +1137,8 @@ class Install_Model extends CI_Model{
 
         $index_page = $this->hide_index?'':'index.php';
         $this->change_config($file_name, "index_page", $index_page, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        $this->change_config($file_name, "encryption_key", 'namidanoregret', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $encryption_key = md5(time() . rand());
+        $this->change_config($file_name, "encryption_key", $encryption_key, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $table_name = 'ci_sessions';
         if(!trim($this->db_table_prefix) == ''){
             $table_name = $this->db_table_prefix.'_'.$table_name;

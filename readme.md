@@ -3,7 +3,7 @@ What is No-CMS?
 
 No-CMS is a CMS-framework.
 
-No-CMS is a basic and "less-assumption" CMS with some default features such as user authorization (including third party authentication), 
+No-CMS is a basic and "less-assumption" CMS with some default features such as user authorization (including third party authentication),
 menu, module and theme management.
 It is fully customizable and extensible, you can make your own module and your own themes.
 It provide freedom to make your very own CMS, which is not provided very well by any other CMS.
@@ -40,7 +40,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v0.6.6 stable rev-1, February, 20, 2014
+- v0.6.6 stable rev-2, April, 22, 2014
 
 
 Server Requirements
