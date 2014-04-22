@@ -624,6 +624,7 @@ class Install_Model extends CI_Model{
                 'default_theme' => $type_varchar_small,
                 'default_layout' => $type_varchar_small,
                 'notif_url'=>$type_varchar_large,
+                'children'=>$type_varchar_large,
             );
         $sql_list[] = $this->create_table('main_navigation',$fields);
 

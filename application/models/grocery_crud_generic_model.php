@@ -438,4 +438,10 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
         return $result;
     }
 
+    function having($key, $value = NULL, $escape = TRUE)
+    {
+        $this->db->group_by($key);
+        $this->db->having( $key, $value, $escape);
+    }
+
 }
