@@ -529,13 +529,15 @@ class CMS_Model extends CI_Model
                     }
                 } else {
                     $url = trim_slashes($url);
-                    //$this->cms_ci_session('cms_dynamic_widget', TRUE);
+                    $url_segment = explode('/', $url);
                     $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
+                    $_REQUEST['__cms_dynamic_widget_module'] = $url_segment[0];
                     $response = @Modules::run($url);
                     if(strlen($response) == 0){
                         $response = @Modules::run($url.'/index');
                     }
                     unset($_REQUEST['__cms_dynamic_widget']);
+                    unset($_REQUEST['__cms_dynamic_widget_module']);
                     // fallback, Modules::run failed, use AJAX instead
                     if(strlen($response)==0){
                         $response = '<script type="text/javascript">';
@@ -543,7 +545,6 @@ class CMS_Model extends CI_Model
                         $response .= '</script>';
                     }
                     $content .= $response;
-                    //$this->cms_unset_ci_session('cms_dynamic_widget');
                 }
 
                 if($slug){
@@ -1450,8 +1451,12 @@ class CMS_Model extends CI_Model
      */
     public function cms_module_path($module_name = NULL)
     {
-        if (!isset($module_name)) {
-            $module = $this->router->fetch_module();
+        if (!isset($module_name) || $module_name === NULL) {
+            if(isset($_REQUEST['__cms_dynamic_widget_module'])){
+                $module = $_REQUEST['__cms_dynamic_widget_module'];
+            }else{
+                $module = $this->router->fetch_module();
+            }
             return $module;
         } else {
             $query = $this->db->select('module_path')
