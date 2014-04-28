@@ -114,6 +114,8 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 
     	$results = $this->db->get($this->table_name)->result();
 
+        var_dump($this->db->last_query());
+
         // add information from additional_fields
         for($i=0; $i<count($results); $i++){
             foreach($additional_fields as $alias=>$real_field){
@@ -440,7 +442,6 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
 
     function having($key, $value = NULL, $escape = TRUE)
     {
-        $this->db->group_by($key);
         $this->db->having( $key, $value, $escape);
     }
 

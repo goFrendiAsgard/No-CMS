@@ -1,5 +1,5 @@
 <?php
-class Generator extends CMS_Controller{
+class Default_Generator extends CMS_Controller{
     private $project_id;
     private $project_name;
     private $project_db_server;
@@ -398,7 +398,7 @@ class Generator extends CMS_Controller{
                         if(!array_key_exists($column_name, $rules_array)){
                             $rules_array[$column_name] = array('caption'=>$column_caption, 'rule');
                         }
-                        $rules_array[$column_name]['rule'][] = $validation_rule; 
+                        $rules_array[$column_name]['rule'][] = $validation_rule;
                     }
                 }
                 // detail (one to many) field

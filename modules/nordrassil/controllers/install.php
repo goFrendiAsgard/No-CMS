@@ -8,7 +8,7 @@ class Install extends CMS_Module_Installer {
     protected $DEPENDENCIES = array();
     protected $NAME         = 'gofrendi.noCMS.nordrassil';
     protected $DESCRIPTION  = 'A very cool and easy module generator. Choose your database schema, press the magical "generate" button, and enjoy your life';
-    
+
     protected function check_subdomain(){
         if(CMS_SUBSITE != ''){
             $module_path = $this->cms_module_path();
@@ -23,15 +23,15 @@ class Install extends CMS_Module_Installer {
     protected function do_activate(){
         if(!$this->check_subdomain()){
             $this->remove_all();
-            $this->build_all();    
-        }        
+            $this->build_all();
+        }
     }
     //this should be what happen when user uninstall this module
     protected function do_deactivate(){
         if(!$this->check_subdomain()){
             $this->backup_database(array('project','table','column','table_option','column_option'));
-            $this->remove_all();    
-        }               
+            $this->remove_all();
+        }
     }
 
     private function remove_all(){
@@ -184,7 +184,7 @@ class Install extends CMS_Module_Installer {
 		// install template
 		$this->load->library($module_path.'/NordrassilLib');
 		$template_name = 'No-CMS default Module';
-		$generator_path = 'nordrassil/default_generator/generator/index';
+		$generator_path = 'nordrassil/default_generator/default_generator/index';
 		$project_options = array();
 		$table_options = array(
 			array('name'=>'dont_make_form', 'description'=>'make form for this table'),
@@ -223,12 +223,12 @@ class Install extends CMS_Module_Installer {
     }
 
     // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){         
+    private function backup_database($table_names, $limit = 100){
         if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
             $module_path = $this->cms_module_path();
             $this->load->dbutil();
             $sql = '';
-            
+
             // create DROP TABLE syntax
             for($i=count($table_names)-1; $i>=0; $i--){
                 $table_name = $this->cms_complete_table_name($table_names[$i]);
@@ -237,8 +237,8 @@ class Install extends CMS_Module_Installer {
             }
             if($sql !='')$sql.= PHP_EOL;
 
-            // create CREATE TABLE and INSERT syntax 
-            
+            // create CREATE TABLE and INSERT syntax
+
             $prefs = array(
                     'tables'      => $table_names,
                     'ignore'      => array(),
@@ -248,7 +248,7 @@ class Install extends CMS_Module_Installer {
                     'add_insert'  => TRUE,
                     'newline'     => PHP_EOL
                   );
-            $sql.= $this->dbutil->backup($prefs);        
+            $sql.= $this->dbutil->backup($prefs);
 
             //write file
             $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
@@ -256,7 +256,7 @@ class Install extends CMS_Module_Installer {
                     BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
                     $sql
                 );
-        }       
+        }
 
     }
 }

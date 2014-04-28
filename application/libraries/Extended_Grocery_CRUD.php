@@ -162,8 +162,8 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
                     elseif(isset($this->relation_n_n[$column->field_name]))
                     {
                         //@todo have a where for the relation_n_n statement
-                        $escaped_text = $this->basic_model->escape_str($state_info->search->text);
-                        $this->having($column->field_name." LIKE '%".$escaped_text."%'");
+                        //$escaped_text = $this->basic_model->escape_str($state_info->search->text);
+                        //$this->having($column->field_name." LIKE '%".$escaped_text."%'");
                     }
                     else
                     {
