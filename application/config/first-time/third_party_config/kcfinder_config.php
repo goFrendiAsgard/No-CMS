@@ -16,13 +16,15 @@
 // you are using session configuration.
 // See http://kcfinder.sunhater.com/install for setting descriptions
 
-$_BASE_URL = '{{ BASE_URL }}';
-$_FCPATH = '{{ FCPATH }}';
-
 // Native session, the only way to communicate with No-CMS
 if(!isset($_SESSION)){
     session_start();
 }
+
+$_BASE_URL = isset($_SESSION['__cms_base_url'])? $_SESSION['__cms_base_url'] : '{{ BASE_URL }}';
+$_FCPATH = '{{ FCPATH }}';
+
+
 
 // get subsite
 $_cms_subsite = isset($_SESSION['__cms_subsite'])? $_SESSION['__cms_subsite'] : NULL;

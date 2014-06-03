@@ -979,8 +979,11 @@ class CMS_Controller extends MX_Controller
             $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
             $this->template->append_metadata('<script type="text/javascript" src="' . $jquery_path . '"></script>');
 
-            // ck editor thing
+            // ckeditor adjustment thing
             $this->template->append_metadata('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
+
+            // add javascript base_url for ckeditor
+            $this->template->append_metadata('<script type="text/javascript">var __cms_base_url = "'.base_url().'";</script>');
 
             // check login status
             $login_code = '<script type="text/javascript">';

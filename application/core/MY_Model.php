@@ -101,6 +101,14 @@ class CMS_Model extends CI_Model
             'language_dictionary' => array(),
             'config' => array()
         );
+        // BASE URL, needed by kcfinder
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        if(!isset($_SESSION['__base_url'])){
+            $_SESSION['__cms_base_url'] = base_url();
+        }
+        // seamless update
         $this->__update();
 
     }

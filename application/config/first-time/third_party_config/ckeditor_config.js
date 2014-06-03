@@ -2,8 +2,12 @@
 Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
-
-var BASE_URL = '{{ BASE_URL }}'
+var BASE_URL = '';
+if(typeof(__cms_base_url) == 'undefined'){
+    BASE_URL = '{{ BASE_URL }}';
+}else{
+    BASE_URL = __cms_base_url;
+}
 
 CKEDITOR.editorConfig = function( config )
 {
@@ -22,11 +26,11 @@ CKEDITOR.editorConfig = function( config )
     //config.entities_processNumerical = false;
     config.allowedContent = true; // don't filter my data
 
-    config.filebrowserBrowseUrl = BASE_URL+'assets/kcfinder/browse.php?type=files';                      
-    config.filebrowserImageBrowseUrl = BASE_URL+'assets/kcfinder/browse.php?type=images';                
+    config.filebrowserBrowseUrl = BASE_URL+'assets/kcfinder/browse.php?type=files';
+    config.filebrowserImageBrowseUrl = BASE_URL+'assets/kcfinder/browse.php?type=images';
     config.filebrowserFlashBrowseUrl = BASE_URL+'assets/kcfinder/browse.php?type=flash';
-    config.filebrowserUploadUrl = BASE_URL+'assets/kcfinder/upload.php?type=files';                    
-    config.filebrowserImageUploadUrl = BASE_URL+'assets/kcfinder/upload.php?type=images';                
+    config.filebrowserUploadUrl = BASE_URL+'assets/kcfinder/upload.php?type=files';
+    config.filebrowserImageUploadUrl = BASE_URL+'assets/kcfinder/upload.php?type=images';
     config.filebrowserFlashUploadUrl = BASE_URL+'assets/kcfinder/upload.php?type=flash';
 
 };
@@ -38,10 +42,10 @@ CKEDITOR.config.fillEmptyBlocks = function (element) {
 
 CKEDITOR.on( 'instanceReady', function( ev )
 {
-    var writer = ev.editor.dataProcessor.writer; 
+    var writer = ev.editor.dataProcessor.writer;
     // The character sequence to use for every indentation step.
     writer.indentationChars = '    ';
- 
+
     var dtd = CKEDITOR.dtd;
     console.log(dtd);
 
@@ -61,39 +65,39 @@ CKEDITOR.on( 'instanceReady', function( ev )
             breakAfterClose : false
         });
     }
- 
+
     for ( var e in CKEDITOR.tools.extend( {}, dtd.$list, dtd.$listItem, dtd.$tableContent ) )
     {
-        ev.editor.dataProcessor.writer.setRules( e, {           
+        ev.editor.dataProcessor.writer.setRules( e, {
             indent : true,
         });
     }
- 
-    
+
+
     var indented_element = new Array('table', 'form');
     for(var e in indented_element){
         ev.editor.dataProcessor.writer.setRules( e,
-        {       
+        {
             indent : true,
-        }); 
+        });
     }
 
     var single_tag = new Array('br', 'source');
     for(var e in single_tag){
         ev.editor.dataProcessor.writer.setRules( e,
-        {       
+        {
             breakAfterOpen : true,
-        }); 
+        });
     }
     // You can also apply the rules to a single element.
     /*
     ev.editor.dataProcessor.writer.setRules( 'table',
-    {       
+    {
         indent : true,
-    }); 
- 
+    });
+
     ev.editor.dataProcessor.writer.setRules( 'form',
-    {       
+    {
         indent : true,
     });
     ev.editor.dataProcessor.writer.setRules( 'source',
