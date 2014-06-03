@@ -296,7 +296,6 @@ class Install extends CMS_Module_Installer {
     private function duplicate_file($original_file_name){
         $this->load->library('image_moo');
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/uploads/';
-        $original_file_name = '01.jpg';
         $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . $original_file_name;
         copy($image_path.$original_file_name, $image_path.$file_name);
 
