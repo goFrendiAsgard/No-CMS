@@ -77,7 +77,7 @@ class Install extends CMS_Module_Installer {
     // REMOVE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
     private function remove_all(){
         $module_path = $this->cms_module_path();
-        
+
         // remove widgets
         $this->remove_widget($this->cms_complete_navigation_name('slideshow'));
         $this->remove_widget($this->cms_complete_navigation_name('tab'));
@@ -92,7 +92,7 @@ class Install extends CMS_Module_Installer {
 
         // remove parent of all navigations
         $this->remove_navigation($this->cms_complete_navigation_name('index'));
-        
+
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('visitor_counter'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('tab_content'), TRUE);
@@ -120,7 +120,7 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
             $module_path.'/install/setting', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        
+
         $this->add_widget($this->cms_complete_navigation_name('slideshow'), 'Slide Show',
             $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/slide');
         $this->add_widget($this->cms_complete_navigation_name('tab'), 'Tabbed Content',
@@ -128,7 +128,7 @@ class Install extends CMS_Module_Installer {
         $this->add_widget($this->cms_complete_navigation_name('visitor_count'), 'Visitor Count',
             $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/visitor_counter');
 
-        
+
         // create tables
         // slide
         $fields = array(
@@ -161,10 +161,20 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_key('counter_id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('visitor_counter'));
 
-        $data = array('image_url'=>'01.jpg','content'=>'<h1>The first slide image</h1><p>Some awesome descriptions</p>');
+        // make copy of 01.jpg and insert it as new slide
+        $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
+        $original_file_name = '01.jpg';
+        $file_name = CMS_SUBSITE . $original_file_name;
+        move_uploaded_file($image_path.$original_file_name, $image_path.$file_name);
+        $data = array('image_url'=>$file_name,'content'=>'<h1>The first slide image</h1><p>Some awesome descriptions</p>');
         $this->db->insert($this->cms_complete_table_name('slide'),$data);
 
-        $data = array('image_url'=>'02.jpg','content'=>'<h1>The second slide image</h1><p>Another awesome description</p>');
+        // make copy of 02.jpg and insert it as new slide
+        $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
+        $original_file_name = '02.jpg';
+        $file_name = CMS_SUBSITE . $original_file_name;
+        move_uploaded_file($image_path.$original_file_name, $image_path.$file_name);
+        $data = array('image_url'=>$file_name,'content'=>'<h1>The second slide image</h1><p>Another awesome description</p>');
         $this->db->insert($this->cms_complete_table_name('slide'),$data);
     }
 }
