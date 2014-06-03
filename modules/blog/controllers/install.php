@@ -46,7 +46,7 @@ class Install extends CMS_Module_Installer {
             }
         }
         $this->dbforge->add_column($table_name, $fields);
-        
+
         // table : blog comment
         $table_name = $this->cms_complete_table_name('comment');
         $field_list = $this->db->list_fields($table_name);
@@ -67,17 +67,17 @@ class Install extends CMS_Module_Installer {
             }
         }
         $this->dbforge->add_column($table_name, $fields);
-        
+
         // navigation: blog_index
         $table_name = cms_table_name('main_navigation');
         $navigation_name = $this->cms_complete_navigation_name('index');
-        $this->db->update($table_name, 
-            array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'), 
+        $this->db->update($table_name,
+            array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'),
             array('navigation_name' => $navigation_name));
         // navigation: blog_article
         $navigation_name = $this->cms_complete_navigation_name('manage_article');
-        $this->db->update($table_name, 
-            array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'), 
+        $this->db->update($table_name,
+            array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'),
             array('navigation_name' => $navigation_name));
     }
 
@@ -152,7 +152,7 @@ class Install extends CMS_Module_Installer {
             $parent_url = $module_path.'/blog';
         }
         $this->add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
-            $parent_url, $this->PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil', NULL, NULL, 
+            $parent_url, $this->PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil', NULL, NULL,
             $this->cms_module_path().'/notif/new_comment'
         );
 
@@ -278,24 +278,31 @@ class Install extends CMS_Module_Installer {
         $data = array('category_id'=>2, 'article_id'=>1);
         $this->db->insert($table_name, $data);
 
-        // photo
+        // photos
         $table_name = $this->cms_complete_table_name('photo');
-        $data = array('article_id'=>1, 'url'=>'e290d4scandal-promo.jpg');
-        $this->db->insert($table_name, $data);
-        $data = array('article_id'=>1, 'url'=>'6d65c1si_5097488_vjjnjbm6s1_lr.jpg');
-        $this->db->insert($table_name, $data);
-        $data = array('article_id'=>1, 'url'=>'cf061dNews_Scandal_Tempt1b.jpg');
-        $this->db->insert($table_name, $data);
-        $data = array('article_id'=>1, 'url'=>'77bf85541445_422004441170914_376342220_n.jpg');
-        $this->db->insert($table_name, $data);
-        $data = array('article_id'=>1, 'url'=>'38a006scandalbox.jpg');
-        $this->db->insert($table_name, $data);
+        for($i=1; $i<6; $i++){
+            $file_name = $this->duplicate_file('0'.$i.'.jpg');
+            $data = array('article_id'=>1, 'url'=>$file_name);
+            $this->db->insert($table_name, $data);
+        }
 
         // comment
         $table_name = $this->cms_complete_table_name('comment');
         $data = array('article_id'=>1, 'author_user_id'=>1, 'read'=>0, 'date'=>'2013-03-25 09:53:16', 'content'=>'Great comment for great article');
         $this->db->insert($table_name, $data);
 
+    }
+
+    private function duplicate_file($original_file_name){
+        $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/uploads/';
+        $original_file_name = '01.jpg';
+        $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . $original_file_name;
+        move_uploaded_file($image_path.$original_file_name, $image_path.$file_name);
+
+        $thumbnail_name = 'thumb_'.$file_name;
+        $this->image_moo->load($image_path.$file_name)->resize(800,75)->save($image_path.$thumbnail_name,true);
+
+        return $file_name;
     }
 
     // IMPORT SQL FILE
