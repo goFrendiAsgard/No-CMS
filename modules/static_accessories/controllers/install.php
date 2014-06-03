@@ -165,7 +165,7 @@ class Install extends CMS_Module_Installer {
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
         $original_file_name = '01.jpg';
         $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . $original_file_name;
-        move_uploaded_file($image_path.$original_file_name, $image_path.$file_name);
+        copy($image_path.$original_file_name, $image_path.$file_name);
         $data = array('image_url'=>$file_name,'content'=>'<h1>The first slide image</h1><p>Some awesome descriptions</p>');
         $this->db->insert($this->cms_complete_table_name('slide'),$data);
 
@@ -173,7 +173,7 @@ class Install extends CMS_Module_Installer {
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
         $original_file_name = '02.jpg';
         $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . $original_file_name;
-        move_uploaded_file($image_path.$original_file_name, $image_path.$file_name);
+        copy($image_path.$original_file_name, $image_path.$file_name);
         $data = array('image_url'=>$file_name,'content'=>'<h1>The second slide image</h1><p>Another awesome description</p>');
         $this->db->insert($this->cms_complete_table_name('slide'),$data);
     }

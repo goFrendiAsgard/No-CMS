@@ -298,7 +298,7 @@ class Install extends CMS_Module_Installer {
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/uploads/';
         $original_file_name = '01.jpg';
         $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . $original_file_name;
-        move_uploaded_file($image_path.$original_file_name, $image_path.$file_name);
+        copy($image_path.$original_file_name, $image_path.$file_name);
 
         $thumbnail_name = 'thumb_'.$file_name;
         $this->image_moo->load($image_path.$file_name)->resize(800,75)->save($image_path.$thumbnail_name,true);
