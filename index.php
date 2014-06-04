@@ -166,8 +166,26 @@ switch (ERROR_REPORTING)
 // END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
 // --------------------------------------------------------------------
 
-// The "domain" function was written by: gustavo.andriulo@vulcabras.com.ar
+// The "esip" and "domain" function was written by: gustavo.andriulo@vulcabras.com.ar
 // and posted here: http://www.php.net/manual/en/function.parse-url.php
+function esip($ip_addr)
+{
+    //first of all the format of the ip address is matched
+    if(preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/",$ip_addr))
+    {
+        //now all the intger values are separated
+        $parts=explode(".",$ip_addr);
+        //now we need to check each part can range from 0-255
+        foreach($parts as $ip_parts)
+        {
+            if(intval($ip_parts)>255 || intval($ip_parts)<0)
+                return FALSE; //if number is not within range of 0-255
+        }
+        return TRUE;
+    }
+    else
+        return FALSE; //if format of ip address doesn't matches
+}
 function domain($domainb)
 {
     $bits = explode('/', $domainb);
@@ -193,6 +211,25 @@ function domain($domainb)
     return $url;
 }
 
+// The "url_origin" and "full_url" function was written by: http://stackoverflow.com/users/175071/timo-huovinen
+// and posted here: http://stackoverflow.com/questions/6768793/get-the-full-url-in-php
+function url_origin($s, $use_forwarded_host=false)
+{
+    $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true:false;
+    $sp = strtolower($s['SERVER_PROTOCOL']);
+    $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+    $port = $s['SERVER_PORT'];
+    $port = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+    $host = ($use_forwarded_host && isset($s['HTTP_X_FORWARDED_HOST'])) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
+    $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
+    return $protocol . '://' . $host;
+}
+function full_url($s, $use_forwarded_host=false)
+{
+    return url_origin($s, $use_forwarded_host) . $s['REQUEST_URI'];
+}
+
+
 // define ENVIRONMENT, CMS_SUBSITE and USE_SUBDOMAIN contants
 if(!file_exists('./'.$application_folder.'/config/database.php')){
     define('ENVIRONMENT', 'first-time');
@@ -213,13 +250,30 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
             $cms_subsite = $_GET['__cms_subsite'];
             define('USE_SUBDOMAIN', FALSE);
         }else{
-            $host = $_SERVER['HTTP_HOST'];
-            $real_domain_name = domain($host);
-            if(isset($site_alias[$host]) && $site_alias[$host] != ''){
+            $actual_host_name = $_SERVER['HTTP_HOST'];
+            $address = full_url($_SERVER);
+            $parsed_url = parse_url($address);
+            $check = esip($parsed_url['host']);
+            $stripped_host_name = $parsed_url['host'];
+            if ($check == FALSE){
+                if ($stripped_host_name != ""){
+                    $stripped_host_name = domain($stripped_host_name);
+                }else{
+                    $stripped_host_name = domain($address);
+                }
+            }
+
+            // if there is an alias defined
+            if(isset($site_alias[$actual_host_name]) && $site_alias[$actual_host_name] != ''){
                 $cms_subsite = $site_alias[$host];
                 define('USE_SUBDOMAIN', TRUE);
-            } else if (strlen($host)> 0 && (count(explode('.',$host)) > count(explode('.',$real_domain_name)) )){
-                $host_array = explode('.', $host);
+            }
+            // If there is subdomain, subsite determine from subdomain.
+            // There is possibility that actual_host_name & stripped_host_name has the same value
+            // since "domain" function cannot detect single domain name (such as localhost or computer_name)
+            else if (strlen($actual_host_name)> 0 &&
+            ( ( count(explode('.', $actual_host_name)) == 2 && count(explode('.', $actual_host_name)) == count(explode('.', $stripped_host_name)))  || (count(explode('.',$actual_host_name)) > count(explode('.',$stripped_host_name))) )){
+                $host_array = explode('.', $actual_host_name);
                 $cms_subsite = $host_array[0];
                 define('USE_SUBDOMAIN', TRUE);
             }
