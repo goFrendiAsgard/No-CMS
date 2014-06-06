@@ -18,9 +18,29 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
         return FALSE;
     }else{
         if($value === NULL){
+            /*
             $CI =& get_instance();
             $CI->config->load($config_load_alias);
             $value = $CI->config->item($key);
+            */
+            //include($file_name);
+
+            // eval is more robbust than include
+            $code = file_get_contents($file_name);
+            $code = substr($code, 5);
+            if(substr($code,-2) == '?>'){
+                $code = substr($code,0,strlen($code)-2);
+            }
+            eval($code);
+
+            if(!isset($config)){
+                $config = array();
+            }
+            if(key_exists($key, $config)){
+                $value = $config[$key];
+            }else{
+                $value = '';
+            }
             return $value;
         }else{
             $str = file_get_contents($file_name);
@@ -40,7 +60,7 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
             }
             @chmod($file_name,0777);
             if(strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
-                @file_put_contents($file_name, $str);
+                @file_put_contents($file_name, $str, LOCK_EX);
                 @chmod($file_name,0555);
             }
             return $value;

@@ -165,12 +165,12 @@ class Main extends CMS_Controller
         // show the view
         if (isset($theme)) {
             $this->cms_set_config('site_theme', $theme);
-            redirect('main/change_theme','refresh');
-        } else {
-            $data['themes'] = $this->cms_get_theme_list();
-            $data['upload_new_theme_caption'] = $this->cms_lang('Upload New Theme');
-            $this->view('main/main_change_theme', $data, 'main_change_theme');
+            //redirect('main/change_theme','refresh');
         }
+
+        $data['themes'] = $this->cms_get_theme_list();
+        $data['upload_new_theme_caption'] = $this->cms_lang('Upload New Theme');
+        $this->view('main/main_change_theme', $data, 'main_change_theme');
     }
 
     //this is used for the real static page which doesn't has any URL in navigation management
