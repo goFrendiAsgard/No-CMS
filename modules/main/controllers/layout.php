@@ -46,14 +46,6 @@ class Layout extends CMS_Controller{
             $this->cms_language($this->input->post('site_language'));
 
         }
-        /*
-        // redirection
-        if(count($_POST)>0 || isset($_FILES['site_logo']) || isset($_FILES['site_favicon'])){
-            //echo $this->cms_get_config('site_name');
-            //redirect('main/layout/index','refresh');
-        }
-         *
-         */
         // widgets
         $query = $this->db->select('widget_id, widget_name, static_content')->from(cms_table_name('main_widget'))->get();
         $widget_list = $query->result_array();

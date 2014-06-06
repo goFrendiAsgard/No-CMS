@@ -165,7 +165,6 @@ class Main extends CMS_Controller
         // show the view
         if (isset($theme)) {
             $this->cms_set_config('site_theme', $theme);
-            //redirect('main/change_theme','refresh');
         }
 
         $data['themes'] = $this->cms_get_theme_list();

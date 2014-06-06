@@ -18,20 +18,12 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
         return FALSE;
     }else{
         if($value === NULL){
-            /*
-            $CI =& get_instance();
-            $CI->config->load($config_load_alias);
-            $value = $CI->config->item($key);
-            */
-            //include($file_name);
 
-            // eval is more robbust than include
-            $code = file_get_contents($file_name);
-            $code = substr($code, 5);
-            if(substr($code,-2) == '?>'){
-                $code = substr($code,0,strlen($code)-2);
+            // enforce refresh
+            if(function_exists('opcache_invalidate')){
+                opcache_invalidate('second.php');
             }
-            eval($code);
+            include($file_name);
 
             if(!isset($config)){
                 $config = array();
