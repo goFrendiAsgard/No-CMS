@@ -21,7 +21,7 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
 
             // enforce refresh
             if(function_exists('opcache_invalidate')){
-                opcache_invalidate('second.php');
+                opcache_invalidate($file_name);
             }
             include($file_name);
 
