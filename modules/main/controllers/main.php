@@ -1385,6 +1385,7 @@ class Main extends CMS_Controller
                 }
             });
         ';
+        $this->output->set_content_type('application/javascript');
         echo $ck_editor_adjust_script;
     }
 
