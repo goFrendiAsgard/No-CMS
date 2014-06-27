@@ -108,6 +108,7 @@ class CMS_Controller extends MX_Controller
         }
         // resolve HMVC set rule callback problem
         $crud->form_validation = $this->form_validation;
+        $crud->set_theme('no-flexigrid');
         return $crud;
     }
 

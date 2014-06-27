@@ -601,13 +601,9 @@ class Main extends CMS_Controller
                 ));
             }
         }
-
         $crud->set_lang_string('delete_error_message', 'You cannot delete super admin user or your own account');
-
         $crud->set_language($this->cms_language());
-
         $output = $crud->render();
-
         $this->view('main/main_user', $output, 'main_user_management');
     }
 
