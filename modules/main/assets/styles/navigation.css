@@ -1,8 +1,9 @@
 @CHARSET "UTF-8";
+
 .navigation_active{
-    cursor: pointer;
+    cursor: pointer;/*
     text-decoration: underline;
-    color: blue;
+    color: blue;*/
 }
 .input_disable{
 	background-color: lightgray!important;

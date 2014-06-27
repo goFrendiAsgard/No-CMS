@@ -815,10 +815,10 @@ div.flexigrid a:hover
 }
 .crud-action
 {
-	float:right;
+	/*float:right;
 	margin-left:5px;
 	padding:0px;
-	margin-right: 3px;
+	margin-right: 3px;*/
 }
 .readonly_label
 {
@@ -1455,6 +1455,7 @@ input[type="submit"].btn.btn-mini {
 	margin-left: 550px;
 	z-index: 1000;
 }
+/* from gofrendi */
 #filtering_form{
     margin-top: 5px;
     margin-bottom: 5px;
@@ -1467,4 +1468,7 @@ input[type="submit"].btn.btn-mini {
         width:auto;
         height:auto;
     }
+}
+#ajax_list tbody{
+    font-size: small;
 }
