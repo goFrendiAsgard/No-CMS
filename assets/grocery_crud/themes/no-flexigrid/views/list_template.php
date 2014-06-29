@@ -47,9 +47,6 @@ if($success_message !== null){?>
 		<div class="ftitle">
 			&nbsp;
 		</div>
-		<div title="<?php echo $this->l('minimize_maximize');?>" class="ptogtitle">
-			<span></span>
-		</div>
 	</div>
 	<div id='main-table-box' class="main-table-box">
 
@@ -116,21 +113,6 @@ if($success_message !== null){?>
         <div class="form-group">
             <input type="button" value="<?php echo $this->l('list_clear_filtering');?>" id='search_clear' class="search_clear btn btn-primary form-control">
         </div>
-	    <!--
-		<div class="sDiv2">
-			<?php echo $this->l('list_search');?>: <input type="text" class="qsbsearch_fieldox search_text" name="search_text" size="30" id='search_text'>
-			<select name="search_field" id="search_field">
-				<option value=""><?php echo $this->l('list_search_all');?></option>
-				<?php foreach($columns as $column){?>
-				<option value="<?php echo $column->field_name?>"><?php echo $column->display_as?>&nbsp;&nbsp;</option>
-				<?php }?>
-			</select>
-            <input type="button" value="<?php echo $this->l('list_search');?>" class="crud_search" id='crud_search'>
-		</div>
-        <div class='search-div-clear-button'>
-        	<input type="button" value="<?php echo $this->l('list_clear_filtering');?>" id='search_clear' class="search_clear">
-        </div>
-        -->
 	</div>
 	<div class="pDiv">
 		<div class="pDiv2">
@@ -162,10 +144,13 @@ if($success_message !== null){?>
             </div>
             <div class="btnseparator">
             </div>
-            <div class="pGroup">
-                <span class="pcontrol"><?php echo $this->l('list_page'); ?> <input name='page' type="text" value="1" size="4" id='crud_page' class="crud_page">
-                <?php echo $this->l('list_paging_of'); ?>
-                <span id='last-page-number' class="last-page-number"><?php echo ceil($total_results / $default_per_page)?></span></span>
+            <div class="pGroup form-inline">
+                <span class="pcontrol form-group">
+                    <label><?php echo $this->l('list_page'); ?></label>
+                    <input name='page' type="text" value="1" size="4" id='crud_page' class="crud_page">
+                    <label><?php echo $this->l('list_paging_of'); ?></label>
+                    <label id='last-page-number' class="last-page-number"><?php echo ceil($total_results / $default_per_page)?></label>
+                </span>
             </div>
             <div class="btnseparator">
             </div>

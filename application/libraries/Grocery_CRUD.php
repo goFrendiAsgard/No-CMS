@@ -3996,7 +3996,6 @@ class Grocery_CRUD extends grocery_CRUD_States
             $this->columns_checked = true;
 
         }
-
         return $this->columns;
     }
 

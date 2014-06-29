@@ -1455,6 +1455,7 @@ input[type="submit"].btn.btn-mini {
 	margin-left: 550px;
 	z-index: 1000;
 }
+
 /* from gofrendi */
 #filtering_form{
     margin-top: 5px;
@@ -1464,11 +1465,14 @@ input[type="submit"].btn.btn-mini {
     #filtering_form .form-group{
         margin-right:5px;
     }
-    #filtering_form input, #filtering_form select{
+    .flexigrid input, .flexigrid select{
         width:auto;
         height:auto;
     }
 }
 #ajax_list tbody{
     font-size: small;
+}
+.pDiv, .pDiv2{
+    padding-bottom: 10px;
 }

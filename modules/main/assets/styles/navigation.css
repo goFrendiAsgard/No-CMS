@@ -1,9 +1,7 @@
 @CHARSET "UTF-8";
 
 .navigation_active{
-    cursor: pointer;/*
-    text-decoration: underline;
-    color: blue;*/
+    cursor: pointer;
 }
 .input_disable{
 	background-color: lightgray!important;
@@ -17,4 +15,7 @@
 }
 #flex1 th:last-child{
     min-width: 120px!important;
+}
+.table-striped tbody{
+    border-left: 1px solid;
 }

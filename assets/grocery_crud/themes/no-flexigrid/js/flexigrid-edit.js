@@ -113,3 +113,14 @@ $(function(){
 
 	}
 });
+
+// addition by gofrendi
+function add_form_control_class(){
+    $('.flexigrid input, .flexigrid select').addClass('form-control');
+}
+$(document).ready(function(){
+    add_form_control_class();
+});
+$(document).ajaxComplete(function(){
+    add_form_control_class();
+});

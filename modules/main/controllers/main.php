@@ -701,7 +701,7 @@ class Main extends CMS_Controller
         $crud->unique_fields('navigation_name', 'title', 'url');
         $crud->unset_read();
 
-        $crud->columns('navigation_name', 'navigation_child', 'title', 'active');
+        $crud->columns('navigation_name'/*, 'navigation_child', 'title', 'active'*/);
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
         $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
@@ -732,7 +732,7 @@ class Main extends CMS_Controller
             ->display_as('default_theme', $this->cms_lang('Default Theme'))
             ->display_as('default_layout', $this->cms_lang('Default Layout'));
 
-        $crud->order_by('parent_id, index', 'asc');
+        $crud->order_by('index', 'asc');
 
         $crud->unset_texteditor('description');
         $crud->field_type('only_content', 'true_false');
@@ -754,19 +754,10 @@ class Main extends CMS_Controller
         }else{
             $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
         }
-        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
-            site_url($this->cms_module_path().'/action_navigation_move_up').'/');
-        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
-            site_url($this->cms_module_path().'/action_navigation_move_down').'/');
 
-        $crud->callback_column('active', array(
+        $crud->callback_column(cms_table_name('main_navigation').'.navigation_name', array(
             $this,
-            'column_navigation_active'
-        ));
-
-        $crud->callback_column('navigation_child', array(
-            $this,
-            'column_navigation_child'
+            'column_navigation_name'
         ));
 
         $crud->callback_before_insert(array(
@@ -799,45 +790,6 @@ class Main extends CMS_Controller
         $this->view('main/main_navigation', $output, 'main_navigation_management');
     }
 
-    public function action_navigation_move_up($primary_key){
-        $query = $this->db->select('navigation_name, parent_id')
-            ->from(cms_table_name('main_navigation'))
-            ->where('navigation_id', $primary_key)
-            ->get();
-        $row = $query->row();
-        $navigation_name = $row->navigation_name;
-        $parent_id = $row->parent_id;
-
-        // move up
-        $this->cms_do_move_up_navigation($navigation_name);
-
-        // redirect
-        if(isset($parent_id)){
-            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key,'refresh');
-        }else{
-            redirect('main/navigation'.'#record_'.$primary_key,'refresh');
-        }
-    }
-
-    public function action_navigation_move_down($primary_key){
-        $query = $this->db->select('navigation_name, parent_id')
-            ->from(cms_table_name('main_navigation'))
-            ->where('navigation_id', $primary_key)
-            ->get();
-        $row = $query->row();
-        $navigation_name = $row->navigation_name;
-        $parent_id = $row->parent_id;
-
-        // move down
-        $this->cms_do_move_down_navigation($navigation_name);
-
-        // redirect
-        if(isset($parent_id)){
-            redirect('main/navigation/'.$parent_id.'#record_'.$primary_key,'refresh');
-        }else{
-            redirect('main/navigation'.'#record_'.$primary_key,'refresh');
-        }
-    }
 
     public function before_insert_navigation($post_array)
     {
@@ -879,37 +831,106 @@ class Main extends CMS_Controller
         ));
     }
 
-    public function column_navigation_active($value, $row)
+    public function column_navigation_name($value, $row)
     {
-        $html = '<a name="record_'.$row->navigation_id.'">&nbsp;</a>';
-        $target = site_url($this->cms_module_path() . '/toggle_navigation_active/' . $row->navigation_id);
-        if ($value == 0) {
-            $html .= '<span target="' . $target . '" class="navigation_active">Inactive</span>';
-        } else {
-            $html .= '<span target="' . $target . '" class="navigation_active">Active</span>';
+        if(!isset($_SESSION)){
+            session_start();
         }
-        return $html;
-    }
 
-    public function column_navigation_child($value, $row)
-    {
-        $html = '';
         $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
             ->where('parent_id', $row->navigation_id);
         $query = $this->db->get();
         $child_count = $query->num_rows();
-        if($child_count<=0){
-            $html .= $this->cms_lang('No Child');
+        // determine need_child class
+        if($child_count>0){
+            $can_be_expanded = TRUE;
+            $need_child = ' need-child';
         }else{
-            $html .= '<a href="'.site_url($this->cms_module_path().'/navigation/'.$row->navigation_id).'">'.
-                $this->cms_lang('Manage Children')
-                .'</a>';
+            $can_be_expanded = FALSE;
+            $need_child = '';
         }
-        $html .= '&nbsp;|&nbsp;<a href="'.site_url($this->cms_module_path().'/navigation/'.$row->navigation_id).'/add">'.
-            $this->cms_lang('Add Child')
+
+        $html  = '<a name="'.$row->navigation_id.'"></a>';
+        $html .= '<span>' .$value . ' (' . $row->title . ')</span>';
+        $html .= '<input type="hidden" class="navigation_id' . $need_child . '" value="'.$row->navigation_id.'" /><br />';
+        // active or not
+        $target = site_url($this->cms_module_path() . '/toggle_navigation_active/' . $row->navigation_id);
+        if ($row->active == 0) {
+            $html .= '<a href="#" target="' . $target . '" class="navigation_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Inactive</span></a>';
+        } else {
+            $html .= '<a href="#" target="' . $target . '" class="navigation_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Active</span></a>';
+        }
+        // expand
+        if($can_be_expanded){
+            $html .= ' | <a href="#" class="expand-collapse-children" target="'.$row->navigation_id.'"><i class="glyphicon glyphicon-chevron-up"></i> Collapse</a>';
+        }
+        // add children
+        $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation/'.$row->navigation_id).'/add">'.
+            '<i class="glyphicon glyphicon-plus"></i> '.$this->cms_lang('Add Child')
             .'</a>';
+
+        if(isset($_SESSION['__mark_move_navigation_id'])){
+            $mark_move_navigation_id = $_SESSION['__mark_move_navigation_id'];
+            if($row->navigation_id == $mark_move_navigation_id){
+                // cancel link
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_move_cancel').'"><i class="glyphicon glyphicon-repeat"></i> Undo</a>';
+            }else{
+                // paste before, paste after, paste inside
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_move_before/'.$row->navigation_id).'"><i class="glyphicon glyphicon-open"></i> Put Before</a>';
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_move_after/'.$row->navigation_id).'"><i class="glyphicon glyphicon-save"></i> Put After</a>';
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_move_into/'.$row->navigation_id).'"><i class="glyphicon glyphicon-import"></i> Put Into</a>';
+            }
+        }else{
+            $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_mark_move/'.$row->navigation_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
+        }
+
         return $html;
+    }
+
+    public function navigation_mark_move($navigation_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $_SESSION['__mark_move_navigation_id'] = $navigation_id;
+        redirect($this->cms_module_path().'/navigation#'.$navigation_id,'refresh');
+    }
+
+    public function navigation_move_cancel(){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $navigation_id = $_SESSION['__mark_move_navigation_id'];
+        unset($_SESSION['__mark_move_navigation_id']);
+        redirect($this->cms_module_path().'/navigation#'.$navigation_id,'refresh');
+    }
+
+    public function navigation_move_before($dst_navigation_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $src_navigation_id = $_SESSION['__mark_move_navigation_id'];
+        $this->cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id);
+        unset($_SESSION['__mark_move_navigation_id']);
+        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id,'refresh');
+    }
+    public function navigation_move_after($dst_navigation_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $src_navigation_id = $_SESSION['__mark_move_navigation_id'];
+        $this->cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id);
+        unset($_SESSION['__mark_move_navigation_id']);
+        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id,'refresh');
+    }
+    public function navigation_move_into($dst_navigation_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $src_navigation_id = $_SESSION['__mark_move_navigation_id'];
+        $this->cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id);
+        unset($_SESSION['__mark_move_navigation_id']);
+        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id,'refresh');
     }
 
     public function toggle_navigation_active($navigation_id)
@@ -966,11 +987,6 @@ class Main extends CMS_Controller
             'before_insert_quicklink'
         ));
 
-        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
-            site_url($this->cms_module_path().'/action_quicklink_move_up').'/');
-        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
-            site_url($this->cms_module_path().'/action_quicklink_move_down').'/');
-
         $crud->callback_column($this->unique_field_name('navigation_id'), array(
             $this,
             'column_quicklink_navigation_id'
@@ -980,7 +996,7 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('grocery_CRUD', $output, 'main_quicklink_management');
+        $this->view('main_quicklink', $output, 'main_quicklink_management');
     }
 
     public function before_insert_quicklink($post_array)
@@ -1003,39 +1019,61 @@ class Main extends CMS_Controller
 
     public function column_quicklink_navigation_id($value, $row)
     {
-        $html = '<a name="record_'.$row->quicklink_id.'">&nbsp;</a>';
-        $html .= $value;
+        $html  = '<a name="'.$row->quicklink_id.'"></a>';
+        $html .= '<span>' .$value . '</span>';
+        $html .= '<input type="hidden" class="quicklink_id" value="'.$row->quicklink_id.'" />';
+
+        if(isset($_SESSION['__mark_move_quicklink_id'])){
+            $mark_move_quicklink_id = $_SESSION['__mark_move_quicklink_id'];
+            if($row->quicklink_id == $mark_move_quicklink_id){
+                // cancel link
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/quicklink_move_cancel').'"><i class="glyphicon glyphicon-repeat"></i> Undo</a>';
+            }else{
+                // paste before, paste after, paste inside
+                $html .= '<br /><a href="'.site_url($this->cms_module_path().'/quicklink_move_before/'.$row->quicklink_id).'"><i class="glyphicon glyphicon-open"></i> Put Before</a>';
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/quicklink_move_after/'.$row->quicklink_id).'"><i class="glyphicon glyphicon-save"></i> Put After</a>';
+            }
+        }else{
+            $html .= ' | <a href="'.site_url($this->cms_module_path().'/quicklink_mark_move/'.$row->quicklink_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
+        }
+
         return $html;
     }
 
-    public function action_quicklink_move_up($primary_key){
-        $query = $this->db->select('navigation_id')
-            ->from(cms_table_name('main_quicklink'))
-            ->where('quicklink_id', $primary_key)
-            ->get();
-        $row = $query->row();
-        $navigation_id = $row->navigation_id;
-
-        // move up
-        $this->cms_do_move_up_quicklink($navigation_id);
-
-        // redirect
-        redirect('main/quicklink'.'#record_'.$primary_key,'refresh');
+    public function quicklink_mark_move($quicklink_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $_SESSION['__mark_move_quicklink_id'] = $quicklink_id;
+        redirect($this->cms_module_path().'/quicklink#'.$quicklink_id,'refresh');
     }
 
-    public function action_quicklink_move_down($primary_key){
-        $query = $this->db->select('navigation_id')
-            ->from(cms_table_name('main_quicklink'))
-            ->where('quicklink_id', $primary_key)
-            ->get();
-        $row = $query->row();
-        $navigation_id = $row->navigation_id;
+    public function quicklink_move_cancel(){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $quicklink_id = $_SESSION['__mark_move_quicklink_id'];
+        unset($_SESSION['__mark_move_quicklink_id']);
+        redirect($this->cms_module_path().'/quicklink#'.$quicklink_id,'refresh');
+    }
 
-        // move up
-        $this->cms_do_move_down_quicklink($navigation_id);
-
-        // redirect
-        redirect('main/quicklink'.'#record_'.$primary_key,'refresh');
+    public function quicklink_move_before($dst_quicklink_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $src_quicklink_id = $_SESSION['__mark_move_quicklink_id'];
+        $this->cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id);
+        unset($_SESSION['__mark_move_quicklink_id']);
+        redirect($this->cms_module_path().'/quicklink#'.$src_quicklink_id,'refresh');
+    }
+    public function quicklink_move_after($dst_quicklink_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $src_quicklink_id = $_SESSION['__mark_move_quicklink_id'];
+        $this->cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id);
+        unset($_SESSION['__mark_move_quicklink_id']);
+        redirect($this->cms_module_path().'/quicklink#'.$src_quicklink_id,'refresh');
     }
 
     // PRIVILEGE ===============================================================
@@ -1089,7 +1127,7 @@ class Main extends CMS_Controller
         $crud->unique_fields('widget_name');
         $crud->unset_read();
 
-        $crud->columns('widget_name', 'title', 'active', 'slug');
+        $crud->columns('widget_name');
         $crud->edit_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups', 'index');
         $crud->add_fields('widget_name', 'title', 'active', 'description', 'is_static', 'static_content', 'url', 'slug', 'authorization_id', 'groups', 'index');
         $crud->field_type('active', 'true_false');
@@ -1122,14 +1160,9 @@ class Main extends CMS_Controller
             'before_insert_widget'
         ));
 
-        $crud->add_action('Move Up', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/up.png'),
-            site_url($this->cms_module_path().'/action_widget_move_up').'/');
-        $crud->add_action('Move Down', base_url('modules/'.$this->cms_module_path().'/assets/action_icon/down.png'),
-            site_url($this->cms_module_path().'/action_widget_move_down').'/');
-
-        $crud->callback_column('active', array(
+        $crud->callback_column('widget_name', array(
             $this,
-            'column_widget_active'
+            'column_widget_name'
         ));
 
         $crud->set_language($this->cms_language());
@@ -1161,18 +1194,6 @@ class Main extends CMS_Controller
         return $post_array;
     }
 
-    public function column_widget_active($value, $row)
-    {
-        $html = '<a name="record_'.$row->widget_id.'">&nbsp;</a>';
-        $target = site_url($this->cms_module_path() . '/toggle_widget_active/' . $row->widget_id);
-        if ($value == 0) {
-            $html.= '<span target="' . $target . '" class="widget_active">Inactive</span>';
-        } else {
-            $html.= '<span target="' . $target . '" class="widget_active">Active</span>';
-        }
-        return $html;
-    }
-
     public function toggle_widget_active($widget_id)
     {
         if ($this->input->is_ajax_request()) {
@@ -1197,34 +1218,77 @@ class Main extends CMS_Controller
         }
     }
 
-    public function action_widget_move_up($primary_key){
-        $query = $this->db->select('widget_name')
-            ->from(cms_table_name('main_widget'))
-            ->where('widget_id', $primary_key)
-            ->get();
-        $row = $query->row();
-        $widget_name = $row->widget_name;
+    public function column_widget_name($value, $row)
+    {
+        if(!isset($_SESSION)){
+            session_start();
+        }
 
-        // move up
-        $this->cms_do_move_up_widget($widget_name);
+        $html  = '<a name="'.$row->widget_id.'"></a>';
+        $html .= '<span>' .$value . ' (' . $row->title . ')</span>';
+        $html .= '<input type="hidden" class="widget_id" value="'.$row->widget_id.'" /><br />';
+        if(isset($row->slug) && $row->slug != NULL && $row->slug != ''){
+            $html .= '<span style="font-size:smaller;">' . $row->slug . '</span><br />';
+        }
+        // active or not
+        $target = site_url($this->cms_module_path() . '/toggle_widget_active/' . $row->widget_id);
+        if ($row->active == 0) {
+            $html .= '<a href="#" target="' . $target . '" class="widget_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Inactive</span></a>';
+        } else {
+            $html .= '<a href="#" target="' . $target . '" class="widget_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Active</span></a>';
+        }
 
-        // redirect
-        redirect('main/widget'.'#record_'.$primary_key,'refresh');
+        if(isset($_SESSION['__mark_move_widget_id'])){
+            $mark_move_widget_id = $_SESSION['__mark_move_widget_id'];
+            if($row->widget_id == $mark_move_widget_id){
+                // cancel link
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/widget_move_cancel').'"><i class="glyphicon glyphicon-repeat"></i> Undo</a>';
+            }else{
+                // paste before, paste after, paste inside
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/widget_move_before/'.$row->widget_id).'"><i class="glyphicon glyphicon-open"></i> Put Before</a>';
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/widget_move_after/'.$row->widget_id).'"><i class="glyphicon glyphicon-save"></i> Put After</a>';
+            }
+        }else{
+            $html .= ' | <a href="'.site_url($this->cms_module_path().'/widget_mark_move/'.$row->widget_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
+        }
+
+        return $html;
     }
 
-    public function action_widget_move_down($primary_key){
-        $query = $this->db->select('widget_name')
-            ->from(cms_table_name('main_widget'))
-            ->where('widget_id', $primary_key)
-            ->get();
-        $row = $query->row();
-        $widget_name = $row->widget_name;
+    public function widget_mark_move($widget_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $_SESSION['__mark_move_widget_id'] = $widget_id;
+        redirect($this->cms_module_path().'/widget#'.$widget_id,'refresh');
+    }
 
-        // move up
-        $this->cms_do_move_down_widget($widget_name);
+    public function widget_move_cancel(){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $widget_id = $_SESSION['__mark_move_widget_id'];
+        unset($_SESSION['__mark_move_widget_id']);
+        redirect($this->cms_module_path().'/widget#'.$widget_id,'refresh');
+    }
 
-        // redirect
-        redirect('main/widget'.'#record_'.$primary_key,'refresh');
+    public function widget_move_before($dst_widget_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $src_widget_id = $_SESSION['__mark_move_widget_id'];
+        $this->cms_do_move_widget_before($src_widget_id, $dst_widget_id);
+        unset($_SESSION['__mark_move_widget_id']);
+        redirect($this->cms_module_path().'/widget#'.$src_widget_id,'refresh');
+    }
+    public function widget_move_after($dst_widget_id){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $src_widget_id = $_SESSION['__mark_move_widget_id'];
+        $this->cms_do_move_widget_after($src_widget_id, $dst_widget_id);
+        unset($_SESSION['__mark_move_widget_id']);
+        redirect($this->cms_module_path().'/widget#'.$src_widget_id,'refresh');
     }
 
     // CONFIG ==================================================================

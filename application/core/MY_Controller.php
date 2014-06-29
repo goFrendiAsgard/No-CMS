@@ -222,6 +222,35 @@ class CMS_Controller extends MX_Controller
         return $this->No_CMS_Model->cms_user_is_super_admin();
     }
 
+    public function cms_do_move_widget_after($src_widget_id, $dst_widget_id){
+        $this->No_CMS_Model->cms_do_move_widget_after($src_widget_id, $dst_widget_id);
+    }
+
+    public function cms_do_move_widget_before($src_widget_id, $dst_widget_id){
+        $this->No_CMS_Model->cms_do_move_widget_before($src_widget_id, $dst_widget_id);
+    }
+
+    public function cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id){
+        $this->No_CMS_Model->cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id);
+    }
+
+    public function cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id){
+        $this->No_CMS_Model->cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id);
+    }
+
+    public function cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id){
+        $this->No_CMS_Model->cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id);
+    }
+
+    public function cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id){
+        $this->No_CMS_Model->cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id);
+    }
+
+    public function cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id){
+        $this->No_CMS_Model->cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id);
+    }
+
+
     /**
      * @author  goFrendiAsgard
      * @param   string navigation_name
@@ -260,20 +289,20 @@ class CMS_Controller extends MX_Controller
 
     /**
      * @author  goFrendiAsgard
-     * @param   int navigation id
+     * @param   int quicklink id
      * @desc    move quicklink up
      */
-    public function cms_do_move_up_quicklink($navigation_id){
-        $this->No_CMS_Model->cms_do_move_up_quicklink($navigation_id);
+    public function cms_do_move_up_quicklink($quicklink_id){
+        $this->No_CMS_Model->cms_do_move_up_quicklink($quicklink_id);
     }
 
     /**
      * @author  goFrendiAsgard
-     * @param   int navigation id
+     * @param   int quicklink id
      * @desc    move quicklink down
      */
-    public function cms_do_move_down_quicklink($navigation_id){
-        $this->No_CMS_Model->cms_do_move_down_quicklink($navigation_id);
+    public function cms_do_move_down_quicklink($quicklink_id){
+        $this->No_CMS_Model->cms_do_move_down_quicklink($quicklink_id);
     }
 
     /**

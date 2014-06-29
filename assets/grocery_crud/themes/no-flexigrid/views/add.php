@@ -15,9 +15,6 @@
 			</div>
 			<div class='clear'></div>
 		</div>
-		<div title="<?php echo $this->l('minimize_maximize');?>" class="ptogtitle">
-			<span></span>
-		</div>
 	</div>
 <div id='main-table-box'>
 	<?php echo form_open( $insert_url, 'method="post" id="crudForm" autocomplete="off" enctype="multipart/form-data"'); ?>

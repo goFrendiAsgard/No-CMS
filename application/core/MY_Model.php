@@ -1063,18 +1063,361 @@ class CMS_Model extends CI_Model
         }
     }
 
+    public function cms_do_move_widget_after($src_widget_id, $dst_widget_id){
+        $table_name = cms_table_name('main_widget');
+        // get src record index
+        $query = $this->db->select('index')
+            ->from($table_name)
+            ->where('widget_id', $src_widget_id)
+            ->get();
+        $row = $query->row();
+        $src_index = $row->index;
+        // reduce index of everything after src record
+        $query = $this->db->select('widget_id, index')
+            ->from($table_name)
+            ->where('index >', $src_index)
+            ->get();
+        foreach($query->result() as $row){
+            $widget_id = $row->widget_id;
+            $index = $row->index - 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('widget_id' => $widget_id));
+        }
+        // get dst record index
+        $query = $this->db->select('index')
+            ->from($table_name)
+            ->where('widget_id', $dst_widget_id)
+            ->get();
+        $row = $query->row();
+        $dst_index = $row->index;
+        // add index of everything after dst record
+        $query = $this->db->select('widget_id, index')
+            ->from($table_name)
+            ->where('index >', $dst_index)
+            ->get();
+        foreach($query->result() as $row){
+            $widget_id = $row->widget_id;
+            $index = $row->index + 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('widget_id' => $widget_id));
+        }
+        // put src after dst
+        $this->db->update($table_name,
+            array('index' => $dst_index + 1),
+            array('widget_id' => $src_widget_id));
+        $this->__cms_reindex_widget();
+    }
+
+    public function cms_do_move_widget_before($src_widget_id, $dst_widget_id){
+        $table_name = cms_table_name('main_widget');
+        // get src record index
+        $query = $this->db->select('index')
+            ->from($table_name)
+            ->where('widget_id', $src_widget_id)
+            ->get();
+        $row = $query->row();
+        $src_index = $row->index;
+        // reduce index of everything after src record
+        $query = $this->db->select('widget_id, index')
+            ->from($table_name)
+            ->where('index >', $src_index)
+            ->get();
+        foreach($query->result() as $row){
+            $widget_id = $row->widget_id;
+            $index = $row->index - 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('widget_id' => $widget_id));
+        }
+        // get dst record index
+        $query = $this->db->select('index')
+            ->from($table_name)
+            ->where('widget_id', $dst_widget_id)
+            ->get();
+        $row = $query->row();
+        $dst_index = $row->index;
+        // add index of dst record and everything after dst record
+        $query = $this->db->select('widget_id, index')
+            ->from($table_name)
+            ->where('index >=', $dst_index)
+            ->get();
+        foreach($query->result() as $row){
+            $widget_id = $row->widget_id;
+            $index = $row->index + 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('widget_id' => $widget_id));
+        }
+        // put src after dst
+        $this->db->update($table_name,
+            array('index' => $dst_index),
+            array('widget_id' => $src_widget_id));
+        $this->__cms_reindex_widget();
+    }
+
+    public function cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id){
+        $table_name = cms_table_name('main_quicklink');
+        // get src record index
+        $query = $this->db->select('index')
+            ->from($table_name)
+            ->where('quicklink_id', $src_quicklink_id)
+            ->get();
+        $row = $query->row();
+        $src_index = $row->index;
+        // reduce index of everything after src record
+        $query = $this->db->select('quicklink_id, index')
+            ->from($table_name)
+            ->where('index >', $src_index)
+            ->get();
+        foreach($query->result() as $row){
+            $quicklink_id = $row->quicklink_id;
+            $index = $row->index - 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('quicklink_id' => $quicklink_id));
+        }
+        // get dst record index
+        $query = $this->db->select('index')
+            ->from($table_name)
+            ->where('quicklink_id', $dst_quicklink_id)
+            ->get();
+        $row = $query->row();
+        $dst_index = $row->index;
+        // add index of everything after dst record
+        $query = $this->db->select('quicklink_id, index')
+            ->from($table_name)
+            ->where('index >', $dst_index)
+            ->get();
+        foreach($query->result() as $row){
+            $quicklink_id = $row->quicklink_id;
+            $index = $row->index + 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('quicklink_id' => $quicklink_id));
+        }
+        // put src after dst
+        $this->db->update($table_name,
+            array('index' => $dst_index + 1),
+            array('quicklink_id' => $src_quicklink_id));
+        $this->__cms_reindex_quicklink();
+    }
+
+    public function cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id){
+        $table_name = cms_table_name('main_quicklink');
+        // get src record index
+        $query = $this->db->select('index')
+            ->from($table_name)
+            ->where('quicklink_id', $src_quicklink_id)
+            ->get();
+        $row = $query->row();
+        $src_index = $row->index;
+        // reduce index of everything after src record
+        $query = $this->db->select('quicklink_id, index')
+            ->from($table_name)
+            ->where('index >', $src_index)
+            ->get();
+        foreach($query->result() as $row){
+            $quicklink_id = $row->quicklink_id;
+            $index = $row->index - 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('quicklink_id' => $quicklink_id));
+        }
+        // get dst record index
+        $query = $this->db->select('index')
+            ->from($table_name)
+            ->where('quicklink_id', $dst_quicklink_id)
+            ->get();
+        $row = $query->row();
+        $dst_index = $row->index;
+        // add index of dst record and everything after dst record
+        $query = $this->db->select('quicklink_id, index')
+            ->from($table_name)
+            ->where('index >=', $dst_index)
+            ->get();
+        foreach($query->result() as $row){
+            $quicklink_id = $row->quicklink_id;
+            $index = $row->index + 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('quicklink_id' => $quicklink_id));
+        }
+        // put src after dst
+        $this->db->update($table_name,
+            array('index' => $dst_index),
+            array('quicklink_id' => $src_quicklink_id));
+        $this->__cms_reindex_quicklink();
+    }
+
+    public function cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id){
+        $table_name = cms_table_name('main_navigation');
+        // get src record index
+        $query = $this->db->select('parent_id, index')
+            ->from($table_name)
+            ->where('navigation_id', $src_navigation_id)
+            ->get();
+        $row = $query->row();
+        $src_index = $row->index;
+        $src_parent_id = $row->parent_id;
+        // reduce index of everything after src record
+        $query = $this->db->select('navigation_id, index')
+            ->from($table_name)
+            ->where('parent_id', $src_parent_id)
+            ->where('index >', $src_index)
+            ->get();
+        foreach($query->result() as $row){
+            $navigation_id = $row->navigation_id;
+            $index = $row->index - 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('navigation_id' => $navigation_id));
+        }
+        // get dst record index
+        $query = $this->db->select('parent_id, index')
+            ->from($table_name)
+            ->where('navigation_id', $dst_navigation_id)
+            ->get();
+        $row = $query->row();
+        $dst_index = $row->index;
+        $dst_parent_id = $row->parent_id;
+        // add index of everything after dst record
+        $query = $this->db->select('navigation_id, index')
+            ->from($table_name)
+            ->where('parent_id', $dst_parent_id)
+            ->where('index >', $dst_index)
+            ->get();
+        foreach($query->result() as $row){
+            $navigation_id = $row->navigation_id;
+            $index = $row->index + 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('navigation_id' => $navigation_id));
+        }
+        // put src after dst
+        $this->db->update($table_name,
+            array('index' => $dst_index + 1, 'parent_id' => $dst_parent_id),
+            array('navigation_id' => $src_navigation_id));
+        $this->__cms_reindex_navigation($src_parent_id);
+        $this->__cms_reindex_navigation($dst_parent_id);
+    }
+
+    public function cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id){
+        $table_name = cms_table_name('main_navigation');
+        // get src record index
+        $query = $this->db->select('parent_id, index')
+            ->from($table_name)
+            ->where('navigation_id', $src_navigation_id)
+            ->get();
+        $row = $query->row();
+        $src_index = $row->index;
+        $src_parent_id = $row->parent_id;
+        // reduce index of everything after src record
+        $query = $this->db->select('navigation_id, index')
+            ->from($table_name)
+            ->where('parent_id', $src_parent_id)
+            ->where('index >', $src_index)
+            ->get();
+        foreach($query->result() as $row){
+            $navigation_id = $row->navigation_id;
+            $index = $row->index - 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('navigation_id' => $navigation_id));
+        }
+        // get dst record index
+        $query = $this->db->select('parent_id, index')
+            ->from($table_name)
+            ->where('navigation_id', $dst_navigation_id)
+            ->get();
+        $row = $query->row();
+        $dst_index = $row->index;
+        $dst_parent_id = $row->parent_id;
+        // add index of dst record and everything after dst record
+        $query = $this->db->select('navigation_id, index')
+            ->from($table_name)
+            ->where('parent_id', $dst_parent_id)
+            ->where('index <=', $dst_index)
+            ->get();
+        foreach($query->result() as $row){
+            $navigation_id = $row->navigation_id;
+            $index = $row->index + 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('navigation_id' => $navigation_id));
+        }
+        // put src after dst
+        $this->db->update($table_name,
+            array('index' => $dst_index, 'parent_id' => $dst_parent_id),
+            array('navigation_id' => $src_navigation_id));
+        $this->__cms_reindex_navigation($src_parent_id);
+        $this->__cms_reindex_navigation($dst_parent_id);
+    }
+
+    public function cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id){
+        $table_name = cms_table_name('main_navigation');
+        // get src record index
+        $query = $this->db->select('parent_id, index')
+            ->from($table_name)
+            ->where('navigation_id', $src_navigation_id)
+            ->get();
+        $row = $query->row();
+        $src_index = $row->index;
+        $src_parent_id = $row->parent_id;
+        // reduce index of everything after src record
+        $query = $this->db->select('navigation_id, index')
+            ->from($table_name)
+            ->where('parent_id', $src_parent_id)
+            ->where('index >', $src_index)
+            ->get();
+        foreach($query->result() as $row){
+            $navigation_id = $row->navigation_id;
+            $index = $row->index - 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('navigation_id' => $navigation_id));
+        }
+        // get dst record index
+        $query = $this->db->select('parent_id, index')
+            ->from($table_name)
+            ->where('navigation_id', $dst_navigation_id)
+            ->get();
+        $row = $query->row();
+        $dst_index = $row->index;
+        $dst_parent_id = $row->parent_id;
+        // add index of everything inside dst record
+        $query = $this->db->select('navigation_id, index')
+            ->from($table_name)
+            ->where('parent_id', $dst_navigation_id)
+            ->get();
+        foreach($query->result() as $row){
+            $navigation_id = $row->navigation_id;
+            $index = $row->index + 1;
+            $this->db->update($table_name,
+                array('index' => $index),
+                array('navigation_id' => $navigation_id));
+        }
+        // put src after dst
+        $this->db->update($table_name,
+            array('index' => 1, 'parent_id' => $dst_navigation_id),
+            array('navigation_id' => $src_navigation_id));
+        $this->__cms_reindex_navigation($src_parent_id);
+        $this->__cms_reindex_navigation($dst_id);
+    }
+
     /**
      * @author  goFrendiAsgard
      * @param   int navigation id
      * @desc    move quicklink up
      */
-    public function cms_do_move_up_quicklink($navigation_id){
+    public function cms_do_move_up_quicklink($quicklink_id){
         // re-index all
         $this->__cms_reindex_quicklink();
         // get the index again
         $query = $this->db->select('quicklink_id, index')
             ->from(cms_table_name('main_quicklink'))
-            ->where('navigation_id', $navigation_id)
+            ->where('quicklink_id', $quicklink_id)
             ->get();
         $row = $query->row();
         $this_index = $row->index;
@@ -1105,13 +1448,13 @@ class CMS_Model extends CI_Model
      * @param   int navigation id
      * @desc    move quicklink down
      */
-    public function cms_do_move_down_quicklink($navigation_id){
+    public function cms_do_move_down_quicklink($quicklink_id){
         // re-index all
         $this->__cms_reindex_quicklink();
         // get the index again
         $query = $this->db->select('quicklink_id, index')
             ->from(cms_table_name('main_quicklink'))
-            ->where('navigation_id', $navigation_id)
+            ->where('quicklink_id', $quicklink_id)
             ->get();
         $row = $query->row();
         $this_index = $row->index;

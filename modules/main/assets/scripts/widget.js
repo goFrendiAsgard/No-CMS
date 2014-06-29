@@ -5,7 +5,7 @@ $(document).ready(function(){
 	    $.ajax({
 	        url: $(this).attr('target'),
 	        dataType: 'json',
-	        success: function(response){                    
+	        success: function(response){
 	            if(str == 'Active'){
 	                str = 'Inactive';
 	            }else{
@@ -17,7 +17,10 @@ $(document).ready(function(){
 	        }
 	    });
 	});
-	
+
+	// remove sorting
+    $('.field-sorting').removeClass('field-sorting');
+
 	// check
     adjust_component_view();
     $("#field-is_static-true").click(function(){
@@ -49,3 +52,7 @@ function adjust_component_view(){
         $("div#groups_field_box").hide();
     }
 }
+
+$(document).ajaxComplete(function(){
+    $('.field-sorting').removeClass('field-sorting');
+});
