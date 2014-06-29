@@ -18,7 +18,9 @@
 	$asset->add_module_js('scripts/adjust.js', '{{ module_path }}');
 	echo $asset->compile_js();
 	echo '<h4>Table</h4>';
+    echo anchor(site_url('{{ module_path }}/data/nds/project'.$project_id),'All Projects','class="btn btn-primary"');
 	if(isset($project_id)){
+	    echo '&nbsp;';
 		echo anchor(site_url('{{ module_path }}/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
 	}
 	echo $output;
@@ -27,6 +29,7 @@
 <script type="text/javascript">
 	// if document ready, call adjust when needed
 	$(document).ready(function(){
+	    $('.field-sorting').removeClass('field-sorting');
 		var changing_field = 'project_id';
 		var affected_field = 'options';
 		var get_restricted_path = '<?php echo site_url('{{ module_path }}'); ?>'+'/data/ajax/get_restricted_table_option/';
@@ -36,5 +39,8 @@
 		});
 	});
 
+	$(document).ajaxComplete(function(){
+        $('.field-sorting').removeClass('field-sorting');
+    });
 
 </script>

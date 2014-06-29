@@ -76,7 +76,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud->set_subject('Article');
 
         // displayed columns on list
-        $crud->columns('article_title','author_user_id','allow_comment','categories','photos','comments');
+        $crud->columns('article_title','author_user_id','allow_comment','categories','comments');
         // displayed columns on edit operation
         $crud->edit_fields('article_title','article_url','date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
         // displayed columns on add operation

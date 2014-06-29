@@ -45,8 +45,8 @@
 			<!-- End of hidden inputs -->
 			<?php if ($is_ajax) { ?><input type="hidden" name="is_ajax" value="true" /><?php }?>
 
-			<div id='report-error' class='report-div error'></div>
-			<div id='report-success' class='report-div success'></div>
+			<div id='report-error' class='report-div error alert alert-danger'></div>
+			<div id='report-success' class='report-div success alert alert-success'></div>
 		</div>
 		<div class="pDiv">
 			<div class='form-button-box'>

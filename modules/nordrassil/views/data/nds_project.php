@@ -4,9 +4,6 @@
 		visibility: hidden;
 	}
 </style>
-<p class="alert-warning alert">
-    Import database only works for MySQL.
-</p>
 <?php
 	$asset = new CMS_Asset();
 	foreach($css_files as $file){
@@ -21,7 +18,12 @@
 	$asset->add_module_js('scripts/adjust.js', '{{ module_path }}');
 	echo $asset->compile_js();
 	echo '<h4>Project</h4>';
-	echo anchor(site_url('{{ module_path }}/data/nds/project/'),'Show All Project','class="btn btn-primary"');
+    if($state != 'list'){
+        echo '<p class="alert-warning alert">
+                Import database only works for MySQL.
+            </p>';
+	    echo anchor(site_url('{{ module_path }}/data/nds/project/'),'All Projects','class="btn btn-primary"');
+    }
 	echo $output;
 ?>
 
@@ -47,7 +49,7 @@
                 $("#field-"+autofill[i][0]).val(autofill[i][1]);
             }
         }
-        
+
 	});
 
 

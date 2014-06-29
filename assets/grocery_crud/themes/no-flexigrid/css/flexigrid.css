@@ -743,13 +743,13 @@ div.pGroup {
 .report-div
 {
 	padding: 10px;
-	border-style: solid;
+	/*border-style: solid;
 	border-width: 1px;
 	margin-bottom: 10px;
-	margin-top: 10px;
+	margin-top: 10px;*/
 	display:none;
 	/*font-family: Arial,Helvetica,sans-serif;*/
-}
+}/*
 .report-div.success
 {
 	border-color: green;
@@ -769,7 +769,7 @@ div.pGroup {
 	background: url(images/error.png) no-repeat left center;
 	margin: 0px !important;
 	padding: 10px 0px 10px 25px !important;
-}
+}*/
 input.field_error
 {
 	border: 1px solid red !important;

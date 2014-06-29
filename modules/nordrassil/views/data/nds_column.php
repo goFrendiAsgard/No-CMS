@@ -18,8 +18,12 @@
 	$asset->add_module_js('scripts/adjust.js', '{{ module_path }}');
 	echo $asset->compile_js();
 	echo '<h4>Column</h4>';
-	if(isset($project_id)){
+	echo anchor(site_url('{{ module_path }}/data/nds/project'.$project_id),'All Projects','class="btn btn-primary"');
+    if(isset($project_id)){
+        echo '&nbsp;';
 		echo anchor(site_url('{{ module_path }}/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
+        echo '&nbsp;';
+        echo anchor(site_url('{{ module_path }}/data/nds/table/'.$project_id),'All Tables in "<b>'.$project_name.'</b>"','class="btn btn-primary"');
 		echo '&nbsp;';
 		echo anchor(site_url('{{ module_path }}/data/nds/table/'.$project_id.'/edit/'.$table_id),'Table "<b>'.$table_name.'</b>"','class="btn btn-primary"');
 	}
@@ -27,8 +31,12 @@
 ?>
 
 <script type="text/javascript">
+    $(document).ajaxComplete(function(){
+        $('.field-sorting').removeClass('field-sorting');
+    });
 	// if document ready, call adjust when needed
 	$(document).ready(function(){
+	    $('.field-sorting').removeClass('field-sorting');
 		// when table_id changed
 		var changing_field_1 = 'table_id';
 		var affected_field_1 = Array('options', 'lookup_table_id','relation_table_id', 'selection_table_id');

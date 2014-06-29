@@ -23,7 +23,7 @@ class nds extends CMS_Controller {
         $crud->edit_fields('name','generator_path','options');
         // displayed columns on add operation
         $crud->add_fields('name','generator_path');
-        
+
         $crud->unset_read();
 
         $crud->required_fields('name','generator_path');
@@ -151,7 +151,7 @@ class nds extends CMS_Controller {
         $crud->set_table($this->cms_complete_table_name('project'));
 
         // displayed columns on list
-        $crud->columns('template_id','name','options','tables','manage_tables');
+        $crud->columns('name','options','tables');
         // displayed columns on edit operation
         $crud->edit_fields('template_id','name','options','db_server','db_port','db_schema','db_user','db_password','db_table_prefix','tables');
         // displayed columns on add operation
@@ -159,7 +159,7 @@ class nds extends CMS_Controller {
 
         $crud->required_fields('template_id','name');
         $crud->unique_fields('name');
-        
+
         $crud->unset_read();
 
         // caption of each columns
@@ -173,18 +173,17 @@ class nds extends CMS_Controller {
 		$crud->display_as('db_password','Database Password');
 		$crud->display_as('db_table_prefix','Database Table Prefix');
 		$crud->display_as('tables','Tables');
-		$crud->display_as('manage_tables','Manage Tables');
 
 		$crud->field_type('db_password','password');
 
 		$crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
 		$crud->set_relation_n_n('options',$this->cms_complete_table_name('project_option'),
-		  $this->cms_complete_table_name('template_option'),'project_id','option_id','name');
+		$this->cms_complete_table_name('template_option'),'project_id','option_id','name');
 
 		$crud->callback_after_insert(array($this, 'project_after_insert'));
 		$crud->callback_before_delete(array($this, 'callback_project_before_delete'));
 
-		$crud->callback_column('manage_tables',array($this,'callback_column_project_manage_tables'));
+        $crud->callback_column($this->cms_complete_table_name('project').'.name',array($this,'callback_column_project_name'));
 		$crud->callback_column('tables',array($this,'callback_column_project_tables'));
 		$crud->callback_edit_field('tables',array($this,'callback_edit_field_project_tables'));
 
@@ -194,6 +193,7 @@ class nds extends CMS_Controller {
 
         // render
         $output = $crud->render();
+        $output->state = $crud->getState();
         $this->view($this->cms_module_path()."/data/nds_project", $output, $this->cms_complete_navigation_name('project'));
     }
 
@@ -209,19 +209,24 @@ class nds extends CMS_Controller {
 		return TRUE;
 	}
 
-	public function callback_column_project_manage_tables($value, $row){
-		$primary_key = $row->project_id;
-		$url = site_url($this->cms_module_path().'/data/nds/table');
-		$caption = 'Table';
-		return $this->get_detail_action($caption, $url, $primary_key, TRUE);
-	}
+    public function callback_column_project_name($value, $row){
+        $query = $this->db->select('name')
+            ->from($this->cms_complete_table_name('template'))
+            ->where('template_id', $row->template_id)
+            ->get();
+        $template_row = $query->row();
+        $template_name = $template_row->name;
+        return '<b>'.$value.'</b>'.br().$template_name;
+    }
 
 	public function callback_column_project_tables($value, $row){
 		$primary_key = $row->project_id;
 		$url = site_url($this->cms_module_path().'/data/nds/table');
+        $caption = 'Table';
 		$this->load->model('/data/nds_model');
+        $action =  $this->get_detail_action($caption, $url, $primary_key, TRUE);
 		$result = $this->nds_model->get_table_by_project($primary_key);
-		return $this->get_detail_data($result, $url, $primary_key, 'table_id', 'name');
+		return $action.br().$this->get_detail_data($result, $url, $primary_key, 'table_id', 'name');
 	}
 
 	public function callback_edit_field_project_tables($value, $primary_key){
@@ -247,15 +252,15 @@ class nds extends CMS_Controller {
 		if(isset($project_id) && intval($project_id)>0){
     		$crud->where($this->cms_complete_table_name('table').'.project_id', $project_id);
     		// displayed columns on list
-        	$crud->columns('name','caption','priority','options','columns','manage_columns');
+        	$crud->columns('name', 'options', 'priority', 'columns');
     	}else{
     		// displayed columns on list
-        	$crud->columns('project_id','name','caption','priority','options','columns','manage_columns');
+        	$crud->columns('project_id', 'name', 'options', 'priority', 'columns');
     	}
     	$crud->order_by('priority');
 
         $crud->required_fields('name','caption');
-        
+
         $crud->unset_read();
 
         // displayed columns on edit operation
@@ -268,12 +273,9 @@ class nds extends CMS_Controller {
         // caption of each columns
         $crud->display_as('project_id','Project');
         $crud->display_as('name','Name');
-        $crud->display_as('caption','Caption');
-        $crud->display_as('priority','Priority');
+        $crud->display_as('priority','Order Priority');
 		$crud->display_as('options','Options');
 		$crud->display_as('columns','Columns');
-		$crud->display_as('manage_columns','Manage Columns');
-		$crud->display_as('priority', 'Order Index');
 
         $crud->set_relation('project_id',$this->cms_complete_table_name('project'),'name');
 		$crud->set_relation_n_n('options',$this->cms_complete_table_name('table_option'),
@@ -285,7 +287,7 @@ class nds extends CMS_Controller {
 
 		$crud->callback_before_delete(array($this, 'callback_table_before_delete'));
 
-		$crud->callback_column('manage_columns',array($this,'callback_column_table_manage_columns'));
+		$crud->callback_column($this->cms_complete_table_name('table').'.name',array($this,'callback_column_table_name'));
 		$crud->callback_column('columns',array($this,'callback_column_table_columns'));
 		$crud->callback_edit_field('columns',array($this,'callback_edit_field_table_columns'));
 		$crud->callback_column($this->unique_field_name('project_id'),array($this,'callback_column_table_project_id'));
@@ -315,19 +317,18 @@ class nds extends CMS_Controller {
 		return $this->get_back_to_parent_action($value, $url, $parent_key);
 	}
 
-	public function callback_column_table_manage_columns($value, $row){
-		$primary_key = $row->table_id;
-		$url = site_url($this->cms_module_path().'/data/nds/column');
-		$caption = 'Column';
-		return $this->get_detail_action($caption, $url, $primary_key, TRUE);
-	}
+    public function callback_column_table_name($value, $row){
+        return '<b>' . $value . '</b>' . br() . '(' . $row->caption . ')';
+    }
 
 	public function callback_column_table_columns($value, $row){
 		$primary_key = $row->table_id;
 		$url = site_url($this->cms_module_path().'/data/nds/column');
+        $caption = 'Column';
 		$this->load->model('/data/nds_model');
 		$result = $this->nds_model->get_column_by_table($primary_key);
-		return $this->get_detail_data($result, $url, $primary_key, 'column_id', 'name');
+        $action = $this->get_detail_action($caption, $url, $primary_key, TRUE);
+		return $action.br().$this->get_detail_data($result, $url, $primary_key, 'column_id', 'name');
 	}
 
 	public function callback_edit_field_table_columns($value, $primary_key){
@@ -353,15 +354,15 @@ class nds extends CMS_Controller {
 		if(isset($table_id) && intval($table_id)>0){
     		$crud->where($this->cms_complete_table_name('column').'.table_id', $table_id);
 			// displayed columns on list
-        	$crud->columns('name','caption','role','data_type','data_size','options','priority');
+        	$crud->columns('name','role','options','priority');
     	}else{
     		// displayed columns on list
-        	$crud->columns('table_id','name','caption','role','data_type','data_size','options','priority');
+        	$crud->columns('table_id','name','role','options','priority');
     	}
     	$crud->order_by('priority');
 
         $crud->required_fields('name','caption');
-        
+
         $crud->unset_read();
 
         // displayed columns on edit operation
@@ -372,7 +373,7 @@ class nds extends CMS_Controller {
         	'relation_selection_column_id','relation_priority_column_id','selection_table_id','selection_column_id');
 
         $crud->set_rules('priority','Priority','numeric');
-        
+
         // caption of each columns
         $crud->display_as('table_id','Table');
 		$crud->display_as('name','Name');
@@ -390,7 +391,7 @@ class nds extends CMS_Controller {
 		$crud->display_as('selection_column_id','Selection Shown Column');
 		$crud->display_as('value_selection_mode','Selection Mode');
 		$crud->display_as('value_selection_item','Selection Item');
-		$crud->display_as('priority', 'Order Index');
+		$crud->display_as('priority', 'Order Priority');
 
 		$crud->field_type('data_type', 'enum', $this->nds_model->available_data_type);
 		$crud->field_type('role', 'enum', array('primary','lookup','detail many to many','detail one to many'));
@@ -416,6 +417,7 @@ class nds extends CMS_Controller {
 
 		$crud->callback_before_delete(array($this,'callback_column_before_delete'));
 
+        $crud->callback_column($this->cms_complete_table_name('column').'.name',array($this,'callback_column_column_name'));
 		$crud->callback_column($this->unique_field_name('table_id'),array($this,'callback_column_column_table_id'));
 
         // adjust grocery-crud language
@@ -441,6 +443,11 @@ class nds extends CMS_Controller {
 		$this->nds_model->before_delete_column($primary_key);
 		return TRUE;
 	}
+
+    public function callback_column_column_name($value, $row){
+        return '<b>' . $value . '</b>' . ', ' . $row->data_type. '(' . $row->data_size . ')' . br() .
+            '(' . $row->caption . ')';
+    }
 
 	public function callback_column_column_table_id($value, $row){
 		$parent_key = $row->table_id;
@@ -474,23 +481,22 @@ class nds extends CMS_Controller {
 	private function get_detail_action($caption, $link, $primary_key, $narrow = FALSE){
 		$link = $this->preprocess_url($link);
 		$html = '';
-		// show all
-		$html .= anchor(
-				$link.$primary_key,
-				'Show All '.$caption,
-				array('class'=>'btn btn-mini')
-			);
+        // add new
+        $html .= anchor(
+                $link.$primary_key.'/add',
+                '<i class="glyphicon glyphicon-plus"></i> Add New '.$caption
+            );
+        // separator
 		if($narrow){
 			$html .= br();
 		}else{
-			$html .= '&nbsp;';
+			$html .= '&nbsp; | &nbsp;';
 		}
-		// add new
-		$html .= anchor(
-				$link.$primary_key.'/add',
-				'Add New '.$caption,
-				array('class'=>'btn btn-mini')
-			);
+        // manage
+        $html .= anchor(
+                $link.$primary_key,
+                '<i class="glyphicon glyphicon-list"></i> Manage '.$caption
+            );
 		return $html;
 	}
 
@@ -499,23 +505,13 @@ class nds extends CMS_Controller {
 		$arr = array();
 		$char_count=0;
 		foreach($model_result as $row){
-			$arr[] = anchor(
+			$arr[] =
+			     '<li>' . anchor(
 					$link.$primary_key.'/edit/'.$row->{$primary_key_lookup_field},
-					$row->{$title_lookup_field},
-					array(
-						'class'=>'btn btn-mini',
-						'style'=>'float:left;')
-				);
-			// just add some spaces and new lines
-			$char_count += strlen($row->{$title_lookup_field});
-			if($char_count>=26){
-				$arr[] = br();
-				$char_count = 0;
-			}else{
-				$arr[] = '<span style="float:left;">&nbsp;</span>';
-			}
+					$row->{$title_lookup_field}
+				) . '</li>';
 		}
-		$html = implode('',$arr);
+		$html = '<ul>' . implode('',$arr) . '</ul>';
 		return $html;
 	}
 
