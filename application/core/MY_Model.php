@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.6.6.0';
+        $current_version = '0.6.6.1';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -62,6 +62,17 @@ class CMS_Model extends CI_Model
                 }
             }
             $this->dbforge->add_column($table_name, $fields);
+
+            // update main_layout into main_setting
+            $data = array(
+                'navigation_name' => 'main_setting',
+                'url' => 'main/setting',
+                'title' => 'Setting',
+                'description' => 'CMS Setting'
+            );
+            $this->db->update($this->cms_complete_table_name('main_navigation'),
+                $data,
+                array('navigation_name' => 'main_layout'));
 
             // write new version
             cms_config('__cms_version', $current_version);
@@ -1065,6 +1076,7 @@ class CMS_Model extends CI_Model
 
     public function cms_do_move_widget_after($src_widget_id, $dst_widget_id){
         $table_name = cms_table_name('main_widget');
+        $this->__cms_reindex_widget();
         // get src record index
         $query = $this->db->select('index')
             ->from($table_name)
@@ -1112,6 +1124,7 @@ class CMS_Model extends CI_Model
 
     public function cms_do_move_widget_before($src_widget_id, $dst_widget_id){
         $table_name = cms_table_name('main_widget');
+        $this->__cms_reindex_widget();
         // get src record index
         $query = $this->db->select('index')
             ->from($table_name)
@@ -1159,6 +1172,7 @@ class CMS_Model extends CI_Model
 
     public function cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id){
         $table_name = cms_table_name('main_quicklink');
+        $this->__cms_reindex_quicklink();
         // get src record index
         $query = $this->db->select('index')
             ->from($table_name)
@@ -1206,6 +1220,7 @@ class CMS_Model extends CI_Model
 
     public function cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id){
         $table_name = cms_table_name('main_quicklink');
+        $this->__cms_reindex_quicklink();
         // get src record index
         $query = $this->db->select('index')
             ->from($table_name)
@@ -1261,6 +1276,7 @@ class CMS_Model extends CI_Model
         $row = $query->row();
         $src_index = $row->index;
         $src_parent_id = $row->parent_id;
+        $this->__cms_reindex_navigation($src_parent_id);
         // reduce index of everything after src record
         $query = $this->db->select('navigation_id, index')
             ->from($table_name)
@@ -1282,6 +1298,7 @@ class CMS_Model extends CI_Model
         $row = $query->row();
         $dst_index = $row->index;
         $dst_parent_id = $row->parent_id;
+        $this->__cms_reindex_navigation($dst_parent_id);
         // add index of everything after dst record
         $query = $this->db->select('navigation_id, index')
             ->from($table_name)
@@ -1313,6 +1330,7 @@ class CMS_Model extends CI_Model
         $row = $query->row();
         $src_index = $row->index;
         $src_parent_id = $row->parent_id;
+        $this->__cms_reindex_navigation($src_parent_id);
         // reduce index of everything after src record
         $query = $this->db->select('navigation_id, index')
             ->from($table_name)
@@ -1334,6 +1352,7 @@ class CMS_Model extends CI_Model
         $row = $query->row();
         $dst_index = $row->index;
         $dst_parent_id = $row->parent_id;
+        $this->__cms_reindex_navigation($dst_parent_id);
         // add index of dst record and everything after dst record
         $query = $this->db->select('navigation_id, index')
             ->from($table_name)
@@ -1365,6 +1384,7 @@ class CMS_Model extends CI_Model
         $row = $query->row();
         $src_index = $row->index;
         $src_parent_id = $row->parent_id;
+        $this->__cms_reindex_navigation($src_parent_id);
         // reduce index of everything after src record
         $query = $this->db->select('navigation_id, index')
             ->from($table_name)
@@ -1386,6 +1406,7 @@ class CMS_Model extends CI_Model
         $row = $query->row();
         $dst_index = $row->index;
         $dst_parent_id = $row->parent_id;
+        $this->__cms_reindex_navigation($dst_parent_id);
         // add index of everything inside dst record
         $query = $this->db->select('navigation_id, index')
             ->from($table_name)

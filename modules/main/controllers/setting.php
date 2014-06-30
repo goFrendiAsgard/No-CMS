@@ -1,18 +1,14 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-class Layout extends CMS_Controller{
+class Setting extends CMS_Controller{
 
     protected $theme = 'neutral';
-
-    public function __construct(){
-        parent::__construct();
-        $this->theme = $this->cms_get_config('site_theme');
-    }
 
     private function update_static_content($widget_name, $content){
         $this->db->update(cms_table_name('main_widget'), array('static_content'=>$content), array('widget_name'=>$widget_name));
     }
 
     public function index(){
+        $this->theme = $this->cms_get_config('site_theme');
         // save the uploaded files
         if(isset($_FILES['site_logo'])){
             $site_logo = $_FILES['site_logo'];
@@ -92,6 +88,6 @@ class Layout extends CMS_Controller{
         $data['config_list'] = $config_list;
         $data['layout_list'] = $layout_list;
         $data['current_language'] = $this->cms_get_config('site_language', True);
-        $this->view('layout_index', $data, 'main_layout');
+        $this->view('setting_index', $data, 'main_setting');
     }
 }
