@@ -70,7 +70,7 @@ class CMS_Model extends CI_Model
                 'title' => 'Setting',
                 'description' => 'CMS Setting'
             );
-            $this->db->update($this->cms_complete_table_name('main_navigation'),
+            $this->db->update(cms_table_name('main_navigation'),
                 $data,
                 array('navigation_name' => 'main_layout'));
 

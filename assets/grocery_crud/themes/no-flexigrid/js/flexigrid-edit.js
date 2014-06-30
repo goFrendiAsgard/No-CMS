@@ -120,6 +120,18 @@ function add_form_control_class(){
 }
 $(document).ready(function(){
     add_form_control_class();
+
+    $('.fbutton .add').prepend('<i class="glyphicon glyphicon-plus-sign"></i> ');
+    $('.fbutton .add').addClass('btn btn-default');
+    $('.fbutton .add').live('click', function(){
+        $('.delete-icon').each(function(){
+            if($(this).html() == ''){
+                $(this).addClass('btn btn-default');
+                $(this).html('<i class="glyphicon glyphicon-minus-sign"></i>');
+            }
+        });
+    });
+
 });
 $(document).ajaxComplete(function(){
     add_form_control_class();
