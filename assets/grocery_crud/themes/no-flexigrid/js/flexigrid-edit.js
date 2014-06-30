@@ -121,6 +121,10 @@ function add_form_control_class(){
 $(document).ready(function(){
     add_form_control_class();
 
+    // make multi select shown as it should be
+    $('.ui-helper-clearfix, .ui-helper-clearfix .selected, .ui-helper-clearfix .available').css('width','auto');
+    $('.ui-helper-clearfix .selected ul, .ui-helper-clearfix .available ul').css('height','110px');
+    // add & delete on detail table
     $('.fbutton .add').prepend('<i class="glyphicon glyphicon-plus-sign"></i> ');
     $('.fbutton .add').addClass('btn btn-default');
     $('.fbutton .add').live('click', function(){

@@ -552,7 +552,7 @@ class Default_Generator extends CMS_Controller{
             // views
             $data = array(
                 'make_frontpage'=>$table_make_frontpage,
-                'front_controller_import_name' => underscore(humanize($this->front_controller_class_name($table_name))),
+                'front_controller_import_name' => underscore(humanize($this->front_controller_class_name($stripped_table_name))),
             );
             $str = $this->nds->read_view('nordrassil/default_generator/back_view.php',$data,$pattern,$replacement);
             $this->nds->write_file($this->project_path.'views/'.$this->back_view_file_name($stripped_table_name), $str);

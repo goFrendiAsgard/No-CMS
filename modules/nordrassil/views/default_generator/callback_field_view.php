@@ -340,7 +340,7 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // reset field on save
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    $(document).ajaxSuccess(function(event, xhr, settings) {        
+    $(document).ajaxSuccess(function(event, xhr, settings) {
         if (settings.url == "{{ module_site_url }}manage_<?php echo underscore($stripped_master_table_name) ?>/index/insert") {
             response = $.parseJSON(xhr.responseText);
             if(response.success == true){
@@ -375,7 +375,8 @@
                 dateFormat: js_date_format,
                 showButtonPanel: true,
                 changeMonth: true,
-                changeYear: true
+                changeYear: true,
+                yearRange: "c-100:c+100",
         });
         // date-picker-input-clear
         $('#<?php echo $table_id; ?> .datepicker-input-clear').click(function(){
@@ -488,6 +489,6 @@
 
     function IsNumeric(input){
         return (input - 0) == input && input.length > 0;
-    }    
+    }
 
 </script>

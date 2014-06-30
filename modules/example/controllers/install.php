@@ -35,9 +35,9 @@ class Install extends CMS_Module_Installer {
             $this->cms_complete_table_name('commodity'),
             $this->cms_complete_table_name('city_tourism'),
             $this->cms_complete_table_name('city_commodity'),
-            $this->cms_complete_table_name('city'),
             $this->cms_complete_table_name('citizen_hobby'),
-            $this->cms_complete_table_name('tourism')
+            $this->cms_complete_table_name('tourism'),
+            $this->cms_complete_table_name('city')
         ));
         $this->remove_all();
     }
@@ -81,8 +81,8 @@ class Install extends CMS_Module_Installer {
 
         // remove navigations
         $this->remove_navigation($this->cms_complete_navigation_name('browse_city'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_tourism'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_city'));
+        $this->remove_navigation($this->cms_complete_navigation_name('manage_tourism'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_commodity'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_country'));
         $this->remove_navigation($this->cms_complete_navigation_name('manage_hobby'));
@@ -93,9 +93,9 @@ class Install extends CMS_Module_Installer {
         $this->remove_navigation($this->cms_complete_navigation_name('index'));
         
         // drop tables
+        $this->dbforge->drop_table($this->cms_complete_table_name('city'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('tourism'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('citizen_hobby'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('city'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('city_commodity'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('city_tourism'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('commodity'), TRUE);
@@ -129,11 +129,11 @@ class Install extends CMS_Module_Installer {
         $this->add_navigation($this->cms_complete_navigation_name('manage_commodity'), 'Manage Commodity',
             $module_path.'/manage_commodity', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_city'), 'Manage City',
-            $module_path.'/manage_city', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
-        );
         $this->add_navigation($this->cms_complete_navigation_name('manage_tourism'), 'Manage Tourism',
             $module_path.'/manage_tourism', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        );
+        $this->add_navigation($this->cms_complete_navigation_name('manage_city'), 'Manage City',
+            $module_path.'/manage_city', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
         
@@ -208,19 +208,6 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('city_commodity'));
 
-        // city
-        $fields = array(
-            'city_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'country_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
-            'tourism'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
-            'commodity'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
-            'citizen'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('city_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('city'));
-
         // citizen_hobby
         $fields = array(
             'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
@@ -239,6 +226,19 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('tourism_id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('tourism'));
+
+        // city
+        $fields = array(
+            'city_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'country_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
+            'tourism'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
+            'commodity'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
+            'citizen'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('city_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('city'));
 
         
     }

@@ -17,4 +17,4 @@ function __ommit_nbsp($matches){
 }
 echo preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', '__ommit_nbsp', $output);
 ?>
-<a class="btn btn-primary" href="{{ site_url }}{{ module_path }}/browse_twn_city/index">Show Front Page</a>
+<a class="btn btn-primary" href="{{ site_url }}{{ module_path }}/browse_city/index">Show Front Page</a>

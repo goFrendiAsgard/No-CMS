@@ -4,7 +4,7 @@ INSERT INTO {{ complete_table_name:project }} (`project_id`, `template_id`, `nam
 INSERT INTO {{ complete_table_name:table }} (`table_id`, `project_id`, `name`, `caption`, `priority`) VALUES 
 (1, 1, 'twn_citizen', 'Citizen', 0),
 (2, 1, 'twn_citizen_hobby', 'Citizen Hobby', 0),
-(3, 1, 'twn_city', 'City', 0),
+(3, 1, 'twn_city', 'City', 1),
 (4, 1, 'twn_city_commodity', 'City Commodity', 0),
 (5, 1, 'twn_city_tourism', 'City Tourism', 0),
 (6, 1, 'twn_commodity', 'Commodity', 0),
