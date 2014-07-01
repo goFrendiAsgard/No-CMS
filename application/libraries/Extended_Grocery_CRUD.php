@@ -38,8 +38,8 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 
 	/* Extra field types Functions
      */
-    public function field_type_ext($field , $type, $extras = null){
-    	if($field && $type){
+	public function field_type_ext($field , $type, $extras = null){
+        if($field && $type){
     		switch ($type) {
     			case 'yes_no':
     				$this->field_type($field,'dropdown', array('1' => 'Yes', '0' => 'No'));
@@ -59,20 +59,20 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
     }
 
     // fix issue http://www.grocerycrud.com/forums/topic/1975-bug-in-the-search/
-    public function unset_search_field($field){
-        $this->unsearchable_field[] = $field;
+	public function unset_search_field($field){
+       	$this->unsearchable_field[] = $field;
     }
 
     public function get_actual_columns(){
         $field_types = $this->get_field_types();
         $actual_columns = array();
         foreach($field_types as $field) {
-            if( isset($field->db_extra) && $field->db_extra != 'auto_increment' ){
-                if(!in_array($field->name, $this->unsearchable_field)){
-                    $actual_columns[] = $field->name;
-                }
-            }
-        }
+           		if( isset($field->db_extra) && $field->db_extra != 'auto_increment' ){
+               		if(!in_array($field->name, $this->unsearchable_field)){
+               			$actual_columns[] = $field->name;
+               		}
+           		}
+		 }
         return $actual_columns;
     }
 
@@ -205,8 +205,7 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
     }
 
     // fix issue of NULL unique field (it is possible). The property_exists function is more robbust than isset
-    protected function db_update_validation()
-    {
+    protected function db_update_validation(){
         $validation_result = (object)array('success'=>false);
 
         $field_types = $this->get_field_types();
