@@ -5,7 +5,7 @@
 <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?>" />
 <style type="text/css">
     #md_table_citizen input[type="text"]{
-        width:80px;
+        max-width:100px;
     }
     #md_table_citizen th:last-child, #md_table_citizen td:last-child{
         width: 60px;
@@ -13,7 +13,8 @@
 </style>
 
 <div id="md_table_citizen_container">
-    <table id="md_table_citizen" class="table table-striped table-bordered">
+    <div id="no-datamd_table_citizen">No data</div>
+    <table id="md_table_citizen" class="table table-striped table-bordered" style="display:none">
         <thead>
             <tr>
                 <th>Name</th>
@@ -28,7 +29,8 @@
         </tbody>
     </table>
     <div class="fbutton">
-        <span id="md_field_citizen_add" class="add">Add Citizen</span>
+        <span id="md_field_citizen_add" class="add btn btn-default">
+            <i class="glyphicon glyphicon-plus-sign"></i> Add Citizen        </span>
     </div>
     <br />
     <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
@@ -74,6 +76,9 @@
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function add_table_row_citizen(value){
+        // hide no-data div
+        $("#no-datamd_table_citizen").hide();
+        $("#md_table_citizen").show();
 
         var component = '<tr id="md_field_citizen_tr_'+RECORD_INDEX_citizen+'" class="md_field_citizen_tr">';
         
@@ -152,7 +157,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><span class="delete-icon md_field_citizen_delete" record_index="'+RECORD_INDEX_citizen+'"></span></td>';
+        component += '<td><span class="delete-icon btn btn-default md_field_citizen_delete" record_index="'+RECORD_INDEX_citizen+'"><i class="glyphicon glyphicon-minus-sign"></i></span></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////

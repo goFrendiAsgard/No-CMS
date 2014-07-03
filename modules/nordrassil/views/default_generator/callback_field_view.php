@@ -46,7 +46,7 @@
 <link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?&gt;" />
 <style type="text/css">
     #<?php echo $table_id; ?> input[type="text"]{
-        min-width:80px;
+        max-width:100px;
     }
     #<?php echo $table_id; ?> th:last-child, #<?php echo $table_id; ?> td:last-child{
         width: 60px;
@@ -120,8 +120,8 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function <?php echo $fn_add_table_row; ?>(value){
         // hide no-data div
-        $('#no-data<?php echo $table_id; ?>").hide();
-        $('#<?php echo $table_id; ?>").show();
+        $("#no-data<?php echo $table_id; ?>").hide();
+        $("#<?php echo $table_id; ?>").show();
 
         var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
         <?php
