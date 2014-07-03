@@ -354,10 +354,10 @@ class nds extends CMS_Controller {
 		if(isset($table_id) && intval($table_id)>0){
     		$crud->where($this->cms_complete_table_name('column').'.table_id', $table_id);
 			// displayed columns on list
-        	$crud->columns('name','role','options','priority');
+        	$crud->columns('name','options','priority');
     	}else{
     		// displayed columns on list
-        	$crud->columns('table_id','name','role','options','priority');
+        	$crud->columns('table_id','name','options','priority');
     	}
     	$crud->order_by('priority');
 
@@ -445,7 +445,15 @@ class nds extends CMS_Controller {
 	}
 
     public function callback_column_column_name($value, $row){
-        return '<b>' . $value . '</b>' . ', ' . $row->data_type. '(' . $row->data_size . ')' . br() .
+        if($row->role == NULL || $row->role == '' || $row->role == 'primary' || $row->role == 'lookup'){
+            $description = $row->data_type. '(' . $row->data_size . ')';
+            if($row->role != NULL && $row->role != ''){
+                $description .= ' <span class="badge">'.ucfirst($row->role).'</span>';
+            }
+        }else{
+            $description = '<span class="badge">'.ucfirst($row->role).'</span>';
+        }
+        return '<b>' . $value . '</b>' . ', ' . $description . br() .
             '(' . $row->caption . ')';
     }
 

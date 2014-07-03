@@ -146,11 +146,19 @@ function clearForm()
 }
 
 // addition by gofrendi
-function add_form_control_class(){
+function __add_form_control_class(){
     $('.flexigrid input, .flexigrid select').addClass('form-control');
 }
+function __mutate_delete_icon(){
+    $('.delete-icon').each(function(){
+        if($(this).html() == ''){
+            $(this).addClass('btn btn-default');
+            $(this).html('<i class="glyphicon glyphicon-minus-sign"></i>');
+        }
+    });
+}
 $(document).ready(function(){
-    add_form_control_class();
+    __add_form_control_class();
 
     // make multi select shown as it should be
     $('.ui-helper-clearfix, .ui-helper-clearfix .selected, .ui-helper-clearfix .available').css('width','auto');
@@ -159,15 +167,12 @@ $(document).ready(function(){
     $('.fbutton .add').prepend('<i class="glyphicon glyphicon-plus-sign"></i> ');
     $('.fbutton .add').addClass('btn btn-default');
     $('.fbutton .add').live('click', function(){
-        $('.delete-icon').each(function(){
-            if($(this).html() == ''){
-                $(this).addClass('btn btn-default');
-                $(this).html('<i class="glyphicon glyphicon-minus-sign"></i>');
-            }
-        });
+        __mutate_delete_icon();
     });
-
+    $('.flexigrid tbody').bind("DOMSubtreeModified",function(){
+        __mutate_delete_icon();
+    });
 });
 $(document).ajaxComplete(function(){
-    add_form_control_class();
+    __add_form_control_class();
 });

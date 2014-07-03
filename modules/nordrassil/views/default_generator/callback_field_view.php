@@ -201,6 +201,10 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         $('#<?php echo $table_id; ?> tbody').append(component);
         <?php echo $fn_mutate_input; ?>();
+        // add icon to delete_button
+        if(typeof __mutate_delete_icon == 'function') {
+            __mutate_delete_icon();
+        }
 
     } // end of ADD ROW FUNCTION
 

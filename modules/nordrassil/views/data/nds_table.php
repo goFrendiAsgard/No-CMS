@@ -18,7 +18,7 @@
 	$asset->add_module_js('scripts/adjust.js', '{{ module_path }}');
 	echo $asset->compile_js();
 	echo '<h4>Table</h4>';
-    echo anchor(site_url('{{ module_path }}/data/nds/project'.$project_id),'All Projects','class="btn btn-primary"');
+    echo anchor(site_url('{{ module_path }}/data/nds/project/'.$project_id),'All Projects','class="btn btn-primary"');
 	if(isset($project_id)){
 	    echo '&nbsp;';
 		echo anchor(site_url('{{ module_path }}/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
