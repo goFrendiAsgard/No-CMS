@@ -46,7 +46,7 @@
 <link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?&gt;" />
 <style type="text/css">
     #<?php echo $table_id; ?> input[type="text"]{
-        width:80px;
+        min-width:80px;
     }
     #<?php echo $table_id; ?> th:last-child, #<?php echo $table_id; ?> td:last-child{
         width: 60px;
@@ -54,7 +54,8 @@
 </style>
 
 <div id="<?php echo $table_id; ?>_container">
-    <table id="<?php echo $table_id; ?>" class="table table-striped table-bordered">
+    <div id="no-data<?php echo $table_id; ?>">No data</div>
+    <table id="<?php echo $table_id; ?>" class="table table-striped table-bordered" style="display:none">
         <thead>
             <tr>
 <?php
@@ -70,7 +71,9 @@
         </tbody>
     </table>
     <div class="fbutton">
-        <span id="<?php echo $add_button_id; ?>" class="add">Add <?php echo $detail_table_caption; ?></span>
+        <span id="<?php echo $add_button_id; ?>" class="add btn btn-default">
+            <i class="glyphicon glyphicon-plus-sign"></i> Add <?php echo $detail_table_caption; ?>
+        </span>
     </div>
     <br />
     <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
@@ -116,6 +119,9 @@
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function <?php echo $fn_add_table_row; ?>(value){
+        // hide no-data div
+        $('#no-data<?php echo $table_id; ?>").hide();
+        $('#<?php echo $table_id; ?>").show();
 
         var component = '<tr id="<?php echo $tr_class ?>_'+<?php echo $var_record_index; ?>+'" class="<?php echo $tr_class ?>">';
         <?php
@@ -193,7 +199,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><span class="delete-icon <?php echo $delete_button_class; ?>" record_index="'+<?php echo $var_record_index; ?>+'"></span></td>';
+        component += '<td><span class="delete-icon btn btn-default <?php echo $delete_button_class; ?>" record_index="'+<?php echo $var_record_index; ?>+'"><i class="glyphicon glyphicon-minus-sign"></i></span></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,10 +207,6 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         $('#<?php echo $table_id; ?> tbody').append(component);
         <?php echo $fn_mutate_input; ?>();
-        // add icon to delete_button
-        if(typeof __mutate_delete_icon == 'function') {
-            __mutate_delete_icon();
-        }
 
     } // end of ADD ROW FUNCTION
 

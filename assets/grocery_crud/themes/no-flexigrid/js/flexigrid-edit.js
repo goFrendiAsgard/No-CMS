@@ -119,10 +119,18 @@ function __add_form_control_class(){
     $('.flexigrid input, .flexigrid select').addClass('form-control');
 }
 function __mutate_delete_icon(){
-    $('.delete-icon').each(function(){
+    $('.flexigrid .delete-icon').each(function(){
         if($(this).html() == ''){
             $(this).addClass('btn btn-default');
             $(this).html('<i class="glyphicon glyphicon-minus-sign"></i>');
+        }
+    });
+}
+function __mutate_add_icon(){
+    $('.flexigrid .fbutton .add').each(function(){
+        if(!$(this).hasClass('btn')){
+            $(this).addClass('btn btn-default');
+            $(this).prepend('<i class="glyphicon glyphicon-plus-sign"></i>');
         }
     });
 }
@@ -133,8 +141,7 @@ $(document).ready(function(){
     $('.ui-helper-clearfix, .ui-helper-clearfix .selected, .ui-helper-clearfix .available').css('width','auto');
     $('.ui-helper-clearfix .selected ul, .ui-helper-clearfix .available ul').css('height','110px');
     // add & delete on detail table
-    $('.fbutton .add').prepend('<i class="glyphicon glyphicon-plus-sign"></i> ');
-    $('.fbutton .add').addClass('btn btn-default');
+    __mutate_add_icon();
     $('.fbutton .add').live('click', function(){
         __mutate_delete_icon();
     });
