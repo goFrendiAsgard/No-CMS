@@ -66,7 +66,12 @@ class NordrassilLib{
 	public function write_file($file_name, $content){
 	    if(file_exists($file_name)){
 	        @chmod($file_name, 0777);
+            if(file_get_contents($filename) != $content){
+                $backup_file_name = date('Y-m-d-H-i-s-'.$file_name.'.bak');
+                copy($file_name, $backup_file_name);
+            }
 	    }
+        @chmod(dirname($file_name), 0777);
 		file_put_contents($file_name, $content);
 		@chmod($file_name, 0777);
 	}

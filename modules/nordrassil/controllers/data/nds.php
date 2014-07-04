@@ -285,6 +285,8 @@ class nds extends CMS_Controller {
     		$crud->change_field_type('project_id', 'hidden', $project_id);
     	}
 
+        $crud->callback_after_insert(array($this, 'callback_table_after_insert'));
+        $crud->callback_after_update(array($this, 'callback_table_after_update'));
 		$crud->callback_before_delete(array($this, 'callback_table_before_delete'));
 
 		$crud->callback_column($this->cms_complete_table_name('table').'.name',array($this,'callback_column_table_name'));
@@ -303,6 +305,45 @@ class nds extends CMS_Controller {
 			$output->project_name = $this->nds_model->get_project_name($project_id);
 		}
         $this->view($this->cms_module_path()."/data/nds_table", $output, $this->cms_complete_navigation_name('project'));
+    }
+
+    public function _reorder_table($project_id){
+        $result = $this->db->select('*')
+            ->from($this->cms_complete_table_name('table'))
+            ->where('project_id', $project_id)
+            ->order_by('priority')
+            ->get()
+            ->result();
+        $priority = 0;
+        foreach($result as $row){
+            $this->db->update($this->cms_complete_table_name('table'),
+                array('priority' => $priority),
+                array('table_id' => $row->table_id));
+            $priority ++;
+        }
+    }
+
+    public function callback_table_after_insert($post_array, $primary_key){
+        $success = $this->callback_table_after_insert_or_update($post_array, $primary_key);
+        return $success;
+    }
+    public function callback_table_after_update($post_array, $primary_key){
+        $success = $this->callback_table_after_insert_or_update($post_array, $primary_key);
+        return $success;
+    }
+    public function callback_table_after_insert_or_update($post_array, $primary_key){
+        $project_id = $post_array['project_id'];
+        $priority = $post_array['priority'];
+        $table_id = $primary_key;
+        $t_table = $this->cms_complete_table_name('table');
+        $sql = "
+            UPDATE $t_table SET priority = priority+1
+            WHERE project_id = $project_id AND
+                  table_id <> $table_id AND
+                  priority >= $priority;";
+        $this->db->query($sql);
+        $this->_reorder_table($project_id);
+        return TRUE;
     }
 
 	public function callback_table_before_delete($primary_key){
@@ -415,6 +456,8 @@ class nds extends CMS_Controller {
     		$crud->change_field_type('table_id', 'hidden', $table_id);
     	}
 
+        $crud->callback_after_insert(array($this, 'callback_column_after_insert'));
+        $crud->callback_after_update(array($this, 'callback_column_after_update'));
 		$crud->callback_before_delete(array($this,'callback_column_before_delete'));
 
         $crud->callback_column($this->cms_complete_table_name('column').'.name',array($this,'callback_column_column_name'));
@@ -436,6 +479,45 @@ class nds extends CMS_Controller {
 			$output->table_name = $this->nds_model->get_table_name($table_id);
 		}
         $this->view($this->cms_module_path()."/data/nds_column", $output, $this->cms_complete_navigation_name('project'));
+    }
+
+    public function _reorder_column($table_id){
+        $result = $this->db->select('*')
+            ->from($this->cms_complete_table_name('column'))
+            ->where('table_id', $table_id)
+            ->order_by('priority')
+            ->get()
+            ->result();
+        $priority = 0;
+        foreach($result as $row){
+            $this->db->update($this->cms_complete_table_name('column'),
+                array('priority' => $priority),
+                array('column_id' => $row->column_id));
+            $priority ++;
+        }
+    }
+
+    public function callback_column_after_insert($post_array, $primary_key){
+        $success = $this->callback_column_after_insert_or_update($post_array, $primary_key);
+        return $success;
+    }
+    public function callback_column_after_update($post_array, $primary_key){
+        $success = $this->callback_column_after_insert_or_update($post_array, $primary_key);
+        return $success;
+    }
+    public function callback_column_after_insert_or_update($post_array, $primary_key){
+        $table_id = $post_array['table_id'];
+        $priority = $post_array['priority'];
+        $column_id = $primary_key;
+        $t_column = $this->cms_complete_table_name('column');
+        $sql = "
+            UPDATE $t_column SET priority = priority+1
+            WHERE table_id = $table_id AND
+                  column_id <> $column_id AND
+                  priority >= $priority;";
+        $this->db->query($sql);
+        $this->_reorder_column($table_id);
+        return TRUE;
     }
 
 	public function callback_column_before_delete($primary_key){

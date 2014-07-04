@@ -34,6 +34,7 @@ class Nds_Model extends CMS_Model{
 		$query = $this->db->select('table_id, name')
 			->from($this->cms_complete_table_name('table'))
 			->where('project_id', $project_id)
+            ->order_by('priority')
 			->get();
 		return $query->result();
 	}
@@ -41,6 +42,7 @@ class Nds_Model extends CMS_Model{
 		$query = $this->db->select('column_id, name')
 			->from($this->cms_complete_table_name('column'))
 			->where('table_id', $table_id)
+            ->order_by('priority')
 			->get();
 		return $query->result();
 	}
@@ -116,7 +118,7 @@ class Nds_Model extends CMS_Model{
 				$table_id = $table['table_id'];
 				unset($table['table_id']);
 				// get table name
-				$table['name'] = addslashes($table['name']);				
+				$table['name'] = addslashes($table['name']);
 	            if($db_table_prefix != '' && $db_table_prefix !== NULL){
 	                if(strpos($table['name'], $db_table_prefix.'_') !== 0){
 	                    $table['name'] = $db_table_prefix.'_'.$table['name'];
@@ -286,10 +288,10 @@ class Nds_Model extends CMS_Model{
 			$this->db->insert($this->cms_complete_table_name('template_option'),$data);
 		}
 	}
-    
+
     public function get_create_table_forge($tables){
-        $php = array();        
-        foreach($tables as $table){            
+        $php = array();
+        foreach($tables as $table){
             $table_name = $table['stripped_name'];
             $columns = $table['columns'];
             $primary_key_name = NULL;
@@ -302,7 +304,7 @@ class Nds_Model extends CMS_Model{
                 $column_value_selection_item = $column['value_selection_item'];
                 if($column['role'] == 'primary'){
                     $primary_key_name = $column_name;
-                    
+
                 }
                 $composed_type = '$this->TYPE_VARCHAR_50_NULL';
                 if($column['role'] == 'primary'){
@@ -322,7 +324,7 @@ class Nds_Model extends CMS_Model{
                         }
                         $composed_type = 'array("type"=>\''.$column_type.'\', "constraint"=>'.$column_size.', "null"=>TRUE)';
                     }
-                    
+
                 }
                 $field_list[] = "'$column_name'". '=> '.$composed_type;
             }
@@ -330,15 +332,15 @@ class Nds_Model extends CMS_Model{
             $create_forge .= '        $fields = array('.PHP_EOL.'            '.implode(','.PHP_EOL.'            ', $field_list).PHP_EOL.'        );'.PHP_EOL;
             $create_forge .= '        $this->dbforge->add_field($fields);'.PHP_EOL;
             if(isset($primary_key_name)){
-                $create_forge .= '        $this->dbforge->add_key(\''.$primary_key_name.'\', TRUE);'.PHP_EOL;    
+                $create_forge .= '        $this->dbforge->add_key(\''.$primary_key_name.'\', TRUE);'.PHP_EOL;
             }
             $create_forge .= '        $this->dbforge->create_table($this->cms_complete_table_name(\''.$table_name.'\'));'.PHP_EOL;
-            
+
             $php[] = $create_forge;
         }
         return implode(PHP_EOL.'        ',$php);
     }
-    
+
     public function get_drop_table_forge($tables){
         $php = array();
         foreach($tables as $table){

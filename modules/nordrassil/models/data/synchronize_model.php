@@ -12,6 +12,36 @@ class Synchronize_Model extends CMS_Model{
 			'decimal', 'numeric',
 		);
 
+    public function humanize($name){
+        $UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $LOWER = 'abcdefghijklmnopqrstuvwxyz';
+        $i=0;
+        while($i<strlen($name)-1){
+            $char = substr($name, $i, 1);
+            // just pass by if character is space
+            if($char == ' '){ $i++; continue;}
+            $before_chunk = $i == 0 ? '' : substr($name, 0, $i);
+            $after_chunk = $i == strlen($name)-1 ? '' : substr($name, $i+1);
+            // just pass by if character
+            if($before_chunk == '' || $after_chunk == ''){ $i++; continue;};
+            $before_char = substr($before_chunk, -1, 1);
+            $after_char = substr($after_chunk, 0,1);
+            // lower case preceed upper case
+            if(strpos($LOWER, $before_char) !== FALSE && strpos($UPPER, $char) != FALSE){
+                $char  = ' '.$char;
+                $name = $before_chunk . $char . $after_chunk;
+            }
+            // upper case, upper case than lower case
+            if(strpos($UPPER, $before_char) !== FALSE && strpos($UPPER, $char) != FALSE && strpos($LOWER, $after_char) != FALSE){
+                $char = ' '.$char;
+                $name = $before_chunk . $char . $after_chunk;
+            }
+            $i++;
+        }
+        $name = ucwords(str_replace('_', ' ', $name));
+        return $name;
+    }
+
 	public function synchronize($project_id){
 		// make project_id save of SQL injection
 		$save_project_id = addslashes($project_id);
@@ -67,27 +97,30 @@ class Synchronize_Model extends CMS_Model{
 		$SQL = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA='$save_db_schema' AND TABLE_NAME like'$save_db_table_prefix%'";
 		$result = mysqli_query($this->connection, $SQL);
 
+        $priority = 0;
 		while($row = mysqli_fetch_array($result)){
 			// create caption
 			$caption = '';
 			$prefix_length = isset($this->db_table_prefix)?strlen($this->db_table_prefix):0;
 			if($prefix_length>0){
 				$caption = substr($row['TABLE_NAME'], $prefix_length);
-				$caption = humanize($caption);
+				$caption = $this->humanize($caption);
 				$caption = trim($caption);
 				if(strlen($caption)==0){
-					$caption = humanize($row['TABLE_NAME']);
+					$caption = $this->humanize($row['TABLE_NAME']);
 				}
 			}else{
-				$caption = humanize($row['TABLE_NAME']);
+				$caption = $this->humanize($row['TABLE_NAME']);
 			}
 			// inserting the table
 			$data = array(
 					'project_id' => $project_id,
 					'name'=> $row['TABLE_NAME'],
-					'caption' => $caption
+					'caption' => $caption,
+					'priority' => $priority,
 				);
 			$this->db->insert($this->cms_complete_table_name('table'), $data);
+            $priority++;
 			// inserting the field
 			$table_id = $this->db->insert_id();
 			$table_name = $row['TABLE_NAME'];
@@ -105,6 +138,7 @@ class Synchronize_Model extends CMS_Model{
 				NUMERIC_PRECISION, NUMERIC_SCALE, COLUMN_KEY
 			FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$save_db_schema' AND TABLE_NAME='$save_table_name'";
 		$result = mysqli_query($this->connection, $SQL);
+        $priority = 0;
 		while($row = mysqli_fetch_array($result)){
 			if($row['COLUMN_KEY'] == 'PRI'){
 				$role = 'primary';
@@ -149,14 +183,16 @@ class Synchronize_Model extends CMS_Model{
 			$data = array(
 					'table_id' => $table_id,
 					'name'=> $row['COLUMN_NAME'],
-					'caption' => humanize($row['COLUMN_NAME']),
+					'caption' => $this->humanize($row['COLUMN_NAME']),
 					'data_type' => $data_type,
 					'data_size' => $length,
 					'role' => $role,
 					'value_selection_mode'=>$value_selection_mode,
 					'value_selection_item'=>$value_selection_item,
+                    'priority' => $priority,
 				);
 			$this->db->insert($this->cms_complete_table_name('column'), $data);
+            $priority++;
 		}
 
 	}
