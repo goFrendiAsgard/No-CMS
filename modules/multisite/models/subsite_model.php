@@ -24,6 +24,7 @@ class Subsite_Model extends  CMS_Model{
             ->from($this->cms_complete_table_name('subsite').' as subsite')
             ->like('subsite.name', $keyword)
             ->or_like('subsite.description', $keyword)
+            ->order_by('subsite.id','desc')
             ->limit($limit, $page*$limit)
             ->get();
         $result = $query->result();

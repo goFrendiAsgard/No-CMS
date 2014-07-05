@@ -28,16 +28,16 @@ class Install extends CMS_Module_Installer {
     // DEACTIVATION
     protected function do_deactivate(){
         $this->backup_database(array(
-            $this->cms_complete_table_name('citizen'),
             $this->cms_complete_table_name('job'),
             $this->cms_complete_table_name('hobby'),
             $this->cms_complete_table_name('country'),
             $this->cms_complete_table_name('commodity'),
-            $this->cms_complete_table_name('city_tourism'),
-            $this->cms_complete_table_name('city_commodity'),
-            $this->cms_complete_table_name('citizen_hobby'),
             $this->cms_complete_table_name('tourism'),
-            $this->cms_complete_table_name('city')
+            $this->cms_complete_table_name('city'),
+            $this->cms_complete_table_name('citizen'),
+            $this->cms_complete_table_name('city_commodity'),
+            $this->cms_complete_table_name('city_tourism'),
+            $this->cms_complete_table_name('citizen_hobby')
         ));
         $this->remove_all();
     }
@@ -93,16 +93,16 @@ class Install extends CMS_Module_Installer {
         $this->remove_navigation($this->cms_complete_navigation_name('index'));
         
         // drop tables
+        $this->dbforge->drop_table($this->cms_complete_table_name('citizen_hobby'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('city_tourism'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('city_commodity'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('citizen'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('city'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('tourism'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('citizen_hobby'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('city_commodity'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('city_tourism'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('commodity'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('country'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('hobby'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('job'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('citizen'), TRUE);
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -138,19 +138,6 @@ class Install extends CMS_Module_Installer {
 
         
         // create tables
-        // citizen
-        $fields = array(
-            'citizen_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
-            'birthdate'=> array("type"=>'date', "null"=>TRUE),
-            'job_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'hobby'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('citizen_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('citizen'));
-
         // job
         $fields = array(
             'job_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
@@ -187,37 +174,6 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_key('commodity_id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('commodity'));
 
-        // city_tourism
-        $fields = array(
-            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'tourism_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('city_tourism'));
-
-        // city_commodity
-        $fields = array(
-            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'commodity_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'priority'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('city_commodity'));
-
-        // citizen_hobby
-        $fields = array(
-            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'citizen_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'hobby_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('citizen_hobby'));
-
         // tourism
         $fields = array(
             'tourism_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
@@ -239,6 +195,50 @@ class Install extends CMS_Module_Installer {
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('city_id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('city'));
+
+        // citizen
+        $fields = array(
+            'citizen_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+            'birthdate'=> array("type"=>'date', "null"=>TRUE),
+            'job_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'hobby'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('citizen_id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('citizen'));
+
+        // city_commodity
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'commodity_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'priority'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('city_commodity'));
+
+        // city_tourism
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'tourism_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('city_tourism'));
+
+        // citizen_hobby
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'citizen_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'hobby_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE)
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('citizen_hobby'));
 
         
     }

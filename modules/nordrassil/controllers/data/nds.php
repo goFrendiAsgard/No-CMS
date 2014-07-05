@@ -285,6 +285,7 @@ class nds extends CMS_Controller {
     		$crud->change_field_type('project_id', 'hidden', $project_id);
     	}
 
+        $crud->callback_before_insert(array($this, 'callback_table_before_insert'));
         $crud->callback_after_insert(array($this, 'callback_table_after_insert'));
         $crud->callback_after_update(array($this, 'callback_table_after_update'));
 		$crud->callback_before_delete(array($this, 'callback_table_before_delete'));
@@ -321,6 +322,13 @@ class nds extends CMS_Controller {
                 array('table_id' => $row->table_id));
             $priority ++;
         }
+    }
+
+    public function callback_table_before_insert($post_array, $primary_key){
+        if($post_array['priority'] == '' || $post_array['priority'] == NULL){
+            $post_array['priority'] = 5000;
+        }
+        return $post_array;
     }
 
     public function callback_table_after_insert($post_array, $primary_key){
@@ -456,6 +464,7 @@ class nds extends CMS_Controller {
     		$crud->change_field_type('table_id', 'hidden', $table_id);
     	}
 
+        $crud->callback_before_insert(array($this, 'callback_column_before_insert'));
         $crud->callback_after_insert(array($this, 'callback_column_after_insert'));
         $crud->callback_after_update(array($this, 'callback_column_after_update'));
 		$crud->callback_before_delete(array($this,'callback_column_before_delete'));
@@ -495,6 +504,13 @@ class nds extends CMS_Controller {
                 array('column_id' => $row->column_id));
             $priority ++;
         }
+    }
+
+    public function callback_column_before_insert($post_array, $primary_key){
+        if($post_array['priority'] == '' || $post_array['priority'] == NULL){
+            $post_array['priority'] = 5000;
+        }
+        return $post_array;
     }
 
     public function callback_column_after_insert($post_array, $primary_key){

@@ -23,6 +23,9 @@
 </style>
 <?php
     echo '<h3> Edit '.$name.' sub-site</h3>';
+    if($save){
+        echo '<div class="alert alert-success">Changes has been saved</div>';
+    }
     echo form_open_multipart($edit_url, 'class="form form-horizontal"');
 
     echo '<div class="form-group">';

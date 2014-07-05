@@ -18,12 +18,14 @@
 	$asset->add_module_js('scripts/adjust.js', '{{ module_path }}');
 	echo $asset->compile_js();
 	echo '<h4>Project</h4>';
+    echo '<div style="padding-bottom: 10px;">';
     if($state != 'list'){
         echo '<p class="alert-warning alert">
                 Import database only works for MySQL.
             </p>';
 	    echo anchor(site_url('{{ module_path }}/data/nds/project/'),'All Projects','class="btn btn-primary"');
     }
+    echo '</div>';
 	echo $output;
 ?>
 

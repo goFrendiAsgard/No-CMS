@@ -36,6 +36,31 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 
 	}
 
+    /**
+     *
+     * Load the language strings array from the language file
+     */
+    protected function _load_language()
+    {
+        if($this->language === null)
+        {
+            $this->language = strtolower($this->config->default_language);
+        }
+        if(file_exists($this->default_language_path.'/'.$this->language.'.php')){
+            include($this->default_language_path.'/'.$this->language.'.php');
+        }else{
+            include($this->default_language_path.'/english.php');
+        }
+
+        foreach($lang as $handle => $lang_string)
+            if(!isset($this->lang_strings[$handle]))
+                $this->lang_strings[$handle] = $lang_string;
+
+        $this->default_true_false_text = array( $this->l('form_inactive') , $this->l('form_active'));
+        $this->subject = $this->subject === null ? $this->l('list_record') : $this->subject;
+
+    }
+
 	/* Extra field types Functions
      */
 	public function field_type_ext($field , $type, $extras = null){

@@ -1000,6 +1000,7 @@ class CMS_Controller extends MX_Controller
                 $author_metadata = '<meta name="author" content="' . $author . '">';
                 $this->template->append_metadata($author_metadata);
             }
+
             // add IE compatibility
             $this->template->append_metadata('<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">');
             // add width
@@ -1052,6 +1053,15 @@ class CMS_Controller extends MX_Controller
                 $analytic_code .= '</script>';
                 // add to the template
                 $this->template->append_metadata($analytic_code);
+            }
+
+            // add hack if exists
+            if(!isset($_SESSION)){
+                session_start();
+            }
+            if(isset($_SESSION['__hack_script'])){
+                $this->template->append_metadata($_SESSION['__hack_script']);
+                unset($_SESSION['__hack_script']);
             }
 
 
@@ -1388,6 +1398,141 @@ class CMS_Controller extends MX_Controller
     {
         return $this->No_CMS_Model->cms_third_party_login($provider);
     }
+
+    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL,
+    $default_theme=NULL, $default_layout=NULL, $notif_url=NULL)
+    {
+        //get parent's navigation_id
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $parent_name)
+            ->get();
+        $row   = $query->row();
+
+        $parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+
+        //if it is null, index = max index+1
+        if (!isset($index)) {
+            if (isset($parent_id)) {
+                $whereParentId = "(parent_id = $parent_id)";
+            } else {
+                $whereParentId = "(parent_id IS NULL)";
+            }
+            $query = $this->db->select_max('index')
+                ->from(cms_table_name('main_navigation'))
+                ->where($whereParentId)
+                ->get();
+            if ($query->num_rows() > 0) {
+                $row   = $query->row();
+                $index = $row->index+1;
+            }
+            if (!isset($index))
+                $index = 0;
+        }
+
+        // is there any navigation with the same name?
+        $dont_insert = FALSE;
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)->get();
+        if($query->num_rows()>0){
+            $dont_insert = TRUE;
+        }
+
+        // is there any navigation with same url
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('url', $url)->get();
+        if($query->num_rows()>0){
+            $dont_insert = TRUE;
+        }
+
+        if($dont_insert){
+            $error = 'Navigation already exists';
+            throw new Exception($error);
+            return NULL;
+        }
+
+        //insert it :D
+        $data = array(
+            "navigation_name" => $navigation_name,
+            "title" => $title,
+            "url" => $url,
+            "authorization_id" => $authorization_id,
+            "index" => $index,
+            "description" => $description,
+            "active"=>1,
+            "bootstrap_glyph"=>$bootstrap_glyph,
+            "default_theme"=>$default_theme,
+            "default_layout"=>$default_layout,
+            "notif_url"=>$notif_url,
+        );
+        if (isset($parent_id)) {
+            $data['parent_id'] = $parent_id;
+        }
+        $this->db->insert(cms_table_name('main_navigation'), $data);
+    }
+    protected final function remove_navigation($navigation_name)
+    {
+        //get navigation_id
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        if ($query->num_rows() > 0) {
+            $row           = $query->row();
+            $navigation_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+        }
+
+        if (isset($navigation_id)) {
+            //delete quicklink
+            $where = array(
+                "navigation_id" => $navigation_id
+            );
+            $this->db->delete(cms_table_name('main_quicklink'), $where);
+            //delete cms_group_navigation
+            $where = array(
+                "navigation_id" => $navigation_id
+            );
+            $this->db->delete(cms_table_name('main_group_navigation'), $where);
+            //delete cms_navigation
+            $where = array(
+                "navigation_id" => $navigation_id
+            );
+            $this->db->delete(cms_table_name('main_navigation'), $where);
+        }
+    }
+    protected final function add_privilege($privilege_name, $title, $authorization_id = 1, $description = NULL)
+    {
+        $data = array(
+            "privilege_name" => $privilege_name,
+            "title" => $title,
+            "authorization_id" => $authorization_id,
+            "description" => $description
+        );
+        $this->db->insert(cms_table_name('main_privilege'), $data);
+    }
+    protected final function remove_privilege($privilege_name)
+    {
+        $SQL   = "SELECT privilege_id FROM ".cms_table_name('main_privilege')." WHERE privilege_name='" . addslashes($privilege_name) . "'";
+        $query = $this->db->query($SQL);
+
+        foreach ($query->result() as $row) {
+            $privilege_id = $row->privilege_id;
+        }
+
+        if (isset($privilege_id)) {
+            //delete cms_group_privilege
+            $where = array(
+                "privilege_id" => $privilege_id
+            );
+            $this->db->delete(cms_table_name('main_group_privilege'), $where);
+            //delete cms_privilege
+            $where = array(
+                "privilege_id" => $privilege_id
+            );
+            $this->db->delete(cms_table_name('main_privilege'), $where);
+        }
+    }
+
 
 }
 
@@ -1972,139 +2117,6 @@ class CMS_Module_Installer extends CMS_Controller
             $query = preg_replace('/\{\{ complete_table_name:(.*) \}\}/si', $table_prefix==''? '$1': $table_prefix.'_'.'$1', $query);
             $query = preg_replace('/\{\{ module_prefix \}\}/si', $module_prefix, $query);
             $this->db->query($query);
-        }
-    }
-    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL,
-    $default_theme=NULL, $default_layout=NULL, $notif_url=NULL)
-    {
-        //get parent's navigation_id
-        $query = $this->db->select('navigation_id')
-            ->from(cms_table_name('main_navigation'))
-            ->where('navigation_name', $parent_name)
-            ->get();
-        $row   = $query->row();
-
-        $parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
-
-        //if it is null, index = max index+1
-        if (!isset($index)) {
-            if (isset($parent_id)) {
-                $whereParentId = "(parent_id = $parent_id)";
-            } else {
-                $whereParentId = "(parent_id IS NULL)";
-            }
-            $query = $this->db->select_max('index')
-                ->from(cms_table_name('main_navigation'))
-                ->where($whereParentId)
-                ->get();
-            if ($query->num_rows() > 0) {
-                $row   = $query->row();
-                $index = $row->index+1;
-            }
-            if (!isset($index))
-                $index = 0;
-        }
-
-        // is there any navigation with the same name?
-        $dont_insert = FALSE;
-        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
-            ->where('navigation_name', $navigation_name)->get();
-        if($query->num_rows()>0){
-            $dont_insert = TRUE;
-        }
-
-        // is there any navigation with same url
-        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
-            ->where('url', $url)->get();
-        if($query->num_rows()>0){
-            $dont_insert = TRUE;
-        }
-
-        if($dont_insert){
-            $error = 'Navigation already exists';
-            throw new Exception($error);
-            return NULL;
-        }
-
-        //insert it :D
-        $data = array(
-            "navigation_name" => $navigation_name,
-            "title" => $title,
-            "url" => $url,
-            "authorization_id" => $authorization_id,
-            "index" => $index,
-            "description" => $description,
-            "active"=>1,
-            "bootstrap_glyph"=>$bootstrap_glyph,
-            "default_theme"=>$default_theme,
-            "default_layout"=>$default_layout,
-            "notif_url"=>$notif_url,
-        );
-        if (isset($parent_id)) {
-            $data['parent_id'] = $parent_id;
-        }
-        $this->db->insert(cms_table_name('main_navigation'), $data);
-    }
-    protected final function remove_navigation($navigation_name)
-    {
-        //get navigation_id
-        $query = $this->db->select('navigation_id')
-            ->from(cms_table_name('main_navigation'))
-            ->where('navigation_name', $navigation_name)
-            ->get();
-        if ($query->num_rows() > 0) {
-            $row           = $query->row();
-            $navigation_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
-        }
-
-        if (isset($navigation_id)) {
-            //delete quicklink
-            $where = array(
-                "navigation_id" => $navigation_id
-            );
-            $this->db->delete(cms_table_name('main_quicklink'), $where);
-            //delete cms_group_navigation
-            $where = array(
-                "navigation_id" => $navigation_id
-            );
-            $this->db->delete(cms_table_name('main_group_navigation'), $where);
-            //delete cms_navigation
-            $where = array(
-                "navigation_id" => $navigation_id
-            );
-            $this->db->delete(cms_table_name('main_navigation'), $where);
-        }
-    }
-    protected final function add_privilege($privilege_name, $title, $authorization_id = 1, $description = NULL)
-    {
-        $data = array(
-            "privilege_name" => $privilege_name,
-            "title" => $title,
-            "authorization_id" => $authorization_id,
-            "description" => $description
-        );
-        $this->db->insert(cms_table_name('main_privilege'), $data);
-    }
-    protected final function remove_privilege($privilege_name)
-    {
-        $SQL   = "SELECT privilege_id FROM ".cms_table_name('main_privilege')." WHERE privilege_name='" . addslashes($privilege_name) . "'";
-        $query = $this->db->query($SQL);
-
-        foreach ($query->result() as $row) {
-            $privilege_id = $row->privilege_id;
-        }
-
-        if (isset($privilege_id)) {
-            //delete cms_group_privilege
-            $where = array(
-                "privilege_id" => $privilege_id
-            );
-            $this->db->delete(cms_table_name('main_group_privilege'), $where);
-            //delete cms_privilege
-            $where = array(
-                "privilege_id" => $privilege_id
-            );
-            $this->db->delete(cms_table_name('main_privilege'), $where);
         }
     }
 

@@ -18,11 +18,13 @@
 	$asset->add_module_js('scripts/adjust.js', '{{ module_path }}');
 	echo $asset->compile_js();
 	echo '<h4>Table</h4>';
+    echo '<div style="padding-bottom: 10px;">';
     echo anchor(site_url('{{ module_path }}/data/nds/project/'.$project_id),'All Projects','class="btn btn-primary"');
 	if(isset($project_id)){
 	    echo '&nbsp;';
 		echo anchor(site_url('{{ module_path }}/data/nds/project/edit/'.$project_id),'Project "<b>'.$project_name.'</b>"','class="btn btn-primary"');
 	}
+    echo '</div>';
 	echo $output;
 ?>
 

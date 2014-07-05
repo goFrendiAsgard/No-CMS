@@ -34,11 +34,18 @@ class Setting extends CMS_Controller{
             $this->update_static_content('section_bottom', $this->input->post('section_bottom'));
             $this->update_static_content('navigation_right_partial', $this->input->post('navigation_right_partial'));
             // save configurations
-            $this->cms_set_config('site_name', $this->input->post('site_name'));
-            $this->cms_set_config('site_layout', $this->input->post('site_layout'));
-            $this->cms_set_config('site_slogan', $this->input->post('site_slogan'));
-            $this->cms_set_config('site_footer', $this->input->post('site_footer'));
-            $this->cms_set_config('site_language', $this->input->post('site_language'));
+            $configuration_list = array(
+                'site_name', 'site_layout', 'site_slogan', 'site_footer', 'site_language',
+                'cms_signup_activation', 'cms_email_protocol',
+                'cms_email_reply_address', 'cms_email_reply_name', 'cms_email_forgot_subject',
+                'cms_email_forgot_message', 'cms_email_signup_subject', 'cms_email_signup_message',
+                'cms_email_useragent', 'cms_email_mailpath', 'cms_email_smtp_host', 'cms_email_smtp_user',
+                'cms_email_smtp_pass', 'cms_email_smtp_port', 'cms_email_smtp_timeout','cms_google_analytic_property_id',
+                'cms_add_subsite_on_register','cms_subsite_use_subdomain'
+            );
+            foreach($configuration_list as $configuration){
+                $this->cms_set_config($configuration, $this->input->post($configuration));
+            }
             $this->cms_language($this->input->post('site_language'));
 
         }

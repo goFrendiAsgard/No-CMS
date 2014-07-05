@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.6.6.1';
+        $current_version = '0.7';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -63,6 +63,56 @@ class CMS_Model extends CI_Model
             }
             $this->dbforge->add_column($table_name, $fields);
 
+            // table : main_user
+            $table_name = cms_table_name('main_user');
+            $field_list = $this->db->list_fields($table_name);
+            $missing_fields = array(
+                'language' => array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '50',
+                    'null' => TRUE,
+                ),
+                'theme' => array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '50',
+                    'null' => TRUE,
+                ),
+            );
+            $fields = array();
+            foreach($missing_fields as $key=>$value){
+                if(!in_array($key, $field_list)){
+                    $fields[$key] = $value;
+                }
+            }
+
+            $table_list = $this->db->list_tables();
+            // add main-language-detail
+            if(! in_array(cms_table_name('main_detail_language'), $table_list)){
+                $fields = array(
+                    'detail_language_id'=> array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE,),
+                    'id_language'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+                    'key'=> array("type"=>'text', "null"=>TRUE),
+                    'translation'=> array("type"=>'text', "null"=>TRUE)
+                );
+                $this->dbforge->add_field($fields);
+                $this->dbforge->add_key('detail_language_id', TRUE);
+                $this->dbforge->create_table(cms_table_name('main_detail_language'));
+            }
+
+            // add main_language
+            if(! in_array(cms_table_name('main_language'), $table_list)){
+                $fields = array(
+                    'language_id'=> array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE,),
+                    'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+                    'code'=>array("type"=>'varchar',"contstrain"=>50, "null"=>TRUE),
+                    'iso_code'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+                    'translations'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
+                );
+                $this->dbforge->add_field($fields);
+                $this->dbforge->add_key('language_id', TRUE);
+                $this->dbforge->create_table(cms_table_name('main_language'));
+            }
+
             // update main_layout into main_setting
             $data = array(
                 'navigation_name' => 'main_setting',
@@ -73,6 +123,83 @@ class CMS_Model extends CI_Model
             $this->db->update(cms_table_name('main_navigation'),
                 $data,
                 array('navigation_name' => 'main_layout'));
+            // add manage language
+            $query = $this->db->select('navigation_id')
+                ->from(cms_table_name('main_navigation'))
+                ->where('navigation_name','main_language_management')
+                ->get();
+            if($query->num_rows() == 0){
+                $parent_id = $this->db->select('navigation_id')
+                    ->from(cms_table_name('main_navigation'))
+                    ->where('navigation_name', 'main_management')
+                    ->get()->row()->navigation_id;
+                $this->db->insert(cms_table_name('main_navigation'),array(
+                    'navigation_name'=>'main_language_management',
+                    'title' => 'Language Management',
+                    'page_title' => 'Language Management',
+                    'description' => 'Language Management',
+                    'url'=>'main/language_management',
+                    'parent_id'=>$parent_id,
+                    'authorization_id'=>4));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Afrikaans','code'=>'afrikaans'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Arabic','code'=>'arabic'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Bengali','code'=>'bengali'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Bulgarian','code'=>'bulgarian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Catalan','code'=>'catalan'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Chinese','code'=>'chinese'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Czech','code'=>'czech'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Danish','code'=>'danish'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Dutch','code'=>'dutch'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'English','code'=>'english'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'French','code'=>'french'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'German','code'=>'german'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Greek','code'=>'greek'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Hindi','code'=>'hindi'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Hungarian','code'=>'hungarian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Indonesian','code'=>'indonesian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Italian','code'=>'italian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Japanese','code'=>'japanese'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Korean','code'=>'korean'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Mongolian','code'=>'mongolian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Norwegian','code'=>'norwegian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Persian','code'=>'persian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Polish','code'=>'polish'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Portuguese (Brazil)','code'=>'pt-br.portuguese'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Portuguese','code'=>'pt-pt.portuguese'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Romanian','code'=>'romanian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Russian','code'=>'russian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Slovak','code'=>'slovak'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Spanish','code'=>'spanish'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Thai','code'=>'thai'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Turkish','code'=>'turkish'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Ukrainian','code'=>'ukrainian'));
+                $this->db->insert(cms_table_name('main_language'),array('name'=>'Vietnamese','code'=>'vietnamese'));
+            }
+
+            // new configuration, cms_add_subsite_on_register
+            $exists = $this->db->select('config_name')
+                ->from(cms_table_name('main_config'))
+                ->where('config_name','cms_add_subsite_on_register')
+                ->get()->num_rows() > 0;
+            if(!$exists){
+                $this->db->insert(cms_table_name('main_config'),array(
+                    'config_name' => 'cms_add_subsite_on_register',
+                    'value' => 'TRUE',
+                    'description' => 'Automatically create subsite on register'
+                ));
+            }
+            // new configuration, cms_subsite_use_subdomain
+            $exists = $this->db->select('config_name')
+                ->from(cms_table_name('main_config'))
+                ->where('config_name','cms_subsite_use_subdomain')
+                ->get()->num_rows() > 0;
+            if(!$exists){
+                $this->db->insert(cms_table_name('main_config'),array(
+                    'config_name' => 'cms_subsite_use_subdomain',
+                    'value' => 'FALSE',
+                    'description' => 'Automatically use subdomain'
+                ));
+            }
 
             // write new version
             cms_config('__cms_version', $current_version);
@@ -135,7 +262,15 @@ class CMS_Model extends CI_Model
      * @desc   return good table name
      */
     public function cms_complete_table_name($table_name){
-        $module_path = $this->cms_module_path();
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        // hack module path by changing the session, don't forget to unset !!!
+        if(isset($_SESSION['__override_module_path'])){
+            $module_path = $_SESSION['__override_module_path'];
+        }else{
+            $module_path = $this->cms_module_path();
+        }
         if($module_path == 'main' or $module_path == ''){
             return cms_table_name($table_name);
         }else{
@@ -1698,18 +1833,89 @@ class CMS_Model extends CI_Model
     public function cms_do_register($user_name, $email, $real_name, $password)
     {
         // check if activation needed
-        $need_activation = strtoupper($this->cms_get_config('cms_signup_activation')) == 'TRUE';
+        $activation = $this->cms_get_config('cms_signup_activation');
         $data            = array(
             "user_name" => $user_name,
             "email" => $email,
             "real_name" => $real_name,
             "password" => md5($password),
-            "active" => !$need_activation // depend on activation needed or not
+            "active" => $activation == 'automatic'
         );
         $this->db->insert(cms_table_name('main_user'), $data);
         // send activation code if needed
-        if ($need_activation) {
+        if ($activation == 'by_mail') {
             $this->cms_generate_activation_code($user_name, TRUE, 'SIGNUP');
+        }
+
+        if($activation == 'automatic' && $this->cms_is_module_active('admin.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
+            $current_user_id = $this->db->select('user_id')
+                ->from(cms_table_name('main_user'))
+                ->where('user_name', $user_name)
+                ->get()->row()->user_id;
+            $module_path = $this->cms_module_path('admin.multisite');
+            $this->load->model('installer/install_model');
+            $this->load->model($module_path.'/subsite_model');
+            $install_model = new Install_Model();
+            $subsite_model = new Subsite_Model();
+            // get these from old setting
+            $this->install_model->db_table_prefix              = cms_table_prefix();
+            $this->install_model->is_subsite                   = TRUE;
+            $this->install_model->subsite                      = $user_name;
+            $this->install_model->subsite_aliases              = '';
+            $this->install_model->set_subsite();
+            $this->install_model->admin_email                  = $email;
+            $this->install_model->admin_real_name              = $real_name;
+            $this->install_model->admin_user_name              = $user_name;
+            $this->install_model->admin_password               = $password;
+            $this->install_model->admin_confirm_password       = $password;
+            $this->install_model->hide_index                   = TRUE;
+            $this->install_model->gzip_compression             = FALSE;
+            $check_installation = $this->install_model->check_installation();
+            $success = $check_installation['success'];
+            if($success){
+                $this->install_model->build_database();
+                $this->install_model->build_configuration();
+            }
+            if(!isset($_SESSION)){
+                session_start();
+            }
+            // hack module path by changing the session, don't forget to unset !!!
+            $_SESSION['__override_module_path'] = $module_path;
+            $data = array(
+                'name'=> $this->install_model->subsite,
+                'description'=>$user_name.' website',
+                'use_subdomain'=>$this->cms_get_config('cms_subsite_use_subdomain')=='TRUE'?1:0,
+                'user_id'=>$current_user_id
+            );
+            $this->db->insert($this->cms_complete_table_name('subsite'), $data);
+            $this->load->model($this->cms_module_path().'/subsite_model');
+            $this->subsite_model->update_configs();
+            unset($_SESSION['__override_module_path']);
+            // hack script, will be added and removed in next view
+            $_SESSION['__hack_script'] = '<script type="text/javascript">
+                $(document).ready(function(){
+                    var modules =  ["blog", "static_accessories", "contact_us"];
+                    var done = 0;
+                    for(var i=0; i<modules.length; i++){
+                        var module = modules[i];
+                        $.ajax({
+                            "url": "{{ SITE_URL }}/"+module+"/install/activate/?__cms_subsite='.$this->install_model->subsite.'",
+                            "type": "POST",
+                            "dataType": "json",
+                            "async": true,
+                            "data":{
+                                    "silent" : true,
+                                    "identity": "'.$user_name.'",
+                                    "password": "'.$password.'"
+                                },
+                            "success": function(response){
+                                    if(!response["success"]){
+                                        console.log("error installing "+response["module_path"]);
+                                    }
+                                },
+                        });
+                    }
+                });</script>';
         }
 
     }
@@ -2192,30 +2398,52 @@ class CMS_Model extends CI_Model
      */
     public function cms_language_list()
     {
-        $this->load->helper('file');
-        $result = array();
-        $language_list = get_filenames(APPPATH.'../assets/nocms/languages');
-        foreach ($language_list as $language){
-            if(preg_match('/\.php$/i', $language)){
-                $result[] = str_ireplace('.php', '', $language);
-            }
+        // look for available language which are probably not registered
+        if(!isset($_SESSION)){
+            session_start();
         }
-        $module_list = $this->cms_get_module_list();
-        $module_list[] = array('module_path'=>'main');
-        foreach ($module_list as $module){
-            $directory = $module['module_path'];
-            $module_language_list = get_filenames(APPPATH.'../modules/'.$directory.'/assets/languages');
-            if($module_language_list === FALSE) continue;
-            foreach($module_language_list as $module_language){
-                if(preg_match('/\.php$/i', $module_language)){
-                    $module_language = str_ireplace('.php', '', $module_language);
-                    if(!in_array($module_language, $result)){
-                        $result[] = $module_language;
+        if(!isset($_SESSION['__cms_language_uptodate'])){
+            $this->load->helper('file');
+            $new_lang = array();
+            $language_list = get_filenames(APPPATH.'../assets/nocms/languages');
+            foreach ($language_list as $language){
+                if(preg_match('/\.php$/i', $language)){
+                    $lang = str_ireplace('.php', '', $language);
+                    $exist = $this->db->select('code')->from(cms_table_name('main_language'))
+                        ->where('code',$lang)->get()->num_rows() > 0;
+                    if(!$exist){
+                        $new_lang[] = $lang;
                     }
                 }
             }
+            $module_list = $this->cms_get_module_list();
+            $module_list[] = array('module_path'=>'main');
+            foreach ($module_list as $module){
+                $directory = $module['module_path'];
+                $module_language_list = get_filenames(APPPATH.'../modules/'.$directory.'/assets/languages');
+                if($module_language_list === FALSE) continue;
+                foreach($module_language_list as $module_language){
+                    if(preg_match('/\.php$/i', $module_language)){
+                        $module_language = str_ireplace('.php', '', $module_language);
+                        $exist = $this->db->select('code')->from(cms_table_name('main_language'))
+                            ->where('code',$module_language)->get()->num_rows() > 0;
+                        if(!$exist && !in_array($module_language, $new_lang)){
+                            $new_lang[] = $module_language;
+                        }
+                    }
+                }
+            }
+            // add the language to database
+            foreach($new_lang as $lang){
+                $this->db->insert(cms_table_name('language'),array('name'=>$lang,'code'=>$lang));
+            }
+            $_SESSION['__cms_language_uptodate'] = TRUE;
         }
-        sort($result);
+        // grab it
+        $result = $this->db->select('name,code,iso_code')
+            ->from(cms_table_name('main_language'))
+            ->order_by('name')
+            ->get()->result();
         return $result;
     }
 
@@ -2256,6 +2484,15 @@ class CMS_Model extends CI_Model
             $local_language_file = APPPATH."../modules/$module_path/assets/languages/$language.php";
             if (file_exists($local_language_file)) {
                 include($local_language_file);
+            }
+
+            $result = $this->db->select('key, translation')
+                ->from(cms_table_name('main_detail_language'))
+                ->join(cms_table_name('main_language'), cms_table_name('main_detail_language').'.id_language = '.cms_table_name('main_language').'.language_id')
+                ->where('name', $this->cms_language())
+                ->get()->result();
+            foreach($result as $row){
+                $lang[$row->key] = $row->translation;
             }
 
             $this->__cms_model_properties['language_dictionary'] = $lang;

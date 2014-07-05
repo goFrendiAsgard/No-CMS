@@ -47,6 +47,7 @@ class multisite extends CMS_Priv_Strict_Controller {
         $module_list = $this->subsite_model->module_list();
         $theme_list = $this->subsite_model->theme_list();
         // if btn_save clicked
+        $save = false;
         if($this->input->post('btn_save')){
             $description = $this->input->post('description');
             $name = $this->input->post('name');
@@ -82,6 +83,7 @@ class multisite extends CMS_Priv_Strict_Controller {
             }
             $this->db->update($this->cms_complete_table_name('subsite'), $data, array('name'=>$site_name));
             $this->subsite_model->update_configs();
+            $save = true;
         }
         // get data
         $subsite = $this->subsite_model->get_one_data($site_name);
@@ -99,6 +101,7 @@ class multisite extends CMS_Priv_Strict_Controller {
             'module_list' => $this->make_associative_array($module_list),
             'theme_list' => $this->make_associative_array($theme_list),
             'is_super_admin' => $is_super_admin,
+            'save' => $save,
         );
         // show
         $config = array('privileges'=>array('modify_subsite'));

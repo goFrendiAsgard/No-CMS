@@ -520,7 +520,8 @@ class Main extends CMS_Controller
             redirect('','refresh');
         } else {
             $data = array(
-                "language_list" => $this->cms_language_list()
+                "language_list" => $this->cms_language_list(),
+                "current_language" => $this->cms_language()
             );
             $this->view('main/main_language', $data, 'main_language');
         }

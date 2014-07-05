@@ -20,8 +20,8 @@
     // option for languages
     $option_language = '';
     foreach($language_list as $language){
-        $selected = $language == $current_language ? 'selected' : '';
-        $option_language .= '<option '.$selected.' value="'.$language.'">'.ucwords($language).'</option>';
+        $selected = $language->code == $current_language ? 'selected' : '';
+        $option_language .= '<option '.$selected.' value="'.$language->code.'">'.$language->name.'</option>';
     }
     // option for layouts
     $option_layout = '<option selected value="'.$config_list['site_layout'].'">'.$config_list['site_layout'].'</option>';
@@ -30,7 +30,7 @@
             $option_layout .= '<option value="'.$layout.'">'.$layout.'</option>';
         }
     }
-    
+
     $asset = new CMS_Asset();
     $asset->add_cms_css('grocery_crud/css/jquery_plugins/chosen/chosen.css');
     //$asset->add_cms_css('grocery_crud/themes/flexigrid/css/flexigrid.css');
@@ -58,12 +58,12 @@
     </ul>
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
         <div class="tab-content">
-                                
-            <div class="tab-pane" id="tab1"> 
-                <h3>Configurations</h3>
-                <div class="form-group">                   
-                   <label class="control-label col-md-4" for="site_layout">Default Layout</label>                   
-                   <div class="controls col-md-8">                       
+
+            <div class="tab-pane" id="tab1">
+                <h3>Site Configurations</h3>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="site_layout">Default Layout</label>
+                   <div class="controls col-md-8">
                        <select id="site_language" name="site_layout" class="form-control"><?php echo $option_layout; ?></select>
                        <p class="help-block">Default layout used</p>
                    </div>
@@ -74,7 +74,7 @@
                        <select id="site_language" name="site_language" class="form-control"><?php echo $option_language; ?></select>
                        <p class="help-block">Default language used</p>
                    </div>
-                </div>                
+                </div>
                 <div class="form-group">
                    <label class="control-label col-md-4" for="site_name">Site Name</label>
                    <div class="controls col-md-8">
@@ -96,8 +96,168 @@
                        <p class="help-block">Site footer &amp; attribution (e.g: "Powered by No-CMS © 2013", etc)</p>
                    </div>
                 </div>
+
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_signup_activation">User Activation</label>
+                   <div class="controls col-md-8">
+                       <select id="cms_signup_activation" name="cms_signup_activation" class="form-control">
+                       <?php
+                            $option_list = array('automatic'=>'Automatic', 'by_mail'=>'By Email', 'manual'=>'Manual');
+                            foreach($option_list as $key=>$value){
+                                $selected = $config_list['cms_signup_activation'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                       ?>
+                       </select>
+                       <p class="help-block">User Activation (Automatic, By Email, or Manual)</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_add_subsite_on_register">Automatically add subsite on register</label>
+                   <div class="controls col-md-8">
+                       <select id="cms_add_subsite_on_register" name="cms_add_subsite_on_register" class="form-control">
+                       <?php
+                            $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $config_list['cms_add_subsite_on_register'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                       ?>
+                       </select>
+                       <p class="help-block">Automatic Add subsite when user register (only works if User Activation is set to "Automatic" and multisite module is installed)</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_subsite_use_subdomain">Use subdomain for automatically added subsite</label>
+                   <div class="controls col-md-8">
+                       <select id="cms_subsite_use_subdomain" name="cms_subsite_use_subdomain" class="form-control">
+                       <?php
+                            $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $config_list['cms_subsite_use_subdomain'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                       ?>
+                       </select>
+                       <p class="help-block">You should has "wildcard" DNS in order to make this works</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_protocol">Email Protocol</label>
+                   <div class="controls col-md-8">
+                       <select type="text" id="cms_email_protocol" name="cms_email_protocol" class="form-control">
+                       <?php
+                            $option_list = array('mail'=>'Main', 'sendmail'=>'Sendmail', 'smtp'=>'SMTP');
+                            foreach($option_list as $key=>$value){
+                                $selected = $config_list['cms_email_protocol'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                       ?>
+                       </select>
+                       <p class="help-block">Email Protocol</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_reply_address">Email Reply Address</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_reply_address" name="cms_email_reply_address" value="<?php echo $config_list['cms_email_reply_address'] ?>" class="form-control">
+                       <p class="help-block">Reply address for all generated email</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_reply_name">Email Reply Name</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_reply_name" name="cms_email_reply_name" value="<?php echo $config_list['cms_email_reply_name'] ?>" class="form-control">
+                       <p class="help-block">Reply name for all generated email</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_forgot_subject">Forgot Password Mail Subject</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_forgot_subject" name="cms_email_forgot_subject" value="<?php echo $config_list['cms_email_forgot_subject'] ?>" class="form-control">
+                       <p class="help-block">Forgot password mail subject</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_forgot_message">Forgot Password Mail Message</label>
+                   <div class="controls col-md-8">
+                       <textarea class="text-area-section" id="cms_email_forgot_message" name="cms_email_forgot_message" class="form-control"><?php echo $config_list['cms_email_forgot_message'] ?></textarea>
+                       <p class="help-block">Forgot password mail message</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_signup_subject">User Activation Mail Subject</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_signup_subject" name="cms_email_signup_subject" value="<?php echo $config_list['cms_email_signup_subject'] ?>" class="form-control">
+                       <p class="help-block">User activation mail subject</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_signup_message">User Activation Mail Message</label>
+                   <div class="controls col-md-8">
+                       <textarea class="text-area-section" id="cms_email_signup_message" name="cms_email_signup_message" class="form-control"><?php echo $config_list['cms_email_signup_message'] ?></textarea>
+                       <p class="help-block">User activation mail message</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_useragent">Email User Agent</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_useragent" name="cms_email_useragent" value="<?php echo $config_list['cms_email_useragent'] ?>" class="form-control">
+                       <p class="help-block">Email User Agent</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_mailpath">Mail Path</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_mailpath" name="cms_email_mailpath" value="<?php echo $config_list['cms_email_mailpath'] ?>" class="form-control">
+                       <p class="help-block">Mail Path</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_smtp_host">SMTP Host</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_smtp_host" name="cms_email_smtp_host" value="<?php echo $config_list['cms_email_smtp_host'] ?>" class="form-control">
+                       <p class="help-block">SMTP Host (e.g: ssl://smtp.googlemail.com)</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_smtp_user">SMTP User</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_smtp_user" name="cms_email_smtp_user" value="<?php echo $config_list['cms_email_smtp_user'] ?>" class="form-control">
+                       <p class="help-block">SMTP User (e.g: your.gmail.account@gmail.com)</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_smtp_pass">SMTP Password</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_smtp_pass" name="cms_email_smtp_pass" value="<?php echo $config_list['cms_email_smtp_pass'] ?>" class="form-control">
+                       <p class="help-block">SMTP Password</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_smtp_port">SMTP Port</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_smtp_port" name="cms_email_smtp_port" value="<?php echo $config_list['cms_email_smtp_port'] ?>" class="form-control">
+                       <p class="help-block">SMTP Port (e.g: 465)</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_email_smtp_timeout">SMTP Timeout</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_email_smtp_timeout" name="cms_email_smtp_timeout" value="<?php echo $config_list['cms_email_smtp_timeout'] ?>" class="form-control">
+                       <p class="help-block">SMTP Timeout (e.g: 30)</p>
+                   </div>
+                </div>
+                <div class="form-group">
+                   <label class="control-label col-md-4" for="cms_google_analytic_property_id">Google Analytics Property Id</label>
+                   <div class="controls col-md-8">
+                       <input type="text" id="cms_google_analytic_property_id" name="cms_google_analytic_property_id" value="<?php echo $config_list['cms_google_analytic_property_id'] ?>" class="form-control">
+                       <p class="help-block">Google Analytics Property Id (e.g: UA-30285787-1)</p>
+                   </div>
+                </div>
+
             </div>
-            
+
             <div class="tab-pane" id="tab2">
                 <h3>Images</h3>
                 <div class="form-group">
@@ -107,7 +267,7 @@
                        <input type="file" id="site_logo" name="site_logo" class="form-control">
                        <p class="help-block">Image used as site Logo</p>
                    </div>
-                </div>                
+                </div>
                 <div class="form-group">
                    <label class="control-label col-md-4" for="site_favicon">Site Favicon</label>
                    <div class="controls col-md-8">
@@ -117,7 +277,7 @@
                    </div>
                 </div>
             </div>
-            
+
             <div class="tab-pane active" id="tab3">
                 <h3>Sections</h3>
                 <div class="form-group">
@@ -126,57 +286,57 @@
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
-                       <textarea id="section_custom_script" name="section_custom_script" class="text-area-section"><?php show_static_content($section_widget_list, 'section_custom_script'); ?></textarea>                       
+                       <textarea id="section_custom_script" name="section_custom_script" class="text-area-section"><?php show_static_content($section_widget_list, 'section_custom_script'); ?></textarea>
                        <p class="help-block">HTML &amp; tags of top section</p>
                    </div>
-                </div> 
+                </div>
                 <div class="form-group">
                    <label class="control-label col-md-4" for="section_top_fix">Top Section</label>
                    <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
-                       <textarea id="section_top_fix" name="section_top_fix" class="text-area-section"><?php echo show_static_content($section_widget_list, 'section_top_fix'); ?></textarea>                       
+                       <textarea id="section_top_fix" name="section_top_fix" class="text-area-section"><?php echo show_static_content($section_widget_list, 'section_top_fix'); ?></textarea>
                        <p class="help-block">HTML &amp; tags of top section</p>
                    </div>
-                </div> 
+                </div>
                 <div class="form-group">
                    <label class="control-label col-md-4" for="section_top_fix">Navigation Bar's Right Partial</label>
                    <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
-                       <textarea id="navigation_right_partial" name="navigation_right_partial" class="text-area-section"><?php show_static_content($section_widget_list, 'navigation_right_partial'); ?></textarea>                       
+                       <textarea id="navigation_right_partial" name="navigation_right_partial" class="text-area-section"><?php show_static_content($section_widget_list, 'navigation_right_partial'); ?></textarea>
                        <p class="help-block">HTML &amp; tags of navigation bar's right partial (don't put too much thing here)</p>
                    </div>
-                </div>               
+                </div>
                 <div class="form-group">
                    <label class="control-label col-md-4" for="section_banner">Banner Section</label>
                    <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
-                       <textarea id="section_banner" name="section_banner" class="text-area-section"><?php show_static_content($section_widget_list, 'section_banner'); ?></textarea>                       
+                       <textarea id="section_banner" name="section_banner" class="text-area-section"><?php show_static_content($section_widget_list, 'section_banner'); ?></textarea>
                        <p class="help-block">HTML &amp; tags of banner section</p>
                    </div>
-                </div>                
+                </div>
                 <div class="form-group">
                    <label class="control-label col-md-4" for="section_left">Left Section</label>
                    <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
-                       <textarea id="section_left" name="section_left" class="text-area-section"><?php show_static_content($section_widget_list, 'section_left'); ?></textarea>                       
+                       <textarea id="section_left" name="section_left" class="text-area-section"><?php show_static_content($section_widget_list, 'section_left'); ?></textarea>
                        <p class="help-block">HTML &amp; tags of left Section</p>
                    </div>
-                </div>                
+                </div>
                 <div class="form-group">
                    <label class="control-label col-md-4" for="section_right">Right Section</label>
                    <div class="controls col-md-8">
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
-                       <textarea id="section_right" name="section_right" class="text-area-section"><?php show_static_content($section_widget_list, 'section_right'); ?></textarea>                       
+                       <textarea id="section_right" name="section_right" class="text-area-section"><?php show_static_content($section_widget_list, 'section_right'); ?></textarea>
                        <p class="help-block">HTML &amp; tags of right section</p>
                    </div>
                 </div>
@@ -186,15 +346,15 @@
                        <div class="div-normal-widget">
                            <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                        </div>
-                       <textarea id="section_bottom" name="section_bottom" class="text-area-section"><?php show_static_content($section_widget_list, 'section_bottom'); ?></textarea>                       
+                       <textarea id="section_bottom" name="section_bottom" class="text-area-section"><?php show_static_content($section_widget_list, 'section_bottom'); ?></textarea>
                        <p class="help-block">HTML &amp; tags of bottom section</p>
                    </div>
-                </div>                
+                </div>
             </div>
-            
+
         </div>
         <input type="submit" class="btn btn-primary btn-lg" value="Apply Changes">
-    </form>    
+    </form>
 </div>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <?php
