@@ -739,6 +739,9 @@ class Default_Generator extends CMS_Controller{
         $this->nds->write_file($this->project_path.'helpers/.htaccess', $str);
         $this->nds->write_file($this->project_path.'libraries/.htaccess', $str);
         $this->nds->write_file($this->project_path.'config/.htaccess', $str);
+        // create subsite_auth.php
+        $str = $this->nds->read_view('default_generator/subsite_auth.php');
+        $this->nds_write_file($this->project_path.'subsite_auth.php', $str);
     }
 
 }

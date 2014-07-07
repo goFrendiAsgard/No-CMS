@@ -104,7 +104,7 @@ class CMS_Model extends CI_Model
                 $fields = array(
                     'language_id'=> array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE,),
                     'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
-                    'code'=>array("type"=>'varchar',"contstrain"=>50, "null"=>TRUE),
+                    'code'=>array("type"=>'varchar',"constraint"=>50, "null"=>TRUE),
                     'iso_code'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
                     'translations'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
                 );
