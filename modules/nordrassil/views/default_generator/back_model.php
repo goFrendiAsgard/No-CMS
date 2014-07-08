@@ -6,7 +6,8 @@
  * @author No-CMS Module Generator
  */
 class {{ model_name }}  extends grocery_CRUD_Model{
-	public function __construct(){
-		parent::__construct();
-	}	
+
+    public function __construct(){
+        parent::__construct();
+    }
 }

@@ -9,6 +9,15 @@ class Manage_Tourism extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
+    public function cms_complete_table_name($table_name){
+        include(FCPATH.'modules/'.$this->cms_module_path().'/helpers/function.php');
+        if(function_exists('cms_complete_table_name')){
+            return cms_complete_table_name($table_name);
+        }else{
+            return parent::cms_complete_table_name($table_name);
+        }
+    }
+
     public function index(){
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // initialize groceryCRUD
@@ -18,7 +27,6 @@ class Manage_Tourism extends CMS_Priv_Strict_Controller {
         if (FALSE) $crud = new Extended_Grocery_CRUD();
 
         // check state & get primary_key
-        $state = $crud->getState();
         $state = $crud->getState();
         $state_info = $crud->getStateInfo();
         $primary_key = isset($state_info->primary_key)? $state_info->primary_key : NULL;
@@ -42,8 +50,8 @@ class Manage_Tourism extends CMS_Priv_Strict_Controller {
             case 'export': break;
             case 'print': break;
         }
-        
-        // unset things 
+
+        // unset things
         $crud->unset_jquery();
         $crud->unset_read();
         // $crud->unset_add();
@@ -71,8 +79,8 @@ class Manage_Tourism extends CMS_Priv_Strict_Controller {
         $crud->edit_fields('name');
         // displayed columns on add operation
         $crud->add_fields('name');
-        
-        
+
+
 
         // caption of each columns
         $crud->display_as('name','Name');

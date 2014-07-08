@@ -45,27 +45,36 @@
  */
 class {{ model_name }} extends  CMS_Model{
 
-	public function get_data($keyword, $page=0){
-		$limit = 10;
-		$query = $this->db->select('<?php echo $select; ?>')
-			->from($this->cms_complete_table_name('<?php echo $stripped_table_name; ?>').' as <?php echo $stripped_table_name; ?>')
+    public function cms_complete_table_name($table_name){
+        include(FCPATH.'modules/'.$this->cms_module_path().'/helpers/function.php');
+        if(function_exists('cms_complete_table_name')){
+            return cms_complete_table_name($table_name);
+        }else{
+            return parent::cms_complete_table_name($table_name);
+        }
+    }
+
+    public function get_data($keyword, $page=0){
+        $limit = 10;
+        $query = $this->db->select('<?php echo $select; ?>')
+            ->from($this->cms_complete_table_name('<?php echo $stripped_table_name; ?>').' as <?php echo $stripped_table_name; ?>')
 <?php
 	foreach($join_array as $join){
-		echo '			->join('.$join.')'.PHP_EOL;
+		echo '            ->join('.$join.')'.PHP_EOL;
 	}
 	for($i=0; $i<count($like_array); $i++){
 		if($i==0){
-			echo '			->like('.$like_array[$i].')'.PHP_EOL;
+			echo '           ->like('.$like_array[$i].')'.PHP_EOL;
 		}else{
-			echo '			->or_like('.$like_array[$i].')'.PHP_EOL;
+			echo '           ->or_like('.$like_array[$i].')'.PHP_EOL;
 		}
 
 	}
 ?>
-			->limit($limit, $page*$limit)
-			->get();
-		$result = $query->result();
-		return $result;
-	}
+            ->limit($limit, $page*$limit)
+            ->get();
+        $result = $query->result();
+        return $result;
+    }
 
 }

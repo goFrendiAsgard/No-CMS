@@ -732,6 +732,32 @@ class CMS_Controller extends MX_Controller
 
     /**
      * @author  goFrendiAsgard
+     * @param   string tmp_module_path
+     * @desc    pretend to be tmp_module_path to adjust the table prefix. This only affect table name
+     */
+    public function cms_override_table_prefix($tmp_module_path){
+        $this->No_CMS_Model->cms_override_table_prefix($tmp_module_path);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @desc    cancel effect created by cms_override_table_prefix
+     */
+    public function cms_reset_overriden_table_prefix(){
+        $this->No_CMS_Model->cms_reset_overriden_table_prefix();
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string content
+     * @desc    flash content to be served as metadata on next call of $this->view in controller
+     */
+    public function cms_flash_metadata($content){
+        $this->No_CMS_Model->cms_flash_metadata($content);
+    }
+
+    /**
+     * @author  goFrendiAsgard
      * @param   string view_url
      * @param   string data
      * @param   string navigation_name
@@ -1059,9 +1085,9 @@ class CMS_Controller extends MX_Controller
             if(!isset($_SESSION)){
                 session_start();
             }
-            if(isset($_SESSION['__hack_script'])){
-                $this->template->append_metadata($_SESSION['__hack_script']);
-                unset($_SESSION['__hack_script']);
+            if(isset($_SESSION['__cms_flash_metadata'])){
+                $this->template->append_metadata($_SESSION['__cms_flash_metadata']);
+                unset($_SESSION['__cms_flash_metadata']);
             }
 
 

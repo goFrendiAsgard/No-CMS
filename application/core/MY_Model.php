@@ -266,8 +266,8 @@ class CMS_Model extends CI_Model
             session_start();
         }
         // hack module path by changing the session, don't forget to unset !!!
-        if(isset($_SESSION['__override_module_path'])){
-            $module_path = $_SESSION['__override_module_path'];
+        if(isset($_SESSION['__cms_override_module_path'])){
+            $module_path = $_SESSION['__cms_override_module_path'];
         }else{
             $module_path = $this->cms_module_path();
         }
@@ -1880,7 +1880,7 @@ class CMS_Model extends CI_Model
                 session_start();
             }
             // hack module path by changing the session, don't forget to unset !!!
-            $_SESSION['__override_module_path'] = $module_path;
+            $this->cms_override_table_prefix($module_path);
             $data = array(
                 'name'=> $this->install_model->subsite,
                 'description'=>$user_name.' website',
@@ -1890,9 +1890,10 @@ class CMS_Model extends CI_Model
             $this->db->insert($this->cms_complete_table_name('subsite'), $data);
             $this->load->model($this->cms_module_path().'/subsite_model');
             $this->subsite_model->update_configs();
-            unset($_SESSION['__override_module_path']);
+            $this->cms_reset_overriden_table_prefix();
+
             // hack script, will be added and removed in next view
-            $_SESSION['__hack_script'] = '<script type="text/javascript">
+            $install_module_script = '<script type="text/javascript">
                 $(document).ready(function(){
                     var modules =  ["blog", "static_accessories", "contact_us"];
                     var done = 0;
@@ -1916,8 +1917,47 @@ class CMS_Model extends CI_Model
                         });
                     }
                 });</script>';
+            $this->cms_flash_metadata($install_module_script);
         }
 
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string tmp_module_path
+     * @desc    pretend to be tmp_module_path to adjust the table prefix. This only affect table name
+     */
+    public function cms_override_table_prefix($tmp_module_path){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        $_SESSION['__cms_override_module_path'] = $tmp_module_path;
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @desc    cancel effect created by cms_override_table_prefix
+     */
+    public function cms_reset_overriden_table_prefix(){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        unset($_SESSION['__cms_override_module_path']);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string content
+     * @desc    flash content to be served as metadata on next call of $this->view in controller
+     */
+    public function cms_flash_metadata($content){
+        if(!isset($_SESSION)){
+            session_start();
+        }
+        if(!isset($_SESSION['__cms_flash_metadata'])){
+            $_SESSION['__cms_flash_metadata'] = '';
+        }
+        $_SESSION['__cms_flash_metadata'] .= $content;
     }
 
     /**

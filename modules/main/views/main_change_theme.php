@@ -25,7 +25,7 @@
         }
         $image_path = base_url('themes/'.$theme['path'].'/preview.png');
         if(@file_get_contents($image_path,0,NULL,0,1)){
-            echo '<img src="'.$image_path.'" />';
+            echo '<img style="border:1px solid" src="'.$image_path.'" />';
         }else{
             echo '{{ language:No Preview }}';
         }
@@ -38,7 +38,7 @@
             echo '<p>Click to use this theme</p>';
         }
         echo '</div>';
-        
+
         if(!$theme['used']) echo '</a>';
         echo '</div>'; // end of div.thumbnail div.theme-thumbnail
         echo '</div>'; // end of div.col-xs-6
@@ -69,7 +69,7 @@
                 }
             });
             $(identifier).each(function(){
-                var margin_bottom = 0;               
+                var margin_bottom = 0;
                 if($(this).height()<max_height){
                     margin_bottom = max_height - $(this).height();
                 }

@@ -1030,8 +1030,13 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_privilege('cms_install_module', 'Install Module', 'Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You\'d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)'.PHP_EOL.'&nbsp;', 4);
         $sql_list[] = $this->insert_privilege('cms_manage_access', 'Manage Access', 'Manage access'.PHP_EOL.'&nbsp;', 4);
         // config
-        $sql_list[] = $this->insert_config('site_name', 'No-CMS', 'Site title');
-        $sql_list[] = $this->insert_config('site_slogan', 'A Free CodeIgniter Based CMS Framework', 'Site slogan');
+        if($this->is_subsite){
+            $sql_list[] = $this->insert_config('site_name', $this->subsite, 'Site title');
+            $sql_list[] = $this->insert_config('site_slogan', $this->subsite, 'Site slogan');
+        }else{
+            $sql_list[] = $this->insert_config('site_name', 'No-CMS', 'Site title');
+            $sql_list[] = $this->insert_config('site_slogan', 'A Free CodeIgniter Based CMS Framework', 'Site slogan');
+        }
         $sql_list[] = $this->insert_config('site_logo', '{{ base_url }}assets/nocms/images/No-CMS-logo.png', 'Site logo');
         $sql_list[] = $this->insert_config('site_favicon', '{{ base_url }}assets/nocms/images/No-CMS-favicon.png', 'Site favicon');
         $sql_list[] = $this->insert_config('site_footer', 'Powered by No-CMS &copy; 2013', 'Site footer');
