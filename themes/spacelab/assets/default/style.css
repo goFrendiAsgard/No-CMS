@@ -23,10 +23,6 @@
     max-width: 100%;
 }
 
-body {  
-	padding-bottom:40px;
-}
-
 footer{
 	padding: 10px;
 }
@@ -51,7 +47,7 @@ footer{
 /* end of grocery-CRUD flexigrid */
 
 /* Landscape phones and down */
-@media (max-width: 480px){    
+@media (max-width: 480px){
     body {
         padding-top: 0px;
     }
@@ -63,7 +59,7 @@ footer{
     .form-display-as-box{
        width: 100%!important;
     }
-    
+
     .flexigrid table td,
     .flexigrid table th{
         display: none!important;
@@ -78,10 +74,10 @@ footer{
 }
 
 /* Landscape phone to portrait tablet */
-@media (min-width: 481px) and (max-width: 768px)  {  
+@media (min-width: 481px) and (max-width: 768px)  {
     body {
         padding-top: 0px;
-    }  
+    }
     .form-input-box>input, .form-input-box>textarea,
     .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
         width: 300px!important;
@@ -90,7 +86,7 @@ footer{
     .form-display-as-box{
        width: 100%!important;
     }
-    
+
     .flexigrid table td,
     .flexigrid table th{
         display: none!important;

@@ -760,6 +760,7 @@ class CMS_Model extends CI_Model
                     }
                 });
                 $(identifier).each(function(){
+                    $(this).height(max_height);
                     var margin_bottom = 0;
                     if($(this).height()<max_height){
                         margin_bottom = max_height - $(this).height();
@@ -1872,9 +1873,11 @@ class CMS_Model extends CI_Model
             $this->install_model->gzip_compression             = FALSE;
             $check_installation = $this->install_model->check_installation();
             $success = $check_installation['success'];
+            $module_installed = FALSE;
             if($success){
                 $this->install_model->build_database();
                 $this->install_model->build_configuration();
+                $module_installed = $this->install_model->install_modules();
             }
             if(!isset($_SESSION)){
                 session_start();
@@ -1892,32 +1895,34 @@ class CMS_Model extends CI_Model
             $this->subsite_model->update_configs();
             $this->cms_reset_overriden_table_prefix();
 
-            // hack script, will be added and removed in next view
-            $install_module_script = '<script type="text/javascript">
-                $(document).ready(function(){
-                    var modules =  ["blog", "static_accessories", "contact_us"];
-                    var done = 0;
-                    for(var i=0; i<modules.length; i++){
-                        var module = modules[i];
-                        $.ajax({
-                            "url": "{{ SITE_URL }}/"+module+"/install/activate/?__cms_subsite='.$this->install_model->subsite.'",
-                            "type": "POST",
-                            "dataType": "json",
-                            "async": true,
-                            "data":{
-                                    "silent" : true,
-                                    "identity": "'.$user_name.'",
-                                    "password": "'.$password.'"
-                                },
-                            "success": function(response){
-                                    if(!response["success"]){
-                                        console.log("error installing "+response["module_path"]);
-                                    }
-                                },
-                        });
-                    }
-                });</script>';
-            $this->cms_flash_metadata($install_module_script);
+            if(!$module_installed){
+                // hack script, will be added and removed in next view
+                $install_module_script = '<script type="text/javascript">
+                    $(document).ready(function(){
+                        var modules =  ["blog", "static_accessories", "contact_us"];
+                        var done = 0;
+                        for(var i=0; i<modules.length; i++){
+                            var module = modules[i];
+                            $.ajax({
+                                "url": "{{ SITE_URL }}/"+module+"/install/activate/?__cms_subsite='.$this->install_model->subsite.'",
+                                "type": "POST",
+                                "dataType": "json",
+                                "async": true,
+                                "data":{
+                                        "silent" : true,
+                                        "identity": "'.$user_name.'",
+                                        "password": "'.$password.'"
+                                    },
+                                "success": function(response){
+                                        if(!response["success"]){
+                                            console.log("error installing "+response["module_path"]);
+                                        }
+                                    },
+                            });
+                        }
+                    });</script>';
+                $this->cms_flash_metadata($install_module_script);
+            }
         }
 
     }

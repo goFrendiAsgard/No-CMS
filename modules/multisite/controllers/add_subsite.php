@@ -75,9 +75,11 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
         $this->get_input();
         $check_installation = $this->install_model->check_installation();
         $success = $check_installation['success'];
+        $module_installed = FALSE;
         if($success){
             $this->install_model->build_database();
             $this->install_model->build_configuration();
+            $module_installed = $this->install_model->install_modules();
         }
 
         // upload the logo
@@ -103,6 +105,7 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
         $this->subsite_model->update_configs();
 
         $data = $check_installation;
+        $data['module_installed'] = $module_installed;
         $data['admin_user_name'] = $this->install_model->admin_user_name;
         $data['admin_password'] = $this->install_model->admin_password;
         $data['subsite'] = $this->install_model->subsite;

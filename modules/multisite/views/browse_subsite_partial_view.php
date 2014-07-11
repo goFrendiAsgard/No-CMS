@@ -3,7 +3,7 @@
 $contents = '';
 for($i=0; $i<count($result); $i++){
     $record = $result[$i];
-    $contents .= '<div class="col-xs-6 col-md-4">';
+    $contents .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
     $contents .= '<div id="record_'.$record->id.'" class="record_container thumbnail">';
 
     if($record->use_subdomain){

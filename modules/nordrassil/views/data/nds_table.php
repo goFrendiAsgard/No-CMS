@@ -31,7 +31,9 @@
 <script type="text/javascript">
 	// if document ready, call adjust when needed
 	$(document).ready(function(){
+	    // remove sorting
 	    $('.field-sorting').removeClass('field-sorting');
+	    // change field
 		var changing_field = 'project_id';
 		var affected_field = 'options';
 		var get_restricted_path = '<?php echo site_url('{{ module_path }}'); ?>'+'/data/ajax/get_restricted_table_option/';
@@ -43,6 +45,18 @@
 
 	$(document).ajaxComplete(function(){
         $('.field-sorting').removeClass('field-sorting');
+        // path array
+        var path_array = window.location.pathname.split( '/' );
+        if (path_array.length > 1){
+            if (path_array[path_array.length - 2] == 'success'){
+                var id = path_array[path_array.length - 1];
+                var position = $('#rec-' + id).position();
+                if(position != undefined){
+                    var top = position.top;
+                    $(window).scrollTop( top );
+                }
+            }
+        }
     });
 
 </script>

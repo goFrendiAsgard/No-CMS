@@ -8,28 +8,6 @@
     -moz-box-sizing: content-box!important;
     box-sizing: content-box!important;
 }
-/*
-.carousel-caption {
-    background:rgba(255,255,255,0)!important;
-    background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1))!important;
-    background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 1))!important;
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(0, 0, 0, 0.4)), to(rgba(255, 255, 255, 1)))!important;
-    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1))!important;
-    background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1))!important;
-    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(255, 255, 255, 1))!important;
-    background-repeat: repeat-y;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='rgba(0, 0, 0, 0)', endColorstr='rgba(255, 255, 255, 1)', GradientType=1)!important;
-    padding-top: 150px!important;
-}
-.carousel-caption h4, .carousel-caption p{
-    color:#444!important;
-}
-.navbar-text{
-    color:#ffffff!important;
-    font-family: 'Telex',sans-serif;
-    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2)!important;
-}
-*/
 .not_shown{
 	display: none;
 }
@@ -42,54 +20,50 @@
     max-width: 100%;
 }
 
-body { 
-	padding-bottom:40px;
-}
-
 footer{
 	padding: 10px;
 }
 
 #__section-banner>div{
-	/* IE10 */ 
+	/* IE10 */
 	background-image: -ms-linear-gradient(top left, white 0%, gray 100%);
-	
-	/* Mozilla Firefox */ 
+
+	/* Mozilla Firefox */
 	background-image: -moz-linear-gradient(top left, white 0%, gray 100%);
-	
-	/* Opera */ 
+
+	/* Opera */
 	background-image: -o-linear-gradient(top left, white 0%, gray 100%);
-	
-	/* Webkit (Safari/Chrome 10) */ 
+
+	/* Webkit (Safari/Chrome 10) */
 	background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, gray));
-	
-	/* Webkit (Chrome 11+) */ 
+
+	/* Webkit (Chrome 11+) */
 	background-image: -webkit-linear-gradient(top left, white 0%, gray 100%);
-	
-	/* Proposed W3C Markup */ 
+
+	/* Proposed W3C Markup */
 	background-image: linear-gradient(top left, white 0%, gray 100%);
 }
 
 #__section-left-and-content{
 	padding:5px;
 	margin-left:0px;
-	
-	/* IE10 */ 
+
+	/* IE10 */
 	background-image: -ms-linear-gradient(top left, white 0%, #EEEEEE 100%);
-	
-	/* Mozilla Firefox */ 
+
+	/* Mozilla Firefox */
 	background-image: -moz-linear-gradient(top left, white 0%, #EEEEEE 100%);
-	
-	/* Opera */ 
+
+	/* Opera */
 	background-image: -o-linear-gradient(top left, white 0%, #EEEEEE 100%);
-	
-	/* Webkit (Safari/Chrome 10) */ 
+
+	/* Webkit (Safari/Chrome 10) */
 	background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, #EEEEEE));
-	
-	/* Webkit (Chrome 11+) */ 
+
+	/* Webkit (Chrome 11+) */
 	background-image: -webkit-linear-gradient(top left, white 0%, #EEEEEE 100%);
-	
-	/* Proposed W3C Markup */ 
+
+	/* Proposed W3C Markup */
 	background-image: linear-gradient(top left, white 0%, #EEEEEE 100%);
 }
 
@@ -113,7 +87,7 @@ footer{
 /* end of grocery-CRUD flexigrid */
 
 /* Landscape phones and down */
-@media (max-width: 480px){    
+@media (max-width: 480px){
     body {
         padding-top: 0px;
     }
@@ -125,7 +99,7 @@ footer{
     .form-display-as-box{
        width: 100%!important;
     }
-    
+
     .flexigrid table td,
     .flexigrid table th{
         display: none!important;
@@ -140,10 +114,10 @@ footer{
 }
 
 /* Landscape phone to portrait tablet */
-@media (min-width: 481px) and (max-width: 768px)  {  
+@media (min-width: 481px) and (max-width: 768px)  {
     body {
         padding-top: 0px;
-    }  
+    }
     .form-input-box>input, .form-input-box>textarea,
     .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
         width: 300px!important;
@@ -152,7 +126,7 @@ footer{
     .form-display-as-box{
        width: 100%!important;
     }
-    
+
     .flexigrid table td,
     .flexigrid table th{
         display: none!important;

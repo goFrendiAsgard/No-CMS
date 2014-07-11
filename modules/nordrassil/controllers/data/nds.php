@@ -317,9 +317,11 @@ class nds extends CMS_Controller {
             ->result();
         $priority = 0;
         foreach($result as $row){
-            $this->db->update($this->cms_complete_table_name('table'),
-                array('priority' => $priority),
-                array('table_id' => $row->table_id));
+            if($row->priority != $priority){
+                $this->db->update($this->cms_complete_table_name('table'),
+                    array('priority' => $priority),
+                    array('table_id' => $row->table_id));
+            }
             $priority ++;
         }
     }
@@ -367,7 +369,7 @@ class nds extends CMS_Controller {
 	}
 
     public function callback_column_table_name($value, $row){
-        return '<b>' . $value . '</b>' . br() . '(' . $row->caption . ')';
+        return '<b>' . $value . '</b>' . br() . '(' . $row->caption . ')<a id="rec-'.$row->table_id.'" name="rec-'.$row->table_id.'">&nbsp;</a>';
     }
 
 	public function callback_column_table_columns($value, $row){
@@ -499,9 +501,11 @@ class nds extends CMS_Controller {
             ->result();
         $priority = 0;
         foreach($result as $row){
-            $this->db->update($this->cms_complete_table_name('column'),
-                array('priority' => $priority),
-                array('column_id' => $row->column_id));
+            if($row->priority != $priority){
+                $this->db->update($this->cms_complete_table_name('column'),
+                    array('priority' => $priority),
+                    array('column_id' => $row->column_id));
+            }
             $priority ++;
         }
     }
@@ -552,7 +556,7 @@ class nds extends CMS_Controller {
             $description = '<span class="badge">'.ucfirst($row->role).'</span>';
         }
         return '<b>' . $value . '</b>' . ', ' . $description . br() .
-            '(' . $row->caption . ')';
+            '(' . $row->caption . ')<a id="rec-'.$row->column_id.'" name="rec-'.$row->column_id.'">&nbsp;</a>';
     }
 
 	public function callback_column_column_table_id($value, $row){

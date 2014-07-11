@@ -70,10 +70,13 @@ class Installer extends CI_Controller{
         $this->get_input();
         $check_installation = $this->install_model->check_installation();
         $success = $check_installation['success'];
+        $module_installed = FALSE;
         if($success){
             $this->install_model->build_database();
             $this->install_model->build_configuration();
+            $module_installed = $this->install_model->install_modules();
         }
+        $data['module_installed'] = $module_installed;
         $data['success'] = $success;
         $data['admin_user_name'] = $this->install_model->admin_user_name;
         $data['admin_password'] = $this->install_model->admin_password;

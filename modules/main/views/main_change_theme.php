@@ -59,33 +59,36 @@
     </form>
 </div>
 <script type="text/javascript">
-    $(window).load(function(){
-        function __adjust_component(identifier){
-            var max_height = 0;
-            $(identifier).each(function(){
-                $(this).css('margin-bottom', 0);
-                if($(this).height()>max_height){
-                    max_height = $(this).height();
-                }
-            });
-            $(identifier).each(function(){
-                var margin_bottom = 0;
-                if($(this).height()<max_height){
-                    margin_bottom = max_height - $(this).height();
-                }
-                margin_bottom += 10;
-                $(this).css('margin-bottom', margin_bottom);
-            });
-        }
-        function adjust_thumbnail(){
-            __adjust_component('.thumbnail img');
-            __adjust_component('.thumbnail div.caption');
-        }
-        adjust_thumbnail();
-
-        // resize
-        $(window).resize(function(){
-            adjust_thumbnail();
+    function __adjust_component(identifier){
+        var max_height = 0;
+        $(identifier).each(function(){
+            $(this).css('margin-bottom', 0);
+            if($(this).height()>max_height){
+                max_height = $(this).height();
+            }
         });
+        $(identifier).each(function(){
+            var margin_bottom = 0;
+            $(this).height(max_height);
+            if($(this).height()<max_height){
+                margin_bottom = max_height - $(this).height();
+            }
+            margin_bottom += 10;
+            $(this).css('margin-bottom', margin_bottom);
+        });
+    }
+    function adjust_thumbnail(){
+        __adjust_component('.thumbnail img');
+        __adjust_component('.thumbnail div.caption');
+    }
+
+    $(window).load(function(){
+        adjust_thumbnail();
+    });
+    $(window).resize(function(){
+        adjust_thumbnail();
+    });
+    $(document).ready(function(){
+        adjust_thumbnail();
     });
 </script>

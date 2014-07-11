@@ -145,4 +145,17 @@ class multisite extends CMS_Priv_Strict_Controller {
         $this->view($this->cms_module_path().'/browse_subsite_partial_view',$data,
            $this->cms_complete_navigation_name('browse_subsite'), $config);
     }
+
+    public function ajax_user_multisite(){
+        $user_id = $this->cms_user_id();
+        $query = $this->db->select('name')
+            ->from($this->cms_complete_table_name('subsite'))
+            ->where('user_id', $user_id)
+            ->get();
+        $subsite_list = array();
+        foreach($query->result() as $row){
+            $subsite_list[] = $row->name;
+        }
+        return json_encode($subsite_list);
+    }
 }

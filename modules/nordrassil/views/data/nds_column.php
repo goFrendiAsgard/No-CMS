@@ -35,6 +35,18 @@
 <script type="text/javascript">
     $(document).ajaxComplete(function(){
         $('.field-sorting').removeClass('field-sorting');
+        // path array
+        var path_array = window.location.pathname.split( '/' );
+        if (path_array.length > 1){
+            if (path_array[path_array.length - 2] == 'success'){
+                var id = path_array[path_array.length - 1];
+                var position = $('#rec-' + id).position();
+                if(position != undefined){
+                    var top = position.top;
+                    $(window).scrollTop( top );
+                }
+            }
+        }
     });
 	// if document ready, call adjust when needed
 	$(document).ready(function(){

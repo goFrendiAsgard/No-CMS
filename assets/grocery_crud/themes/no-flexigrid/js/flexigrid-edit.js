@@ -116,7 +116,7 @@ $(function(){
 
 // addition by gofrendi
 function __add_form_control_class(){
-    $('.flexigrid input, .flexigrid select').addClass('form-control');
+    $('.flexigrid input, .flexigrid select, .flexigrid textarea').addClass('form-control');
 }
 function __mutate_delete_icon(){
     $('.flexigrid .delete-icon').each(function(){
