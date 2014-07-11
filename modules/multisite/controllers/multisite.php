@@ -156,6 +156,6 @@ class multisite extends CMS_Priv_Strict_Controller {
         foreach($query->result() as $row){
             $subsite_list[] = $row->name;
         }
-        return json_encode($subsite_list);
+        echo json_encode($subsite_list);
     }
 }
