@@ -31,11 +31,11 @@ assets/caches/*.css
 modules/*/config/module_config_*.php
 application/config/*.php
 application/config/site-*
-./.htaccess
+/.htaccess
 application/logs/log*.php
 assets/grocery_crud/texteditor/ckeditor/config.js
 assets/kcfinder/config.php
-./site.php
+/site.php
 
 # the sql
 modules/*/assets/db/backup*.sql
