@@ -190,16 +190,16 @@ table th
 	float:left;
 	display:block;
 	cursor:pointer;
-	padding:1px;
+	/*padding:1px;*/
 }
 .flexigrid div.fbutton div {
 	float:left;
-	padding:1px 3px;
+	/*padding:1px 3px;*/
 }
 .flexigrid div.fbutton span {
 	float:left;
 	display:block;
-	padding:3px;
+	/*padding:3px;*/
 }/*
 .flexigrid div.fbutton span.add {
 	background:url(images/add.png) no-repeat;
@@ -219,7 +219,7 @@ table th
 .flexigrid div.fbutton span.delete {
 	background:url(images/close.png) no-repeat;
 	padding-left: 20px;
-}*/
+}
 .flexigrid div.fbutton:hover,.flexigrid div.fbutton.fbOver {
 	padding:0px;
 	border:1px solid #ccc;
@@ -231,6 +231,7 @@ table th
 	border-right:1px solid #eee;
 	border-bottom: 1px solid #eee;
 }
+*/
 /* end toolbar*/
 .flexigrid div.hDiv table {
 	border-right:1px solid #fff;

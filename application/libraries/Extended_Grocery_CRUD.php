@@ -27,14 +27,48 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 	protected $callback_delete_ext=array();
 	protected $callback_post_render=array();
 
+    /* The unsetters */
+    public $unset_texteditor     = array();
+    public $unset_add            = false;
+    public $unset_edit           = false;
+    public $unset_delete         = false;
+    public $unset_read           = false;
+    public $unset_jquery         = false;
+    public $unset_jquery_ui      = false;
+    public $unset_bootstrap      = false;
+    public $unset_list           = false;
+    public $unset_export         = false;
+    public $unset_print          = false;
+    public $unset_back_to_list   = false;
+    public $unset_columns        = null;
+    public $unset_add_fields     = null;
+    public $unset_edit_fields    = null;
+
     // fix issue http://www.grocerycrud.com/forums/topic/1975-bug-in-the-search/
     protected $unsearchable_field = array();
 
-	public function __construct(){
-		parent::__construct();
-		$this->_ci = &get_instance();
+    public function __construct(){
+        parent::__construct();
+        $this->_ci = &get_instance();
+        // resolve HMVC set rule callback problem
+        $this->form_validation = $this->_ci->form_validation;
+    }
 
-	}
+    protected function set_default_Model()
+    {
+        $db_driver = $this->_ci->db->platform();
+        $model_name = 'grocery_crud_model_'.$db_driver;
+        $model_alias = 'm'.substr(md5(rand()), 0, rand(4,15) );
+        if (file_exists(APPPATH.'/models/'.$model_name.'.php')){
+            $this->_ci->load->model('grocery_crud_model');
+            $this->_ci->load->model('grocery_crud_generic_model');
+            $this->_ci->load->model($model_name,$model_alias);
+            $this->basic_model = $this->_ci->{$model_alias};
+        }else{
+            $this->_ci->load->model('grocery_CRUD_Model');
+            $this->basic_model = new grocery_CRUD_Model();
+        }
+    }
 
     /**
      *

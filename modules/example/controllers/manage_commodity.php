@@ -18,7 +18,7 @@ class Manage_Commodity extends CMS_Priv_Strict_Controller {
         }
     }
 
-    public function index(){
+    private function make_crud(){
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // initialize groceryCRUD
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +56,7 @@ class Manage_Commodity extends CMS_Priv_Strict_Controller {
         $crud->unset_read();
         // $crud->unset_add();
         // $crud->unset_edit();
+        // $crud->unset_delete();
         // $crud->unset_list();
         // $crud->unset_back_to_list();
         // $crud->unset_print();
@@ -69,6 +70,9 @@ class Manage_Commodity extends CMS_Priv_Strict_Controller {
 
         // table name
         $crud->set_table($this->cms_complete_table_name('commodity'));
+
+        // primary key
+        $crud->set_primary_key('commodity_id');
 
         // set subject
         $crud->set_subject('Commodity');
@@ -157,13 +161,28 @@ class Manage_Commodity extends CMS_Priv_Strict_Controller {
         // $crud->set_lang_string('update_error',         'Cannot edit the record'  );
         // $crud->set_lang_string('insert_error',         'Cannot add the record'   );
 
+        $this->crud = $crud;
+        return $crud;
+    }
+
+    public function index(){
+        $crud = $this->make_crud();
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
         $this->view($this->cms_module_path().'/manage_commodity_view', $output,
             $this->cms_complete_navigation_name('manage_commodity'));
+    }
 
+    public function delete_selection(){
+        $crud = $this->make_crud();
+        if(!$crud->unset_delete){
+            $id_list = json_decode($this->input->post('data'));
+            foreach($id_list as $id){
+                $this->db->delete($this->cms_complete_table_name('commodity'),array('commodity_id'=>$id));
+            }
+        }
     }
 
     public function _before_insert($post_array){

@@ -299,6 +299,7 @@ class Default_Generator extends CMS_Controller{
         $save_project_name = underscore($this->project_name);
         foreach($tables as $table){
             $table_name = $table['name'];
+            $primary_key = 'id';
             $stripped_table_name = $table['stripped_name'];
             $table_caption = $table['caption'];
             $table_make_frontpage = $table['options']['make_frontpage'];
@@ -321,7 +322,10 @@ class Default_Generator extends CMS_Controller{
             $rules_array = array();
             $upload_field_array = array();
             foreach($columns as $column){
-                if($column['role']=='primary') continue;
+                if($column['role']=='primary'){
+                    $primary_key = $column['name'];
+                    continue;
+                }
                 $column_name = $column['name'];
                 $column_caption = $column['caption'];
                 // field_list
@@ -517,7 +521,8 @@ class Default_Generator extends CMS_Controller{
                 'required_fields',
                 'unique_fields',
                 'set_rules',
-                'upload'
+                'upload',
+                'primary_key'
             );
             $replacement = array(
                 $this->back_navigation_name($stripped_table_name),
@@ -541,7 +546,8 @@ class Default_Generator extends CMS_Controller{
                 $required_fields,
                 $unique_fields,
                 $set_rules,
-                $upload
+                $upload,
+                $primary_key
             );
             // controllers
             $str = $this->nds->read_view('nordrassil/default_generator/back_controller.php',NULL,$pattern,$replacement);
@@ -553,6 +559,7 @@ class Default_Generator extends CMS_Controller{
             $data = array(
                 'make_frontpage'=>$table_make_frontpage,
                 'front_controller_import_name' => underscore(humanize($this->front_controller_class_name($stripped_table_name))),
+                'controller_name' => $this->back_controller_file_name($stripped_table_name),
             );
             $str = $this->nds->read_view('nordrassil/default_generator/back_view.php',$data,$pattern,$replacement);
             $this->nds->write_file($this->project_path.'views/'.$this->back_view_file_name($stripped_table_name), $str);

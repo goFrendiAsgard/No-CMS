@@ -184,12 +184,12 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        synchronize_citizen_table_width();
         synchronize_citizen();
         for(var i=0; i<DATA_citizen.update.length; i++){
             add_table_row_citizen(DATA_citizen.update[i].data);
             RECORD_INDEX_citizen++;
         }
+        synchronize_citizen_table_width();
 
         // on resize, adjust the table width
         $(window).resize(function() {
@@ -222,6 +222,7 @@
 
             // synchronize to the md_real_field_citizen_col
             synchronize_citizen();
+            synchronize_citizen_table_width();
         });
 
 
@@ -323,11 +324,13 @@
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // synchronize table width (called on resize).
+    // synchronize table width (called on resize and add).
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function synchronize_citizen_table_width(){
         var parent_width = $("#md_table_citizen_container").parent().parent().width();
-        $("#md_table_citizen_container").width(parent_width);
+        if($("#md_table_citizen_container table:visible").length > 0){
+            $("#md_table_citizen_container").width(parent_width);
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

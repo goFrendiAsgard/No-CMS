@@ -54,7 +54,7 @@ if($success_message !== null){?>
 	<div class="tDiv">
 		<?php if(!$unset_add){?>
         <div class="tDiv2">
-            <a href='<?php echo $add_url?>' title='<?php echo $this->l('list_add'); ?> <?php echo $subject?>' class='add-anchor add_button'>
+            <a href='<?php echo $add_url?>' title='<?php echo $this->l('list_add'); ?> <?php echo $subject?>' class='add-anchor add_button btn btn-default'>
             <div class="fbutton">
                 <div>
                     <span class="add"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;<?php echo $this->l('list_add'); ?> <?php echo $subject?></span>
@@ -67,17 +67,17 @@ if($success_message !== null){?>
         <?php }?>
 		<div class="tDiv3">
 			<?php if(!$unset_export) { ?>
-            <a class="export-anchor" data-url="<?php echo $export_url; ?>" target="_blank">
+            <a class="export-anchor btn btn-default" data-url="<?php echo $export_url; ?>" target="_blank">
                 <div class="fbutton">
                     <div>
                         <span class="export"><i class="glyphicon glyphicon-share"></i>&nbsp;<?php echo $this->l('list_export');?></span>
                     </div>
                 </div>
-            </a>
+            </a>&nbsp;
             <div class="btnseparator"></div>
             <?php } ?>
             <?php if(!$unset_print) { ?>
-            <a class="print-anchor" data-url="<?php echo $print_url; ?>">
+            <a class="print-anchor btn btn-default" data-url="<?php echo $print_url; ?>">
                 <div class="fbutton">
                     <div>
                         <span class="print"><i class="glyphicon glyphicon-print"></i>&nbsp;<?php echo $this->l('list_print');?></span>

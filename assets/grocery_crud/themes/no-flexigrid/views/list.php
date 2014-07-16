@@ -26,7 +26,13 @@
 		</thead>
 		<tbody>
 <?php foreach($list as $num_row => $row){ ?>
-		<tr  <?php if($num_row % 2 == 1){?>class="erow"<?php }?>>
+        <?php
+        $temp_string = $row->delete_url;
+        $temp_string = explode("/", $temp_string);
+        $row_num = sizeof($temp_string)-1;
+        $rowId = $temp_string[$row_num];
+        ?>
+		<tr rowId="<?php echo $rowId; ?>">
 			<?php foreach($columns as $column){?>
 			<td width='<?php echo $column_width?>%' class='<?php if(isset($order_by[0]) &&  $column->field_name == $order_by[0]){?>sorted<?php }?>'>
 				<div class='text-left'><?php echo $row->{$column->field_name} != '' ? $row->{$column->field_name} : '&nbsp;' ; ?></div>
@@ -43,7 +49,11 @@
                             <a href="<?php echo $action_url; ?>" class="<?php echo $action->css_class; ?> crud-action" title="<?php echo $action->label?>"><?php
                                 if(!empty($action->image_url))
                                 {
-                                    ?><img src="<?php echo $action->image_url; ?>" alt="<?php echo $action->label?>" /> <?php
+                                    if(strpos($action->image_url, 'glyphicon glyphicon-') == 0){
+                                        ?><i class="<?php echo $action->image_url; ?>"></i>&nbsp;<?php
+                                    }else{
+                                        ?><img src="<?php echo $action->image_url; ?>" alt="<?php echo $action->label?>" />&nbsp;<?php
+                                    }
                                 }
                                 echo $action->label;
                             ?></a>
@@ -52,17 +62,17 @@
                     ?>
 					<?php if(!$unset_read){?>
 					    &nbsp;
-						<a href='<?php echo $row->read_url?>' title='<?php echo $this->l('list_view')?> <?php echo $subject?>' class="edit_button">
+						<a href='<?php echo $row->read_url?>' title='<?php echo $this->l('list_view')?> <?php echo $subject?>' class="edit_button btn btn-default">
 						      <span class='read-icon'><i class="glyphicon glyphicon-list"></i>&nbsp;<?php echo $this->l('list_view')?></span>
 						</a>
 					<?php }?>
 					<?php if(!$unset_edit){?>&nbsp;
-                        <a href='<?php echo $row->edit_url?>' title='<?php echo $this->l('list_edit')?> <?php echo $subject?>' class="edit_button">
+                        <a href='<?php echo $row->edit_url?>' title='<?php echo $this->l('list_edit')?> <?php echo $subject?>' class="edit_button btn btn-default">
                               <span class='edit-icon'><i class="glyphicon glyphicon-pencil"></i>&nbsp;<?php echo $this->l('list_edit')?></span>
                         </a>
                     <?php }?>
 					<?php if(!$unset_delete){?>&nbsp;
-                        <a href='<?php echo $row->delete_url?>' title='<?php echo $this->l('list_delete')?> <?php echo $subject?>' class="delete-row" >
+                        <a href='<?php echo $row->delete_url?>' title='<?php echo $this->l('list_delete')?> <?php echo $subject?>' class="delete-row btn btn-default" >
                                 <span class='delete-icon'><i class="glyphicon glyphicon-remove"></i>&nbsp;<?php echo $this->l('list_delete')?></span>
                         </a>
                     <?php }?>
