@@ -93,6 +93,8 @@ class Manage_City extends CMS_Priv_Strict_Controller {
         $crud->display_as('commodity','Commodity');
         $crud->display_as('citizen','Citizen');
 
+        $crud->set_tabs(array('Country and Name'=>2,'Detail Info'=>3,));
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
         // (documentation: http://www.grocerycrud.com/documentation/options_functions/required_fields)

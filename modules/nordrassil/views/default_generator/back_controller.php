@@ -84,6 +84,14 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
         // displayed columns on add operation
         $crud->add_fields({{ field_list }});
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Put Tabs (if needed)
+        // usage:
+        //     $crud->set_tabs(array(
+        //        'First Tab Caption'  => $how_many_field_on_first_tab,
+        //        'Second Tab Caption' => $how_many_field_on_second_tab,
+        //     ));
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         // caption of each columns

@@ -27,6 +27,8 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 	protected $callback_delete_ext=array();
 	protected $callback_post_render=array();
 
+    protected $tabs = NULL;
+
     /* The unsetters */
     public $unset_texteditor     = array();
     public $unset_add            = false;
@@ -52,6 +54,17 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
         $this->_ci = &get_instance();
         // resolve HMVC set rule callback problem
         $this->form_validation = $this->_ci->form_validation;
+    }
+
+    public function set_tabs($data){
+        $this->tabs = $data;
+    }
+
+    public function add_tab($caption, $count){
+        if($this->tabs == NULL){
+            $this->tabs = array();
+        }
+        $this->tabs[$key] = $count;
     }
 
     protected function set_default_Model()
