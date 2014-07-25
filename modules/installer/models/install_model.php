@@ -1068,7 +1068,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_config('cms_email_bcc_batch_mode', 'FALSE', 'Enable BCC Batch Mode. Default: false, Alternatives: true');
         $sql_list[] = $this->insert_config('cms_email_bcc_batch_size', '200', 'Number of emails in each BCC batch.');
         $sql_list[] = $this->insert_config('cms_google_analytic_property_id', '', 'Google analytics property ID (e.g: UA-30285787-1). Leave blank if you don\'t want to use it.');
-        $sql_list[] = $this->insert_config('cms_add_subsite_on_register', 'TRUE', 'Automatically create subsite on register');
+        $sql_list[] = $this->insert_config('cms_add_subsite_on_register', 'FALSE', 'Automatically create subsite on register');
         $sql_list[] = $this->insert_config('cms_subsite_use_subdomain','FALSE','Automatically use subdomain');
         // group user
         $sql_list[] = $this->insert_group_user();
@@ -1209,7 +1209,7 @@ class Install_Model extends CI_Model{
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
-                if($file == 'database.php' && !$this->is_subsite){
+                if($file == 'database.php' && $this->is_subsite){
                     continue;
                 }
                 if($file=='cms_extended_login.php' && $this->is_subsite){

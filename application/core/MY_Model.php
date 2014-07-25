@@ -184,7 +184,7 @@ class CMS_Model extends CI_Model
             if(!$exists){
                 $this->db->insert(cms_table_name('main_config'),array(
                     'config_name' => 'cms_add_subsite_on_register',
-                    'value' => 'TRUE',
+                    'value' => 'FALSE',
                     'description' => 'Automatically create subsite on register'
                 ));
             }
