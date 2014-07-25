@@ -1209,7 +1209,10 @@ class Install_Model extends CI_Model{
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
-                if($file == 'database.php' && $this->subsite != ''){
+                if($file == 'database.php' && !$this->is_subsite){
+                    continue;
+                }
+                if($file=='cms_extended_login.php' && $this->is_subsite){
                     continue;
                 }
                 copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
