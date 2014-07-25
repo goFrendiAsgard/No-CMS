@@ -83,6 +83,20 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
         }
     }
 
+    protected function _trim_print_string($value)
+    {
+        return $value;
+        /*
+        $value = str_replace(array("&nbsp;","&amp;","&gt;","&lt;"),array(" ","&",">","<"),$value);
+
+        //If the value has only spaces and nothing more then add the whitespace html character
+        if(str_replace(" ","",$value) == "")
+            $value = "&nbsp;";
+
+        return strip_tags($value);
+         */
+    }
+
     /**
      *
      * Load the language strings array from the language file

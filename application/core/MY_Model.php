@@ -1861,7 +1861,7 @@ class CMS_Model extends CI_Model
             // get these from old setting
             $this->install_model->db_table_prefix              = cms_table_prefix();
             $this->install_model->is_subsite                   = TRUE;
-            $this->install_model->subsite                      = $user_name;
+            $this->install_model->subsite                      = strtolower(str_replace(' ', '',$user_name));
             $this->install_model->subsite_aliases              = '';
             $this->install_model->set_subsite();
             $this->install_model->admin_email                  = $email;

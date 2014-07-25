@@ -243,6 +243,9 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
         $data = '<?php'.PHP_EOL;
         @file_put_contents('./site.php', $data);
     }
+    if(function_exists('opcache_invalidate')){
+        opcache_invalidate('./site.php');
+    }
     require_once('./site.php');
     if(isset($available_site) && is_array($available_site)){
         $cms_subsite = '';
