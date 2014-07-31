@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7';
+        $current_version = '0.7.0-apha';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -29,6 +29,18 @@ class CMS_Model extends CI_Model
                 $destination = APPPATH.'config/site-'.CMS_SUBSITE.'/grocery_crud.php';
             }
             copy($source, $destination);
+
+            $query = $this->db->select('authorization_id')
+                ->from(cms_table_name('main_authorization'))
+                ->where('authorization_id',5)
+                ->get();
+            if($query->num_rows() == 0){
+                $this->db->insert(cms_table_name('main_authorization'), array(
+                    'authorization_id'=>5,
+                    'authorization_name'=>'Exclusive Authorized',
+                    'description'=>'Even Super Admin cannot access this if not allowed'
+                ));
+            }
 
             // table : main navigation
             $table_name = cms_table_name('main_navigation');
@@ -469,6 +481,17 @@ class CMS_Model extends CI_Model
                                             (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
                                 )>0
                             )
+                        ) OR
+                        (
+                            (authorization_id = 5 AND $login) AND
+                            (
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
+                                    WHERE
+                                        gn.navigation_id=n.navigation_id AND
+                                        gn.group_id IN
+                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                )>0
+                            )
                         )
                     ) AS allowed
                 FROM ".cms_table_name('main_navigation')." AS n WHERE
@@ -556,6 +579,17 @@ class CMS_Model extends CI_Model
                                                     (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
                                         )>0
                                     )
+                                ) OR
+                                (
+                                    (authorization_id = 5 AND $login) AND
+                                    (
+                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
+                                            WHERE
+                                                gn.navigation_id=n.navigation_id AND
+                                                gn.group_id IN
+                                                    (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                        )>0
+                                    )
                                 )
                             ) ORDER BY q.".$this->db->protect_identifiers('index'));
         $result = array();
@@ -636,6 +670,17 @@ class CMS_Model extends CI_Model
                             (
                                 (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
                                     OR $super_user OR
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_widget')." AS gw
+                                    WHERE
+                                        gw.widget_id=w.widget_id AND
+                                        gw.group_id IN
+                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                )>0
+                            )
+                        ) OR
+                        (
+                            (authorization_id = 5 AND $login) AND
+                            (
                                 (SELECT COUNT(*) FROM ".cms_table_name('main_group_widget')." AS gw
                                     WHERE
                                         gw.widget_id=w.widget_id AND
@@ -996,7 +1041,19 @@ class CMS_Model extends CI_Model
                                         (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
                             )>0)
                         )
-                    )");
+                    ) OR
+                    (
+                        (authorization_id = 5 AND $login AND
+                        (
+                            (SELECT COUNT(*) FROM ".cms_table_name('main_group_privilege')." AS gp
+                                WHERE
+                                    gp.privilege_id=p.privilege_id AND
+                                    gp.group_id IN
+                                        (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = '" . addslashes($user_id) . "')
+                            )>0)
+                        )
+                    )
+                    ");
         $result = array();
         foreach ($query->result() as $row) {
             $result[] = array(

@@ -8,18 +8,19 @@
 
 class CMS_Controller extends MX_Controller
 {
-    public $PRIV_EVERYONE           = 1;
-    public $PRIV_NOT_AUTHENTICATED  = 2;
-    public $PRIV_AUTHENTICATED      = 3;
-    public $PRIV_AUTHORIZED         = 4;
+    public $PRIV_EVERYONE             = 1;
+    public $PRIV_NOT_AUTHENTICATED    = 2;
+    public $PRIV_AUTHENTICATED        = 3;
+    public $PRIV_AUTHORIZED           = 4;
+    public $PRIV_EXCLUSIVE_AUTHORIZED = 5;
 
-    protected $__cms_dynamic_widget = FALSE;
+    protected $__cms_dynamic_widget   = FALSE;
 
-    private $__cms_widgets          = NULL;
-    private $__cms_navigations      = NULL;
-    private $__cms_navigation_path  = NULL;
-    private $__cms_navigation_name  = NULL;
-    private $__cms_quicklinks       = NULL;
+    private $__cms_widgets            = NULL;
+    private $__cms_navigations        = NULL;
+    private $__cms_navigation_path    = NULL;
+    private $__cms_navigation_name    = NULL;
+    private $__cms_quicklinks         = NULL;
 
     protected $REFERRER = NULL;
 

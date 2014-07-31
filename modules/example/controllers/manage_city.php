@@ -84,6 +84,14 @@ class Manage_City extends CMS_Priv_Strict_Controller {
         // displayed columns on add operation
         $crud->add_fields('country_id','name','tourism','commodity','citizen');
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Put Tabs (if needed)
+        // usage:
+        //     $crud->set_tabs(array(
+        //        'First Tab Caption'  => $how_many_field_on_first_tab,
+        //        'Second Tab Caption' => $how_many_field_on_second_tab,
+        //     ));
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         // caption of each columns
@@ -92,8 +100,6 @@ class Manage_City extends CMS_Priv_Strict_Controller {
         $crud->display_as('tourism','Tourism');
         $crud->display_as('commodity','Commodity');
         $crud->display_as('citizen','Citizen');
-
-        $crud->set_tabs(array('Country and Name'=>2,'Detail Info'=>3,));
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -196,26 +202,35 @@ class Manage_City extends CMS_Priv_Strict_Controller {
         if(!$crud->unset_delete){
             $id_list = json_decode($this->input->post('data'));
             foreach($id_list as $id){
-                $this->db->delete($this->cms_complete_table_name('city'),array('city_id'=>$id));
+                if($this->_before_delete($id)){
+                    $this->db->delete($this->cms_complete_table_name('city'),array('city_id'=>$id));
+                    $this->_after_delete($id);
+                }
             }
         }
     }
 
     public function _before_insert($post_array){
+        $post_array = $this->_before_insert_or_update($post_array);
+        // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_insert($post_array, $primary_key){
         $success = $this->_after_insert_or_update($post_array, $primary_key);
+        // HINT : Put your code here
         return $success;
     }
 
     public function _before_update($post_array, $primary_key){
+        $post_array = $this->_before_insert_or_update($post_array, $primary_key);
+        // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_update($post_array, $primary_key){
         $success = $this->_after_insert_or_update($post_array, $primary_key);
+        // HINT : Put your code here
         return $success;
     }
 
@@ -386,6 +401,10 @@ class Manage_City extends CMS_Priv_Strict_Controller {
         }
 
         return TRUE;
+    }
+
+    public function _before_insert_or_update($post_array, $primary_key=NULL){
+        return $post_array;
     }
 
 

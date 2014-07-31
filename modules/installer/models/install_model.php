@@ -914,6 +914,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_authorization('Unauthenticated', 'Only non-member visitor, they who hasn\'t log in yet (e.g:view member registration page)');
         $sql_list[] = $this->insert_authorization('Authenticated', 'Only member (e.g:change password)');
         $sql_list[] = $this->insert_authorization('Authorized', 'Only member with certain privilege (depend on group)');
+        $sql_list[] = $this->insert_authorization('Exclusive Authorized', 'Even Super Admin cannot access this if not allowed');
         // group
         $sql_list[] = $this->insert_group('Super Admin', 'Every member of this group can do everything possible, but only programmer can turn the impossible into real :D');
         $sql_list[] = $this->insert_group('Employee', 'Group Example');

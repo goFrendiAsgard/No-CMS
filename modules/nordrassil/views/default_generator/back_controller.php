@@ -188,26 +188,35 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
         if(!$crud->unset_delete){
             $id_list = json_decode($this->input->post('data'));
             foreach($id_list as $id){
-                $this->db->delete($this->cms_complete_table_name('{{ table_name }}'),array('{{ primary_key }}'=>$id));
+                if($this->_before_delete($id)){
+                    $this->db->delete($this->cms_complete_table_name('{{ table_name }}'),array('{{ primary_key }}'=>$id));
+                    $this->_after_delete($id);
+                }
             }
         }
     }
 
     public function _before_insert($post_array){
+        $post_array = $this->_before_insert_or_update($post_array);
+        // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_insert($post_array, $primary_key){
         $success = $this->_after_insert_or_update($post_array, $primary_key);
+        // HINT : Put your code here
         return $success;
     }
 
     public function _before_update($post_array, $primary_key){
+        $post_array = $this->_before_insert_or_update($post_array, $primary_key);
+        // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_update($post_array, $primary_key){
         $success = $this->_after_insert_or_update($post_array, $primary_key);
+        // HINT : Put your code here
         return $success;
     }
 
@@ -223,6 +232,10 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
     public function _after_insert_or_update($post_array, $primary_key){
 {{ detail_after_insert_or_update }}
         return TRUE;
+    }
+
+    public function _before_insert_or_update($post_array, $primary_key=NULL){
+        return $post_array;
     }
 
 {{ detail_callback_declaration }}
