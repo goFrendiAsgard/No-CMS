@@ -30,7 +30,8 @@
     </table>
     <div class="fbutton">
         <span id="md_field_citizen_add" class="add btn btn-default">
-            <i class="glyphicon glyphicon-plus-sign"></i> Add Citizen        </span>
+            <i class="glyphicon glyphicon-plus-sign"></i> Add Citizen
+        </span>
     </div>
     <br />
     <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
@@ -81,7 +82,7 @@
         $("#md_table_citizen").show();
 
         var component = '<tr id="md_field_citizen_tr_'+RECORD_INDEX_citizen+'" class="md_field_citizen_tr">';
-        
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "name"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +204,7 @@
         $('#md_field_citizen_add').click(function(){
             // new data
             var data = new Object();
-            
+
           data.name = '';
           data.birthdate = '';
           data.job_id = '';
