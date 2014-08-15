@@ -66,11 +66,13 @@ class Install extends CMS_Module_Installer {
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('template'), "Generator Template",
             $module_path."/data/nds/template", 4, "nordrassil_index",
-            NULL, 'Add, edit, and delete generator template'
+            NULL, 'Add, edit, and delete generator template',
+            NULL, NULL, 'default-one-column'
         );
         $this->add_navigation($this->cms_complete_navigation_name('project'), "Project",
             $module_path."/data/nds/project", 4, "nordrassil_index",
-            NULL, 'Add, edit, and delete project skeleton'
+            NULL, 'Add, edit, and delete project skeleton',
+            NULL, NULL, 'default-one-column'
         );
 
 

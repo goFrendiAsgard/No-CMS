@@ -92,10 +92,7 @@ class Manage_City extends CMS_Priv_Strict_Controller {
         //        'Second Tab Caption' => $how_many_field_on_second_tab,
         //     ));
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->set_tabs(array(
-            'first tab' => 1,
-            'second tab' => 3,
-        ));
+
 
         // caption of each columns
         $crud->display_as('country_id','Country');

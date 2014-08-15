@@ -1,0 +1,324 @@
+.navbar-default {
+  background-color: #222222;
+  border-color: #080808;
+}
+
+.navbar-default .navbar-brand {
+  color: #999999;
+}
+
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+  color: #ffffff;
+  background-color: transparent;
+}
+
+.navbar-default .navbar-text {
+  color: #999999;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: #999999;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  color: #ffffff;
+  background-color: transparent;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #ffffff;
+  background-color: #080808;
+}
+
+.navbar-default .navbar-nav > .disabled > a,
+.navbar-default .navbar-nav > .disabled > a:hover,
+.navbar-default .navbar-nav > .disabled > a:focus {
+  color: #444444;
+  background-color: transparent;
+}
+
+.navbar-default .navbar-toggle {
+  border-color: #333333;
+}
+
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+  background-color: #333333;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #ffffff;
+}
+
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+  border-color: #101010;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: #ffffff;
+  background-color: #080808;
+}
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav .open .dropdown-menu > .dropdown-header {
+    border-color: #080808;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu .divider {
+    background-color: #080808;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #999999;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+    color: #ffffff;
+    background-color: transparent;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #ffffff;
+    background-color: #080808;
+  }
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:hover,
+  .navbar-default .navbar-nav .open .dropdown-menu > .disabled > a:focus {
+    color: #444444;
+    background-color: transparent;
+  }
+}
+
+.navbar-default .navbar-link {
+  color: #999999;
+}
+
+.navbar-default .navbar-link:hover {
+  color: #ffffff;
+}
+
+/* end of inversing navbar */
+
+.flexigrid *,
+.flexigrid *:before,
+.flexigrid *:after,
+#colorbox,
+#colorbox:before,
+#colorbox:after {
+    -webkit-box-sizing: content-box!important;
+    -moz-box-sizing: content-box!important;
+    box-sizing: content-box!important;
+}
+
+.breadcrumb{
+    background-color:inherit!important;
+}
+.not_shown{
+    display: none;
+}
+
+.clear{
+    clear: both;
+}
+
+.layout_widget_container input, .layout_widget_container textarea {
+    max-width: 100%;
+}
+
+body {
+    padding-top:50px;
+}
+
+footer{
+	padding: 10px;
+}
+
+#__section-banner div.jumbotron{
+    padding: 15px;
+    border-radius:10px;
+
+	/* IE10 */
+	background-image: -ms-linear-gradient(top left, white 0%, gray 100%);
+
+	/* Mozilla Firefox */
+	background-image: -moz-linear-gradient(top left, white 0%, gray 100%);
+
+	/* Opera */
+	background-image: -o-linear-gradient(top left, white 0%, gray 100%);
+
+	/* Webkit (Safari/Chrome 10) */
+	background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, gray));
+
+	/* Webkit (Chrome 11+) */
+	background-image: -webkit-linear-gradient(top left, white 0%, gray 100%);
+
+	/* Proposed W3C Markup */
+	background-image: linear-gradient(top left, white 0%, gray 100%);
+}
+
+#__section-left-and-content{
+	padding: 15px;
+    border-radius:10px;
+	margin-left:0px;
+
+	/* IE10 */
+	background-image: -ms-linear-gradient(top left, white 0%, #EEEEEE 100%);
+
+	/* Mozilla Firefox */
+	background-image: -moz-linear-gradient(top left, white 0%, #EEEEEE 100%);
+
+	/* Opera */
+	background-image: -o-linear-gradient(top left, white 0%, #EEEEEE 100%);
+
+	/* Webkit (Safari/Chrome 10) */
+	background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, #EEEEEE));
+
+	/* Webkit (Chrome 11+) */
+	background-image: -webkit-linear-gradient(top left, white 0%, #EEEEEE 100%);
+
+	/* Proposed W3C Markup */
+	background-image: linear-gradient(top left, white 0%, #EEEEEE 100%);
+}
+
+#__section-content{
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom:10px;
+}
+#crudForm{
+    padding-bottom: 145px;
+}
+.chzn-results{
+    max-height: 200px!important;
+}
+
+body{
+    margin-left:0px;
+
+    /* IE10 */
+    background-image: -ms-linear-gradient(top left, #EEEEEE 0%, white 100%);
+
+    /* Mozilla Firefox */
+    background-image: -moz-linear-gradient(top left, #EEEEEE 0%, white 100%);
+
+    /* Opera */
+    background-image: -o-linear-gradient(top left, #EEEEEE 0%, white 100%);
+
+    /* Webkit (Safari/Chrome 10) */
+    background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, #EEEEEE), color-stop(1, white));
+
+    /* Webkit (Chrome 11+) */
+    background-image: -webkit-linear-gradient(top left, #EEEEEE 0%, white 100%);
+
+    /* Proposed W3C Markup */
+    background-image: linear-gradient(top left, #EEEEEE 0%, white 100%);
+}
+
+.navbar-inner{
+    min-height:45px;
+}
+
+/* grocery-CRUD flexigrid */
+.pGroup select#per_page
+{
+    max-width: 54px;
+}
+
+/* end of grocery-CRUD flexigrid */
+
+/* Landscape phones and down */
+@media (max-width: 480px){
+    .form-input-box>input, .form-input-box>textarea,
+    .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
+        width: 250px!important;
+        float: left!important;
+    }
+    .form-display-as-box{
+       width: 100%!important;
+    }
+
+    .flexigrid table td,
+    .flexigrid table th{
+        display: none!important;
+    }
+    .flexigrid table td:first-child,
+    .flexigrid table th:first-child,
+    .flexigrid table td:last-child,
+    .flexigrid table th:last-child
+    {
+        display: table-cell!important;
+    }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
+    }
+}
+
+/* Landscape phone to portrait tablet */
+@media (min-width: 481px) and (max-width: 768px)  {
+    .form-input-box>input, .form-input-box>textarea,
+    .form-input-box>div.chzn-container, .form-input-box div.chzn-drop{
+        width: 300px!important;
+        float: left!important;
+    }
+    .form-display-as-box{
+       width: 100%!important;
+    }
+
+    .flexigrid table td,
+    .flexigrid table th{
+        display: none!important;
+    }
+    .flexigrid table td:first-child,
+    .flexigrid table th:first-child,
+    .flexigrid table td:last-child,
+    .flexigrid table th:last-child,
+    .flexigrid table td:nth-child(2),
+    .flexigrid table th:nth-child(2)
+    {
+        display: table-cell!important;
+    }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
+    }
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 769px)  and (max-width: 978px) {
+    .flexigrid table td,
+    .flexigrid table th{
+        display: none!important;
+    }
+    .flexigrid table td:first-child,
+    .flexigrid table th:first-child,
+    .flexigrid table td:last-child,
+    .flexigrid table th:last-child,
+    .flexigrid table td:nth-child(2),
+    .flexigrid table th:nth-child(2),
+    .flexigrid table td:nth-child(3),
+    .flexigrid table th:nth-child(3),
+    .flexigrid table td:nth-child(4),
+    .flexigrid table th:nth-child(4)
+    {
+        display: table-cell!important;
+    }
+    .navbar-fixed-top a > [class^="icon-"],
+    .navbar-fixed-top a > [class*=" icon-"] {
+      background-image: url("../img/glyphicons-halflings-white.png")!important;
+    }
+}
+
+/* normal desktop */
+@media (min-width: 979px) and (max-width: 1199px)  {
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+}
