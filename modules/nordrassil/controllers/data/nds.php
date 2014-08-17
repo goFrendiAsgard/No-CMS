@@ -241,6 +241,7 @@ class nds extends CMS_Controller {
     public function resynchronize_from_db($project_id){
         $this->load->model($this->cms_module_path().'/data/synchronize_model');
         $this->synchronize_model->synchronize($project_id);
+        redirect(site_url($this->cms_module_path().'/data/nds/project/edit/'.$project_id));
     }
 
     public function table($project_id = NULL){
