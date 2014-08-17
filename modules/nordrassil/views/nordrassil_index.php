@@ -1,4 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<style type="text/css">
+    #textarea-seed{
+        font-family:courier;
+        font-size:small;
+    }
+</style>
 <h4>Generate Project</h4>
 <div class="form form-inline well" style="margin-bottom:20px;">
     <label>Choose a project </label>
@@ -23,9 +29,17 @@
 <h4>Data</h4>
 <?php echo $content; ?>
 
+<h4>Import Project Seed (JSON Script)</h4>
+<form method="post" action="{{ module_site_url }}nordrassil/import">
+    <textarea id="textarea-seed" name="seed" class="form-control"></textarea><br />
+    <button class="btn btn-primary"><i class="glyphicon glyphicon-import"></i> Import</button>
+</form>
+
+<script type="text/javascript" src="{{ BASE_URL }}assets/nocms/js/jquery.autosize.js"></script>
 <script type="text/javascript">
     var GENERATOR_PATH = <?php echo json_encode($project_generator_path); ?>;
     $(document).ready(function(){
+        $('#textarea-seed').autosize();
         $('#btn_generate').click(function(){
             var project_id = $('#project_list').val();
             var url = GENERATOR_PATH[project_id];

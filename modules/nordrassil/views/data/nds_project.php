@@ -54,5 +54,9 @@
 
 	});
 
+	$(document).ajaxComplete(function(){
+		$('.blank').attr('target','_blank');
+	});
+
 
 </script>

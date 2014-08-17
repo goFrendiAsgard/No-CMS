@@ -182,6 +182,8 @@ class nds extends CMS_Controller {
         $crud->callback_column('tables',array($this,'_callback_column_project_tables'));
         $crud->callback_edit_field('tables',array($this,'_callback_edit_field_project_tables'));
 
+        $crud->add_action('Export Seed (JSON)','glyphicon glyphicon-export',
+            $this->cms_module_path().'/data/nds/get_seed', 'btn btn-default blank');
 
         // adjust grocery-crud language
         $crud->set_language($this->cms_language());
@@ -232,8 +234,8 @@ class nds extends CMS_Controller {
         // action
         $action = $this->get_detail_action($caption, $url, $primary_key);
         $action.= ' | '.anchor(
-            site_url($this->cms_module_path().'/data/nds/resynchronize_from_db/'.$primary_key), 
-            '<i class="glyphicon glyphicon-refresh"></i> Fetch From Database'); 
+            site_url($this->cms_module_path().'/data/nds/resynchronize_from_db/'.$primary_key),
+            '<i class="glyphicon glyphicon-refresh"></i> Fetch From Database');
         $data = $this->get_detail_data($result, $url, $primary_key, 'table_id');
         return $action.br().$data;
     }
@@ -242,6 +244,89 @@ class nds extends CMS_Controller {
         $this->load->model($this->cms_module_path().'/data/synchronize_model');
         $this->synchronize_model->synchronize($project_id);
         redirect(site_url($this->cms_module_path().'/data/nds/project/edit/'.$project_id));
+    }
+
+    public function get_seed($project_id){
+        $this->load->helper('inflector');
+        $this->load->model($this->cms_module_path().'/data/nds_model');
+        $row = $this->db->select('name')->from($this->cms_complete_table_name('project'))
+            ->where('project_id', $project_id)->get()->row();
+        $project_name = $row->name;
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename='.
+            basename(underscore($project_name).
+            '.nordrassil_seed.json'));
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        // get the project
+        $project = $this->nds_model->get_project($project_id);
+
+        // remove unused key
+        foreach($project as $project_key=>$project_val){
+            // unset empty options
+            if($project_key == 'options'){
+                foreach($project_val as $option=>$option_val){
+                    if($option_val === FALSE){
+                        unset($project['options'][$project_key]);
+                        unset($project_val[$project_key]);
+                    }
+                }
+            }
+            // clean up tables
+            if($project_key == 'tables'){
+                for($i=0; $i<count($project_val); $i++){
+                    $table = $project_val[$i];
+                    foreach($table as $table_key=>$table_val){
+                        // unset empty table options
+                        if($table_key == 'options'){
+                            foreach($table_val as $option=>$option_val){
+                                if($option_val === FALSE){
+                                    unset($project['tables'][$i]['options'][$option]);
+                                    unset($table_val[$option]);
+                                }
+                            }
+                        }
+                        // clean up columns
+                        if($table_key == 'columns'){
+                            for($j=0; $j<count($table_val); $j++){
+                                $column = $table_val[$j];
+                                foreach($column as $column_key=>$column_val){
+                                    // unset empty column options
+                                    if($column_key == 'options'){
+                                        foreach($column_val as $option=>$option_val){
+                                            unset($project['tables'][$i]['columns'][$j]['options'][$option]);
+                                            unset($column_val[$option]);
+                                        }
+                                    }
+                                    // unset empty and irelevant keys
+                                    if($column_key == 'lookup_stripped_table_name' || $column_key == 'selection_stripped_table_name' || 
+                                    $column_key == 'relation_stripped_table_name' || $column_val === '' || (is_array($column_val) && count($column_val)==0)){
+                                        unset($project['tables'][$i]['columns'][$j][$column_key]);
+                                    }
+                                }
+                            }
+                        }
+                        // unset empty and irelevant keys
+                        if($table_key == 'stripped_name' || $table_val === '' || (is_array($table_val) && count($table_val)==0)){
+                            unset($project['tables'][$i][$table_key]);
+                        }
+                    }
+                }
+            }
+            // unset other empty keys
+            if($project_val === '' || (is_array($project_val) && count($project_val)==0)){
+                unset($project[$project_key]);
+            }
+        }
+
+        // Print it
+        if(defined('JSON_PRETTY_PRINT')){
+            $str = json_encode($project, JSON_PRETTY_PRINT);
+        }else{
+            $str = json_encode($project);
+        }
+        echo $str;
     }
 
     public function table($project_id = NULL){
@@ -339,11 +424,11 @@ class nds extends CMS_Controller {
     }
 
     public function _callback_table_after_insert($post_array, $primary_key){
-        $success = $this->callback_table_after_insert_or_update($post_array, $primary_key);
+        $success = $this->_callback_table_after_insert_or_update($post_array, $primary_key);
         return $success;
     }
     public function _callback_table_after_update($post_array, $primary_key){
-        $success = $this->callback_table_after_insert_or_update($post_array, $primary_key);
+        $success = $this->_callback_table_after_insert_or_update($post_array, $primary_key);
         return $success;
     }
     public function _callback_table_after_insert_or_update($post_array, $primary_key){
@@ -523,11 +608,11 @@ class nds extends CMS_Controller {
     }
 
     public function _callback_column_after_insert($post_array, $primary_key){
-        $success = $this->callback_column_after_insert_or_update($post_array, $primary_key);
+        $success = $this->_callback_column_after_insert_or_update($post_array, $primary_key);
         return $success;
     }
     public function _callback_column_after_update($post_array, $primary_key){
-        $success = $this->callback_column_after_insert_or_update($post_array, $primary_key);
+        $success = $this->_callback_column_after_insert_or_update($post_array, $primary_key);
         return $success;
     }
     public function _callback_column_after_insert_or_update($post_array, $primary_key){
@@ -632,23 +717,23 @@ class nds extends CMS_Controller {
                 if(isset($row->name) && isset($row->caption)){
                     if(isset($row->data_type) && $row->data_type !== NULL && $row->data_type != ''){
                         if(isset($row->role) && $row->role !== NULL && $row->role != ''){
-                            $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'. 
+                            $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'.
                                 $row->data_type.'('.$row->data_size.'), '. $row->role;
                             $caption .= $options == ''? '' : ' | '.$options;
                         }else{
-                            $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'. 
+                            $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'.
                                 $row->data_type.'('.$row->data_size.')';
                             $caption .= $options == ''? '' : ' | '.$options;
                         }
                     }else if(isset($row->role) && $row->role !== NULL && $row->role != ''){
-                        $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'. 
+                        $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'.
                             $row->role;
                         $caption .= $options == ''? '' : ' | '.$options;
                     }else{
                         $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')';
                         $caption .= $options == ''? '' : '<br />'.$options;
                     }
-                }                
+                }
             }else{
                 $caption = $row->{$title_lookup_field};
             }

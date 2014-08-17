@@ -185,7 +185,7 @@ class Install extends CMS_Module_Installer {
 
 		// install template
 		$this->load->library($module_path.'/NordrassilLib');
-		$template_name = 'No-CMS default Module';
+		$template_name = 'No-CMS Module';
 		$generator_path = 'nordrassil/default_generator/default_generator/index';
 		$project_options = array();
 		$table_options = array(

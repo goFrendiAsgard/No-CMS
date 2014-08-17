@@ -118,6 +118,14 @@ class Nds_Model extends CMS_Model{
             unset($data['template_id']);
             unset($data['project_id']);
 
+            // get template name
+            $query = $this->db->select('name')
+                ->from($this->cms_complete_table_name('template'))
+                ->where('template_id', $template_id)
+                ->get();
+            $template_name = $query->row()->name;
+            $data['template'] = $template_name;
+
             // get project, table and column option's header
             $query = $this->db->select('option_id, name, option_type')
                 ->from($this->cms_complete_table_name('template_option'))
@@ -572,6 +580,214 @@ class Nds_Model extends CMS_Model{
 
     public function before_delete_column($id){
         $this->db->delete($this->cms_complete_table_name('column_option'),array('column_id'=>$id));
+    }
+
+    private function _pop($array, $key, $default=''){
+        if(array_key_exists($key, $array)){
+            return $array[$key];
+        }else{
+            return $default;
+        }
+    }
+
+    public function import_project($seed){
+        // get max project id (in case of name is empty)
+        $query = $this->db->select_max('project_id')
+            ->from($this->cms_complete_table_name('project'))
+            ->get();
+        $row = $query->row();
+        $max_id = $row->project_id;
+
+        // get project parameters
+        $name               = $this->_pop($seed, 'name', 'Project_'.($max_id+1));
+        $db_server          = $this->_pop($seed, 'db_server');
+        $db_schema          = $this->_pop($seed, 'db_schema');
+        $db_port            = $this->_pop($seed, 'db_port');
+        $db_user            = $this->_pop($seed, 'db_user');
+        $db_password        = $this->_pop($seed, 'db_password');
+        $db_table_prefix    = $this->_pop($seed, 'db_table_prefix');
+        $tables             = $this->_pop($seed, 'tables', array());
+        $project_options    = $this->_pop($seed, 'options', array());
+        $template_name      = $this->_pop($seed, 'template','');
+
+        // get template id
+        $query = $this->db->select('template_id')
+            ->from($this->cms_complete_table_name('template'))
+            ->where('name', $template_name)->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $template_id = $row->template_id;
+        }else{
+            $template_id = 1;
+        }
+
+        // insert project and get project id
+        $data = array(
+                'template_id'       => $template_id,
+                'name'              => $name,
+                'db_server'         => $db_server,
+                'db_schema'         => $db_schema,
+                'db_port'           => $db_port,
+                'db_user'           => $db_user,
+                'db_password'       => $db_password,
+                'db_table_prefix'   => $db_table_prefix,
+            );
+        $this->db->insert($this->cms_complete_table_name('project'), $data);
+        $project_id = $this->db->insert_id();
+
+        // insert project options
+        foreach($project_options as $option=>$val){
+            if(!$val) continue;
+            $query = $this->db->select('option_id')
+                ->from($this->cms_complete_table_name('template_option'))
+                ->where('name', $option)
+                ->get();
+            $row = $query->row();
+            $option_id = $row->option_id;
+            $this->db->insert($this->cms_complete_table_name('project_option'),array(
+                    'project_id'    => $project_id,
+                    'option_id'     => $option_id,
+                ));
+        }
+
+        // insert table
+        $id_dict = array();
+        $table_priority = 0;
+        $relationship_column = array();
+        foreach($tables as $table){
+            // get table parameters
+            $name           = $this->_pop($table, 'name');
+            $caption        = $this->_pop($table, 'caption');
+            $columns        = $this->_pop($table, 'columns', array());
+            $table_options  = $this->_pop($table, 'options', array());
+
+            // insert table and get table_id
+            $this->db->insert($this->cms_complete_table_name('table'), array(
+                    'name'          => $name,
+                    'caption'       => $caption,
+                    'project_id'    => $project_id,
+                    'priority'      => $table_priority,
+                ));
+            $table_id = $this->db->insert_id();
+            $table_name = $name;
+            $id_dict[$table_name] = array('id'=>$table_id, 'columns'=>array());
+            $table_priority ++;
+
+            // insert table option
+            foreach($table_options as $option=>$val){
+                if(!$val) continue;
+                $query = $this->db->select('option_id')
+                    ->from($this->cms_complete_table_name('template_option'))
+                    ->where('name', $option)
+                    ->get();
+                $row = $query->row();
+                $option_id = $row->option_id;
+                $this->db->insert($this->cms_complete_table_name('table_option'),array(
+                        'table_id'  => $table_id,
+                        'option_id' => $option_id,
+                    ));
+            }
+
+            // insert columns
+            $column_priority = 0;
+            foreach($columns as $column){
+                // get column parameters
+                $caption                = $this->_pop($column, 'caption');
+                $name                   = $this->_pop($column, 'name');
+                $data_type              = $this->_pop($column, 'data_type','varchar');
+                $data_size              = $this->_pop($column, 'data_type','50');
+                $role                   = $this->_pop($column, 'role');
+                $value_selection_mode   = $this->_pop($column, 'value_selection_mode');
+                $value_selection_item   = $this->_pop($column, 'value_selection_item');
+                $column_options         = $this->_pop($column, 'options', array());
+                $this->db->insert($this->cms_complete_table_name('column'), array(
+                        'name'                  => $name,
+                        'caption'               => $caption,
+                        'data_type'             => $data_type,
+                        'data_size'             => $data_size,
+                        'role'                  => $role,
+                        'value_selection_mode'  => $value_selection_mode,
+                        'value_selection_item'  => $value_selection_item,
+                        'table_id'              => $table_id,
+                        'priority'              => $column_priority,
+                    ));
+                $column_id = $this->db->insert_id();
+                $column_name = $name;
+                $id_dict[$table_name]['columns'][$column_name] = $column_id;
+                $column_priority ++;
+                // add to relationship_column
+                if($role != '' && $role != 'primary'){
+                    $column['column_id']   = $column_id;
+                    $relationship_column[] = $column;
+                }
+
+                // insert column option
+                foreach($column_options as $option=>$val){
+                    if(!$val) continue;
+                    $query = $this->db->select('option_id')
+                        ->from($this->cms_complete_table_name('template_option'))
+                        ->where('name', $option)
+                        ->get();
+                    $row = $query->row();
+                    $option_id = $row->option_id;
+                    $this->db->insert($this->cms_complete_table_name('column_option'),array(
+                            'column_id' => $column_id,
+                            'option_id' => $option_id,
+                        ));
+                }
+
+            } // end foreach column
+        } // end foreach table
+
+        // deal with relationship
+        foreach($relationship_column as $column){
+            // get parameters
+            $lookup_table_name                  = $this->_pop($column, "lookup_table_name", NULL);
+            $lookup_column_name                 = $this->_pop($column, "lookup_column_name", NULL);
+            $relation_table_name                = $this->_pop($column, "relation_table_name", NULL);
+            $relation_table_column_name         = $this->_pop($column, "relation_table_column_name", NULL);
+            $relation_priority_column_name      = $this->_pop($column, "relation_priority_column_name", NULL);
+            $relation_selection_column_name     = $this->_pop($column, "relation_selection_column_name", NULL);
+            $selection_table_name               = $this->_pop($column, "selection_table_name", NULL);
+            $selection_column_name              = $this->_pop($column, "selection_column_name", NULL);
+            
+            // get id
+            $lookup_table_id                    = $this->_get_table_id($id_dict, $lookup_table_name);
+            $lookup_column_id                   = $this->_get_column_id($id_dict, $lookup_table_name, $lookup_column_name);
+            $relation_table_id                  = $this->_get_table_id($id_dict, $relation_table_name);
+            $relation_table_column_id           = $this->_get_column_id($id_dict, $relation_table_name, $relation_table_column_name);
+            $relation_priority_column_id        = $this->_get_column_id($id_dict, $relation_table_name, $relation_priority_column_id);
+            $relation_selection_column_id       = $this->_get_column_id($id_dict, $relation_table_name, $relation_selection_column_id);
+            $selection_table_id                 = $this->_get_table_id($id_dict, $selection_table_name);
+            $selection_column_id                = $this->_get_column_id($id_dict, $selection_table_name, $selection_column_name);
+            $column_id                          = $column['column_id'];
+
+            // update column
+            $this->db->update($this->cms_complete_table_name('column'), array(
+                    'lookup_table_id'               => $lookup_table_id,
+                    'lookup_column_id'              => $lookup_column_id,
+                    'relation_table_id'             => $relation_table_id,
+                    'relation_table_column_id'      => $relation_table_column_id,
+                    'relation_priority_column_id'   => $relation_priority_column_id,
+                    'relation_selection_column_id'  => $relation_selection_column_id,
+                    'selection_table_id'            => $selection_table_id,
+                    'selection_column_id'           => $selection_column_id,
+                ), array(
+                    'column_id' => $column_id
+                ));
+        }
+
+
+        // return project id
+        return $project_id;
+    }
+    private function _get_table_id($id_dict, $table_name = NULL){
+        if($table_name === NULL) return NULL;
+        return $id_dict[$table_name]['id'];
+    }
+    private function _get_column_id($id_dict, $table_name, $column_name = NULL){
+        if($table_name === NULL || $column_name === NULL) return NULL;
+        return $id_dict[$table_name]['columns'][$column_name];
     }
 
 }
