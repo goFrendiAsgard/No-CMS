@@ -182,7 +182,7 @@ class nds extends CMS_Controller {
         $crud->callback_column('tables',array($this,'_callback_column_project_tables'));
         $crud->callback_edit_field('tables',array($this,'_callback_edit_field_project_tables'));
 
-        $crud->add_action('Export Seed (JSON)','glyphicon glyphicon-export',
+        $crud->add_action('Export','glyphicon glyphicon-export',
             $this->cms_module_path().'/data/nds/get_seed', 'btn btn-default blank');
 
         // adjust grocery-crud language
@@ -715,6 +715,15 @@ class nds extends CMS_Controller {
                 }
                 // guess what should be appeared :)
                 if(isset($row->name) && isset($row->caption)){
+                    if(strlen($row->name) > 45){
+                        $row->name = substr($row->name, 0, 41).' ...';
+                    }
+                    if(strlen($row->caption) > 25){
+                        $row->caption = substr($row->caption, 0, 21).' ...';
+                    }
+                    if(strlen($options)>70){
+                        $options = substr($options, 0, 66).' ...';
+                    }
                     if(isset($row->data_type) && $row->data_type !== NULL && $row->data_type != ''){
                         if(isset($row->role) && $row->role !== NULL && $row->role != ''){
                             $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'.

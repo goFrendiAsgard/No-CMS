@@ -164,5 +164,9 @@ v0.6.6 rev 1
 
 v0.6.7
 + (proposed) namespace
-+ (proposed) Navigation: move to anywhere.
++ (done, tested) Navigation: move to anywhere.
 + (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre <-- The first one seems to be fixed
+
+v0.7.0
++ (done, tested) export project feature in Nordrassil
++ (done, tested) fetch from database feature in Nordrassil
