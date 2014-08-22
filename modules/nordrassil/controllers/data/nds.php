@@ -295,8 +295,10 @@ class nds extends CMS_Controller {
                                     // unset empty column options
                                     if($column_key == 'options'){
                                         foreach($column_val as $option=>$option_val){
-                                            unset($project['tables'][$i]['columns'][$j]['options'][$option]);
-                                            unset($column_val[$option]);
+                                            if($option_val === FALSE){
+                                                unset($project['tables'][$i]['columns'][$j]['options'][$option]);
+                                                unset($column_val[$option]);
+                                            }
                                         }
                                     }
                                     // unset empty and irelevant keys

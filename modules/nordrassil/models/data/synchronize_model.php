@@ -151,6 +151,9 @@ class Synchronize_Model extends CMS_Model{
     }
 
     private function create_field($table_id, $table_name){
+        $required_option_id = NULL;
+        $no_required_option = FALSE;
+
         $this->load->helper('inflector');
         $save_db_schema = addslashes($this->db_schema);
         $save_table_name = addslashes($table_name);
@@ -179,6 +182,7 @@ class Synchronize_Model extends CMS_Model{
             }else{
                 $role = '';
             }
+            $is_nullable = (strtolower($row['IS_NULLABLE']) == 'yes')? TRUE: FALSE;
             $data_type = $row['DATA_TYPE'];
             $length = NULL;
             $value_selection_mode = NULL;
@@ -206,7 +210,7 @@ class Synchronize_Model extends CMS_Model{
                     $length = $row['CHARACTER_MAXIMUM_LENGTH'];
                 }
                 if(!isset($length)){
-                    $length = 10;
+                    $length = 11;
                 }
             }
             if($role == 'primary'){
@@ -232,10 +236,50 @@ class Synchronize_Model extends CMS_Model{
             if($query->num_rows()>0){
                 $row = $query->row();
                 $column_id = $row->column_id;
+                // update
+                $where = array('column_id' => $column_id);
+                unset($data['priority']);
+                $this->db->update($this->cms_complete_table_name('column'), $data, $where);
             }else{
                 $this->db->insert($this->cms_complete_table_name('column'), $data);
                 $priority++;
                 $column_id = $this->db->insert_id();
+            }
+            // get template id
+            if(!$is_nullable && $role != 'primary'){
+                // get required option id if needed
+                if(!$no_required_option && $required_option_id === NULL){
+                    log_message('ERROR', var_export($required_option_id, TRUE));
+                    $t_template_option = $this->cms_complete_table_name('template_option');
+                    $t_project = $this->cms_complete_table_name('project');
+                    $t_table = $this->cms_complete_table_name('table');
+                    $query = $this->db->select('option_id')
+                        ->from($t_template_option)
+                        ->join($t_project, "$t_project.template_id = $t_template_option.template_id")
+                        ->join($t_table, "$t_table.project_id = $t_project.project_id")
+                        ->where("$t_table.table_id", $table_id)
+                        ->where("$t_template_option.name", 'required')
+                        ->get();
+                    $row = $query->row();
+                    if($row !== NULL){
+                        $required_option_id = $row->option_id;
+                    }else{
+                        $no_required_option = FALSE;
+                    }
+                }
+                // insert if not available
+                if($required_option_id !== NULL){
+                    $t_column_option = $this->cms_complete_table_name('column_option');
+                    $query = $this->db->select('*')
+                        ->from($t_column_option)
+                        ->where(array('column_id'=>$column_id, 'option_id'=>$required_option_id))
+                        ->get();
+                    $row = $query->row();
+                    if($row === NULL){
+                        $data = array('option_id'=>$required_option_id, 'column_id'=>$column_id);
+                        $this->db->insert($t_column_option, $data);
+                    }
+                }
             }
         }
 
