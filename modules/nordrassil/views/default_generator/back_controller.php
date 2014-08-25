@@ -10,7 +10,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
     protected $URL_MAP = array();
 
     public function cms_complete_table_name($table_name){
-        include(FCPATH.'modules/'.$this->cms_module_path().'/helpers/function.php');
+        require_once(FCPATH.'modules/'.$this->cms_module_path().'/helpers/function.php');
         if(function_exists('cms_complete_table_name')){
             return cms_complete_table_name($table_name);
         }else{

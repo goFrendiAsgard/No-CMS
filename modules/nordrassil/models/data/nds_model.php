@@ -230,7 +230,7 @@ class Nds_Model extends CMS_Model{
                     // value selection (for enum and set)
                     $column['value_selection_item'] = isset($column['value_selection_item'])?$column['value_selection_item']:'';
                     $column['value_selection_mode'] = isset($column['value_selection_mode'])?$column['value_selection_mode']:'';
-                    if($column['value_selection_mode']!=''){
+                    if($column['value_selection_mode']!='' && ($column['data_size'] == 0 || $column['data_size'] == '' || $column['data_size'] === NULL)){
                         $column['data_size'] = 255;
                     }
 
@@ -695,7 +695,7 @@ class Nds_Model extends CMS_Model{
                 $caption                = $this->_pop($column, 'caption');
                 $name                   = $this->_pop($column, 'name');
                 $data_type              = $this->_pop($column, 'data_type','varchar');
-                $data_size              = $this->_pop($column, 'data_type','50');
+                $data_size              = $this->_pop($column, 'data_size','50');
                 $role                   = $this->_pop($column, 'role');
                 $value_selection_mode   = $this->_pop($column, 'value_selection_mode');
                 $value_selection_item   = $this->_pop($column, 'value_selection_item');
@@ -756,8 +756,8 @@ class Nds_Model extends CMS_Model{
             $lookup_column_id                   = $this->_get_column_id($id_dict, $lookup_table_name, $lookup_column_name);
             $relation_table_id                  = $this->_get_table_id($id_dict, $relation_table_name);
             $relation_table_column_id           = $this->_get_column_id($id_dict, $relation_table_name, $relation_table_column_name);
-            $relation_priority_column_id        = $this->_get_column_id($id_dict, $relation_table_name, $relation_priority_column_id);
-            $relation_selection_column_id       = $this->_get_column_id($id_dict, $relation_table_name, $relation_selection_column_id);
+            $relation_priority_column_id        = $this->_get_column_id($id_dict, $relation_table_name, $relation_priority_column_name);
+            $relation_selection_column_id       = $this->_get_column_id($id_dict, $relation_table_name, $relation_selection_column_name);
             $selection_table_id                 = $this->_get_table_id($id_dict, $selection_table_name);
             $selection_column_id                = $this->_get_column_id($id_dict, $selection_table_name, $selection_column_name);
             $column_id                          = $column['column_id'];
