@@ -26,8 +26,9 @@ class CMS_Controller extends MX_Controller
 
     protected function _guard_controller(){
         $module_path = $this->cms_module_path();
-        // module is not installed, but the naughty user add navigation manually
-        if($module_path != 'main' && $module_path != ''){
+        // in case of module is not installed, but the naughty user add navigation manually, show module not installed message
+        // however if controllers/install.php doesn't exists, than it has nothing todo with the module
+        if($module_path != 'main' && $module_path != '' && file_exists(FCPATH.'modules/'.$module_path.'/controllers/install.php')){
             $query = $this->db->select('module_path')
                 ->from(cms_table_name('main_module'))
                 ->where('module_path', $module_path)

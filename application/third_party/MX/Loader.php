@@ -124,11 +124,11 @@ class MX_Loader extends CI_Loader
     public function helper($helper = array()) {
         
         if (is_array($helper)) return $this->helpers($helper);
-        
+
         if (isset($this->_ci_helpers[$helper]))    return;
 
         list($path, $_helper) = Modules::find($helper.'_helper', $this->_module, 'helpers/');
-
+        
         if ($path === FALSE) return parent::helper($helper);
 
         Modules::load_file($_helper, $path);

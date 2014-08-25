@@ -208,7 +208,7 @@ class Modules
 		if ( ! empty($segments)) {
 			$modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');
 		}
-
+		
 		foreach (Modules::$locations as $location => $offset) {
 			foreach($modules as $module => $subpath) {
 				$fullpath = $location.$module.'/'.$base.$subpath;
