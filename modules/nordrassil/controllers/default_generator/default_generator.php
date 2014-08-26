@@ -751,7 +751,7 @@ class Default_Generator extends CMS_Controller{
         $this->nds->write_file($this->project_path.'subsite_auth.php', $str);
         // create function helper
         $str = $this->nds->read_view('default_generator/helper_function.php');
-        $this->nds->write_file($this->project_path.'helpers/function.php', $str);
+        $this->nds->write_file($this->project_path.'helpers/function_helper.php', $str);
     }
 
 }

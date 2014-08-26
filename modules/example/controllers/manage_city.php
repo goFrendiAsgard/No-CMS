@@ -10,7 +10,7 @@ class Manage_City extends CMS_Priv_Strict_Controller {
     protected $URL_MAP = array();
 
     public function cms_complete_table_name($table_name){
-        include(FCPATH.'modules/'.$this->cms_module_path().'/helpers/function.php');
+        $this->load->helper($this->cms_module_path().'/function');
         if(function_exists('cms_complete_table_name')){
             return cms_complete_table_name($table_name);
         }else{
@@ -62,8 +62,13 @@ class Manage_City extends CMS_Priv_Strict_Controller {
         // $crud->unset_print();
         // $crud->unset_export();
 
-        // set model
-        // $crud->set_model($this->cms_module_path().'/grocerycrud_city_model');
+        // set custom grocery crud model, uncomment to use.
+        /*
+        $this->load->model('grocery_crud_model');
+        $this->load->model('grocery_crud_generic_model');
+        $this->load->model('grocery_crud_automatic_model');
+        $crud->set_model($this->cms_module_path().'/grocerycrud_city_model');
+        */
 
         // adjust groceryCRUD's language to No-CMS's language
         $crud->set_language($this->cms_language());

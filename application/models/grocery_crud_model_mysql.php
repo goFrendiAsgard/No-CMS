@@ -1,4 +1,4 @@
 <?php
-class grocery_crud_model_MySQL extends grocery_CRUD_Generic_Model{
+class grocery_crud_model_mysql extends grocery_CRUD_Generic_Model{
 
 }

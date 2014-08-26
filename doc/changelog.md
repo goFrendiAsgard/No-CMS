@@ -157,16 +157,19 @@ v0.6.6 rev 1
 + (done, tested) "minimal" layout
 + (done, tested) blog reply comment
 + (done, tested) notification url
-+ (done, tested) {{ base_url }} fix in ck_editor
++ (done, tested) `{{ base_url }}` fix in ck_editor
 + (done, tested) active menu
 + (done, tested) login/logout change status automatic redirection (e.g: when session expired)
 + (done, tested) seamless update
 
 v0.6.7
-+ (proposed) namespace
++ (cancelled) namespace
 + (done, tested) Navigation: move to anywhere.
 + (proposed) Wait for the new version of CI 3.0 or apply this fix to Codeigniter development team: select_max does not escape field_name, pgsql driver should convert `DATETIME` to `TIMESTAMP` since there is no `DATETIME` in postgre <-- The first one seems to be fixed
 
 v0.7.0
-+ (done, tested) export project feature in Nordrassil
++ (done, tested) export and import project feature in Nordrassil
 + (done, tested) fetch from database feature in Nordrassil
++ (done, tested) Grocery-Crud Multiple-Delete
++ (done, tested) Grocery-Crud Tab
++ (done, tested) add grocery_CRUD_Automatic_Model (which is smartly choose for the correct model base)
