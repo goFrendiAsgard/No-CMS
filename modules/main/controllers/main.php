@@ -621,13 +621,13 @@ class Main extends CMS_Controller
         return $post_array;
     }
 
-    public function before_delete_user($primary_key, $post_array)
+    public function before_delete_user($primary_key)
     {
         //The super admin user cannot be deleted, a user cannot delete his/her own account
         if (($primary_key == 1) || ($primary_key == $this->cms_user_id())) {
             return false;
         }
-        return $post_array;
+        return true;
     }
 
     // GROUP ===================================================================
@@ -684,7 +684,7 @@ class Main extends CMS_Controller
         if ($primary_key == 1 || $count > 0) {
             return false;
         }
-        return $post_array;
+        return true;
     }
 
     // NAVIGATION ==============================================================
@@ -830,6 +830,7 @@ class Main extends CMS_Controller
         $this->db->delete(cms_table_name('main_quicklink'), array(
             'navigation_id' => $primary_key
         ));
+        return true;
     }
 
     public function column_navigation_name($value, $row)

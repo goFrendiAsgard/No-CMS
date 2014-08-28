@@ -754,7 +754,7 @@ class nds extends CMS_Controller {
                     $caption
                 ) . '</li>';
         }
-        $html = '<ul>' . implode('',$arr) . '</ul>';
+        $html = '<ul style="padding-left:15px; padding-top:5px; font-size:12px;">' . implode('',$arr) . '</ul>';
         return $html;
     }
 
