@@ -186,29 +186,18 @@ function esip($ip_addr)
     else
         return FALSE; //if format of ip address doesn't matches
 }
-function domain($domainb)
+function domain($domain)
 {
-    $bits = explode('/', $domainb);
-    if ($bits[0]=='http:' || $bits[0]=='https:')
+    $domain_part = explode('.', $domain);
+    if(strtolower($domain_part[count($domain_part)-1]) == 'localhost'){
+        return 'localhost';
+    }
+    if(preg_match("/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i", $domain, $matches))
     {
-        $domainb= $bits[2];
+        return $matches['domain'];
     } else {
-        $domainb= $bits[0];
+        return $domain;
     }
-    unset($bits);
-    $bits = explode('.', $domainb);
-    $idz=count($bits);
-    $idz-=3;
-    if (strlen($bits[($idz+2)])==2) {
-        $url=$bits[$idz].'.'.$bits[($idz+1)].'.'.$bits[($idz+2)];
-    } else if (strlen($bits[($idz+2)])==0) {
-        $url=$bits[($idz)].'.'.$bits[($idz+1)];
-    } else if($idz>-2) {
-        $url=$bits[($idz+1)].'.'.$bits[($idz+2)];
-    } else{
-        $url=$domainb;
-    }
-    return $url;
 }
 
 // The "url_origin" and "full_url" function was written by: http://stackoverflow.com/users/175071/timo-huovinen
