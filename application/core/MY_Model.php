@@ -2277,16 +2277,17 @@ class CMS_Model extends CI_Model
                 $email_subject = 'Account Activation';
                 $email_message = 'Dear, {{ user_real_name }}<br />Click <a href="{{ site_url }}main/activate/{{ activation_code }}">{{ site_url }}main/activate/{{ activation_code }}</a> to activate your account';
                 if (strtoupper($reason) == 'FORGOT') {
-                    $email_subject = $this->cms_get_config('cms_email_forgot_subject');
-                    $email_message = $this->cms_get_config('cms_email_forgot_message');
+                    $email_subject = $this->cms_get_config('cms_email_forgot_subject', TRUE);
+                    $email_message = $this->cms_get_config('cms_email_forgot_message', TRUE);
                 } else if (strtoupper($reason) == 'SIGNUP') {
-                    $email_subject = $this->cms_get_config('cms_email_signup_subject');
-                    $email_message = $this->cms_get_config('cms_email_signup_message');
+                    $email_subject = $this->cms_get_config('cms_email_signup_subject', TRUE);
+                    $email_message = $this->cms_get_config('cms_email_signup_message', TRUE);
                 }
 
                 $email_message = str_replace('{{ user_real_name }}', $real_name, $email_message);
                 $email_message = str_replace('{{ activation_code }}', $activation_code, $email_message);
                 //send email to user
+                log_message('ERROR', var_export(array($email_message, $real_name, $activation_code), TRUE));
                 return $this->cms_send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);
             }
             // if send_mail == false, than it should be succeed

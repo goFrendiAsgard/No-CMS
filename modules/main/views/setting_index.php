@@ -230,7 +230,7 @@
                 <div class="form-group">
                    <label class="control-label col-md-4" for="cms_email_smtp_pass">SMTP Password</label>
                    <div class="controls col-md-8">
-                       <input type="text" id="cms_email_smtp_pass" name="cms_email_smtp_pass" value="<?php echo $config_list['cms_email_smtp_pass'] ?>" class="form-control">
+                       <input type="password" id="cms_email_smtp_pass" name="cms_email_smtp_pass" value="<?php echo $config_list['cms_email_smtp_pass'] ?>" class="form-control">
                        <p class="help-block">SMTP Password</p>
                    </div>
                 </div>
