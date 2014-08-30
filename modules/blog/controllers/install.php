@@ -116,6 +116,7 @@ class Install extends CMS_Module_Installer {
         // remove widgets
         $this->remove_widget($this->cms_complete_navigation_name('newest_article'));
         $this->remove_widget($this->cms_complete_navigation_name('article_category'));
+        $this->remove_widget($this->cms_complete_navigation_name('content'));
 
         // remove quicklinks
         $this->remove_quicklink($this->cms_complete_navigation_name('index'));
@@ -173,6 +174,8 @@ class Install extends CMS_Module_Installer {
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/newest','sidebar');
         $this->add_widget($this->cms_complete_navigation_name('article_category'), 'Categories',
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
+        $this->add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
+            $this->PRIV_EVERYONE, $module_path);
 
 
         // import install.sql

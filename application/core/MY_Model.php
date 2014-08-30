@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-apha';
+        $current_version = '0.7.0-beta';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -211,6 +211,44 @@ class CMS_Model extends CI_Model
                     'value' => 'FALSE',
                     'description' => 'Automatically use subdomain'
                 ));
+            }
+            // new configuration, cms_subsite_home_content
+            $exists = $this->db->select('config_name')
+                ->from(cms_table_name('main_config'))
+                ->where('config_name','cms_subsite_home_content')
+                ->get()->num_rows() > 0;
+            if(!$exists){
+                $this->db->insert(cms_table_name('main_config'),array(
+                    'config_name' => 'cms_subsite_home_content',
+                    'value' => '{{ widget_name:blog_content }}',
+                    'description' => 'Default subsite homepage content'
+                ));
+            }
+
+            // blog widget
+            if($this->cms_is_module_active('gofrendi.noCMS.blog')){
+                $result = $this->db->select('widget_name')
+                    ->from(cms_table_name('main_widget'))
+                    ->where('widget_name', 'blog_content')
+                    ->get();
+                if($result->num_rows() == 0){
+                    $result = $this->db->select_max('index')
+                        ->from(cms_table_name('main_widget'))
+                        ->get();
+                    $row = $result->row();
+                    $max_index = $row->index;
+                    $max_index = is_numeric($max_index)? $max_index : 0;
+                    $this->db->insert(cms_table_name('main_widget'), array(
+                        'widget_name ' => 'blog_content',
+                        'title' => 'Blog Content',
+                        'description' => 'Blog Content',
+                        'url' => 'blog',
+                        'authorization_id' => 1,
+                        'active' => 1,
+                        'index' => $max_index + 1,
+                        'is_static' => 0
+                    ));
+                }
             }
 
             // write new version
@@ -1932,8 +1970,9 @@ class CMS_Model extends CI_Model
             $success = $check_installation['success'];
             $module_installed = FALSE;
             if($success){
-                $this->install_model->build_database();
-                $this->install_model->build_configuration();
+                $config = array('subsite_home_content'=> $this->cms_get_config('cms_subsite_home_content', TRUE));
+                $this->install_model->build_database($config);
+                $this->install_model->build_configuration($config);
                 $module_installed = $this->install_model->install_modules();
             }
             if(!isset($_SESSION)){

@@ -77,8 +77,9 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
         $success = $check_installation['success'];
         $module_installed = FALSE;
         if($success){
-            $this->install_model->build_database();
-            $this->install_model->build_configuration();
+            $config = array('subsite_home_content'=> $this->cms_get_config('cms_subsite_home_content', TRUE));
+            $this->install_model->build_database($config);
+            $this->install_model->build_configuration($config);
             $module_installed = $this->install_model->install_modules();
         }
 
