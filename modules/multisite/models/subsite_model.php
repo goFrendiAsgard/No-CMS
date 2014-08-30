@@ -20,10 +20,13 @@ class Subsite_Model extends  CMS_Model{
 
     public function get_data($keyword, $page=0){
         $limit = 10;
+        $where = 'active = 1 AND(
+                subsite.name LIKE \'%'.$keyword.'%\' OR
+                subsite.description LIKE \'%'.$keyword.'%\'
+            )';
         $query = $this->db->select('subsite.id, subsite.name, subsite.use_subdomain, subsite.logo, subsite.description, subsite.modules, subsite.themes, subsite.user_id')
             ->from($this->cms_complete_table_name('subsite').' as subsite')
-            ->like('subsite.name', $keyword)
-            ->or_like('subsite.description', $keyword)
+            ->where($where)
             ->order_by('subsite.id','desc')
             ->limit($limit, $page*$limit)
             ->get();
@@ -115,6 +118,7 @@ class Subsite_Model extends  CMS_Model{
     public function update_configs(){
         $query = $this->db->select('name, aliases, use_subdomain, modules, themes')
             ->from($this->cms_complete_table_name('subsite'))
+            ->where('active', 1)
             ->get();
         $name_list = array();
         $alias_list = array();

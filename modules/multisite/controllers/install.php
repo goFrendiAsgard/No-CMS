@@ -10,9 +10,9 @@ class Install extends CMS_Module_Installer {
     /////////////////////////////////////////////////////////////////////////////
 
     protected $DEPENDENCIES = array();
-    protected $NAME         = 'admin.multisite';
+    protected $NAME         = 'gofrendi.noCMS.multisite';
     protected $DESCRIPTION  = 'One codebase to rule them all ...';
-    protected $VERSION      = '0.0.1';
+    protected $VERSION      = '0.0.2';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -41,6 +41,7 @@ class Install extends CMS_Module_Installer {
         $field_list = $this->db->list_fields($table_name);
         $missing_fields = array(
             'user_id'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'active'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE, "default"=>1),
         );
         $fields = array();
         foreach($missing_fields as $key=>$value){
@@ -129,6 +130,7 @@ class Install extends CMS_Module_Installer {
             'modules'=>array("type"=>'text', "null"=>TRUE),
             'themes'=>array("type"=>'text', "null"=>TRUE),
             'user_id'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+            'active'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE, "default"=>1),
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);

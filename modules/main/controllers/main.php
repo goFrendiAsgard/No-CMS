@@ -591,6 +591,10 @@ class Main extends CMS_Controller
             $this,
             'before_delete_user'
         ));
+        $crud->callback_after_update(array(
+            $this,
+            'after_update_user'
+        ));
 
         if ($crud->getState() == 'edit') {
             $state_info  = $crud->getStateInfo();
@@ -628,6 +632,21 @@ class Main extends CMS_Controller
             return false;
         }
         return true;
+    }
+
+    public function after_update_user($post_array, $primary_key)
+    {
+        // get user activation status
+        $user_id = $primary_key;
+        $result = $this->db->select('active')
+            ->from(cms_table_name('main_user'))
+            ->where('user_id', $user_id)
+            ->get();
+        $row = $result->row();
+        $active = $row->active;
+        // update subsite
+        $this->_cms_set_user_subsite_activation($user_id, $active);
+        return TRUE;
     }
 
     // GROUP ===================================================================

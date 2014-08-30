@@ -10,7 +10,7 @@ class Install extends CMS_Module_Installer {
     /////////////////////////////////////////////////////////////////////////////
 
     protected $DEPENDENCIES = array();
-    protected $NAME         = 'gofrendi.noCms.static_accessories';
+    protected $NAME         = 'gofrendi.noCMS.static_accessories';
     protected $DESCRIPTION  = 'This widget contains several widgets such a slideshow, tabbed content, and visitor counter';
     protected $VERSION      = '0.0.0';
 

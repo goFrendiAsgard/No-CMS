@@ -97,6 +97,26 @@ class CMS_Model extends CI_Model
                 }
             }
 
+            // table : multisite_subsite
+            if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
+                $table_name = cms_table_name('multisite_subsite');
+                $field_list = $this->db->list_fields($table_name);
+                $missing_fields = array(
+                    'active' => array(
+                        'type' => 'INT',
+                        'constraint' => '11',
+                        'null' => TRUE,
+                        'default' => 1,
+                    )
+                );
+                $fields = array();
+                foreach($missing_fields as $key=>$value){
+                    if(!in_array($key, $field_list)){
+                        $fields[$key] = $value;
+                    }
+                }
+            }
+
             $table_list = $this->db->list_tables();
             // add main-language-detail
             if(! in_array(cms_table_name('main_detail_language'), $table_list)){
@@ -251,6 +271,11 @@ class CMS_Model extends CI_Model
                 }
             }
 
+            // update module name
+            $this->db->update(cms_table_name('main_module'), 
+                array('module_name'=>'gofrendi.noCMS.multisite'),
+                array('module_name'=>'admin.multisite'));
+
             // write new version
             cms_config('__cms_version', $current_version);
         }
@@ -315,12 +340,7 @@ class CMS_Model extends CI_Model
         if(!isset($_SESSION)){
             session_start();
         }
-        // hack module path by changing the session, don't forget to unset !!!
-        if(isset($_SESSION['__cms_override_module_path'])){
-            $module_path = $_SESSION['__cms_override_module_path'];
-        }else{
-            $module_path = $this->cms_module_path();
-        }
+        $module_path = $this->cms_module_path();
         if($module_path == 'main' or $module_path == ''){
             return cms_table_name($table_name);
         }else{
@@ -1943,12 +1963,12 @@ class CMS_Model extends CI_Model
             $this->cms_generate_activation_code($user_name, TRUE, 'SIGNUP');
         }
 
-        if($activation == 'automatic' && $this->cms_is_module_active('admin.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
+        if($this->cms_is_module_active('gofrendi.noCMS.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
             $current_user_id = $this->db->select('user_id')
                 ->from(cms_table_name('main_user'))
                 ->where('user_name', $user_name)
                 ->get()->row()->user_id;
-            $module_path = $this->cms_module_path('admin.multisite');
+            $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
             $this->load->model('installer/install_model');
             $this->load->model($module_path.'/subsite_model');
             $install_model = new Install_Model();
@@ -1979,17 +1999,18 @@ class CMS_Model extends CI_Model
                 session_start();
             }
             // hack module path by changing the session, don't forget to unset !!!
-            $this->cms_override_table_prefix($module_path);
+            $this->cms_override_module_path($module_path);
             $data = array(
                 'name'=> $this->install_model->subsite,
                 'description'=>$user_name.' website',
                 'use_subdomain'=>$this->cms_get_config('cms_subsite_use_subdomain')=='TRUE'?1:0,
-                'user_id'=>$current_user_id
+                'user_id'=>$current_user_id,
+                'active'=>$activation == 'automatic'
             );
             $this->db->insert($this->cms_complete_table_name('subsite'), $data);
             $this->load->model($this->cms_module_path().'/subsite_model');
             $this->subsite_model->update_configs();
-            $this->cms_reset_overriden_table_prefix();
+            $this->cms_reset_overriden_module_path();
 
             if(!$module_installed){
                 // hack script, will be added and removed in next view
@@ -2028,7 +2049,7 @@ class CMS_Model extends CI_Model
      * @param   string tmp_module_path
      * @desc    pretend to be tmp_module_path to adjust the table prefix. This only affect table name
      */
-    public function cms_override_table_prefix($tmp_module_path){
+    public function cms_override_module_path($tmp_module_path){
         if(!isset($_SESSION)){
             session_start();
         }
@@ -2037,9 +2058,9 @@ class CMS_Model extends CI_Model
 
     /**
      * @author  goFrendiAsgard
-     * @desc    cancel effect created by cms_override_table_prefix
+     * @desc    cancel effect created by cms_override_module_path
      */
-    public function cms_reset_overriden_table_prefix(){
+    public function cms_reset_overriden_module_path(){
         if(!isset($_SESSION)){
             session_start();
         }
@@ -2170,23 +2191,28 @@ class CMS_Model extends CI_Model
      */
     public function cms_module_path($module_name = NULL)
     {
-        if (!isset($module_name) || $module_name === NULL) {
-            if(isset($_REQUEST['__cms_dynamic_widget_module'])){
-                $module = $_REQUEST['__cms_dynamic_widget_module'];
-            }else{
-                $module = $this->router->fetch_module();
-            }
-            return $module;
-        } else {
-            $query = $this->db->select('module_path')
-                ->from(cms_table_name('main_module'))
-                ->where('module_name', $module_name)
-                ->get();
-            if ($query->num_rows() > 0) {
-                $row = $query->row();
-                return $row->module_path;
+        // hack module path by changing the session, don't forget to unset !!!
+        if(isset($_SESSION['__cms_override_module_path'])){
+            return $_SESSION['__cms_override_module_path'];
+        }else{
+            if (!isset($module_name) || $module_name === NULL) {
+                if(isset($_REQUEST['__cms_dynamic_widget_module'])){
+                    $module = $_REQUEST['__cms_dynamic_widget_module'];
+                }else{
+                    $module = $this->router->fetch_module();
+                }
+                return $module;
             } else {
-                return '';
+                $query = $this->db->select('module_path')
+                    ->from(cms_table_name('main_module'))
+                    ->where('module_name', $module_name)
+                    ->get();
+                if ($query->num_rows() > 0) {
+                    $row = $query->row();
+                    return $row->module_path;
+                } else {
+                    return '';
+                }
             }
         }
     }
@@ -2361,9 +2387,27 @@ class CMS_Model extends CI_Model
                 "user_id" => $user_id
             );
             $this->db->update(cms_table_name('main_user'), $data, $where);
+
+            $this->_cms_set_user_subsite_activation($user_id, 1);
+
             return TRUE;
         } else {
             return FALSE;
+        }
+    }
+
+    public function _cms_set_user_subsite_activation($user_id, $active){
+        if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
+            $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
+            $this->cms_override_module_path($module_path);
+            $data = array('active'=>$active);
+            $where = array('user_id'=>$user_id);
+            $this->db->update($this->cms_complete_table_name('subsite'), $data, $where);
+            log_message('ERROR', $this->cms_module_path());
+            log_message('ERROR', $module_path);
+            $this->load->model($this->cms_module_path().'/subsite_model');
+            $this->subsite_model->update_configs();
+            $this->cms_reset_overriden_module_path();
         }
     }
 

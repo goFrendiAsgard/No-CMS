@@ -508,6 +508,10 @@ class CMS_Controller extends MX_Controller
         return $this->No_CMS_Model->cms_activate_account($activation_code, $new_password);
     }
 
+    public function _cms_set_user_subsite_activation($user_id, $active){
+        return $this->No_CMS_Model->_cms_set_user_subsite_activation($user_id, $active);
+    }
+
     /**
      * @author  goFrendiAsgard
      * @param   string from_address

@@ -112,36 +112,45 @@
                         <p class="help-block">User Activation (Automatic, By Email, or Manual)</p>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="cms_add_subsite_on_register">Automatically add subsite on register</label>
-                    <div class="controls col-md-8">
-                        <select id="cms_add_subsite_on_register" name="cms_add_subsite_on_register" class="form-control">
-                        <?php
-                            $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
-                            foreach($option_list as $key=>$value){
-                                $selected = $config_list['cms_add_subsite_on_register'] == $key ? 'selected' : '';
-                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
-                            }
-                        ?>
-                        </select>
-                        <p class="help-block">Automatic Add subsite when user register (only works if User Activation is set to "Automatic" and multisite module is installed)</p>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="cms_subsite_use_subdomain">Use subdomain for automatically added subsite</label>
-                    <div class="controls col-md-8">
-                        <select id="cms_subsite_use_subdomain" name="cms_subsite_use_subdomain" class="form-control">
-                        <?php
-                            $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
-                            foreach($option_list as $key=>$value){
-                                $selected = $config_list['cms_subsite_use_subdomain'] == $key ? 'selected' : '';
-                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
-                            }
-                        ?>
-                        </select>
-                        <p class="help-block">You should has "wildcard" DNS in order to make this works</p>
-                    </div>
-                </div>
+                <?php if(CMS_SUBSITE == ''){ ?>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="cms_add_subsite_on_register">Automatically add subsite on register</label>
+                            <div class="controls col-md-8">
+                                <select id="cms_add_subsite_on_register" name="cms_add_subsite_on_register" class="form-control">
+                                <?php
+                                    $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
+                                    foreach($option_list as $key=>$value){
+                                        $selected = $config_list['cms_add_subsite_on_register'] == $key ? 'selected' : '';
+                                        echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                                    }
+                                ?>
+                                </select>
+                                <p class="help-block">Automatic Add subsite when user register (only works if multisite module is installed)</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="cms_subsite_use_subdomain">Use subdomain for automatically added subsite</label>
+                            <div class="controls col-md-8">
+                                <select id="cms_subsite_use_subdomain" name="cms_subsite_use_subdomain" class="form-control">
+                                <?php
+                                    $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
+                                    foreach($option_list as $key=>$value){
+                                        $selected = $config_list['cms_subsite_use_subdomain'] == $key ? 'selected' : '';
+                                        echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                                    }
+                                ?>
+                                </select>
+                                <p class="help-block">You should has "wildcard" DNS in order to make this works</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="cms_subsite_home_content">Default Subsite Homepage Content</label>
+                            <div class="controls col-md-8">
+                                <textarea class="text-area-section" id="cms_subsite_home_content" name="cms_subsite_home_content" class="form-control"><?php echo $config_list['cms_subsite_home_content'] ?></textarea>
+                                <p class="help-block">Default Subsite Homepage Content</p>
+                            </div>
+                        </div>
+                <?php } ?>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="cms_email_protocol">Email Protocol</label>
                     <div class="controls col-md-8">

@@ -173,3 +173,6 @@ v0.7.0
 + (done, tested) Grocery-Crud Multiple-Delete
 + (done, tested) Grocery-Crud Tab
 + (done, tested) add grocery_CRUD_Automatic_Model (which is smartly choose for the correct model base)
++ (done, tested) Refine subdomain detection
++ (done, tested) Add "default homepage content" for subsite
++ (done, tested) Subsite activation also works for user activation by mail.

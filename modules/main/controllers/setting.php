@@ -41,8 +41,13 @@ class Setting extends CMS_Controller{
                 'cms_email_forgot_message', 'cms_email_signup_subject', 'cms_email_signup_message',
                 'cms_email_useragent', 'cms_email_mailpath', 'cms_email_smtp_host', 'cms_email_smtp_user',
                 'cms_email_smtp_pass', 'cms_email_smtp_port', 'cms_email_smtp_timeout','cms_google_analytic_property_id',
-                'cms_add_subsite_on_register','cms_subsite_use_subdomain'
             );
+            // only for non-subsite
+            if(CMS_SUBSITE == ''){
+                $configuration_list[] = 'cms_add_subsite_on_register';
+                $configuration_list[] = 'cms_subsite_use_subdomain';
+                $configuration_list[] = 'cms_subsite_home_content';
+            }
             foreach($configuration_list as $configuration){
                 $this->cms_set_config($configuration, $this->input->post($configuration));
             }
