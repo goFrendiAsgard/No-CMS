@@ -211,8 +211,10 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
                 else
                 {
                     // added by gofrendi, to skip non actual column search
-                    if(array_search($state_info->search->field, $actual_columns) !== false) {
-                        $this->like($basic_table.'.'.$state_info->search->field , $state_info->search->text);
+                    $search_field_part = explode('.',$state_info->search->field);
+                    $real_search_field = $search_field_part[count($search_field_part)-1];
+                    if(in_array($real_search_field, $actual_columns)){
+                        $this->like($basic_table.'.'.$real_search_field , $state_info->search->text);
                     }
                 }
             }
@@ -221,12 +223,16 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
                 $columns = $this->get_columns();
 
                 $search_text = $state_info->search->text;
+                $escaped_text = $this->basic_model->escape_str($state_info->search->text);
 
 
-                if(!empty($this->where))
+                if(!empty($this->where)){
+                    /* TODO: this produce error on select count (ajax_list_info)
                     foreach($this->where as $where){
                         $this->basic_model->having($where[0],$where[1],$where[2]);
-                    }
+                    }*/
+                }
+                $search_where = '1=0';
 
 
                 foreach($columns as $column)
@@ -237,18 +243,23 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
                         {
                             foreach($temp_relation[$column->field_name] as $search_field)
                             {
-                                $this->or_like($search_field, $search_text);
+                                //$this->or_like($search_field, $search_text);
+                                $search_where .= " OR " .
+                                    $this->basic_model->protect_identifiers($search_field). 
+                                    " LIKE '%" . $escaped_text . "%'";
                             }
                         }
                         else
                         {
-                            $this->or_like($temp_relation[$column->field_name], $search_text);
+                            //$this->or_like($temp_relation[$column->field_name], $search_text);
+                            $search_where .= " OR " .
+                                    $this->basic_model->protect_identifiers($temp_relation[$column->field_name]). 
+                                    " LIKE '%" . $escaped_text . "%'";
                         }
                     }
                     elseif(isset($this->relation_n_n[$column->field_name]))
                     {
                         //@todo have a where for the relation_n_n statement
-                        $escaped_text = $this->basic_model->escape_str($state_info->search->text);
 
                         list($field_name, $relation_table, $selection_table, $primary_key_alias_to_this_table,
                         $primary_key_alias_to_selection_table, $title_field_selection_table, $priority_field_relation_table) = array_values((array)$this->relation_n_n[$column->field_name]);
@@ -275,17 +286,24 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
                             ." ON ".$this->basic_model->protect_identifiers($relation_table.".".$primary_key_alias_to_selection_table)." = ".$this->basic_model->protect_identifiers($selection_table.".".$primary_key_selection_table)
                             ." WHERE ".$this->basic_model->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table)." = ".$this->basic_model->protect_identifiers($this->basic_db_table.".".$this->basic_model->get_primary_key($this->basic_db_table))
                             ." GROUP BY ".$this->basic_model->protect_identifiers($relation_table.".".$primary_key_alias_to_this_table).") ";
-                        $this->or_where($subquery." LIKE '%".$escaped_text."%'", NULL, FALSE);
+                        //$this->or_where($subquery." LIKE '%".$escaped_text."%'", NULL, FALSE);
+                        $search_where .= " OR " . $subquery. " LIKE '%" . $escaped_text . "%'";
 
                     }
                     else
                     {
-                        if(array_search($column->field_name, $actual_columns) === false) {
-                            continue;
+                        $search_field_part = explode('.',$column->field_name);
+                        $real_search_field = $search_field_part[count($search_field_part)-1];
+                        if(in_array($real_search_field, $actual_columns)){
+                            //$this->or_like($basic_table.'.'.$real_search_field, $search_text);
+                            $search_where .= " OR " . 
+                                $this->basic_model->protect_identifiers($basic_table.'.'.$real_search_field).
+                                " LIKE '%" . $escaped_text . "%'";
                         }
-                        $this->or_like($basic_table.'.'.$column->field_name, $search_text);
                     }
                 }
+
+                $this->where($search_where, NULL, FALSE);
             }
         }
     }

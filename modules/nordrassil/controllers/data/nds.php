@@ -418,7 +418,7 @@ class nds extends CMS_Controller {
         }
     }
 
-    public function _callback_table_before_insert($post_array, $primary_key){
+    public function _callback_table_before_insert($post_array){
         if($post_array['priority'] == '' || $post_array['priority'] == NULL){
             $post_array['priority'] = 5000;
         }
@@ -602,7 +602,7 @@ class nds extends CMS_Controller {
         }
     }
 
-    public function _callback_column_before_insert($post_array, $primary_key){
+    public function _callback_column_before_insert($post_array){
         if($post_array['priority'] == '' || $post_array['priority'] == NULL){
             $post_array['priority'] = 5000;
         }
@@ -717,11 +717,11 @@ class nds extends CMS_Controller {
                 }
                 // guess what should be appeared :)
                 if(isset($row->name) && isset($row->caption)){
-                    if(strlen($row->name) > 45){
-                        $row->name = substr($row->name, 0, 41).' ...';
+                    if(strlen($row->name) > 43){
+                        $row->name = substr($row->name, 0, 39).' ...';
                     }
-                    if(strlen($row->caption) > 25){
-                        $row->caption = substr($row->caption, 0, 21).' ...';
+                    if(strlen($row->caption) > 21){
+                        $row->caption = substr($row->caption, 0, 17).' ...';
                     }
                     if(strlen($options)>70){
                         $options = substr($options, 0, 66).' ...';
