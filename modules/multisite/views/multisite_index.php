@@ -32,6 +32,7 @@
     var LOADING = false;
     var REQUEST;
     var RUNNING_REQUEST = false;
+    var STOP_REQUEST = false;
 
     function __adjust_component(identifier){
         var max_height = 0;
@@ -53,6 +54,7 @@
     function adjust_thumbnail(){
         __adjust_component(".thumbnail img");
         __adjust_component(".thumbnail div.caption");
+        __adjust_component(".record_container_thumbnail")
     }
 
     function fetch_more_data(async){
@@ -78,6 +80,9 @@
                 // show contents
                 $('#record_content').append(response);
                 adjust_thumbnail();
+                if(response == ''){
+                    STOP_REQUEST = true;
+                }
                 // show bottom contents
                 var bottom_content = 'No more Subsite to show.';
                 if(ALLOW_NAVIGATE_BACKEND){
@@ -113,7 +118,7 @@
 
         // scroll
         $(window).scroll(function(){
-            if(!LOADING){
+            if(!LOADING & !STOP_REQUEST){
                 if($(window).scrollTop() == $(document).height() - $(window).height()){
                     LOADING = true;
                     fetch_more_data(false);

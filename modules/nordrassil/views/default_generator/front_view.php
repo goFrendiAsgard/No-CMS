@@ -53,6 +53,7 @@
     var LOADING = false;
     var REQUEST;
     var RUNNING_REQUEST = false;
+    var STOP_REQUEST = false;
 
     function fetch_more_data(async){
         if(typeof(async) == 'undefined'){
@@ -76,6 +77,10 @@
             'success'  : function(response){
                 // show contents
                 $('#record_content').append(response);
+                // stop request if response is empty
+                if(response == ''){
+                    STOP_REQUEST = true;
+                }
 
                 // show bottom contents
                 var bottom_content = 'No more {{ table_caption }} to show.';
@@ -130,7 +135,7 @@
 
         // scroll
         $(window).scroll(function(){
-            if(!LOADING){
+            if(!STOP_REQUEST && !LOADING){
                 if($(window).scrollTop() == $(document).height() - $(window).height()){
                     LOADING = true;
                     fetch_more_data(false);

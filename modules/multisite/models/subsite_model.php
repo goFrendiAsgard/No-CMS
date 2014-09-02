@@ -19,7 +19,7 @@ class Subsite_Model extends  CMS_Model{
     }
 
     public function get_data($keyword, $page=0){
-        $limit = 10;
+        $limit = 9;
         $where = 'active = 1 AND(
                 subsite.name LIKE \'%'.$keyword.'%\' OR
                 subsite.description LIKE \'%'.$keyword.'%\'
