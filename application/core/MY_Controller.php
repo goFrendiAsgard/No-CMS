@@ -804,7 +804,7 @@ class CMS_Controller extends MX_Controller
         $custom_keyword     = isset($config['keyword']) ? $config['keyword'] : NULL;
         $custom_description = isset($config['description'])? $config['description'] : NULL;
         $custom_author      = isset($config['author'])? $config['author'] : NULL;
-        $only_content       = isset($config['only_content']) ? $config['only_content'] : NULL;
+        $only_content       = isset($config['only_content']) ? $config['only_content'] : FALSE;
         $always_allow       = isset($config['always_allow']) ? $config['always_allow'] : FALSE;
         $layout_suffix      = isset($config['layout_suffix']) ? $config['layout_suffix'] : '';
 
@@ -892,9 +892,6 @@ class CMS_Controller extends MX_Controller
                 }
 
             }
-        }
-        if (!isset($only_content)) {
-            $only_content = TRUE;
         }
 
         // ASSIGN THEME
