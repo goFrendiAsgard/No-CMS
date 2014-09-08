@@ -239,6 +239,7 @@ class Synchronize_Model extends CMS_Model{
                 // update
                 $where = array('column_id' => $column_id);
                 unset($data['priority']);
+                unset($data['role']);
                 $this->db->update($this->cms_complete_table_name('column'), $data, $where);
             }else{
                 $this->db->insert($this->cms_complete_table_name('column'), $data);
