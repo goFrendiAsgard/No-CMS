@@ -257,7 +257,7 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
 
             // if there is an alias defined
             if(isset($site_alias[$actual_host_name]) && $site_alias[$actual_host_name] != ''){
-                $cms_subsite = $site_alias[$host];
+                $cms_subsite = $site_alias[$actual_host_name];
                 define('USE_SUBDOMAIN', TRUE);
             }
             // If there is subdomain, subsite determine from subdomain.
