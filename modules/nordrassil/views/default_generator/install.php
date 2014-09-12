@@ -133,9 +133,10 @@ class Install extends CMS_Module_Installer {
             $sql.= @$this->dbutil->backup($prefs);
 
             //write file
+            chmod(FCPATH.'modules/'.$module_path.'/assets/db/', 0777);
             $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
             file_put_contents(
-                    BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
+                    FCPATH.'modules/'.$module_path.'/assets/db/'.$file_name,
                     $sql
                 );
         }

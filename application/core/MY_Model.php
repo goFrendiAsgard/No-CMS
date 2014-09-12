@@ -2154,7 +2154,7 @@ class CMS_Model extends CI_Model
                     unset($subsite_allowed);
                     include($subsite_auth_file);
                     if(isset($public) && is_bool($public) && !$public){
-                        if(is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                        if(!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))){
                             continue;
                         }
                     }
@@ -2264,7 +2264,7 @@ class CMS_Model extends CI_Model
                     unset($subsite_allowed);
                     include($subsite_auth_file);
                     if(isset($public) && is_bool($public) && !$public){
-                        if(isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                        if(!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))){
                             continue;
                         }
                     }

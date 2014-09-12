@@ -15,7 +15,7 @@ class Install extends CMS_Module_Installer {
     protected $VERSION      = '0.0.0';
 
     public function cms_complete_table_name($table_name){
-        include(FCPATH.'modules/'.$this->cms_module_path().'/helpers/function.php');
+        $this->load->helper($this->cms_module_path().'/function');
         if(function_exists('cms_complete_table_name')){
             return cms_complete_table_name($table_name);
         }else{
@@ -281,8 +281,9 @@ class Install extends CMS_Module_Installer {
 
             //write file
             $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
+            chmod(FCPATH.'modules/'.$module_path.'/assets/db/', 0777);
             file_put_contents(
-                    BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
+                    FCPATH.'modules/'.$module_path.'/assets/db/'.$file_name,
                     $sql
                 );
         }

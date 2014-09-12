@@ -65,7 +65,7 @@ class CMS_Controller extends MX_Controller
                 unset($subsite_allowed);
                 include($subsite_auth_file);
                 if(isset($public) && is_bool($public) && !$public){
-                    if(isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)){
+                    if(!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))){
                         die('Module is not accessible for '.CMS_SUBSITE.' subsite');
                     }
                 }
