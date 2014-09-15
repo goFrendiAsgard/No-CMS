@@ -17,7 +17,7 @@
         <!-- the data presentation be here -->
     </tbody>
 </table>
-<input id="md_field_photos_add" class="btn" type="button" value="Add Photo" />
+<input id="md_field_photos_add" class="btn btn-default" type="button" value="Add Photo" />
 <br />
 <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
 <input id="md_real_field_photos_col" name="md_real_field_photos_col" type="hidden" />
@@ -90,7 +90,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        component += '<td><input class="md_field_photos_delete btn" record_index="'+RECORD_INDEX_photos+'" primary_key="" type="button" value="Delete" /></td>';
+        component += '<td><input class="md_field_photos_delete btn btn-default" record_index="'+RECORD_INDEX_photos+'" primary_key="" type="button" value="Delete" /></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////

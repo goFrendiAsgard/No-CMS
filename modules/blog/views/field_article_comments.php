@@ -123,7 +123,7 @@
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         component += '<td>';
-        component += '<input class="md_field_comments_delete btn" record_index="'+RECORD_INDEX_comments+'" primary_key="" type="button" value="Delete" /></td>';
+        component += '<input class="md_field_comments_delete btn btn-default" record_index="'+RECORD_INDEX_comments+'" primary_key="" type="button" value="Delete" /></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
