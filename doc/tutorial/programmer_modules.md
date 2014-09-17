@@ -409,7 +409,7 @@ Modify your `new_module/controllers/install.php` into this:
             $sql.= $this->dbutil->backup($prefs);
 
             //write file
-            $file_name = 'backup_'.date('Y-m-d_G:i:s').'.sql';
+            $file_name = 'backup_'.date('Y-m-d_G-i-s').'.sql';
             file_put_contents(
                     BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
                     $sql
