@@ -4,6 +4,10 @@
         font-family:courier;
         font-size:small;
     }
+    #status{
+        padding: 10px;
+        margin-top: 10px;
+    }
 </style>
 <h4>Generate Project</h4>
 <div class="form form-inline well" style="margin-bottom:20px;">
@@ -19,17 +23,18 @@
             echo '<option value="'.$project_id.'">'.$project_name.'</option>';
         }
     ?>    
-    </select>
+    </select> 
+    and
     <input id="btn_generate" type="button" value="Generate" class="btn btn-primary"/>
     or
     <a href="<?php echo site_url('nordrassil/data/nds/project/add'); ?>" class="btn btn-success">Make a new Project</a>
+    <div id="status" class="alert-info"><b>Hint : </b>Choose a project and generate</div>
 </div>
-<div id="status" class="alert alert-info"><b>Hint : </b>Choose project and generate</div>
 
-<h4>Data</h4>
+<h4>Manage Project (Manage existing project/template)</h4>
 <?php echo $content; ?>
 
-<h4>Import Project Seed (JSON Script)</h4>
+<h4>Import Project (Paste project JSON-seed and import)</h4>
 <form method="post" action="{{ module_site_url }}nordrassil/import">
     <textarea id="textarea-seed" name="seed" class="form-control"></textarea><br />
     <button class="btn btn-primary"><i class="glyphicon glyphicon-import"></i> Import</button>

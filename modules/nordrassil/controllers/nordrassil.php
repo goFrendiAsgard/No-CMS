@@ -26,7 +26,14 @@ class nordrassil extends CMS_Priv_Strict_Controller {
     public function import(){
         $this->load->model($this->cms_module_path().'/data/nds_model');
         $seed = $this->input->post('seed');
-        $seed = json_decode($seed, TRUE);
+        try{
+            $seed = json_decode($seed, TRUE);
+            if(!is_array($seed)){
+                redirect($this->cms_module_path());
+            }
+        }catch(Exception $e){
+            redirect($this->cms_module_path());
+        }
         $project_id = $this->nds_model->import_project($seed);
         if($project_id !== FALSE){
             redirect(site_url($this->cms_module_path().'/data/nds/project/edit/'.$project_id));

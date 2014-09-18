@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+&lt;?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 // Is the module published for every subsite?
 $public                 = FALSE;
