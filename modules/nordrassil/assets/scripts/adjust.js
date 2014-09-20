@@ -13,7 +13,6 @@ function adjust(changing_field, affected_field, ajax_get_restricted_path){
 		'dataType' : 'json',
 		'success' : function(response){
 			$('#field_'+affected_field+'_chzn ul.chzn-results li').removeClass('hidden');
-			console.log(' ');
 			for(var i=0; i<response.length; i++){					
 				var current_option = $('select#field-'+affected_field).children('option[value="'+response[i]+'"]');
 				var index = $('select#field-'+affected_field+' option').index(current_option);

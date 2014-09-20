@@ -176,3 +176,6 @@ v0.7.0
 + (done, tested) Refine subdomain detection
 + (done, tested) Add "default homepage content" for subsite
 + (done, tested) Subsite activation also works for user activation by mail.
++ (done, tested) Fix "template" for relation_field_title
++ (done, tested) Now "one-to-many" can has "datetime"
++ (done, tested) Replace ":" with "_" for database backup file name

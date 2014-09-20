@@ -7,6 +7,9 @@
     #md_table_citizen input[type="text"]{
         max-width:100px;
     }
+    #md_table_citizen .chzn-drop input[type="text"]{
+        max-width:240px;
+    }
     #md_table_citizen th:last-child, #md_table_citizen td:last-child{
         width: 60px;
     }
@@ -41,6 +44,7 @@
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery-ui-timepicker-addon.js'); ?>"></script>
 <script type="text/javascript">
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,11 +103,10 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         var field_value = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('birthdate')){
-          field_value = php_date_to_js(value.birthdate);
+          field_value = php_datetime_to_js(value.birthdate);
         }
         component += '<td>';
-        component += '<input id="md_field_citizen_col_birthdate_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col datepicker-input" column_name="birthdate" type="text" value="'+field_value+'"/>';
-        component += '<a href="#" class="datepicker-input-clear btn">Clear</a>';
+        component += '<input id="md_field_citizen_col_birthdate_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col datetime-input" column_name="birthdate" type="text" value="'+field_value+'"/>';
         component += '</td>';
 
 
@@ -275,6 +278,9 @@
             if($(this).hasClass('datepicker-input')){
                 value = js_date_to_php(value);
             }
+            else if($(this).hasClass('datetime-input')){
+                value = js_datetime_to_php(value);
+            }
             if(typeof(value)=='undefined'){
                 value = '';
             }
@@ -337,7 +343,7 @@
     // function to mutate input
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function mutate_input_citizen(){
-        // datepikcer-input
+        // datepicker-input
         $('#md_table_citizen .datepicker-input').datepicker({
                 dateFormat: js_date_format,
                 showButtonPanel: true,
@@ -348,6 +354,21 @@
         // date-picker-input-clear
         $('#md_table_citizen .datepicker-input-clear').click(function(){
             $(this).parent().find('.datepicker-input').val('');
+            return false;
+        });
+        // datetime-input
+        $('#md_table_citizen .datetime-input').datetimepicker({
+            timeFormat: 'HH:mm:ss',
+            dateFormat: js_date_format,
+            showButtonPanel: true,
+            changeMonth: true,
+            changeYear: true
+        });
+        
+        $('#md_table_citizen .datetime-input-clear').button();
+        
+        $('#md_table_citizen .datetime-input-clear').click(function(){
+            $(this).parent().find('.datetime-input').val("");
             return false;
         });
         // chzn-select
@@ -390,6 +411,9 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     function js_datetime_to_php(js_datetime){
+        if(typeof(js_datetime)=='undefined' || js_datetime == ''){
+            return '';
+        }
         var datetime_array = js_datetime.split(' ');
         var js_date = datetime_array[0];
         var time = datetime_array[1];
@@ -397,6 +421,9 @@
         return php_date + ' ' + time;
     }
     function php_datetime_to_js(php_datetime){
+        if(typeof(php_datetime)=='undefined' || php_datetime == ''){
+            return '';
+        }
         var datetime_array = php_datetime.split(' ');
         var php_date = datetime_array[0];
         var time = datetime_array[1];

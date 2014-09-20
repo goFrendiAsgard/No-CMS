@@ -58,6 +58,7 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
         if(isset($as)){
             $concat_str .= " as ".$as;
         }
+        return $concat_str;
 
     }
 
@@ -78,7 +79,6 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
                 list($field_name , $related_table , $related_field_title) = $relation;
                 $unique_join_name = $this->_unique_join_name($field_name);
                 $unique_field_name = $this->_unique_field_name($field_name);
-
                 if(strstr($related_field_title,'{'))
                 {
                     $related_field_title = str_replace(" ","&nbsp;",$related_field_title);

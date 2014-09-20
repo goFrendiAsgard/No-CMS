@@ -48,6 +48,9 @@
     #<?php echo $table_id; ?> input[type="text"]{
         max-width:100px;
     }
+    #<?php echo $table_id; ?> .chzn-drop input[type="text"]{
+        max-width:240px;
+    }
     #<?php echo $table_id; ?> th:last-child, #<?php echo $table_id; ?> td:last-child{
         width: 60px;
     }
@@ -84,6 +87,7 @@
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
 <script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>
+<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery-ui-timepicker-addon.js'); ?&gt;"></script>
 <script type="text/javascript">
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +139,8 @@
             $additional_class_array = array();
             if($data_type=='date'){
                 $additional_class_array[] = 'datepicker-input';
+            }else if($data_type=='datetime'){
+                $additional_class_array[] = 'datetime-input';
             }else if(in_array($data_type, $integer_type)){
                 $additional_class_array[] = 'numeric';
             }
@@ -151,6 +157,8 @@
             echo '        if(typeof(value) != \'undefined\' && value.hasOwnProperty(\''.$name.'\')){'.PHP_EOL;
             if($data_type=='date'){
                 echo '          field_value = php_date_to_js(value.'.$name.');'.PHP_EOL;
+            }else if($data_type=='datetime'){
+                echo '          field_value = php_datetime_to_js(value.'.$name.');'.PHP_EOL;
             }else{
                 echo '          field_value = value.'.$name.';'.PHP_EOL;
             }
@@ -317,6 +325,9 @@
             if($(this).hasClass('datepicker-input')){
                 value = js_date_to_php(value);
             }
+            else if($(this).hasClass('datetime-input')){
+                value = js_datetime_to_php(value);
+            }
             if(typeof(value)=='undefined'){
                 value = '';
             }
@@ -379,7 +390,7 @@
     // function to mutate input
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function <?php echo $fn_mutate_input; ?>(){
-        // datepikcer-input
+        // datepicker-input
         $('#<?php echo $table_id; ?> .datepicker-input').datepicker({
                 dateFormat: js_date_format,
                 showButtonPanel: true,
@@ -390,6 +401,21 @@
         // date-picker-input-clear
         $('#<?php echo $table_id; ?> .datepicker-input-clear').click(function(){
             $(this).parent().find('.datepicker-input').val('');
+            return false;
+        });
+        // datetime-input
+        $('#<?php echo $table_id; ?> .datetime-input').datetimepicker({
+            timeFormat: 'HH:mm:ss',
+            dateFormat: js_date_format,
+            showButtonPanel: true,
+            changeMonth: true,
+            changeYear: true
+        });
+        
+        $('#<?php echo $table_id; ?> .datetime-input-clear').button();
+        
+        $('#<?php echo $table_id; ?> .datetime-input-clear').click(function(){
+            $(this).parent().find('.datetime-input').val("");
             return false;
         });
         // chzn-select
@@ -432,6 +458,9 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     function js_datetime_to_php(js_datetime){
+        if(typeof(js_datetime)=='undefined' || js_datetime == ''){
+            return '';
+        }
         var datetime_array = js_datetime.split(' ');
         var js_date = datetime_array[0];
         var time = datetime_array[1];
@@ -439,6 +468,9 @@
         return php_date + ' ' + time;
     }
     function php_datetime_to_js(php_datetime){
+        if(typeof(php_datetime)=='undefined' || php_datetime == ''){
+            return '';
+        }
         var datetime_array = php_datetime.split(' ');
         var php_date = datetime_array[0];
         var time = datetime_array[1];

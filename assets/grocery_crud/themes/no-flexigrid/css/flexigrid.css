@@ -1,22 +1,26 @@
 @charset "UTF-8";
 /* Fix  width bug */
+/*
 .chzn-container, .chzn-drop, .chzn-drop .chzn-search, .chzn-drop {
   width: 240px !important;
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
-}
+}*/
 
 /* Input Box has to be slightly smaller, don't know why and I don't care. */
+/*
 .chzn-search input {
     width: 220px !important;
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
-}
+}*/
 
 /* Override width of the whole thing */
+/*
 .chzn-container { width:240px !important; }
+*/
 
 table th
 {
