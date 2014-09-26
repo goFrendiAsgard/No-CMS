@@ -1749,9 +1749,12 @@ class Main extends CMS_Controller
                         </button>
                         <a class="navbar-brand" href="{{ site_url }}"><img src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" /></a>
                     </div>
-                    <div class="collapse navbar-collapse">
+                    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
                         <ul class="navbar-nav nav">'.$result.'</ul>
-                    </div><!--/.nav-collapse -->
+                        <ul class="navbar-nav nav navbar-right">
+                            <li class="dropdown" id="__right_navbar">{{ widget_name:navigation_right_partial }}</li>
+                        </ul>
+                    </nav><!--/.nav-collapse -->
                 </div>
             </div>
             <script type="text/javascript">
@@ -1811,6 +1814,13 @@ class Main extends CMS_Controller
                     $(document).ajaxComplete(function(){
                         __adjust_navbar();
                     });
+                    // adjust right navbar
+                    font_color = $("nav li a").css("color");
+                    $("#__right_navbar").css("color", font_color);
+                    padding_top = $("nav li a").css("padding-top");
+                    padding_bottom = $("nav li a").css("padding-bottom");
+                    $("#__right_navbar").css("padding-top", padding_top);
+                    $("#__right_navbar").css("padding-bottom", padding_bottom);
                 });
             </script>';
             $this->cms_show_html($result);

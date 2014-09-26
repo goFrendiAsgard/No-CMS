@@ -59,8 +59,10 @@
     </form>
 </div>
 <script type="text/javascript">
-    function __adjust_component(identifier){
-        var max_height = 0;
+    function __adjust_component(identifier, max_height){
+        if(typeof max_height == 'undefined'){
+            max_height = 0;
+        }
         $(identifier).each(function(){
             $(this).css('margin-bottom', 0);
             if($(this).height()>max_height){
@@ -78,7 +80,7 @@
         });
     }
     function adjust_thumbnail(){
-        __adjust_component('.thumbnail img');
+        __adjust_component('.thumbnail img', 100);
         __adjust_component('.thumbnail div.caption');
     }
 

@@ -101,11 +101,11 @@ class nds extends CMS_Controller {
 
         $crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
         $crud->unset_texteditor('description');
-        $crud->change_field_type('option_type', 'enum', array('project','table','column'));
+        $crud->field_type('option_type', 'enum', array('project','table','column'));
 
         if(isset($template_id) && intval($template_id)>0){
             $crud->where($this->cms_complete_table_name('template_option').'.template_id', $template_id);
-            $crud->change_field_type('template_id', 'hidden', $template_id);
+            $crud->field_type('template_id', 'hidden', $template_id);
         }
 
         $crud->callback_column($this->unique_field_name('template_id'),array($this,'_callback_column_template_option_template_id'));
@@ -368,13 +368,14 @@ class nds extends CMS_Controller {
         $crud->display_as('priority','Order Priority');
         $crud->display_as('options','Options');
         $crud->display_as('columns','Columns');
-
-        $crud->set_relation('project_id',$this->cms_complete_table_name('project'),'name');
+        
         $crud->set_relation_n_n('options',$this->cms_complete_table_name('table_option'),
             $this->cms_complete_table_name('template_option'),'table_id','option_id','name');
 
         if(isset($project_id) && intval($project_id)>0){
-            $crud->change_field_type('project_id', 'hidden', $project_id);
+            $crud->field_type('project_id', 'hidden', $project_id);
+        }else{
+            $crud->set_relation('project_id',$this->cms_complete_table_name('project'),'name');
         }
 
         $crud->callback_before_insert(array($this, '_callback_table_before_insert'));
@@ -540,7 +541,6 @@ class nds extends CMS_Controller {
         $crud->field_type('role', 'enum', array('primary','lookup','detail many to many','detail one to many'));
         $crud->field_type('value_selection_mode', 'enum', array('set','enum'));
 
-        $crud->set_relation('table_id',$this->cms_complete_table_name('table'),'name');
         $crud->set_relation_n_n('options',$this->cms_complete_table_name('column_option'),
           $this->cms_complete_table_name('template_option'),'column_id','option_id','name');
 
@@ -555,7 +555,9 @@ class nds extends CMS_Controller {
         $crud->set_relation('selection_column_id',$this->cms_complete_table_name('column'),'name');
 
         if(isset($table_id) && intval($table_id)>0){
-            $crud->change_field_type('table_id', 'hidden', $table_id);
+            $crud->field_type('table_id', 'hidden', $table_id);
+        }else{
+            $crud->set_relation('table_id',$this->cms_complete_table_name('table'),'name');    
         }
 
         $crud->callback_before_insert(array($this, '_callback_column_before_insert'));
