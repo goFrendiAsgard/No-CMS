@@ -232,7 +232,7 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
                         $this->basic_model->having($where[0],$where[1],$where[2]);
                     }*/
                 }
-                $search_where = '1=0';
+                $search_where = '(1=0';
 
 
                 foreach($columns as $column)
@@ -302,6 +302,8 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
                         }
                     }
                 }
+
+                $search_where .= ')';
 
                 $this->where($search_where, NULL, FALSE);
             }

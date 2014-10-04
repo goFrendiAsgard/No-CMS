@@ -179,3 +179,4 @@ v0.7.0
 + (done, tested) Fix "template" for relation_field_title
 + (done, tested) Now "one-to-many" can has "datetime"
 + (done, tested) Replace ":" with "_" for database backup file name
++ (done, tested) Fix subquery, add parantheses for search_where in `Extended_Grocery_CRUD.php`

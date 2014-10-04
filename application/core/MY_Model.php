@@ -2450,9 +2450,13 @@ class CMS_Model extends CI_Model
         $this->email->to($to_address);
         $this->email->subject($subject);
         $this->email->message($message);
-
-        $success = $this->email->send();
-        log_message('debug', $this->email->print_debugger());
+        try{
+            $success = $this->email->send();
+            log_message('debug', $this->email->print_debugger());
+        }catch(Error $error){
+            // do nothing
+            log_message('error', $this->email->print_debugger());
+        }
         return $success;
     }
 

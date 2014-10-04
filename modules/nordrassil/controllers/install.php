@@ -61,7 +61,7 @@ class Install extends CMS_Module_Installer {
 
         // parent of all navigations
         $this->add_navigation($this->cms_complete_navigation_name('index'), "Module Generator",
-            $module_path."/nordrassil/index", 4, "main_management");
+            $module_path."/nordrassil/index", 4, "main_management", NULL, "Nordrassil Module Generator");
 
         // add navigations
         $this->add_navigation($this->cms_complete_navigation_name('template'), "Generator Template",

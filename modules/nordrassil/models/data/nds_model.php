@@ -570,15 +570,60 @@ class Nds_Model extends CMS_Model{
     }
 
     public function before_delete_table($id){
+        // get current project_id & priority
+        $query = $this->db->select('project_id, priority')
+            ->from($this->cms_complete_table_name('table'))
+            ->where('table_id', $id)
+            ->get();
+        $row = $query->row();
+        $project_id = $row->project_id;
+        $priority   = $row->priority;
+        // adjust priority
+        $query = $this->db->select('table_id, priority')
+            ->from($this->cms_complete_table_name('table'))
+            ->where('project_id', $project_id)
+            ->where('priority >', $priority)
+            ->get();
+        foreach($query->result() as $row){
+            $table_id = $row->table_id;
+            $priority = $row->priority;
+            $data = array('priority' => $priority-1);
+            $where = array('table_id'=>$table_id);
+            $this->db->update($this->cms_complete_table_name('table'), $data, $where);
+        }
+        // delete all related column
         $query = $this->db->select('column_id')->from($this->cms_complete_table_name('column'))->where('table_id',$id)->get();
         foreach($query->result() as $row){
             $this->before_delete_column($row->column_id);
             $this->db->delete($this->cms_complete_table_name('column'),array('column_id'=>$row->column_id));
         }
+        // delete all related table option
         $this->db->delete($this->cms_complete_table_name('table_option'),array('table_id'=>$id));
     }
 
     public function before_delete_column($id){
+        // get current project_id & priority
+        $query = $this->db->select('table_id, priority')
+            ->from($this->cms_complete_table_name('column'))
+            ->where('column_id', $id)
+            ->get();
+        $row = $query->row();
+        $table_id = $row->table_id;
+        $priority   = $row->priority;
+        // adjust priority
+        $query = $this->db->select('column_id, priority')
+            ->from($this->cms_complete_table_name('column'))
+            ->where('table_id', $table_id)
+            ->where('priority >', $priority)
+            ->get();
+        foreach($query->result() as $row){
+            $column_id = $row->column_id;
+            $priority = $row->priority;
+            $data = array('priority' => $priority-1);
+            $where = array('column_id'=>$column_id);
+            $this->db->update($this->cms_complete_table_name('column'), $data, $where);
+        }
+        // delte column option
         $this->db->delete($this->cms_complete_table_name('column_option'),array('column_id'=>$id));
     }
 

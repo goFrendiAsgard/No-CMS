@@ -113,10 +113,9 @@ class grocery_CRUD_Generic_Model  extends grocery_CRUD_Model  {
         $this->db->select($select, false);
         $results = $this->db->get($this->table_name)->result();
 
-        /*
-        log_message('error', $this->db->last_query());
-        */
-
+        
+        //log_message('error', $this->db->last_query());
+        
         // add information from additional_fields
         for($i=0; $i<count($results); $i++){
             foreach($additional_fields as $alias=>$real_field){
