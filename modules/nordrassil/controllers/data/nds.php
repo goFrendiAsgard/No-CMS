@@ -384,7 +384,7 @@ class nds extends CMS_Controller {
         $crud->callback_before_delete(array($this, '_callback_table_before_delete'));
         $crud->callback_after_delete(array($this, '_callback_table_after_delete'));
 
-        $crud->callback_column($this->cms_complete_table_name('table').'.name',array($this,'_callback_column_table_name'));
+        $crud->callback_column('name',array($this,'_callback_column_table_name'));
         $crud->callback_column('columns',array($this,'_callback_column_table_columns'));
         $crud->callback_edit_field('columns',array($this,'_callback_edit_field_table_columns'));
         $crud->callback_column($this->unique_field_name('project_id'),array($this,'_callback_column_table_project_id'));

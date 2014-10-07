@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-beta';
+        $current_version = '0.7.0-stable-1';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -74,6 +74,28 @@ class CMS_Model extends CI_Model
                 }
             }
             $this->dbforge->add_column($table_name, $fields);
+
+            $changed_fields = array(
+                'navigation_name' => array(
+                    'name' => 'navigation_name',
+                    'type' => 'VARCHAR',
+                    'constraint' => 100,
+                    'null' => FALSE,
+                )
+            );
+            $this->dbforge->modify_column($table_name, $changed_fields);
+
+            // table : main_widget
+            $table_name = cms_table_name('main_widget');
+            $changed_fields = array(
+                'widget_name' => array(
+                    'name' => 'widget_name',
+                    'type' => 'VARCHAR',
+                    'constraint' => 100,
+                    'null' => FALSE,
+                )
+            );
+            $this->dbforge->modify_column($table_name, $changed_fields);
 
             // table : main_user
             $table_name = cms_table_name('main_user');

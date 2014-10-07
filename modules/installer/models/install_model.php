@@ -596,7 +596,7 @@ class Install_Model extends CI_Model{
         // WIDGET
         $fields = array(
                 'widget_id' => $type_primary_key,
-                'widget_name' => $type_varchar_small_strict,
+                'widget_name' => $type_varchar_large_strict,
                 'title' => $type_varchar_small,
                 'description' => $type_text,
                 'url' => $type_varchar_large,
@@ -612,7 +612,7 @@ class Install_Model extends CI_Model{
         // NAVIGATION
         $fields = array(
                 'navigation_id' => $type_primary_key,
-                'navigation_name' => $type_varchar_small_strict,
+                'navigation_name' => $type_varchar_large_strict,
                 'parent_id' => $type_foreign_key,
                 'title' => $type_varchar_small_strict,
                 'bootstrap_glyph' => $type_varchar_small,
