@@ -104,7 +104,9 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->set_relation('author_user_id', cms_table_name('main_user'), 'user_name');
+        if($state == 'list' || $state == 'ajax_list' || $state == 'export' || $state == 'print'){
+            $crud->set_relation('author_user_id', cms_table_name('main_user'), 'user_name');
+        }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here
@@ -125,7 +127,9 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->field_type( $field_name , $field_type, $value  );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->field_type('author_user_id', 'hidden');
+        if($state != 'list' && $state != 'ajax_list' && $state != 'print' && $state != 'export'){
+            $crud->field_type('author_user_id', 'hidden');
+        }
         $crud->field_type('date', 'hidden');
         $crud->field_type('allow_comment', 'true_false');
         $crud->unset_texteditor('description');

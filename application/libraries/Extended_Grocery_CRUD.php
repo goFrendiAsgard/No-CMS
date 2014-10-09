@@ -97,6 +97,53 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
          */
     }
 
+    /* Fix issue: http://www.grocerycrud.com/forums/topic/61-default-field-values-for-add-form/ */
+    protected function get_add_input_fields($field_values = null)
+    {
+        $fields = $this->get_add_fields();
+        $types  = $this->get_field_types();
+
+        $input_fields = array();
+
+        foreach($fields as $field_num => $field)
+        {
+            $field_info = $types[$field->field_name];
+
+            // added by gofrendi
+            $default_value = isset($field_info->default)? $field_info->default : null;
+            // modified by gofrendi
+            $field_value = !empty($field_values) && isset($field_values->{$field->field_name}) ? $field_values->{$field->field_name} : $default_value;
+
+            if(!isset($this->callback_add_field[$field->field_name]))
+            {
+                $field_input = $this->get_field_input($field_info, $field_value);
+            }
+            else
+            {
+                $field_input = $field_info;
+                $field_input->input = call_user_func($this->callback_add_field[$field->field_name], $field_value, null, $field_info);
+            }
+
+            switch ($field_info->crud_type) {
+                case 'invisible':
+                    unset($this->add_fields[$field_num]);
+                    unset($fields[$field_num]);
+                    continue;
+                break;
+                case 'hidden':
+                    $this->add_hidden_fields[] = $field_input;
+                    unset($this->add_fields[$field_num]);
+                    unset($fields[$field_num]);
+                    continue;
+                break;
+            }
+
+            $input_fields[$field->field_name] = $field_input;
+        }
+
+        return $input_fields;
+    }
+
     /**
      *
      * Load the language strings array from the language file
