@@ -3022,7 +3022,7 @@ class CMS_Model extends CI_Model
      * @return boolean success
      * @desc login/register by using third-party provider
      */
-    public function cms_third_party_login($provider)
+    public function cms_third_party_login($provider, $email = NULL)
     {
         // if provider not valid then exit
         $status = $this->cms_third_party_status();
@@ -3041,6 +3041,12 @@ class CMS_Model extends CI_Model
         } else { // no identifier match, register it to the database
             $third_party_email        = $status[$provider]['email'];
             $third_party_display_name = $status[$provider]['firstName'];
+            
+            // well, twitter sucks... it doesn't allow us to retrieve user's email
+            if($third_party_email === NULL){
+                $third_party_email = $email != NULL? $email : $new_user_name.'@unknown.com';
+            }
+
             // if email match with the database, set $user_id
             if ($user_id == FALSE) {
                 $query = $this->db->select('user_id')->from(cms_table_name('main_user'))->where('email', $third_party_email)->get();

@@ -180,3 +180,4 @@ v0.7.0
 + (done, tested) Now "one-to-many" can has "datetime"
 + (done, tested) Replace ":" with "_" for database backup file name
 + (done, tested) Fix subquery, add parantheses for search_where in `Extended_Grocery_CRUD.php`
++ (done, tested) Fix twitter authentication by ask email manually.

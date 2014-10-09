@@ -31,9 +31,9 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 		parent::initialize();
 
 		// Provider api end-points
-		$this->api->api_base_url  = "https://apis.live.net/v5.0/";
-		$this->api->authorize_url = "https://oauth.live.com/authorize";
-		$this->api->token_url     = 'https://oauth.live.com/token';
+		$this->api->api_base_url  = 'https://apis.live.net/v5.0/';
+		$this->api->authorize_url = 'https://login.live.com/oauth20_authorize.srf';
+		$this->api->token_url     = 'https://login.live.com/oauth20_token.srf';
 
 		$this->api->curl_authenticate_method  = "GET";
 	}
@@ -46,7 +46,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 		$data = $this->api->get( "me" ); 
 
 		if ( ! isset( $data->id ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
 		$this->user->profile->identifier    = (property_exists($data,'id'))?$data->id:"";
@@ -85,7 +85,7 @@ class Hybrid_Providers_Live extends Hybrid_Provider_Model_OAuth2
 			throw new Exception( 'User contacts request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
 
-		if ( ! $response->data && ( $response->error != 0 ) )
+		if ( !isset($response->data) || ( isset($response->errcode) &&  $response->errcode != 0 ) )
 		{
 			return array();
 		}

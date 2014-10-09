@@ -873,7 +873,7 @@ class Main extends CMS_Controller
         }
 
         $html  = '<a name="'.$row->navigation_id.'"></a>';
-        $html .= '<span>' .$value . ' (' . $row->title . ')</span>';
+        $html .= '<span>' .$value . '<br />(' . $row->title . ')</span>';
         $html .= '<input type="hidden" class="navigation_id' . $need_child . '" value="'.$row->navigation_id.'" /><br />';
         // active or not
         $target = site_url($this->cms_module_path() . '/toggle_navigation_active/' . $row->navigation_id);

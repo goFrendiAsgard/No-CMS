@@ -1,13 +1,15 @@
 <?php
 // http://oauth.googlecode.com/svn/code/php/OAuth.php
-// rev 1261,	Mar 29, 2011	morten.fangel
+// rev 1276,	July 4, 2014
 
 // vim: foldmethod=marker
 
 /* Generic exception class
  */
-class OAuthException extends Exception {
-  // pass
+if (!class_exists('OAuthException')) {
+  class OAuthException extends Exception {
+    // pass
+  }
 }
 
 class OAuthConsumer {
@@ -261,6 +263,9 @@ class OAuthRequest {
     $scheme = (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on")
               ? 'http'
               : 'https';
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+      $scheme = $_SERVER['HTTP_X_FORWARDED_PROTO'];
+    }
     $http_url = ($http_url) ? $http_url : $scheme .
                               '://' . $_SERVER['SERVER_NAME'] .
                               ':' .

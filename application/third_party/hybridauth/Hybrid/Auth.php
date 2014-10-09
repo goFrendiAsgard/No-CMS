@@ -1,8 +1,8 @@
 <?php
-/*!
+/**
 * HybridAuth
 * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
-* (c) 2009-2012, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+* (c) 2009-2014, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
 */
 
 /**
@@ -14,7 +14,7 @@
  */
 class Hybrid_Auth 
 {
-	public static $version = "2.1.0";
+	public static $version = "2.3.0-dev";
 
 	public static $config  = array();
 
@@ -68,9 +68,8 @@ class Hybrid_Auth
 
 		# load hybridauth required files, a autoload is on the way...
 		require_once $config["path_base"] . "Error.php";
+		require_once $config["path_base"] . "Exception.php";
 		require_once $config["path_base"] . "Logger.php";
-
-		require_once $config["path_base"] . "Storage.php";
 
 		require_once $config["path_base"] . "Provider_Adapter.php";
 
@@ -84,13 +83,17 @@ class Hybrid_Auth
 		require_once $config["path_base"] . "User_Contact.php";
 		require_once $config["path_base"] . "User_Activity.php";
 
+		if ( ! class_exists("Hybrid_Storage", false) ){
+			require_once $config["path_base"] . "Storage.php";
+        	}
+
 		// hash given config
 		Hybrid_Auth::$config = $config;
 
-		// instace of log mng
+		// instance of log mng
 		Hybrid_Auth::$logger = new Hybrid_Logger();
 
-		// instace of errors mng
+		// instance of errors mng
 		Hybrid_Auth::$error = new Hybrid_Error();
 
 		// start session storage mng
@@ -111,13 +114,7 @@ class Hybrid_Auth
 		if ( ! function_exists('json_decode') ) {
 			Hybrid_Logger::error('Hybridauth Library needs the JSON PHP extension.');
 			throw new Exception('Hybridauth Library needs the JSON PHP extension.');
-		}
-
-		// OAuth PECL extension is not compatible with this library
-		if( extension_loaded('oauth') ) {
-			Hybrid_Logger::error('Hybridauth Library not compatible with installed PECL OAuth extension. Please disable it.');
-			throw new Exception('Hybridauth Library not compatible with installed PECL OAuth extension. Please disable it.');
-		}
+		} 
 
 		// session.name
 		if( session_name() != "PHPSESSID" ){
@@ -167,7 +164,7 @@ class Hybrid_Auth
 	/**
 	* Hybrid storage system accessor
 	*
-	* Users sessions are stored using HybridAuth storage system ( HybridAuth 2.0 handle PHP Session only) and can be acessed directly by
+	* Users sessions are stored using HybridAuth storage system ( HybridAuth 2.0 handle PHP Session only) and can be accessed directly by
 	* Hybrid_Auth::storage()->get($key) to retrieves the data for the given key, or calling
 	* Hybrid_Auth::storage()->set($key, $value) to store the key => $value set.
 	*/
@@ -255,7 +252,7 @@ class Hybrid_Auth
 		if( ! $params ){ 
 			$params = Hybrid_Auth::storage()->get( "hauth_session.$providerId.id_provider_params" );
 			
-			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ), no params given. Trying to get the sotred for this provider.", $params );
+			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ), no params given. Trying to get the stored for this provider.", $params );
 		}
 
 		if( ! $params ){ 
@@ -264,11 +261,11 @@ class Hybrid_Auth
 			Hybrid_Logger::info( "Hybrid_Auth::setup( $providerId ), no stored params found for this provider. Initialize a new one for new session" );
 		}
 
-		if( ! isset( $params["hauth_return_to"] ) ){
+		if( is_array($params) && ! isset( $params["hauth_return_to"] ) ){
 			$params["hauth_return_to"] = Hybrid_Auth::getCurrentUrl(); 
-		}
 
-		Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ). HybridAuth Callback URL set to: ", $params["hauth_return_to"] );
+			Hybrid_Logger::debug( "Hybrid_Auth::setup( $providerId ). HybridAuth Callback URL set to: ", $params["hauth_return_to"] );
+		}
 
 		# instantiate a new IDProvider Adapter
 		$provider   = new Hybrid_Provider_Adapter();
@@ -389,14 +386,7 @@ class Hybrid_Auth
 			$protocol = 'http://';
 		}
 
-		$url = $protocol . $_SERVER['SERVER_NAME'];
-
-		// use port if non default
-		$url .= 
-			isset( $_SERVER['SERVER_PORT'] ) 
-			&&( ($protocol === 'http://' && $_SERVER['SERVER_PORT'] != 80) || ($protocol === 'https://' && $_SERVER['SERVER_PORT'] != 443) )
-			? ':' . $_SERVER['SERVER_PORT'] 
-			: '';
+		$url = $protocol . $_SERVER['HTTP_HOST'];
 
 		if( $request_uri ){
 			$url .= $_SERVER['REQUEST_URI'];

@@ -1411,9 +1411,9 @@ class CMS_Controller extends MX_Controller
      * @return boolean success
      * @desc login/register by using third-party provider
      */
-    public function cms_third_party_login($provider)
+    public function cms_third_party_login($provider, $email = NULL)
     {
-        return $this->No_CMS_Model->cms_third_party_login($provider);
+        return $this->No_CMS_Model->cms_third_party_login($provider, $email);
     }
 
     protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL,

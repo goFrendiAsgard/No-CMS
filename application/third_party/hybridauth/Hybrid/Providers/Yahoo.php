@@ -24,7 +24,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 		parent::initialize();
 
 		// Provider api end-points
-		$this->api->api_base_url      = 'http://social.yahooapis.com/v1/';
+		$this->api->api_base_url      = 'https://social.yahooapis.com/v1/';
 		$this->api->authorize_url     = 'https://api.login.yahoo.com/oauth/v2/request_auth';
 		$this->api->request_token_url = 'https://api.login.yahoo.com/oauth/v2/get_request_token';
 		$this->api->access_token_url  = 'https://api.login.yahoo.com/oauth/v2/get_token';
@@ -40,7 +40,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 		$response = $this->api->get( 'user/' . $userId . '/profile', $parameters ); 
 
 		if ( ! isset( $response->profile ) ){
-			throw new Exception( "User profile request failed! {$this->providerId} returned an invalide response.", 6 );
+			throw new Exception( "User profile request failed! {$this->providerId} returned an invalid response.", 6 );
 		}
 
 		$data = $response->profile;
@@ -101,7 +101,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 			throw new Exception( 'User contacts request failed! ' . $this->providerId . ' returned an error: ' . $this->errorMessageByStatus( $this->api->http_code ) );
 		}
 
-		if ( !$response->contacts->contact && ( $response->errcode != 0 ) )
+		if ( !isset($response->contacts) || !isset($response->contacts->contact) || ( isset($response->errcode) &&  $response->errcode != 0 ) )
 		{
 			return array();
 		}
@@ -218,6 +218,11 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 	function selectEmail( $v )
 	{
 		$s = $this->select($v, 'email');
+		if(empty($s)){
+			$s = $this->select($v, 'yahooid');
+			if(!empty($s) && isset($s->value) && strpos($s->value,"@")===FALSE)
+				$s->value .= "@yahoo.com";
+		}
 		return ($s)?$s->value:"";
 	}
 
@@ -229,7 +234,7 @@ class Hybrid_Providers_Yahoo extends Hybrid_Provider_Model_OAuth1
 		$response = $this->api->get( 'me/guid', $parameters );
 
 		if ( ! isset( $response->guid->value ) ){
-			throw new Exception( "User id request failed! {$this->providerId} returned an invalide response." );
+			throw new Exception( "User id request failed! {$this->providerId} returned an invalid response." );
 		}
 
 		return $response->guid->value;

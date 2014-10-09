@@ -77,7 +77,7 @@
             var child_id = 'child-' + navigation_id;
             var filler_id = 'filler-' + navigation_id;
             // make child
-            var html = '<tr id="'+child_id+'"><td style="padding-left:40px; padding-right:0px; border-top:0px;" colspan="2">No-Children</td></tr>';
+            var html = '<tr id="'+child_id+'"><td style="padding-left:25px; padding-right:0px; border-top:0px;" colspan="2">No-Children</td></tr>';
             $table.append(html);
             var $child = $('#'+child_id);
             // make filler
