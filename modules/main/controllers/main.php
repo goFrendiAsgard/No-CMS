@@ -1788,7 +1788,7 @@ class Main extends CMS_Controller
                                     // decrease the font
                                     var currentFontSize = $(".navbar-nav > li").css("font-size");
                                     var currentFontSizeNum = parseFloat(currentFontSize, 10);
-                                    var newFontSize = currentFontSizeNum * 0.8;
+                                    var newFontSize = currentFontSizeNum * 0.95;
                                     $(".navbar-nav > li").css("font-size", newFontSize);
                                 }
                             }
@@ -1799,7 +1799,7 @@ class Main extends CMS_Controller
                 // MAIN PROGRAM
                 $(document).ready(function(){
                     // override bootstrap default behavior on dropdown click
-                    $("a.dropdown-toggle span.anchor-text").on("click touchstart", function(){
+                    $("a.dropdown-toggle span.anchor-text").on("click touchstart", function(event){
                         if(event.stopPropagation){
                             event.stopPropagation();
                         }
