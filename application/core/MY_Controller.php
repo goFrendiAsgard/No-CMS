@@ -92,6 +92,16 @@ class CMS_Controller extends MX_Controller
 
     /**
      * @author goFrendiAsgard
+     * @param  string $hostname
+     * @param  int    $port
+     * @desc   is it able to go to some site?
+     */
+    public function cms_is_connect($hostname=NULL, $port=80){ 
+        return $this->No_CMS_Model->cms_is_connect($hostname, $port);
+    }
+
+    /**
+     * @author goFrendiAsgard
      * @return Grocery_CRUD
      * @desc   return Grocery_CRUD
      */
@@ -1024,7 +1034,11 @@ class CMS_Controller extends MX_Controller
             $this->template->append_metadata('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
 
             // always use grocerycrud's jquery for maximum compatibility
-            $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
+            if($this->cms_is_connect('google.com')){
+                $jquery_path = '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js';
+            }else{
+                $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
+            }
             $this->template->append_metadata('<script type="text/javascript" src="' . $jquery_path . '"></script>');
 
             // ckeditor adjustment thing
@@ -1050,26 +1064,28 @@ class CMS_Controller extends MX_Controller
                         }
                     }
                 });
-            },50000);';
+            },60000);';
             $login_code .= '</script>';
             $this->template->append_metadata($login_code);
 
-            // google analytic
-            $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
-            if (trim($analytic_property_id) != '') {
-                // create analytic code
-                $analytic_code  = '<script type="text/javascript"> ';
-                $analytic_code .= 'var _gaq = _gaq || []; ';
-                $analytic_code .= '_gaq.push([\'_setAccount\', \'' . $analytic_property_id . '\']); ';
-                $analytic_code .= '_gaq.push([\'_trackPageview\']); ';
-                $analytic_code .= '(function() { ';
-                $analytic_code .= 'var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true; ';
-                $analytic_code .= 'ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\'; ';
-                $analytic_code .= 'var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s); ';
-                $analytic_code .= '})(); ';
-                $analytic_code .= '</script>';
-                // add to the template
-                $this->template->append_metadata($analytic_code);
+            if($this->cms_is_connect('google-analytics.com')){
+                // google analytic
+                $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
+                if (trim($analytic_property_id) != '') {
+                    // create analytic code
+                    $analytic_code  = '<script type="text/javascript"> ';
+                    $analytic_code .= 'var _gaq = _gaq || []; ';
+                    $analytic_code .= '_gaq.push([\'_setAccount\', \'' . $analytic_property_id . '\']); ';
+                    $analytic_code .= '_gaq.push([\'_trackPageview\']); ';
+                    $analytic_code .= '(function() { ';
+                    $analytic_code .= 'var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true; ';
+                    $analytic_code .= 'ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\'; ';
+                    $analytic_code .= 'var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s); ';
+                    $analytic_code .= '})(); ';
+                    $analytic_code .= '</script>';
+                    // add to the template
+                    $this->template->append_metadata($analytic_code);
+                }
             }
 
             // add hack if exists

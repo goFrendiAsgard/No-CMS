@@ -418,6 +418,36 @@ class CMS_Model extends CI_Model
 
     /**
      * @author goFrendiAsgard
+     * @param  string $hostname
+     * @param  int    $port
+     * @desc   is it able to go to some site?
+     */
+    public function cms_is_connect($hostname=NULL, $port=80){        
+        $hostname = $hostname === NULL? 'google.com' : $hostname;
+        // return from session if we have look for it before
+        if($this->cms_ci_session('cms_connect_'.$hostname)){
+            // if last connect attempt is more than 60 seconds, try again
+            if(microtime(true) - $this->cms_ci_session('cms_last_contact_'.$hostname) > 60){
+                $this->cms_unset_ci_session('cms_connect_'.$hostname);
+                return $this->cms_is_connect($hostname, $port);
+            }
+            return $this->cms_ci_session('cms_connect_'.$hostname);
+        }
+        // we never look for it before, now look for it and save on session
+        $connected = @fsockopen($hostname, $port);
+        if ($connected){
+            $is_conn = true; //action when connected
+            fclose($connected);
+        }else{
+            $is_conn = false; //action in connection failure
+        }
+        $this->cms_ci_session('cms_connect_'.$hostname, $is_conn);
+        $this->cms_ci_session('cms_last_contact_'.$hostname, microtime(true));
+        return $is_conn;
+    }
+
+    /**
+     * @author goFrendiAsgard
      * @param  string $user_name
      * @return mixed
      * @desc   set or get CI_Session["cms_user_name"]
@@ -2465,19 +2495,26 @@ class CMS_Model extends CI_Model
         $config['bcc_batch_mode'] = (boolean) $this->cms_get_config('cms_email_bcc_batch_mode');
         $config['bcc_batch_size'] = (integer) $this->cms_get_config('cms_email_bcc_batch_size');
 
-        $message = $this->cms_parse_keyword($message);
+        $ssl = $this->email->smtp_crypto === 'ssl'? 'ssl://' : ''; 
+        // if protocol is (not smtp) or (is smtp and able to connect)
+        if($config['protocol'] != 'smtp' || ($config['protocol'] == 'smtp' && $this->cms_is_connect($ssl.$config['smtp_host'], $config['smtp_port']))){
+            $message = $this->cms_parse_keyword($message);
 
-        $this->email->initialize($config);
-        $this->email->from($from_address, $from_name);
-        $this->email->to($to_address);
-        $this->email->subject($subject);
-        $this->email->message($message);
-        try{
-            $success = $this->email->send();
-            log_message('debug', $this->email->print_debugger());
-        }catch(Error $error){
-            // do nothing
-            log_message('error', $this->email->print_debugger());
+            $this->email->initialize($config);
+            $this->email->from($from_address, $from_name);
+            $this->email->to($to_address);
+            $this->email->subject($subject);
+            $this->email->message($message);
+            try{
+                $success = $this->email->send();
+                log_message('debug', $this->email->print_debugger());
+            }catch(Error $error){
+                $success = FALSE;
+                log_message('error', $this->email->print_debugger());
+            }
+        }else{
+            $success = FALSE;
+            log_message('error', 'Connection to '.$ssl.$config['smtp_host'] . ':'. $config['smtp_port'].' is impossible');
         }
         return $success;
     }
