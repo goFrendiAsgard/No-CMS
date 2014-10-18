@@ -47,7 +47,7 @@ CKEDITOR.on( 'instanceReady', function( ev )
     writer.indentationChars = '    ';
 
     var dtd = CKEDITOR.dtd;
-    console.log(dtd);
+    //console.log(dtd);
 
     // Elements taken as an example are: block-level elements (div or p), list items (li, dd), and table elements (td, tbody).
     for ( var e in CKEDITOR.tools.extend( {}, dtd.$block, dtd.$listItem, dtd.$tableContent, dtd.$nonEditable ) )

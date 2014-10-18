@@ -1441,20 +1441,23 @@ class Main extends CMS_Controller
                             });
                         }
                     });
-
+                    
                     // when form submit, adjust ck editor
-                    $("form").submit(function(){
-                        for (instance in CKEDITOR.instances) {
-                            // ck_instance
-                            ck_instance = CKEDITOR.instances[instance];
-                            var name = CKEDITOR.instances[instance].name;
-                            var $original_textarea = $("textarea#"+name);
-                            var data = ck_instance.getData();
-                            content = data.replace(
-                                /(src=".*?)('.$save_base_url.')(.*?")/gi,
-                                "$1{{ base_url }}$3"
-                            );
-                            ck_instance.setData(content);
+                    $(document).ajaxSend(function(event, xhr, settings) {
+                        if(settings.url == $("#crudForm").attr("action")){
+                            for (instance in CKEDITOR.instances) {
+                                // ck_instance
+                                ck_instance = CKEDITOR.instances[instance];
+                                var name = CKEDITOR.instances[instance].name;
+                                var $original_textarea = $("textarea#"+name);
+                                var data = ck_instance.getData();
+                                content = data.replace(
+                                    /(src=".*?)('.$save_base_url.')(.*?")/gi,
+                                    "$1{{ base_url }}$3"
+                                );
+                                ck_instance.setData(content);
+                                $("#crudForm").submit();
+                            }
                         }
                     });
 

@@ -17,13 +17,11 @@ $(function(){
 
 	$('#save-and-go-back-button').click(function(){
 		save_and_close = true;
-
 		$('#crudForm').trigger('submit');
 	});
 
 	$('#crudForm').submit(function(){
 		var my_crud_form = $(this);
-
 		$(this).ajaxSubmit({
 			url: validation_url,
 			dataType: 'json',
