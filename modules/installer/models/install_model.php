@@ -671,6 +671,8 @@ class Install_Model extends CI_Model{
                 'auth_Live' => $type_varchar_large,
                 'language' => $type_varchar_small,
                 'theme' => $type_varchar_small,
+                'last_active'=>$type_varchar_small,
+                'login'=>$type_boolean_false,
             );
         $sql_list[] = $this->create_table('main_user',$fields);
 
@@ -1030,6 +1032,9 @@ class Install_Model extends CI_Model{
                 'advertisement');
         $sql_list[] = $this->insert_widget('navigation_right_partial', 'top navigation right partial', 'Right Partial of Top Navigation Bar. Use this when you want to add something like facebook login form', NULL,
                 1, 1, 18, 1, NULL,
+                NULL);
+        $sql_list[] = $this->insert_widget('online_user', 'Who\'s online', '', 'main/widget_online_user',
+                1, 1, 20, 0, NULL,
                 NULL);
         // privilege
         $sql_list[] = $this->insert_privilege('cms_install_module', 'Install Module', 'Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You\'d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)'.PHP_EOL.'&nbsp;', 4);

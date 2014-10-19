@@ -1473,6 +1473,26 @@ class Main extends CMS_Controller
         echo $ck_editor_adjust_script;
     }
 
+    public function widget_online_user(){
+        $this->view('main/main_widget_online_user');
+    }
+    public function widget_online_user_ajax(){
+        $query = $this->db->select('user_name')
+            ->from(cms_table_name('main_user'))
+            ->where('login', 1)
+            ->where('last_active >=', microtime(true)-70)
+            ->get();
+        $user_name_list = array();
+        foreach($query->result() as $row){
+            $user_name_list[] = $row->user_name;
+        }
+        if(count($user_name_list)>0){
+            echo implode(', ', $user_name_list);
+        }else{
+            echo 'No user online';
+        }
+    }
+
     public function widget_logout()
     {
         $data = array(

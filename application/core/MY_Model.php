@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-1';
+        $current_version = '0.7.0-stable-2';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -110,6 +110,18 @@ class CMS_Model extends CI_Model
                     'type' => 'VARCHAR',
                     'constraint' => '50',
                     'null' => TRUE,
+                ),
+                'last_active'=>array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '50',
+                    'null' => TRUE,
+                ),
+                'login'=>array(
+                    'type' => 'INT',
+                    'constraint' => 5,
+                    'unsigned' => TRUE,
+                    'default'=> 0,
+                    'null' => FALSE,
                 ),
             );
             $fields = array();
@@ -293,6 +305,30 @@ class CMS_Model extends CI_Model
                 }
             }
 
+            // widget online_user
+            $result = $this->db->select('widget_name')
+                ->from(cms_table_name('main_widget'))
+                ->where('widget_name', 'online_user')
+                ->get();
+            if($result->num_rows() == 0){
+                $result = $this->db->select_max('index')
+                    ->from(cms_table_name('main_widget'))
+                    ->get();
+                $row = $result->row();
+                $max_index = $row->index;
+                $max_index = is_numeric($max_index)? $max_index : 0;
+                $this->db->insert(cms_table_name('main_widget'), array(
+                    'widget_name ' => 'online_user',
+                    'title' => 'Who\'s online',
+                    'description' => 'NULL',
+                    'url' => 'main/widget_online_user',
+                    'authorization_id' => 1,
+                    'active' => 1,
+                    'index' => $max_index + 1,
+                    'is_static' => 0
+                ));
+            }
+
             // update module name
             $this->db->update(cms_table_name('main_module'), 
                 array('module_name'=>'gofrendi.noCMS.multisite'),
@@ -346,6 +382,8 @@ class CMS_Model extends CI_Model
         // seamless update
         $this->__update();
 
+        // extend user last active status
+        $this->__cms_extend_user_last_active($this->cms_user_id());
     }
 
     public function __destruct(){
@@ -1280,6 +1318,8 @@ class CMS_Model extends CI_Model
             $this->cms_user_id($user_id);
             $this->cms_user_real_name($user_real_name);
             $this->cms_user_email($user_email);
+            // save login status
+
             // needed by kcfinder
             if(!isset($_SESSION)){
                 session_start();
@@ -1287,9 +1327,20 @@ class CMS_Model extends CI_Model
             if(!isset($_SESSION['__cms_user_id'])){
                 $_SESSION['__cms_user_id'] = $user_id;
             }
+            $this->__cms_extend_user_last_active($user_id);
             return TRUE;
         }
         return FALSE;
+    }
+
+    private function __cms_extend_user_last_active($user_id){
+        if($user_id > 0){
+            $this->db->update(cms_table_name('main_user'),
+                array(
+                    'last_active'=>microtime(true),
+                    'login'=>1),
+                array('user_id'=>$user_id));
+        }
     }
 
     /**
@@ -1298,10 +1349,15 @@ class CMS_Model extends CI_Model
      */
     public function cms_do_logout()
     {
+        $this->db->update(cms_table_name('main_user'),
+            array('login'=>0),
+            array('user_id'=>$this->cms_user_id()));
+        
         $this->cms_unset_ci_session('cms_user_name');
         $this->cms_unset_ci_session('cms_user_id');
         $this->cms_unset_ci_session('cms_user_real_name');
         $this->cms_unset_ci_session('cms_user_email');
+        
         // needed by kcfinder
         if(isset($_SESSION)){
             session_unset('__cms_user_id');
