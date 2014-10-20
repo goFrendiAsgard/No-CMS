@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-3';
+        $current_version = '0.7.0-stable-4';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -130,6 +130,7 @@ class CMS_Model extends CI_Model
                     $fields[$key] = $value;
                 }
             }
+            $this->dbforge->add_column(cms_table_name('main_user'), $fields);
 
             // table : multisite_subsite
             if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
@@ -149,7 +150,9 @@ class CMS_Model extends CI_Model
                         $fields[$key] = $value;
                     }
                 }
+                $this->dbforge->add_column(cms_table_name('multisite_subsite'), $fields);
             }
+            
 
             $table_list = $this->db->list_tables();
             // add main-language-detail

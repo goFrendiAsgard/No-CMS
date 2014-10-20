@@ -1456,7 +1456,6 @@ class Main extends CMS_Controller
                                     "$1{{ base_url }}$3"
                                 );
                                 ck_instance.setData(content);
-                                $("#crudForm").submit();
                             }
                         }
                     });
