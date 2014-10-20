@@ -1034,7 +1034,10 @@ class Install_Model extends CI_Model{
                 1, 1, 18, 1, NULL,
                 NULL);
         $sql_list[] = $this->insert_widget('online_user', 'Who\'s online', '', 'main/widget_online_user',
-                1, 1, 20, 0, NULL,
+                1, 1, 19, 0, NULL,
+                NULL);
+        $sql_list[] = $this->insert_widget('fb_comment', 'Facebook Comments', '', '',
+                1, 1, 20, 1, '<div id="fb-root"></div>' . PHP_EOL . '<script>(function(d, s, id) {' . PHP_EOL . '  var js, fjs = d.getElementsByTagName(s)[0];' . PHP_EOL . '  if (d.getElementById(id)) return;' . PHP_EOL . '  js = d.createElement(s); js.id = id;' . PHP_EOL . '  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=278375612355057&version=v2.0";' . PHP_EOL . '  fjs.parentNode.insertBefore(js, fjs);' . PHP_EOL . '}(document, \'script\', \'facebook-jssdk\'));</script>' . PHP_EOL . '<div class="fb-comments" data-href="{{ site_url }}" data-numposts="5" data-colorscheme="light" width="100%"></div>',
                 NULL);
         // privilege
         $sql_list[] = $this->insert_privilege('cms_install_module', 'Install Module', 'Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You\'d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)'.PHP_EOL.'&nbsp;', 4);

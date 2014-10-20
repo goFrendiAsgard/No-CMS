@@ -172,7 +172,7 @@ class Install extends CMS_Module_Installer {
 
         $this->add_widget($this->cms_complete_navigation_name('newest_article'), 'Newest Articles',
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/newest','sidebar');
-        $this->add_widget($this->cms_complete_navigation_name('article_category'), 'Categories',
+        $this->add_widget($this->cms_complete_navigation_name('article_category'), 'Article Categories',
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
         $this->add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
             $this->PRIV_EVERYONE, $module_path);

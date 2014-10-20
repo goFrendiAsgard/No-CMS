@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-2';
+        $current_version = '0.7.0-stable-3';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -326,6 +326,30 @@ class CMS_Model extends CI_Model
                     'active' => 1,
                     'index' => $max_index + 1,
                     'is_static' => 0
+                ));
+            }
+
+            // widget fb_comment
+            $result = $this->db->select('widget_name')
+                ->from(cms_table_name('main_widget'))
+                ->where('widget_name', 'fb_comment')
+                ->get();
+            if($result->num_rows() == 0){
+                $result = $this->db->select_max('index')
+                    ->from(cms_table_name('main_widget'))
+                    ->get();
+                $row = $result->row();
+                $max_index = $row->index;
+                $max_index = is_numeric($max_index)? $max_index : 0;
+                $this->db->insert(cms_table_name('main_widget'), array(
+                    'widget_name ' => 'fb_comment',
+                    'title' => 'Facebook Comments',
+                    'description' => 'NULL',
+                    'static_content' => '<div id="fb-root"></div>' . PHP_EOL . '<script>(function(d, s, id) {' . PHP_EOL . '  var js, fjs = d.getElementsByTagName(s)[0];' . PHP_EOL . '  if (d.getElementById(id)) return;' . PHP_EOL . '  js = d.createElement(s); js.id = id;' . PHP_EOL . '  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=278375612355057&version=v2.0";' . PHP_EOL . '  fjs.parentNode.insertBefore(js, fjs);' . PHP_EOL . '}(document, \'script\', \'facebook-jssdk\'));</script>' . PHP_EOL . '<div class="fb-comments" data-href="{{ site_url }}" data-numposts="5" data-colorscheme="light" width="100%"></div>',
+                    'authorization_id' => 1,
+                    'active' => 1,
+                    'index' => $max_index + 1,
+                    'is_static' => 1
                 ));
             }
 
