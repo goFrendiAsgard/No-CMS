@@ -1407,7 +1407,7 @@ class Main extends CMS_Controller
                 if (typeof(CKEDITOR) != "undefined"){
                     function __adjust_ck_editor(){
                         for (instance in CKEDITOR.instances) {
-                            // ck_instance
+                            /* ck_instance */
                             ck_instance = CKEDITOR.instances[instance];
                             var name = CKEDITOR.instances[instance].name;
                             var $ck_textarea = $("#cke_"+name+" textarea");
@@ -1430,11 +1430,11 @@ class Main extends CMS_Controller
                         }
                     }
 
-                    // when instance ready & form submit, adjust ck editor
+                    /* when instance ready & form submit, adjust ck editor */
                     CKEDITOR.on("instanceReady", function(){
                         __adjust_ck_editor();
                         for (instance in CKEDITOR.instances) {
-                            // ck_instance
+                            /* ck_instance */
                             ck_instance = CKEDITOR.instances[instance];
                             ck_instance.on("mode", function(){
                                 __adjust_ck_editor();
@@ -1442,11 +1442,11 @@ class Main extends CMS_Controller
                         }
                     });
                     
-                    // when form submit, adjust ck editor
+                    /* when form submit, adjust ck editor */
                     $(document).ajaxSend(function(event, xhr, settings) {
                         if(settings.url == $("#crudForm").attr("action")){
                             for (instance in CKEDITOR.instances) {
-                                // ck_instance
+                                /* ck_instance */
                                 ck_instance = CKEDITOR.instances[instance];
                                 var name = CKEDITOR.instances[instance].name;
                                 var $original_textarea = $("textarea#"+name);
@@ -1468,8 +1468,11 @@ class Main extends CMS_Controller
                 }
             });
         ';
-        $this->output->set_content_type('application/javascript');
-        echo $ck_editor_adjust_script;
+        $content = str_replace(array(PHP_EOL, '    '), array('',''), $ck_editor_adjust_script);
+        $this->output->set_content_type('application/javascript')
+            ->set_header('Cache-Control:max-age=2592000')
+            ->set_header('Expires:Fri, 30 Oct 2037 11:32:29 GMT')
+            ->set_output($content);
     }
 
     public function widget_online_user(){
