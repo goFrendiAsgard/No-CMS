@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-4';
+        $current_version = '0.7.0-stable-5';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -281,6 +281,18 @@ class CMS_Model extends CI_Model
                     'description' => 'Default subsite homepage content'
                 ));
             }
+            // new configuration, cms_internet_connectivity
+            $exists = $this->db->select('config_name')
+                ->from(cms_table_name('main_config'))
+                ->where('config_name','cms_internet_connectivity')
+                ->get()->num_rows() > 0;
+            if(!$exists){
+                $this->db->insert(cms_table_name('main_config'),array(
+                    'config_name' => 'cms_internet_connectivity',
+                    'value' => 'UNKNOWN',
+                    'description' => 'Is the server connected to the internet?'
+                ));
+            }
 
             // blog widget
             if($this->cms_is_module_active('gofrendi.noCMS.blog')){
@@ -487,7 +499,12 @@ class CMS_Model extends CI_Model
      * @param  int    $port
      * @desc   is it able to go to some site?
      */
-    public function cms_is_connect($hostname=NULL, $port=80){        
+    public function cms_is_connect($hostname=NULL, $port=80){
+        if($this->cms_get_config('cms_internet_connectivity') === 'ONLINE'){
+            return TRUE;
+        }else if($this->cms_get_config('cms_internet_connectivity') === 'OFFLINE'){
+            return FALSE;
+        }
         $hostname = $hostname === NULL? 'google.com' : $hostname;
         // return from session if we have look for it before
         if($this->cms_ci_session('cms_connect_'.$hostname)){
@@ -505,6 +522,17 @@ class CMS_Model extends CI_Model
             fclose($connected);
         }else{
             $is_conn = false; //action in connection failure
+        }
+        // get hostname
+        $host_name = explode(':',$_SERVER['HTTP_HOST']);
+        $host_name = $host_name[0];
+        // if hostname is not localhost, change the UNKNOWN cms_internet_connectivity into ONLINE or OFFLINE
+        if($host_name != 'localhost' && $host_name != '127.0.0.1'){
+            if($is_conn){
+                $this->cms_set_config('cms_internet_connectivity', 'ONLINE');
+            }else{
+                $this->cms_set_config('cms_internet_connectivity', 'OFFLINE');
+            }
         }
         $this->cms_ci_session('cms_connect_'.$hostname, $is_conn);
         $this->cms_ci_session('cms_last_contact_'.$hostname, microtime(true));

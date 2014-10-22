@@ -655,6 +655,6 @@ FileETag None
 # Enable if you serve a lot of static content but, be aware of the
 # possible disadvantages!
 
-# <IfModule mod_headers.c>
-#    Header set Connection Keep-Alive
-# </IfModule>
+<IfModule mod_headers.c>
+   Header set Connection Keep-Alive
+</IfModule>

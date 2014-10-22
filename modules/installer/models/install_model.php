@@ -1084,6 +1084,7 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_config('cms_add_subsite_on_register', 'FALSE', 'Automatically create subsite on register');
         $sql_list[] = $this->insert_config('cms_subsite_use_subdomain','FALSE','Automatically use subdomain');
         $sql_list[] = $this->insert_config('cms_subsite_home_content','{{ widget_name:blog_content }}','Default subsite homepage content');
+        $sql_list[] = $this->insert_config('cms_internet_connectivity','UNKNOWN','Is the server connected to the internet?');
         // group user
         $sql_list[] = $this->insert_group_user();
 

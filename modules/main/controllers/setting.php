@@ -40,7 +40,8 @@ class Setting extends CMS_Controller{
                 'cms_email_reply_address', 'cms_email_reply_name', 'cms_email_forgot_subject',
                 'cms_email_forgot_message', 'cms_email_signup_subject', 'cms_email_signup_message',
                 'cms_email_useragent', 'cms_email_mailpath', 'cms_email_smtp_host', 'cms_email_smtp_user',
-                'cms_email_smtp_pass', 'cms_email_smtp_port', 'cms_email_smtp_timeout','cms_google_analytic_property_id',
+                'cms_email_smtp_pass', 'cms_email_smtp_port', 'cms_email_smtp_timeout',
+                'cms_google_analytic_property_id','cms_internet_connectivity'
             );
             // only for non-subsite
             if(CMS_SUBSITE == ''){

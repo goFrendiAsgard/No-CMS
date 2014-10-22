@@ -152,6 +152,21 @@
                         </div>
                 <?php } ?>
                 <div class="form-group">
+                    <label class="control-label col-md-4" for="cms_internet_connectivity">Internet Connectivity</label>
+                    <div class="controls col-md-8">
+                        <select type="text" id="cms_internet_connectivity" name="cms_internet_connectivity" class="form-control">
+                        <?php
+                            $option_list = array('UNKNOWN'=>'Unknown Connectivity', 'ONLINE'=>'Always Online (Use this for real website)', 'OFFLINE'=>'Always Offline (Only use this if you are sure)');
+                            foreach($option_list as $key=>$value){
+                                $selected = $config_list['cms_internet_connectivity'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Email Protocol</p>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="control-label col-md-4" for="cms_email_protocol">Email Protocol</label>
                     <div class="controls col-md-8">
                         <select type="text" id="cms_email_protocol" name="cms_email_protocol" class="form-control">
