@@ -932,14 +932,23 @@ class CMS_Model extends CI_Model
                 } else {
                     $url = trim_slashes($url);
                     $url_segment = explode('/', $url);
-                    $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
-                    $_REQUEST['__cms_dynamic_widget_module'] = $url_segment[0];
-                    $response = @Modules::run($url);
-                    if(strlen($response) == 0){
-                        $response = @Modules::run($url.'/index');
+                    $module_path = $url_segment[0];
+                    $response = '';
+                    // look if module installed
+                    $query = $this->db->select('module_id, module_name')
+                        ->from(cms_table_name('main_module'))
+                        ->where('module_path', $module_path)
+                        ->get();
+                    if($module_path == 'main' || $query->num_rows()>0){
+                        $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
+                        $_REQUEST['__cms_dynamic_widget_module'] = $module_path;
+                        $response = @Modules::run($url);
+                        if(strlen($response) == 0){
+                            $response = @Modules::run($url.'/index');
+                        }
+                        unset($_REQUEST['__cms_dynamic_widget']);
+                        unset($_REQUEST['__cms_dynamic_widget_module']);
                     }
-                    unset($_REQUEST['__cms_dynamic_widget']);
-                    unset($_REQUEST['__cms_dynamic_widget_module']);
                     // fallback, Modules::run failed, use AJAX instead
                     if(strlen($response)==0){
                         $response = '<script type="text/javascript">';
@@ -973,6 +982,30 @@ class CMS_Model extends CI_Model
 
         }
         return $result;
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @return  string
+     * @desc    return url of navigation
+     */
+    public function cms_navigation_url($navigation_name)
+    {
+        $query = $this->db->select('navigation_name, url')
+            ->from(cms_table_name('main_navigation'))
+            ->get();
+        if($query->num_rows() > 0){
+            $row = $query->row();
+            $url = $row->url;
+            if($url == '' || $url === NULL){
+                $navigation_name = $row->navigation_name;
+                $url = 'main/static_page/'.$navigation_name; 
+            }
+            return $url;
+        }else{
+            return '';
+        }
     }
 
     /**

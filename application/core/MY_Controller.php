@@ -34,7 +34,7 @@ class CMS_Controller extends MX_Controller
                 ->where('module_path', $module_path)
                 ->get();
             if($query->num_rows() <= 0){
-                die('Module is not installed');
+                die('Module '.$module_path.' is not installed');
             }
         }
     }
@@ -337,6 +337,17 @@ class CMS_Controller extends MX_Controller
     public function cms_widgets($slug = NULL, $widget_name = NULL)
     {
         return $this->No_CMS_Model->cms_widgets($slug, $widget_name);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @return  string
+     * @desc    return url of navigation
+     */
+    public function cms_navigation_url($navigation_name)
+    {
+        return $this->No_CMS_Model->cms_navigation_url($navigation_name);
     }
 
     /**
@@ -683,8 +694,9 @@ class CMS_Controller extends MX_Controller
             }
         }
 
-        if ($this->cms_allow_navigate('main_login') && ($uriString != 'main/login')) {
-            redirect('main/login','refresh');
+        $login_url = $this->cms_navigation_url('main_login');
+        if ($this->cms_allow_navigate('main_login') && ($uriString != $login_url)) {
+            redirect($login_url,'refresh');
         } else {
             $navigation_name = $this->cms_navigation_name($this->router->default_controller);
             if (!isset($navigation_name)) {
@@ -1988,7 +2000,8 @@ class CMS_Module_Installer extends CMS_Controller
         if($silent){
             $this->cms_show_json($result);
         } else if($result['success']) {
-            redirect('main/module_management','refresh');
+            $module_management_url = $this->cms_navigation_url('main_module_management');
+            redirect($module_management_url,'refresh');
         } else {
             $this->view('main/main_module_activation_error', $result, 'main_module_management');
         }
@@ -2050,7 +2063,8 @@ class CMS_Module_Installer extends CMS_Controller
         $result['message'] = ul($result['message']);
 
         if($result['success']) {
-            redirect('main/module_management','refresh');
+            $module_management_url = $this->cms_navigation_url('main_module_management');
+            redirect($module_management_url,'refresh');
         } else {
             $this->view('main/main_module_deactivation_error', $result, 'main_module_management');
         }
@@ -2104,14 +2118,16 @@ class CMS_Module_Installer extends CMS_Controller
         $result['message'] = ul($result['message']);
 
         if($result['success']) {
-            redirect('main/module_management','refresh');
+            $module_management_url = $this->cms_navigation_url('main_module_management');
+            redirect($module_management_url,'refresh');
         } else {
             $this->view('main/module_upgrade_error', $result, 'main_module_management');
         }
     }
 
     public function setting(){
-        $data['cms_content'] = '<p>Setting is not available</p>'.anchor(site_url('main/module_management'),'Back');
+        $module_management_url = $this->cms_navigation_url('main_module_management');
+        $data['cms_content'] = '<p>Setting is not available</p>'.anchor(site_url($module_management_url),'Back');
         $this->view('CMS_View',$data,'main_module_management');
     }
 
