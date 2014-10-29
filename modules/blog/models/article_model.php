@@ -8,6 +8,24 @@
 class Article_Model extends  CMS_Model{
     public $page_break_separator = '';
 
+    public function get_archive(){
+        $query = $this->db->select('date')
+            ->from($this->cms_complete_table_name('article'))
+            ->get();
+        $data = array();
+        foreach($query->result() as $row){
+            $str = substr($row->date, 0, 7);
+            if(!in_array($str, $data)){
+                $data[] = $str;
+            }
+        }
+        $return = array();
+        foreach($data as $year_month){
+            $return[$year_month] = date('F Y', strtotime($year_month.'-01 00:00:00'));
+        }
+        return $return;
+    }
+
 	public function get_data($keyword, $page=0){
 		$limit = 10;
 		$query = $this->db->select('article.article_id, article.article_title,
@@ -107,7 +125,7 @@ class Article_Model extends  CMS_Model{
         }
     }
 
-    public function get_articles($page, $limit, $category, $search){
+    public function get_articles($page, $limit, $category, $archive, $search){
         $words = $search? explode(' ', $search) : array();
 
         $data = array();
@@ -142,7 +160,8 @@ class Article_Model extends  CMS_Model{
                 " ON (".cms_table_name('main_user').".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
             WHERE
                 $where_category AND
-                $where_search
+                $where_search AND 
+                date LIKE '$archive%'
             ORDER BY date DESC, article_id DESC
             LIMIT $limit OFFSET $offset";
 

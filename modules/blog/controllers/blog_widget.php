@@ -24,4 +24,11 @@ class Blog_Widget extends CMS_Controller {
         $data['module_path'] = $this->cms_module_path();
         $this->view($this->cms_module_path().'/widget_category', $data);
     }
+
+    public function archive(){
+        $data = array();
+        $data['archives'] = $this->article_model->get_archive();
+        $data['module_path'] = $this->cms_module_path();
+        $this->view($this->cms_module_path().'/widget_archive', $data);
+    }
 }

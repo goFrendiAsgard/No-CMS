@@ -271,7 +271,8 @@ class Main extends CMS_Controller
                     $this->cms_activate_account($activation_code, $password);
                     redirect('','refresh');
                 } else {
-                    redirect('main/forgot','refresh');
+                    $main_forgot_url = $this->cms_navigation_url('main_forgot');
+                    redirect($main_forgot_url,'refresh');
                 }
             } else {
                 $data = array(

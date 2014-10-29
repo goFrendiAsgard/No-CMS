@@ -83,6 +83,7 @@ class Blog extends CMS_Priv_Strict_Controller {
             'backend_url' => site_url($this->cms_module_path().'/manage_article/index'),
             'categories'=>$this->article_model->get_available_category(),
             'chosen_category' => $this->input->get('category'),
+            'archive' => $this->input->get('archive'),
             'keyword' => $this->input->get('keyword'),
             'module_path' => $this->cms_module_path(),
             'is_user_login' => $this->cms_user_id()>0,
@@ -123,14 +124,16 @@ class Blog extends CMS_Priv_Strict_Controller {
         $keyword = $this->input->post('keyword');
         $page = $this->input->post('page');
         $category = $this->input->post('category');
+        $archive = $this->input->post('archive');
         if(!$keyword) $keyword = '';
         if(!$page) $page = 0;
         if(!$category) $category = '';
+        if(!$archive) $archive = '';
         $limit = 5;
         // get data from model
         $this->load->model($this->cms_module_path().'/article_model');
         $this->Article_Model = new Article_Model();
-        $result = $this->Article_Model->get_articles($page, $limit, $category, $keyword);;
+        $result = $this->Article_Model->get_articles($page, $limit, $category, $archive, $keyword);;
         $data = array(
             'articles'=>$result,
             'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article')),

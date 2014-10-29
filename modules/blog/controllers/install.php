@@ -12,7 +12,7 @@ class Install extends CMS_Module_Installer {
     protected $DEPENDENCIES = array();
     protected $NAME         = 'gofrendi.noCMS.blog';
     protected $DESCRIPTION  = 'Write articles, upload photos, allow visitors to give comments, rule the world...';
-    protected $VERSION      = '0.0.1';
+    protected $VERSION      = '0.0.2';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -79,6 +79,16 @@ class Install extends CMS_Module_Installer {
         $this->db->update($table_name,
             array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'),
             array('navigation_name' => $navigation_name));
+
+        // add widget archive
+        $query = $this->db->select('widget_name')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $this->cms_complete_navigation_name('archive'))
+            ->get();
+        if($query->num_rows()>0){
+            $this->add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
+            $this->PRIV_EVERYONE, $module_path.'/blog_widget/archive', 'sidebar');
+        }
     }
 
     // OVERRIDE THIS FUNCTION TO PROVIDE "Module Setting" FEATURE
@@ -117,6 +127,7 @@ class Install extends CMS_Module_Installer {
         $this->remove_widget($this->cms_complete_navigation_name('newest_article'));
         $this->remove_widget($this->cms_complete_navigation_name('article_category'));
         $this->remove_widget($this->cms_complete_navigation_name('content'));
+        $this->remove_widget($this->cms_complete_navigation_name('archive'));
 
         // remove quicklinks
         $this->remove_quicklink($this->cms_complete_navigation_name('index'));
@@ -176,6 +187,8 @@ class Install extends CMS_Module_Installer {
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
         $this->add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
             $this->PRIV_EVERYONE, $module_path);
+        $this->add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
+            $this->PRIV_EVERYONE, $module_path.'/blog_widget/archive', 'sidebar');
 
 
         // import install.sql

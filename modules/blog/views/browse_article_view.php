@@ -247,6 +247,7 @@
             'async': async,
             'data' : {
                 'category' : category,
+                'archive' : '<?=isset($_GET["archive"])? $_GET["archive"] : ""?>',
                 'keyword' : keyword,
                 'page' : PAGE,
             },
