@@ -90,6 +90,23 @@ class CMS_Controller extends MX_Controller
         if(false) $this->No_CMS_Model = new No_CMS_Model();
     }
 
+    /** 
+     * @author goFrendiAsgard
+     * @desc   get default_controller
+     */
+    public function cms_get_default_controller(){
+        return $this->No_CMS_Model->cms_get_default_controller();
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @param  string $value
+     * @desc   set default_controller to value
+     */
+    public function cms_set_default_controller($value){
+        $this->No_CMS_Model->cms_set_default_controller($value);
+    }
+
     /**
      * @author goFrendiAsgard
      * @param  string $hostname

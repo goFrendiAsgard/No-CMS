@@ -98,6 +98,14 @@
                 </div>
 
                 <div class="form-group">
+                      <label class="control-label col-md-4" for="default_controller">Default Controller</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="default_controller" name="default_controller" value="<?php echo $default_controller ?>" class="form-control">
+                          <p class="help-block">Default Controller, default value: main. Leave it as is, unless you are familiar with CodeIgniter routing and know it well.</p>
+                      </div>
+                </div>
+
+                <div class="form-group">
                     <label class="control-label col-md-4" for="cms_signup_activation">User Activation</label>
                     <div class="controls col-md-8">
                         <select id="cms_signup_activation" name="cms_signup_activation" class="form-control">

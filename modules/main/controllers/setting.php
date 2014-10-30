@@ -13,15 +13,15 @@ class Setting extends CMS_Controller{
         if(isset($_FILES['site_logo'])){
             $site_logo = $_FILES['site_logo'];
             if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != ''){
-                move_uploaded_file($site_logo['tmp_name'], BASEPATH.'../assets/nocms/images/custom_logo/'.$site_logo['name']);
-                $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.$site_logo['name']);
+                move_uploaded_file($site_logo['tmp_name'], BASEPATH.'../assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
+                $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
             }
         }
         if(isset($_FILES['site_favicon'])){
             $site_favicon = $_FILES['site_favicon'];
             if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != ''){
-                move_uploaded_file($site_favicon['tmp_name'], BASEPATH.'../assets/nocms/images/custom_favicon/'.$site_favicon['name']);
-                $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.$site_favicon['name']);
+                move_uploaded_file($site_favicon['tmp_name'], BASEPATH.'../assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
+                $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
             }
         }
         if(count($_POST)>0){
@@ -53,6 +53,7 @@ class Setting extends CMS_Controller{
                 $this->cms_set_config($configuration, $this->input->post($configuration));
             }
             $this->cms_language($this->input->post('site_language'));
+            $this->cms_set_default_controller($this->input->post('default_controller'));
 
         }
         // widgets
@@ -93,6 +94,7 @@ class Setting extends CMS_Controller{
             $layout_list[] = $file;
         }
 
+        $default_controller = $this->cms_get_default_controller();
 
         // send to the view
         $data['normal_widget_list'] = $normal_widget_list;
@@ -101,6 +103,7 @@ class Setting extends CMS_Controller{
         $data['config_list'] = $config_list;
         $data['layout_list'] = $layout_list;
         $data['current_language'] = $this->cms_get_config('site_language', True);
+        $data['default_controller'] = $default_controller;
         $this->view('setting_index', $data, 'main_setting');
     }
 }

@@ -493,6 +493,55 @@ class CMS_Model extends CI_Model
         unset($this->__cms_model_properties['session'][$key]);
     }
 
+    /** 
+     * @author goFrendiAsgard
+     * @desc   get default_controller
+     */
+    public function cms_get_default_controller(){
+        if(CMS_SUBSITE == ''){
+            include(APPPATH.'config/routes.php');
+        }else{
+            include(APPPATH.'config/site-'.CMS_SUBSITE.'/routes.php');
+        }
+        return $route['default_controller'];
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @param  string $value
+     * @desc   set default_controller to value
+     */
+    public function cms_set_default_controller($value){
+        $pattern = array();
+        $pattern[] = '/(\$route\[(\'|")default_controller(\'|")\] *= *")(.*?)(";)/si';
+        $pattern[] = "/(".'\$'."route\[('|\")default_controller('|\")\] *= *')(.*?)(';)/si";
+        if(CMS_SUBSITE == ''){
+            $file_name = APPPATH.'config/routes.php';
+        }else{
+            $file_name = APPPATH.'config/site-'.CMS_SUBSITE.'/routes.php';
+        }
+        $str = file_get_contents($file_name);
+        $replacement = '${1}'.addslashes($value).'${5}';
+        $found = FALSE;
+        foreach($pattern as $single_pattern){
+            if(preg_match($single_pattern,$str)){
+                $found = TRUE;
+                break;
+            }
+        }
+        if(!$found){
+            $str .= PHP_EOL.'$route[\'default_controller\'] = \''.addslashes($value).'\';';
+        }
+        else{
+            $str = preg_replace($pattern, $replacement, $str);
+        }
+        @chmod($file_name,0777);
+        if(strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
+            @file_put_contents($file_name, $str, LOCK_EX);
+            @chmod($file_name,0555);
+        }
+    }
+
     /**
      * @author goFrendiAsgard
      * @param  string $hostname
