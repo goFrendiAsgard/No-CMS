@@ -19,7 +19,7 @@ echo preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', '__ommit_nbs
 ?&gt;
 <?php
     if($make_frontpage){
-        echo '<a class="btn btn-primary" href="{{ site_url }}{{ module_path }}/'.$front_controller_import_name.'/index">Show Front Page</a>';
+        echo '<a class="btn btn-primary" href="{{ site_url }}{{ module_path }}/'.$front_controller_import_name.'/index">{{ language:Show Front Page }}</a>';
     }
 ?>
 <script type="text/javascript">
@@ -27,7 +27,7 @@ echo preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', '__ommit_nbs
 
         //ADD COMPONENTS
         if($('.pDiv2 .delete_all_button').length == 0 && $('#flex1 tbody td .delete-row').length != 0) { //check if element already exists (for ajax refresh purposes)
-            $('.pDiv2').prepend('<div class="pGroup"><a class="delete_all_button btn btn-default" href="#"><i class="glyphicon glyphicon-remove"></i> Delete Selected</a></div>');
+            $('.pDiv2').prepend('<div class="pGroup"><a class="delete_all_button btn btn-default" href="#"><i class="glyphicon glyphicon-remove"></i> {{ language:Delete Selected }}</a></div>');
         }
         if($('#flex1 thead td .checkall').length == 0 && $('#flex1 tbody td .delete-row').length != 0){
             $('#flex1 thead tr').prepend('<td><input type="checkbox" class="checkall" /></td>');
@@ -58,7 +58,7 @@ echo preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', '__ommit_nbs
                 //remove selection rows
                 $('#flex1 tr[rowId="' + list[i] + '"]').remove();
             }
-            alert('Selected row deleted');
+            alert('{{ language:Selected row deleted }}');
         });
     });
 

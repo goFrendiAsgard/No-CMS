@@ -1,8 +1,9 @@
 <?php
     $record_index = 0;
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS); ?>" />
 <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/jquery.ui.datetime.css'); ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/jquery-ui-timepicker-addon.css'); ?>" />
 <style type="text/css">
     #md_table_citizen input[type="text"]{
         max-width:100px;
@@ -40,7 +41,6 @@
     <input id="md_real_field_citizen_col" name="md_real_field_citizen_col" type="hidden" />
 </div>
 
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?>"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?>"></script>
@@ -103,10 +103,11 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         var field_value = '';
         if(typeof(value) != 'undefined' && value.hasOwnProperty('birthdate')){
-          field_value = php_datetime_to_js(value.birthdate);
+          field_value = php_date_to_js(value.birthdate);
         }
         component += '<td>';
-        component += '<input id="md_field_citizen_col_birthdate_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col datetime-input" column_name="birthdate" type="text" value="'+field_value+'"/>';
+        component += '<input id="md_field_citizen_col_birthdate_'+RECORD_INDEX_citizen+'" record_index="'+RECORD_INDEX_citizen+'" class="md_field_citizen_col datepicker-input" column_name="birthdate" type="text" value="'+field_value+'"/>';
+        component += '<a href="#" class="datepicker-input-clear btn">Clear</a>';
         component += '</td>';
 
 

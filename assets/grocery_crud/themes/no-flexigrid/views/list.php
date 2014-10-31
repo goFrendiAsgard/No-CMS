@@ -11,7 +11,7 @@
                 <th width='<?php echo $column_width?>%'>
                     <div class="text-left field-sorting <?php if(isset($order_by[0]) &&  $column->field_name == $order_by[0]){?><?php echo $order_by[1]?><?php }?>"
                         rel='<?php echo $column->field_name?>'>
-                        <?php echo $column->display_as?>
+                        {{ language:<?php echo $column->display_as?> }}
                     </div>
                 </th>
                 <?php }?>

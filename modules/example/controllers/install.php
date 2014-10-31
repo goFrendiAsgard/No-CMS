@@ -210,7 +210,7 @@ class Install extends CMS_Module_Installer {
             'citizen_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
             'city_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
             'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
-            'birthdate'=> array("type"=>'datetime', "null"=>TRUE),
+            'birthdate'=> array("type"=>'date', "null"=>TRUE),
             'job_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
             'hobby'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
         );

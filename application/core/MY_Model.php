@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-5';
+        $current_version = '0.7.0-stable-6';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -167,12 +167,18 @@ class CMS_Model extends CI_Model
                 $this->dbforge->add_key('detail_language_id', TRUE);
                 $this->dbforge->create_table(cms_table_name('main_detail_language'));
             }
+            // change main_language structure
+            $fields = array(
+                    'key' => array('name' => 'key','type' => 'TEXT'),
+                    'translation' => array('name' => 'translation','type' => 'TEXT'),
+            );
+            $this->dbforge->modify_column(cms_table_name('main_detail_language'), $fields);
 
             // add main_language
             if(! in_array(cms_table_name('main_language'), $table_list)){
                 $fields = array(
                     'language_id'=> array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE,),
-                    'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
+                    'name'=> array("type"=>'varchar',  "null"=>TRUE),
                     'code'=>array("type"=>'varchar',"constraint"=>50, "null"=>TRUE),
                     'iso_code'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
                     'translations'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
@@ -181,6 +187,7 @@ class CMS_Model extends CI_Model
                 $this->dbforge->add_key('language_id', TRUE);
                 $this->dbforge->create_table(cms_table_name('main_language'));
             }
+
 
             // update main_layout into main_setting
             $data = array(
@@ -779,7 +786,7 @@ class CMS_Model extends CI_Model
                 "navigation_name" => $row->navigation_name,
                 "bootstrap_glyph" => $row->bootstrap_glyph,
                 "title" => $this->cms_lang($row->title),
-                "description" => $row->description,
+                "description" => $this->cms_lang($row->description),
                 "url" => $url,
                 "notif_url" => $notif_url,
                 "is_static" => $row->is_static,
@@ -2938,8 +2945,7 @@ class CMS_Model extends CI_Model
             }
 
             $this->__cms_model_properties['language_dictionary'] = $lang;
-        }
-
+        }        
         return $this->__cms_model_properties['language_dictionary'];
     }
 

@@ -54,10 +54,10 @@ if($success_message !== null){?>
 	<div class="tDiv">
 		<?php if(!$unset_add){?>
         <div class="tDiv2">
-            <a href='<?php echo $add_url?>' title='<?php echo $this->l('list_add'); ?> <?php echo $subject?>' class='add-anchor add_button btn btn-default'>
+            <a href='<?php echo $add_url?>' title='<?php echo $this->l('list_add'); ?> {{ language:<?php echo $subject?> }}' class='add-anchor add_button btn btn-default'>
             <div class="fbutton">
                 <div>
-                    <span class="add"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;<?php echo $this->l('list_add'); ?> <?php echo $subject?></span>
+                    <span class="add"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;<?php echo $this->l('list_add'); ?> {{ language:<?php echo $subject?> }}</span>
                 </div>
             </div>
             </a>
@@ -103,7 +103,7 @@ if($success_message !== null){?>
             <select name="search_field" id="search_field" class="form-control">
                 <option value=""><?php echo $this->l('list_search_all');?></option>
                 <?php foreach($columns as $column){?>
-                <option value="<?php echo $column->field_name?>"><?php echo $column->display_as?>&nbsp;&nbsp;</option>
+                <option value="<?php echo $column->field_name?>">{{ language:<?php echo $column->display_as?> }}&nbsp;&nbsp;</option>
                 <?php }?>
             </select>
         </div>

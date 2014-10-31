@@ -749,8 +749,8 @@ class Install_Model extends CI_Model{
         $fields = array(
                 'language_id' => $type_primary_key,
                 'name' => $type_varchar_small_strict,
-                'code' => $type_varchar_small,
-                'iso_code' => $type_varchar_small,
+                'code' => $type_text,
+                'iso_code' => $type_text,
             );
         $sql_list[] = $this->create_table('main_language',$fields);
         // DETAIL LANGUAGE
