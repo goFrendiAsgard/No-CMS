@@ -34,7 +34,7 @@ class CMS_Controller extends MX_Controller
                 ->where('module_path', $module_path)
                 ->get();
             if($query->num_rows() <= 0){
-                die('Module '.$module_path.' is not installed');
+                die('<pre>ERROR : Module '.$module_path.' is not installed</pre>');
             }
         }
     }

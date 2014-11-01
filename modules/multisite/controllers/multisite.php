@@ -74,12 +74,14 @@ class multisite extends CMS_Priv_Strict_Controller {
             if($is_super_admin){
                 $activated_module_list = $this->input->post('modules');
                 $activated_theme_list = $this->input->post('themes');
+                $aliases = $this->input->post('aliases');
                 $activated_module_list = $activated_module_list===NULL? array() : $activated_module_list;
                 $activated_theme_list = $activated_theme_list===NULL? array() : $activated_theme_list;
                 $modules = $activated_module_list == NULL? '' : implode(',', $activated_module_list);
                 $themes = $activated_theme_list == NULL? '' : implode(',', $activated_theme_list);
                 $data['modules'] = $modules;
                 $data['themes'] = $themes;
+                $data['aliases'] = $aliases;
             }
             $this->db->update($this->cms_complete_table_name('subsite'), $data, array('name'=>$site_name));
             $this->subsite_model->update_configs();

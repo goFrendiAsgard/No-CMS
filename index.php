@@ -224,6 +224,7 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
     define('ENVIRONMENT', 'first-time');
     define('CMS_SUBSITE', '');
     define('USE_SUBDOMAIN', FALSE);
+    define('INVALID_SUBSITE', FALSE);
     $available_site = array();
 }else{
     // multisite, can use GET or subdomain
@@ -261,22 +262,25 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
                 define('USE_SUBDOMAIN', TRUE);
             }
             // If there is subdomain, subsite determine from subdomain.
-            // There is possibility that actual_host_name & stripped_host_name has the same value
-            // since "domain" function cannot detect single domain name (such as localhost or computer_name)
             else if (strlen($actual_host_name)> 0 &&
-            ( ( count(explode('.', $actual_host_name)) == 2 && count(explode('.', $actual_host_name)) == count(explode('.', $stripped_host_name)))  || (count(explode('.',$actual_host_name)) > count(explode('.',$stripped_host_name))) )){
+                ( count(explode('.',$actual_host_name)) > count(explode('.',$stripped_host_name))) 
+            ){
                 $host_array = explode('.', $actual_host_name);
                 $cms_subsite = $host_array[0];
                 define('USE_SUBDOMAIN', TRUE);
             }
         }
-        if(in_array($cms_subsite, $available_site)){
+        // define cms_subsite and wether it is valid or not
+        if($cms_subsite == '' || in_array($cms_subsite, $available_site)){
             define('CMS_SUBSITE', $cms_subsite);
+            define('INVALID_SUBSITE', FALSE);
         }else{
-            define('CMS_SUBSITE', '');
+            define('CMS_SUBSITE', $cms_subsite);
+            define('INVALID_SUBSITE', TRUE);
         }
     }else{
         define('CMS_SUBSITE', '');
+        define('INVALID_SUBSITE', FALSE);
     }
     // change the environment based on multisite
     define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site-'.CMS_SUBSITE : 'production');
@@ -287,10 +291,37 @@ if(!isset($_SESSION)){
 }
 $_SESSION['__cms_subsite'] = CMS_SUBSITE;
 
-if( CMS_SUBSITE != '' &&
-(!in_array(CMS_SUBSITE, $available_site) || !is_dir('./'.$application_folder.'/config/site-'.CMS_SUBSITE)) ){
-    header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-    echo 'Website not found';
+// is subsite is invalid then redirect to the main website.
+if( INVALID_SUBSITE ||
+(CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/config/site-'.CMS_SUBSITE)) ){
+    $address = full_url($_SERVER);
+    var_dump($address);
+    // determine redirection url
+    if(USE_SUBDOMAIN){
+        $address_part = explode('.', $address);
+        // get the protocol first
+        $protocol = $address_part[0];
+        $protocol_part = explode('://', $protocol);
+        $protocol = $protocol_part[0].'://';
+        // remove subdomain
+        $address_part = array_slice($address_part, 1);
+        $address = implode('.', $address_part);
+        // add the protocol again        
+        $address = $protocol.$address;
+    }else{
+        $address_part = explode('/', $address);
+        $new_address_part = array();
+        for($i=0; $i<count($address_part); $i++){
+            // remove site-subsite part
+            if($address_part[$i] == 'site-'.CMS_SUBSITE){
+                break;
+            }
+            $new_address_part[] = $address_part[$i];
+        }
+        $address = implode('/', $new_address_part);
+    }
+    
+    header('Location: '.$address);
     exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
 }
 
