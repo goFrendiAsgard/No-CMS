@@ -183,3 +183,7 @@ v0.7.0
 + (done, tested) Fix twitter authentication by ask email manually.
 + (done, tested) Add missing `event` parameter, so that dropdown menu is also works in firefox.
 + (done, tested) Add `automatic-jquery-switching` (depend on internet connection status)
++ (proposed) Add configurations: subsite-configs & subsite-modules (JSON Format) for default installation on register
++ (proposed) Add setting for third party authentication
++ (proposed) Allow user to upload favicon & Logo on installation
++ (proposed) Change registration, let registrant upload favicon, logo, set slogan & site name

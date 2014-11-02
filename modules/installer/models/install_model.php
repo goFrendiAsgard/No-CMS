@@ -21,6 +21,9 @@ class Install_Model extends CI_Model{
     public $admin_password  = 'admin';
     public $admin_confirm_password = 'admin';
 
+    public $modules         = array();
+    public $configs         = array();
+
     public $hide_index       = FALSE;
     public $gzip_compression = FALSE;
 
@@ -883,6 +886,10 @@ class Install_Model extends CI_Model{
     }
 
     protected function insert_config($config_name, $value, $description){
+        // configuration can be overridden
+        if(array_key_exists($config_name, $this->configs)){
+            $value = $this->configs[$config_name];
+        }
         $array = array(
                 'config_name' => $config_name,
                 'value' => $value,
@@ -1044,12 +1051,14 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_privilege('cms_manage_access', 'Manage Access', 'Manage access'.PHP_EOL.'&nbsp;', 4);
         // config
         if($this->is_subsite){
-            $sql_list[] = $this->insert_config('site_name', $this->subsite, 'Site title');
-            $sql_list[] = $this->insert_config('site_slogan', $this->subsite, 'Site slogan');
+            $site_name = $this->subsite;
+            $site_slogan = $this->subsite;
         }else{
-            $sql_list[] = $this->insert_config('site_name', 'No-CMS', 'Site title');
-            $sql_list[] = $this->insert_config('site_slogan', 'A Free CodeIgniter Based CMS Framework', 'Site slogan');
+            $site_name      = 'No-CMS';
+            $site_slogan    = 'A Free CodeIgniter Based CMS Framework';
         }
+        $sql_list[] = $this->insert_config('site_name', $site_name, 'Site title');
+        $sql_list[] = $this->insert_config('site_slogan', $site_slogan, 'Site slogan');
         $sql_list[] = $this->insert_config('site_logo', '{{ base_url }}assets/nocms/images/No-CMS-logo.png', 'Site logo');
         $sql_list[] = $this->insert_config('site_favicon', '{{ base_url }}assets/nocms/images/No-CMS-favicon.png', 'Site favicon');
         $sql_list[] = $this->insert_config('site_footer', 'Powered by No-CMS &copy; 2013', 'Site footer');
@@ -1381,10 +1390,14 @@ class Install_Model extends CI_Model{
 
     public function install_modules(){
         if (in_array('curl', get_loaded_extensions())) {
-            $modules = array('blog','contact_us','static_accessories');
-            if(!$this->is_subsite){
-                $modules[] = 'nordrassil';
-                $modules[] = 'multisite';
+            if(count($this->modules) == 0){
+                $modules = array('blog','contact_us','static_accessories');
+                if(!$this->is_subsite){
+                    $modules[] = 'nordrassil';
+                    $modules[] = 'multisite';
+                }
+            }else{
+                $modules = $this->modules;
             }
             foreach($modules as $module){
                 $ch = curl_init();
