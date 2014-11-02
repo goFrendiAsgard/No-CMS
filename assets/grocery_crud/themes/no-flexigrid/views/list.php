@@ -1,7 +1,18 @@
 <?php
-
     $column_width = (int)(80/count($columns));
-
+    $_ci = &get_instance();
+    // in the grocerycrud, every configuration should be left blank
+    function _escape_template($value){
+        $search     = array(
+            '{{ ',
+            ' }}'
+        );
+        $replace    = array(
+            '&#123;&#123; ',
+            ' &#125;&#125;'
+        );
+        return str_replace($search, $replace, $value);
+    }
     if(!empty($list)){
 ?><div class="bDiv" >
         <table cellspacing="0" cellpadding="0" border="0" id="flex1" class="table table-striped">
@@ -11,7 +22,7 @@
                 <th width='<?php echo $column_width?>%'>
                     <div class="text-left field-sorting <?php if(isset($order_by[0]) &&  $column->field_name == $order_by[0]){?><?php echo $order_by[1]?><?php }?>"
                         rel='<?php echo $column->field_name?>'>
-                        {{ language:<?php echo $column->display_as?> }}
+                        <?php echo isset($_ci->No_CMS_Model)? $_ci->No_CMS_Model->cms_lang($column->display_as): $column->display_as; ?>
                     </div>
                 </th>
                 <?php }?>
@@ -35,7 +46,7 @@
         <tr rowId="<?php echo $rowId; ?>">
             <?php foreach($columns as $column){?>
             <td width='<?php echo $column_width?>%' class='<?php if(isset($order_by[0]) &&  $column->field_name == $order_by[0]){?>sorted<?php }?>'>
-                <div class='text-left'><?php echo $row->{$column->field_name} != '' ? $row->{$column->field_name} : '&nbsp;' ; ?></div>
+                <div class='text-left'><?php echo $row->{$column->field_name} != '' ? _escape_template($row->{$column->field_name}) : '&nbsp;' ; ?></div>
             </td>
             <?php }?>
             <?php if(!$unset_delete || !$unset_edit || !$unset_read || !empty($actions)){?>

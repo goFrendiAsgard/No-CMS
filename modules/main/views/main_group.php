@@ -1,9 +1,9 @@
 <style type="text/css">
-	a[href="<?php echo site_url('{{ module_path }}/group/delete/1');?>"]{
-		visibility : hidden;
-		pointer-events: none;
-        cursor: default;
-	}
+	<?php foreach($undeleted_id as $id){ ?>
+    tr[rowid="<?=$id?>"] a.delete-row{
+        display:none;
+    }
+    <?php } ?>
 </style>
 <?php
 	$asset = new CMS_Asset();

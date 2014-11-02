@@ -96,7 +96,7 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
         return strip_tags($value);
          */
     }
-
+    
     /* Fix issue: http://www.grocerycrud.com/forums/topic/61-default-field-values-for-add-form/ */
     protected function get_add_input_fields($field_values = null)
     {

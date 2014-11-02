@@ -171,7 +171,7 @@
                             }
                         ?>
                         </select>
-                        <p class="help-block">Email Protocol</p>
+                        <p class="help-block">Internet Connectivity (If this set to online, No-CMS will use jquery cdn instead of the local one)</p>
                     </div>
                 </div>
                 <div class="form-group">

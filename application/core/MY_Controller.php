@@ -635,7 +635,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    get translation of key in site_language
      */
-    protected function cms_lang($key, $module = NULL)
+    public function cms_lang($key, $module = NULL)
     {
         return $this->No_CMS_Model->cms_lang($key, $module);
     }

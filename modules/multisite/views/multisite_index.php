@@ -123,7 +123,7 @@
         // scroll
         $(window).scroll(function(){
             if(!LOADING & !STOP_REQUEST){
-                if($(window).scrollTop() == $(document).height() - $(window).height()){
+                if($(window).scrollTop() >= $(document).height() - $('#record_content_bottom').position().top){
                     LOADING = true;
                     fetch_more_data(false);
                     LOADING = false;
