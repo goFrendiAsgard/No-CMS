@@ -9,6 +9,23 @@ class Setting extends CMS_Controller{
 
     public function index(){
         $this->theme = $this->cms_get_config('site_theme');
+
+        // third party authentication setting
+        $third_party_variables = array(
+            'auth_enable_facebook', 'auth_facebook_app_id', 'auth_facebook_app_secret', 'auth_enable_twitter',
+            'auth_twitter_app_key', 'auth_twitter_app_secret', 'auth_enable_google', 'auth_google_app_id',
+            'auth_google_app_secret', 'auth_enable_yahoo', 'auth_yahoo_app_id', 'auth_yahoo_app_secret', 
+            'auth_enable_linkedin', 'auth_linkedin_app_key', 'auth_linkedin_app_secret', 'auth_enable_myspace',
+            'auth_myspace_app_key', 'auth_myspace_app_secret', 'auth_enable_foursquare', 'auth_foursquare_app_id',
+            'auth_foursquare_app_secret', 'auth_enable_windows_live', 'auth_windows_live_app_id',
+            'auth_windows_live_app_secret', 'auth_enable_open_id', 'auth_enable_aol');
+
+        if(CMS_SUBSITE == ''){
+            $hybridauth_config_file = APPPATH.'/config/hybridauthlib.php';
+        }else{
+            $hybridauth_config_file = APPPATH.'/config/site-'.CMS_SUBSITE.'/hybridauthlib.php';
+        }
+
         // save the uploaded files
         if(isset($_FILES['site_logo'])){
             $site_logo = $_FILES['site_logo'];
@@ -41,20 +58,40 @@ class Setting extends CMS_Controller{
                 'cms_email_forgot_message', 'cms_email_signup_subject', 'cms_email_signup_message',
                 'cms_email_useragent', 'cms_email_mailpath', 'cms_email_smtp_host', 'cms_email_smtp_user',
                 'cms_email_smtp_pass', 'cms_email_smtp_port', 'cms_email_smtp_timeout',
-                'cms_google_analytic_property_id','cms_internet_connectivity'
+                'cms_google_analytic_property_id','cms_internet_connectivity','cms_subsite_configs','cms_subsite_modules',
             );
             // only for non-subsite
-            if(CMS_SUBSITE == ''){
+            if(CMS_SUBSITE == '' && $this->cms_is_module_active('gofrendi.noCMS.multisite')){
                 $configuration_list[] = 'cms_add_subsite_on_register';
                 $configuration_list[] = 'cms_subsite_use_subdomain';
                 $configuration_list[] = 'cms_subsite_home_content';
+                $configuration_list[] = 'cms_subsite_configs';
+                $configuration_list[] = 'cms_subsite_modules';
             }
             foreach($configuration_list as $configuration){
                 $this->cms_set_config($configuration, $this->input->post($configuration));
             }
+            // save language
             $this->cms_language($this->input->post('site_language'));
+            // save default_controller
             $this->cms_set_default_controller($this->input->post('default_controller'));
-
+            // save third party authentication
+            $str = file_get_contents($hybridauth_config_file);
+            foreach($third_party_variables as $var){
+                $value = $this->input->post($var);
+                // for auth_enable type, just put a boolean value, else add quotes
+                if(substr($var, 0,11) == 'auth_enable'){
+                    $value = $value == 0? 'FALSE' : 'TRUE';
+                }else{
+                    $value = "'".addslashes($value)."'";
+                }
+                $pattern = '/(\$'.$var.' *= *)(.*?)(;)/si';
+                $replacement = '${1}'.$value.'${3}';
+                $str = preg_replace($pattern, $replacement, $str);
+            }
+            @chmod($hybridauth_config_file, 0777);
+            file_put_contents($hybridauth_config_file, $str);
+            @chmod($hybridauth_config_file, 0755);
         }
         // widgets
         $query = $this->db->select('widget_id, widget_name, static_content')->from(cms_table_name('main_widget'))->get();
@@ -70,6 +107,7 @@ class Setting extends CMS_Controller{
         }
         // languages
         $language_list = $this->cms_language_list();
+
         // config
         $query = $this->db->select('config_name, value')->from(cms_table_name('main_config'))->get();
         $config_list = array();
@@ -93,6 +131,14 @@ class Setting extends CMS_Controller{
             }
             $layout_list[] = $file;
         }
+        
+        // get third_party_configurations
+        include($hybridauth_config_file);
+        $third_party_config = array();
+        foreach($third_party_variables as $var){
+            eval('$third_party_config["'.$var.'"] = $'.$var.';');
+        }
+
 
         $default_controller = $this->cms_get_default_controller();
 
@@ -104,6 +150,8 @@ class Setting extends CMS_Controller{
         $data['layout_list'] = $layout_list;
         $data['current_language'] = $this->cms_get_config('site_language', True);
         $data['default_controller'] = $default_controller;
+        $data['multisite_active'] = $this->cms_is_module_active('gofrendi.noCMS.multisite');
+        $data['third_party_config'] = $third_party_config;
         $this->view('setting_index', $data, 'main_setting');
     }
 }

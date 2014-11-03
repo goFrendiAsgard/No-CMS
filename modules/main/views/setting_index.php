@@ -55,12 +55,14 @@
         <li class="active"><a href="#tab1" data-toggle="tab">Configurations</a></li>
         <li><a href="#tab2" data-toggle="tab">Images</a></li>
         <li><a href="#tab3" data-toggle="tab">Sections</a></li>
+        <li><a href="#tab4" data-toggle="tab">Third Party Authentication</a></li>
     </ul>
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
         <div class="tab-content">
 
             <div class="tab-pane" id="tab1">
                 <h3>Site Configurations</h3>
+                <hr /><h4>General</h4>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="site_layout">Default Layout</label>
                     <div class="controls col-md-8">
@@ -120,7 +122,30 @@
                         <p class="help-block">User Activation (Automatic, By Email, or Manual)</p>
                     </div>
                 </div>
-                <?php if(CMS_SUBSITE == ''){ ?>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="cms_internet_connectivity">Internet Connectivity</label>
+                    <div class="controls col-md-8">
+                        <select type="text" id="cms_internet_connectivity" name="cms_internet_connectivity" class="form-control">
+                        <?php
+                            $option_list = array('UNKNOWN'=>'Unknown Connectivity', 'ONLINE'=>'Always Online (Use this for real website)', 'OFFLINE'=>'Always Offline (Only use this if you are sure)');
+                            foreach($option_list as $key=>$value){
+                                $selected = $config_list['cms_internet_connectivity'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Internet Connectivity (If this set to online, No-CMS will use jquery cdn instead of the local one)</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="cms_google_analytic_property_id">Google Analytics Property Id</label>
+                    <div class="controls col-md-8">
+                        <input type="text" id="cms_google_analytic_property_id" name="cms_google_analytic_property_id" value="<?php echo $config_list['cms_google_analytic_property_id'] ?>" class="form-control">
+                        <p class="help-block">Google Analytics Property Id (e.g: UA-30285787-1)</p>
+                    </div>
+                </div>
+                <?php if(CMS_SUBSITE == '' && $multisite_active){ ?>
+                        <hr /><h4>Multisite and Registration</h4>
                         <div class="form-group">
                             <label class="control-label col-md-4" for="cms_add_subsite_on_register">Automatically add subsite on register</label>
                             <div class="controls col-md-8">
@@ -158,22 +183,24 @@
                                 <p class="help-block">Default Subsite Homepage Content</p>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="cms_subsite_configs">Default Configurations for New Subsite</label>
+                            <div class="controls col-md-8">
+                                <textarea class="text-area-section" id="cms_subsite_configs" name="cms_subsite_configs" class="form-control"><?php echo $config_list['cms_subsite_configs'] ?></textarea>
+                                <p class="help-block">Default configuration for new subsite (JSON Format). I.e:<br />
+                                {"site_footer" : "Powered by me", "site_name" : "Another cool website"}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="cms_subsite_modules">Default Modules for New Subsite</label>
+                            <div class="controls col-md-8">
+                                <textarea class="text-area-section" id="cms_subsite_modules" name="cms_subsite_modules" class="form-control"><?php echo $config_list['cms_subsite_modules'] ?></textarea>
+                                <p class="help-block">Default modules for new subsite (Comma Separated)</p>
+                            </div>
+                        </div>                        
                 <?php } ?>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="cms_internet_connectivity">Internet Connectivity</label>
-                    <div class="controls col-md-8">
-                        <select type="text" id="cms_internet_connectivity" name="cms_internet_connectivity" class="form-control">
-                        <?php
-                            $option_list = array('UNKNOWN'=>'Unknown Connectivity', 'ONLINE'=>'Always Online (Use this for real website)', 'OFFLINE'=>'Always Offline (Only use this if you are sure)');
-                            foreach($option_list as $key=>$value){
-                                $selected = $config_list['cms_internet_connectivity'] == $key ? 'selected' : '';
-                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
-                            }
-                        ?>
-                        </select>
-                        <p class="help-block">Internet Connectivity (If this set to online, No-CMS will use jquery cdn instead of the local one)</p>
-                    </div>
-                </div>
+                <hr /><h4>Email Setting</h4>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="cms_email_protocol">Email Protocol</label>
                     <div class="controls col-md-8">
@@ -280,14 +307,6 @@
                         <p class="help-block">SMTP Timeout (e.g: 30)</p>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="cms_google_analytic_property_id">Google Analytics Property Id</label>
-                    <div class="controls col-md-8">
-                        <input type="text" id="cms_google_analytic_property_id" name="cms_google_analytic_property_id" value="<?php echo $config_list['cms_google_analytic_property_id'] ?>" class="form-control">
-                        <p class="help-block">Google Analytics Property Id (e.g: UA-30285787-1)</p>
-                    </div>
-                </div>
-
             </div>
 
             <div class="tab-pane" id="tab2">
@@ -315,11 +334,8 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_top_fix">Custom Script</label>
                     <div class="controls col-md-8">
-                        <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
-                        </div>
                         <textarea id="section_custom_script" name="section_custom_script" class="text-area-section"><?php show_static_content($section_widget_list, 'section_custom_script'); ?></textarea>
-                        <p class="help-block">HTML &amp; tags of top section</p>
+                        <p class="help-block">Custom Javascript and CSS (You can use this to customize your theme etc)</p>
                     </div>
                 </div>
                 <div class="form-group">
@@ -382,6 +398,267 @@
                         <p class="help-block">HTML &amp; tags of bottom section</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="tab-pane" id="tab4">
+                <h3>Third Party Authentication</h3>
+
+                <hr /><h4>Facebook</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_facebook">Enable Facebook</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_facebook" name="auth_enable_facebook" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_facebook'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable facebook login</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_facebook_app_id">App Id</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_facebook_app_id" name="auth_facebook_app_id" class="form-control" value="<?=$third_party_config['auth_facebook_app_id']?>" />
+                        <p class="help-block">App Id</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_facebook_app_secret">App Secret</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_facebook_app_secret" name="auth_facebook_app_secret" class="form-control" value="<?=$third_party_config['auth_facebook_app_secret']?>" />
+                        <p class="help-block">APP Secret</p>
+                    </div>
+                </div>
+
+                <hr /><h4>Twitter</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_twitter">Enable Twitter</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_twitter" name="auth_enable_twitter" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_twitter'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable twitter login</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_twitter_app_key">App Key</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_twitter_app_key" name="auth_twitter_app_key" class="form-control" value="<?=$third_party_config['auth_twitter_app_key']?>" />
+                        <p class="help-block">App Key</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_twitter_app_secret">App Secret</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_twitter_app_secret" name="auth_twitter_app_secret" class="form-control" value="<?=$third_party_config['auth_twitter_app_secret']?>" />
+                        <p class="help-block">APP Secret</p>
+                    </div>
+                </div>
+
+
+                <hr /><h4>Google</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_google">Enable Google</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_google" name="auth_enable_google" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_google'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable google login</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_google_app_id">App Id</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_google_app_id" name="auth_google_app_id" class="form-control" value="<?=$third_party_config['auth_google_app_id']?>" />
+                        <p class="help-block">App Id</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_google_app_secret">App Secret</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_google_app_secret" name="auth_google_app_secret" class="form-control" value="<?=$third_party_config['auth_google_app_secret']?>" />
+                        <p class="help-block">APP Secret</p>
+                    </div>
+                </div>
+
+                <hr /><h4>Yahoo</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_yahoo">Enable Yahoo</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_yahoo" name="auth_enable_yahoo" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_yahoo'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable yahoo login</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_yahoo_app_id">App Id</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_yahoo_app_id" name="auth_yahoo_app_id" class="form-control" value="<?=$third_party_config['auth_yahoo_app_id']?>" />
+                        <p class="help-block">App Id</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_yahoo_app_secret">App Secret</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_yahoo_app_secret" name="auth_yahoo_app_secret" class="form-control" value="<?=$third_party_config['auth_yahoo_app_secret']?>" />
+                        <p class="help-block">APP Secret</p>
+                    </div>
+                </div>
+
+
+                <hr /><h4>Linkedin</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_linkedin">Enable Linkedin</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_linkedin" name="auth_enable_linkedin" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_linkedin'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable linkedin login</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_linkedin_app_key">App Key</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_linkedin_app_key" name="auth_linkedin_app_key" class="form-control" value="<?=$third_party_config['auth_linkedin_app_key']?>" />
+                        <p class="help-block">App Key</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_linkedin_app_secret">App Secret</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_linkedin_app_secret" name="auth_linkedin_app_secret" class="form-control" value="<?=$third_party_config['auth_linkedin_app_secret']?>" />
+                        <p class="help-block">APP Secret</p>
+                    </div>
+                </div>
+
+
+                <hr /><h4>Myspace</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_myspace">Enable Myspace</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_myspace" name="auth_enable_myspace" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_myspace'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable myspace login</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_myspace_app_key">App Key</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_myspace_app_key" name="auth_myspace_app_key" class="form-control" value="<?=$third_party_config['auth_myspace_app_key']?>" />
+                        <p class="help-block">App Key</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_myspace_app_secret">App Secret</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_myspace_app_secret" name="auth_myspace_app_secret" class="form-control" value="<?=$third_party_config['auth_myspace_app_secret']?>" />
+                        <p class="help-block">APP Secret</p>
+                    </div>
+                </div>
+
+
+                <hr /><h4>Windows Live</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_windows_live">Enable Windows Live</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_windows_live" name="auth_enable_windows_live" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_windows_live'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable windows live login</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_windows_live_app_id">App Id</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_windows_live_app_id" name="auth_windows_live_app_id" class="form-control" value="<?=$third_party_config['auth_windows_live_app_id']?>" />
+                        <p class="help-block">App Id</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_windows_live_app_secret">App Secret</label>
+                    <div class="controls col-md-8">
+                        <input id="auth_windows_live_app_secret" name="auth_windows_live_app_secret" class="form-control" value="<?=$third_party_config['auth_windows_live_app_secret']?>" />
+                        <p class="help-block">APP Secret</p>
+                    </div>
+                </div>
+
+
+                <hr /><h4>Open Id</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_open_id">Enable Open Id</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_open_id" name="auth_enable_open_id" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_open_id'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable open id login</p>
+                    </div>
+                </div>
+
+                <hr /><h4>AOL</h4>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="auth_enable_aol">Enable AOL</label>
+                    <div class="controls col-md-8">
+                        <select id="auth_enable_aol" name="auth_enable_aol" class="form-control">
+                        <?php
+                            $option_list = array(1=>'Yes', 0=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $third_party_config['auth_enable_aol'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Enable AOL login</p>
+                    </div>
+                </div>
+
             </div>
 
         </div>

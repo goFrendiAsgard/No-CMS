@@ -11,7 +11,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-6';
+        $current_version = '0.7.0-stable-7';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -298,6 +298,30 @@ class CMS_Model extends CI_Model
                     'config_name' => 'cms_internet_connectivity',
                     'value' => 'UNKNOWN',
                     'description' => 'Is the server connected to the internet?'
+                ));
+            }
+            // new configuration, cms_subsite_modules
+            $exists = $this->db->select('config_name')
+                ->from(cms_table_name('main_config'))
+                ->where('config_name','cms_subsite_modules')
+                ->get()->num_rows() > 0;
+            if(!$exists){
+                $this->db->insert(cms_table_name('main_config'),array(
+                    'config_name' => 'cms_subsite_modules',
+                    'value' => 'blog,contact_us,static_accessories',
+                    'description' => 'Comma Separated, Modules that is going to be installed by default for new subsite'
+                ));
+            }
+            // new configuration, cms_subsite_configs
+            $exists = $this->db->select('config_name')
+                ->from(cms_table_name('main_config'))
+                ->where('config_name','cms_subsite_configs')
+                ->get()->num_rows() > 0;
+            if(!$exists){
+                $this->db->insert(cms_table_name('main_config'),array(
+                    'config_name' => 'cms_subsite_configs',
+                    'value' => '{}',
+                    'description' => 'JSON Format, Configuration value for new subsite'
                 ));
             }
 
@@ -2238,6 +2262,20 @@ class CMS_Model extends CI_Model
             $this->install_model->admin_confirm_password       = $password;
             $this->install_model->hide_index                   = TRUE;
             $this->install_model->gzip_compression             = FALSE;
+            // get these from configuration
+            $configs = $this->cms_get_config('cms_subsite_configs');
+            $configs = @json_decode($configs);
+            if(!$configs){
+                $configs = array();
+            }
+            $modules = $this->cms_get_config('cms_subsite_modules');
+            $modules = explode(',', $modules);
+            for($i=0; $i<count($modules); $i++){
+                $modules[$i] = trim($modules[$i]);
+            }
+            $this->install_model->configs = $configs;
+            $this->install_model->modules = $modules;
+            // check installation
             $check_installation = $this->install_model->check_installation();
             $success = $check_installation['success'];
             $module_installed = FALSE;

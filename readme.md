@@ -34,13 +34,13 @@ No-CMS come with several batteries included:
 * Module system
 * Custom Theme system
 * Custom language
-* tagging system
+* Tagging system
 
 
 Release Information
 ===================
 
-- v0.7.0 stable, Nov, 2, 2014
+- v0.7.0 stable, Nov, 3, 2014
 
 
 Server Requirements
