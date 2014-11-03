@@ -2220,9 +2220,10 @@ class CMS_Model extends CI_Model
      * @param   string email
      * @param   string real_name
      * @param   string password
+     * @param   string config
      * @desc    register new user
      */
-    public function cms_do_register($user_name, $email, $real_name, $password)
+    public function cms_do_register($user_name, $email, $real_name, $password, $subsite_config=array())
     {
         // check if activation needed
         $activation = $this->cms_get_config('cms_signup_activation');
@@ -2264,9 +2265,12 @@ class CMS_Model extends CI_Model
             $this->install_model->gzip_compression             = FALSE;
             // get these from configuration
             $configs = $this->cms_get_config('cms_subsite_configs');
-            $configs = @json_decode($configs);
+            $configs = @json_decode($configs, TRUE);
             if(!$configs){
                 $configs = array();
+            }
+            foreach($subsite_config as $key => $value){
+                $configs[$key] = $value;
             }
             $modules = $this->cms_get_config('cms_subsite_modules');
             $modules = explode(',', $modules);

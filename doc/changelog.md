@@ -185,4 +185,4 @@ v0.7.0
 + (done, tested) Add `automatic-jquery-switching` (depend on internet connection status)
 + (done, tested) Add configurations: subsite-configs & subsite-modules (JSON Format) for default installation on register
 + (done, tested) Add setting for third party authentication
-+ (proposed) Change registration, let registrant upload favicon, logo, set slogan & site name
++ (done, tested) Change registration, let registrant upload favicon, logo, set slogan & site name

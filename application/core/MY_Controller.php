@@ -450,9 +450,9 @@ class CMS_Controller extends MX_Controller
      * @param   string password
      * @desc    register new user
      */
-    protected function cms_do_register($user_name, $email, $real_name, $password)
+    protected function cms_do_register($user_name, $email, $real_name, $password, $subsite_config=array())
     {
-        return $this->No_CMS_Model->cms_do_register($user_name, $email, $real_name, $password);
+        return $this->No_CMS_Model->cms_do_register($user_name, $email, $real_name, $password, $subsite_config);
     }
 
     /**

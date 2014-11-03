@@ -29,15 +29,15 @@ class Setting extends CMS_Controller{
         // save the uploaded files
         if(isset($_FILES['site_logo'])){
             $site_logo = $_FILES['site_logo'];
-            if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != ''){
-                move_uploaded_file($site_logo['tmp_name'], BASEPATH.'../assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
+            if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
+                move_uploaded_file($site_logo['tmp_name'], FCPATH.'assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
                 $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
             }
         }
         if(isset($_FILES['site_favicon'])){
             $site_favicon = $_FILES['site_favicon'];
-            if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != ''){
-                move_uploaded_file($site_favicon['tmp_name'], BASEPATH.'../assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
+            if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
+                move_uploaded_file($site_favicon['tmp_name'], FCPATH.'assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
                 $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
             }
         }

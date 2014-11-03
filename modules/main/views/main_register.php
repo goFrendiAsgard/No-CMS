@@ -61,16 +61,29 @@
         });
     }
 
+    function capitaliseFirstLetter(string)
+    {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     $(document).ready(function(){
+
         check_user_exists();
-        $('input').keyup(function(){
+
+        $('#form-register input').keyup(function(){
             check_user_exists();
         });
-    })
+
+        $('#<?=$secret_code?>user_name').keyup(function(){
+            var value = $('#<?=$secret_code?>user_name').val();
+            $('#site_title').val(capitaliseFirstLetter(value));
+            $('#site_slogan').val('Website ' + capitaliseFirstLetter(value));
+        });
+    });
 </script>
 <h3>{{ language:Register }}</h3>
 <?php
-    echo form_open('main/register', 'class="form form-horizontal"');
+    echo form_open_multipart('main/register', 'id="form-register" class="form form-horizontal"');
     echo form_input(array('name'=>'user_name', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'real_name', 'value'=>'', 'class'=>'register_input'));
@@ -116,6 +129,38 @@
         'id="'.$secret_code.'confirm_password" placeholder="Password (again)" class="form-control"');
     echo '</div>';
     echo '</div>';
+
+    if(CMS_SUBSITE == '' && $multisite_active && $add_subsite_on_register){
+        echo '<div class="form-group">';
+        echo form_label('{{ language:Site Title }}', ' for="" class="control-label col-sm-4');
+        echo '<div class="col-sm-8">';
+        echo form_input('site_title', '', 
+            'id="site_title" placeholder="Site Title" class="form-control"');
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div class="form-group">';
+        echo form_label('{{ language:Site Slogan }}', ' for="" class="control-label col-sm-4');
+        echo '<div class="col-sm-8">';
+        echo form_input('site_slogan', '', 
+            'id="site_slogan" placeholder="Site Slogan" class="form-control"');
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div class="form-group">';
+        echo form_label('{{ language:Site Logo }}', ' for="" class="control-label col-sm-4');
+        echo '<div class="col-sm-8">';
+        echo '<input type="file" name="site_logo" id="site_logo" class="form-control" />';
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div class="form-group">';
+        echo form_label('{{ language:Site Favicon }}', ' for="" class="control-label col-sm-4');
+        echo '<div class="col-sm-8">';
+        echo '<input type="file" name="site_favicon" id="site_favicon" class="form-control" />';
+        echo '</div>';
+        echo '</div>';
+    }
 
     echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
     echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';

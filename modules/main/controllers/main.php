@@ -345,7 +345,27 @@ class Main extends CMS_Controller
         $secret_code = $this->__random_string();
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
-            $this->cms_do_register($user_name, $email, $real_name, $password);
+            $configs = array();
+            if(CMS_SUBSITE == '' && $this->cms_is_module_active('gofrendi.noCMS.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
+                $configs['site_name'] = $this->input->post('site_title');
+                $configs['site_slogan'] = $this->input->post('site_slogan');
+
+                if(isset($_FILES['site_logo'])){
+                    $site_logo = $_FILES['site_logo'];
+                    if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
+                        move_uploaded_file($site_logo['tmp_name'], FCPATH.'assets/nocms/images/custom_logo/'.$user_name.$site_logo['name']);
+                        $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
+                    }
+                }
+                if(isset($_FILES['site_favicon'])){
+                    $site_favicon = $_FILES['site_favicon'];
+                    if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
+                        move_uploaded_file($site_favicon['tmp_name'], FCPATH.'assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name']);
+                        $configs['site_favicon'] = '{{ base_url }}assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
+                    }
+                }
+            }
+            $this->cms_do_register($user_name, $email, $real_name, $password, $configs);
             redirect('','refresh');
         } else {
             $data = array(
@@ -354,6 +374,8 @@ class Main extends CMS_Controller
                 "real_name" => $real_name,
                 "register_caption" => $this->cms_lang('Register'),
                 "secret_code" => $secret_code,
+                "multisite_active" => $this->cms_is_module_active('gofrendi.noCMS.multisite'),
+                "add_subsite_on_register" => $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE',
             );
             $this->view('main/main_register', $data, 'main_register');
         }
