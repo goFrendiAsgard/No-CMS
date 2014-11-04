@@ -11,7 +11,7 @@
     <div class="mDiv">
         <div class="ftitle">
             <div class='ftitle-left'>
-                <?php echo $this->l('form_edit'); ?> {{ language:<?php echo $subject?> }}
+                <h3><?php echo $this->l('form_edit'); ?> {{ language:<?php echo $subject?> }}</h3>
             </div>
             <div class='clear'></div>
         </div>
@@ -48,11 +48,13 @@
                     if($this->tabs !== NULL){
                         if($counter == 0){
                             echo '<div class="tab-pane active" id="'.str_replace(' ','',$tab_key[0]).'">';
+                            echo '<h4>'.$tab_key[0].'</h4>';
                         }else if($tab_item_counter == $this->tabs[$tab_key[$tab_index]] && $tab_index<count($tab_key)-1){
                             $tab_index ++;
                             $tab_item_counter = 0;
                             echo '</div>';
                             echo '<div class="tab-pane" id="'.str_replace(' ','',$tab_key[$tab_index]).'">';
+                            echo '<h4>'.$tab_key[$tab_index].'</h4>';
                         }
                         //echo $tab_item_counter.' '.$tab_index.' '.print_r($this->tabs,TRUE).' '.print_r($tab_key,TRUE).'<br />';
                     }
