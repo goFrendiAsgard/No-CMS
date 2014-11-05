@@ -50,6 +50,9 @@
         font-size: small;
     }
 </style>
+<?php if($changed){?>
+<div class="alert alert-info">Changes applied</div>
+<?php } ?>
 <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab1" data-toggle="tab">Configurations</a></li>

@@ -18,6 +18,31 @@ class Subsite_Model extends  CMS_Model{
         return $list;
     }
 
+    public function get_actual_logo($subsite_name){
+        $config_table_name = cms_table_name('site_'.$subsite_name.'_main_config');
+        $query = $this->db->select('value')->from($config_table_name)
+            ->where('config_name', 'site_logo')
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $logo = $row->value;
+            $logo = $this->cms_parse_keyword($logo);
+        }else{
+            $query = $this->db->select('logo')
+                ->from($this->cms_complete_table_name('subsite'))
+                ->where('name',$subsite_name)
+                ->get();
+            $row = $query->row();
+            $logo = $row->logo;
+            if($logo === NULL || $logo == ''){
+                $logo = base_url('modules/{{ module_path }}/assets/images/default-logo.png');
+            }else{
+                $logo = base_url('modules/{{ module_path }}/assets/uploads/'.$logo);
+            }
+        }
+        return $logo;
+    }
+
     public function get_data($keyword, $page=0){
         $limit = 9;
         $where = 'active = 1 AND(
@@ -37,6 +62,7 @@ class Subsite_Model extends  CMS_Model{
             $result[$i]->allow_edit = $current_user_id == $result[$i]->user_id || in_array(1, $group_id_array);
             $result[$i]->themes = $this->explode_and_trim($result[$i]->themes);
             $result[$i]->modules = $this->explode_and_trim($result[$i]->modules);
+            $result[$i]->logo = $this->get_actual_logo($result[$i]->name);
         }
         return $result;
     }
@@ -52,6 +78,7 @@ class Subsite_Model extends  CMS_Model{
         $row->allow_edit = $current_user_id == $row->user_id || in_array(1, $group_id_array);
         $row->themes = $this->explode_and_trim($row->themes);
         $row->modules = $this->explode_and_trim($row->modules);
+        $row->logo = $this->get_actual_logo($row->name);
         return $row;
     }
 

@@ -13,13 +13,7 @@ for($i=0; $i<count($result); $i++){
     }
 
     // show columns
-    $image_path = '';
-    if($record->logo === NULL || $record->logo == ''){
-        $image_path = base_url('modules/{{ module_path }}/assets/images/default-logo.png');
-    }else{
-        $image_path = base_url('modules/{{ module_path }}/assets/uploads/'.$record->logo);
-    }
-    $contents .= '<img src="'.$image_path.'" style="max-height:64px; max-width:64px; height:64px;" />';
+    $contents .= '<img src="'.$record->logo.'" style="max-height:64px; max-width:64px; height:64px;" />';
     $contents .= '<div class="caption">';
     $contents .= '<h3>'.$record->name.'</h3>';
     $contents .= '<p class="description">'.$record->description.'</p>';

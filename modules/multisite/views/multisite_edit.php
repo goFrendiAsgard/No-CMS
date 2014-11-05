@@ -31,12 +31,7 @@
     echo '<div class="form-group">';
     echo form_label('Logo', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    if($logo === NULL || $logo == ''){
-        $image_path = base_url('modules/{{ module_path }}/assets/images/default-logo.png');
-    }else{
-        $image_path = base_url('modules/{{ module_path }}/assets/uploads/'.$logo);
-    }
-    echo '<img src="'.$image_path.'" style="max-height:64px; max-width:64px;" />';
+    echo '<img src="'.$logo.'" style="max-height:64px; max-width:64px;" />';
     echo '<input name="logo" type="file" />';
     echo '</div>';
     echo '</div>';

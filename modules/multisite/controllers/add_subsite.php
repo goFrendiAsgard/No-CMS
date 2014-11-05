@@ -75,23 +75,47 @@ class Add_Subsite extends CMS_Priv_Strict_Controller {
         $this->get_input();
         $check_installation = $this->install_model->check_installation();
         $success = $check_installation['success'];
+
+        $configs = $this->cms_get_config('cms_subsite_configs');
+        $configs = @json_decode($configs, TRUE);
+        if(!$configs){
+            $configs = array();
+        }
+        $modules = $this->cms_get_config('cms_subsite_modules');
+        $modules = explode(',', $modules);
+        for($i=0; $i<count($modules); $i++){
+            $modules[$i] = trim($modules[$i]);
+        }
+        $this->install_model->configs = $configs;
+        $this->install_model->modules = $modules;
+
+        // upload the logo
+        $upload_path = FCPATH.'modules/'.$this->cms_module_path().'/assets/uploads/';
+        $file_name = NULL;
+        if(isset($_FILES['logo']) && isset($_FILES['logo']['name']) && $_FILES['logo']['name'] != '' && getimagesize($_FILES['logo']['tmp_name']) !== FALSE){
+            $tmp_name = $_FILES['logo']['tmp_name'];
+            $file_name = $_FILES['logo']['name'];
+            $file_name = $this->randomize_string($file_name).$file_name;
+            move_uploaded_file($tmp_name, $upload_path.$file_name);
+            
+            $subsite = $this->install_model->subsite;
+            $logo_file_name = FCPATH.'assets/nocms/images/custom_logo/'.$subsite.$_FILES['logo']['name'];
+            $this->load->library('image_moo');
+            $this->image_moo->load($upload_path.$file_name)->resize(800,125)->save($logo_file_name,TRUE);
+            $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$subsite.$_FILES['logo']['name'];
+        }
+
         $module_installed = FALSE;
         if($success){
             $config = array('subsite_home_content'=> $this->cms_get_config('cms_subsite_home_content', TRUE));
+            $this->install_model->configs = $configs;
+            $this->install_model->modules = $modules;
             $this->install_model->build_database($config);
             $this->install_model->build_configuration($config);
             $module_installed = $this->install_model->install_modules();
         }
 
-        // upload the logo
-        $upload_path = FCPATH.'modules/'.$this->cms_module_path().'/assets/uploads/';
-        $file_name = NULL;
-        if(isset($_FILES['logo']) && isset($_FILES['logo']['name']) && $_FILES['logo']['name'] != ''){
-            $tmp_name = $_FILES['logo']['tmp_name'];
-            $file_name = $_FILES['logo']['name'];
-            $file_name = $this->randomize_string($file_name).$file_name;
-            move_uploaded_file($tmp_name, $upload_path.$file_name);
-        }
+
 
         $data = array(
             'name'=> $this->install_model->subsite,

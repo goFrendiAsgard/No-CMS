@@ -349,21 +349,26 @@ class Main extends CMS_Controller
             if(CMS_SUBSITE == '' && $this->cms_is_module_active('gofrendi.noCMS.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
                 $configs['site_name'] = $this->input->post('site_title');
                 $configs['site_slogan'] = $this->input->post('site_slogan');
-
+                $this->load->library('image_moo');
                 if(isset($_FILES['site_logo'])){
                     $site_logo = $_FILES['site_logo'];
                     if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
-                        move_uploaded_file($site_logo['tmp_name'], FCPATH.'assets/nocms/images/custom_logo/'.$user_name.$site_logo['name']);
+                        $file_name = FCPATH.'assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
+                        move_uploaded_file($site_logo['tmp_name'], $file_name);
                         $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
+                        $this->image_moo->load($file_name)->resize(800,125)->save($file_name,true);
                     }
                 }
                 if(isset($_FILES['site_favicon'])){
                     $site_favicon = $_FILES['site_favicon'];
                     if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
-                        move_uploaded_file($site_favicon['tmp_name'], FCPATH.'assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name']);
+                        $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
+                        move_uploaded_file($site_favicon['tmp_name'], $file_name);
                         $configs['site_favicon'] = '{{ base_url }}assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
+                        $this->image_moo->load($file_name)->resize(64,64)->save($file_name,true);
                     }
                 }
+
             }
             $this->cms_do_register($user_name, $email, $real_name, $password, $configs);
             redirect('','refresh');

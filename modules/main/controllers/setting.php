@@ -26,19 +26,24 @@ class Setting extends CMS_Controller{
             $hybridauth_config_file = APPPATH.'/config/site-'.CMS_SUBSITE.'/hybridauthlib.php';
         }
 
+        $this->load->library('image_moo');
         // save the uploaded files
         if(isset($_FILES['site_logo'])){
             $site_logo = $_FILES['site_logo'];
             if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
-                move_uploaded_file($site_logo['tmp_name'], FCPATH.'assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
+                $file_name = FCPATH.'assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name'];
+                move_uploaded_file($site_logo['tmp_name'], $file_name);
                 $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
+                $this->image_moo->load($file_name)->resize(800,125)->save($file_name,true);
             }
         }
         if(isset($_FILES['site_favicon'])){
             $site_favicon = $_FILES['site_favicon'];
             if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
-                move_uploaded_file($site_favicon['tmp_name'], FCPATH.'assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
+                $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name'];
+                move_uploaded_file($site_favicon['tmp_name'], $file_name);
                 $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
+                $this->image_moo->load($file_name)->resize(64,64)->save($file_name,true);
             }
         }
         if(count($_POST)>0){
@@ -152,6 +157,7 @@ class Setting extends CMS_Controller{
         $data['default_controller'] = $default_controller;
         $data['multisite_active'] = $this->cms_is_module_active('gofrendi.noCMS.multisite');
         $data['third_party_config'] = $third_party_config;
+        $data['changed'] = count($_POST)>0;
         $this->view('setting_index', $data, 'main_setting');
     }
 }
