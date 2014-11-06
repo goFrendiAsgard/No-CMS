@@ -66,9 +66,12 @@ class multisite extends CMS_Priv_Strict_Controller {
                 $new_logo_config = '{{ base_url }}assets/nocms/images/custom_logo/'.$site_name.$_FILES['logo']['name'];
                 $this->load->library('image_moo');
                 $this->image_moo->load($upload_path.$file_name)->resize(800,125)->save($new_logo_file,true);
-                $this->db->update(cms_table_name('site_'.$site_name.'_main_config'),
+                $this->db->update($this->subsite_model->get_subsite_config_table_name($site_name),
                     array('value'=>$new_logo_config),
                     array('config_name'=>'site_logo'));
+                // update cms_config
+                __cms_config('site_logo', $new_logo_config, FALSE, 
+                    APPPATH.'config/site-'.$site_name.'/cms_config.php', 'cms_config');
             }
             $logo = $file_name;
 

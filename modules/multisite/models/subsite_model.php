@@ -18,8 +18,20 @@ class Subsite_Model extends  CMS_Model{
         return $list;
     }
 
+    public function get_subsite_config_table_name($subsite_name){
+        $cms_config_file = APPPATH.'config/site-'.$subsite_name.'/cms_config.php';
+        if(file_exists($cms_config_file)){
+            include $cms_config_file;
+            $table_prefix = $config['cms_table_prefix'];
+            $config_table_name = $table_prefix.'_main_config';
+        }else{
+            $config_table_name = cms_table_name('site_'.$subsite_name.'_main_config');
+        }
+        return $config_table_name;
+    }
+
     public function get_actual_logo($subsite_name){
-        $config_table_name = cms_table_name('site_'.$subsite_name.'_main_config');
+        $config_table_name = $this->get_subsite_config_table_name($subsite_name);
         $query = $this->db->select('value')->from($config_table_name)
             ->where('config_name', 'site_logo')
             ->get();
