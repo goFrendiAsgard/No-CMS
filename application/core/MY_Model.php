@@ -2274,9 +2274,14 @@ class CMS_Model extends CI_Model
             }
             $modules = $this->cms_get_config('cms_subsite_modules');
             $modules = explode(',', $modules);
-            for($i=0; $i<count($modules); $i++){
-                $modules[$i] = trim($modules[$i]);
+            $new_modules = array();
+            foreach($modules as $module){
+                $module = trim($module);
+                if(!in_array($module, $new_modules)){
+                    $new_modules[] = $module;
+                }
             }
+            $modules = $new_modules;
             $this->install_model->configs = $configs;
             $this->install_model->modules = $modules;
             // check installation
