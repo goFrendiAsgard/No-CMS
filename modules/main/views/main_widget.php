@@ -1,3 +1,10 @@
+<style type="text/css">
+    <?php foreach($undeleted_id as $id){ ?>
+    tr[rowid="<?=$id?>"] a.delete-row{
+        display:none;
+    }
+    <?php } ?>
+</style>
 <?php 
 	$asset = new CMS_Asset();
 	$asset->add_module_css('styles/widget.css', 'main'); 

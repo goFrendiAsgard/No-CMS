@@ -57,11 +57,14 @@ class Subsite_Model extends  CMS_Model{
 
     public function get_data($keyword, $page=0){
         $limit = 9;
-        $where = 'active = 1 AND(
-                subsite.name LIKE \'%'.$keyword.'%\' OR
-                subsite.description LIKE \'%'.$keyword.'%\'
-            )';
-        $query = $this->db->select('subsite.id, subsite.name, subsite.use_subdomain, subsite.logo, subsite.description, subsite.modules, subsite.themes, subsite.user_id')
+        $is_super_admin = in_array($this->cms_user_id(), $this->cms_user_group_id());
+
+        $keyword = addslashes($keyword);
+        $where = '(subsite.name LIKE \'%'.$keyword.'%\' OR subsite.description LIKE \'%'.$keyword.'%\')';
+        if($is_super_admin){
+            $where .= ' AND active = 1';
+        }
+        $query = $this->db->select('subsite.id, subsite.name, subsite.use_subdomain, subsite.logo, subsite.description, subsite.modules, subsite.themes, subsite.user_id, subsite.active')
             ->from($this->cms_complete_table_name('subsite').' as subsite')
             ->where($where)
             ->order_by('subsite.id','desc')
@@ -80,7 +83,7 @@ class Subsite_Model extends  CMS_Model{
     }
 
     public function get_one_data($subsite_name){
-        $query = $this->db->select('subsite.id, subsite.name, subsite.aliases, subsite.use_subdomain, subsite.logo, subsite.description, subsite.modules, subsite.themes, subsite.user_id')
+        $query = $this->db->select('subsite.id, subsite.name, subsite.aliases, subsite.use_subdomain, subsite.logo, subsite.description, subsite.modules, subsite.themes, subsite.user_id, subsite.active')
             ->from($this->cms_complete_table_name('subsite').' as subsite')
             ->where('name',$subsite_name)
             ->get();

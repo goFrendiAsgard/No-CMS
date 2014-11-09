@@ -756,15 +756,19 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_navigation'));
         $crud->set_subject('Navigation (Page)');
 
+        $undeleted_id = array();
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->like('navigation_name','main_','after')
+            ->like('url','main/','after')
+            ->get();
+        foreach($query->result() as $row){
+            $undeleted_id[] = $row->navigation_id;
+        }
+
         if($state == 'update' || $state == 'edit' || $state == 'update_validation'){
             $primary_key = $state_info->primary_key;
-            $query = $this->db->select('navigation_id')
-                ->from(cms_table_name('main_navigation'))
-                ->where('navigation_id', $primary_key)
-                ->like('navigation_name','main_','after')
-                ->like('url','main/','after')
-                ->get();
-            if($query->num_rows()>0){
+            if(in_array($primary_key, $udeleted_id)){
                 $crud->field_type('navigation_name','readonly');
                 $crud->required_fields('title');
             }else{
@@ -861,15 +865,7 @@ class Main extends CMS_Controller
         }
         $output->navigation_path = $navigation_path;
 
-        $undeleted_id = array();
-        $query = $this->db->select('navigation_id')
-            ->from(cms_table_name('main_navigation'))
-            ->like('navigation_name','main_','after')
-            ->like('url','main/','after')
-            ->get();
-        foreach($query->result() as $row){
-            $undeleted_id[] = $row->navigation_id;
-        }
+        
         $output->undeleted_id = $undeleted_id;        
 
         $this->view('main/main_navigation', $output, 'main_navigation_management');
@@ -1219,7 +1215,30 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_widget'));
         $crud->set_subject('Widget');
 
-        $crud->required_fields('widget_name');
+        $state = $crud->getState();
+        $state_info = $crud->getStateInfo();
+
+        $undeleted_id = array();
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->like('widget_name','section_','after')
+            ->get();
+        foreach($query->result() as $row){
+            $undeleted_id[] = $row->widget_id;
+        }
+
+        if($state == 'update' || $state == 'edit' || $state == 'update_validation'){
+            $primary_key = $state_info->primary_key;
+            if(in_array($primary_key, $undeleted_id)){
+                $crud->field_type('widget_name','readonly');
+            }else{
+                $crud->required_fields('widget_name');   
+            }
+        }else{
+            $crud->required_fields('widget_name');
+        }
+
+        
         $crud->unique_fields('widget_name');
         $crud->unset_read();
 
@@ -1256,6 +1275,11 @@ class Main extends CMS_Controller
             'before_insert_widget'
         ));
 
+        $crud->callback_before_delete(array(
+            $this,
+            'before_delete_navigation'
+        ));
+
         $crud->callback_column('widget_name', array(
             $this,
             'column_widget_name'
@@ -1264,6 +1288,8 @@ class Main extends CMS_Controller
         $crud->set_language($this->cms_language());
 
         $output = $crud->render();
+
+        $output->undeleted_id = $undeleted_id;
 
         $this->view('main/main_widget', $output, 'main_widget_management');
     }
@@ -1311,6 +1337,20 @@ class Main extends CMS_Controller
                     'success' => false
                 ));
             }
+        }
+    }
+
+    public function before_delete_widget($primary_key)
+    {
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_id', $primary_key)
+            ->like('widget_name','section_','after')
+            ->get();
+        if($query->num_rows() == 0){
+            return true;
+        }else{
+            return false;
         }
     }
 
