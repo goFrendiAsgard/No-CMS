@@ -768,7 +768,7 @@ class Main extends CMS_Controller
 
         if($state == 'update' || $state == 'edit' || $state == 'update_validation'){
             $primary_key = $state_info->primary_key;
-            if(in_array($primary_key, $udeleted_id)){
+            if(in_array($primary_key, $undeleted_id)){
                 $crud->field_type('navigation_name','readonly');
                 $crud->required_fields('title');
             }else{
