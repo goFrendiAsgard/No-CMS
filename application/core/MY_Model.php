@@ -567,8 +567,9 @@ class CMS_Model extends CI_Model
             $str = preg_replace($pattern, $replacement, $str);
         }
         @chmod($file_name,0777);
-        if(strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
-            @file_put_contents($file_name, $str, LOCK_EX);
+        if(strpos($str, '<?php') !== FALSE && strpos($str, '$route') !== FALSE){
+            log_message('error','if jalan');
+            @file_put_contents($file_name, $str);
             @chmod($file_name,0555);
         }
     }
