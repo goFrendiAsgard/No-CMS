@@ -1,0 +1,2 @@
+<?php
+$hostname = "gofrendi.dev";

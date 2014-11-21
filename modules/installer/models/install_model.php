@@ -1214,6 +1214,13 @@ class Install_Model extends CI_Model{
     }
 
     public function build_configuration($config = array()){
+        // create hostname.php
+        if(!$this->is_subsite){
+            $hostname = $_SERVER['HTTP_HOST'];
+            $content  = '<?php'.PHP_EOL;
+            $content .= '$hostname = "'.$hostname.'";';
+            file_put_contents(FCPATH.'/hostname.php', $content);
+        }
         // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite
         if($this->is_subsite){
             // add site.php entry

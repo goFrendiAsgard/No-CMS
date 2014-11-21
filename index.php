@@ -188,6 +188,12 @@ function esip($ip_addr)
 }
 function domain($domain)
 {
+    if(file_exists('hostname.php')){
+        include('hostname.php');
+        if(isset($hostname)){
+            return $hostname;
+        }
+    }
     $domain_part = explode('.', $domain);
     if(strtolower($domain_part[count($domain_part)-1]) == 'localhost'){
         return 'localhost';
