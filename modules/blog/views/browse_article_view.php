@@ -352,7 +352,7 @@
         // scroll
         $(window).scroll(function(){
             if(!LOADING && SCROLL_WORK){
-                if($(window).scrollTop() == $(document).height() - $('#record_content_bottom').position().top){
+                if($(window).scrollTop() - $(window).height() >= $(document).height() - $('#record_content_bottom').position().top){
                     LOADING = true;
                     fetch_more_data(false);
                     LOADING = false;
