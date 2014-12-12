@@ -9,6 +9,20 @@ class CMS_Model extends CI_Model
 {
     private $__cms_model_properties;
 
+    public function cms_list_fields($table_name){
+        if($this->db instanceof CI_DB_pdo_sqlite_driver){
+            $result = $this->db->get($table_name);
+            $row_array = $result->row_array();
+            $field_list = array();
+            foreach($row_array as $key=>$value){
+                $field_list[] = $key;
+            }
+            return $field_list;
+        }else{
+            return $this->db->list_fields($table_name);   
+        }
+    }
+
     private function __update(){
         $old_version = cms_config('__cms_version');
         $current_version = '0.7.0-stable-7';
@@ -44,7 +58,7 @@ class CMS_Model extends CI_Model
 
             // table : main navigation
             $table_name = cms_table_name('main_navigation');
-            $field_list = $this->db->list_fields($table_name);
+            $field_list = $this->cms_list_fields($table_name);
             $missing_fields = array(
                 'notif_url' => array(
                     'type' => 'VARCHAR',
@@ -75,31 +89,35 @@ class CMS_Model extends CI_Model
             }
             $this->dbforge->add_column($table_name, $fields);
 
-            $changed_fields = array(
-                'navigation_name' => array(
-                    'name' => 'navigation_name',
-                    'type' => 'VARCHAR',
-                    'constraint' => 100,
-                    'null' => FALSE,
-                )
-            );
-            $this->dbforge->modify_column($table_name, $changed_fields);
+            if(!$this->db instanceof CI_DB_pdo_sqlite_driver){
+                $changed_fields = array(
+                    'navigation_name' => array(
+                        'name' => 'navigation_name',
+                        'type' => 'VARCHAR',
+                        'constraint' => 100,
+                        'null' => FALSE,
+                    )
+                );
+                $this->dbforge->modify_column($table_name, $changed_fields);
+            }
 
             // table : main_widget
-            $table_name = cms_table_name('main_widget');
-            $changed_fields = array(
-                'widget_name' => array(
-                    'name' => 'widget_name',
-                    'type' => 'VARCHAR',
-                    'constraint' => 100,
-                    'null' => FALSE,
-                )
-            );
-            $this->dbforge->modify_column($table_name, $changed_fields);
+            if(!$this->db instanceof CI_DB_pdo_sqlite_driver){
+                $table_name = cms_table_name('main_widget');
+                $changed_fields = array(
+                    'widget_name' => array(
+                        'name' => 'widget_name',
+                        'type' => 'VARCHAR',
+                        'constraint' => 100,
+                        'null' => FALSE,
+                    )
+                );
+                $this->dbforge->modify_column($table_name, $changed_fields);
+            }
 
             // table : main_user
             $table_name = cms_table_name('main_user');
-            $field_list = $this->db->list_fields($table_name);
+            $field_list = $this->cms_list_fields($table_name);
             $missing_fields = array(
                 'language' => array(
                     'type' => 'VARCHAR',
@@ -135,7 +153,7 @@ class CMS_Model extends CI_Model
             // table : multisite_subsite
             if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
                 $table_name = cms_table_name('multisite_subsite');
-                $field_list = $this->db->list_fields($table_name);
+                $field_list = $this->cms_list_fields($table_name);
                 $missing_fields = array(
                     'active' => array(
                         'type' => 'INT',
@@ -168,11 +186,13 @@ class CMS_Model extends CI_Model
                 $this->dbforge->create_table(cms_table_name('main_detail_language'));
             }
             // change main_language structure
-            $fields = array(
-                    'key' => array('name' => 'key','type' => 'TEXT'),
-                    'translation' => array('name' => 'translation','type' => 'TEXT'),
-            );
-            $this->dbforge->modify_column(cms_table_name('main_detail_language'), $fields);
+            if(!$this->db instanceof CI_DB_pdo_sqlite_driver){
+                $fields = array(
+                        'key' => array('name' => 'key','type' => 'TEXT'),
+                        'translation' => array('name' => 'translation','type' => 'TEXT'),
+                );
+                $this->dbforge->modify_column(cms_table_name('main_detail_language'), $fields);
+            }
 
             // add main_language
             if(! in_array(cms_table_name('main_language'), $table_list)){

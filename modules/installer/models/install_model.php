@@ -97,7 +97,7 @@ class Install_Model extends CI_Model{
         if($this->db_port == ''){
             $this->db_port = $this->DEFAULT_PORT[$this->db_protocol];
         }
-        if($this->db_protocol=='pdo_sqlite'){
+        if($this->db_protocol=='pdo_sqlite' || $this->db_protocol=='sqlite' || $this->db_protocol=='sqlite3'){
             $dsn = 'sqlite:'.FCPATH.'db.sqlite';
         }else{
             $db_protocol = '';

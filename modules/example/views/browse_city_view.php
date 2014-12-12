@@ -115,7 +115,7 @@
         // scroll
         $(window).scroll(function(){
             if(!STOP_REQUEST && !LOADING){
-                if($(window).scrollTop() - $(window).height() >= $(document).height() - $('#record_content_bottom').position().top){
+                if($('#record_content_bottom').position().top <= $(window).scrollTop() + $(window).height() ){
                     LOADING = true;
                     fetch_more_data(false);
                     LOADING = false;
