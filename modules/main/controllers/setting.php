@@ -48,6 +48,7 @@ class Setting extends CMS_Controller{
         }
         if(count($_POST)>0){
             // save the section widgets
+            $this->update_static_content('section_custom_style', $this->input->post('section_custom_style'));
             $this->update_static_content('section_custom_script', $this->input->post('section_custom_script'));
             $this->update_static_content('section_top_fix', $this->input->post('section_top_fix'));
             $this->update_static_content('section_banner', $this->input->post('section_banner'));
@@ -104,7 +105,7 @@ class Setting extends CMS_Controller{
         $normal_widget_list = array();
         $section_widget_list = array();
         foreach($widget_list as $widget){
-            if($widget['widget_id']<7 || $widget['widget_name'] == 'navigation_right_partial'){
+            if(substr($widget['widget_name'],0,8) == 'section_' || $widget['widget_name'] == 'navigation_right_partial'){
                 $section_widget_list[$widget['widget_name']] = $widget;
             }else{
                 $normal_widget_list[] = $widget;

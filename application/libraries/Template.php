@@ -47,6 +47,32 @@ class Template
 
 	private $_data = array();
 
+	// ADDED BY GOFRENDI
+	private $_js = array();
+	private $_css = array();
+	public function prepend_js($line)
+	{
+		array_unshift($this->_js, $line);
+		return $this;
+	}
+	public function append_js($line)
+	{
+		$this->_js[] = $line;
+		return $this;
+	}
+	public function prepend_css($line)
+	{
+		array_unshift($this->_css, $line);
+		return $this;
+	}
+	public function append_css($line)
+	{
+		$this->_css[] = $line;
+		return $this;
+	}
+	// END OF ADDITION
+
+
 	/**
 	 * Constructor - Sets Preferences
 	 *
@@ -209,6 +235,10 @@ class Template
 		$template['breadcrumbs'] = $this->_breadcrumbs;
 		$template['metadata']	= implode("\n\t\t", $this->_metadata);
 		$template['partials']	= array();
+		// ADDED BY GOFRENDI
+		$template['css'] = implode("\n\t\t", $this->_css);
+		$template['js']	 = implode("\n\t\t", $this->_js);
+		// END OF ADDITION
 
 		// Assign by reference, as all loaded views will need access to partials
 		$this->_data['template'] =& $template;

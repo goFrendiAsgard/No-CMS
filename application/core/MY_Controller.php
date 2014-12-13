@@ -1066,18 +1066,18 @@ class CMS_Controller extends MX_Controller
             if($this->cms_is_connect('code.jquery.com')){
                 $jquery_path = 'http://code.jquery.com/jquery-1.10.2.min.js';
                 $migration_path = 'http://code.jquery.com/jquery-migrate-1.2.1.min.js';
-                $this->template->append_metadata('<script type="text/javascript" src="' . $jquery_path . '"></script>');
-                $this->template->append_metadata('<script type="text/javascript" src="' . $migration_path . '"></script>');
+                $this->template->append_js('<script type="text/javascript" src="' . $jquery_path . '"></script>');
+                $this->template->append_js('<script type="text/javascript" src="' . $migration_path . '"></script>');
             }else{
                 $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
-                $this->template->append_metadata('<script type="text/javascript" src="' . $jquery_path . '"></script>');
+                $this->template->append_js('<script type="text/javascript" src="' . $jquery_path . '"></script>');
             }            
 
             // ckeditor adjustment thing
-            $this->template->append_metadata('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
+            $this->template->append_js('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
 
             // add javascript base_url for ckeditor
-            $this->template->append_metadata('<script type="text/javascript">var __cms_base_url = "'.base_url().'";</script>');
+            $this->template->append_js('<script type="text/javascript">var __cms_base_url = "'.base_url().'";</script>');
 
             // check login status
             $login_code = '<script type="text/javascript">';
@@ -1098,7 +1098,7 @@ class CMS_Controller extends MX_Controller
                 });
             },60000);';
             $login_code .= '</script>';
-            $this->template->append_metadata($login_code);
+            $this->template->append_js($login_code);
 
             if($this->cms_is_connect('google-analytics.com')){
                 // google analytic
@@ -1116,7 +1116,7 @@ class CMS_Controller extends MX_Controller
                     $analytic_code .= '})(); ';
                     $analytic_code .= '</script>';
                     // add to the template
-                    $this->template->append_metadata($analytic_code);
+                    $this->template->append_js($analytic_code);
                 }
             }
 

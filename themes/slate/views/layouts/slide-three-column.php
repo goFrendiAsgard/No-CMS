@@ -7,7 +7,7 @@
         <link rel="icon" href="{{ site_favicon }}">
         <!-- Le styles -->
         <?php
-            //var_dump($controller_instance);
+            echo $template['css'];
             $asset = new CMS_Asset();
             if($__is_bootstrap_cdn_connected){
                 $asset->add_css('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');
@@ -20,10 +20,11 @@
         ?>
         <!-- Le fav and touch icons -->
         <link rel="shortcut icon" href="{{ site_favicon }}">
-        {{ widget_name:section_custom_script }}
+        <style type="text/css">{{ widget_name:section_custom_style }}</style>
     </head>
     <body>
         <?php
+            echo $template['js'];
             if($__is_bootstrap_cdn_connected){
                 $asset->add_js('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js');
             }else{  
@@ -36,6 +37,7 @@
         <!--[if lt IE 9]>
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
+        <script type="text/javascript">{{ widget_name:section_custom_script }}</script>
         {{ widget_name:section_top_fix }}
         {{ widget_name:static_accessories_slideshow }}
         <div class="container">

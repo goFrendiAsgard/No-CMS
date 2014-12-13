@@ -25,7 +25,7 @@ class CMS_Model extends CI_Model
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-7';
+        $current_version = '0.7.0-stable-8';
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -418,6 +418,62 @@ class CMS_Model extends CI_Model
                     'is_static' => 1
                 ));
             }
+
+            // widget section_custom_style
+            $result = $this->db->select('widget_name')
+                ->from(cms_table_name('main_widget'))
+                ->where('widget_name', 'section_custom_style')
+                ->get();
+            if($result->num_rows() == 0){
+                $result = $this->db->select_max('index')
+                    ->from(cms_table_name('main_widget'))
+                    ->get();
+                $row = $result->row();
+                $max_index = $row->index;
+                $max_index = is_numeric($max_index)? $max_index : 0;
+                $this->db->insert(cms_table_name('main_widget'), array(
+                    'widget_name ' => 'section_custom_style',
+                    'title' => '',
+                    'description' => 'Custom CSS',
+                    'static_content' => '',
+                    'authorization_id' => 1,
+                    'active' => 1,
+                    'index' => $max_index + 1,
+                    'is_static' => 1
+                ));
+            }
+
+            // widget section_custom_script
+            $result = $this->db->select('widget_name, static_content')
+                ->from(cms_table_name('main_widget'))
+                ->where('widget_name', 'section_custom_script')
+                ->get();
+            if($result->num_rows() == 0){
+                $result = $this->db->select_max('index')
+                    ->from(cms_table_name('main_widget'))
+                    ->get();
+                $row = $result->row();
+                $max_index = $row->index;
+                $max_index = is_numeric($max_index)? $max_index : 0;
+                $this->db->insert(cms_table_name('main_widget'), array(
+                    'widget_name ' => 'section_custom_script',
+                    'title' => '',
+                    'description' => 'Custom Javascript',
+                    'static_content' => '',
+                    'authorization_id' => 1,
+                    'active' => 1,
+                    'index' => $max_index + 1,
+                    'is_static' => 1
+                ));
+            }else{
+                $row = $result->row();
+                if($row->static_content == '<style type="text/css"></style><script type="text/javascript"></script>'){
+                    $this->db->update(cms_table_name('main_widget'),
+                        array('static_content'=>''),
+                        array('widget_name'=>'section_custom_script'));
+                }
+            }
+
 
             // update module name
             $this->db->update(cms_table_name('main_module'), 

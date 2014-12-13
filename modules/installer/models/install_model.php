@@ -986,8 +986,11 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_quicklink( 2, 3);
         $sql_list[] = $this->insert_quicklink( 4, 4);
         // widget
-        $sql_list[] = $this->insert_widget('section_custom_script', 'Script', '', '',
-                1, 1, 1, 1, '<style type="text/css"></style><script type="text/javascript"></script>',
+        $sql_list[] = $this->insert_widget('section_custom_style', '', 'Custom CSS', '',
+                1, 1, 1, 1, '',
+                NULL);
+        $sql_list[] = $this->insert_widget('section_custom_script', '', 'Custom Javascript', '',
+                1, 1, 1, 1, '',
                 NULL);
         $sql_list[] = $this->insert_widget('section_top_fix', 'Top Fix Section', '', '',
                 1, 1, 2, 1, '{{ widget_name:top_navigation }}',

@@ -335,10 +335,17 @@
             <div class="tab-pane active" id="tab3">
                 <h3>Sections</h3>
                 <div class="form-group">
+                    <label class="control-label col-md-4" for="section_top_fix">Custom Style</label>
+                    <div class="controls col-md-8">
+                        <textarea id="section_custom_style" name="section_custom_style" class="text-area-section"><?php show_static_content($section_widget_list, 'section_custom_style'); ?></textarea>
+                        <p class="help-block">Custom CSS (You can use this to customize your theme etc)</p>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="control-label col-md-4" for="section_top_fix">Custom Script</label>
                     <div class="controls col-md-8">
                         <textarea id="section_custom_script" name="section_custom_script" class="text-area-section"><?php show_static_content($section_widget_list, 'section_custom_script'); ?></textarea>
-                        <p class="help-block">Custom Javascript and CSS (You can use this to customize your theme etc)</p>
+                        <p class="help-block">Custom Javascript</p>
                     </div>
                 </div>
                 <div class="form-group">
