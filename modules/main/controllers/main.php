@@ -638,7 +638,21 @@ class Main extends CMS_Controller
         $crud->set_language($this->cms_language());
         $output = $crud->render();
         $output->undeleted_id = array(1, $this->cms_user_id());
-        $this->view('main/main_user', $output, 'main_user_management');
+
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new CMS_Asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+        // show the view
+        $this->view('main/main_user', $output, 'main_user_management', $config);
     }
 
     public function read_only_user_active($value, $row)
@@ -726,7 +740,20 @@ class Main extends CMS_Controller
             $output->undeleted_id[] = $row->group_id;
         }
 
-        $this->view('main/main_group', $output, 'main_group_management');
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new CMS_Asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+        // show the view
+        $this->view('main/main_group', $output, 'main_group_management', $config);
     }
 
     public function before_delete_group($primary_key)
@@ -868,7 +895,20 @@ class Main extends CMS_Controller
         
         $output->undeleted_id = $undeleted_id;        
 
-        $this->view('main/main_navigation', $output, 'main_navigation_management');
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new CMS_Asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+        // show the view
+        $this->view('main/main_navigation', $output, 'main_navigation_management', $config);
     }
 
 
@@ -1088,7 +1128,20 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main_quicklink', $output, 'main_quicklink_management');
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new CMS_Asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+        // show the view
+        $this->view('main_quicklink', $output, 'main_quicklink_management', $config);
     }
 
     public function before_insert_quicklink($post_array)
@@ -1202,7 +1255,20 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/main_privilege', $output, 'main_privilege_management');
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new CMS_Asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+        // show the view
+        $this->view('main/main_privilege', $output, 'main_privilege_management', $config);
     }
 
     // WIDGET ==================================================================
@@ -1291,7 +1357,20 @@ class Main extends CMS_Controller
 
         $output->undeleted_id = $undeleted_id;
 
-        $this->view('main/main_widget', $output, 'main_widget_management');
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new CMS_Asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+        // show the view
+        $this->view('main/main_widget', $output, 'main_widget_management', $config);
     }
 
     public function before_insert_widget($post_array)
@@ -1478,7 +1557,20 @@ class Main extends CMS_Controller
 
         $output = $crud->render();
 
-        $this->view('main/main_config', $output, 'main_config_management');
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new CMS_Asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+        // show the view
+        $this->view('main/main_config', $output, 'main_config_management', $config);
     }
 
     public function after_insert_config($post_array, $primary_key){

@@ -846,6 +846,8 @@ class CMS_Controller extends MX_Controller
         $only_content       = isset($config['only_content']) ? $config['only_content'] : FALSE;
         $always_allow       = isset($config['always_allow']) ? $config['always_allow'] : FALSE;
         $layout_suffix      = isset($config['layout_suffix']) ? $config['layout_suffix'] : '';
+        $custom_css         = isset($config['css']) ? $config['css'] : '';
+        $custom_js          = isset($config['js']) ? $config['js'] : '';
 
         /**
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
@@ -1135,6 +1137,9 @@ class CMS_Controller extends MX_Controller
                 $this->template->append_metadata($metadata);
             }
 
+            // append custom css & js
+            $this->template->append_js($custom_js);
+            $this->template->append_css($custom_css);
 
             $this->load->helper('directory');
             $partial_path = BASEPATH . '../themes/' . $theme . '/views/partials/' . $layout . '/';

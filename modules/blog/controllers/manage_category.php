@@ -91,8 +91,23 @@ class Manage_Category extends CMS_Priv_Strict_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
+
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new CMS_Asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+
+        // show the view
         $this->view($this->cms_module_path().'/manage_category_view', $output,
-            $this->cms_complete_navigation_name('manage_category'));
+            $this->cms_complete_navigation_name('manage_category'), $config);
 
     }
 
