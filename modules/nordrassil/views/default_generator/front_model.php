@@ -46,7 +46,7 @@
 class {{ model_name }} extends  CMS_Model{
 
     public function cms_complete_table_name($table_name){
-        include(FCPATH.'modules/'.$this->cms_module_path().'/helpers/function.php');
+        $this->load->helper($this->cms_module_path().'/function');
         if(function_exists('cms_complete_table_name')){
             return cms_complete_table_name($table_name);
         }else{
