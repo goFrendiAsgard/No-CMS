@@ -9,15 +9,6 @@ class Manage_City extends CMS_Priv_Strict_Controller {
 
     protected $URL_MAP = array();
 
-    public function cms_complete_table_name($table_name){
-        $this->load->helper($this->cms_module_path().'/function');
-        if(function_exists('cms_complete_table_name')){
-            return cms_complete_table_name($table_name);
-        }else{
-            return parent::cms_complete_table_name($table_name);
-        }
-    }
-
     private function make_crud(){
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // initialize groceryCRUD

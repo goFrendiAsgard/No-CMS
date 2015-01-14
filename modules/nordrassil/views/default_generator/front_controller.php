@@ -8,15 +8,6 @@
 
 class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 
-    public function cms_complete_table_name($table_name){
-        include(FCPATH.'modules/'.$this->cms_module_path().'/helpers/function.php');
-        if(function_exists('cms_complete_table_name')){
-            return cms_complete_table_name($table_name);
-        }else{
-            return parent::cms_complete_table_name($table_name);
-        }
-    }
-
     protected function do_override_url_map($URL_MAP){
         $module_path = $this->cms_module_path();
         $navigation_name = $this->cms_complete_navigation_name('{{ navigation_name }}');

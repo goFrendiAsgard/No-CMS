@@ -7,6 +7,12 @@
  */
 class CMS_Model extends CI_Model
 {
+    public $PRIV_EVERYONE             = 1;
+    public $PRIV_NOT_AUTHENTICATED    = 2;
+    public $PRIV_AUTHENTICATED        = 3;
+    public $PRIV_AUTHORIZED           = 4;
+    public $PRIV_EXCLUSIVE_AUTHORIZED = 5;
+
     private $__cms_model_properties;
 
     public function cms_list_fields($table_name){
@@ -485,6 +491,28 @@ class CMS_Model extends CI_Model
         }
     }
 
+    protected function __update_module(){
+        $module_list = $this->cms_get_module_list();
+        foreach($module_list as $module){
+            $module_path = $module['module_path'];
+            $module_name = $module['module_name'];
+            $version = $this->cms_module_version($module_name);
+            $active = $module['active'];
+            if($active){
+                $model_alias = 'm_'.$module_path.'_install';
+                if(file_exists(FCPATH.'modules/'.$module_path.'/models/_info.php')){
+                    $this->load->model($module_path.'/_info', $model_alias);
+                    $module_install_model = $this->{$model_alias};
+                    if(method_exists($module_install_model,'do_upgrade')){                        
+                        $module_install_model->do_upgrade($version);
+                        $new_version = $module_install_model->VERSION;
+                        $this->cms_module_version($module_name, $new_version);
+                    }
+                }
+            }
+        }
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -525,8 +553,12 @@ class CMS_Model extends CI_Model
         if(!isset($_SESSION['__base_url'])){
             $_SESSION['__cms_base_url'] = base_url();
         }
-        // seamless update
+
+        // core seamless update
         $this->__update();
+
+        // module seamless update
+        $this->__update_module();
 
         // extend user last active status
         $this->__cms_extend_user_last_active($this->cms_user_id());
@@ -550,6 +582,12 @@ class CMS_Model extends CI_Model
         if($module_path == 'main' or $module_path == ''){
             return cms_table_name($table_name);
         }else{
+            if(file_exists(FCPATH.'modules/'.$module_path.'/cms_helper.php')){ 
+                $this->load->helper($module_path.'/cms');
+                if(function_exists('cms_complete_table_name')){
+                    return cms_complete_table_name($table_name);
+                }
+            }
             return cms_module_table_name($module_path, $table_name);
         }
     }
@@ -2559,6 +2597,24 @@ class CMS_Model extends CI_Model
         return $module;
     }
 
+    public function cms_module_version($module_name = NULL, $new_version = NULL){
+        if($new_version !== NULL){
+            $this->db->update(cms_table_name('main_module'),
+                array('version'=>$new_version),
+                array('module_name'=>$module_name));
+        }
+        $query = $this->db->select('version')
+            ->from(cms_table_name('main_module'))
+            ->where('module_name', $module_name)
+            ->get();
+        if($query->num_rows()==0){
+            return '0.0.0';
+        }else{
+            $row = $query->row();
+            return $row->version;
+        }       
+    }
+
     /**
      * @author  goFrendiAsgard
      * @param   string module_name
@@ -3471,8 +3527,418 @@ class CMS_Model extends CI_Model
         return FALSE;
     }
 
+    public final function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL,
+    $default_theme=NULL, $default_layout=NULL, $notif_url=NULL)
+    {
+        //get parent's navigation_id
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $parent_name)
+            ->get();
+        $row   = $query->row();
+
+        $parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+
+        //if it is null, index = max index+1
+        if (!isset($index)) {
+            if (isset($parent_id)) {
+                $whereParentId = "(parent_id = $parent_id)";
+            } else {
+                $whereParentId = "(parent_id IS NULL)";
+            }
+            $query = $this->db->select_max('index')
+                ->from(cms_table_name('main_navigation'))
+                ->where($whereParentId)
+                ->get();
+            if ($query->num_rows() > 0) {
+                $row   = $query->row();
+                $index = $row->index+1;
+            }
+            if (!isset($index))
+                $index = 0;
+        }
+
+        // is there any navigation with the same name?
+        $dont_insert = FALSE;
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)->get();
+        if($query->num_rows()>0){
+            $dont_insert = TRUE;
+        }
+
+        // is there any navigation with same url
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('url', $url)->get();
+        if($query->num_rows()>0){
+            $dont_insert = TRUE;
+        }
+
+        if($dont_insert){
+            $error = 'Navigation already exists';
+            throw new Exception($error);
+            return NULL;
+        }
+
+        //insert it :D
+        $data = array(
+            "navigation_name" => $navigation_name,
+            "title" => $title,
+            "url" => $url,
+            "authorization_id" => $authorization_id,
+            "index" => $index,
+            "description" => $description,
+            "active"=>1,
+            "bootstrap_glyph"=>$bootstrap_glyph,
+            "default_theme"=>$default_theme,
+            "default_layout"=>$default_layout,
+            "notif_url"=>$notif_url,
+        );
+        if (isset($parent_id)) {
+            $data['parent_id'] = $parent_id;
+        }
+        $this->db->insert(cms_table_name('main_navigation'), $data);
+    }
+    public final function cms_remove_navigation($navigation_name)
+    {
+        //get navigation_id
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
+        if ($query->num_rows() > 0) {
+            $row           = $query->row();
+            $navigation_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+        }
+
+        if (isset($navigation_id)) {
+            //delete quicklink
+            $where = array(
+                "navigation_id" => $navigation_id
+            );
+            $this->db->delete(cms_table_name('main_quicklink'), $where);
+            //delete cms_group_navigation
+            $where = array(
+                "navigation_id" => $navigation_id
+            );
+            $this->db->delete(cms_table_name('main_group_navigation'), $where);
+            //delete cms_navigation
+            $where = array(
+                "navigation_id" => $navigation_id
+            );
+            $this->db->delete(cms_table_name('main_navigation'), $where);
+        }
+    }
+    public final function cms_add_privilege($privilege_name, $title, $authorization_id = 1, $description = NULL)
+    {
+        $data = array(
+            "privilege_name" => $privilege_name,
+            "title" => $title,
+            "authorization_id" => $authorization_id,
+            "description" => $description
+        );
+        $this->db->insert(cms_table_name('main_privilege'), $data);
+    }
+    public final function cms_remove_privilege($privilege_name)
+    {
+        $SQL   = "SELECT privilege_id FROM ".cms_table_name('main_privilege')." WHERE privilege_name='" . addslashes($privilege_name) . "'";
+        $query = $this->db->query($SQL);
+
+        foreach ($query->result() as $row) {
+            $privilege_id = $row->privilege_id;
+        }
+
+        if (isset($privilege_id)) {
+            //delete cms_group_privilege
+            $where = array(
+                "privilege_id" => $privilege_id
+            );
+            $this->db->delete(cms_table_name('main_group_privilege'), $where);
+            //delete cms_privilege
+            $where = array(
+                "privilege_id" => $privilege_id
+            );
+            $this->db->delete(cms_table_name('main_privilege'), $where);
+        }
+    }
+
+    public final function cms_add_widget($widget_name, $title=NULL, $authorization_id = 1, $url = NULL, $slug = NULL, $index = NULL, $description = NULL)
+    {
+        //if it is null, index = max index+1
+        if (!isset($index)) {
+            if (isset($slug)) {
+                $whereSlug = "(slug = '".addslashes($slug)."')";
+            } else {
+                $whereSlug = "(slug IS NULL)";
+            }
+            $query = $this->db->select_max('index')
+                ->from(cms_table_name('main_widget'))
+                ->where($whereSlug)
+                ->get();
+            if ($query->num_rows() > 0) {
+                $row   = $query->row();
+                $index = $row->index+1;
+            }
+
+            if (!isset($index))
+                $index = 0;
+        }
+
+        $data = array(
+            "widget_name" => $widget_name,
+            "title" => $title,
+            "slug" => $slug,
+            "index" => $index,
+            "authorization_id" => $authorization_id,
+            "url" => $url,
+            "description" => $description
+        );
+        $this->db->insert(cms_table_name('main_widget'), $data);
+    }
+
+    public final function cms_remove_widget($widget_name)
+    {
+        $SQL       = "SELECT widget_id FROM ".cms_table_name('main_widget')." WHERE widget_name='" . addslashes($widget_name) . "'";
+        $query     = $this->db->query($SQL);
+        if($query->num_rows()>0){
+            $row       = $query->row();
+            $widget_id = $row->widget_id;
+
+            if (isset($widget_id)) {
+                //delete cms_group_privilege
+                $where = array(
+                    "widget_id" => $widget_id
+                );
+                $this->db->delete(cms_table_name('main_group_widget'), $where);
+                //delete cms_privilege
+                $where = array(
+                    "widget_id" => $widget_id
+                );
+                $this->db->delete(cms_table_name('main_widget'), $where);
+            }
+
+        }
+
+    }
+
+    public final function cms_add_quicklink($navigation_name)
+    {
+        $SQL   = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_name ='" . addslashes($navigation_name) . "'";
+        $query = $this->db->query($SQL);
+        if ($query->num_rows() > 0) {
+            $row           = $query->row();
+            $navigation_id = $row->navigation_id;
+            // index = max index+1
+            $query = $this->db->select_max('index')
+                ->from(cms_table_name('main_quicklink'))
+                ->get();
+            $row           = $query->row();
+            $index         = $row->index+1;
+            if (!isset($index))
+                $index = 0;
+
+            // insert
+            $data = array(
+                "navigation_id" => $navigation_id,
+                "index" => $index
+            );
+            $this->db->insert(cms_table_name('main_quicklink'), $data);
+        }
+    }
+
+    public final function cms_remove_quicklink($navigation_name)
+    {
+        $SQL   = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_name ='" . addslashes($navigation_name) . "'";
+        $query = $this->db->query($SQL);
+        if ($query->num_rows() > 0) {
+            $row           = $query->row();
+            $navigation_id = $row->navigation_id;
+
+            // delete
+            $where = array(
+                "navigation_id" => $navigation_id
+            );
+            $this->db->delete(cms_table_name('main_quicklink'), $where);
+        }
+    }
+
+    public final function cms_execute_SQL($SQL, $separator)
+    {
+        $queries = explode($separator, $SQL);
+        foreach ($queries as $query) {
+            if(trim($query) == '') continue;
+            $table_prefix = cms_module_table_prefix($this->cms_module_path());
+            $module_prefix = cms_module_prefix($this->cms_module_path());
+            $query = preg_replace('/\{\{ complete_table_name:(.*) \}\}/si', $table_prefix==''? '$1': $table_prefix.'_'.'$1', $query);
+            $query = preg_replace('/\{\{ module_prefix \}\}/si', $module_prefix, $query);
+            $this->db->query($query);
+        }
+    }
+
+}
+
+class CMS_Module_Info_Model extends CMS_Model{
+    public $DEPENDENCIES    = array();
+    public $NAME            = '';
+    public $VERSION         = '0.0.0';
+    public $DESCRIPTION     = NULL;
+    public $IS_ACTIVE       = FALSE;
+    public $IS_OLD          = FALSE;
+    public $OLD_VERSION     = '';
+    public $ERROR_MESSAGE   = '';
+    public $PUBLIC          = TRUE;
+    public $SUBSITE_ALLOWED = array();
+    // type
+    public $TYPE_INT_UNSIGNED_AUTO_INCREMENT = array( 'type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE, );
+    public $TYPE_INT_UNSIGNED_NOTNULL = array( 'type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null' => FALSE, );
+    public $TYPE_INT_SIGNED_NOTNULL = array( 'type' => 'INT', 'constraint' => 20, 'null' => FALSE, );
+    public $TYPE_INT_UNSIGNED_NULL = array( 'type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null'=>TRUE, );
+    public $TYPE_INT_SIGNED_NULL = array( 'type' => 'INT', 'constraint' => 20, 'null'=>TRUE, );
+    public $TYPE_DATETIME_NOTNULL = array( 'type' => 'TIMESTAMP', 'null' => FALSE, );
+    public $TYPE_DATE_NOTNULL = array( 'type' => 'DATE', 'null' => FALSE, );
+    public $TYPE_DATETIME_NULL = array( 'type' => 'TIMESTAMP', 'null'=>TRUE, );
+    public $TYPE_DATE_NULL = array( 'type' => 'DATE', 'null'=>TRUE, );
+    public $TYPE_FLOAT_NOTNULL = array( 'type' => 'FLOAT', 'null' => FALSE, );
+    public $TYPE_DOUBLE_NOTNULL = array( 'type' => 'DOUBLE', 'null' => FALSE, );
+    public $TYPE_FLOAT_NULL = array( 'type' => 'FLOAT', 'null'=>TRUE, );
+    public $TYPE_DOUBLE_NULL = array( 'type' => 'DOUBLE', 'null'=>TRUE, );
+    public $TYPE_TEXT = array( 'type' => 'TEXT', 'null'=> TRUE, );
+    public $TYPE_VARCHAR_5_NOTNULL = array( 'type' => 'VARCHAR', 'constraint' => 5, 'null' => FALSE, );
+    public $TYPE_VARCHAR_10_NOTNULL = array( 'type' => 'VARCHAR', 'constraint' => 10, 'null' => FALSE, );
+    public $TYPE_VARCHAR_20_NOTNULL = array( 'type' => 'VARCHAR', 'constraint' => 20, 'null' => FALSE, );
+    public $TYPE_VARCHAR_50_NOTNULL = array( 'type' => 'VARCHAR', 'constraint' => 50, 'null' => FALSE, );
+    public $TYPE_VARCHAR_100_NOTNULL = array( 'type' => 'VARCHAR', 'constraint' => 100, 'null' => FALSE, );
+    public $TYPE_VARCHAR_150_NOTNULL = array( 'type' => 'VARCHAR', 'constraint' => 150, 'null' => FALSE, );
+    public $TYPE_VARCHAR_200_NOTNULL = array( 'type' => 'VARCHAR', 'constraint' => 200, 'null' => FALSE, );
+    public $TYPE_VARCHAR_250_NOTNULL = array( 'type' => 'VARCHAR', 'constraint' => 250, 'null' => FALSE, );
+    public $TYPE_VARCHAR_5_NULL = array( 'type' => 'VARCHAR', 'constraint' => 5, 'null'=>TRUE, );
+    public $TYPE_VARCHAR_10_NULL = array( 'type' => 'VARCHAR', 'constraint' => 10, 'null'=>TRUE, );
+    public $TYPE_VARCHAR_20_NULL = array( 'type' => 'VARCHAR', 'constraint' => 20, 'null'=>TRUE, );
+    public $TYPE_VARCHAR_50_NULL = array( 'type' => 'VARCHAR', 'constraint' => 50, 'null'=>TRUE, );
+    public $TYPE_VARCHAR_100_NULL = array( 'type' => 'VARCHAR', 'constraint' => 100, 'null'=>TRUE, );
+    public $TYPE_VARCHAR_150_NULL = array( 'type' => 'VARCHAR', 'constraint' => 150, 'null'=>TRUE, );
+    public $TYPE_VARCHAR_200_NULL = array( 'type' => 'VARCHAR', 'constraint' => 200, 'null'=>TRUE, );
+    public $TYPE_VARCHAR_250_NULL = array( 'type' => 'VARCHAR', 'constraint' => 250, 'null'=>TRUE, );
+
+    protected function __update_module(){
+        // do nothing
+    }
+
+    public function __construct(){
+        parent::__construct();
+        // get module name & module path
+        $query = $this->db->select('version')
+            ->from(cms_table_name('main_module'))
+            ->where(array(
+                'module_name'=> $this->NAME,
+                'module_path'=> $this->cms_module_path(),
+              ))
+            ->get();
+        if ($query->num_rows() == 0) {
+            $this->IS_ACTIVE = FALSE;
+            $this->IS_OLD = FALSE;
+            $this->OLD_VERSION = '0.0.0';
+        } else {
+            $this->IS_ACTIVE = TRUE;
+            $row = $query->row();
+            // TODO: the suck sqlite returning array
+            $row = json_decode(json_encode($row), FALSE);
+            if($this->OLD_VERSION == ''){
+                $this->OLD_VERSION = $row->version;
+            }
+            if(version_compare($this->VERSION, $this->OLD_VERSION)>0){
+                $this->IS_OLD = TRUE;
+            }else{
+                $this->IS_OLD = FALSE;
+            }
+        }
+        // load dbforge to be used later
+        $this->load->dbforge();
+        // get subsite authorization
+        $subsite_auth_file = FCPATH.'modules/'.$this->cms_module_path().'/subsite_auth.php';
+        if(file_exists($subsite_auth_file)){
+            unset($public);
+            unset($subsite_allowed);
+            include($subsite_auth_file);
+            if(isset($public) && is_bool($public)){
+                $this->PUBLIC = $public;
+            }
+            if(isset($subsite_allowed) && is_array($subsite_allowed)){
+                $this->SUBSITE_ALLOWED = $subsite_allowed;
+            }
+        }
+    }
+
+    protected function do_activate()
+    {        
+        //this should be overridden by module developer
+        return FALSE;
+    }
+
+    protected function do_deactivate()
+    {
+        //this should be overridden by module developer
+        return FALSE;
+    }
+
+    protected function do_upgrade($old_version)
+    {
+        //this should be overridden by module developer
+        return FALSE;
+    }
+
+    public final function execute_SQL($SQL, $separator)
+    {
+        $this->cms_execute_sql($SQL, $separator);
+    }
+
+    protected final function add_navigation($navigation_name, $title, $url, $authorization_id = 1, 
+        $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL,
+        $default_theme=NULL, $default_layout=NULL, $notif_url=NULL)
+    {
+        $this->cms_add_navigation($navigation_name, $title, $url, $authorization_id, 
+            $parent_name, $index, $description, $bootstrap_glyph,
+            $default_theme, $default_layout, $notif_url);
+    }
+
+    protected final function remove_navigation($navigation_name)
+    {
+        $this->cms_remove_navigation($navigation_name);
+    }
+
+    protected final function add_privilege($privilege_name, $title, $authorization_id = 1, $description = NULL)
+    {
+        $this->cms_add_privilege($privilege_name, $title, $authorization_id, $description);
+    }
+    protected final function remove_privilege($privilege_name)
+    {
+        $this->cms_remove_privilege($privilege_name);
+    }
+
+    protected function add_widget($widget_name, $title=NULL, $authorization_id = 1, $url = NULL, $slug = NULL, 
+        $index = NULL, $description = NULL)
+    {
+        $this->cms_add_widget($widget_name, $title, $authorization_id, $url, $slug, $index, 
+            $description);
+    }
+
+    protected function remove_widget($widget_name)
+    {
+        $this->cms_remove_widget($widget_name);
+    }
+
+    protected function add_quicklink($navigation_name)
+    {
+        $this->cms_add_quicklink($navigation_name);
+    }
+
+    protected function remove_quicklink($navigation_name)
+    {
+        $this->cms_remove_quicklink($navigation_name);
+    }
 }
 
 class MY_Model extends CI_Model
 {
 }
+
+

@@ -702,6 +702,9 @@ class Default_Generator extends CMS_Controller{
             $this->nds->get_drop_table_forge($tables),
             $this->nds->get_create_table_forge($tables),
         );
+        $str = $this->nds->read_view('default_generator/_info', NULL, $pattern, $replacement);
+        $this->nds->write_file($project_path.'models/_info.php', $str);
+
         $str = $this->nds->read_view('default_generator/install', NULL, $pattern, $replacement);
         $this->nds->write_file($project_path.'controllers/install.php', $str);
 
