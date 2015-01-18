@@ -90,6 +90,10 @@ class CMS_Controller extends MX_Controller
         if(false) $this->No_CMS_Model = new No_CMS_Model();
     }
 
+    public function cms_load_info_model($module_path){
+        return $this->No_CMS_Model->cms_load_info_model($module_path);
+    }
+
     /** 
      * @author goFrendiAsgard
      * @desc   get default_controller
@@ -1519,6 +1523,11 @@ class CMS_Controller extends MX_Controller
         $this->No_CMS_Model->cms_remove_quicklink($navigation_name);
     }
 
+    protected function cms_execute_sql($SQL, $separator)
+    {
+        $this->No_CMS_Model->cms_execute_sql($SQL, $separator);
+    }
+
 }
 
 
@@ -1690,9 +1699,8 @@ class CMS_Module_Installer extends CMS_Controller
     public function __construct(){
         parent::__construct();
         $module_path = $this->cms_module_path();
-        if(file_exists(FCPATH.'modules/'.$module_path.'/models/_info.php')){
-            $this->load->model($module_path.'/_info', '_info');
-            $this->info_model      = $this->_info;
+        $this->info_model = $this->cms_load_info_model($module_path);
+        if($this->info_model != NULL){
             $this->DEPENDENCIES    = $this->info_model->DEPENDENCIES;
             $this->NAME            = $this->info_model->NAME;
             $this->VERSION         = $this->info_model->VERSION;
@@ -1945,7 +1953,7 @@ class CMS_Module_Installer extends CMS_Controller
             // from _upgrade model
             $this->db->trans_start();
             $module_path = $this->cms_module_path();
-            $model_alias = 'm_'.$module_path.'_install';
+            $model_alias = 'm_'.$module_path.'_info';
             if(file_exists(FCPATH.'modules/'.$module_path.'/models/_info.php')){
                 $this->load->model($module_path.'/_info', $model_alias);
                 $module_install_model = $this->{$model_alias};
@@ -2158,6 +2166,11 @@ class CMS_Module_Installer extends CMS_Controller
     protected function remove_quicklink($navigation_name)
     {
         $this->cms_remove_quicklink($navigation_name);
+    }
+
+    public final function execute_sql($SQL, $separator)
+    {
+        $this->cms_execute_sql($SQL, $separator);
     }
 }
 

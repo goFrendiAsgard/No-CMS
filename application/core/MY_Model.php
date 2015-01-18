@@ -491,6 +491,20 @@ class CMS_Model extends CI_Model
         }
     }
 
+    public function cms_load_info_model($module_path){
+        $model = NULL;
+        $info_model_file = FCPATH.'modules/'.$module_path.'/models/_info.php';
+        if(file_exists($info_model_file)){
+            $content = file_get_contents($info_model_file);
+            $content = preg_replace('/class( *)_info/i', 'class Info', $content);
+            $content = str_replace('<?php', '', $content);
+            $content = str_replace('?>', '', $content);
+            eval($content);
+            $model = new Info();
+        }
+        return $model;
+    }
+
     protected function __update_module(){
         $module_list = $this->cms_get_module_list();
         foreach($module_list as $module){
@@ -499,7 +513,7 @@ class CMS_Model extends CI_Model
             $version = $this->cms_module_version($module_name);
             $active = $module['active'];
             if($active){
-                $model_alias = 'm_'.$module_path.'_install';
+                $model_alias = 'm_'.$module_path.'_info';
                 if(file_exists(FCPATH.'modules/'.$module_path.'/models/_info.php')){
                     $this->load->model($module_path.'/_info', $model_alias);
                     $module_install_model = $this->{$model_alias};
@@ -3761,7 +3775,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    public final function cms_execute_SQL($SQL, $separator)
+    public final function cms_execute_sql($SQL, $separator)
     {
         $queries = explode($separator, $SQL);
         foreach ($queries as $query) {
