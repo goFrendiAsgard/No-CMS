@@ -513,13 +513,11 @@ class CMS_Model extends CI_Model
             $version = $this->cms_module_version($module_name);
             $active = $module['active'];
             if($active){
-                $model_alias = 'm_'.$module_path.'_info';
-                if(file_exists(FCPATH.'modules/'.$module_path.'/models/_info.php')){
-                    $this->load->model($module_path.'/_info', $model_alias);
-                    $module_install_model = $this->{$model_alias};
-                    $new_version = $module_install_model->VERSION;
-                    if($new_version != $version && method_exists($module_install_model,'do_upgrade')){                        
-                        $module_install_model->do_upgrade($version);
+                $module_info_model = $this->cms_load_info_model($module_path);
+                if($module_info_model != NULL){
+                    $new_version = $module_info_model->VERSION;
+                    if($new_version != $version && method_exists($module_info_model,'do_upgrade')){                        
+                        $module_info_model->do_upgrade($version);
                         $this->cms_module_version($module_name, $new_version);
                     }
                 }
