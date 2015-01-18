@@ -503,9 +503,9 @@ class CMS_Model extends CI_Model
                 if(file_exists(FCPATH.'modules/'.$module_path.'/models/_info.php')){
                     $this->load->model($module_path.'/_info', $model_alias);
                     $module_install_model = $this->{$model_alias};
-                    if(method_exists($module_install_model,'do_upgrade')){                        
+                    $new_version = $module_install_model->VERSION;
+                    if($new_version != $version && method_exists($module_install_model,'do_upgrade')){                        
                         $module_install_model->do_upgrade($version);
-                        $new_version = $module_install_model->VERSION;
                         $this->cms_module_version($module_name, $new_version);
                     }
                 }
