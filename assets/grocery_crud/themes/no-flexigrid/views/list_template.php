@@ -43,29 +43,43 @@ if($success_message !== null){?>
 ?></div>
 <div class="flexigrid" style='width: 100%;' data-unique-hash="<?php echo $unique_hash; ?>">
 	<div id="hidden-operations" class="hidden-operations"></div>
-	<div class="mDiv">
-		<div class="ftitle">
-			&nbsp;
-		</div>
-	</div>
 	<div id='main-table-box' class="main-table-box">
 
+    <?php echo form_open( $ajax_list_url, 'method="post" id="filtering_form" class="filtering_form" autocomplete = "off" data-ajax-list-info-url="'.$ajax_list_info_url.'"'); ?>
+    
+    <div class="quickSearchBox form-inline" id='quickSearchBox'>
+        <div class="form-group">
+            <input type="text" class="qsbsearch_fieldox search_text form-control" name="search_text" id="search_text" placeholder="<?php echo $this->l('list_search');?>">
+        </div>
+        <div class="form-group">
+            <select name="search_field" id="search_field" class="form-control">
+                <option value=""><?php echo $this->l('list_search_all');?></option>
+                <?php foreach($columns as $column){?>
+                <option value="<?php echo $column->field_name?>">{{ language:<?php echo $column->display_as?> }}&nbsp;&nbsp;</option>
+                <?php }?>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="button" value="<?php echo $this->l('list_search');?>" class="crud_search btn btn-primary form-control" id='crud_search'>
+        </div>
+        <div class="form-group">
+            <input type="button" value="<?php echo $this->l('list_clear_filtering');?>" id='search_clear' class="search_clear btn btn-primary form-control">
+        </div>
+    </div>
+
 	<?php if(!$unset_add || !$unset_export || !$unset_print){?>
-	<div class="tDiv">
-		<?php if(!$unset_add){?>
-        <div class="tDiv2">
+	<div class="tDiv">		    
+		<div class="tDiv3">
+            <?php if(!$unset_add){?>
             <a href='<?php echo $add_url?>' title='<?php echo $this->l('list_add'); ?> {{ language:<?php echo $subject?> }}' class='add-anchor add_button btn btn-default'>
             <div class="fbutton">
                 <div>
                     <span class="add"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;<?php echo $this->l('list_add'); ?> {{ language:<?php echo $subject?> }}</span>
                 </div>
             </div>
-            </a>
-            <div class="btnseparator">
-            </div>
-        </div>
-        <?php }?>
-		<div class="tDiv3">
+            </a>&nbsp;
+            <div class="btnseparator"></div>
+            <?php }?>
 			<?php if(!$unset_export) { ?>
             <a class="export-anchor btn btn-default" data-url="<?php echo $export_url; ?>" target="_blank">
                 <div class="fbutton">
@@ -91,38 +105,12 @@ if($success_message !== null){?>
 	</div>
 	<?php }?>
 
-	<div id='ajax_list' class="ajax_list">
-		<?php echo $list_view?>
-	</div>
-	<?php echo form_open( $ajax_list_url, 'method="post" id="filtering_form" class="filtering_form" autocomplete = "off" data-ajax-list-info-url="'.$ajax_list_info_url.'"'); ?>
-	<div class="sDiv quickSearchBox form-inline" id='quickSearchBox'>
-	    <div class="form-group">
-            <input type="text" class="qsbsearch_fieldox search_text form-control" name="search_text" id="search_text" placeholder="<?php echo $this->l('list_search');?>">
-        </div>
-        <div class="form-group">
-            <select name="search_field" id="search_field" class="form-control">
-                <option value=""><?php echo $this->l('list_search_all');?></option>
-                <?php foreach($columns as $column){?>
-                <option value="<?php echo $column->field_name?>">{{ language:<?php echo $column->display_as?> }}&nbsp;&nbsp;</option>
-                <?php }?>
-            </select>
-        </div>
-        <div class="form-group">
-            <input type="button" value="<?php echo $this->l('list_search');?>" class="crud_search btn btn-primary form-control" id='crud_search'>
-        </div>
-        <div class="form-group">
-            <input type="button" value="<?php echo $this->l('list_clear_filtering');?>" id='search_clear' class="search_clear btn btn-primary form-control">
-        </div>
-	</div>
-	<div class="pDiv">
-		<div class="pDiv2">
-            <div class="pGroup">
-                <div class="pSearch pButton quickSearchButton" id='quickSearchButton' title="<?php echo $this->l('list_search');?>">
-                    <span><i class="glyphicon glyphicon-search"></i></span>
-                </div>
-            </div>
-            <div class="btnseparator">
-            </div>
+    <div id='ajax_list' class="ajax_list">
+        <?php echo $list_view?>
+    </div>
+
+    <div class="pDiv">
+        <div class="pDiv2">
             <div class="pGroup">
                 <select name="per_page" id='per_page' class="per_page">
                     <?php foreach($paging_options as $option){?>
@@ -139,7 +127,7 @@ if($success_message !== null){?>
                     <span>&nbsp;<i class="glyphicon glyphicon-fast-backward"></i></span>
                 </div>
                 <div class="pPrev pButton prev-button">
-                    <span>&nbsp;<i class="glyphicon glyphicon-backward"></i>&nbsp;</span>
+                    <span>&nbsp;<i class="glyphicon glyphicon-chevron-left"></i>&nbsp;</span>
                 </div>
             </div>
             <div class="btnseparator">
@@ -156,7 +144,7 @@ if($success_message !== null){?>
             </div>
             <div class="pGroup">
                 <div class="pNext pButton next-button" >
-                    <span>&nbsp;<i class="glyphicon glyphicon-forward"></i>&nbsp;</span>
+                    <span>&nbsp;<i class="glyphicon glyphicon-chevron-right"></i>&nbsp;</span>
                 </div>
                 <div class="pLast pButton last-button">
                     <span><i class="glyphicon glyphicon-fast-forward"></i>&nbsp;</span>
@@ -183,9 +171,11 @@ if($success_message !== null){?>
                 </span>
             </div>
         </div>
-		<div style="clear: both;">
-		</div>
-	</div>
+        <div style="clear: both;">
+        </div>
+    </div>
+	
 	<?php echo form_close(); ?>
+
 	</div>
 </div>
