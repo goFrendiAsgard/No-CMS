@@ -149,3 +149,34 @@ function cms_module_navigation_name($module_directory, $name){
         return $name;
     }
 }
+
+/*
+ Rename Install into _Info
+*/
+function cms_update_module_installer(){
+    $ci =& get_instance();
+    $ci->load->helper('directory');
+    $directories = directory_map(FCPATH.'modules', 1);
+    sort($directories);
+    $module      = array();
+    foreach ($directories as $directory) {
+        $directory = str_replace(array('/','\\'),'',$directory);
+        if (!is_dir(FCPATH.'modules/' . $directory))
+            continue;
+
+        // get old and new installer name
+        $old_installer = FCPATH.'modules/' . $directory . '/controllers/install.php';
+        $new_installer = FCPATH.'modules/' . $directory . '/controllers/_info.php';
+
+        if (!file_exists($old_installer) || file_exists($new_installer))
+            continue;
+
+        // make new installer
+        $content = file_get_contents($old_installer);
+        $content = preg_replace('/class( *)Install( *)extends( *)CMS_Module_Installer/i', 
+            'class _Info extends CMS_Module_Info_Controller', $content);
+        file_put_contents($new_installer, $content);
+        unlink($old_installer);
+    }
+
+}

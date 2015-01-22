@@ -71,6 +71,10 @@ class Install_Model extends CI_Model{
         );
 
     public function __construct(){
+        // update module installer
+        $this->load->helper('cms_helper');
+        cms_update_module_installer();
+        
         $timezone = @date_default_timezone_get();
         if (!isset($timezone) || $timezone == '') {
             $timezone = @ini_get('date.timezone');
@@ -1415,9 +1419,9 @@ class Install_Model extends CI_Model{
             foreach($modules as $module){
                 $ch = curl_init();
                 if($this->is_subsite){
-                    $url = site_url($module.'/install/activate?__cms_subsite='.$this->subsite);
+                    $url = site_url($module.'/_info/activate?__cms_subsite='.$this->subsite);
                 }else{
-                    $url = site_url($module.'/install/activate');
+                    $url = site_url($module.'/_info/activate');
                 }
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_POST, 3);

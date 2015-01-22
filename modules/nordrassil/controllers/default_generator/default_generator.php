@@ -705,8 +705,8 @@ class Default_Generator extends CMS_Controller{
         $str = $this->nds->read_view('default_generator/_info', NULL, $pattern, $replacement);
         $this->nds->write_file($project_path.'models/_info.php', $str);
 
-        $str = $this->nds->read_view('default_generator/install', NULL, $pattern, $replacement);
-        $this->nds->write_file($project_path.'controllers/install.php', $str);
+        $str = $this->nds->read_view('default_generator/_info_controller', NULL, $pattern, $replacement);
+        $this->nds->write_file($project_path.'controllers/_info.php', $str);
 
         $str = $this->nds->read_view('default_generator/install_setting_view', NULL, $pattern, $replacement);
         $this->nds->write_file($project_path.'views/install_setting.php', $str);

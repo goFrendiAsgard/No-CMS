@@ -1905,7 +1905,7 @@ class Main extends CMS_Controller
 
         // show up
         if($first){
-            if(!$no_complete_menu){
+            if(!$no_complete_menu && $this->cms_user_id() > 0){
                 //  hidden-sm hidden-xs
                 $result = '<li class="dropdown">'.
                     '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.

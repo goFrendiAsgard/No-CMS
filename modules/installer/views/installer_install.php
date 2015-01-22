@@ -56,7 +56,7 @@
                 for(var i=0; i<modules.length; i++){
                     var module = modules[i];
                     $.ajax({
-                        'url': '<?php echo site_url() ?>/'+module+'/install/activate',
+                        'url': '<?php echo site_url() ?>/'+module+'/_info/activate',
                         'type': 'POST',
                         'dataType': 'json',
                         'async': true,

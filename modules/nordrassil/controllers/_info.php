@@ -4,7 +4,7 @@
  *
  * @author No-CMS Module Generator
  */
-class Install extends CMS_Module_Installer {
+class _Info extends CMS_Module_Info_Controller {
     protected $DEPENDENCIES = array();
     protected $NAME         = 'gofrendi.noCMS.nordrassil';
     protected $DESCRIPTION  = 'A very cool and easy module generator. Choose your database schema, press the magical "generate" button, and enjoy your life';

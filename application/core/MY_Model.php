@@ -48,6 +48,9 @@ class CMS_Base_Model extends CI_Model
         $old_version = cms_config('__cms_version');
         $current_version = '0.7.0-stable-8';
 
+        // update module installer
+        cms_update_module_installer();
+
         if($old_version !== $current_version){
             $this->load->dbforge();
 
@@ -2444,7 +2447,7 @@ class CMS_Base_Model extends CI_Model
                         for(var i=0; i<modules.length; i++){
                             var module = modules[i];
                             $.ajax({
-                                "url": "{{ SITE_URL }}/"+module+"/install/activate/?__cms_subsite='.$this->install_model->subsite.'",
+                                "url": "{{ SITE_URL }}/"+module+"/_info/activate/?__cms_subsite='.$this->install_model->subsite.'",
                                 "type": "POST",
                                 "dataType": "json",
                                 "async": true,
@@ -2556,7 +2559,7 @@ class CMS_Base_Model extends CI_Model
      * @desc    get module list
      */
     public function cms_get_module_list()
-    {
+    {        
         $this->load->helper('directory');
         $directories = directory_map(FCPATH.'modules', 1);
         sort($directories);
@@ -2566,7 +2569,7 @@ class CMS_Base_Model extends CI_Model
             if (!is_dir(FCPATH.'modules/' . $directory))
                 continue;
 
-            if (!file_exists(FCPATH.'modules/' . $directory . '/controllers/install.php'))
+            if (!file_exists(FCPATH.'modules/' . $directory . '/controllers/_info.php'))
                 continue;
 
             // unpublished module should not be shown
@@ -2591,7 +2594,7 @@ class CMS_Base_Model extends CI_Model
                 $extension      = $filename_array[count($filename_array) - 1];
                 unset($filename_array[count($filename_array) - 1]);
                 $filename = implode('.', $filename_array);
-                if ($extension == 'php' && $filename != 'install') {
+                if ($extension == 'php' && $filename != '_info') {
                     $module_controllers[] = $filename;
                 }
             }

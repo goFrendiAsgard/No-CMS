@@ -29,10 +29,10 @@
         	echo '<img class="logo" src="'.base_url('assets/nocms/images/icons/package.png').'" />';
         }
         echo '  <br />';
-        echo '  <a id="module_'.$i.'_activate" class="btn btn-success disabled" href="'.site_url($module['module_path'].'/install/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
-        echo '  <a id="module_'.$i.'_upgrade" class="btn btn-warning disabled" href="'.site_url($module['module_path'].'/install/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
-        echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger disabled" href="'.site_url($module['module_path'].'/install/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
-        echo '  <a id="module_'.$i.'_setting" class="btn btn-warning disabled" href="'.site_url($module['module_path'].'/install/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
+        echo '  <a id="module_'.$i.'_activate" class="btn btn-success disabled" href="'.site_url($module['module_path'].'/_info/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
+        echo '  <a id="module_'.$i.'_upgrade" class="btn btn-warning disabled" href="'.site_url($module['module_path'].'/_info/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
+        echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger disabled" href="'.site_url($module['module_path'].'/_info/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
+        echo '  <a id="module_'.$i.'_setting" class="btn btn-warning disabled" href="'.site_url($module['module_path'].'/_info/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
         echo '</div>';
         echo '<div class="col-sm-8">';
         echo '  <br />';
@@ -43,7 +43,7 @@
         echo '<script type="text/javascript">'; 
         echo 'function check_module_status_'.$i.'(){';       
         echo '  $.ajax({';
-        echo '      url:"'.site_url($module['module_path'].'/install/status').'",';
+        echo '      url:"'.site_url($module['module_path'].'/_info/status').'",';
         echo '      dataType:"json",';
         echo '      success:function(response){';
         echo '          var status = "";';
