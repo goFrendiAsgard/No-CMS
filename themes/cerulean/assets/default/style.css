@@ -1,22 +1,12 @@
 textarea, .chzn-drop{
     color:black;
 }
-.flexigrid *,
-.flexigrid *:before,
-.flexigrid *:after,
-#colorbox,
-#colorbox:before,
-#colorbox:after {
-    -webkit-box-sizing: content-box!important;
-    -moz-box-sizing: content-box!important;
-    box-sizing: content-box!important;
-}
 .not_shown{
-	display: none;
+    display: none;
 }
 
 .clear{
-	clear: both;
+    clear: both;
 }
 
 .layout_widget_container input, .layout_widget_container textarea {
@@ -24,50 +14,7 @@ textarea, .chzn-drop{
 }
 
 footer{
-	padding: 10px;
-}
-
-#__section-banner>div{
-	/* IE10 */
-	background-image: -ms-linear-gradient(top left, white 0%, gray 100%);
-
-	/* Mozilla Firefox */
-	background-image: -moz-linear-gradient(top left, white 0%, gray 100%);
-
-	/* Opera */
-	background-image: -o-linear-gradient(top left, white 0%, gray 100%);
-
-	/* Webkit (Safari/Chrome 10) */
-	background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, gray));
-
-	/* Webkit (Chrome 11+) */
-	background-image: -webkit-linear-gradient(top left, white 0%, gray 100%);
-
-	/* Proposed W3C Markup */
-	background-image: linear-gradient(top left, white 0%, gray 100%);
-}
-
-#__section-left-and-content{
-	padding:5px;
-	margin-left:0px;
-
-	/* IE10 */
-	background-image: -ms-linear-gradient(top left, white 0%, #EEEEEE 100%);
-
-	/* Mozilla Firefox */
-	background-image: -moz-linear-gradient(top left, white 0%, #EEEEEE 100%);
-
-	/* Opera */
-	background-image: -o-linear-gradient(top left, white 0%, #EEEEEE 100%);
-
-	/* Webkit (Safari/Chrome 10) */
-	background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, white), color-stop(1, #EEEEEE));
-
-	/* Webkit (Chrome 11+) */
-	background-image: -webkit-linear-gradient(top left, white 0%, #EEEEEE 100%);
-
-	/* Proposed W3C Markup */
-	background-image: linear-gradient(top left, white 0%, #EEEEEE 100%);
+    padding: 10px;
 }
 
 #__section-content{
@@ -76,18 +23,6 @@ footer{
     padding-bottom: 30px;
 }
 
-/* grocery-CRUD flexigrid */
-.pGroup select#per_page
-{
-    max-width: 54px;
-}
-#crudForm{
-    padding-bottom: 145px;
-}
-.chzn-results{
-    max-height: 200px!important;
-}
-/* end of grocery-CRUD flexigrid */
 
 /* Landscape phones and down */
 @media (max-width: 480px){

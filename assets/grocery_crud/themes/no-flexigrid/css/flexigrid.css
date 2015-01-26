@@ -96,15 +96,7 @@ table th
 .flexigrid div.nBtn.srtd {
 	background:url(images/wbg.gif) repeat-x 0px -1px;
 }
-.flexigrid div.mDiv {/*
-	background:url(images/wbg.gif) repeat-x top;
-	border:1px solid #ccc;
-	border-bottom:0px;
-	border-top:0px;
-	font-weight:bold;
-	display:block;
-	overflow:hidden;
-	white-space:nowrap;*/
+.flexigrid div.mDiv {
 	position:relative;
 }
 .flexigrid div.mDiv div {
@@ -146,11 +138,8 @@ table th
 	float:right;
 	padding:1px;
 }
-.flexigrid div.sDiv /*toolbar*/ {/*
-	background:#fafafa url(images/bg.gif) repeat-x top;*/
-	position:relative;/*
-	border:1px solid #ccc;
-	border-top:0px;*/
+.flexigrid div.sDiv /*toolbar*/ {
+	position:relative;
 	overflow:hidden;
 	display:none;
 }
@@ -170,67 +159,27 @@ table th
 }
 .flexigrid div.btnseparator {
 	float:left;
-	height:22px;/*
-	border-left:1px solid #ccc;
-	border-right:1px solid #fff;
-	margin:1px;*/
+	height:22px;
 }
 .flexigrid div.fbutton {
 	float:left;
 	display:block;
 	cursor:pointer;
-	/*padding:1px;*/
 }
 .flexigrid div.fbutton div {
 	float:left;
-	/*padding:1px 3px;*/
 }
 .flexigrid div.fbutton span {
 	float:left;
 	display:block;
-	/*padding:3px;*/
-}/*
-.flexigrid div.fbutton span.add {
-	background:url(images/add.png) no-repeat;
-	background-position: 0px 3px;
-	padding-left: 20px;
 }
-.flexigrid div.fbutton span.export {
-	background:url(images/export.png) no-repeat;
-	background-position: 0px 3px;
-	padding-left: 20px;
-}
-.flexigrid div.fbutton span.print {
-	background:url(images/print.png) no-repeat;
-	background-position: 0px 3px;
-	padding-left: 20px;
-}
-.flexigrid div.fbutton span.delete {
-	background:url(images/close.png) no-repeat;
-	padding-left: 20px;
-}
-.flexigrid div.fbutton:hover,.flexigrid div.fbutton.fbOver {
-	padding:0px;
-	border:1px solid #ccc;
-}
-.flexigrid div.fbutton:hover div,.flexigrid div.fbutton.fbOver div {
-	padding:0px 2px;
-	border-left:1px solid #fff;
-	border-top:1px solid #fff;
-	border-right:1px solid #eee;
-	border-bottom: 1px solid #eee;
-}
-*/
 /* end toolbar*/
 .flexigrid div.hDiv table {
 	border-right:1px solid #fff;
 }
 .flexigrid table tr.hDiv
-{/*
-	background:#fafafa url(images/fhbg.gif) repeat-x bottom;*/
-	position:relative;/*
-	border:1px solid #ccc;
-	border-bottom:0px;*/
+{
+	position:relative;
 	overflow:hidden;
 }
 .flexigrid div.cDrag {
@@ -269,101 +218,17 @@ table th
 	padding:0px;
 	background:none;
 }
-.flexigrid div.bDiv {/*
-	border:1px solid #ccc;
-	border-top:0px;
-	background:#fff;*/
+.flexigrid div.bDiv {
 	overflow:auto;
 	position:relative;
 }
-.flexigrid div.form-div {/*
-	border:1px solid #ccc;
-	border-top:0px;
-	background:#fff;*/
-	position:relative;/*
-	font-size:15px;
-	padding:0px 0px 10px 0px;*/
-}
-/*
-.flexigrid div.form-div select
-{
-	font-size: 15px;
-	border: 1px solid #AAA;
-	padding: 5px 5px 5px 5px;
-	background: #fafafa;
-}
-.flexigrid div.form-div select option
-{
-	padding-right: 10px;
-}*/
-.flexigrid div.form-div input[type=text], .flexigrid div.form-div input[type=password]
-{
-	/*font-size: 15px;*/
-	width: 500px;
-	height:20px;/*
-	border: 1px solid #AAA;*/
-	padding: 5px 5px 5px 5px;
-	/*background: #fafafa;*/
-}
-.flexigrid div.form-div
-{
-	/*font-size: 15px;
-	border: 1px solid #AAA;*/
-	padding: 5px 5px 5px 5px;
-	/*background: #fafafa;*/
-}
-/*
-.flexigrid div.form-div textarea:hover,
-.flexigrid div.form-div input[type=text]:hover,
-.flexigrid div.form-div select:hover
-{
-	border: 1px solid #555;
-	background: #fff;
-}
-.flexigrid div.form-div textarea:focus, .flexigrid div.form-div input[type=text]:focus, .flexigrid div.form-div select:focus
-{
-	border: 1px solid #444;
-	background: #fff;
-}
-div.form-div input.datepicker-input
-{
-	width: 100px !important;
-}
-div.form-div input.datetime-input
-{
-	width:150px !important;
-}*/
-.form-field-box
-{
-	padding: 5px 10px;
-	margin: 0px 0px 5px 0px;
-	min-height: 30px;
-}/*
-.form-field-box.odd
-{
-	background: #fff;
-}
-.form-field-box.even
-{
-	background: #EFEFEF;
-}*/
-.form-display-as-box
-{
-	float:left;
-	width:200px;
-	padding-top:7px;
-}
-.form-input-box
-{
-	float:left;
+.flexigrid div.form-div {
+	position:relative;
 }
 .flexigrid div.form-button-box {
 	float:left;
 	margin-top:11px;
 	margin-left:10px;
-}
-.flexigrid div.bDiv table {/*
-	border-bottom:1px solid #ccc;*/
 }
 .flexigrid div.hGrip {
 	position:absolute;
@@ -399,10 +264,7 @@ div.form-div input.datetime-input
 	border-bottom:1px solid #aaa;
 	background:none;
 }
-.flexigrid table tr.hDiv th,.flexigrid div.bDiv td /* common cell properties*/ {/*
-	text-align:left;
-	border-right:1px solid #ddd;
-	border-left:1px solid #fff;*/
+.flexigrid table tr.hDiv th,.flexigrid div.bDiv td /* common cell properties*/ {
 	overflow:hidden;
 	vertical-align:top !important;
 }
@@ -487,35 +349,7 @@ div.colCopy {
 .flexigrid div.bDiv td div {
 	border-top:0px solid #fff;
 	padding-bottom:4px;
-}/*
-.flexigrid tr td.sorted {
-	background:#f3f3f3;
-	border-right:1px solid #ddd;
-	border-bottom:1px solid #f3f3f3;
 }
-.flexigrid tr td.sorted div {
-}
-.flexigrid tr.erow td {
-	background:#f7f7f7;
-	border-bottom:1px solid #f7f7f7;
-}
-.flexigrid tr.erow td.sorted {
-	background:#e3e3e3;
-	border-bottom:1px solid #e3e3e3;
-}
-.flexigrid tr.erow td.sorted div {
-}
-.flexigrid div.bDiv tr:hover td,.flexigrid div.bDiv tr:hover td.sorted,.flexigrid div.bDiv tr.trOver td.sorted,.flexigrid div.bDiv tr.trOver td {
-	background:#d9ebf5;
-	border-left:1px solid #eef8ff;
-	border-bottom:1px dotted #a8d8eb;
-}
-.flexigrid div.bDiv tr.trSelected:hover td,.flexigrid div.bDiv tr.trSelected:hover td.sorted,.flexigrid div.bDiv tr.trOver.trSelected td.sorted,.flexigrid div.bDiv tr.trOver.trSelected td,.flexigrid tr.trSelected td.sorted,.flexigrid tr.trSelected td {
-	background:#d5effc url(images/hl.png) repeat-x top;
-	border-right:1px solid #d2e3ec;
-	border-left:1px solid #eef8ff;
-	border-bottom: 1px solid #a8d8eb;
-}*/
 /* novstripe adjustments */
 .flexigrid.novstripe .bDiv table {
 	border-bottom:1px solid #ccc;
@@ -544,9 +378,6 @@ div.colCopy {
 }
 /* end novstripe */
 .flexigrid div.pDiv {
-	/*background:url(images/wbg.gif) repeat-x 0 -1px;
-	border:1px solid #ccc;
-	border-top:0px;*/
 	overflow:hidden;
 	white-space:nowrap;
 	position:relative;
@@ -560,14 +391,11 @@ div.colCopy {
 }
 div.pGroup {
 	float:left;
-	/*background:none;
-	height:24px;*/
 	height:30px;
 	margin:0px 5px;
 }
 .flexigrid div.pDiv .pPageStat,.flexigrid div.pDiv .pcontrol {
 	position:relative;
-	/*top:5px;*/
 	overflow:visible;
 }
 .flexigrid div.pDiv input {
@@ -576,50 +404,14 @@ div.pGroup {
 	top:-5px;
 }
 .flexigrid div.pDiv div.pButton {
-	float:left;/*
-	width:22px;
-	height:22px;
-	border:0px;*/
+	float:left;
 	cursor:pointer;
 	overflow:hidden;
 }
-.flexigrid div.pDiv div.pButton:hover,.flexigrid div.pDiv div.pButton.pBtnOver {/*
-	width:20px;
-	height:20px;
-	border:1px solid #ccc;
-	cursor:pointer;*/
-}
-.flexigrid div.pDiv div.pButton span {/*
-	width:20px;
-	height:20px;*/
+.flexigrid div.pDiv div.pButton span {
 	display:block;
 	float:left;
 }
-.flexigrid div.pDiv div.pButton:hover span,.flexigrid div.pDiv div.pButton.pBtnOver span {/*
-	width:19px;
-	height:19px;
-	border-top:1px solid #fff;
-	border-left:1px solid #fff;*/
-}
-/*
-.flexigrid .pSearch {
-	background:url(images/magnifier.png) no-repeat center;
-}
-.flexigrid .pFirst {
-	background:url(images/first.gif) no-repeat center;
-}
-.flexigrid .pPrev {
-	background:url(images/prev.gif) no-repeat center;
-}
-.flexigrid .pNext {
-	background:url(images/next.gif) no-repeat center;
-}
-.flexigrid .pLast {
-	background:url(images/last.gif) no-repeat center;
-}
-.flexigrid .pReload {
-	background:url(images/load.png) no-repeat center;
-}*/
 .flexigrid .pReload.loading,.flexigrid .fbutton.loading{
 	background:url(images/load.gif) no-repeat center;
 }
@@ -634,46 +426,7 @@ div.pGroup {
 {
 	float:right;
 	padding:5px;
-}/*
-.flexigrid .edit-icon
-{
-	background:url(images/edit.png) no-repeat;
-	cursor: pointer;
-	width: 16px;
-	height:16px;
-	float:right;
-	border: none !important;
-	padding:0px !important;
-	padding-bottom:0px !important;
-	margin-left:5px;
-	display: block;
 }
-.flexigrid .delete-icon
-{
-	background:url(images/close.png) no-repeat;
-	cursor: pointer;
-	width: 16px;
-	height:16px;
-	float:right;
-	border: none !important;
-	padding:0px !important;
-	padding-bottom:0px !important;
-	margin-left:5px;
-	display: block;
-}
-.flexigrid .read-icon
-{
-	background:url(images/magnifier.png) no-repeat center;
-	cursor: pointer;
-	width: 16px;
-	height:16px;
-	float:right;
-	border: none !important;
-	padding:0px !important;
-	padding-bottom:0px !important;
-	margin-left:5px;
-	display: block;
-}*/
 .flexigrid .tools
 {
 	white-space: nowrap;
@@ -695,11 +448,7 @@ div.pGroup {
 .text-right
 {
 	text-align: right;
-}/*
-.add-anchor, .delete-anchor, .export-anchor, .print-anchor
-{
-	color: #000;
-}*/
+}
 .floatL
 {
 	float:left;
@@ -707,15 +456,6 @@ div.pGroup {
 .floatR
 {
 	float:right;
-}
-.clear
-{
-	clear: both !important;
-	border: none !important;
-	padding: 0px !important;
-	margin: 0px !important;
-	height:0px;
-	width:0px;
 }
 .flexigrid a img
 {
@@ -733,33 +473,8 @@ div.pGroup {
 .report-div
 {
 	padding: 10px;
-	/*border-style: solid;
-	border-width: 1px;
-	margin-bottom: 10px;
-	margin-top: 10px;*/
 	display:none;
-	/*font-family: Arial,Helvetica,sans-serif;*/
-}/*
-.report-div.success
-{
-	border-color: green;
 }
-.report-div.success p
-{
-	background: url(images/success.png) no-repeat left center;
-	margin: 0px !important;
-	padding: 10px 0px 10px 25px !important;
-}
-.report-div.error
-{
-	border-color: red;
-}
-.report-div.error p
-{
-	background: url(images/error.png) no-repeat left center;
-	margin: 0px !important;
-	padding: 10px 0px 10px 25px !important;
-}*/
 input.field_error
 {
 	border: 1px solid red !important;
@@ -775,25 +490,7 @@ input.field_error
 	float: right;
 	margin:0px;
 	padding:0px 25px 0px 0px !important;
-}/*
-div.flexigrid .ftitle a
-{
-	color: blue;
-	text-decoration: none;
 }
-div.flexigrid .ftitle a:hover
-{
-	text-decoration: underline;
-}
-div.flexigrid a
-{
-	color: blue;
-	text-decoration: none;
-}
-div.flexigrid a:hover
-{
-	text-decoration: underline;
-}*/
 .small-loading
 {
 	background: url('images/load.gif') no-repeat;
@@ -869,8 +566,8 @@ textarea.texteditor, textarea.mini-texteditor
     #filtering_form .form-group{
         margin-right:5px;
     }
-    .flexigrid input, .flexigrid select{
-        width:auto;
+    .flexigrid input, .flexigrid select{/*
+        width:auto;*/
         height:auto;
     }
 }
@@ -879,4 +576,19 @@ textarea.texteditor, textarea.mini-texteditor
 }
 .pDiv, .pDiv2{
     padding-bottom: 10px;
+}
+
+.chzn-container *, .chzn-container-multi *,
+.chzn-container *, .chzn-container-multi:before *,
+.chzn-container *, .chzn-container-multi:after * {
+    -webkit-box-sizing: content-box!important;
+    -moz-box-sizing: content-box!important;
+    box-sizing: content-box!important;
+}
+
+#crudForm{
+    padding-bottom: 145px;
+}
+.chzn-results{
+    max-height: 200px!important;
 }

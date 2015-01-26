@@ -1282,6 +1282,7 @@ class CMS_Base_Model extends CI_Model
             $other_module_path = $module_list['module_path'];
             $image_directories[] = "modules/$other_module_path/assets/navigation_icon";
         }
+        $submenu_count = count($submenus);
         foreach ($submenus as $submenu) {
             $navigation_id   = $submenu["navigation_id"];
             $navigation_name = $submenu["navigation_name"];
@@ -1348,7 +1349,11 @@ class CMS_Base_Model extends CI_Model
                 $image_file_path = 'assets/nocms/images/icons/package.png';
             }
             $html .= '<a href="' . $url . '" style="text-decoration:none;">';
-            $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
+            if($submenu_count <= 2){
+                $html .= '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">';
+            }else if($submenu_count >= 3){
+                $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
+            }
             $html .= '<div class="thumbnail thumbnail_submenu">';
 
             if ($image_file_path != '') {

@@ -46,6 +46,13 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
     public $unset_add_fields     = null;
     public $unset_edit_fields    = null;
 
+    /* Added by Go Frendi. to modify search form, do this:
+    $crud->unset_default_search();
+    $crud->search_form_components = '<input name=....';
+    */ 
+    public $unset_default_search   = false;
+    public $search_form_components = '';
+
     // fix issue http://www.grocerycrud.com/forums/topic/1975-bug-in-the-search/
     protected $unsearchable_field = array();
 
@@ -95,6 +102,89 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 
         return strip_tags($value);
          */
+    }
+
+    public function unset_default_search()
+    {
+        $this->unset_default_search = true;
+
+        return $this;
+    }
+
+    protected function showList($ajax = false, $state_info = null)
+    {
+        $data = $this->get_common_data();
+
+        $data->order_by     = $this->order_by;
+
+        $data->types        = $this->get_field_types();
+
+        $data->list = $this->get_list();
+        $data->list = $this->change_list($data->list , $data->types);
+        $data->list = $this->change_list_add_actions($data->list);
+
+        $data->total_results = $this->get_total_results();
+
+        $data->columns              = $this->get_columns();
+
+        // added by go frendi
+        $data->unsearchable_field   = $this->unsearchable_field;
+        // end of addtion
+
+        $data->success_message      = $this->get_success_message_at_list($state_info);
+
+        $data->primary_key          = $this->get_primary_key();
+        $data->add_url              = $this->getAddUrl();
+        $data->edit_url             = $this->getEditUrl();
+        $data->delete_url           = $this->getDeleteUrl();
+        $data->read_url             = $this->getReadUrl();
+        $data->ajax_list_url        = $this->getAjaxListUrl();
+        $data->ajax_list_info_url   = $this->getAjaxListInfoUrl();
+        $data->export_url           = $this->getExportToExcelUrl();
+        $data->print_url            = $this->getPrintUrl();
+        $data->actions              = $this->actions;
+        $data->unique_hash          = $this->get_method_hash();
+        $data->order_by             = $this->order_by;
+
+        $data->unset_add            = $this->unset_add;
+        $data->unset_edit           = $this->unset_edit;
+        $data->unset_read           = $this->unset_read;
+        $data->unset_delete         = $this->unset_delete;
+        $data->unset_export         = $this->unset_export;
+        $data->unset_print          = $this->unset_print;
+
+        // unset search
+        $data->unset_default_search = $this->unset_default_search;
+        $data->search_form_components = $this->search_form_components;
+
+        $default_per_page = $this->config->default_per_page;
+        $data->paging_options = $this->config->paging_options;
+        $data->default_per_page     = is_numeric($default_per_page) && $default_per_page >1 && in_array($default_per_page,$data->paging_options)? $default_per_page : 25;
+
+        if($data->list === false)
+        {
+            throw new Exception('It is impossible to get data. Please check your model and try again.', 13);
+            $data->list = array();
+        }
+
+        foreach($data->list as $num_row => $row)
+        {
+            $data->list[$num_row]->edit_url = $data->edit_url.'/'.$row->{$data->primary_key};
+            $data->list[$num_row]->delete_url = $data->delete_url.'/'.$row->{$data->primary_key};
+            $data->list[$num_row]->read_url = $data->read_url.'/'.$row->{$data->primary_key};
+        }
+
+        if(!$ajax)
+        {
+            $this->_add_js_vars(array('dialog_forms' => $this->config->dialog_forms));
+            $data->list_view = $this->_theme_view('list.php',$data,true);
+            $this->_theme_view('list_template.php',$data);
+        }
+        else
+        {
+            $this->set_echo_and_die();
+            $this->_theme_view('list.php',$data);
+        }
     }
     
     /* Fix issue: http://www.grocerycrud.com/forums/topic/61-default-field-values-for-add-form/ */
@@ -458,6 +548,416 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
         }
 
         return $validation_result;
+    }
+
+    protected function get_integer_input($field_info,$value)
+    {
+        $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery.numeric.min.js');
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.numeric.config.js');
+        $extra_attributes = '';
+        if(!empty($field_info->db_max_length))
+            $extra_attributes .= "maxlength='{$field_info->db_max_length}'";
+        $input = "<input id='field-{$field_info->name}' name='{$field_info->name}' type='text' value='$value' class='numeric form-control' $extra_attributes />";
+        return $input;
+    }
+
+    protected function get_true_false_input($field_info,$value)
+    {
+        $this->set_css($this->default_css_path.'/jquery_plugins/uniform/uniform.default.css');
+        $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery.uniform.min.js');
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.uniform.config.js');
+
+        $value_is_null = empty($value) && $value !== '0' && $value !== 0 ? true : false;
+
+        $input = "<div class='pretty-radio-buttons'>";
+
+        $true_string = is_array($field_info->extras) && array_key_exists(1,$field_info->extras) ? $field_info->extras[1] : $this->default_true_false_text[1];
+        $checked = $value === '1' || ($value_is_null && $field_info->default === '1') ? "checked = 'checked'" : "";
+        $input .= "<label><input id='field-{$field_info->name}-true' class='radio-uniform'  type='radio' name='{$field_info->name}' value='1' $checked /> ".$true_string."</label> ";
+
+        $false_string =  is_array($field_info->extras) && array_key_exists(0,$field_info->extras) ? $field_info->extras[0] : $this->default_true_false_text[0];
+        $checked = $value === '0' || ($value_is_null && $field_info->default === '0') ? "checked = 'checked'" : "";
+        $input .= "<label><input id='field-{$field_info->name}-false' class='radio-uniform' type='radio' name='{$field_info->name}' value='0' $checked /> ".$false_string."</label>";
+
+        $input .= "</div>";
+
+        return $input;
+    }
+
+    protected function get_string_input($field_info,$value)
+    {
+        $value = !is_string($value) ? '' : str_replace('"',"&quot;",$value);
+
+        $extra_attributes = '';
+        if(!empty($field_info->db_max_length))
+            $extra_attributes .= "maxlength='{$field_info->db_max_length}'";
+        $input = "<input id='field-{$field_info->name}' class='form-control' name='{$field_info->name}' type='text' value=\"$value\" $extra_attributes />";
+        return $input;
+    }
+
+    protected function get_text_input($field_info,$value)
+    {
+        if($field_info->extras == 'text_editor')
+        {
+            $editor = $this->config->default_text_editor;
+            switch ($editor) {
+                case 'ckeditor':
+                    $this->set_js_lib($this->default_texteditor_path.'/ckeditor/ckeditor.js');
+                    $this->set_js_lib($this->default_texteditor_path.'/ckeditor/adapters/jquery.js');
+                    $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.ckeditor.config.js');
+                break;
+
+                case 'tinymce':
+                    $this->set_js_lib($this->default_texteditor_path.'/tiny_mce/jquery.tinymce.js');
+                    $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.tine_mce.config.js');
+                break;
+
+                case 'markitup':
+                    $this->set_css($this->default_texteditor_path.'/markitup/skins/markitup/style.css');
+                    $this->set_css($this->default_texteditor_path.'/markitup/sets/default/style.css');
+
+                    $this->set_js_lib($this->default_texteditor_path.'/markitup/jquery.markitup.js');
+                    $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.markitup.config.js');
+                break;
+            }
+
+            $class_name = $this->config->text_editor_type == 'minimal' ? 'mini-texteditor' : 'texteditor';
+
+            $input = "<textarea id='field-{$field_info->name}' name='{$field_info->name}' class='$class_name form-control' >$value</textarea>";
+        }
+        else
+        {
+            $input = "<textarea id='field-{$field_info->name}' name='{$field_info->name}' class='form-control'>$value</textarea>";
+        }
+        return $input;
+    }
+
+    protected function get_datetime_input($field_info,$value)
+    {
+        $this->set_css($this->default_css_path.'/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS);
+        $this->set_css($this->default_css_path.'/jquery_plugins/jquery.ui.datetime.css');
+        $this->set_css($this->default_css_path.'/jquery_plugins/jquery-ui-timepicker-addon.css');
+        $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS);
+        $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery-ui-timepicker-addon.js');
+
+        if($this->language !== 'english')
+        {
+            include($this->default_config_path.'/language_alias.php');
+            if(array_key_exists($this->language, $language_alias))
+            {
+                $i18n_date_js_file = $this->default_javascript_path.'/jquery_plugins/ui/i18n/datepicker/jquery.ui.datepicker-'.$language_alias[$this->language].'.js';
+                if(file_exists($i18n_date_js_file))
+                {
+                    $this->set_js_lib($i18n_date_js_file);
+                }
+
+                $i18n_datetime_js_file = $this->default_javascript_path.'/jquery_plugins/ui/i18n/timepicker/jquery-ui-timepicker-'.$language_alias[$this->language].'.js';
+                if(file_exists($i18n_datetime_js_file))
+                {
+                    $this->set_js_lib($i18n_datetime_js_file);
+                }
+            }
+        }
+
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery-ui-timepicker-addon.config.js');
+
+        if(!empty($value) && $value != '0000-00-00 00:00:00' && $value != '1970-01-01 00:00:00'){
+            list($year,$month,$day) = explode('-',substr($value,0,10));
+            $date = date($this->php_date_format, mktime(0,0,0,$month,$day,$year));
+            $datetime = $date.substr($value,10);
+        }
+        else
+        {
+            $datetime = '';
+        }
+        $input = "<input id='field-{$field_info->name}' name='{$field_info->name}' type='text' value='$datetime' maxlength='19' class='datetime-input form-control' />
+        <a class='datetime-input-clear' tabindex='-1'>".$this->l('form_button_clear')."</a>
+        ({$this->ui_date_format}) hh:mm:ss";
+        return $input;
+    }
+
+    protected function get_hidden_input($field_info,$value)
+    {
+        if($field_info->extras !== null && $field_info->extras != false)
+            $value = $field_info->extras;
+        $input = "<input id='field-{$field_info->name}' class='form-control' type='hidden' name='{$field_info->name}' value='$value' />";
+        return $input;
+    }
+
+    protected function get_password_input($field_info,$value)
+    {
+        $value = !is_string($value) ? '' : $value;
+
+        $extra_attributes = '';
+        if(!empty($field_info->db_max_length))
+            $extra_attributes .= "maxlength='{$field_info->db_max_length}'";
+        $input = "<input id='field-{$field_info->name}' class='form-control' name='{$field_info->name}' type='password' value='$value' $extra_attributes />";
+        return $input;
+    }
+
+    protected function get_date_input($field_info,$value)
+    {
+        $this->set_css($this->default_css_path.'/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS);
+        $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS);
+
+        if($this->language !== 'english')
+        {
+            include($this->default_config_path.'/language_alias.php');
+            if(array_key_exists($this->language, $language_alias))
+            {
+                $i18n_date_js_file = $this->default_javascript_path.'/jquery_plugins/ui/i18n/datepicker/jquery.ui.datepicker-'.$language_alias[$this->language].'.js';
+                if(file_exists($i18n_date_js_file))
+                {
+                    $this->set_js_lib($i18n_date_js_file);
+                }
+            }
+        }
+
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.datepicker.config.js');
+
+        if(!empty($value) && $value != '0000-00-00' && $value != '1970-01-01')
+        {
+            list($year,$month,$day) = explode('-',substr($value,0,10));
+            $date = date($this->php_date_format, mktime(0,0,0,$month,$day,$year));
+        }
+        else
+        {
+            $date = '';
+        }
+
+        $input = "<input id='field-{$field_info->name}' name='{$field_info->name}' type='text' value='$date' maxlength='10' class='datepicker-input form-control' />
+        <a class='datepicker-input-clear' tabindex='-1'>".$this->l('form_button_clear')."</a> (".$this->ui_date_format.")";
+        return $input;
+    }
+
+    protected function get_dropdown_input($field_info,$value)
+    {
+        $this->load_js_chosen();
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.chosen.config.js');
+
+        $select_title = str_replace('{field_display_as}',$field_info->display_as,$this->l('set_relation_title'));
+
+        $input = "<select id='field-{$field_info->name}' name='{$field_info->name}' class='chosen-select form-control' data-placeholder='".$select_title."'>";
+        $options = array('' => '') + $field_info->extras;
+        foreach($options as $option_value => $option_label)
+        {
+            $selected = !empty($value) && $value == $option_value ? "selected='selected'" : '';
+            $input .= "<option value='$option_value' $selected >$option_label</option>";
+        }
+
+        $input .= "</select>";
+        return $input;
+    }
+
+    protected function get_enum_input($field_info,$value)
+    {
+        $this->load_js_chosen();
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.chosen.config.js');
+
+        $select_title = str_replace('{field_display_as}',$field_info->display_as,$this->l('set_relation_title'));
+
+        $input = "<select id='field-{$field_info->name}' name='{$field_info->name}' class='chosen-select form-control' data-placeholder='".$select_title."'>";
+        $options_array = $field_info->extras !== false && is_array($field_info->extras)? $field_info->extras : explode("','",substr($field_info->db_max_length,1,-1));
+        $options_array = array('' => '') + $options_array;
+
+        foreach($options_array as $option)
+        {
+            $selected = !empty($value) && $value == $option ? "selected='selected'" : '';
+            $input .= "<option value='$option' $selected >$option</option>";
+        }
+
+        $input .= "</select>";
+        return $input;
+    }
+
+    protected function get_readonly_input($field_info, $value)
+    {
+        $read_only_value = "&nbsp;";
+
+        if (!empty($value) && !is_array($value)) {
+            $read_only_value = $value;
+        } elseif (is_array($value)) {
+            $all_values = array_values($value);
+            $read_only_value = implode(", ",$all_values);
+        }
+
+        return '<div id="field-'.$field_info->name.'" class="readonly_label">'.$read_only_value.'</div>';
+    }
+
+    protected function get_set_input($field_info,$value)
+    {
+        $this->load_js_chosen();
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.chosen.config.js');
+
+        $options_array = $field_info->extras !== false && is_array($field_info->extras)? $field_info->extras : explode("','",substr($field_info->db_max_length,1,-1));
+        $selected_values    = !empty($value) ? explode(",",$value) : array();
+
+        $select_title = str_replace('{field_display_as}',$field_info->display_as,$this->l('set_relation_title'));
+        $input = "<select id='field-{$field_info->name}' name='{$field_info->name}[]' multiple='multiple' size='8' class='chosen-multiple-select form-control' data-placeholder='$select_title' style='width:510px;' >";
+
+        foreach($options_array as $option)
+        {
+            $selected = !empty($value) && in_array($option,$selected_values) ? "selected='selected'" : '';
+            $input .= "<option value='$option' $selected >$option</option>";
+        }
+
+        $input .= "</select>";
+
+        return $input;
+    }
+
+    protected function get_multiselect_input($field_info,$value)
+    {
+        $this->load_js_chosen();
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.chosen.config.js');
+
+        $options_array = $field_info->extras;
+        $selected_values    = !empty($value) ? explode(",",$value) : array();
+
+        $select_title = str_replace('{field_display_as}',$field_info->display_as,$this->l('set_relation_title'));
+        $input = "<select id='field-{$field_info->name}' name='{$field_info->name}[]' multiple='multiple' size='8' class='chosen-multiple-select' data-placeholder='$select_title' style='width:510px;' >";
+
+        foreach($options_array as $option_value => $option_label)
+        {
+            $selected = !empty($value) && in_array($option_value,$selected_values) ? "selected='selected'" : '';
+            $input .= "<option value='$option_value' $selected >$option_label</option>";
+        }
+
+        $input .= "</select>";
+
+        return $input;
+    }
+
+    protected function get_relation_input($field_info,$value)
+    {
+        $this->load_js_chosen();
+        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.chosen.config.js');
+
+        $ajax_limitation = 10000;
+        $total_rows = $this->get_relation_total_rows($field_info->extras);
+
+
+        //Check if we will use ajax for our queries or just clien-side javascript
+        $using_ajax = $total_rows > $ajax_limitation ? true : false;
+
+        //We will not use it for now. It is not ready yet. Probably we will have this functionality at version 1.4
+        $using_ajax = false;
+
+        //If total rows are more than the limitation, use the ajax plugin
+        $ajax_or_not_class = $using_ajax ? 'chosen-select' : 'chosen-select';
+
+        $this->_inline_js("var ajax_relation_url = '".$this->getAjaxRelationUrl()."';\n");
+
+        $select_title = str_replace('{field_display_as}',$field_info->display_as,$this->l('set_relation_title'));
+        $input = "<select id='field-{$field_info->name}'  name='{$field_info->name}' class='$ajax_or_not_class' data-placeholder='$select_title' style='width:300px'>";
+        $input .= "<option value=''></option>";
+
+        if(!$using_ajax)
+        {
+            $options_array = $this->get_relation_array($field_info->extras);
+            foreach($options_array as $option_value => $option)
+            {
+                $selected = !empty($value) && $value == $option_value ? "selected='selected'" : '';
+                $input .= "<option value='$option_value' $selected >$option</option>";
+            }
+        }
+        elseif(!empty($value) || (is_numeric($value) && $value == '0') ) //If it's ajax then we only need the selected items and not all the items
+        {
+            $selected_options_array = $this->get_relation_array($field_info->extras, $value);
+            foreach($selected_options_array as $option_value => $option)
+            {
+                $input .= "<option value='$option_value'selected='selected' >$option</option>";
+            }
+        }
+
+        $input .= "</select>";
+        return $input;
+    }
+
+    protected function get_relation_readonly_input($field_info,$value)
+    {
+        $options_array = $this->get_relation_array($field_info->extras);
+
+        $value = isset($options_array[$value]) ? $options_array[$value] : '';
+
+        return $this->get_readonly_input($field_info, $value);
+    }
+
+    protected function get_upload_file_readonly_input($field_info,$value)
+    {
+        $file = $file_url = base_url().$field_info->extras->upload_path.'/'.$value;
+
+        $value = !empty($value) ? '<a href="'.$file.'" target="_blank">'.$value.'</a>' : '';
+
+        return $this->get_readonly_input($field_info, $value);
+    }
+
+    protected function get_relation_n_n_input($field_info_type, $selected_values)
+    {
+        $has_priority_field = !empty($field_info_type->extras->priority_field_relation_table) ? true : false;
+        $is_ie_7 = isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 7') !== false) ? true : false;
+
+        if($has_priority_field || $is_ie_7)
+        {
+            $this->set_css($this->default_css_path.'/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS);
+            $this->set_css($this->default_css_path.'/jquery_plugins/ui.multiselect.css');
+            $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS);
+            $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/ui.multiselect.min.js');
+            $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.multiselect.js');
+
+            if($this->language !== 'english')
+            {
+                include($this->default_config_path.'/language_alias.php');
+                if(array_key_exists($this->language, $language_alias))
+                {
+                    $i18n_date_js_file = $this->default_javascript_path.'/jquery_plugins/ui/i18n/multiselect/ui-multiselect-'.$language_alias[$this->language].'.js';
+                    if(file_exists($i18n_date_js_file))
+                    {
+                        $this->set_js_lib($i18n_date_js_file);
+                    }
+                }
+            }
+        }
+        else
+        {
+            $this->set_css($this->default_css_path.'/jquery_plugins/chosen/chosen.css');
+            $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery.chosen.min.js');
+            $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.chosen.config.js');
+        }
+
+        $this->_inline_js("var ajax_relation_url = '".$this->getAjaxRelationUrl()."';\n");
+
+        $field_info         = $this->relation_n_n[$field_info_type->name]; //As we use this function the relation_n_n exists, so don't need to check
+        $unselected_values  = $this->get_relation_n_n_unselected_array($field_info, $selected_values);
+
+        if(empty($unselected_values) && empty($selected_values))
+        {
+            $input = "Please add {$field_info_type->display_as} first";
+        }
+        else
+        {
+            $css_class = $has_priority_field || $is_ie_7 ? 'multiselect': 'chosen-multiple-select';
+            $width_style = $has_priority_field || $is_ie_7 ? '' : 'width:510px;';
+
+            $select_title = str_replace('{field_display_as}',$field_info_type->display_as,$this->l('set_relation_title'));
+            $input = "<select id='field-{$field_info_type->name}' name='{$field_info_type->name}[]' multiple='multiple' size='8' class='$css_class form-control' data-placeholder='$select_title' style='$width_style' >";
+
+            if(!empty($unselected_values))
+                foreach($unselected_values as $id => $name)
+                {
+                    $input .= "<option value='$id'>$name</option>";
+                }
+
+            if(!empty($selected_values))
+                foreach($selected_values as $id => $name)
+                {
+                    $input .= "<option value='$id' selected='selected'>$name</option>";
+                }
+
+            $input .= "</select>";
+        }
+
+        return $input;
     }
 
     /**********************/

@@ -1,22 +1,12 @@
 textarea, .chzn-drop{
     color:black;
 }
-.flexigrid *,
-.flexigrid *:before,
-.flexigrid *:after,
-#colorbox,
-#colorbox:before,
-#colorbox:after {
-    -webkit-box-sizing: content-box!important;
-    -moz-box-sizing: content-box!important;
-    box-sizing: content-box!important;
-}
 .not_shown{
-	display: none;
+    display: none;
 }
 
 .clear{
-	clear: both;
+    clear: both;
 }
 
 .layout_widget_container input, .layout_widget_container textarea {
@@ -24,7 +14,7 @@ textarea, .chzn-drop{
 }
 
 footer{
-	padding: 10px;
+    padding: 10px;
 }
 
 #__section-content{
@@ -33,18 +23,6 @@ footer{
     padding-bottom: 30px;
 }
 
-/* grocery-CRUD flexigrid */
-.pGroup select#per_page
-{
-    max-width: 54px;
-}
-#crudForm{
-    padding-bottom: 145px;
-}
-.chzn-results{
-    max-height: 200px!important;
-}
-/* end of grocery-CRUD flexigrid */
 
 /* Landscape phones and down */
 @media (max-width: 480px){
@@ -139,3 +117,4 @@ footer{
         padding-top: 50px;
     }
 }
+

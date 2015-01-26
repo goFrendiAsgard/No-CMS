@@ -3,11 +3,12 @@
     $this->set_css($this->default_theme_path.'/no-flexigrid/css/flexigrid.css');
     $this->set_js_lib($this->default_theme_path.'/no-flexigrid/js/jquery.form.js');
     $this->set_js_config($this->default_theme_path.'/no-flexigrid/js/flexigrid-add.js');
+    $this->set_js_config($this->default_theme_path.'/no-flexigrid/js/flexigrid-form.js');
 
     $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery.noty.js');
     $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/config/jquery.noty.config.js');
 ?>
-<div class="flexigrid crud-form" style='width: 100%;' data-unique-hash="<?php echo $unique_hash; ?>">
+<div class="flexigrid crud-form" data-unique-hash="<?php echo $unique_hash; ?>">
     <div class="mDiv">
         <div class="ftitle">
             <div class='ftitle-left'>
@@ -17,25 +18,27 @@
         </div>
     </div>
 <div id='main-table-box'>
-    <?php echo form_open( $insert_url, 'method="post" id="crudForm" autocomplete="off" enctype="multipart/form-data"'); ?>
-        <div class='form-div'>
-            <?php
-                if(!isset($this->tabs)){
-                    $this->tabs = NULL;
-                }
+    <?php
+        if(!isset($this->tabs)){
+            $this->tabs = NULL;
+        }
 
-                // make tabs
-                if($this->tabs !== NULL){
-                    echo '<ul class="nav nav-tabs" role="tablist">';
-                    $active = 'active';
-                    $tab_key = array();
-                    foreach($this->tabs as $key=>$val){
-                        $tab_key[] = $key;
-                        echo '<li class="'.$active.'"><a href="#'.str_replace(' ','',$key).'" role="tab" data-toggle="tab">'.$key.'</a></li>';
-                        $active = '';
-                    }
-                    echo '</ul>';
-                }
+        // make tabs
+        if($this->tabs !== NULL){
+            echo '<ul class="nav nav-tabs" role="tablist">';
+            $active = 'active';
+            $tab_key = array();
+            foreach($this->tabs as $key=>$val){
+                $tab_key[] = $key;
+                echo '<li class="'.$active.'"><a href="#'.str_replace(' ','',$key).'" role="tab" data-toggle="tab">'.$key.'</a></li>';
+                $active = '';
+            }
+            echo '</ul>';
+        }
+    ?>
+    <?php echo form_open( $insert_url, 'method="post" id="crudForm" autocomplete="off" enctype="multipart/form-data"'); ?>
+        <div class='form-div form-horizontal'>
+            <?php
 
                 $counter = 0;
                 $tab_index=0;
@@ -48,13 +51,13 @@
                     if($this->tabs !== NULL){
                         if($counter == 0){
                             echo '<div class="tab-pane active" id="'.str_replace(' ','',$tab_key[0]).'">';
-                            echo '<h4>'.$tab_key[0].'</h4>';
+                            echo '<h3>'.$tab_key[0].'</h3>';
                         }else if($tab_item_counter == $this->tabs[$tab_key[$tab_index]] && $tab_index<count($tab_key)-1){
                             $tab_index ++;
                             $tab_item_counter = 0;
                             echo '</div>';
                             echo '<div class="tab-pane" id="'.str_replace(' ','',$tab_key[$tab_index]).'">';
-                            echo '<h4>'.$tab_key[$tab_index].'</h4>';
+                            echo '<h4 style="margin-bottom:20px;">'.$tab_key[$tab_index].'</h4>';
                         }
                         //echo $tab_item_counter.' '.$tab_index.' '.print_r($this->tabs,TRUE).' '.print_r($tab_key,TRUE).'<br />';
                     }
@@ -62,14 +65,13 @@
                     $counter++;
                     $tab_item_counter ++;
             ?>
-                    <div class='form-field-box <?php echo $even_odd?>' id="<?php echo $field->field_name; ?>_field_box">
-                        <div class='form-display-as-box' id="<?php echo $field->field_name; ?>_display_as_box">
-                            {{ language:<?php echo $input_fields[$field->field_name]->display_as; ?> }}<?php echo ($input_fields[$field->field_name]->required)? "<span class='required'>*</span> " : ""; ?> :
-                        </div>
-                        <div class='form-input-box' id="<?php echo $field->field_name; ?>_input_box">
+                    <div class='form-field-box form-group col-md-12 <?php echo $even_odd?>' id="<?php echo $field->field_name; ?>_field_box">
+                        <label class='form-display-as-box col-md-3' id="<?php echo $field->field_name; ?>_display_as_box">
+                            {{ language:<?php echo $input_fields[$field->field_name]->display_as; ?> }}<?php echo ($input_fields[$field->field_name]->required)? "<span class='required'>*</span> " : ""; ?>
+                        </label>
+                        <div class='form-input-box col-md-9' id="<?php echo $field->field_name; ?>_input_box">
                             <?php echo $input_fields[$field->field_name]->input?>
                         </div>
-                        <div class='clear'></div>
                     </div>
             <?php
                     if($this->tabs !== NULL){
@@ -92,10 +94,10 @@
             <!-- End of hidden inputs -->
             <?php if ($is_ajax) { ?><input type="hidden" name="is_ajax" value="true" /><?php }?>
 
-            <div id='report-error' class='report-div error alert alert-danger'></div>
-            <div id='report-success' class='report-div success alert alert-success'></div>
+            <div id='report-error' class='report-div error alert alert-danger container col-md-12'></div>
+            <div id='report-success' class='report-div success alert alert-success container col-md-12'></div>
         </div>
-        <div class="pDiv">
+        <div class="pDiv container col-md-12">
             <div class='form-button-box'>
                 <input id="form-button-save" type='submit' value='<?php echo $this->l('form_save'); ?>'  class="btn btn-default btn-large"/>
             </div>
@@ -122,3 +124,4 @@
     var message_alert_add_form = "<?php echo $this->l('alert_add_form')?>";
     var message_insert_error = "<?php echo $this->l('insert_error')?>";
 </script>
+<script type="text/javascript" src="<?=base_url($this->default_theme_path.'/no-flexigrid/js/flexigrid-fix-chosen.js')?>"></script>

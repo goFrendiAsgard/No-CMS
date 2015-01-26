@@ -1,5 +1,4 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
-<link rel="stylesheet" type="text/css" href="<?php echo base_url().'assets/nocms/js/colorbox/colorbox.css';?>"></link>
 <style type="text/css">
     .comment_normal{
         display:none!important;
@@ -59,7 +58,6 @@
         margin-top: 10px!important;
     }
 </style>
-<script type="text/javascript" src ="<?php echo base_url().'assets/nocms/js/colorbox/jquery.colorbox-min.js';?>"></script>
 
 <div id="submenu_screen"><?php echo $submenu_screen; ?></div>
 <form id="search-form" class="form-inline" role="form">
@@ -96,16 +94,34 @@
         if(isset($article) && $article !== FALSE){
             echo '<h2>'.$article['title'].'</h2>';
             echo '('.$article['author'].', '.$article['date'].')'.br();
-            echo '<div>';
-            echo $article['content'];
-            echo '</div>';
 
-            echo '<div>';
+            // photos
+            echo '<div>';            
             foreach($article['photos'] as $photo){
                 echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
-                echo '<img class="photo_thumbnail" src="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'" />';
+                echo '<img class="photo_thumbnail" src="'.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).'" />';
                 echo '</a>';
             }
+            echo '</div>';
+            echo '<div id="big_photo_'.$article['id'].'"></div>';
+            echo '<script type="text/javascript">
+                $(".photo_'.$article['id'].'").click(function(event){
+                    $("#big_photo_'.$article['id'].'").hide();
+                    $("#big_photo_'.$article['id'].'").html("<img src=\"" + $(this).attr("href") + "\" /><br />");
+                    $("#big_photo_'.$article['id'].'").fadeIn();
+                    $("html, body").animate({
+                        scrollTop: $("#big_photo_'.$article['id'].'").offset().top - 60
+                    }, 1000);
+                    $(".photo_'.$article['id'].'").css("opacity", 1);            
+                    $(this).css("opacity", 0.3);
+                    event.preventDefault();
+                });
+            </script>';
+            
+
+            // content
+            echo '<div>';
+            echo $article['content'];
             echo '</div>';
             // edit and delete button
             if($allow_navigate_backend){
@@ -117,11 +133,9 @@
                 }
                 echo '</div>';
             }
-            echo '<script type="text/javascript">
-            $(".photo_'.$article['id'].'").colorbox({rel:"photo_'.$article['id'].'", transition:"none", width:"75%", height:"75%", slideshow:true});
-            </script>';
-            echo '<div id="article-comment">';
+
             // comment
+            echo '<div id="article-comment">';
             $odd_row = TRUE;
             foreach($article['comments'] as $comment){
                 echo '<div class="comment-item well" style="margin-left:'.($comment['level']*20).'px;">';
@@ -223,6 +237,7 @@
     var REQUEST;
     var RUNNING_REQUEST = false;
     var SCROLL_WORK = true;
+
     <?php if(isset($article)){
         echo 'SCROLL_WORK = false;';
     }
@@ -233,7 +248,7 @@
         if(typeof(async) == 'undefined'){
             async = true;
         }
-        $('#record_content_bottom').html('Load more Article ...');
+        $('#record_content_bottom').html('Load more Article &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
         var keyword = $('#input_search').val();
         var category = $('#input_category').val();
         // kill all previous AJAX
