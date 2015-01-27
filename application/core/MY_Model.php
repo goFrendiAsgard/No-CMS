@@ -906,6 +906,7 @@ class CMS_Base_Model extends CI_Model
                     ) AS allowed
                 FROM ".cms_table_name('main_navigation')." AS n WHERE
                     $where_is_root ORDER BY n.".$this->db->protect_identifiers('index'));
+        
         $result        = array();
         foreach ($query->result() as $row) {
             $children              = $this->cms_navigations($row->navigation_id, $max_menu_depth);

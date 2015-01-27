@@ -962,9 +962,9 @@ class CMS_Controller extends MX_Controller
         // ASSIGN TITLE
         $title = '';
         if (isset($custom_title) && $custom_title !== NULL && $custom_title != '') {
-            $title = $custom_title;
+            $title = $this->cms_get_config('site_name').' - '.$custom_title;
         } else if (isset($page_title) && $page_title !== NULL && $page_title != '') {
-            $title = $page_title;
+            $title = $this->cms_get_config('site_name').' - '.$page_title;
         } else {
             $title = $this->cms_get_config('site_name');
         }

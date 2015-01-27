@@ -7,6 +7,38 @@ class Setting extends CMS_Controller{
         $this->db->update(cms_table_name('main_widget'), array('static_content'=>$content), array('widget_name'=>$widget_name));
     }
 
+    private function resizeImage($file_name, $nWidth, $nHeight){
+        // original code: http://stackoverflow.com/questions/16977853/resize-images-with-transparency-in-php
+
+        // read image
+        $im = imagecreatefrompng($file_name);
+        $srcWidth = imagesx($im);
+        $srcHeight = imagesy($im);
+
+        // decide ratio
+        $widthRatio = $nWidth/$srcWidth;
+        $heightRatio = $nHeight/$srcHeight;
+        if($widthRatio > $heightRatio){
+            $ratio = $heightRatio;
+        }else{
+            $ratio = $heightRatio;
+        }
+        $nWidth = $srcWidth * $ratio;
+        $nHeight = $srcHeight * $ratio;
+
+        // make new image
+        $newImg = imagecreatetruecolor($nWidth, $nHeight);
+        imagealphablending($newImg, false);
+        imagesavealpha($newImg,true);
+        $transparent = imagecolorallocatealpha($newImg, 255, 255, 255, 127);
+        imagefilledrectangle($newImg, 0, 0, $nWidth, $nHeight, $transparent);
+        imagecopyresampled($newImg, $im, 0, 0, 0, 0, $nWidth, $nHeight,
+            $srcWidth, $srcHeight);
+
+        // write new image
+        imagepng($newImg, $file_name);
+    }
+
     public function index(){
         $this->theme = $this->cms_get_config('site_theme');
 
@@ -34,7 +66,8 @@ class Setting extends CMS_Controller{
                 $file_name = FCPATH.'assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name'];
                 move_uploaded_file($site_logo['tmp_name'], $file_name);
                 $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
-                $this->image_moo->load($file_name)->resize(800,125)->save($file_name,true);
+                //$this->image_moo->load($file_name)->resize(800,125)->save($file_name,true);
+                $this->resizeImage($file_name, 800, 125);
             }
         }
         if(isset($_FILES['site_favicon'])){
@@ -43,7 +76,8 @@ class Setting extends CMS_Controller{
                 $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name'];
                 move_uploaded_file($site_favicon['tmp_name'], $file_name);
                 $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
-                $this->image_moo->load($file_name)->resize(64,64)->save($file_name,true);
+                //$this->image_moo->load($file_name)->resize(64,64)->save($file_name,true);
+                $this->resizeImage($file_name, 64, 64);
             }
         }
         if(count($_POST)>0){
