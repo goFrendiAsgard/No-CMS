@@ -10,33 +10,38 @@ class Setting extends CMS_Controller{
     private function resizeImage($file_name, $nWidth, $nHeight){
         // original code: http://stackoverflow.com/questions/16977853/resize-images-with-transparency-in-php
 
+        
         // read image
-        $im = imagecreatefrompng($file_name);
-        $srcWidth = imagesx($im);
-        $srcHeight = imagesy($im);
+        $im = @imagecreatefrompng($file_name);
+        if($im){
+            $srcWidth = imagesx($im);
+            $srcHeight = imagesy($im);
 
-        // decide ratio
-        $widthRatio = $nWidth/$srcWidth;
-        $heightRatio = $nHeight/$srcHeight;
-        if($widthRatio > $heightRatio){
-            $ratio = $heightRatio;
+            // decide ratio
+            $widthRatio = $nWidth/$srcWidth;
+            $heightRatio = $nHeight/$srcHeight;
+            if($widthRatio > $heightRatio){
+                $ratio = $heightRatio;
+            }else{
+                $ratio = $heightRatio;
+            }
+            $nWidth = $srcWidth * $ratio;
+            $nHeight = $srcHeight * $ratio;
+
+            // make new image
+            $newImg = imagecreatetruecolor($nWidth, $nHeight);
+            imagealphablending($newImg, false);
+            imagesavealpha($newImg,true);
+            $transparent = imagecolorallocatealpha($newImg, 255, 255, 255, 127);
+            imagefilledrectangle($newImg, 0, 0, $nWidth, $nHeight, $transparent);
+            imagecopyresampled($newImg, $im, 0, 0, 0, 0, $nWidth, $nHeight,
+                $srcWidth, $srcHeight);
+
+            // write new image
+            imagepng($newImg, $file_name);
         }else{
-            $ratio = $heightRatio;
+            $this->image_moo->load($file_name)->resize($nWidth,$nHeight)->save($file_name,true);
         }
-        $nWidth = $srcWidth * $ratio;
-        $nHeight = $srcHeight * $ratio;
-
-        // make new image
-        $newImg = imagecreatetruecolor($nWidth, $nHeight);
-        imagealphablending($newImg, false);
-        imagesavealpha($newImg,true);
-        $transparent = imagecolorallocatealpha($newImg, 255, 255, 255, 127);
-        imagefilledrectangle($newImg, 0, 0, $nWidth, $nHeight, $transparent);
-        imagecopyresampled($newImg, $im, 0, 0, 0, 0, $nWidth, $nHeight,
-            $srcWidth, $srcHeight);
-
-        // write new image
-        imagepng($newImg, $file_name);
     }
 
     public function index(){
