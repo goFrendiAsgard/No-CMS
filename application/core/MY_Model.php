@@ -4376,19 +4376,19 @@ class CMS_Module_Info_Model extends CMS_Base_Model{
         }
     }
 
-    protected function do_activate()
+    public function do_activate()
     {        
         //this should be overridden by module developer
         return FALSE;
     }
 
-    protected function do_deactivate()
+    public function do_deactivate()
     {
         //this should be overridden by module developer
         return FALSE;
     }
 
-    protected function do_upgrade($old_version)
+    public function do_upgrade($old_version)
     {
         //this should be overridden by module developer
         return FALSE;

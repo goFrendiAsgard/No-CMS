@@ -70,10 +70,10 @@ if($success_message !== null){?>
             </select>
         </div>
         <div class="form-group">
-            <input type="button" value="<?php echo $this->l('list_search');?>" class="crud_search btn btn-primary form-control" id='crud_search'>
+            <input type="button" value="<?php echo $this->l('list_search');?>" class="crud_search btn btn-primary" id='crud_search'>
         </div>
         <div class="form-group">
-            <input type="button" value="<?php echo $this->l('list_clear_filtering');?>" id='search_clear' class="search_clear btn btn-primary form-control">
+            <input type="button" value="<?php echo $this->l('list_clear_filtering');?>" id='search_clear' class="search_clear btn btn-primary">
         </div>
         <?php if(isset($unset_default_search) && $unset_default_search) echo '</div>'; ?>
         

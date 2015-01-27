@@ -15,18 +15,18 @@ class _Info extends CMS_Module_Info_Model{
     /////////////////////////////////////////////////////////////////////////////
 
     // ACTIVATION
-    protected function do_activate(){
+    public function do_activate(){
         $this->remove_all();
         $this->build_all();
     }
 
     // DEACTIVATION
-    protected function do_deactivate(){
+    public function do_deactivate(){
         $this->remove_all();
     }
 
     // UPGRADE
-    protected function do_upgrade($old_version){
+    public function do_upgrade($old_version){
         // table : blog article
         $table_name = $this->cms_complete_table_name('article');
         $field_list = $this->db->list_fields($table_name);

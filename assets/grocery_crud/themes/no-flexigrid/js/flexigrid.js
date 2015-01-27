@@ -267,7 +267,7 @@ function displaying_and_pages(this_container)
 
 // addition by gofrendi
 function add_form_control_class(){
-    $('.flexigrid input, .flexigrid select').addClass('form-control');
+    $('.flexigrid input[type~="button"], .flexigrid select').addClass('form-control');
 }
 $(document).ready(function(){
     add_form_control_class();

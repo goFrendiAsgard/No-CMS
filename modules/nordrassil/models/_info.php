@@ -15,14 +15,14 @@ class _Info extends CMS_Module_Info_Model{
     }
 
     //this should be what happen when user install this module
-    protected function do_activate(){
+    public function do_activate(){
         if(!$this->check_subdomain()){
             $this->remove_all();
             $this->build_all();
         }
     }
     //this should be what happen when user uninstall this module
-    protected function do_deactivate(){
+    public function do_deactivate(){
         if(!$this->check_subdomain()){
             $this->backup_database(array('project','table','column','table_option','column_option'));
             $this->remove_all();
