@@ -1290,11 +1290,11 @@ th {
   padding: 8px;
   line-height: 1.428571429;
   vertical-align: top;
-  border-top: 1px solid #653109;
+  /*border-top: 1px solid #653109;*/
 }
 .table thead > tr > th {
   vertical-align: bottom;
-  border-bottom: 2px solid #653109;
+  /*border-bottom: 2px solid #653109;*/
 }
 .table caption + thead tr:first-child th,
 .table colgroup + thead tr:first-child th,

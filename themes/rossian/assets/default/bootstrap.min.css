@@ -1299,6 +1299,7 @@ th {
 .table {
   width: 100%;
   margin-bottom: 20px;
+  background-color:#f9f9f9;
 }
 .table thead > tr > th,
 .table tbody > tr > th,
@@ -1309,11 +1310,11 @@ th {
   padding: 8px;
   line-height: 1.428571429;
   vertical-align: top;
-  border-top: 1px solid #324734;
+  /*border-top: 1px solid #324734;*/
 }
 .table thead > tr > th {
   vertical-align: bottom;
-  border-bottom: 2px solid #324734;
+  /*border-bottom: 2px solid #324734;*/
 }
 .table caption + thead tr:first-child th,
 .table colgroup + thead tr:first-child th,
@@ -4256,7 +4257,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   padding: 3px 7px;
   font-size: 12px;
   font-weight: bold;
-  color: #ffffff;
+  color: #324734;
   line-height: 1;
   vertical-align: baseline;
   white-space: nowrap;
@@ -4269,7 +4270,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 }
 a.badge:hover,
 a.badge:focus {
-  color: #ffffff;
+  color: #324734;
   text-decoration: none;
   cursor: pointer;
 }
