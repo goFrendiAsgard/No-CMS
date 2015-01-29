@@ -33,502 +33,19 @@ class CMS_Base_Model extends CI_Model
         $model = NULL;
         $info_model_file = FCPATH.'modules/'.$module_path.'/models/_info.php';
         if(file_exists($info_model_file)){
-            $content = file_get_contents($info_model_file);
-            $content = preg_replace('/class( *)_info/i', 'class _Info_'.$module_path, $content);
-            $content = str_replace('<?php', '', $content);
-            $content = str_replace('?>', '', $content);
-            $content = $content.PHP_EOL.'$model = new _Info_'.$module_path.'();';
+            $content = '';
+            if(!class_exists('_Info_Model_'.$module_path)){
+                $content = file_get_contents($info_model_file);
+                $content = preg_replace('/class( *)_info/i', 'class _Info_Model_'.$module_path, $content);
+                $content = str_replace('<?php', '', $content);
+                $content = str_replace('?>', '', $content);
+                $content = $content.PHP_EOL;
+            }
+            $content .= '$model = new _Info_Model_'.$module_path.'();';
             eval($content);
             
         }
         return $model;
-    }
-
-    private function __update(){
-        $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-8';
-
-        // update module installer
-        cms_update_module_installer();
-
-        if($old_version !== $current_version){
-            $this->load->dbforge();
-
-            // make site_layout configuration
-            if($this->cms_get_config('site_layout') == NULL){
-                $this->cms_set_config('site_layout', 'default');
-            }
-
-            // copy from grocery_crud config from first-time to current config
-            $source = APPPATH.'config/first-time/grocery_crud.php';
-            if(CMS_SUBSITE == ''){
-                $destination = APPPATH.'config/grocery_crud.php';
-            }else{
-                $destination = APPPATH.'config/site-'.CMS_SUBSITE.'/grocery_crud.php';
-            }
-            copy($source, $destination);
-
-            $query = $this->db->select('authorization_id')
-                ->from(cms_table_name('main_authorization'))
-                ->where('authorization_id',5)
-                ->get();
-            if($query->num_rows() == 0){
-                $this->db->insert(cms_table_name('main_authorization'), array(
-                    'authorization_id'=>5,
-                    'authorization_name'=>'Exclusive Authorized',
-                    'description'=>'Even Super Admin cannot access this if not allowed'
-                ));
-            }
-
-            // table : main navigation
-            $table_name = cms_table_name('main_navigation');
-            $field_list = $this->cms_list_fields($table_name);
-            $missing_fields = array(
-                'notif_url' => array(
-                    'type' => 'VARCHAR',
-                    'constraint' => '100',
-                    'null' => TRUE,
-                ),
-                'bootstrap_glyph' => array(
-                    'type' => 'VARCHAR',
-                    'constraint' => '50',
-                    'null' => TRUE,
-                ),
-                'default_layout' => array(
-                    'type' => 'VARCHAR',
-                    'constraint' => '50',
-                    'null' => TRUE,
-                ),
-                'default_theme' => array(
-                    'type' => 'VARCHAR',
-                    'constraint' => '50',
-                    'null' => TRUE,
-                ),
-            );
-            $fields = array();
-            foreach($missing_fields as $key=>$value){
-                if(!in_array($key, $field_list)){
-                    $fields[$key] = $value;
-                }
-            }
-            $this->dbforge->add_column($table_name, $fields);
-
-            if(!$this->db instanceof CI_DB_pdo_sqlite_driver){
-                $changed_fields = array(
-                    'navigation_name' => array(
-                        'name' => 'navigation_name',
-                        'type' => 'VARCHAR',
-                        'constraint' => 100,
-                        'null' => FALSE,
-                    )
-                );
-                $this->dbforge->modify_column($table_name, $changed_fields);
-            }
-
-            // table : main_widget
-            if(!$this->db instanceof CI_DB_pdo_sqlite_driver){
-                $table_name = cms_table_name('main_widget');
-                $changed_fields = array(
-                    'widget_name' => array(
-                        'name' => 'widget_name',
-                        'type' => 'VARCHAR',
-                        'constraint' => 100,
-                        'null' => FALSE,
-                    )
-                );
-                $this->dbforge->modify_column($table_name, $changed_fields);
-            }
-
-            // table : main_user
-            $table_name = cms_table_name('main_user');
-            $field_list = $this->cms_list_fields($table_name);
-            $missing_fields = array(
-                'language' => array(
-                    'type' => 'VARCHAR',
-                    'constraint' => '50',
-                    'null' => TRUE,
-                ),
-                'theme' => array(
-                    'type' => 'VARCHAR',
-                    'constraint' => '50',
-                    'null' => TRUE,
-                ),
-                'last_active'=>array(
-                    'type' => 'VARCHAR',
-                    'constraint' => '50',
-                    'null' => TRUE,
-                ),
-                'login'=>array(
-                    'type' => 'INT',
-                    'constraint' => 5,
-                    'unsigned' => TRUE,
-                    'default'=> 0,
-                    'null' => FALSE,
-                ),
-            );
-            $fields = array();
-            foreach($missing_fields as $key=>$value){
-                if(!in_array($key, $field_list)){
-                    $fields[$key] = $value;
-                }
-            }
-            $this->dbforge->add_column(cms_table_name('main_user'), $fields);
-
-            // table : multisite_subsite
-            if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
-                $table_name = cms_table_name('multisite_subsite');
-                $field_list = $this->cms_list_fields($table_name);
-                $missing_fields = array(
-                    'active' => array(
-                        'type' => 'INT',
-                        'constraint' => '11',
-                        'null' => TRUE,
-                        'default' => 1,
-                    )
-                );
-                $fields = array();
-                foreach($missing_fields as $key=>$value){
-                    if(!in_array($key, $field_list)){
-                        $fields[$key] = $value;
-                    }
-                }
-                $this->dbforge->add_column(cms_table_name('multisite_subsite'), $fields);
-            }
-            
-
-            $table_list = $this->db->list_tables();
-            // add main-language-detail
-            if(! in_array(cms_table_name('main_detail_language'), $table_list)){
-                $fields = array(
-                    'detail_language_id'=> array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE,),
-                    'id_language'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-                    'key'=> array("type"=>'text', "null"=>TRUE),
-                    'translation'=> array("type"=>'text', "null"=>TRUE)
-                );
-                $this->dbforge->add_field($fields);
-                $this->dbforge->add_key('detail_language_id', TRUE);
-                $this->dbforge->create_table(cms_table_name('main_detail_language'));
-            }
-            // change main_language structure
-            if(!$this->db instanceof CI_DB_pdo_sqlite_driver){
-                $fields = array(
-                        'key' => array('name' => 'key','type' => 'TEXT'),
-                        'translation' => array('name' => 'translation','type' => 'TEXT'),
-                );
-                $this->dbforge->modify_column(cms_table_name('main_detail_language'), $fields);
-            }
-
-            // add main_language
-            if(! in_array(cms_table_name('main_language'), $table_list)){
-                $fields = array(
-                    'language_id'=> array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE,),
-                    'name'=> array("type"=>'varchar',  "null"=>TRUE),
-                    'code'=>array("type"=>'varchar',"constraint"=>50, "null"=>TRUE),
-                    'iso_code'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
-                    'translations'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
-                );
-                $this->dbforge->add_field($fields);
-                $this->dbforge->add_key('language_id', TRUE);
-                $this->dbforge->create_table(cms_table_name('main_language'));
-            }
-
-
-            // update main_layout into main_setting
-            $data = array(
-                'navigation_name' => 'main_setting',
-                'url' => 'main/setting',
-                'title' => 'Setting',
-                'description' => 'CMS Setting'
-            );
-            $this->db->update(cms_table_name('main_navigation'),
-                $data,
-                array('navigation_name' => 'main_layout'));
-            // add manage language
-            $query = $this->db->select('navigation_id')
-                ->from(cms_table_name('main_navigation'))
-                ->where('navigation_name','main_language_management')
-                ->get();
-            if($query->num_rows() == 0){
-                $parent_id = $this->db->select('navigation_id')
-                    ->from(cms_table_name('main_navigation'))
-                    ->where('navigation_name', 'main_management')
-                    ->get()->row()->navigation_id;
-                $this->db->insert(cms_table_name('main_navigation'),array(
-                    'navigation_name'=>'main_language_management',
-                    'title' => 'Language Management',
-                    'page_title' => 'Language Management',
-                    'description' => 'Language Management',
-                    'url'=>'main/language_management',
-                    'parent_id'=>$parent_id,
-                    'authorization_id'=>4));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Afrikaans','code'=>'afrikaans'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Arabic','code'=>'arabic'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Bengali','code'=>'bengali'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Bulgarian','code'=>'bulgarian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Catalan','code'=>'catalan'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Chinese','code'=>'chinese'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Czech','code'=>'czech'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Danish','code'=>'danish'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Dutch','code'=>'dutch'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'English','code'=>'english'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'French','code'=>'french'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'German','code'=>'german'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Greek','code'=>'greek'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Hindi','code'=>'hindi'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Hungarian','code'=>'hungarian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Indonesian','code'=>'indonesian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Italian','code'=>'italian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Japanese','code'=>'japanese'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Korean','code'=>'korean'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Mongolian','code'=>'mongolian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Norwegian','code'=>'norwegian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Persian','code'=>'persian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Polish','code'=>'polish'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Portuguese (Brazil)','code'=>'pt-br.portuguese'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Portuguese','code'=>'pt-pt.portuguese'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Romanian','code'=>'romanian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Russian','code'=>'russian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Slovak','code'=>'slovak'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Spanish','code'=>'spanish'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Thai','code'=>'thai'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Turkish','code'=>'turkish'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Ukrainian','code'=>'ukrainian'));
-                $this->db->insert(cms_table_name('main_language'),array('name'=>'Vietnamese','code'=>'vietnamese'));
-            }
-
-            // new configuration, cms_add_subsite_on_register
-            $exists = $this->db->select('config_name')
-                ->from(cms_table_name('main_config'))
-                ->where('config_name','cms_add_subsite_on_register')
-                ->get()->num_rows() > 0;
-            if(!$exists){
-                $this->db->insert(cms_table_name('main_config'),array(
-                    'config_name' => 'cms_add_subsite_on_register',
-                    'value' => 'FALSE',
-                    'description' => 'Automatically create subsite on register'
-                ));
-            }
-            // new configuration, cms_subsite_use_subdomain
-            $exists = $this->db->select('config_name')
-                ->from(cms_table_name('main_config'))
-                ->where('config_name','cms_subsite_use_subdomain')
-                ->get()->num_rows() > 0;
-            if(!$exists){
-                $this->db->insert(cms_table_name('main_config'),array(
-                    'config_name' => 'cms_subsite_use_subdomain',
-                    'value' => 'FALSE',
-                    'description' => 'Automatically use subdomain'
-                ));
-            }
-            // new configuration, cms_subsite_home_content
-            $exists = $this->db->select('config_name')
-                ->from(cms_table_name('main_config'))
-                ->where('config_name','cms_subsite_home_content')
-                ->get()->num_rows() > 0;
-            if(!$exists){
-                $this->db->insert(cms_table_name('main_config'),array(
-                    'config_name' => 'cms_subsite_home_content',
-                    'value' => '{{ widget_name:blog_content }}',
-                    'description' => 'Default subsite homepage content'
-                ));
-            }
-            // new configuration, cms_internet_connectivity
-            $exists = $this->db->select('config_name')
-                ->from(cms_table_name('main_config'))
-                ->where('config_name','cms_internet_connectivity')
-                ->get()->num_rows() > 0;
-            if(!$exists){
-                $this->db->insert(cms_table_name('main_config'),array(
-                    'config_name' => 'cms_internet_connectivity',
-                    'value' => 'UNKNOWN',
-                    'description' => 'Is the server connected to the internet?'
-                ));
-            }
-            // new configuration, cms_subsite_modules
-            $exists = $this->db->select('config_name')
-                ->from(cms_table_name('main_config'))
-                ->where('config_name','cms_subsite_modules')
-                ->get()->num_rows() > 0;
-            if(!$exists){
-                $this->db->insert(cms_table_name('main_config'),array(
-                    'config_name' => 'cms_subsite_modules',
-                    'value' => 'blog,contact_us,static_accessories',
-                    'description' => 'Comma Separated, Modules that is going to be installed by default for new subsite'
-                ));
-            }
-            // new configuration, cms_subsite_configs
-            $exists = $this->db->select('config_name')
-                ->from(cms_table_name('main_config'))
-                ->where('config_name','cms_subsite_configs')
-                ->get()->num_rows() > 0;
-            if(!$exists){
-                $this->db->insert(cms_table_name('main_config'),array(
-                    'config_name' => 'cms_subsite_configs',
-                    'value' => '{}',
-                    'description' => 'JSON Format, Configuration value for new subsite'
-                ));
-            }
-
-            // blog widget
-            if($this->cms_is_module_active('gofrendi.noCMS.blog')){
-                $result = $this->db->select('widget_name')
-                    ->from(cms_table_name('main_widget'))
-                    ->where('widget_name', 'blog_content')
-                    ->get();
-                if($result->num_rows() == 0){
-                    $result = $this->db->select_max('index')
-                        ->from(cms_table_name('main_widget'))
-                        ->get();
-                    $row = $result->row();
-                    $max_index = $row->index;
-                    $max_index = is_numeric($max_index)? $max_index : 0;
-                    $this->db->insert(cms_table_name('main_widget'), array(
-                        'widget_name ' => 'blog_content',
-                        'title' => 'Blog Content',
-                        'description' => 'Blog Content',
-                        'url' => 'blog',
-                        'authorization_id' => 1,
-                        'active' => 1,
-                        'index' => $max_index + 1,
-                        'is_static' => 0
-                    ));
-                }
-            }
-
-            // widget online_user
-            $result = $this->db->select('widget_name')
-                ->from(cms_table_name('main_widget'))
-                ->where('widget_name', 'online_user')
-                ->get();
-            if($result->num_rows() == 0){
-                $result = $this->db->select_max('index')
-                    ->from(cms_table_name('main_widget'))
-                    ->get();
-                $row = $result->row();
-                $max_index = $row->index;
-                $max_index = is_numeric($max_index)? $max_index : 0;
-                $this->db->insert(cms_table_name('main_widget'), array(
-                    'widget_name ' => 'online_user',
-                    'title' => 'Who\'s online',
-                    'description' => 'NULL',
-                    'url' => 'main/widget_online_user',
-                    'authorization_id' => 1,
-                    'active' => 1,
-                    'index' => $max_index + 1,
-                    'is_static' => 0
-                ));
-            }
-
-            // widget fb_comment
-            $result = $this->db->select('widget_name')
-                ->from(cms_table_name('main_widget'))
-                ->where('widget_name', 'fb_comment')
-                ->get();
-            if($result->num_rows() == 0){
-                $result = $this->db->select_max('index')
-                    ->from(cms_table_name('main_widget'))
-                    ->get();
-                $row = $result->row();
-                $max_index = $row->index;
-                $max_index = is_numeric($max_index)? $max_index : 0;
-                $this->db->insert(cms_table_name('main_widget'), array(
-                    'widget_name ' => 'fb_comment',
-                    'title' => 'Facebook Comments',
-                    'description' => 'NULL',
-                    'static_content' => '<div id="fb-root"></div>' . PHP_EOL . '<script>(function(d, s, id) {' . PHP_EOL . '  var js, fjs = d.getElementsByTagName(s)[0];' . PHP_EOL . '  if (d.getElementById(id)) return;' . PHP_EOL . '  js = d.createElement(s); js.id = id;' . PHP_EOL . '  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=278375612355057&version=v2.0";' . PHP_EOL . '  fjs.parentNode.insertBefore(js, fjs);' . PHP_EOL . '}(document, \'script\', \'facebook-jssdk\'));</script>' . PHP_EOL . '<div class="fb-comments" data-href="{{ site_url }}" data-numposts="5" data-colorscheme="light" width="100%"></div>',
-                    'authorization_id' => 1,
-                    'active' => 1,
-                    'index' => $max_index + 1,
-                    'is_static' => 1
-                ));
-            }
-
-            // widget section_custom_style
-            $result = $this->db->select('widget_name')
-                ->from(cms_table_name('main_widget'))
-                ->where('widget_name', 'section_custom_style')
-                ->get();
-            if($result->num_rows() == 0){
-                $result = $this->db->select_max('index')
-                    ->from(cms_table_name('main_widget'))
-                    ->get();
-                $row = $result->row();
-                $max_index = $row->index;
-                $max_index = is_numeric($max_index)? $max_index : 0;
-                $this->db->insert(cms_table_name('main_widget'), array(
-                    'widget_name ' => 'section_custom_style',
-                    'title' => '',
-                    'description' => 'Custom CSS',
-                    'static_content' => '',
-                    'authorization_id' => 1,
-                    'active' => 1,
-                    'index' => $max_index + 1,
-                    'is_static' => 1
-                ));
-            }
-
-            // widget section_custom_script
-            $result = $this->db->select('widget_name, static_content')
-                ->from(cms_table_name('main_widget'))
-                ->where('widget_name', 'section_custom_script')
-                ->get();
-            if($result->num_rows() == 0){
-                $result = $this->db->select_max('index')
-                    ->from(cms_table_name('main_widget'))
-                    ->get();
-                $row = $result->row();
-                $max_index = $row->index;
-                $max_index = is_numeric($max_index)? $max_index : 0;
-                $this->db->insert(cms_table_name('main_widget'), array(
-                    'widget_name ' => 'section_custom_script',
-                    'title' => '',
-                    'description' => 'Custom Javascript',
-                    'static_content' => '',
-                    'authorization_id' => 1,
-                    'active' => 1,
-                    'index' => $max_index + 1,
-                    'is_static' => 1
-                ));
-            }else{
-                $row = $result->row();
-                if($row->static_content == '<style type="text/css"></style><script type="text/javascript"></script>'){
-                    $this->db->update(cms_table_name('main_widget'),
-                        array('static_content'=>''),
-                        array('widget_name'=>'section_custom_script'));
-                }
-            }
-
-
-            // update module name
-            $this->db->update(cms_table_name('main_module'), 
-                array('module_name'=>'gofrendi.noCMS.multisite'),
-                array('module_name'=>'admin.multisite'));
-
-            // write new version
-            cms_config('__cms_version', $current_version);
-        }
-    }
-
-    
-
-    private function __update_module(){
-        $module_list = $this->cms_get_module_list();
-        foreach($module_list as $module){
-            $module_path = $module['module_path'];
-            $module_name = $module['module_name'];
-            $version = $this->cms_module_version($module_name);
-            $active = $module['active'];
-            if($active){
-                $module_info_model = $this->cms_load_info_model($module_path);
-                if($module_info_model != NULL){
-                    $new_version = $module_info_model->VERSION;
-                    if($new_version != $version && method_exists($module_info_model,'do_upgrade')){                        
-                        $module_info_model->do_upgrade($version);
-                        $this->cms_module_version($module_name, $new_version);
-                    }
-                }
-            }
-        }
     }
 
     public function __construct()
@@ -3582,22 +3099,18 @@ class CMS_Base_Model extends CI_Model
             ->where('navigation_name', $navigation_name)->get();
         if($query->num_rows()>0){
             $dont_insert = TRUE;
+            $row = $query->row();
+            $navigation_id = $row->navigation_id;
+        }else{
+            // is there any navigation with same url
+            $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+                ->where('url', $url)->get();
+            if($query->num_rows()>0){
+                throw('Navigation with the same url already exists');
+                return NULL;
+            }
         }
-
-        // is there any navigation with same url
-        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
-            ->where('url', $url)->get();
-        if($query->num_rows()>0){
-            $dont_insert = TRUE;
-        }
-
-        if($dont_insert){
-            $error = 'Navigation already exists';
-            throw new Exception($error);
-            return NULL;
-        }
-
-        //insert it :D
+        
         $data = array(
             "navigation_name" => $navigation_name,
             "title" => $title,
@@ -3614,7 +3127,14 @@ class CMS_Base_Model extends CI_Model
         if (isset($parent_id)) {
             $data['parent_id'] = $parent_id;
         }
-        $this->db->insert(cms_table_name('main_navigation'), $data);
+
+        //insert it :D
+        if($dont_insert){
+            unset($data['index']);
+            $this->db->update(cms_table_name('main_navigation'), $data, array('navigation_id'=>$navigation_id));
+        }else{
+            $this->db->insert(cms_table_name('main_navigation'), $data);
+        }
     }
     public final function cms_remove_navigation($navigation_name)
     {
@@ -3654,7 +3174,17 @@ class CMS_Base_Model extends CI_Model
             "authorization_id" => $authorization_id,
             "description" => $description
         );
-        $this->db->insert(cms_table_name('main_privilege'), $data);
+        $query = $this->db->select('privilege_id')
+            ->from(cms_table_name('main_privilege'))
+            ->where('privilege_name', $privilege_name)
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $privilege_id = $row->privilege_id;
+            $this->db->update(cms_table_name('main_privilege'), $data, array('privilege_id'=>$privilege_id));
+        }else{
+            $this->db->insert(cms_table_name('main_privilege'), $data);
+        }
     }
     public final function cms_remove_privilege($privilege_name)
     {
@@ -3710,7 +3240,18 @@ class CMS_Base_Model extends CI_Model
             "url" => $url,
             "description" => $description
         );
-        $this->db->insert(cms_table_name('main_widget'), $data);
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $widget_id = $row->widget_id;
+            unset($data['index']);
+            $this->db->update(cms_table_name('main_widget'), $data, array('widget_id'=>$widget_id));
+        }else{
+            $this->db->insert(cms_table_name('main_widget'), $data);
+        }
     }
 
     public final function cms_remove_widget($widget_name)
@@ -3759,7 +3300,13 @@ class CMS_Base_Model extends CI_Model
                 "navigation_id" => $navigation_id,
                 "index" => $index
             );
-            $this->db->insert(cms_table_name('main_quicklink'), $data);
+            $query = $this->db->select('navigation_id')
+                ->from(cms_table_name('main_quicklink'))
+                ->where('navigation_id', $navigation_id)
+                ->get();
+            if($query->num_rows()==0){
+                $this->db->insert(cms_table_name('main_quicklink'), $data);
+            }
         }
     }
 
@@ -3804,16 +3351,18 @@ class CMS_Model extends CMS_Base_Model{
         // core seamless update
         $this->__update();
 
-        // module seamless update
-        self::$module_updated = TRUE;
-        if(!self::$module_updated){
+        if(!self::$module_updated){  
+            self::$module_updated = TRUE;          
             $this->__update_module();
-        }
+        }        
     }
 
     private function __update(){
         $old_version = cms_config('__cms_version');
         $current_version = '0.7.0-stable-8';
+
+        // update module installer
+        cms_update_module_installer();
 
         if($old_version !== $current_version){
             $this->load->dbforge();
@@ -3936,29 +3485,7 @@ class CMS_Model extends CMS_Base_Model{
                     $fields[$key] = $value;
                 }
             }
-            $this->dbforge->add_column(cms_table_name('main_user'), $fields);
-
-            // table : multisite_subsite
-            if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
-                $table_name = cms_table_name('multisite_subsite');
-                $field_list = $this->cms_list_fields($table_name);
-                $missing_fields = array(
-                    'active' => array(
-                        'type' => 'INT',
-                        'constraint' => '11',
-                        'null' => TRUE,
-                        'default' => 1,
-                    )
-                );
-                $fields = array();
-                foreach($missing_fields as $key=>$value){
-                    if(!in_array($key, $field_list)){
-                        $fields[$key] = $value;
-                    }
-                }
-                $this->dbforge->add_column(cms_table_name('multisite_subsite'), $fields);
-            }
-            
+            $this->dbforge->add_column(cms_table_name('main_user'), $fields);            
 
             $table_list = $this->db->list_tables();
             // add main-language-detail
@@ -4133,32 +3660,6 @@ class CMS_Model extends CMS_Base_Model{
                 ));
             }
 
-            // blog widget
-            if($this->cms_is_module_active('gofrendi.noCMS.blog')){
-                $result = $this->db->select('widget_name')
-                    ->from(cms_table_name('main_widget'))
-                    ->where('widget_name', 'blog_content')
-                    ->get();
-                if($result->num_rows() == 0){
-                    $result = $this->db->select_max('index')
-                        ->from(cms_table_name('main_widget'))
-                        ->get();
-                    $row = $result->row();
-                    $max_index = $row->index;
-                    $max_index = is_numeric($max_index)? $max_index : 0;
-                    $this->db->insert(cms_table_name('main_widget'), array(
-                        'widget_name ' => 'blog_content',
-                        'title' => 'Blog Content',
-                        'description' => 'Blog Content',
-                        'url' => 'blog',
-                        'authorization_id' => 1,
-                        'active' => 1,
-                        'index' => $max_index + 1,
-                        'is_static' => 0
-                    ));
-                }
-            }
-
             // widget online_user
             $result = $this->db->select('widget_name')
                 ->from(cms_table_name('main_widget'))
@@ -4272,7 +3773,7 @@ class CMS_Model extends CMS_Base_Model{
             cms_config('__cms_version', $current_version);
         }
     }
-
+  
     private function __update_module(){
         $module_list = $this->cms_get_module_list();
         foreach($module_list as $module){
@@ -4281,7 +3782,16 @@ class CMS_Model extends CMS_Base_Model{
             $version = $this->cms_module_version($module_name);
             $active = $module['active'];
             if($active){
+                $this->cms_override_module_path($module_path);
                 $module_info_model = $this->cms_load_info_model($module_path);
+                if($module_info_model != NULL){
+                    $new_version = $module_info_model->VERSION;
+                    if($new_version != $version && method_exists($module_info_model,'do_upgrade')){                        
+                        $module_info_model->do_upgrade($version);
+                        $this->cms_module_version($module_name, $new_version);
+                    }
+                }
+                $this->cms_reset_overriden_module_path();
             }
         }
     }

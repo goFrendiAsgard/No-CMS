@@ -7,7 +7,7 @@ class _Info extends CMS_Module_Info_Model{
     public $DEPENDENCIES = array();
     public $NAME         = 'gofrendi.noCMS.blog';
     public $DESCRIPTION  = 'Write articles, upload photos, allow visitors to give comments, rule the world...';
-    public $VERSION      = '0.0.2';
+    public $VERSION      = '0.0.3';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -33,6 +33,12 @@ class _Info extends CMS_Module_Info_Model{
         $missing_fields = array(
             'keyword' => $this->TYPE_VARCHAR_100_NULL,
             'description' => $this->TYPE_TEXT,
+            'status' => array(
+                'type' => 'ENUM("draft","published","scheduled")', 
+                'default' => 'draft',
+                'null' => FALSE,
+            ),
+            'publish_date' => $this->TYPE_DATE_NULL,
         );
         $fields = array();
         foreach($missing_fields as $key=>$value){
@@ -82,7 +88,17 @@ class _Info extends CMS_Module_Info_Model{
             ->get();
         if($query->num_rows()>0){
             $this->add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
-            $this->PRIV_EVERYONE, $module_path.'/blog_widget/archive', 'sidebar');
+                $this->PRIV_EVERYONE, $this->cms_module_path().'/blog_widget/archive', 'sidebar');
+        }
+
+        // add widget blog
+        $query = $this->db->select('widget_name')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', 'blog_content')
+            ->get();
+        if($query->num_rows() == 0){
+            $this->add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
+                $this->PRIV_EVERYONE, $this->cms_module_path());
         }
     }
 
