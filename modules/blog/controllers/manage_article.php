@@ -76,12 +76,12 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud->set_subject('Article');
 
         // displayed columns on list
-        $crud->columns('article_title','author_user_id','allow_comment','categories','comments');
+        $crud->columns('article_title','author_user_id','status','publish_date','allow_comment','categories','comments');
         // displayed columns on edit operation
-        $crud->edit_fields('article_title','article_url','date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
+        $crud->edit_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
         // displayed columns on add operation
-        $crud->add_fields('article_title','article_url','date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
-        $crud->required_fields('article_title');
+        $crud->add_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
+        $crud->required_fields('article_title','status');
         $crud->unique_fields('article_title');
         $crud->unset_read();
 
@@ -133,6 +133,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud->field_type('date', 'hidden');
         $crud->field_type('allow_comment', 'true_false');
         $crud->unset_texteditor('description');
+        $crud->field_type('status', 'enum', array('draft','published','scheduled'));
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +176,17 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 
     }
 
+    public function before_insert_or_update($post_array, $primary_key = NULL){
+        if($post_array['status'] == 'scheduled'){
+            if($post_array['publish_date'] === NULL || trim($post_array['publish_date']) == ''){
+                $post_array['publish_date'] = date('Y-m-d', strtotime('+ 30 days'));
+            }
+        }
+        return $post_array;
+    }
+
     public function before_insert($post_array){
+        $post_array = $this->before_insert_or_update($post_array);
         $this->load->helper('url');
         $this->load->model($this->cms_module_path().'/article_model');
         // article url / permalink
@@ -191,6 +202,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
             }
             $post_array['article_url'] = $url;
         }
+
         // default allow comment value
         if(!isset($post_array['allow_comment']) || !in_array($post_array['allow_comment'],array(0,1))){
             $post_array['allow_comment'] = 1;
@@ -207,7 +219,8 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
     }
 
     public function before_update($post_array, $primary_key){
-        return TRUE;
+        $post_array = $this->before_insert_or_update($post_array);
+        return $post_array;
     }
 
     public function after_update($post_array, $primary_key){

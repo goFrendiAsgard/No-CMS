@@ -145,12 +145,12 @@ class Article_Model extends  CMS_Model{
         }else{
             $where_search = "(1=1)";
         }
-
+        $current_date = date('Y-m-d').' 23:59:59';
         $offset = $page * $limit;
         $SQL = "
             SELECT
                 article_id, article_title, article_url, content, date, allow_comment, author_user_id,
-                real_name AS author,
+                real_name AS author, publish_date, status,
                 (
                   SELECT COUNT(comment_id) FROM ".$this->cms_complete_table_name('comment')."
                   WHERE article_id = ".$this->cms_complete_table_name('article').".article_id
@@ -161,7 +161,8 @@ class Article_Model extends  CMS_Model{
             WHERE
                 $where_category AND
                 $where_search AND 
-                date LIKE '$archive%'
+                date LIKE '$archive%' AND
+                (status = 'published' OR (status='scheduled' AND publish_date <= '".$current_date."'))
             ORDER BY date DESC, article_id DESC
             LIMIT $limit OFFSET $offset";
 
