@@ -1098,7 +1098,7 @@ class CMS_Controller extends MX_Controller
             }
             $login_code .= 'setInterval(function(){
                 $.ajax({
-                    url : "{{ site_url }}main/json_is_login",
+                    url : "{{ site_url }}main/json_login_info",
                     dataType: "json",
                     success: function(response){
                         if(response.is_login != __cms_is_login){

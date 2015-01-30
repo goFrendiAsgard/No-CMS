@@ -1601,8 +1601,11 @@ class Main extends CMS_Controller
         return TRUE;
     }
 
-    public function json_is_login(){
-        $result = array('is_login'=> $this->cms_user_id()>0);
+    public function json_login_info(){
+        $result = array(
+            'is_login'=> $this->cms_user_id()>0,
+            'user_name'=>$this->cms_user_name(),
+        );
         $this->cms_show_json($result);
     }
 

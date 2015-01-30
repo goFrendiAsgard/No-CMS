@@ -186,13 +186,22 @@ function esip($ip_addr)
     else
         return FALSE; //if format of ip address doesn't matches
 }
-function domain($domain)
-{
+
+function hostname(){
     if(file_exists('hostname.php')){
         include('hostname.php');
         if(isset($hostname)){
             return $hostname;
         }
+    }
+    return NULL;
+}
+
+function domain($domain)
+{
+    $hostname = hostname();
+    if($hostname != NULL){
+        return $hostname;
     }
     $domain_part = explode('.', $domain);
     if(strtolower($domain_part[count($domain_part)-1]) == 'localhost'){
@@ -223,7 +232,6 @@ function full_url($s, $use_forwarded_host=false)
 {
     return url_origin($s, $use_forwarded_host) . $s['REQUEST_URI'];
 }
-
 
 // define ENVIRONMENT, CMS_SUBSITE and USE_SUBDOMAIN contants
 if(!file_exists('./'.$application_folder.'/config/database.php')){

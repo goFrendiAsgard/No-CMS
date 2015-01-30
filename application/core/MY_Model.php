@@ -211,7 +211,6 @@ class CMS_Base_Model extends CI_Model
         }
         @chmod($file_name,0777);
         if(strpos($str, '<?php') !== FALSE && strpos($str, '$route') !== FALSE){
-            log_message('error','if jalan');
             @file_put_contents($file_name, $str);
             @chmod($file_name,0555);
         }
@@ -639,6 +638,7 @@ class CMS_Base_Model extends CI_Model
                     // use CURL
                     if (in_array('curl', get_loaded_extensions())) {
                         $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_COOKIEJAR, '');
                         curl_setopt($ch, CURLOPT_URL, $url);
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1145,6 +1145,7 @@ class CMS_Base_Model extends CI_Model
             if(!isset($_SESSION['__cms_user_id'])){
                 $_SESSION['__cms_user_id'] = $user_id;
             }
+            
             $this->__cms_extend_user_last_active($user_id);
             return TRUE;
         }

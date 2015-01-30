@@ -1423,6 +1423,7 @@ class Install_Model extends CI_Model{
                 }else{
                     $url = site_url($module.'/_info/activate');
                 }
+                curl_setopt($ch, CURLOPT_COOKIEJAR, '');
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_POST, 3);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, 'silent=true&identity='.$this->admin_user_name.'&password='.$this->admin_password);

@@ -178,7 +178,7 @@ class Article_Model extends  CMS_Model{
                     "author_user_id" => $row->author_user_id,
                     "content" => $this->cms_parse_keyword($content),
                     "author" => $row->author,
-                    "date" => $row->date,
+                    "date" => $row->status == 'scheduled'? $row->publish_date: $row->date,
                     "comment_count" => $row->comment_count,
                     "photos" => $this->get_photos($row->article_id)
             );
