@@ -38,7 +38,7 @@
         if(typeof(async) == 'undefined'){
             async = true;
         }
-        $('#content-bottom').html('Load more City ...');
+        $('#record_content_bottom').html('Load more City &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
         var keyword = $('#input_search').val();
         // kill all previous AJAX
         if(RUNNING_REQUEST){

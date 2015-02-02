@@ -7,7 +7,7 @@ class _Info extends CMS_Module_Info_Model{
     public $DEPENDENCIES = array();
     public $NAME         = 'gofrendi.noCMS.blog';
     public $DESCRIPTION  = 'Write articles, upload photos, allow visitors to give comments, rule the world...';
-    public $VERSION      = '0.0.3';
+    public $VERSION      = '0.0.4';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ class _Info extends CMS_Module_Info_Model{
             ->where('widget_name', $this->cms_complete_navigation_name('archive'))
             ->get();
         if($query->num_rows()>0){
-            $this->add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
+            $this->cms_add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
                 $this->PRIV_EVERYONE, $this->cms_module_path().'/blog_widget/archive', 'sidebar');
         }
 
@@ -97,8 +97,22 @@ class _Info extends CMS_Module_Info_Model{
             ->where('widget_name', 'blog_content')
             ->get();
         if($query->num_rows() == 0){
-            $this->add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
+            $this->cms_add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
                 $this->PRIV_EVERYONE, $this->cms_module_path());
+        }
+
+        $version_part = explode('.', $old_version);
+        $major = $version_part[0];
+        $minor = $version_part[1];
+        $build = $version_part[2];
+        if($major == 0 && $minor == 0 && $build <= 4){
+            $this->cms_add_group('Blog Editor', 'Can Add, Edit, Delete & Publish other\'s articles');
+            $this->cms_add_group('Blog Author', 'Can Add, Edit, Delete & Publish his/her own articles');
+            $this->cms_add_group('Blog Contributor', 'Can Add, Edit, and Delete his/her own articles');
+            $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Editor');
+            $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Author');
+            $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Contributor');
+            $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_category'),'Blog Editor');
         }
     }
 
@@ -112,21 +126,21 @@ class _Info extends CMS_Module_Info_Model{
         $module_path = $this->cms_module_path();
 
         // remove widgets
-        $this->remove_widget($this->cms_complete_navigation_name('newest_article'));
-        $this->remove_widget($this->cms_complete_navigation_name('article_category'));
-        $this->remove_widget($this->cms_complete_navigation_name('content'));
-        $this->remove_widget($this->cms_complete_navigation_name('archive'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('newest_article'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('article_category'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('content'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('archive'));
 
         // remove quicklinks
         $this->remove_quicklink($this->cms_complete_navigation_name('index'));
 
         // remove navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_category'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_article'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_category'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_article'));
 
 
         // remove parent of all navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
 
         // import uninstall.sql
         $this->dbforge->drop_table($this->cms_complete_table_name('photo'), TRUE);
@@ -151,32 +165,41 @@ class _Info extends CMS_Module_Info_Model{
         }else{
             $parent_url = $module_path.'/blog';
         }
-        $this->add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
             $parent_url, $this->PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil', NULL, NULL,
             $this->cms_module_path().'/notif/new_comment'
         );
 
         // add navigations
-        $this->add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',
             $module_path.'/manage_article', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
             NULL, 'Add, edit, and delete blog articles', NULL, NULL, 'default-one-column',
             $this->cms_module_path().'/notif/new_comment'
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
             $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
             NULL, 'Add, edit, and delete categories. Each article can has one or more categories', NULL, NULL, 'default-one-column'
         );
 
         $this->add_quicklink($this->cms_complete_navigation_name('index'));
 
-        $this->add_widget($this->cms_complete_navigation_name('newest_article'), 'Newest Articles',
+        $this->cms_add_widget($this->cms_complete_navigation_name('newest_article'), 'Newest Articles',
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/newest','sidebar');
-        $this->add_widget($this->cms_complete_navigation_name('article_category'), 'Article Categories',
+        $this->cms_add_widget($this->cms_complete_navigation_name('article_category'), 'Article Categories',
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
-        $this->add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
+        $this->cms_add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
             $this->PRIV_EVERYONE, $module_path);
-        $this->add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
+        $this->cms_add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/archive', 'sidebar');
+
+        // create groups and assign
+        $this->cms_add_group('Blog Editor', 'Can Add, Edit, Delete & Publish other\'s articles');
+        $this->cms_add_group('Blog Author', 'Can Add, Edit, Delete & Publish his/her own articles');
+        $this->cms_add_group('Blog Contributor', 'Can Add, Edit, and Delete his/her own articles');
+        $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Editor');
+        $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Author');
+        $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Contributor');
+        $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_category'),'Blog Editor');
 
 
         // import install.sql

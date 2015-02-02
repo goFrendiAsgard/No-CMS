@@ -57,14 +57,14 @@ class _Info extends CMS_Module_Info_Model{
 
         if(CMS_SUBSITE == ''){
             // remove navigations
-            $this->remove_navigation($this->cms_complete_navigation_name('add_subsite'));
+            $this->cms_remove_navigation($this->cms_complete_navigation_name('add_subsite'));
             // remove privileges
-            $this->remove_privilege('modify_subsite');
+            $this->cms_remove_privilege('modify_subsite');
         }
 
 
         // remove parent of all navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
 
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('subsite'), TRUE);
@@ -75,15 +75,15 @@ class _Info extends CMS_Module_Info_Model{
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->add_navigation($this->cms_complete_navigation_name('index'), 'Multisite',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Multisite',
             ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), $this->PRIV_EVERYONE, NULL,
             NULL, 'Browse subsites', 'glyphicon-dashboard');
 
         if(CMS_SUBSITE == ''){
             // add privileges
-            $this->add_privilege('modify_subsite', 'Modify subsite');
+            $this->cms_add_privilege('modify_subsite', 'Modify subsite');
             // add navigations
-            $this->add_navigation($this->cms_complete_navigation_name('add_subsite'), 'Add Subsite',
+            $this->cms_add_navigation($this->cms_complete_navigation_name('add_subsite'), 'Add Subsite',
                 $module_path.'/add_subsite', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
                 NULL, 'Browse subsites', 'glyphicon-plus', NULL, 'default-one-column'
             );

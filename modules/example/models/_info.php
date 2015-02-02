@@ -53,17 +53,17 @@ class _Info extends CMS_Module_Info_Model {
         $module_path = $this->cms_module_path();
 
         // remove navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('browse_city'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_city'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_tourism'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_commodity'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_country'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_hobby'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_job'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('browse_city'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_city'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_tourism'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_commodity'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_country'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_hobby'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_job'));
 
 
         // remove parent of all navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
 
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('citizen_hobby'), TRUE);
@@ -83,29 +83,29 @@ class _Info extends CMS_Module_Info_Model {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->add_navigation($this->cms_complete_navigation_name('index'), 'Example',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Example',
             $module_path.'/example', $this->PRIV_EVERYONE);
 
         // add navigations
-        $this->add_navigation($this->cms_complete_navigation_name('browse_city'), 'Browse City',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('browse_city'), 'Browse City',
             $module_path.'/browse_city', $this->PRIV_EVERYONE, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_job'), 'Manage Job',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_job'), 'Manage Job',
             $module_path.'/manage_job', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_hobby'), 'Manage Hobby',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_hobby'), 'Manage Hobby',
             $module_path.'/manage_hobby', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_country'), 'Manage Country',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_country'), 'Manage Country',
             $module_path.'/manage_country', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_commodity'), 'Manage Commodity',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_commodity'), 'Manage Commodity',
             $module_path.'/manage_commodity', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_tourism'), 'Manage Tourism',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_tourism'), 'Manage Tourism',
             $module_path.'/manage_tourism', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_city'), 'Manage City',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_city'), 'Manage City',
             $module_path.'/manage_city', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 

@@ -241,12 +241,6 @@
             <?php echo $fn_add_table_row; ?>(<?php echo $var_data; ?>.update[i].data);
             <?php echo $var_record_index; ?>++;
         }
-        <?php echo $fn_synchronize_width; ?>();
-
-        // on resize, adjust the table width
-        $(window).resize(function() {
-            <?php echo $fn_synchronize_width; ?>();
-        });
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -274,7 +268,6 @@
 
             // synchronize to the <?php echo $real_input_id.PHP_EOL; ?>
             <?php echo $fn_synchronize; ?>();
-            <?php echo $fn_synchronize_width; ?>();
         });
 
 
@@ -376,16 +369,6 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     function <?php echo $fn_synchronize; ?>(){
         $('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // synchronize table width (called on resize and add).
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    function <?php echo $fn_synchronize_width; ?>(){
-        var parent_width = $("#<?php echo $table_id; ?>_container").parent().parent().width();
-        if($("#<?php echo $table_id; ?>_container table:visible").length > 0){
-            $("#<?php echo $table_id; ?>_container").width(parent_width);
-        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

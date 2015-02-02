@@ -22,13 +22,16 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud = $this->new_crud();
         $crud->unset_jquery();
 
+        $group_name_list = $this->cms_user_group();
+        $group_id_list = $this->cms_user_group_id();
+
         // check state
         $state = $crud->getState();
         $state_info = $crud->getStateInfo();
         $primary_key = isset($state_info->primary_key)? $state_info->primary_key : NULL;
 
         $allow_continue = TRUE;
-        if($this->cms_user_id() != 1 && !in_array(1, $this->cms_user_group_id()) && isset($primary_key) && $primary_key !== NULL){
+        if($this->cms_user_id() != 1 && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list) && isset($primary_key) && $primary_key !== NULL){
             $query = $this->db->select('author_user_id')
                 ->from($this->cms_complete_table_name('article'))
                 ->where(array('article_id'=> $primary_key, 'author_user_id'=> $this->cms_user_id()))
@@ -67,8 +70,9 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
 
         // table name
         $crud->set_table($this->cms_complete_table_name('article'));
-        // only super admin can edit other's article
-        if($this->cms_user_id() <> 1 && !in_array(1, $this->cms_user_group_id())){
+
+        // only super admin or blog editor able to edit other's article
+        if($this->cms_user_id() != 1 && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list)){
             $crud->where('author_user_id', $this->cms_user_id());
         }
 
@@ -104,7 +108,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        if($state == 'list' || $state == 'ajax_list' || $state == 'export' || $state == 'print'){
+        if($state == 'list' || $state == 'ajax_list' || $state == 'export' || $state == 'print' || $state == 'success'){
             $crud->set_relation('author_user_id', cms_table_name('main_user'), 'user_name');
         }
 
@@ -133,7 +137,13 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud->field_type('date', 'hidden');
         $crud->field_type('allow_comment', 'true_false');
         $crud->unset_texteditor('description');
-        $crud->field_type('status', 'enum', array('draft','published','scheduled'));
+
+        if($this->cms_user_id() != 1 && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list) && !in_array('Blog Author', $group_name_list)){
+            $crud->field_type('status', 'hidden', 'draft');
+            $crud->field_type('publish_date', 'hidden');
+        }else{
+            $crud->field_type('status', 'enum', array('draft','published','scheduled'));
+        }
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

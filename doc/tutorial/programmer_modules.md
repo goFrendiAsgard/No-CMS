@@ -12,7 +12,6 @@ Let's start to make a new module:
         |--- /new_module
                 |--- /controllers
                 |       |--- pokemon.php
-                |       |--- install.php
                 |
                 |--- /models
                 |       |--- pokemon_model.php
@@ -315,19 +314,21 @@ __Note:__ If you want your url to have the same privilege as other url in the sa
 
 Make module installable
 -----------------------
-Make installable module is basically can be done by making automation script of page registration.
-Modify your `new_module/controllers/install.php` into this:
+To make your module installable, you need to make 2 files. 
+The first one is info model, and the second one is info controller. 
+
+Let's make your info model (`new_module/models/_info.php`):
 ```php
-    <?php
-    class Install extends CMS_Module_Installer {
+    <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+    class Install extends CMS_Module_Info_model {
         /////////////////////////////////////////////////////////////////////////////
         // Default Variables
         /////////////////////////////////////////////////////////////////////////////
 
-        protected $DEPENDENCIES = array();
-        protected $NAME         = 'your_name.new_module'; // namespace of your module
-        protected $DESCRIPTION  = 'New Module based on tutorial to show pokemons';
-        protected $VERSION      = '0.0.1';
+        public $DEPENDENCIES = array();
+        public $NAME         = 'your_name.new_module'; // namespace of your module
+        public $DESCRIPTION  = 'New Module based on tutorial to show pokemons';
+        public $VERSION      = '0.0.1';
 
 
         /////////////////////////////////////////////////////////////////////////////
@@ -335,13 +336,13 @@ Modify your `new_module/controllers/install.php` into this:
         /////////////////////////////////////////////////////////////////////////////
 
         // ACTIVATION
-        protected function do_activate(){
+        public function do_activate(){
             $this->remove_all();
             $this->build_all();
         }
 
         // DEACTIVATION
-        protected function do_deactivate(){
+        public function do_deactivate(){
             $this->backup_database(array(
                 'pokemons',
             ));
@@ -349,7 +350,7 @@ Modify your `new_module/controllers/install.php` into this:
         }
 
         // UPGRADE
-        protected function do_upgrade($old_version){
+        public function do_upgrade($old_version){
             // Add your migration logic here.
         }
 
@@ -359,10 +360,14 @@ Modify your `new_module/controllers/install.php` into this:
 
         // REMOVE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
         private function remove_all(){
+
             // remove navigations
-            $this->remove_navigation('pokemon_list');
-            // import uninstall.sql
-            $this->db->query('DROP TABLE IF EXISTS `pokemons`');
+            $this->cms_remove_navigation('pokemon_list');
+
+            // drop table
+            $this->dbforge->drop_table('pokemons', TRUE);
+            // If you prefer to work with raw SQL, this one will also works:
+            // $this->db->query('DROP TABLE IF EXISTS `pokemons`');
         }
 
         // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -370,16 +375,25 @@ Modify your `new_module/controllers/install.php` into this:
             $module_path = $this->cms_module_path();
 
             // parent of all navigations
-            $this->add_navigation('pokemon_list', 'Pokemon List',
+            $this->cms_add_navigation('pokemon_list', 'Pokemon List',
                 $module_path.'/pokemon/show', $this->PRIV_EVERYONE);
 
-
-            $this->db->query('CREATE TABLE `pokemons` (
-                  `id` tinyint(4) unsigned NOT NULL AUTO_INCREMENT,
-                  `name` varchar(45) DEFAULT NULL,
-                  `description` text,
-                  PRIMARY KEY (`id`)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;');
+            // create table
+            $fields = array(
+                'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+                'name'=> array("type"=>'varchar', "constraint"=>45, "null"=>TRUE),
+                'description' => array("type"=>'text'),
+            );
+            $this->dbforge->add_field($fields);
+            $this->dbforge->add_key('id', TRUE);
+            $this->dbforge->create_table('pokemons');
+            // If you prefer to work with raw SQL, this one will also works:
+            // $this->db->query('CREATE TABLE `pokemons` (
+            //      `id` tinyint(4) unsigned NOT NULL AUTO_INCREMENT,
+            //      `name` varchar(45) DEFAULT NULL,
+            //      `description` text,
+            //      PRIMARY KEY (`id`)
+            //    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;');
         }
 
         // EXPORT DATABASE
@@ -416,6 +430,50 @@ Modify your `new_module/controllers/install.php` into this:
                 );
 
         }
+    }
+```
+
+There are several property and method you must provide:
+
+Property:
+
+* public $DEPENDENCIES
+    
+    An array, contains dependency of your module.
+
+* public $NAME
+    
+    Namespace of your module (has nothing to do with PHP namespace).
+    Every module should have different namespace
+
+* public $DESCRIPTION
+
+    Description of your module
+
+* public $VERSION
+
+    Your module version
+
+
+Method:
+
+* public function do_activate()
+
+    Your module activation logic (add navigation, widget, etc)
+
+* public function do_deactivate()
+
+    Your module deactivation logic (remove navigation, widget, etc)
+
+* public function do_upgrade($old_version)
+
+    Your module upgrade logic (will be executed automatically once you change $VERSION)
+
+
+Then make your info controller (`new_module/controllers/_info.php`):
+```php
+    <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+    class _Info extends CMS_Module_Info_Controller {
     }
 ```
 

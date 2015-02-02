@@ -73,11 +73,11 @@ class _Info extends CMS_Module_Info_Controller {
         $this->remove_quicklink($this->cms_complete_navigation_name('index'));
 
         // remove navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_message'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_message'));
 
 
         // remove parent of all navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
         
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('message'), TRUE);
@@ -88,11 +88,11 @@ class _Info extends CMS_Module_Info_Controller {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->add_navigation($this->cms_complete_navigation_name('index'), 'Contact Us',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Contact Us',
             $module_path.'/contact_us', $this->PRIV_EVERYONE, NULL, NULL, 'Contact Us Menu', 'glyphicon-envelope');
 
         // add navigations
-        $this->add_navigation($this->cms_complete_navigation_name('manage_message'), 'Manage Message',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_message'), 'Manage Message',
             $module_path.'/manage_message', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 

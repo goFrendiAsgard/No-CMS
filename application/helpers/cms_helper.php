@@ -150,6 +150,31 @@ function cms_module_navigation_name($module_directory, $name){
     }
 }
 
+function cms_half_md5($data){
+    return md5(md5(md5($data)));
+}
+function cms_md5($data){
+    return cms_half_md5(cms_half_md5($data));
+}
+function _xor($data, $chipper = 'RosesAreRedVioletIsBlueSoThatMyLoveIsOnlyForYou'){
+    while(strlen($chipper) < strlen($data)){
+        $chipper .= $chipper;
+    }
+    $new_data = '';
+    for($i=0; $i<strlen($data); $i++){
+        $new_data .= chr(ord($data[$i]) ^ ord($chipper[$i]));
+    }
+    return $new_data;
+}
+function cms_encode($data, $chipper = 'RosesAreRedVioletIsBlueSoThatMyLoveIsOnlyForYou'){
+    $data = rawurlencode($data);
+    return _xor($data, $chipper);
+}
+function cms_decode($data, $chipper = 'RosesAreRedVioletIsBlueSoThatMyLoveIsOnlyForYou'){
+    $data = _xor($data, $chipper);
+    return rawurldecode($data);
+}
+
 /*
  Rename Install into _Info
 */

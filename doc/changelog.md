@@ -147,7 +147,7 @@ v0.6.6
 + (done, tested) Multisite management.
 + (done, tested) Use bootstrap 3.0.
 + (done, tested) Widget rendering is now does not depend on session, ommiting possibility of clutter display
-+ (done, tested) Per subsite module & theme configuration 
++ (done, tested) Per subsite module & theme configuration
 + (done, tested) module & theme subsite privilege mechanism (subsite_auth)
 + (done, tested) nordrassil priority index and table prefix
 + (done, tested) IP Deny manager.
@@ -186,4 +186,6 @@ v0.7.0
 + (done, tested) Add configurations: subsite-configs & subsite-modules (JSON Format) for default installation on register
 + (done, tested) Add setting for third party authentication
 + (done, tested) Change registration, let registrant upload favicon, logo, set slogan & site name
-+ (proposed) Use this `$_SERVER['HTTP_HOST']`
++ (done, tested) Custom search form
++ (done, tested) Fix nexted quicklink
++ (done, tested) Automatic module update

@@ -802,7 +802,7 @@ class Install_Model extends CI_Model{
         $array = array(
                 'user_name' => $this->admin_user_name,
                 'email' => $this->admin_email,
-                'password'=> md5($this->admin_password),
+                'password'=> cms_md5($this->admin_password),
                 'real_name' => $this->admin_real_name
             );
         $table_name = 'main_user';
@@ -947,27 +947,27 @@ class Install_Model extends CI_Model{
         $sql_list[] = $this->insert_navigation('main_change_profile', NULL, 'Change Profile', 'Change Profile', NULL, 'Change Current Profile', 'main/change_profile',
                 3, 8, 1, 0, NULL, 0);
         $sql_list[] = $this->insert_navigation('main_group_management', 4, 'Group Management', 'Group Management', NULL, 'Group Management', 'main/group',
-                4, 0, 1, 0, NULL, 0);
+                4, 0, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_navigation_management', 4, 'Navigation Management', 'Navigation Management', NULL, 'Navigation management', 'main/navigation',
-                4, 3, 1, 0, NULL, 0);
+                4, 3, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_privilege_management', 4, 'Privilege Management', 'Privilege Management', NULL, 'Privilege Management', 'main/privilege',
-                4, 2, 1, 0, NULL, 0);
+                4, 2, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_user_management', 4, 'User Management', 'User Management', NULL, 'Manage User', 'main/user',
-                4, 1, 1, 0, NULL, 0);
+                4, 1, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_module_management', 4, 'Module Management', 'Module Management', NULL, 'Install Or Uninstall Thirdparty Module', 'main/module_management',
-                4, 5, 1, 0, NULL, 0);
+                4, 5, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_change_theme', 4, 'Change Theme', 'Change Theme', NULL, 'Change Theme', 'main/change_theme',
-                4, 6, 1, 0, NULL, 0);
+                4, 6, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_widget_management', 4, 'Widget Management', 'Widget Management', NULL, 'Manage Widgets', 'main/widget',
-                4, 4, 1, 0, NULL, 0);
+                4, 4, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_quicklink_management', 4, 'Quick Link Management', 'Quick Link Management', NULL, 'Manage Quick Link', 'main/quicklink',
-                4, 7, 1, 0, NULL, 0);
+                4, 7, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_language_management', 4, 'Language Management', 'Language Management', NULL, 'Manage Language', 'main/language_management',
-                4, 8, 1, 0, NULL, 0);
+                4, 8, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_config_management', 4, 'Configuration Management', 'Configuration Management', NULL, 'Manage Configuration Parameters', 'main/config',
-                4, 9, 1, 0, NULL, 0);
+                4, 9, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
         $sql_list[] = $this->insert_navigation('main_setting', 4, 'Setting', 'CMS Setting', NULL, 'CMS Setting', 'main/setting',
-                4, 10, 1, 0, NULL, 0);
+                4, 10, 1, 0, NULL, 0, NULL, NULL, 'default-one-column');
 
         if($this->is_subsite){
             if(array_key_exists('subsite_home_content', $config)){

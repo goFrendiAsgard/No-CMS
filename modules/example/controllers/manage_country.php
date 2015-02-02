@@ -53,6 +53,18 @@ class Manage_Country extends CMS_Priv_Strict_Controller {
         // $crud->unset_print();
         // $crud->unset_export();
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Create custom search form (if needed)
+        // usage:
+        //     $crud->unset_default_search();
+        //     // Your custom form
+        //     $html =  '<div class="row container col-md-12" style="margin-bottom:10px;">';
+        //     $html .= '</div>';
+        //     $html .= '<input name="keyword" placeholder="Keyword" value="'.$keyword.'" /> &nbsp;';
+        //     $html .= '<input type="button" value="Search" class="crud_search btn btn-primary form-control" id="crud_search" />';
+        //     $crud->set_search_form_components($html);
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         // set custom grocery crud model, uncomment to use.
         /*
         $this->load->model('grocery_crud_model');
@@ -83,6 +95,7 @@ class Manage_Country extends CMS_Priv_Strict_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)
         // usage:
+        //     $crud->set_outside_tab($how_many_field_outside_tab);
         //     $crud->set_tabs(array(
         //        'First Tab Caption'  => $how_many_field_on_first_tab,
         //        'Second Tab Caption' => $how_many_field_on_second_tab,

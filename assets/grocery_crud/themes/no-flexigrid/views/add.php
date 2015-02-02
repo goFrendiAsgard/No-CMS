@@ -18,81 +18,100 @@
         </div>
     </div>
 <div id='main-table-box'>
-    <?php
-        if(!isset($this->tabs)){
-            $this->tabs = NULL;
-        }
-
-        // make tabs
-        if($this->tabs !== NULL){
-            echo '<ul class="nav nav-tabs" role="tablist">';
-            $active = 'active';
-            $tab_key = array();
-            foreach($this->tabs as $key=>$val){
-                $tab_key[] = $key;
-                echo '<li class="'.$active.'"><a href="#'.str_replace(' ','',$key).'" role="tab" data-toggle="tab">'.$key.'</a></li>';
-                $active = '';
-            }
-            echo '</ul>';
-        }
-    ?>
     <?php echo form_open( $insert_url, 'method="post" id="crudForm" autocomplete="off" enctype="multipart/form-data"'); ?>
-        <div class='form-div form-horizontal'>
-            <?php
-
-                $counter = 0;
-                $tab_index=0;
-                $tab_item_counter = 0;
+    <div class='form-div form-horizontal row'>
+        <?php
+            $this->tabs = isset($this->tabs)? $this->tabs : NULL;
+            $this->outside_tab = isset($this->outside_tab)? $this->outside_tab : 0;                
+            $counter = 0;
+            $tab_index=-1;
+            $tab_item_counter = 0;
+            foreach($fields as $field)
+            {
                 if($this->tabs !== NULL){
-                    echo '<div class="tab-content">';
-                }
-                foreach($fields as $field)
-                {
-                    if($this->tabs !== NULL){
-                        if($counter == 0){
-                            echo '<div class="tab-pane active" id="'.str_replace(' ','',$tab_key[0]).'">';
-                            echo '<h3>'.$tab_key[0].'</h3>';
-                        }else if($tab_item_counter == $this->tabs[$tab_key[$tab_index]] && $tab_index<count($tab_key)-1){
+                    $tab_key = array();
+                    foreach($this->tabs as $key=>$val){
+                        $tab_key[] = $key;
+                    }
+                    if($counter >= $this->outside_tab){
+                        if($counter == $this->outside_tab){
                             $tab_index ++;
                             $tab_item_counter = 0;
+                            // tab header
+                            echo '<div class="tab-content row col-md-12">';
+                            echo '<ul class="nav nav-tabs" role="tablist">';
+                            $active = 'active';
+                            foreach($this->tabs as $key=>$val){
+                                echo '<li class="'.$active.'"><a href="#'.str_replace(' ','',$key).'" role="tab" data-toggle="tab">'.$key.'</a></li>';
+                                $active = '';
+                            }
+                            echo '</ul>';
                             echo '</div>';
-                            echo '<div class="tab-pane" id="'.str_replace(' ','',$tab_key[$tab_index]).'">';
-                            echo '<h4 style="margin-bottom:20px;">'.$tab_key[$tab_index].'</h4>';
-                        }
-                        //echo $tab_item_counter.' '.$tab_index.' '.print_r($this->tabs,TRUE).' '.print_r($tab_key,TRUE).'<br />';
-                    }
-                    $even_odd = $counter % 2 == 0 ? 'odd' : 'even';
-                    $counter++;
+                            // tab content
+                            echo '<div class="tab-content row col-md-12 well">';
+                            echo '<div class="tab-pane col-md-12 active" id="'.str_replace(' ','',$tab_key[0]).'">';
+                        }else if($tab_item_counter == ($this->tabs[$tab_key[$tab_index]]) && $tab_index<count($tab_key)-1){
+                            $tab_index ++;
+                            $tab_item_counter = 0;
+                            
+                            echo '</div>';
+                            echo '<div class="tab-pane col-md-12" id="'.str_replace(' ','',$tab_key[$tab_index]).'">';                                
+                        }                            
+                    }                        
+                }
+                $even_odd = $counter % 2 == 0 ? 'odd' : 'even';
+                $counter++;
+                if($counter >= $this->outside_tab){
                     $tab_item_counter ++;
-            ?>
-                    <div class='form-field-box form-group col-md-12 <?php echo $even_odd?>' id="<?php echo $field->field_name; ?>_field_box">
-                        <label class='form-display-as-box col-md-3' id="<?php echo $field->field_name; ?>_display_as_box">
+                }
+
+                if(isset($this->field_half_width) && in_array($field->field_name, $this->field_half_width)){
+                    $box_width = 6;
+                    $label_width = 4;
+                    $input_width = 8;
+                }else if(isset($this->field_quarter_width) && in_array($field->field_name, $this->field_quarter_width)){
+                    $box_width = 3;
+                    $label_width = 12;
+                    $label_width = 12;
+                }else if(isset($this->field_one_third_width) && in_array($field->field_name, $this->field_one_third_width)){
+                    $box_width = 4;
+                    $label_width = 12;
+                    $label_width = 12;
+                }else if(isset($this->field_two_third_width) && in_array($field->field_name, $this->field_two_third_width)){
+                    $box_width = 8;
+                    $label_width = 3;
+                    $label_width = 9;
+                }else{
+                    $box_width = 12;
+                    $label_width = 2;
+                    $input_width = 10;
+                }
+        ?>
+                    <div class='form-field-box form-group col-md-<?=$box_width?> <?php echo $even_odd?>' id="<?php echo $field->field_name; ?>_field_box">
+                        <label for="field-<?=$field->field_name?>" class='form-display-as-box col-md-<?=$label_width?>' id="<?php echo $field->field_name; ?>_display_as_box">
                             {{ language:<?php echo $input_fields[$field->field_name]->display_as; ?> }}<?php echo ($input_fields[$field->field_name]->required)? "<span class='required'>*</span> " : ""; ?>
                         </label>
-                        <div class='form-input-box col-md-9' id="<?php echo $field->field_name; ?>_input_box">
+                        <div class='form-input-box col-md-<?=$input_width?>' id="<?php echo $field->field_name; ?>_input_box">
                             <?php echo $input_fields[$field->field_name]->input?>
                         </div>
                     </div>
-            <?php
-                    if($this->tabs !== NULL){
-                        if($counter == count($fields)){
-                            echo '</div>';
-                        }
-                    }
-                }
+        <?php
                 if($this->tabs !== NULL){
-                    echo '</div>';
-                }
-
-            ?>
-            <!-- Start of hidden inputs -->
-                <?php
-                    foreach($hidden_fields as $hidden_field){
-                        echo $hidden_field->input;
+                    if($counter == count($fields)){
+                        echo '</div>';
                     }
-                ?>
-            <!-- End of hidden inputs -->
-            <?php if ($is_ajax) { ?><input type="hidden" name="is_ajax" value="true" /><?php }?>
+                }
+            }
+            if($this->tabs !== NULL){
+                echo '</div>';
+            }
+
+            if(!empty($hidden_fields)){
+                foreach($hidden_fields as $hidden_field){
+                    echo $hidden_field->input;
+                }
+            }
+            if ($is_ajax) { ?><input type="hidden" name="is_ajax" value="true" /><?php }?>
 
             <div id='report-error' class='report-div error alert alert-danger container col-md-12'></div>
             <div id='report-success' class='report-div success alert alert-success container col-md-12'></div>

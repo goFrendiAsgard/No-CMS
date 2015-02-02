@@ -47,7 +47,7 @@ class _Info extends CMS_Module_Info_Model {
 {{ remove_navigations }}
 
         // remove parent of all navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('{{ navigation_parent_name }}'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('{{ navigation_parent_name }}'));
 
         // drop tables
         {{ drop_table_forge }}
@@ -58,7 +58,7 @@ class _Info extends CMS_Module_Info_Model {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->add_navigation($this->cms_complete_navigation_name('{{ navigation_parent_name }}'), '{{ project_caption }}',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('{{ navigation_parent_name }}'), '{{ project_caption }}',
             $module_path.'/{{ main_controller }}', $this->PRIV_EVERYONE);
 
         // add navigations

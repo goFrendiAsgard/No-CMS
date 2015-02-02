@@ -38,6 +38,9 @@
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <script type="text/javascript">{{ widget_name:section_custom_script }}</script>
-        <?php echo $template['body'];?>
+        {{  widget_name:section_top_fix  }}
+        <div class="container">
+            <?php echo $template['body'];?>
+        </div>
     </body>
 </html>

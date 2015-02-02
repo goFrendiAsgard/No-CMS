@@ -135,17 +135,11 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        synchronize_translations_table_width();
         synchronize_translations();
         for(var i=0; i<DATA_translations.update.length; i++){
             add_table_row_translations(DATA_translations.update[i].data);
             RECORD_INDEX_translations++;
         }
-
-        // on resize, adjust the table width
-        $(window).resize(function() {
-            synchronize_translations_table_width();
-        });
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////

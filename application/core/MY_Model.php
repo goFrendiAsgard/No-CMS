@@ -42,8 +42,7 @@ class CMS_Base_Model extends CI_Model
                 $content = $content.PHP_EOL;
             }
             $content .= '$model = new _Info_Model_'.$module_path.'();';
-            eval($content);
-            
+            eval($content);            
         }
         return $model;
     }
@@ -481,7 +480,37 @@ class CMS_Base_Model extends CI_Model
         $login      = $user_name ? "(1=1)" : "(1=2)";
         $super_user = ($user_id == 1 || in_array(1,$this->cms_user_group_id())) ? "(1=1)" : "(1=2)";
 
-        $query  = $this->db->query("SELECT q.navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active
+        $query  = $this->db->query("
+                        SELECT q.navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active,
+                        (
+                            (authorization_id = 1) OR
+                            (authorization_id = 2 AND $not_login) OR
+                            (authorization_id = 3 AND $login) OR
+                            (
+                                (authorization_id = 4 AND $login) AND
+                                (
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id =" . addslashes($user_id) . ")>0
+                                        OR $super_user OR
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
+                                        WHERE
+                                            gn.navigation_id=n.navigation_id AND
+                                            gn.group_id IN
+                                                (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                    )>0
+                                )
+                            ) OR
+                            (
+                                (authorization_id = 5 AND $login) AND
+                                (
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
+                                        WHERE
+                                            gn.navigation_id=n.navigation_id AND
+                                            gn.group_id IN
+                                                (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                    )>0
+                                )
+                            )
+                        ) as allowed
                         FROM
                             ".cms_table_name('main_navigation')." AS n,
                             ".cms_table_name('main_quicklink')." AS q
@@ -489,45 +518,15 @@ class CMS_Base_Model extends CI_Model
                             (
                                 q.navigation_id = n.navigation_id
                             )
-                            AND
-                            (
-                                (authorization_id = 1) OR
-                                (authorization_id = 2 AND $not_login) OR
-                                (authorization_id = 3 AND $login) OR
-                                (
-                                    (authorization_id = 4 AND $login) AND
-                                    (
-                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id =" . addslashes($user_id) . ")>0
-                                            OR $super_user OR
-                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
-                                            WHERE
-                                                gn.navigation_id=n.navigation_id AND
-                                                gn.group_id IN
-                                                    (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
-                                        )>0
-                                    )
-                                ) OR
-                                (
-                                    (authorization_id = 5 AND $login) AND
-                                    (
-                                        (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
-                                            WHERE
-                                                gn.navigation_id=n.navigation_id AND
-                                                gn.group_id IN
-                                                    (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
-                                        )>0
-                                    )
-                                )
-                            ) ORDER BY q.".$this->db->protect_identifiers('index'));
+                            ORDER BY q.".$this->db->protect_identifiers('index'));
         $result = array();
         foreach ($query->result() as $row) {
-            $all_children   = $this->cms_navigations($row->navigation_id);
-            $children       = array();
-            foreach ($all_children as $child) {
-                if ($child['allowed']) {
-                    unset($child['allowed']);
-                    unset($child['have_allowed_children']);
-                    $children[] = $child;
+            $children   = $this->cms_navigations($row->navigation_id);
+            $have_allowed_children = false;
+            foreach ($children as $child) {
+                if ($child["allowed"] && $child["active"]) {
+                    $have_allowed_children = TRUE;
+                    break;
                 }
             }
             if ((!isset($row->url) || $row->url == '') && $row->is_static == 1) {
@@ -550,6 +549,8 @@ class CMS_Base_Model extends CI_Model
                 "navigation_id" => $row->navigation_id,
                 "navigation_name" => $row->navigation_name,
                 "bootstrap_glyph" => $row->bootstrap_glyph,
+                "allowed" => $row->allowed,
+                "have_allowed_children"=>$have_allowed_children,
                 "title" => $this->cms_lang($row->title),
                 "description" => $row->description,
                 "url" => $url,
@@ -1082,7 +1083,7 @@ class CMS_Base_Model extends CI_Model
     {
         $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".cms_table_name('main_user')." WHERE
                     (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
-                    password = '" . md5($password) . "' AND
+                    password = '" . cms_md5($password) . "' AND
                     active = 1");
         $user_name = NULL;
         $user_id = NULL;
@@ -1882,7 +1883,7 @@ class CMS_Base_Model extends CI_Model
             "user_name" => $user_name,
             "email" => $email,
             "real_name" => $real_name,
-            "password" => md5($password),
+            "password" => cms_md5($password),
             "active" => $activation == 'automatic'
         );
         $this->db->insert(cms_table_name('main_user'), $data);
@@ -2049,7 +2050,7 @@ class CMS_Base_Model extends CI_Model
             "active" => 1
         );
         if (isset($password)) {
-            $data['password'] = md5($password);
+            $data['password'] = cms_md5($password);
         }
         $where = array(
             "user_name" => $user_name
@@ -2295,7 +2296,7 @@ class CMS_Base_Model extends CI_Model
 
             //update, add activation_code
             $data  = array(
-                "activation_code" => md5($activation_code)
+                "activation_code" => cms_md5($activation_code)
             );
             $where = array(
                 "user_id" => $user_id
@@ -2320,7 +2321,6 @@ class CMS_Base_Model extends CI_Model
                 $email_message = str_replace('{{ user_real_name }}', $real_name, $email_message);
                 $email_message = str_replace('{{ activation_code }}', $activation_code, $email_message);
                 //send email to user
-                log_message('ERROR', var_export(array($email_message, $real_name, $activation_code), TRUE));
                 return $this->cms_send_email($email_from_address, $email_from_name, $email_to_address, $email_subject, $email_message);
             }
             // if send_mail == false, than it should be succeed
@@ -2339,7 +2339,7 @@ class CMS_Base_Model extends CI_Model
     public function cms_activate_account($activation_code, $new_password = NULL)
     {
         $query = $this->db->query("SELECT user_id FROM ".cms_table_name('main_user')." WHERE
-                    (activation_code = '" . md5($activation_code) . "')");
+                    (activation_code = '" . cms_md5($activation_code) . "')");
         if ($query->num_rows() > 0) {
             $row     = $query->row();
             $user_id = $row->user_id;
@@ -2348,7 +2348,7 @@ class CMS_Base_Model extends CI_Model
                 "active" => TRUE
             );
             if (isset($new_password)) {
-                $data['password'] = md5($new_password);
+                $data['password'] = cms_md5($new_password);
             }
 
             $where = array(
@@ -2371,8 +2371,6 @@ class CMS_Base_Model extends CI_Model
             $data = array('active'=>$active);
             $where = array('user_id'=>$user_id);
             $this->db->update($this->cms_complete_table_name('subsite'), $data, $where);
-            log_message('ERROR', $this->cms_module_path());
-            log_message('ERROR', $module_path);
             $this->load->model($this->cms_module_path().'/subsite_model');
             $this->subsite_model->update_configs();
             $this->cms_reset_overriden_module_path();
@@ -2444,7 +2442,7 @@ class CMS_Base_Model extends CI_Model
     public function cms_valid_activation_code($activation_code)
     {
         $query = $this->db->query("SELECT activation_code FROM ".cms_table_name('main_user')." WHERE
-                    (activation_code = '" . md5($activation_code) . "') AND
+                    (activation_code = '" . cms_md5($activation_code) . "') AND
                     (activation_code IS NOT NULL)");
         if ($query->num_rows() > 0)
             return true;
@@ -3189,10 +3187,13 @@ class CMS_Base_Model extends CI_Model
     }
     public final function cms_remove_privilege($privilege_name)
     {
-        $SQL   = "SELECT privilege_id FROM ".cms_table_name('main_privilege')." WHERE privilege_name='" . addslashes($privilege_name) . "'";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('privilege_id')
+            ->from(cms_table_name('main_privilege'))
+            ->where('privilege_name', $privilege_name)
+            ->get();
 
-        foreach ($query->result() as $row) {
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
             $privilege_id = $row->privilege_id;
         }
 
@@ -3207,6 +3208,49 @@ class CMS_Base_Model extends CI_Model
                 "privilege_id" => $privilege_id
             );
             $this->db->delete(cms_table_name('main_privilege'), $where);
+        }
+    }
+
+    public final function cms_add_group($group_name, $description){
+        $data = array(
+            "group_name" => $group_name,
+            "description" => $description
+        );
+        $query = $this->db->select('group_id')
+            ->from(cms_table_name('main_group'))
+            ->where('group_name', $group_name)
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $group_id = $row->group_id;
+            $this->db->update(cms_table_name('main_group'), $data, array('group_id'=>$group_id));
+        }else{
+            $this->db->insert(cms_table_name('main_group'), $data);
+        }
+    }
+    public final function cms_remove_group($group_name)
+    {
+        $query = $this->db->select('group_id')
+            ->from(cms_table_name('main_group'))
+            ->where('group_name', $group_name)
+            ->get();
+
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
+            $group_id = $row->group_id;
+        }
+
+        if (isset($group_id)) {
+            //delete cms_group_privilege
+            $where = array(
+                "group_id" => $group_id
+            );
+            $this->db->delete(cms_table_name('main_group_user'), $where);
+            //delete cms_privilege
+            $where = array(
+                "privilege_id" => $privilege_id
+            );
+            $this->db->delete(cms_table_name('main_group'), $where);
         }
     }
 
@@ -3257,8 +3301,10 @@ class CMS_Base_Model extends CI_Model
 
     public final function cms_remove_widget($widget_name)
     {
-        $SQL       = "SELECT widget_id FROM ".cms_table_name('main_widget')." WHERE widget_name='" . addslashes($widget_name) . "'";
-        $query     = $this->db->query($SQL);
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
         if($query->num_rows()>0){
             $row       = $query->row();
             $widget_id = $row->widget_id;
@@ -3282,8 +3328,10 @@ class CMS_Base_Model extends CI_Model
 
     public final function cms_add_quicklink($navigation_name)
     {
-        $SQL   = "SELECT navigation_id FROM ".cms_table_name('main_navigation')." WHERE navigation_name ='" . addslashes($navigation_name) . "'";
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('navigation_id')
+            ->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)
+            ->get();
         if ($query->num_rows() > 0) {
             $row           = $query->row();
             $navigation_id = $row->navigation_id;
@@ -3327,6 +3375,97 @@ class CMS_Base_Model extends CI_Model
         }
     }
 
+    public final function cms_assign_navigation($navigation_name, $group_name){
+        $query = $this->db->select('group_id')
+            ->from(cms_table_name('main_group'))
+            ->where('group_name', $group_name)
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $group_id = $row->group_id;
+
+            $query = $this->db->select('navigation_id')
+                ->from(cms_table_name('main_navigation'))
+                ->where('navigation_name', $navigation_name)
+                ->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $navigation_id = $row->navigation_id;
+                $query = $this->db->select('group_id')
+                    ->from(cms_table_name('main_group_navigation'))
+                    ->where('navigation_id', $navigation_id)
+                    ->where('group_id', $group_id)
+                    ->get();
+                if($query->num_rows()==0){
+                    $this->db->insert(cms_table_name('main_group_navigation'), array(
+                        'navigation_id' => $navigation_id,
+                        'group_id' => $group_id));
+                }
+            }
+
+        }
+    }
+    public final function cms_assign_privilege($privilege_name, $group_name){
+        $query = $this->db->select('group_id')
+            ->from(cms_table_name('main_group'))
+            ->where('group_name', $group_name)
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $group_id = $row->group_id;
+
+            $query = $this->db->select('privilege_id')
+                ->from(cms_table_name('main_privilege'))
+                ->where('privilege_name', $privilege_name)
+                ->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $privilege_id = $row->privilege_id;
+                $query = $this->db->select('group_id')
+                    ->from(cms_table_name('main_group_privilege'))
+                    ->where('privilege_id', $privilege_id)
+                    ->where('group_id', $group_id)
+                    ->get();
+                if($query->num_rows()==0){
+                    $this->db->insert(cms_table_name('main_group_privilege'), array(
+                        'privilege_id' => $privilege_id,
+                        'group_id' => $group_id));
+                }
+            }
+
+        }
+    }
+    public final function cms_assign_widget($widget_name, $group_name){
+        $query = $this->db->select('group_id')
+            ->from(cms_table_name('main_group'))
+            ->where('group_name', $group_name)
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $group_id = $row->group_id;
+
+            $query = $this->db->select('widget_id')
+                ->from(cms_table_name('main_widget'))
+                ->where('widget_name', $widget_name)
+                ->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $widget_id = $row->widget_id;
+                $query = $this->db->select('group_id')
+                    ->from(cms_table_name('main_group_widget'))
+                    ->where('widget_id', $widget_id)
+                    ->where('group_id', $group_id)
+                    ->get();
+                if($query->num_rows()==0){
+                    $this->db->insert(cms_table_name('main_group_widget'), array(
+                        'widget_id' => $widget_id,
+                        'group_id' => $group_id));
+                }
+            }
+
+        }
+    }
+
     public final function cms_execute_sql($SQL, $separator)
     {
         $queries = explode($separator, $SQL);
@@ -3360,12 +3499,47 @@ class CMS_Model extends CMS_Base_Model{
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.0-stable-8';
+        $current_version = '0.7.1';
+
+        // get major, minor and rev version
+        $old_version_component = explode('-', $old_version);
+        $old_version_component = $old_version_component[0];
+        $old_version_component = explode('.', $old_version_component);
+        $major_version = $old_version_component[0];
+        $minor_version = $old_version_component[1];
+        $rev_version = $old_version_component[2];        
 
         // update module installer
         cms_update_module_installer();
 
+        if($major_version <= 0 && $minor_version <= 7 && $rev_version <= 0){
+            $query = $this->db->select('user_id, password')
+                ->from(cms_table_name('main_user'))
+                ->get();
+            foreach($query->result() as $row){
+                $this->db->update(cms_table_name('main_user'),
+                    array('password' => md5(md5(md5(md5(md5($row->password)))))),
+                    array('user_id' => $row->user_id)
+                );
+            } 
+
+            // update navigation layout
+            $query = $this->db->select('navigation_id')
+                ->from(cms_table_name('main_navigation'))
+                ->where('navigation_name', 'main_management')
+                ->get();
+            if($query->num_rows>=1){
+                $row = $query->row();
+                $navigation_id = $row->navigation_id;
+                $this->db->update(cms_table_name('main_navigation'),
+                    array('default_layout'=>'default-one-column'),
+                    array('navigation_id'=>$navigation_id));
+            }         
+        }
+
         if($old_version !== $current_version){
+            
+
             $this->load->dbforge();
 
             // make site_layout configuration

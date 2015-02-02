@@ -20,10 +20,10 @@ class _Info extends CMS_Module_Info_Controller{
     }
     
     private function remove_all(){         
-        $this->remove_navigation("ai_nnga_monitor"); 
-        $this->remove_navigation("ai_nnga_set");
-        $this->remove_navigation("ai_nnga_index");
-        $this->remove_navigation("ai_artificial_intelligence_index");
+        $this->cms_remove_navigation("ai_nnga_monitor"); 
+        $this->cms_remove_navigation("ai_nnga_set");
+        $this->cms_remove_navigation("ai_nnga_index");
+        $this->cms_remove_navigation("ai_artificial_intelligence_index");
     }
     
     private function build_all(){    
@@ -36,9 +36,9 @@ class _Info extends CMS_Module_Info_Controller{
     		$module_main_controller_url = $module_url;
     	}
     	
-        $this->add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", $module_main_controller_url, 3);
-        $this->add_navigation("ai_nnga_index","NNGA", $module_url."/nnga/index", 3, "ai_artificial_intelligence_index");
-        $this->add_navigation("ai_nnga_monitor","Monitor", $module_url."/nnga/monitor", 3, "ai_nnga_index");
-        $this->add_navigation("ai_nnga_set","Set Parameters", $module_url."/nnga/set", 3, "ai_nnga_index");
+        $this->cms_add_navigation("ai_artificial_intelligence_index","Artificial Intelligence", $module_main_controller_url, 3);
+        $this->cms_add_navigation("ai_nnga_index","NNGA", $module_url."/nnga/index", 3, "ai_artificial_intelligence_index");
+        $this->cms_add_navigation("ai_nnga_monitor","Monitor", $module_url."/nnga/monitor", 3, "ai_nnga_index");
+        $this->cms_add_navigation("ai_nnga_set","Set Parameters", $module_url."/nnga/set", 3, "ai_nnga_index");
     }
 }

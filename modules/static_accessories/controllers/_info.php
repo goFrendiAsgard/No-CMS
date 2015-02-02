@@ -79,19 +79,19 @@ class _Info extends CMS_Module_Info_Controller {
         $module_path = $this->cms_module_path();
 
         // remove widgets
-        $this->remove_widget($this->cms_complete_navigation_name('slideshow'));
-        $this->remove_widget($this->cms_complete_navigation_name('tab'));
-        $this->remove_widget($this->cms_complete_navigation_name('visitor_count'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('slideshow'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('tab'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('visitor_count'));
 
         // remove navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_visitor_counter'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_tab_content'));
-        $this->remove_navigation($this->cms_complete_navigation_name('manage_slide'));
-        $this->remove_navigation($this->cms_complete_navigation_name('setting'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_visitor_counter'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_tab_content'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_slide'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('setting'));
 
 
         // remove parent of all navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
 
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('visitor_counter'), TRUE);
@@ -104,28 +104,28 @@ class _Info extends CMS_Module_Info_Controller {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->add_navigation($this->cms_complete_navigation_name('index'), 'Accessories Widgets',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Accessories Widgets',
             $module_path.'/static_accessories', $this->PRIV_AUTHORIZED, 'main_management');
 
         // add navigations
-        $this->add_navigation($this->cms_complete_navigation_name('manage_slide'), 'Slideshow',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_slide'), 'Slideshow',
             $module_path.'/manage_slide', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_tab_content'), 'Tabbed Content',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_tab_content'), 'Tabbed Content',
             $module_path.'/manage_tab_content', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('manage_visitor_counter'), 'Visitor',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_visitor_counter'), 'Visitor',
             $module_path.'/manage_visitor_counter', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
-        $this->add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
+        $this->cms_add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
             $module_path.'/install/setting', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
-        $this->add_widget($this->cms_complete_navigation_name('slideshow'), 'Slide Show',
+        $this->cms_add_widget($this->cms_complete_navigation_name('slideshow'), 'Slide Show',
             $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/slide');
-        $this->add_widget($this->cms_complete_navigation_name('tab'), 'Tabbed Content',
+        $this->cms_add_widget($this->cms_complete_navigation_name('tab'), 'Tabbed Content',
             $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/tab');
-        $this->add_widget($this->cms_complete_navigation_name('visitor_count'), 'Visitor Count',
+        $this->cms_add_widget($this->cms_complete_navigation_name('visitor_count'), 'Visitor Count',
             $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/visitor_counter');
 
 

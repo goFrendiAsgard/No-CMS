@@ -27,7 +27,12 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 	protected $callback_delete_ext=array();
 	protected $callback_post_render=array();
 
-    protected $tabs = NULL;
+    protected $outside_tab       = 0;
+    protected $tabs              = NULL;
+    protected $field_half_width  = array();
+    protected $field_one_third_width = array();
+    protected $field_two_third_width = array();
+    protected $field_quarter_width = array();
 
     /* The unsetters */
     public $unset_texteditor     = array();
@@ -51,7 +56,7 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
     $crud->search_form_components = '<input name=....';
     */ 
     public $unset_default_search   = false;
-    public $search_form_components = '';
+    public $search_form_components = '';    
 
     // fix issue http://www.grocerycrud.com/forums/topic/1975-bug-in-the-search/
     protected $unsearchable_field = array();
@@ -65,6 +70,30 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 
     public function set_tabs($data){
         $this->tabs = $data;
+    }
+
+    public function set_outside_tab($data){
+        $this->outside_tab = $data;
+    }
+
+    public function set_field_half_width($data){
+        $this->field_half_width = $data;
+    }
+
+    public function set_field_one_third_width($data){
+        $this->field_one_third_width = $data;
+    }
+
+    public function set_field_two_third_width($data){
+        $this->field_two_third_width = $data;
+    }
+
+    public function set_field_quarter_width($data){
+        $this->field_quarter_width = $data;
+    }
+
+    public function set_search_form_components($html){
+        $this->search_form_components = $html;
     }
 
     public function add_tab($caption, $count){
@@ -772,16 +801,18 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 
     protected function get_readonly_input($field_info, $value)
     {
-        $read_only_value = "&nbsp;";
-
-        if (!empty($value) && !is_array($value)) {
+        $read_only_value = "<i>[Not Set]</i>";
+        if ($value === 0 || $value === '0'){
+            $read_only_value = '0';
+        } elseif (!empty($value) && !is_array($value)) {
             $read_only_value = $value;
         } elseif (is_array($value)) {
             $all_values = array_values($value);
             $read_only_value = implode(", ",$all_values);
         }
 
-        return '<div id="field-'.$field_info->name.'" class="readonly_label">'.$read_only_value.'</div>';
+        return '<div id="field-'.$field_info->name.'" class="readonly_label">'.
+            $read_only_value.'</div>';
     }
 
     protected function get_set_input($field_info,$value)

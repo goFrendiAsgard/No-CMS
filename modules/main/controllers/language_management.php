@@ -126,7 +126,8 @@ class Language_Management extends CMS_Priv_Strict_Controller {
         // eg:
         //      $crud->field_type( $field_name , $field_type, $value  );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        $crud->unset_texteditor('code');
+        $crud->unset_texteditor('iso_code');
 
 
 

@@ -43,21 +43,7 @@ Third Party Authentication
 
 * __I didn't enable third party authentication while installing No-CMS, since I thought I wouldn't need it. Now I change my mind. How could I re-enable third party authentication?__
 
-    Open up `application/config/hybridauthlib.php`. Let's say you want to enable facebook authentication, edit this part:
-
-    ```php
-        $auth_enable_facebook         = FALSE;
-        $auth_facebook_app_id         = '';
-        $auth_facebook_app_secret     = '';
-    ``` 
-
-    into this:
-
-    ```php
-        $auth_enable_facebook         = TRUE;
-        $auth_facebook_app_id         = 'your_facebook_app_id';
-        $auth_facebook_app_secret     = 'your_facebook_app_secret';
-    ```
+    Go to `CMS Management | Setting`, click Third party authentication tab.
 
 * __How could I get my `facebook_app_id` and `facebook_app_secret`?__
     
@@ -114,5 +100,7 @@ Email sending
     | cms_email_priority        | Let it be `3`                                                                                                                                                                |
     | cms_email_bcc_batch_mode  | Let it be `FALSE`                                                                                                                                                            |
     | cms_email_bcc_batch_size  | Let it be `200`                                                                                                                                                              |
+
+    Or simply go to `CMS Management | Setting`.
 
 

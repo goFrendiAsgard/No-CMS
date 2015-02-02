@@ -959,6 +959,7 @@ class CMS_Controller extends MX_Controller
             $theme = $this->cms_get_config('site_theme');
         }
 
+
         // ASSIGN TITLE
         $title = '';
         if (isset($custom_title) && $custom_title !== NULL && $custom_title != '') {
@@ -1023,10 +1024,12 @@ class CMS_Controller extends MX_Controller
 
         // ADJUST THEME AND LAYOUT
         if (!$this->cms_layout_exists($theme, $layout)) {
-            if ($layout == 'mobile' && $this->cms_layout_exists($theme, 'default')) {
-                $layout = 'default';
-            } else {
+            // ASSIGN LAYOUT
+            if(!file_exists(FCPATH.'themes/'.$theme) || !is_dir(FCPATH.'themes/'.$theme)){
                 $theme = 'neutral';
+            }
+            if(!file_exists(FCPATH.'themes/'.$theme.'/views/layouts/'.$layout.'.php')){
+                $layout = 'default';
             }
         }
 
@@ -1501,6 +1504,14 @@ class CMS_Controller extends MX_Controller
         $this->No_CMS_Model->cms_remove_privilege($privilege_name);
     }
 
+    protected final function cms_add_group($group_name, $description){
+        $this->No_CMS_Model->cms_add_group($group_name, $description);
+    }
+    protected final function cms_remove_group($group_name)
+    {
+        $this->No_CMS_Model->cms_remove_group($group_name);
+    }
+
     protected function cms_add_widget($widget_name, $title=NULL, $authorization_id = 1, $url = NULL, $slug = NULL, 
         $index = NULL, $description = NULL)
     {
@@ -1522,6 +1533,16 @@ class CMS_Controller extends MX_Controller
     {
         $this->No_CMS_Model->cms_remove_quicklink($navigation_name);
     }
+    protected function cms_assign_navigation($navigation_name, $group_name){
+        $this->No_CMS_Model->cms_assign_navigation($navigation_name, $group_name);
+    }
+    protected function cms_assign_privilege($privilege_name, $group_name){
+        $this->No_CMS_Model->cms_assign_privilege($privilege_name, $group_name);
+    }
+    protected function cms_assign_widget($widget_name, $group_name){
+        $this->No_CMS_Model->cms_assign_widget($widget_name, $group_name);
+    }
+
 
     protected function cms_execute_sql($SQL, $separator)
     {

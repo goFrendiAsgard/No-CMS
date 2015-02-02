@@ -33,11 +33,11 @@ class _Info extends CMS_Module_Info_Model{
         $module_path = $this->cms_module_path();
 
         // remove navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('project'));
-        $this->remove_navigation($this->cms_complete_navigation_name('template'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('project'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('template'));
 
         // remove parent of all navigations
-        $this->remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
 
          // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('column_option'), TRUE);
@@ -55,16 +55,16 @@ class _Info extends CMS_Module_Info_Model{
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->add_navigation($this->cms_complete_navigation_name('index'), "Module Generator",
+        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), "Module Generator",
             $module_path."/nordrassil/index", 4, "main_management", NULL, "Nordrassil Module Generator");
 
         // add navigations
-        $this->add_navigation($this->cms_complete_navigation_name('template'), "Generator Template",
+        $this->cms_add_navigation($this->cms_complete_navigation_name('template'), "Generator Template",
             $module_path."/data/nds/template", 4, "nordrassil_index",
             NULL, 'Add, edit, and delete generator template',
             NULL, NULL, 'default-one-column'
         );
-        $this->add_navigation($this->cms_complete_navigation_name('project'), "Project",
+        $this->cms_add_navigation($this->cms_complete_navigation_name('project'), "Project",
             $module_path."/data/nds/project", 4, "nordrassil_index",
             NULL, 'Add, edit, and delete project skeleton',
             NULL, NULL, 'default-one-column'
