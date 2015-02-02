@@ -106,6 +106,7 @@ class _Info extends CMS_Module_Info_Model{
         $minor = $version_part[1];
         $build = $version_part[2];
         if($major == 0 && $minor == 0 && $build <= 4){
+            $this->db->update($this->cms_complete_table_name('article'),array('status'=>'published'),array('status'=>'draft'));
             $this->cms_add_group('Blog Editor', 'Can Add, Edit, Delete & Publish other\'s articles');
             $this->cms_add_group('Blog Author', 'Can Add, Edit, Delete & Publish his/her own articles');
             $this->cms_add_group('Blog Contributor', 'Can Add, Edit, and Delete his/her own articles');

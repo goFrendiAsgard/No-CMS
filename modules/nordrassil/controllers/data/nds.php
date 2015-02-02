@@ -196,6 +196,15 @@ class nds extends CMS_Controller {
 
     public function _callback_project_after_insert($post_array, $primary_key){
         $this->load->model($this->cms_module_path().'/data/synchronize_model');
+        if(!isset($primary_key) || $primary_key == NULL){
+            $query = $this->db->select('project_id')->from($this->cms_complete_table_name('project'))
+                ->where(array('name'=>$post_array['name']))
+                ->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $primary_key = $row->project_id;
+            }
+        }
         $this->synchronize_model->synchronize($primary_key);
         return true;
     }
