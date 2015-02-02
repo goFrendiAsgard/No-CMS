@@ -3500,41 +3500,42 @@ class CMS_Model extends CMS_Base_Model{
     private function __update(){
         $old_version = cms_config('__cms_version');
         $current_version = '0.7.1';
+        if($old_version !== NULL && $old_version != ''){
+            // get major, minor and rev version
+            $old_version_component = explode('-', $old_version);
+            $old_version_component = $old_version_component[0];
+            $old_version_component = explode('.', $old_version_component);
+            $major_version = $old_version_component[0];
+            $minor_version = $old_version_component[1];
+            $rev_version = $old_version_component[2];        
 
-        // get major, minor and rev version
-        $old_version_component = explode('-', $old_version);
-        $old_version_component = $old_version_component[0];
-        $old_version_component = explode('.', $old_version_component);
-        $major_version = $old_version_component[0];
-        $minor_version = $old_version_component[1];
-        $rev_version = $old_version_component[2];        
+            // update module installer
+            cms_update_module_installer();
 
-        // update module installer
-        cms_update_module_installer();
+            if($major_version <= 0 && $minor_version <= 7 && $rev_version <= 0){
+                $query = $this->db->select('user_id, password')
+                    ->from(cms_table_name('main_user'))
+                    ->get();
+                foreach($query->result() as $row){
+                    $this->db->update(cms_table_name('main_user'),
+                        array('password' => md5(md5(md5(md5(md5($row->password)))))),
+                        array('user_id' => $row->user_id)
+                    );
+                } 
 
-        if($major_version <= 0 && $minor_version <= 7 && $rev_version <= 0){
-            $query = $this->db->select('user_id, password')
-                ->from(cms_table_name('main_user'))
-                ->get();
-            foreach($query->result() as $row){
-                $this->db->update(cms_table_name('main_user'),
-                    array('password' => md5(md5(md5(md5(md5($row->password)))))),
-                    array('user_id' => $row->user_id)
-                );
-            } 
-
-            // update navigation layout
-            $query = $this->db->select('navigation_id')
-                ->from(cms_table_name('main_navigation'))
-                ->where('navigation_name', 'main_management')
-                ->get();
-            if($query->num_rows>=1){
-                $row = $query->row();
-                $navigation_id = $row->navigation_id;
-                $this->db->update(cms_table_name('main_navigation'),
-                    array('default_layout'=>'default-one-column'),
-                    array('navigation_id'=>$navigation_id));
-            }         
+                // update navigation layout
+                $query = $this->db->select('navigation_id')
+                    ->from(cms_table_name('main_navigation'))
+                    ->where('navigation_name', 'main_management')
+                    ->get();
+                if($query->num_rows>=1){
+                    $row = $query->row();
+                    $navigation_id = $row->navigation_id;
+                    $this->db->update(cms_table_name('main_navigation'),
+                        array('default_layout'=>'default-one-column'),
+                        array('navigation_id'=>$navigation_id));
+                }         
+            }
         }
 
         if($old_version !== $current_version){

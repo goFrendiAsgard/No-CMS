@@ -79,7 +79,7 @@ class Installer extends CI_Controller{
         $data['module_installed'] = $module_installed;
         $data['success'] = $success;
         $data['admin_user_name'] = $this->install_model->admin_user_name;
-        $data['admin_password'] = $this->install_model->admin_password;
+        $data['admin_password'] = $this->install_model->admin_password;        
         $this->load->view('installer_install', $data);
     }
 

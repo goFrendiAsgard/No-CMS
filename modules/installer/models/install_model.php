@@ -3,6 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_Model extends CI_Model{
+    private $VERSION        = '0.7.1';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -1301,6 +1302,8 @@ class Install_Model extends CI_Model{
         $equal_sign = '=';
 
         $this->change_config($file_name, "cms_table_prefix", $this->db_table_prefix, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "__cms_version", $this->VERSION, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        
         // config
         $file_name = APPPATH.'config/'.$this->complete_config_file_name('config.php');
         $key_prefix = '$config[\'';
@@ -1406,6 +1409,7 @@ class Install_Model extends CI_Model{
     }
 
     public function install_modules(){
+        $row = $this->db->select('password')->from('cms_main_user')->get();
         if (in_array('curl', get_loaded_extensions())) {
             if(count($this->modules) == 0){
                 $modules = array('blog','contact_us','static_accessories');
