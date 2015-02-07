@@ -46,7 +46,7 @@
                     'data':{
                             'silent' : true,
                             'identity': '<?php echo $admin_user_name;?>',
-                            'password': '<?php echo $admin_password;?>'
+                            'password': '<?php echo cms_encode($admin_password);?>'
                         },
                     'success': function(response){
                             if(!response['success']){

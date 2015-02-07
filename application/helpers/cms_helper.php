@@ -107,7 +107,7 @@ function cms_module_config($module_directory, $key, $value = NULL, $delete = FAL
 
 
 function cms_table_prefix($new_prefix = NULL){
-    return cms_config('cms_table_prefix', $new_prefix);
+    return cms_config('__cms_table_prefix', $new_prefix);
 }
 
 function cms_module_table_prefix($module_directory, $new_prefix = NULL){
@@ -156,23 +156,43 @@ function cms_half_md5($data){
 function cms_md5($data){
     return cms_half_md5(cms_half_md5($data));
 }
-function _xor($data, $chipper = 'RosesAreRedVioletIsBlueSoThatMyLoveIsOnlyForYou'){
-    while(strlen($chipper) < strlen($data)){
-        $chipper .= $chipper;
+function _xor($data, $chipper=array(1,2,3,4,5,6,7)){
+    while(count($chipper) < count($data)){
+        $chipper = array_merge($chipper, $chipper);
     }
-    $new_data = '';
-    for($i=0; $i<strlen($data); $i++){
-        $new_data .= chr(ord($data[$i]) ^ ord($chipper[$i]));
+    $new_data = array();
+    for($i=0; $i<count($data); $i++){
+        $new_data[] = ($data[$i]+0) ^ ($chipper[$i]+0);
     }
     return $new_data;
 }
-function cms_encode($data, $chipper = 'RosesAreRedVioletIsBlueSoThatMyLoveIsOnlyForYou'){
-    $data = rawurlencode($data);
-    return _xor($data, $chipper);
+function cms_encode($data, $chipper = NULL){
+    $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
+    $data_array = array();
+    $chipper_array = array();
+    for($i=0; $i<strlen($data); $i++){
+        $data_array[] = ord($data[$i]);
+    }
+    for($i=0; $i<strlen($chipper); $i++){
+        $chipper_array[] = ord($chipper[$i]);
+    }
+    $encoded_array = _xor($data_array, $chipper_array);
+    $encoded_str = implode('-', $encoded_array);
+    return $encoded_str;
 }
-function cms_decode($data, $chipper = 'RosesAreRedVioletIsBlueSoThatMyLoveIsOnlyForYou'){
-    $data = _xor($data, $chipper);
-    return rawurldecode($data);
+function cms_decode($data, $chipper = NULL){
+    $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
+    $data_array = explode('-', $data);
+    $chipper_array = array();
+    for($i=0; $i<strlen($chipper); $i++){
+        $chipper_array[] = ord($chipper[$i]);
+    }
+    $decoded_array = _xor($data_array, $chipper_array);
+    $decoded_str = '';
+    for($i=0; $i<count($decoded_array); $i++){
+        $decoded_str .= chr($decoded_array[$i]);
+    }
+    return $decoded_str;
 }
 
 /*

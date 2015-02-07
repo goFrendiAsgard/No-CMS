@@ -1979,7 +1979,7 @@ class CMS_Base_Model extends CI_Model
                                 "data":{
                                         "silent" : true,
                                         "identity": "'.$user_name.'",
-                                        "password": "'.$password.'"
+                                        "password": "'.cms_encode($password).'"
                                     },
                                 "success": function(response){
                                         if(!response["success"]){
@@ -2395,7 +2395,7 @@ class CMS_Base_Model extends CI_Model
         $config['mailpath']       = (string) $this->cms_get_config('cms_email_mailpath');
         $config['smtp_host']      = (string) $this->cms_get_config('cms_email_smtp_host');
         $config['smtp_user']      = (string) $this->cms_get_config('cms_email_smtp_user');
-        $config['smtp_pass']      = (string) $this->cms_get_config('cms_email_smtp_pass');
+        $config['smtp_pass']      = (string) cms_decode($this->cms_get_config('cms_email_smtp_pass'));
         $config['smtp_port']      = (integer) $this->cms_get_config('cms_email_smtp_port');
         $config['smtp_timeout']   = (integer) $this->cms_get_config('cms_email_smtp_timeout');
         $config['wordwrap']       = (boolean) $this->cms_get_config('cms_email_wordwrap');
@@ -3499,46 +3499,9 @@ class CMS_Model extends CMS_Base_Model{
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.1';
-        if($old_version !== NULL && $old_version != ''){
-            // get major, minor and rev version
-            $old_version_component = explode('-', $old_version);
-            $old_version_component = $old_version_component[0];
-            $old_version_component = explode('.', $old_version_component);
-            $major_version = $old_version_component[0];
-            $minor_version = $old_version_component[1];
-            $rev_version = $old_version_component[2];        
+        $current_version = '0.7.2';
 
-            // update module installer
-            cms_update_module_installer();
-
-            if($major_version <= 0 && $minor_version <= 7 && $rev_version <= 0){
-                $query = $this->db->select('user_id, password')
-                    ->from(cms_table_name('main_user'))
-                    ->get();
-                foreach($query->result() as $row){
-                    $this->db->update(cms_table_name('main_user'),
-                        array('password' => md5(md5(md5(md5(md5($row->password)))))),
-                        array('user_id' => $row->user_id)
-                    );
-                } 
-
-                // update navigation layout
-                $query = $this->db->select('navigation_id')
-                    ->from(cms_table_name('main_navigation'))
-                    ->where('navigation_name', 'main_management')
-                    ->get();
-                if($query->num_rows>=1){
-                    $row = $query->row();
-                    $navigation_id = $row->navigation_id;
-                    $this->db->update(cms_table_name('main_navigation'),
-                        array('default_layout'=>'default-one-column'),
-                        array('navigation_id'=>$navigation_id));
-                }         
-            }
-        }
-
-        if($old_version !== $current_version){
+        if($old_version !== NULL && $old_version != '' && $old_version !== $current_version){
             
 
             $this->load->dbforge();
@@ -3689,7 +3652,7 @@ class CMS_Model extends CMS_Base_Model{
             if(! in_array(cms_table_name('main_language'), $table_list)){
                 $fields = array(
                     'language_id'=> array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE,),
-                    'name'=> array("type"=>'varchar',  "null"=>TRUE),
+                    'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
                     'code'=>array("type"=>'varchar',"constraint"=>50, "null"=>TRUE),
                     'iso_code'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
                     'translations'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
@@ -3944,6 +3907,50 @@ class CMS_Model extends CMS_Base_Model{
             $this->db->update(cms_table_name('main_module'), 
                 array('module_name'=>'gofrendi.noCMS.multisite'),
                 array('module_name'=>'admin.multisite'));
+
+            
+            // get major, minor and rev version
+            $old_version_component = explode('-', $old_version);
+            $old_version_component = $old_version_component[0];
+            $old_version_component = explode('.', $old_version_component);
+            $major_version = $old_version_component[0];
+            $minor_version = $old_version_component[1];
+            $rev_version = $old_version_component[2];        
+
+            // update module installer
+            cms_update_module_installer();
+
+            if($major_version <= 0 && $minor_version <= 7 && $rev_version <= 0){
+                $query = $this->db->select('user_id, password')
+                    ->from(cms_table_name('main_user'))
+                    ->get();
+                foreach($query->result() as $row){
+                    $this->db->update(cms_table_name('main_user'),
+                        array('password' => md5(md5(md5(md5(md5($row->password)))))),
+                        array('user_id' => $row->user_id)
+                    );
+                } 
+
+                // update navigation layout
+                $query = $this->db->select('navigation_id')
+                    ->from(cms_table_name('main_navigation'))
+                    ->where('navigation_name', 'main_management')
+                    ->get();
+                if($query->num_rows>=1){
+                    $row = $query->row();
+                    $navigation_id = $row->navigation_id;
+                    $this->db->update(cms_table_name('main_navigation'),
+                        array('default_layout'=>'default-one-column'),
+                        array('navigation_id'=>$navigation_id));
+                }         
+            }
+
+            if($major_version <= 0 && $minor_version <= 7 && $rev_version  <= 1){
+                cms_config('__cms_table_prefix', cms_config('cms_table_prefix'));
+                cms_config('__cms_chipper', md5(rand().time()));
+                $smtp_email_password = $this->cms_get_config('cms_email_smtp_pass');
+                $this->cms_set_config('cms_email_smtp_pass', cms_encode($smtp_email_password));
+            }
 
             // write new version
             cms_config('__cms_version', $current_version);

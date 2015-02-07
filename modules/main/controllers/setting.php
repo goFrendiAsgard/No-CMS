@@ -114,7 +114,14 @@ class Setting extends CMS_Controller{
                 $configuration_list[] = 'cms_subsite_modules';
             }
             foreach($configuration_list as $configuration){
-                $this->cms_set_config($configuration, $this->input->post($configuration));
+                $value = $this->input->post($configuration);
+                if($configuration == 'cms_email_smtp_pass'){
+                    if($value == '[PASSWORD SET]'){
+                        continue;
+                    }
+                    $value = cms_encode($value);
+                }
+                $this->cms_set_config($configuration, $value);
             }
             // save language
             $this->cms_language($this->input->post('site_language'));
@@ -157,7 +164,14 @@ class Setting extends CMS_Controller{
         $query = $this->db->select('config_name, value')->from(cms_table_name('main_config'))->get();
         $config_list = array();
         foreach($query->result_array() as $row){
-            $config_list[$row['config_name']] = $row['value'];
+            $value = $row['value'];
+            if($row['config_name'] == 'cms_email_smtp_pass'){
+                //$value = cms_decode($value);
+                if($value != ''){
+                    $value = '[PASSWORD SET]';
+                }
+            }
+            $config_list[$row['config_name']] = $value;
         }
 
         // layout

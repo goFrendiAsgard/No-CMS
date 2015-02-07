@@ -1811,7 +1811,7 @@ class CMS_Module_Info_Controller extends CMS_Controller
         $identity = $this->input->post('identity');
         $password = $this->input->post('password');
         if ($identity && $password) {
-            $this->cms_do_login($identity, $password);
+            $this->cms_do_login($identity, cms_decode($password));
         }
 
         $result = array(

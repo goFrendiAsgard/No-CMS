@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_Model extends CI_Model{
-    private $VERSION        = '0.7.1';
+    private $VERSION        = '0.7.2';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -1301,9 +1301,10 @@ class Install_Model extends CI_Model{
         $value_suffix = "';";
         $equal_sign = '=';
 
-        $this->change_config($file_name, "cms_table_prefix", $this->db_table_prefix, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "__cms_table_prefix", $this->db_table_prefix, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "__cms_version", $this->VERSION, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        
+        $this->change_config($file_name,"__cms_chipper", md5(md5(rand().time())), $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+
         // config
         $file_name = APPPATH.'config/'.$this->complete_config_file_name('config.php');
         $key_prefix = '$config[\'';
@@ -1420,6 +1421,12 @@ class Install_Model extends CI_Model{
             }else{
                 $modules = $this->modules;
             }
+            if($this->is_subsite){
+                include(APPPATH.'config/site-'.$this->subsite.'/cms_config.php');
+                $chipper = $config['__cms_chipper'];
+            }else{
+                $chipper = cms_config('__cms_chipper');
+            }
             foreach($modules as $module){
                 $ch = curl_init();
                 if($this->is_subsite){
@@ -1430,7 +1437,9 @@ class Install_Model extends CI_Model{
                 curl_setopt($ch, CURLOPT_COOKIEJAR, '');
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_POST, 3);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, 'silent=true&identity='.$this->admin_user_name.'&password='.$this->admin_password);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, 
+                    'silent=true&identity='.$this->admin_user_name.
+                    '&password='.cms_encode($this->admin_password, $chipper));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 @curl_exec($ch);
                 curl_close($ch);
