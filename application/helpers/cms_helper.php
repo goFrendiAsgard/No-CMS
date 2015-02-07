@@ -153,8 +153,10 @@ function cms_module_navigation_name($module_directory, $name){
 function cms_half_md5($data){
     return md5(md5(md5($data)));
 }
-function cms_md5($data){
-    return cms_half_md5(cms_half_md5($data));
+function cms_md5($data, $chipper = NULL){
+    $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
+    $return = crypt(cms_half_md5(cms_half_md5($data)), $chipper);
+    return $return;
 }
 function _xor($data, $chipper=array(1,2,3,4,5,6,7)){
     while(count($chipper) < count($data)){

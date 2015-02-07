@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_Model extends CI_Model{
-    private $VERSION        = '0.7.2';
+    private $VERSION        = '0.7.3';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';

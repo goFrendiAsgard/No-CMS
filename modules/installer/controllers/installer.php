@@ -72,8 +72,8 @@ class Installer extends CI_Controller{
         $success = $check_installation['success'];
         $module_installed = FALSE;
         if($success){
-            $this->install_model->build_database();
             $this->install_model->build_configuration();
+            $this->install_model->build_database();            
             $module_installed = $this->install_model->install_modules();
         }
         $data['module_installed'] = $module_installed;

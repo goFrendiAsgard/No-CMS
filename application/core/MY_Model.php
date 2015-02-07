@@ -1941,9 +1941,9 @@ class CMS_Base_Model extends CI_Model
             $success = $check_installation['success'];
             $module_installed = FALSE;
             if($success){
-                $config = array('subsite_home_content'=> $this->cms_get_config('cms_subsite_home_content', TRUE));
-                $this->install_model->build_database($config);
+                $config = array('subsite_home_content'=> $this->cms_get_config('cms_subsite_home_content', TRUE));                
                 $this->install_model->build_configuration($config);
+                $this->install_model->build_database($config);
                 $module_installed = $this->install_model->install_modules();
             }
             if(!isset($_SESSION)){
@@ -3499,7 +3499,7 @@ class CMS_Model extends CMS_Base_Model{
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.2';
+        $current_version = '0.7.3';
 
         if($old_version !== NULL && $old_version != '' && $old_version !== $current_version){
             
@@ -3950,6 +3950,17 @@ class CMS_Model extends CMS_Base_Model{
                 cms_config('__cms_chipper', md5(rand().time()));
                 $smtp_email_password = $this->cms_get_config('cms_email_smtp_pass');
                 $this->cms_set_config('cms_email_smtp_pass', cms_encode($smtp_email_password));
+            }
+            if($major_version <= 0 && $minor_version <= 7 && $rev_version <= 2){
+                $query = $this->db->select('user_id, password')
+                    ->from(cms_table_name('main_user'))
+                    ->get();
+                foreach($query->result() as $row){
+                    $this->db->update(cms_table_name('main_user'),
+                        array('password' => crypt($row->password, cms_config('__cms_chipper'))),
+                        array('user_id' => $row->user_id)
+                    );
+                } 
             }
 
             // write new version
