@@ -800,10 +800,16 @@ class Install_Model extends CI_Model{
     }
 
     protected function insert_user(){
+        if($this->is_subsite){
+            include(APPPATH.'config/site-'.$this->subsite.'/cms_config.php');
+            $chipper = $config['__cms_chipper'];
+        }else{
+            $chipper = NULL;
+        }
         $array = array(
                 'user_name' => $this->admin_user_name,
                 'email' => $this->admin_email,
-                'password'=> cms_md5($this->admin_password),
+                'password'=> cms_md5($this->admin_password, $chipper),
                 'real_name' => $this->admin_real_name
             );
         $table_name = 'main_user';
