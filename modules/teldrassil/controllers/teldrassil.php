@@ -24,7 +24,7 @@ class teldrassil extends CMS_Priv_Strict_Controller {
         $colors = array('', '', '', '', '', '', '');    // colors
         // set file_name
         if(isset($_FILES['file_name']) && $_FILES['file_name']['name'] != ''){
-            $file_name = FCPATH.'modules/'.$module_path.'/assets/uploads/'.substr(md5(rand),5).'_'.$_FILES['file_name']['name'];
+            $file_name = FCPATH.'modules/'.$module_path.'/assets/uploads/'.substr(md5(rand()),5).'_'.$_FILES['file_name']['name'];
             $url_name = base_url('modules/'.$module_path.'/assets/uploads/'.$_FILES['file_name']['name']);
             move_uploaded_file($_FILES['file_name']['tmp_name'], $file_name);
             $this->session->set_userdata('teldrassil_theme_file', $file_name);
