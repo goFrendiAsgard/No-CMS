@@ -96,7 +96,7 @@
             echo '('.$article['author'].', '.$article['date'].')'.br();
 
             // photos
-            echo '<div>';            
+            echo '<div id="small_photo_'.$article['id'].'">';            
             foreach($article['photos'] as $photo){
                 echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
                 echo '<img class="photo_thumbnail" src="'.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).'" />';
@@ -107,10 +107,10 @@
             echo '<script type="text/javascript">
                 $(".photo_'.$article['id'].'").click(function(event){
                     $("#big_photo_'.$article['id'].'").hide();
-                    $("#big_photo_'.$article['id'].'").html("<img src=\"" + $(this).attr("href") + "\" /><br />");
+                    $("#big_photo_'.$article['id'].'").html("<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" /><br />");
                     $("#big_photo_'.$article['id'].'").fadeIn();
                     $("html, body").animate({
-                        scrollTop: $("#big_photo_'.$article['id'].'").offset().top - 60
+                        scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
                     }, 1000);
                     $(".photo_'.$article['id'].'").css("opacity", 1);            
                     $(this).css("opacity", 0.3);

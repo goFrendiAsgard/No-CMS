@@ -490,7 +490,7 @@
                         <strong>Checking ...</strong>, please wait for a while
                     </div>
                     <div style="margin-top:20px; margin-bottom:20px;">
-                        <input type="submit" id="btn-install" class="btn btn-primary btn-lg" name="Install" disabled="disabled" value="INSTALL NOW">
+                        <button id="btn-install" class="btn btn-primary btn-lg" name="Install" disabled="disabled" value="INSTALL NOW">INSTALL NOW</button>
                         <img id="img-loader" src="<?php echo base_url('modules/installer/assets/ajax-loader.gif'); ?>">
                     </div>
                 </div>

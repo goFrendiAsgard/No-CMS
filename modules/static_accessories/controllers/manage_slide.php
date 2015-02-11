@@ -10,6 +10,10 @@ class Manage_Slide extends CMS_Priv_Strict_Controller {
 	protected $URL_MAP = array();
 
 	public function index(){
+        $slideshow_height = $this->input->post('slideshow-height');
+        if($slideshow_height != NULL){
+            $this->cms_set_config('static_accessories_slide_height', $slideshow_height);
+        }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize groceryCRUD
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,6 +88,8 @@ class Manage_Slide extends CMS_Priv_Strict_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
+        $output->slide_height = $this->cms_get_config('static_accessories_slide_height');
+        $output->state = $crud->getState();
         $this->view($this->cms_module_path().'/manage_slide_view', $output,
             $this->cms_complete_navigation_name('manage_slide'));
 

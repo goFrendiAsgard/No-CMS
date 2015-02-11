@@ -1,8 +1,13 @@
+<style type="text/css">
+    ul._newest_widget { 
+        list-style-type: disc; padding-left: 20px;
+    }
+</style>
 <?php
 if(count($articles)==0){
     echo 'Currently there is no article yet';
 }else{
-    echo '<ul>';
+    echo '<ul class="_newest_widget">';
     foreach($articles as $article){
         echo '<li>';
         if($module_path == 'blog'){

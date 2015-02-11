@@ -1,9 +1,20 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
 <style type="text/css">
     a.image-thumbnail img{
         max-width:200px;
     }
 </style>
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+<?php if($state == 'list' || $state == 'success'){ ?>
+    <h3>Configuration</h3>
+    <form method="post" class="form">
+        <label>Slideshow Height (left blank to make it dynamic) </label>
+        <input name="slideshow-height" value="<?=$slide_height?>" />
+        <label>px</label>
+        <button name="apply" class="btn btn-primary">Save Configuration</button>
+    </form>
+    <h3>Slideshow</h3>
+<?php
+}
 
 $asset = new CMS_Asset(); 
 foreach($css_files as $file){
@@ -16,5 +27,4 @@ foreach($js_files as $file){
 }
 echo $asset->compile_js();	
 echo $output;
-
 ?>

@@ -17,9 +17,14 @@ for($i=0; $i<count($slide_list); $i++){
 }
 ?>
 <style type="text/css">
+    <?php if($slide_height+0 == $slide_height){?>
     div.carousel-inner div.item{
-        height: <?=$slide_height?>;
-        max-height:<?=$slide_height?>;
+        height: <?=$slide_height?>px;
+        max-height:<?=$slide_height?>px;
+    }
+    <?php } ?>
+    div.carousel-inner{
+        opacity:0.85;
     }
     img.item-image{
         margin:auto;
@@ -61,5 +66,20 @@ for($i=0; $i<count($slide_list); $i++){
             });    
         }
     }
+
+    $(window).scroll(function(){
+        var carouselTop = $('div.carousel-inner').offset().top;
+        var windowTop = $(window).scrollTop();
+        var height = $('div.carousel-inner').height();
+        if(windowTop >= carouselTop){
+            var newTop = Math.round((windowTop - carouselTop)*0.8);
+            var newOpacity = 1-0.6*(newTop/height);
+        }else{
+            var newTop = 0;
+            var newOpacity = 1;
+        }
+        $('.carousel-inner>.item').css('top', newTop + 'px');
+        $('.carousel-inner>.item').css('opacity', newOpacity);
+    });
 
 </script>
