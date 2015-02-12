@@ -1422,6 +1422,7 @@ class Install_Model extends CI_Model{
                 $modules = array('blog','contact_us','static_accessories');
                 if(!$this->is_subsite){
                     $modules[] = 'nordrassil';
+                    $modules[] = 'teldrassil';
                     $modules[] = 'multisite';
                 }
             }else{

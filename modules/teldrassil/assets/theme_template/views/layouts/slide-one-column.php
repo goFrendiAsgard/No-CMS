@@ -38,6 +38,7 @@
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <script type="text/javascript">{{ widget_name:section_custom_script }}</script>
+        <div id="__background-image"></div>
         {{ widget_name:section_top_fix }}
         {{ widget_name:static_accessories_slideshow }}
         <div class="container">

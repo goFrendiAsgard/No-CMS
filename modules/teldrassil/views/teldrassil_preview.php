@@ -10,6 +10,7 @@
     </style>  
 </head>
 <body>
+    <div id="__background-image"></div>
     <div class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -22,8 +23,8 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class=""><a href="/">Home</a></li>
-                    <li class="active"><a href="/preview">Preview</a></li>
+                    <li class=""><a href="#">Home</a></li>
+                    <li class="active"><a href="#">Preview</a></li>
                 </ul>
             </div>
         </div>

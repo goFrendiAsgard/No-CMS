@@ -19,7 +19,7 @@
                     }
                 ?>    
                 <input class="form-control" type="file" name="file_name" /><br />
-                <button class="btn btn-default" name="upload">Upload</button>
+                <button class="btn btn-default" name="upload" value="TRUE">Upload</button>
             </div>
 
             <div class="form-group initially-hidden">
@@ -45,6 +45,9 @@
 
         </div>
         <div class="col-md-6">
+            <div class="form-group initially-hidden">
+                <input id="background_image" name="background_image" type="checkbox" <?=$background_image?'checked':''?> />&nbsp;<label>Use Background Image</label>
+            </div>
             <table class="table initially-hidden">
                 <thead>
                     <tr>
@@ -92,17 +95,18 @@
     }
 
     function preview(){
-        console.log('jalan');
         var url = "{{ MODULE_SITE_URL }}teldrassil/preview?font=" + $('#font-select').val();
         for(var i=0; i<7; i++){
             url += '&colors[]=' + $('#color-select-'+i).val();
+        }
+        if($( "#background_image:checked" ).length>0){
+            url += '&use_background_image=TRUE';
         }
         $('#preview').attr('src', url);
     }
 
     $('select.color-select').children().each(function (){
-        $(this).css('background-color', '#' + $(this).val())
-        //$(this).attr('style', 'background-color:' + colors[$(this).val()] + ';');
+        $(this).css('background-color', '#' + $(this).val());
     });
 
     show_color();
@@ -115,5 +119,8 @@
     });
     $('#font-select').change(function(event){
         preview();
-    })
+    });
+    $('#background_image').change(function(event){
+        preview();
+    });
 </script>
