@@ -59,7 +59,7 @@ class _Info extends CMS_Module_Info_Model {
 
         // parent of all navigations
         $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Theme Generator',
-            $module_path == 'teldrassil'? $module_path: $module_path.'/teldrassil', $this->PRIV_EVERYONE, 
+            $module_path == 'teldrassil'? $module_path: $module_path.'/teldrassil', $this->PRIV_AUTHORIZED, 
                 "main_management", NULL, 'Theme Generator', NULL, NULL, 'default-one-column');
 
         // add navigations
