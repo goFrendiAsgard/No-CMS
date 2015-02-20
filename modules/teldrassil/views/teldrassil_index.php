@@ -66,7 +66,7 @@
                                 }else{
                                     $selected = '';
                                 }
-                                echo '<option value="'.$option.'"'.$selected.'>' . $option . '</option>';
+                                echo '<option value="'.$option.'"'.$selected.'>#' . $option . '</option>';
                             }
                             echo '</select></td>';
                             echo '<td>'.$color_descriptions[$i].'</td>';

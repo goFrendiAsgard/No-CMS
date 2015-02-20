@@ -185,7 +185,6 @@ class teldrassil extends CMS_Priv_Strict_Controller {
                 ), 
                 $css
             );
-        log_message('error', $css);
         return $css;
     }
 

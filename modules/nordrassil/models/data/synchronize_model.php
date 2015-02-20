@@ -250,7 +250,6 @@ class Synchronize_Model extends CMS_Model{
             if(!$is_nullable && $role != 'primary'){
                 // get required option id if needed
                 if(!$no_required_option && $required_option_id === NULL){
-                    log_message('ERROR', var_export($required_option_id, TRUE));
                     $t_template_option = $this->cms_complete_table_name('template_option');
                     $t_project = $this->cms_complete_table_name('project');
                     $t_table = $this->cms_complete_table_name('table');

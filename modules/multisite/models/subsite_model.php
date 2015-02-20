@@ -22,7 +22,11 @@ class Subsite_Model extends  CMS_Model{
         $cms_config_file = APPPATH.'config/site-'.$subsite_name.'/cms_config.php';
         if(file_exists($cms_config_file)){
             include $cms_config_file;
-            $table_prefix = $config['cms_table_prefix'];
+            if(array_key_exists('__cms_table_prefix', $config)){
+                $table_prefix = $config['__cms_table_prefix'];    
+            }else{
+                $table_prefix = $config['cms_table_prefix'];
+            }            
             $config_table_name = $table_prefix.'_main_config';
         }else{
             $config_table_name = cms_table_name('site_'.$subsite_name.'_main_config');

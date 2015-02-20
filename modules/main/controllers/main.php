@@ -664,7 +664,7 @@ class Main extends CMS_Controller
 
     public function before_insert_user($post_array)
     {
-        $post_array['password'] = md5($post_array['password']);
+        $post_array['password'] = cms_md5($post_array['password']);
         return $post_array;
     }
 
