@@ -93,6 +93,17 @@ class Install_Model extends CI_Model{
         if($subsite !== NULL){
             $this->subsite = $subsite;
         }
+        // sanitize subsite
+        $subsite = strtolower($this->subsite);
+        $sanitized_subsite = '';
+        for($i=0; $i<strlen($subsite); $i++){
+            $letter = substr($subsite, $i, 1);
+            if(is_numeric($letter) || strpos('abcdefghijklmnopqrstuvwxyz', $letter) !== FALSE){
+                $sanitized_subsite .= $letter;
+            }
+        }
+        // site table prefix
+        $this->subsite = $sanitized_subsite;
         if($this->is_subsite && $this->subsite != ''){
             $this->db_table_prefix .= '_site_'.$this->subsite;
         }
