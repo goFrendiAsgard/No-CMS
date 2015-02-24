@@ -1881,7 +1881,7 @@ class CMS_Base_Model extends CI_Model
     {
         // check if activation needed
         $activation = $this->cms_get_config('cms_signup_activation');
-        $data            = array(
+        $data = array(
             "user_name" => $user_name,
             "email" => $email,
             "real_name" => $real_name,
@@ -1992,6 +1992,37 @@ class CMS_Base_Model extends CI_Model
                         }
                     });</script>';
                 $this->cms_flash_metadata($install_module_script);
+            }else{
+                // get the new subsite
+                $this->cms_override_module_path($module_path);
+                $t_user = cms_table_name('main_user');
+                $t_subsite = $this->cms_complete_table_name('subsite');
+                $query = $this->db->select('name,use_subdomain')
+                    ->from($t_subsite)
+                    ->join($t_user, $t_user.'.user_id='.$t_subsite.'.user_id')
+                    ->where('user_name', $user_name)
+                    ->order_by($t_subsite.'.id', 'desc')
+                    ->get();
+                $this->cms_reset_overriden_module_path();
+                if($query->num_rows()>0){
+                    $row = $query->row();
+                    $subsite = $row->name;
+                    $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
+                    $ssl = $protocol == 'https://';
+                    $port = $_SERVER['SERVER_PORT'];
+                    $port = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+                    if($row->use_subdomain){
+                        $url = $protocol.$subsite.'.'.$_SERVER['SERVER_NAME'].$port;
+                    }else{
+                        $url = $protocol.$_SERVER['SERVER_NAME'].$port.'/site-'.$subsite;
+                    }
+                    $url .= '/main/login';
+                    redirect($url,'refresh');
+                }
+            }
+        }else{
+            if ($activation == 'automatic') {
+                $this->cms_do_login($user_name, $password);
             }
         }
 
