@@ -658,3 +658,9 @@ FileETag None
 <IfModule mod_headers.c>
    Header set Connection Keep-Alive
 </IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|xml|gz)$">
+    Header append Vary: Accept-Encoding
+  </FilesMatch>
+</IfModule>

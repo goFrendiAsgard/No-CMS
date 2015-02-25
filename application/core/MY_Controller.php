@@ -797,6 +797,78 @@ class CMS_Controller extends MX_Controller
         $this->No_CMS_Model->cms_flash_metadata($content);
     }
 
+    private function cms_ck_adjust_script(){
+        $base_url = base_url();
+        $save_base_url = str_replace('/', '\\/', $base_url);
+        $ck_editor_adjust_script = '
+            $(document).ready(function(){
+                if (typeof(CKEDITOR) != "undefined"){
+                    function __adjust_ck_editor(){
+                        for (instance in CKEDITOR.instances) {
+                            /* ck_instance */
+                            ck_instance = CKEDITOR.instances[instance];
+                            var name = CKEDITOR.instances[instance].name;
+                            var $ck_textarea = $("#cke_"+name+" textarea");
+                            var $ck_iframe = $("#cke_"+name+" iframe");
+                            var data = ck_instance.getData();
+                            if($ck_textarea.length > 0){
+                                content = data.replace(
+                                    /(src=".*?)('.$save_base_url.')(.*?")/gi,
+                                    "$1{{ base_url }}$3"
+                                );
+                                ck_instance.setData(content);
+                            }else if ($ck_iframe.length > 0){
+                                content = data.replace(
+                                    /(src=".*?)({{ base_url }})(.*?")/gi,
+                                    "$1'.$base_url.'$3"
+                                );
+                                ck_instance.setData(content);
+                            }
+                            ck_instance.updateElement();
+                        }
+                    }
+
+                    /* when instance ready & form submit, adjust ck editor */
+                    CKEDITOR.on("instanceReady", function(){
+                        __adjust_ck_editor();
+                        for (instance in CKEDITOR.instances) {
+                            /* ck_instance */
+                            ck_instance = CKEDITOR.instances[instance];
+                            ck_instance.on("mode", function(){
+                                __adjust_ck_editor();
+                            });
+                        }
+                    });
+                    
+                    /* when form submit, adjust ck editor */
+                    $(document).ajaxSend(function(event, xhr, settings) {
+                        if(settings.url == $("#crudForm").attr("action")){
+                            for (instance in CKEDITOR.instances) {
+                                /* ck_instance */
+                                ck_instance = CKEDITOR.instances[instance];
+                                var name = CKEDITOR.instances[instance].name;
+                                var $original_textarea = $("textarea#"+name);
+                                var data = ck_instance.getData();
+                                content = data.replace(
+                                    /(src=".*?)('.$save_base_url.')(.*?")/gi,
+                                    "$1{{ base_url }}$3"
+                                );
+                                ck_instance.setData(content);
+                            }
+                        }
+                    });
+
+                    $(document).ajaxComplete(function(event, xhr, settings){
+                        if(settings.url == $("#crudForm").attr("action")){
+                            __adjust_ck_editor();
+                        }
+                    });
+                }
+            });
+        ';
+        return $ck_editor_adjust_script;
+    }
+
     /**
      * @author  goFrendiAsgard
      * @param   string view_url
@@ -1087,7 +1159,8 @@ class CMS_Controller extends MX_Controller
             }            
 
             // ckeditor adjustment thing
-            $this->template->append_js('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
+            //$this->template->append_js('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
+            $this->template->append_js('<script type="text/javascript">'.$this->cms_ck_adjust_script().'</script>');
 
             // add javascript base_url for ckeditor
             $this->template->append_js('<script type="text/javascript">var __cms_base_url = "'.base_url().'";</script>');
