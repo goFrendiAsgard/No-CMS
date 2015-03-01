@@ -35,6 +35,7 @@ foreach($articles as $article){
     // content
     echo '<div>';
     echo $article['content'];
+    echo '<div style="clear:both;"></div>';
     echo '</div>';    
 
     $comment_count = $article['comment_count'];

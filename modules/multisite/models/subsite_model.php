@@ -36,10 +36,13 @@ class Subsite_Model extends  CMS_Model{
 
     public function get_actual_logo($subsite_name){
         $config_table_name = $this->get_subsite_config_table_name($subsite_name);
-        $query = $this->db->select('value')->from($config_table_name)
-            ->where('config_name', 'site_logo')
-            ->get();
-        if($query->num_rows()>0){
+        $table_exists = $this->db->table_exists($config_table_name);
+        if($table_exists){
+            $query = $this->db->select('value')->from($config_table_name)
+                ->where('config_name', 'site_logo')
+                ->get();
+        }
+        if($table_exists && $query->num_rows()>0){
             $row = $query->row();
             $logo = $row->value;
             $logo = $this->cms_parse_keyword($logo);
@@ -57,6 +60,10 @@ class Subsite_Model extends  CMS_Model{
             }
         }
         return $logo;
+    }
+
+    public function delete($subsite){
+        $this->db->delete($this->cms_complete_table_name('subsite'), array('name'=>$subsite));
     }
 
     public function get_data($keyword, $page=0){

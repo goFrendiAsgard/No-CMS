@@ -113,7 +113,7 @@ v0.6.5
 + (done, tested) make language and module list sorted
 + (done, tested) support PDO, use groceryCRUD that support PDO, use CodeIgniter 3.0
 + (done, tested) new installer that will also support PDO
-+ (done, but not tested for enum & set) make nordrassil generated code also support PDO
++ (done, tested) make nordrassil generated code also support PDO
 + (done, tested) change all default module to use dbforge on installation
 + (done, tested) make navigation management more intuitive
 + (done, tested) allowing widget inside widget
@@ -189,3 +189,16 @@ v0.7.0
 + (done, tested) Custom search form
 + (done, tested) Fix nexted quicklink
 + (done, tested) Automatic module update
+
+v0.7.3
++ (done, tested) Better encryption
++ (done, tested) ommit ck_adjust_script
++ (done, tested) Blog clear fix
+
+v0.7.4
++ (done, tested) Add name length for subsite, check registration user with sanitized site, allow underscore
++ (done, tested) Fix newly registered user redirection
++ (done, tested) Show subsite summary properly even if the table broken
++ (done, not tested) Non perfect CRUD load
++ (done, tested) Delete subsite
++ (proposed) google login

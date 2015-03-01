@@ -98,7 +98,7 @@ class Install_Model extends CI_Model{
         $sanitized_subsite = '';
         for($i=0; $i<strlen($subsite); $i++){
             $letter = substr($subsite, $i, 1);
-            if(is_numeric($letter) || strpos('abcdefghijklmnopqrstuvwxyz', $letter) !== FALSE){
+            if(is_numeric($letter) || strpos('abcdefghijklmnopqrstuvwxyz_', $letter) !== FALSE){
                 $sanitized_subsite .= $letter;
             }
         }
@@ -1241,9 +1241,9 @@ class Install_Model extends CI_Model{
     public function build_configuration($config = array()){
         // create hostname.php
         if(!$this->is_subsite){
-            $hostname = $_SERVER['HTTP_HOST'];
-            $content  = '<?php'.PHP_EOL;
-            $content .= '$hostname = "'.$hostname.'";';
+            $hostname  = $_SERVER['HTTP_HOST'];
+            $content   = '<?php'.PHP_EOL;
+            $content  .= '$hostname = "'.$hostname.'";'.PHP_EOL;
             file_put_contents(FCPATH.'/hostname.php', $content);
         }
         // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite

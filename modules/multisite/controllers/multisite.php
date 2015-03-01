@@ -39,6 +39,18 @@ class multisite extends CMS_Priv_Strict_Controller {
             $this->cms_complete_navigation_name('index'));
     }
 
+    public function delete($subsite){
+        $is_admin = $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id());
+        if($is_admin){
+            $this->load->model($this->cms_module_path().'/subsite_model');
+            $this->subsite_model->delete($subsite);
+            $this->subsite_model->update_configs();
+        }
+        redirect( $this->cms_module_path() == 'multisite'? 
+                site_url($this->cms_module_path()) :
+                site_url($this->cms_module_path().'/multisite'));
+    }
+
     public function edit($site_name){
         $this->cms_guard_page($this->cms_complete_navigation_name('index'), 'modify_subsite');
         $this->load->model($this->cms_module_path().'/subsite_model');
@@ -151,10 +163,14 @@ class multisite extends CMS_Priv_Strict_Controller {
         }
         $site_url = str_replace($subdomain_prefixes, '', $site_url);
 
+        $is_admin = $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id());
+
         $data = array(
             'site_url' => $site_url,
             'result'=>$result,
             'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_have_privilege('modify_subsite'),
+            'is_admin' => $is_admin,
+            'delete_url' => $this->cms_module_path() == 'multisite'? site_url($this->cms_module_path().'/delete') :site_url($this->cms_module_path().'/multisite/delete'), 
             'edit_url' => $this->cms_module_path() == 'multisite'? site_url($this->cms_module_path().'/edit') :site_url($this->cms_module_path().'/multisite/edit'),
         );
         $config = array('only_content'=>TRUE);

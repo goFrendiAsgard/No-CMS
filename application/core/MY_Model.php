@@ -2007,14 +2007,25 @@ class CMS_Base_Model extends CI_Model
                 if($query->num_rows()>0){
                     $row = $query->row();
                     $subsite = $row->name;
+                    // get directory
+                    $site_url = site_url();
+                    $site_url = substr($site_url, 0, strlen($site_url)-1);
+                    $site_url_part = explode('/', $site_url);
+                    if(count($site_url_part)>3){
+                        $directory_part = array_slice($site_url_part, 3);
+                        log_message('error',print_r(array($directory_part,$site_url_part), TRUE));
+                        $directory = '/'.implode('/', $directory_part);
+                    }else{
+                        $directory = '';
+                    }
                     $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
                     $ssl = $protocol == 'https://';
                     $port = $_SERVER['SERVER_PORT'];
                     $port = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
                     if($row->use_subdomain){
-                        $url = $protocol.$subsite.'.'.$_SERVER['SERVER_NAME'].$port;
+                        $url = $protocol.$subsite.'.'.$_SERVER['SERVER_NAME'].$port.$directory;
                     }else{
-                        $url = $protocol.$_SERVER['SERVER_NAME'].$port.'/site-'.$subsite;
+                        $url = $protocol.$_SERVER['SERVER_NAME'].$port.$directory.'/site-'.$subsite;
                     }
                     $url .= '/main/login';
                     redirect($url,'refresh');

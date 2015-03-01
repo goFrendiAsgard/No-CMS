@@ -35,7 +35,12 @@ class _Info extends CMS_Module_Info_Model {
 
     // UPGRADE
     public function do_upgrade($old_version){
-        // Add your migration logic here.
+        $version_part = explode('.', $old_version);
+        $major        = $version_part[0];
+        $minor        = $version_part[1];
+        $build        = $version_part[2];
+        $module_path  = $this->cms_module_path();
+        // TODO: Add your migration logic here.
     }
 
 

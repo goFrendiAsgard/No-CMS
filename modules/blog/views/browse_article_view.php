@@ -122,6 +122,7 @@
             // content
             echo '<div>';
             echo $article['content'];
+            echo '<div style="clear:both;"></div>';
             echo '</div>';
             // edit and delete button
             if($allow_navigate_backend){

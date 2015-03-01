@@ -790,6 +790,23 @@ class CMS_Controller extends MX_Controller
 
     /**
      * @author  goFrendiAsgard
+     * @param   string tmp_module_path
+     * @desc    pretend to be tmp_module_path to adjust the table prefix. This only affect table name
+     */
+    public function cms_override_module_path($tmp_module_path){
+        $this->No_CMS_Model->cms_override_module_path($tmp_module_path);
+    }
+
+    /**
+     * @author  goFrendiAsgard
+     * @desc    cancel effect created by cms_override_module_path
+     */
+    public function cms_reset_overriden_module_path(){
+        $this->No_CMS_Model->cms_reset_overriden_module_path();
+    }
+
+    /**
+     * @author  goFrendiAsgard
      * @param   string content
      * @desc    flash content to be served as metadata on next call of $this->view in controller
      */
@@ -814,12 +831,13 @@ class CMS_Controller extends MX_Controller
                             if($ck_textarea.length > 0){
                                 content = data.replace(
                                     /(src=".*?)('.$save_base_url.')(.*?")/gi,
-                                    "$1{{ base_url }}$3"
+                                    "$1{"+"{ base_url }}$3"
                                 );
                                 ck_instance.setData(content);
                             }else if ($ck_iframe.length > 0){
+                                var re = new RegExp(\'(src=".*?)({\'+\'{ base_url }})(.*?")\',"gi");
                                 content = data.replace(
-                                    /(src=".*?)({{ base_url }})(.*?")/gi,
+                                    re,
                                     "$1'.$base_url.'$3"
                                 );
                                 ck_instance.setData(content);
@@ -851,7 +869,7 @@ class CMS_Controller extends MX_Controller
                                 var data = ck_instance.getData();
                                 content = data.replace(
                                     /(src=".*?)('.$save_base_url.')(.*?")/gi,
-                                    "$1{{ base_url }}$3"
+                                    "$1{"+"{ base_url }}$3"
                                 );
                                 ck_instance.setData(content);
                             }

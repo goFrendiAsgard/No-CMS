@@ -170,7 +170,7 @@ class _Info extends CMS_Module_Info_Model{
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
         $original_file_name = '02.jpg';
         if(CMS_SUBSITE != ''){
-            $original_file_name = str_pad(rand(3, 11), 2, "0", STR_PAD_LEFT).'.jpg';
+            $original_file_name = str_pad(rand(3, 15), 2, "0", STR_PAD_LEFT).'.jpg';
         }
         $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . '02.jpg';
         copy($image_path.$original_file_name, $image_path.$file_name);

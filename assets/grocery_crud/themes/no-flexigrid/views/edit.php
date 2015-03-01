@@ -17,7 +17,8 @@
             <div class='clear'></div>
         </div>
     </div>
-<div id='main-table-box'>
+<div id="main-table-loading"><img id="img-loader" src="<?=base_url('assets/nocms/images/ajax-loader.gif')?>" /></div>
+<div id='main-table-box' style="display:none">
     <?php echo form_open( $update_url, 'method="post" id="crudForm" autocomplete="off" enctype="multipart/form-data"'); ?>
     <div class='form-div form-horizontal row'>
         <?php
@@ -142,5 +143,9 @@
 
     var message_alert_edit_form = "<?php echo $this->l('alert_edit_form')?>";
     var message_update_error = "<?php echo $this->l('update_error')?>";
+    $(document).ready(function(){
+        $('#main-table-loading').hide();
+        $('#main-table-box').show();
+    });
 </script>
 <script type="text/javascript" src="<?=base_url($this->default_theme_path.'/no-flexigrid/js/flexigrid-fix-chosen.js')?>"></script>

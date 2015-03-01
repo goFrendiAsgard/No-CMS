@@ -408,7 +408,31 @@ class Main extends CMS_Controller
             } else if ($email_exists){
                 $message = $this->cms_lang("Email already used");
                 $error = TRUE;
+            } else if($this->cms_is_module_active('gofrendi.noCMS.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
+                $subsite = strtolower($user_name);
+                $sanitized_subsite = '';
+                for($i=0; $i<strlen($subsite); $i++){
+                    $letter = substr($subsite, $i, 1);
+                    if(is_numeric($letter) || strpos('abcdefghijklmnopqrstuvwxyz_', $letter) !== FALSE){
+                        $sanitized_subsite .= $letter;
+                    }
+                }
+                $subsite = $sanitized_subsite;
+                // is there any subsite with similar name
+                $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
+                $this->cms_override_module_path($module_path);
+                $t_subsite = $this->cms_complete_table_name('subsite');
+                $query = $this->db->select('name')
+                    ->from($t_subsite)
+                    ->where('name', $subsite)
+                    ->get();
+                if($query->num_rows()>0){
+                    $message = $this->cms_lang("Subsite already used, choose other username");
+                    $error = TRUE;
+                }
+                $this->cms_reset_overriden_module_path();
             }
+
             $data = array(
                 "exists" => $user_name_exists || $email_exists,
                 "error" => $error,

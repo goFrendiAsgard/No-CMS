@@ -7,7 +7,7 @@ class _Info extends CMS_Module_Info_Model{
     public $DEPENDENCIES = array();
     public $NAME         = 'gofrendi.noCMS.multisite';
     public $DESCRIPTION  = 'One codebase to rule them all ...';
-    public $VERSION      = '0.0.2';
+    public $VERSION      = '0.0.3';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,12 @@ class _Info extends CMS_Module_Info_Model{
 
     // UPGRADE
     public function do_upgrade($old_version){
-        // Add your migration logic here.
+        $version_part = explode('.', $old_version);
+        $major        = $version_part[0];
+        $minor        = $version_part[1];
+        $build        = $version_part[2];
+        $module_path  = $this->cms_module_path();
+        // Add your migration logic here.        
         // table : subsite
         $table_name = $this->cms_complete_table_name('subsite');
         $field_list = $this->db->list_fields($table_name);
@@ -45,6 +50,12 @@ class _Info extends CMS_Module_Info_Model{
             }
         }
         $this->dbforge->add_column($table_name, $fields);
+        if($major <= 0 && $minor <= 0 && $build <= 2){
+            $fields = array(
+                'name' => array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
+            );
+            $this->dbforge->modify_column($this->cms_complete_table_name('subsite'), $fields);
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -93,7 +104,7 @@ class _Info extends CMS_Module_Info_Model{
         // create tables
         $fields = array(
             'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
+            'name'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
             'use_subdomain'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
             'aliases'=> array("type"=>'text', "null"=>TRUE),
             'logo'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
