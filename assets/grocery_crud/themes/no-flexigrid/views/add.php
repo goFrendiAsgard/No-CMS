@@ -148,4 +148,3 @@
         $('#main-table-box').show();
     });
 </script>
-<script type="text/javascript" src="<?=base_url($this->default_theme_path.'/no-flexigrid/js/flexigrid-fix-chosen.js')?>"></script>

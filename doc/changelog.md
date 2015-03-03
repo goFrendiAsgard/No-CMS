@@ -201,4 +201,4 @@ v0.7.4
 + (done, tested) Show subsite summary properly even if the table broken
 + (done, not tested) Non perfect CRUD load
 + (done, tested) Delete subsite
-+ (proposed) google login
++ (done, tested) google login

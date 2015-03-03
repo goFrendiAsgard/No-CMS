@@ -45,18 +45,20 @@
     }
     echo '</div>'; // end of div.row
     echo '<div style="clear:both"></div>';
-    if($upload['uploading'] && !$upload['success']){
+    if(CMS_SUBSITE == '' && $upload['uploading'] && !$upload['success']){
         echo '<div id="message" class="alert alert-danger">';
         echo '<b>{{ language:Error }}:</b> '.$upload['message'];
         echo '</div>';
     }
 ?>
 <div style="clear:both; margin: 5px;">
+<?php if(CMS_SUBSITE == ''){ ?>
     <form action="<?php echo site_url('main/change_theme');?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
         <input type="file" name="userfile" size="20" />
         <br /><br />
         <input name="upload" class="btn btn-primary" type="submit" value="<?php echo $upload_new_theme_caption; ?>" />
     </form>
+<?php } ?>
 </div>
 <script type="text/javascript">
     function __adjust_component(identifier, max_height){

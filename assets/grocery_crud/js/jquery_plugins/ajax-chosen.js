@@ -7,7 +7,7 @@
     return $.fn.ajaxChosen = function(options, callback) {
       var select;
       select = this;
-      this.chosen({allow_single_deselect:true});
+      this.chosen({allow_single_deselect:true, width:'100%'});
       this.next('.chzn-container').find(".search-field > input").bind('keyup', function() {
         var field, val;
         val = $.trim($(this).attr('value'));

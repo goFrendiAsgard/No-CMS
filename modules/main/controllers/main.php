@@ -89,39 +89,42 @@ class Main extends CMS_Controller
     public function module_management()
     {
         $this->cms_guard_page('main_module_management');
+        $data = array();
+        // upload new theme
+        if(CMS_SUBSITE == ''){
+            if(isset($_FILES['userfile'])){
+                // upload new module
+                $directory = basename($_FILES['userfile']['name'],'.zip');
 
-        if(isset($_FILES['userfile'])){
-            // upload new module
-            $directory = basename($_FILES['userfile']['name'],'.zip');
-
-            // subsite_auth
-            $subsite_auth_file = FCPATH.'modules/'.$directory.'/subsite_auth.php';
-            $backup_subsite_auth_file = FCPATH.'modules/'.$directory.'_subsite_auth.php';
-            $subsite_backup = FALSE;
-            if(file_exists($subsite_auth_file)){
-                copy($subsite_auth_file, $backup_subsite_auth_file);
-                $subsite_backup = TRUE;
+                // subsite_auth
+                $subsite_auth_file = FCPATH.'modules/'.$directory.'/subsite_auth.php';
+                $backup_subsite_auth_file = FCPATH.'modules/'.$directory.'_subsite_auth.php';
+                $subsite_backup = FALSE;
+                if(file_exists($subsite_auth_file)){
+                    copy($subsite_auth_file, $backup_subsite_auth_file);
+                    $subsite_backup = TRUE;
+                }
+                // config
+                $config_dir = FCPATH.'modules/'.$directory.'/config';
+                $backup_config_dir = FCPATH.'modules/'.$directory.'_config';
+                $config_backup = FALSE;
+                if(file_exists($config_dir) && is_dir($config_dir)){
+                    $this->recurse_copy($config_dir, $backup_config_dir);
+                    $config_backup = TRUE;
+                }
             }
-            // config
-            $config_dir = FCPATH.'modules/'.$directory.'/config';
-            $backup_config_dir = FCPATH.'modules/'.$directory.'_config';
-            $config_backup = FALSE;
-            if(file_exists($config_dir) && is_dir($config_dir)){
-                $this->recurse_copy($config_dir, $backup_config_dir);
-                $config_backup = TRUE;
-            }
-        }
 
 
-        $data['upload'] = $this->upload(FCPATH.'modules/', 'userfile', 'upload');
-        if($data['upload']['success']){
-            if($subsite_backup){
-                copy($backup_subsite_auth_file, $subsite_auth_file);
-                unlink($backup_subsite_auth_file);
-            }
-            if($config_backup){
-                $this->recurse_copy($backup_config_dir, $config_dir);
-                $this->rrmdir($backup_config_dir);
+            $data['upload'] = $this->upload(FCPATH.'modules/', 'userfile', 'upload');
+            if($data['upload']['success']){
+                if($subsite_backup){
+                    copy($backup_subsite_auth_file, $subsite_auth_file);
+                    unlink($backup_subsite_auth_file);
+                }
+                if($config_backup){
+                    $this->recurse_copy($backup_config_dir, $config_dir);
+                    $this->rrmdir($backup_config_dir);
+                }
             }
         }
 
@@ -139,26 +142,30 @@ class Main extends CMS_Controller
     public function change_theme($theme = NULL)
     {
         $this->cms_guard_page('main_change_theme');
-        if(isset($_FILES['userfile'])){
-            // upload new module
-            $directory = basename($_FILES['userfile']['name'],'.zip');
-
-            // subsite_auth
-            $subsite_auth_file = FCPATH.'themes'.$directory.'/subsite_auth.php';
-            $backup_subsite_auth_file = FCPATH.'themes/'.$directory.'_subsite_auth.php';
-            $subsite_backup = FALSE;
-            if(file_exists($subsite_auth_file)){
-                copy($subsite_auth_file, $backup_subsite_auth_file);
-                $subsite_backup = TRUE;
-            }
-        }
+        $data = array();
         // upload new theme
-        $data['upload'] = $this->upload('./themes/', 'userfile', 'upload');
+        if(CMS_SUBSITE == ''){
 
-        if($data['upload']['success']){
-            if($subsite_backup){
-                copy($backup_subsite_auth_file, $subsite_auth_file);
-                unlink($backup_subsite_auth_file);
+            if(isset($_FILES['userfile'])){
+                // upload theme
+                $directory = basename($_FILES['userfile']['name'],'.zip');
+
+                // subsite_auth
+                $subsite_auth_file = FCPATH.'themes'.$directory.'/subsite_auth.php';
+                $backup_subsite_auth_file = FCPATH.'themes/'.$directory.'_subsite_auth.php';
+                $subsite_backup = FALSE;
+                if(file_exists($subsite_auth_file)){
+                    copy($subsite_auth_file, $backup_subsite_auth_file);
+                    $subsite_backup = TRUE;
+                }
+            }
+
+            $data['upload'] = $this->upload('./themes/', 'userfile', 'upload');
+            if($data['upload']['success']){
+                if($subsite_backup){
+                    copy($backup_subsite_auth_file, $subsite_auth_file);
+                    unlink($backup_subsite_auth_file);
+                }
             }
         }
 

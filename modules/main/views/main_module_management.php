@@ -81,17 +81,19 @@
         echo '</script>';
     }
 	echo '<div style="clear:both"></div>';
-    if($upload['uploading'] && !$upload['success']){
+    if(CMS_SUBSITE == '' && $upload['uploading'] && !$upload['success']){
     	echo '<div id="message" class="alert alert-danger">';
     	echo '<b>{{ language:Error }}:</b> '.$upload['message'];
     	echo '</div>';
     }
 ?>
 <div style="clear:both; margin: 5px;">
+<?php if(CMS_SUBSITE == ''){ ?>
 	<form action="<?php echo site_url('main/module_management');?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
 		<input type="file" name="userfile" size="20" />
 		<br /><br />
 		<input name="upload" class="btn btn-primary" type="submit" value="<?php echo $upload_new_module_caption; ?>" />
 	</form>
+<?php } ?>
 </div>
 
