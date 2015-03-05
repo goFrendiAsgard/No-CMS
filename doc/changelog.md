@@ -199,6 +199,10 @@ v0.7.4
 + (done, tested) Add name length for subsite, check registration user with sanitized site, allow underscore
 + (done, tested) Fix newly registered user redirection
 + (done, tested) Show subsite summary properly even if the table broken
-+ (done, not tested) Non perfect CRUD load
++ (done, tested) Non perfect CRUD load
 + (done, tested) Delete subsite
-+ (done, tested) google login
+
+v0.7.5
++ (done, tested) google login fixed, hybridauth updated
++ (done, tested) better grocery-crud themes
++ (done, tested) update chosen

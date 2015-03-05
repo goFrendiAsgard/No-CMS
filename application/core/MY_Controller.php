@@ -1722,7 +1722,7 @@ class CMS_Priv_Strict_Controller extends CMS_Priv_Base_Controller
                     'success' => FALSE,
                     'message' => 'unauthorized access'
                 );
-                $this->cms_show_json($variable);
+                $this->cms_show_json($response);
                 die();
             } else {
                 $this->cms_redirect();

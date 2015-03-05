@@ -682,6 +682,7 @@ class Install_Model extends CI_Model{
                 'auth_OpenID' => $type_varchar_large,
                 'auth_Facebook' => $type_varchar_large,
                 'auth_Twitter' => $type_varchar_large,
+                'auth_Google' => $type_varchar_large,
                 'auth_Yahoo' => $type_varchar_large,
                 'auth_LinkedIn' => $type_varchar_large,
                 'auth_MySpace' => $type_varchar_large,

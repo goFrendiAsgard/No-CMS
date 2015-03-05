@@ -27,6 +27,7 @@
             $counter = 0;
             $tab_index=-1;
             $tab_item_counter = 0;
+            $width_accumulator = 0;
             foreach($fields as $field)
             {
                 if($this->tabs !== NULL){
@@ -66,26 +67,39 @@
                     $tab_item_counter ++;
                 }
 
+                $width_addition = 0;
                 if(isset($this->field_half_width) && in_array($field->field_name, $this->field_half_width)){
                     $box_width = 6;
                     $label_width = 4;
                     $input_width = 8;
+                    $width_addition = 0.5;
                 }else if(isset($this->field_quarter_width) && in_array($field->field_name, $this->field_quarter_width)){
                     $box_width = 3;
                     $label_width = 12;
-                    $input_width = 12;
+                    $label_width = 12;
+                    $width_addition = 0.25;
                 }else if(isset($this->field_one_third_width) && in_array($field->field_name, $this->field_one_third_width)){
                     $box_width = 4;
                     $label_width = 12;
-                    $input_width = 12;
+                    $label_width = 12;
+                    $width_addition = 0.33;
                 }else if(isset($this->field_two_third_width) && in_array($field->field_name, $this->field_two_third_width)){
                     $box_width = 8;
                     $label_width = 3;
-                    $input_width = 9;
+                    $label_width = 9;
+                    $width_addition = 0.67;
                 }else{
                     $box_width = 12;
                     $label_width = 2;
                     $input_width = 10;
+                    $width_addition = 1;
+                }
+
+                if($width_accumulator + $width_addition > 1){
+                    echo '<div style="clear:both;"></div>';
+                    $width_accumulator = $width_addition;
+                }else{
+                    $width_accumulator += $width_addition;
                 }
         ?>
                     <div class='form-field-box form-group col-md-<?=$box_width?> <?php echo $even_odd?>' id="<?php echo $field->field_name; ?>_field_box">

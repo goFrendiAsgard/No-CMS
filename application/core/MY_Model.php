@@ -3543,7 +3543,7 @@ class CMS_Model extends CMS_Base_Model{
 
     private function __update(){
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.3';
+        $current_version = '0.7.5';
         // get major, minor and rev version
         $old_version_component = explode('-', $old_version);
         $old_version_component = $old_version_component[0];
@@ -3671,6 +3671,11 @@ class CMS_Model extends CMS_Base_Model{
                     'unsigned' => TRUE,
                     'default'=> 0,
                     'null' => FALSE,
+                ),
+                'auth_Google' => array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '255',
+                    'null' => TRUE,
                 ),
             );
             $fields = array();
