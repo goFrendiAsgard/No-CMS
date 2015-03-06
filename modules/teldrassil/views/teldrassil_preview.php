@@ -11,6 +11,7 @@
 </head>
 <body>
     <div id="__background-image"></div>
+    <div id="__background-color"></div>
     <div class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">

@@ -250,12 +250,12 @@ html {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 {{ BACKGROUND_IMAGE }}
+{{ BACKGROUND_COLOR }}
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.428571429;
     color: {{ COLOR_6 }};
-    {{ BACKGROUND_COLOR }}
 }
 input,
 button,

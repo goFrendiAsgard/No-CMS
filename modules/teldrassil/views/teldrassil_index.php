@@ -1,10 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
+<link href="{{ MODULE_BASE_URL }}assets/bootstrap-colorselector/lib/bootstrap-colorselector-0.2.0/css/bootstrap-colorselector.css" rel="stylesheet" />
 <style type="text/css">
     <?php
         if($file_name == NULL){
             echo '.initially-hidden{display:none;}';
         }
     ?>
+    .btn-colorselector, .color-btn{
+        border:1px solid;
+    }
 </style>
 <h3>Theme Generator</h3>
 <form class="form row col-md-12" method="post" enctype="multipart/form-data">
@@ -66,7 +70,7 @@
                                 }else{
                                     $selected = '';
                                 }
-                                echo '<option value="'.$option.'"'.$selected.'>#' . $option . '</option>';
+                                echo '<option value="'.$option.'" data-color="#'.$option.'"'.$selected.'>#' . $option . '</option>';
                             }
                             echo '</select></td>';
                             echo '<td>'.$color_descriptions[$i].'</td>';
@@ -86,12 +90,15 @@
         <button class="btn btn-primary" name="generate" value="generate">Generate</button>
     </div>
 </form>
+<script type="text/javascript" src="{{ MODULE_BASE_URL }}assets/bootstrap-colorselector/lib/bootstrap-colorselector-0.2.0/js/bootstrap-colorselector.js"></script>
 <script type="text/javascript">
     function show_color(){
+        /*
         $('.color-select').each(function(){
             var value = $(this).val();
             $(this).parent('td').css('background-color', '#' + value);
         });
+        */
     }
 
     function preview(){
@@ -104,17 +111,21 @@
         }
         $('#preview').attr('src', url);
     }
-
-    $('select.color-select').children().each(function (){
-        $(this).css('background-color', '#' + $(this).val());
+    $(document).ready(function(){
+        $('select.color-select').colorselector();
     });
 
-    show_color();
+    /*
+    $('select.color-select').children().each(function (){
+        $(this).css('background-color', '#' + $(this).val());
+    });*/
+
+    //show_color();
     preview();
 
 
     $('.color-select').change(function(event){
-        show_color();
+        //show_color();
         preview();
     });
     $('#font-select').change(function(event){

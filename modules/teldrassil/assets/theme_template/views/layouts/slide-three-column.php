@@ -39,6 +39,7 @@
         <![endif]-->
         <script type="text/javascript">{{ widget_name:section_custom_script }}</script>
         <div id="__background-image"></div>
+        <div id="__background-color"></div>
         {{ widget_name:section_top_fix }}
         {{ widget_name:static_accessories_slideshow }}
         <div class="container">

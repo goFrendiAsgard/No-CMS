@@ -41,6 +41,18 @@ class teldrassil extends CMS_Priv_Strict_Controller {
             move_uploaded_file($_FILES['file_name']['tmp_name'], $file_name);            
             $this->load->helper($module_path.'/image');
             $color_options = find_dominant_color($file_name, 20);
+            // color default
+            $color_default = ['00', '40', '80', 'C0', 'FF'];
+            foreach($color_default as $r){
+                foreach($color_default as $g){
+                    foreach($color_default as $b){
+                        $complete_color =$r.$g.$b.'';
+                        if(!in_array($complete_color, $color_options)){
+                            $color_options[] = $complete_color;
+                        }
+                    }
+                }
+            }
             $this->session->set_userdata('teldrassil_theme_file', $file_name);
             $this->session->set_userdata('teldrassil_theme_url', $url_name);
             $this->session->set_userdata('teldrassil_color_options', $color_options);
@@ -165,12 +177,28 @@ class teldrassil extends CMS_Priv_Strict_Controller {
                 '    width: 100%;'.PHP_EOL.
                 '    height: 100%;'.PHP_EOL.
                 '    position: fixed;'.PHP_EOL.
+                '    top: 0px;'.PHP_EOL.
                 '}';
-            $background_color = '';
+            $background_color = '#__background-color{'.PHP_EOL.
+                '    background-color: #'.$colors[0].';'.PHP_EOL.
+                '    opacity: 0.6;'.PHP_EOL.
+                '    z-index: -99998;'.PHP_EOL.
+                '    width: 100%;'.PHP_EOL.
+                '    height: 100%;'.PHP_EOL.
+                '    position: fixed;'.PHP_EOL.
+                '    top:0px;'.PHP_EOL.
+                '}';
         }else{
-            $background_color = 'background-color: #'.$colors[0].';';
-            $background_image = '';
+            $background_color = '#__background-color{'.PHP_EOL.
+                '    background-color: #'.$colors[0].';'.PHP_EOL.
+                '    z-index: -99998;'.PHP_EOL.
+                '    width: 100%;'.PHP_EOL.
+                '    height: 100%;'.PHP_EOL.
+                '    position: fixed;'.PHP_EOL.
+                '    top:0px;'.PHP_EOL.
+                '}';
         }
+
         $css = file_get_contents(FCPATH.'modules/'.$module_path.'/assets/theme_template.css');
         $css = str_replace(
                 array(
@@ -205,5 +233,10 @@ class teldrassil extends CMS_Priv_Strict_Controller {
                 'module_base_url' => base_url('modules/'.$module_path).'/',
             );
         $this->load->view($this->cms_module_path().'/teldrassil_preview', $data);
+    }
+
+    public function test(){
+        $this->load->helper('image');
+        var_dump(find_dominant_color(FCPATH.'modules/teldrassil/assets/uploads/1538e10560e91a9aabf80e69e28_workshop.jpg'));
     }
 }
