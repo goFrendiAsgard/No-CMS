@@ -1871,13 +1871,17 @@ class Main extends CMS_Controller
             if(!$no_quicklink){
                 $result .= $this->build_quicklink();
             }
-            // toggle editing            
-            if($this->cms_editing_mode()){
-                $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_off" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
-                    <i class="glyphicon glyphicon-eye-open"></i> Toggle View</a></span>';
+            // toggle editing
+            if($this->cms_user_is_super_admin()){            
+                if($this->cms_editing_mode()){
+                    $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_off" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
+                        <i class="glyphicon glyphicon-eye-open"></i> Toggle View</a></span>';
+                }else{
+                    $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_on" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
+                        <i class="glyphicon glyphicon-pencil"></i> Toggle Edit</a></span>';
+                }
             }else{
-                $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_on" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
-                    <i class="glyphicon glyphicon-pencil"></i> Toggle Edit</a></span>';
+                $toggle_editing = '';
             }
 
             $result =
