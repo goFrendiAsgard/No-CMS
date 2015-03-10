@@ -18,6 +18,7 @@ class Manage_Visitor_Counter extends CMS_Priv_Strict_Controller {
         $crud->unset_add();
         $crud->unset_edit();
         $crud->unset_delete();
+        $crud->unset_read();
 
         // set model
         //$crud->set_model($this->cms_module_path().'/grocerycrud_visitor_counter_model');

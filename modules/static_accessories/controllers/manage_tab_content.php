@@ -15,6 +15,7 @@ class Manage_Tab_Content extends CMS_Priv_Strict_Controller {
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = $this->new_crud();
         $crud->unset_jquery();
+        $crud->unset_read();
 
         // set model
         //$crud->set_model($this->cms_module_path().'/grocerycrud_tab_content_model');

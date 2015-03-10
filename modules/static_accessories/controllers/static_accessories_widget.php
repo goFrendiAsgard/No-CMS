@@ -6,6 +6,7 @@ class Static_Accessories_Widget extends CMS_Controller {
         $data['slide_list'] = $this->slide_model->get();
         $data['slide_height'] = $this->cms_get_config('static_accessories_slide_height');
         $data['module_path'] = $this->cms_module_path();
+        $data['show_edit'] = $this->cms_editing_mode() && $this->cms_allow_navigate($this->cms_complete_navigation_name('index'));
         if(count($data['slide_list'])>0){
             $this->view($this->cms_module_path().'/widget_slide', $data);
         }

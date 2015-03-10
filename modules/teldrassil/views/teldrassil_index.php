@@ -13,6 +13,11 @@
 <h3>Theme Generator</h3>
 <form class="form row col-md-12" method="post" enctype="multipart/form-data">
     <div class="row">
+        <?php if($generated){?>
+        <div class="col-md-12 alert alert-info">
+            Your theme has been generated. Click <a class="btn btn-default" href="{{ SITE_URL }}main/change_theme/<?=$theme_name?>">here</a> to use the theme.
+        </div>
+        <?php } ?>
         <div class="col-md-6">
 
             <div class="form-group">

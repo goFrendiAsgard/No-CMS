@@ -34,6 +34,11 @@
             var selected_layout = $('#select-default_layout option:selected').val();
             $('#field-default_layout').val(selected_layout);
         });
+        // is insert
+        <?php if($is_insert){?>
+            $("#field-is_static-true").attr("checked", "checked");
+            $('#field-is_static-true').click();
+        <?php } ?>
     });
 
     function fetch_layout_option(){

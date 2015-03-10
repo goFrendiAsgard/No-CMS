@@ -19,6 +19,7 @@ class Manage_Slide extends CMS_Priv_Strict_Controller {
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud = $this->new_crud();
         $crud->unset_jquery();
+        $crud->unset_read();
 
         // set model
         //$crud->set_model($this->cms_module_path().'/grocerycrud_slide_model');

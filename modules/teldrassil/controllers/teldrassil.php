@@ -35,13 +35,21 @@ class teldrassil extends CMS_Priv_Strict_Controller {
         $colors = array('', '', '', '', '', '', '');    // colors
         // set file_name
         if(isset($_FILES['file_name']) && $_FILES['file_name']['name'] != ''){
+            // delete previous file
+            if(file_exists($this->session->userdata('teldrassil_theme_file'))){
+                unlink($this->session->userdata('teldrassil_theme_file'));
+            }
+            // default theme name
+            if($theme_name == ''){
+                $theme_name = explode('.',$_FILES['file_name']['name'])[0];
+            }
             $rand = substr(md5(rand()),5);
             $file_name = FCPATH.'modules/'.$module_path.'/assets/uploads/'.$rand.'_'.$_FILES['file_name']['name'];
             $url_name = base_url('modules/'.$module_path.'/assets/uploads/'.$rand.'_'.$_FILES['file_name']['name']);
             move_uploaded_file($_FILES['file_name']['tmp_name'], $file_name);            
             $this->load->helper($module_path.'/image');
             $color_options = find_dominant_color($file_name, 20);
-            // color default
+            // add default color
             $color_default = ['00', '40', '80', 'C0', 'FF'];
             foreach($color_default as $r){
                 foreach($color_default as $g){
@@ -71,7 +79,7 @@ class teldrassil extends CMS_Priv_Strict_Controller {
         if(!isset($_FILES['file_name']) || $_FILES['file_name']['name'] == ''){
             // get theme_name, css, colors, and font from post
             $color_options = $this->get_data_from_post('color_options');
-            $theme_name = $this->get_data_from_post('theme_name');
+            $theme_name = $this->get_data_from_post('theme_name');            
             $colors = $this->get_data_from_post('colors');
             $font = $this->get_data_from_post('font');
             $background_image = $this->get_data_from_post('background_image')==TRUE;
@@ -109,10 +117,12 @@ class teldrassil extends CMS_Priv_Strict_Controller {
                 $subsite_auth .= '$subsite_allowed = array(\''.CMS_SUBSITE.'\');'.PHP_EOL;
             }
             file_put_contents(FCPATH.'themes/'.$theme_name.'/subsite_auth.php', $subsite_auth);
+            unlink($file_name);
         }
 
         // pass the data
         $data = array(
+                'generated' => $this->input->post('generate') == 'generate',
                 'file_name' => $file_name,
                 'theme_name' => $theme_name,
                 'url_name' => $url_name,

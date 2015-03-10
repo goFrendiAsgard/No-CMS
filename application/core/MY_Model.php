@@ -625,6 +625,11 @@ class CMS_Base_Model extends CI_Model
             $content = '';
             if ($row->is_static == 1) {
                 $content = $row->static_content;
+                if(substr($row->widget_name, 0,8)!='section_' && $content != '' && $this->cms_editing_mode() && $this->cms_allow_navigate('main_widget_management')){
+                    $content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/widget/edit/'.$row->widget_id.'">'.
+                        '<i class="glyphicon glyphicon-pencil"></i>'.
+                        '</a></div>'.$content;
+                } 
             } else {
                 // url
                 $url = $row->url;
@@ -3521,6 +3526,18 @@ class CMS_Base_Model extends CI_Model
             $query = preg_replace('/\{\{ module_prefix \}\}/si', $module_prefix, $query);
             $this->db->query($query);
         }
+    }
+
+    public function cms_set_editing_mode(){
+        $this->session->set_userdata('__cms_editing_mode', TRUE);
+    }
+
+    public function cms_unset_editing_mode(){
+        $this->session->set_userdata('__cms_editing_mode', FALSE);
+    }
+
+    public function cms_editing_mode(){
+        return $this->session->userdata('__cms_editing_mode') === TRUE;
     }
 
 }

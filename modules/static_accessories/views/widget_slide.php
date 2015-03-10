@@ -1,6 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 $li_indicator_list = array();
 $div_item_list = array();
+$edit_link = '';
+if($show_edit){
+    $edit_link = '<div>'.
+        '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide"><i class="glyphicon glyphicon-pencil">&nbsp;</i>Edit Slideshow</a>'.
+        '</div>';
+}
 for($i=0; $i<count($slide_list); $i++){
     $slide = $slide_list[$i];
     if($i==0){
@@ -11,8 +17,10 @@ for($i=0; $i<count($slide_list); $i++){
     $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';
     $div_item_list[] = 
             '<div class="item '.$class.'">'.
-            '<img class="item-image" real-src="'.base_url('modules/'.$module_path.'/assets/images/slides/'.$slide['image_url']).'" alt="">'.
-            '<div class="container"><div class="carousel-caption">'.$slide['content'].'</div></div>'.
+            '<div class="item-image" real-src="'.base_url('modules/'.$module_path.'/assets/images/slides/'.$slide['image_url']).'" alt=""></div>'.
+            '<div class="container"><div class="carousel-caption">'.
+                $slide['content'].$edit_link.
+            '</div></div>'.
             '</div>';
 }
 ?>
@@ -26,8 +34,11 @@ for($i=0; $i<count($slide_list); $i++){
     div.carousel-inner{
         opacity:0.85;
     }
-    img.item-image{
+    .item-image{
         margin:auto;
+        background-color:black;
+        height:100%;
+        background-size:cover;
     }
     #slideshow-widget{
         margin-bottom:20px;
@@ -40,7 +51,7 @@ for($i=0; $i<count($slide_list); $i++){
     </ol>
 
     <!-- Wrapper for slides -->
-    <div class="carousel-inner">
+    <div class="carousel-inner">        
         <?php foreach($div_item_list as $div_item){ echo $div_item;} ?>
     </div>
 
@@ -59,9 +70,10 @@ for($i=0; $i<count($slide_list); $i++){
     function __load_slide(){
         var body_width = $('body').width();
         if(body_width>=978){
-            $('img.item-image').each(function(){
+            $('.item-image').each(function(){
                 if($(this).attr('src') !== ''){
-                    $(this).attr('src', $(this).attr('real-src'));
+                    //$(this).attr('src', $(this).attr('real-src'));
+                    $(this).css('background-image', 'url("' + $(this).attr('real-src')+'")');
                 }
             });    
         }
@@ -74,11 +86,15 @@ for($i=0; $i<count($slide_list); $i++){
         if(windowTop >= carouselTop){
             var newTop = Math.round((windowTop - carouselTop)*0.8);
             var newOpacity = 1-0.6*(newTop/height);
+            var blur = Math.round(newTop/height * 20);
         }else{
             var newTop = 0;
             var newOpacity = 1;
+            var blur = 1;
         }
-        $('.carousel-inner>.item').css('top', newTop + 'px');
+        $('.carousel-inner .item-image').css('background-position-y', newTop + 'px');
+        $('.carousel-inner .item-image').css('filter', 'blur(' + blur + 'px)');
+        $('.carousel-inner .item-image').css('-webkit-filter', 'blur(' + blur + 'px)');
         $('.carousel-inner>.item').css('opacity', newOpacity);
     });
 

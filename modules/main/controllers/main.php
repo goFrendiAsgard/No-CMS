@@ -922,7 +922,7 @@ class Main extends CMS_Controller
             }
         }
         $output->navigation_path = $navigation_path;
-
+        $output->is_insert = $crud->getState() == 'add';
         
         $output->undeleted_id = $undeleted_id;        
 
@@ -1640,85 +1640,10 @@ class Main extends CMS_Controller
         $this->cms_show_json($result);
     }
 
-    public function ck_adjust_script(){
-        $base_url = base_url();
-        $save_base_url = str_replace('/', '\\/', $base_url);
-        $ck_editor_adjust_script = '
-            $(document).ready(function(){
-                if (typeof(CKEDITOR) != "undefined"){
-                    function __adjust_ck_editor(){
-                        for (instance in CKEDITOR.instances) {
-                            /* ck_instance */
-                            ck_instance = CKEDITOR.instances[instance];
-                            var name = CKEDITOR.instances[instance].name;
-                            var $ck_textarea = $("#cke_"+name+" textarea");
-                            var $ck_iframe = $("#cke_"+name+" iframe");
-                            var data = ck_instance.getData();
-                            if($ck_textarea.length > 0){
-                                content = data.replace(
-                                    /(src=".*?)('.$save_base_url.')(.*?")/gi,
-                                    "$1{{ base_url }}$3"
-                                );
-                                ck_instance.setData(content);
-                            }else if ($ck_iframe.length > 0){
-                                content = data.replace(
-                                    /(src=".*?)({{ base_url }})(.*?")/gi,
-                                    "$1'.$base_url.'$3"
-                                );
-                                ck_instance.setData(content);
-                            }
-                            ck_instance.updateElement();
-                        }
-                    }
-
-                    /* when instance ready & form submit, adjust ck editor */
-                    CKEDITOR.on("instanceReady", function(){
-                        __adjust_ck_editor();
-                        for (instance in CKEDITOR.instances) {
-                            /* ck_instance */
-                            ck_instance = CKEDITOR.instances[instance];
-                            ck_instance.on("mode", function(){
-                                __adjust_ck_editor();
-                            });
-                        }
-                    });
-                    
-                    /* when form submit, adjust ck editor */
-                    $(document).ajaxSend(function(event, xhr, settings) {
-                        if(settings.url == $("#crudForm").attr("action")){
-                            for (instance in CKEDITOR.instances) {
-                                /* ck_instance */
-                                ck_instance = CKEDITOR.instances[instance];
-                                var name = CKEDITOR.instances[instance].name;
-                                var $original_textarea = $("textarea#"+name);
-                                var data = ck_instance.getData();
-                                content = data.replace(
-                                    /(src=".*?)('.$save_base_url.')(.*?")/gi,
-                                    "$1{{ base_url }}$3"
-                                );
-                                ck_instance.setData(content);
-                            }
-                        }
-                    });
-
-                    $(document).ajaxComplete(function(event, xhr, settings){
-                        if(settings.url == $("#crudForm").attr("action")){
-                            __adjust_ck_editor();
-                        }
-                    });
-                }
-            });
-        ';
-        $content = str_replace(array(PHP_EOL, '    '), array('',''), $ck_editor_adjust_script);
-        $this->output->set_content_type('application/javascript')
-            ->set_header('Cache-Control:max-age=2592000')
-            ->set_header('Expires:Fri, 30 Oct 2037 11:32:29 GMT')
-            ->set_output($content);
-    }
-
     public function widget_online_user(){
         $this->view('main/main_widget_online_user');
     }
+
     public function widget_online_user_ajax(){
         $query = $this->db->select('user_name')
             ->from(cms_table_name('main_user'))
@@ -1946,6 +1871,15 @@ class Main extends CMS_Controller
             if(!$no_quicklink){
                 $result .= $this->build_quicklink();
             }
+            // toggle editing            
+            if($this->cms_editing_mode()){
+                $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_off" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
+                    <i class="glyphicon glyphicon-eye-open"></i> Toggle View</a></span>';
+            }else{
+                $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_on" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
+                    <i class="glyphicon glyphicon-pencil"></i> Toggle Edit</a></span>';
+            }
+
             $result =
             '<style type="text/css">
                 @media (min-width: 750px){
@@ -2017,6 +1951,7 @@ class Main extends CMS_Controller
                         <ul class="navbar-nav nav">'.$result.'</ul>
                         <ul class="navbar-nav nav navbar-right">
                             <li class="dropdown" id="__right_navbar">{{ widget_name:navigation_right_partial }}</li>
+                            <li class="dropdown">'.$toggle_editing.'</div>
                         </ul>
                     </nav><!--/.nav-collapse -->
                 </div>
@@ -2086,11 +2021,37 @@ class Main extends CMS_Controller
                     $("#__right_navbar").css("padding-top", padding_top);
                     $("#__right_navbar").css("padding-bottom", padding_bottom);
                 });
+                $("#__toggle_editing_on").click(function(event){
+                    event.preventDefault();
+                    $.ajax({
+                        url: "{{ SITE_URL }}main/set_editing_mode",
+                        success : function(response){
+                            location.reload();
+                        }
+                    });
+                });
+                $("#__toggle_editing_off").click(function(event){
+                    event.preventDefault();
+                    $.ajax({
+                        url: "{{ SITE_URL }}main/unset_editing_mode",
+                        success : function(response){
+                            location.reload();
+                        }
+                    });
+                });
             </script>';
             $this->cms_show_html($result);
         }else{
             return $result;
         }
+    }
+
+    public function set_editing_mode(){
+        $this->cms_set_editing_mode();
+    }
+
+    public function unset_editing_mode(){
+        $this->cms_unset_editing_mode();
     }
 
     public function widget_top_nav_no_quicklink($caption = 'Complete Menu'){

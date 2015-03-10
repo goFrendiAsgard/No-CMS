@@ -972,7 +972,7 @@ class CMS_Controller extends MX_Controller
          */
         $data = (array) $data;
         if ($navigation_name_provided && !isset($data['_content'])) {
-            $query = $this->db->select('static_content')
+            $query = $this->db->select('navigation_id, static_content')
                 ->from(cms_table_name('main_navigation'))
                 ->where(array('is_static'=>1, 'navigation_name'=>$navigation_name))
                 ->get();
@@ -983,6 +983,11 @@ class CMS_Controller extends MX_Controller
                 if (!$static_content) {
                     $static_content = '';
                 }
+                if($this->cms_editing_mode() && $this->cms_allow_navigate('main_navigation_management')){
+                    $static_content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/navigation/edit/'.$row->navigation_id.'">'.
+                        '<i class="glyphicon glyphicon-pencil"></i> Edit Page'.
+                        '</a></div>'.$static_content;
+                }        
                 $data['cms_content'] = $static_content;
                 $view_url            = 'CMS_View';
 
@@ -1120,6 +1125,9 @@ class CMS_Controller extends MX_Controller
             }
             if(!file_exists(FCPATH.'themes/'.$theme.'/views/layouts/'.$layout.'.php')){
                 $layout = 'default';
+                if(!file_exists(FCPATH.'themes/'.$theme.'/views/layouts/default.php')){
+                    $theme = 'neutral';
+                }
             }
         }
 
@@ -1634,10 +1642,25 @@ class CMS_Controller extends MX_Controller
         $this->No_CMS_Model->cms_assign_widget($widget_name, $group_name);
     }
 
-
     protected function cms_execute_sql($SQL, $separator)
     {
         $this->No_CMS_Model->cms_execute_sql($SQL, $separator);
+    }
+
+    public function cms_set_editing_mode(){
+        $this->No_CMS_Model->cms_set_editing_mode();
+    }
+
+    public function cms_unset_editing_mode(){
+        $this->No_CMS_Model->cms_unset_editing_mode();
+    }
+
+    public function cms_editing_mode(){
+        if($this->cms_user_is_super_admin()){
+            return $this->No_CMS_Model->cms_editing_mode();
+        }else{
+            return FALSE;
+        }
     }
 
 }
