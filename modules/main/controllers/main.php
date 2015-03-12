@@ -360,19 +360,27 @@ class Main extends CMS_Controller
                 if(isset($_FILES['site_logo'])){
                     $site_logo = $_FILES['site_logo'];
                     if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
-                        $file_name = FCPATH.'assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
-                        move_uploaded_file($site_logo['tmp_name'], $file_name);
-                        $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
-                        $this->image_moo->load($file_name)->resize(800,125)->save($file_name,true);
+                        try{
+                            $file_name = FCPATH.'assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
+                            move_uploaded_file($site_logo['tmp_name'], $file_name);
+                            $this->cms_resize_image($file_name, 800, 125);
+                            $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
+                        }catch(Exception $e){
+                            // do nothing
+                        }
                     }
                 }
                 if(isset($_FILES['site_favicon'])){
                     $site_favicon = $_FILES['site_favicon'];
                     if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
-                        $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
-                        move_uploaded_file($site_favicon['tmp_name'], $file_name);
-                        $configs['site_favicon'] = '{{ base_url }}assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
-                        $this->image_moo->load($file_name)->resize(64,64)->save($file_name,true);
+                        try{
+                            $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
+                            move_uploaded_file($site_favicon['tmp_name'], $file_name);
+                            $this->cms_resize_image($file_name, 64, 64);
+                            $configs['site_favicon'] = '{{ base_url }}assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
+                        }catch(Exception $e){
+                            // do nothing
+                        }
                     }
                 }
 

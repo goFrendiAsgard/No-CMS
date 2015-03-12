@@ -34,7 +34,7 @@ class teldrassil extends CMS_Priv_Strict_Controller {
         $background_image = FALSE;
         $colors = array('', '', '', '', '', '', '');    // colors
         // set file_name
-        if(isset($_FILES['file_name']) && $_FILES['file_name']['name'] != ''){
+        if(isset($_FILES['file_name']) && $_FILES['file_name']['name'] != '' && file_exists($_FILES['file_name']['tmp_name'])){
             // delete previous file
             if(file_exists($this->session->userdata('teldrassil_theme_file'))){
                 unlink($this->session->userdata('teldrassil_theme_file'));
@@ -48,28 +48,35 @@ class teldrassil extends CMS_Priv_Strict_Controller {
             $url_name = base_url('modules/'.$module_path.'/assets/uploads/'.$rand.'_'.$_FILES['file_name']['name']);
             move_uploaded_file($_FILES['file_name']['tmp_name'], $file_name);            
             $this->load->helper($module_path.'/image');
-            $color_options = find_dominant_color($file_name, 20);
-            // add default color
-            $color_default = ['00', '40', '80', 'C0', 'FF'];
-            foreach($color_default as $r){
-                foreach($color_default as $g){
-                    foreach($color_default as $b){
-                        $complete_color =$r.$g.$b.'';
-                        if(!in_array($complete_color, $color_options)){
-                            $color_options[] = $complete_color;
+            try{
+                $color_options = find_dominant_color($file_name, 20);
+                // add default color
+                $color_default = ['00', '40', '80', 'C0', 'FF'];
+                foreach($color_default as $r){
+                    foreach($color_default as $g){
+                        foreach($color_default as $b){
+                            $complete_color =$r.$g.$b.'';
+                            if(!in_array($complete_color, $color_options)){
+                                $color_options[] = $complete_color;
+                            }
                         }
                     }
                 }
-            }
-            $this->session->set_userdata('teldrassil_theme_file', $file_name);
-            $this->session->set_userdata('teldrassil_theme_url', $url_name);
-            $this->session->set_userdata('teldrassil_color_options', $color_options);
-            for($i=0; $i<7; $i++){
-                if(count($color_options)>$i){
-                    $colors[$i] = $color_options[$i];
+                $this->session->set_userdata('teldrassil_theme_file', $file_name);
+                $this->session->set_userdata('teldrassil_theme_url', $url_name);
+                $this->session->set_userdata('teldrassil_color_options', $color_options);
+                for($i=0; $i<7; $i++){
+                    if(count($color_options)>$i){
+                        $colors[$i] = $color_options[$i];
+                    }
                 }
+                $this->session->set_userdata('teldrassil_colors', $colors);
+            }catch(Exception $e){
+                // do nothing
+                $file_name = '';
+                $theme_name = '';
+                $url_name = '';
             }
-            $this->session->set_userdata('teldrassil_colors', $colors);
         }else if($this->session->userdata('teldrassil_theme_file') != NULL && 
         file_exists($this->session->userdata('teldrassil_theme_file'))){
             $file_name = $this->session->userdata('teldrassil_theme_file');

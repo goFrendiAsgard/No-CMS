@@ -554,7 +554,7 @@ class CMS_Controller extends MX_Controller
         return $this->No_CMS_Model->cms_activate_account($activation_code, $new_password);
     }
 
-    public function _cms_set_user_subsite_activation($user_id, $active){
+    protected function _cms_set_user_subsite_activation($user_id, $active){
         return $this->No_CMS_Model->_cms_set_user_subsite_activation($user_id, $active);
     }
 
@@ -570,6 +570,10 @@ class CMS_Controller extends MX_Controller
     protected function cms_send_email($from_address, $from_name, $to_address, $subject, $message)
     {
         return $this->No_CMS_Model->cms_send_email($from_address, $from_name, $to_address, $subject, $message);
+    }
+
+    protected function cms_resize_image($file_name, $nWidth, $nHeight){
+        $this->No_CMS_Model->cms_resize_image($file_name, $nWidth, $nHeight);
     }
 
     /**

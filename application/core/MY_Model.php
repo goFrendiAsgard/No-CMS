@@ -2482,6 +2482,44 @@ class CMS_Base_Model extends CI_Model
         return $success;
     }
 
+    public function cms_resize_image($file_name, $nWidth, $nHeight){
+        // original code: http://stackoverflow.com/questions/16977853/resize-images-with-transparency-in-php
+
+        
+        // read image
+        $im = @imagecreatefrompng($file_name);
+        if($im){
+            $srcWidth = imagesx($im);
+            $srcHeight = imagesy($im);
+
+            // decide ratio
+            $widthRatio = $nWidth/$srcWidth;
+            $heightRatio = $nHeight/$srcHeight;
+            if($widthRatio > $heightRatio){
+                $ratio = $heightRatio;
+            }else{
+                $ratio = $heightRatio;
+            }
+            $nWidth = $srcWidth * $ratio;
+            $nHeight = $srcHeight * $ratio;
+
+            // make new image
+            $newImg = imagecreatetruecolor($nWidth, $nHeight);
+            imagealphablending($newImg, false);
+            imagesavealpha($newImg,true);
+            $transparent = imagecolorallocatealpha($newImg, 255, 255, 255, 127);
+            imagefilledrectangle($newImg, 0, 0, $nWidth, $nHeight, $transparent);
+            imagecopyresampled($newImg, $im, 0, 0, 0, 0, $nWidth, $nHeight,
+                $srcWidth, $srcHeight);
+
+            // write new image
+            imagepng($newImg, $file_name);
+        }else{
+            $this->load->library('image_moo');
+            $this->image_moo->load($file_name)->resize($nWidth,$nHeight)->save($file_name,true);
+        }
+    }
+
     /**
      * @author  goFrendiAsgard
      * @param   string activation_code
