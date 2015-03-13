@@ -1,7 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-require_once(APPPATH . '/libraries/jsmin.php');
-
 class CMS_Asset
 {
     private $ci;
@@ -9,14 +7,28 @@ class CMS_Asset
     private $styles;
     private $scripts;
 
+    private $skipped_resources;
+
     public function __construct()
     {
         $this->ci =& get_instance();
         $this->styles  = array();
         $this->scripts = array();
+        $this->skipped_resources = array(base_url('assets/grocery_crud/texteditor/ckeditor/ckeditor.js'));
     }
 
-    public function add_string_js($content)
+    public function add_skipped_resource($path){
+        $this->skipped_resources[] = $this->parse_path($path);
+    }
+
+    public function set_skipped_resource($path_array){
+        $this->skipped_resources = array();
+        foreach($path_array as $path){
+            $this->add_skipped_resource($path);
+        }
+    }
+
+    public function add_internal_js($content)
     {
         $this->scripts[] = array(
             'path' => NULL,
@@ -24,7 +36,7 @@ class CMS_Asset
         );
     }
 
-    public function add_string_css($content)
+    public function add_internal_css($content)
     {
         $this->styles[] = array(
             'path' => NULL,
@@ -86,86 +98,131 @@ class CMS_Asset
         $this->add_js(base_url('assets/' . $path));
     }
 
-    private function combine_css($resources, $extension = 'css')
-    {
-        $long_name = '';
-        foreach ($resources as $resource) {
-            if (isset($resource['path'])) {
-                $long_name .= $resource['path'];
-            } else {
-                $long_name .= $resource['content'];
-            }
-        }
-        $md5_name  = md5($long_name);
-        $file_name = BASEPATH . '../assets/caches/' . $md5_name . '.' . $extension;
-        $file_url  = base_url('assets/caches/' . $md5_name . '.' . $extension);
-        if (!file_exists($file_name)) {
-            if (file_exists($file_name))
-                unlink($file_name);
-            foreach ($resources as $resource) {
-                if (isset($resource['path'])) {
-                    $path    = $resource['path'];
-                    $content = file_get_contents($path);
-                } else {
-                    // write content
-                    $content = $resource['content'];
-                }
-                $content = JSMin::minify($content);
-                file_put_contents($file_name, $content, FILE_APPEND);
-                file_put_contents($file_name, PHP_EOL, FILE_APPEND);
-            }
-
-        }
-        return $file_url;
+    private function parse_path($path){
+        $this->ci->load->model('No_CMS_Model');        
+        $used_theme = $this->ci->session->userdata('__cms_used_theme');
+        $path = $this->ci->No_CMS_Model->cms_parse_keyword($path);
+        return str_ireplace('{{ used_theme }}', $used_theme, $path);
     }
 
-    private function combine_js($resources, $extension = 'js')
-    {
-        $long_name = '';
+    private function minify($content, $mode='css'){
+        return preg_replace('/\n(\s*)/i',PHP_EOL, $content);
+        //return $content;
+        //require_once(APPPATH . '/libraries/jsmin.php');
+        //return JSMin::minify($content);
+    }
+
+    // mode can be css or js
+    // type : internal, external, cdn
+    private function combine($resources, $mode='css'){
+        // get all resource
+        $compiled_resources = array();
+        $base_url = base_url();
         foreach ($resources as $resource) {
-            if (isset($resource['path'])) {
-                $long_name .= $resource['path'];
-            } else {
-                $long_name .= $resource['content'];
-            }
-        }
-        $md5_name  = md5($long_name);
-        $file_name = FCPATH . 'assets/caches/' . $md5_name . '.' . $extension;
-        $file_url  = base_url('assets/caches/' . $md5_name . '.' . $extension);
-        if (!file_exists($file_name)) {
-            if (file_exists($file_name))
-                unlink($file_name);
-            foreach ($resources as $resource) {
-                $content = '';
-                if (isset($resource['path'])) {
-                    $path = $resource['path'];
-                    if (strpos($path, base_url()) == 0) {
-                        $path = FCPATH. substr($path, strlen(base_url()));
+            $last_index = count($compiled_resources)-1;
+            if (isset($resource['path']) && $resource['path'] !== NULL && trim($resource['path']) !== '') {
+                $path = $this->parse_path($resource['path']);
+                $path_part = explode('/', $path);
+                $file_name = $path_part[count($path_part)-1];
+                $dir_path  = substr($path, 0, strlen($path)-strlen($file_name));
+                if(in_array($dir_path.$file_name, $this->skipped_resources)){
+                    $type = 'skipped';
+                    $dir_path = str_ireplace($base_url, FCPATH, $dir_path);
+                    $last_modified_date = date('YmdHis',filemtime($dir_path.$file_name));
+                }else if(strpos($dir_path, $base_url) === 0){
+                    $type = 'external';
+                    $dir_path = str_ireplace($base_url, FCPATH, $dir_path);
+                    $last_modified_date = date('YmdHis',filemtime($dir_path.$file_name));
+                }else{
+                    $type = 'cdn';
+                    $last_modified_date = 0;
+                }
+                if(count($compiled_resources)>0 && $compiled_resources[$last_index]['type'] == $type && $compiled_resources[$last_index]['dir_path'] == $dir_path){
+                    $compiled_resources[$last_index]['file_name'][] = $file_name;
+                    if($last_modified_date > $compiled_resources[$last_index]['modified_time']){
+                        $compiled_resources[$last_index]['modified_time'] = $last_modified_date;
                     }
-                    $content = file_get_contents($path);
-                } else {
-                    // write content
-                    $content = $resource['content'];
+                }else{
+                    $compiled_resources[]=array(
+                        'file_name' => array($file_name),
+                        'dir_path' => $dir_path,
+                        'type' => $type,
+                        'modified_time' => $last_modified_date
+                    );
                 }
-                $content = JSMin::minify($content);
-                if (strlen($content) > 0 && $content[strlen($content) - 1] != ';') {
-                    $content .= ';';
-                } else {
-                    $content .= '/*is alright*/';
+            } else {
+                $content = $resource['content'];
+                $content = $this->minify($content, $mode);
+                if(count($compiled_resources)>0 && $compiled_resources[$last_index]['type'] == 'internal'){
+                    $compiled_resources[$last_index]['content'].= PHP_EOL.$content;
+                }else{
+                    $compiled_resources[] = array(
+                            'type' => 'internal',
+                            'content' => $content
+                        );
                 }
-                file_put_contents($file_name, $content . PHP_EOL . PHP_EOL, FILE_APPEND);
             }
-
         }
-        return $file_url;
+
+        // make string to represent resources
+        $real_base_url = $base_url;
+        if(USE_SUBDOMAIN && CMS_SUBSITE != ''){
+            $real_base_url = str_ireplace('://'.CMS_SUBSITE.'.',  '://', $real_base_url);
+        }
+        $str = '';
+        foreach($compiled_resources as $compiled_resource){
+            if($compiled_resource['type'] == 'internal'){
+                if($mode == 'js'){                    
+                    $str .= '<script type="text/javascript">'.$compiled_resource['content'].'</script>';
+                }else{
+                    $str .= '<style type="text/css">'.$compiled_resource['content'].'</style>';
+                }
+            }else if($compiled_resource['type'] == 'cdn' || $compiled_resource['type'] == 'skipped'){
+                foreach($compiled_resource['file_name'] as $file_name){
+                    $dir_path = $compiled_resource['dir_path'];
+                    if($compiled_resource['type'] = 'skipped'){
+                        $dir_path = str_ireplace(FCPATH, $real_base_url, $dir_path);
+                    }
+                    if($mode == 'js'){
+                        $str .= '<script type="text/javascript" src="'.$dir_path.$file_name.'"></script>';
+                    }else{
+                        $str .= '<link rel="stylesheet" type="text/css" href="'.$dir_path.$file_name.'" />';
+                    }
+                }
+            }else{
+                $dir_path = $compiled_resource['dir_path'];
+                $compiled_file_name = md5(implode('|', $compiled_resource['file_name']));
+                if($mode == 'js'){
+                    $compiled_file_name = '_cache_'.$compiled_file_name.'.js';
+                }else{
+                    $compiled_file_name = '_cache_'.$compiled_file_name.'.css';
+                }
+                // cache is old or doesn't exists, create a new one
+                if(!file_exists($dir_path.$compiled_file_name) || (file_exists($dir_path.$compiled_file_name) && $compiled_resource['modified_time'] > date('YmdHis',filemtime($dir_path.$compiled_file_name)))){
+                    $content = array();
+                    foreach($compiled_resource['file_name'] as $file_name){
+                        $content[] = $this->minify(file_get_contents($dir_path.$file_name), $mode);
+                    }
+                    $content = implode(PHP_EOL, $content);
+                    file_put_contents($dir_path.$compiled_file_name, $content);  
+                }
+                // change fcpath
+                $dir_path = str_ireplace(FCPATH, $real_base_url, $dir_path);
+                if($mode == 'js'){
+                    $str .= '<script type="text/javascript" src="'.$dir_path.$compiled_file_name.'"></script>';
+                }else{
+                    $str .= '<link rel="stylesheet" type="text/css" href="'.$dir_path.$compiled_file_name.'" />';
+                }
+            }
+        }
+        return $str;
     }
 
-    public function compile_css($combine = FALSE)
-    {
-        if ($combine) {
-            $file_name    = $this->combine_css($this->styles, 'css');
+    public function compile_css($combine = TRUE)
+    {        
+        if ($combine) {            
+            $return = $this->combine($this->styles, 'css');
             $this->styles = array();
-            return '<link rel="stylesheet" type="text/css" href="' . $file_name . '" />';
         } else {
             $return = '';
             foreach ($this->styles as $style) {
@@ -175,17 +232,16 @@ class CMS_Asset
                     $return .= '<style type="text/css">' . $style['content'] . '</style>';
                 }
             }
-            $this->styles = array();
-            return $return;
+            $this->styles = array();            
         }
+        return $return;
     }
 
-    public function compile_js($combine = FALSE)
+    public function compile_js($combine = TRUE)
     {
-        if ($combine) {
-            $file_name     = $this->combine_js($this->scripts, 'js');
+        if ($combine) {            
+            $return = $this->combine($this->scripts, 'js');
             $this->scripts = array();
-            return '<script type="text/javascript" src="' . $file_name . '"></script>';
         } else {
             $return = '';
             foreach ($this->scripts as $script) {
@@ -195,8 +251,8 @@ class CMS_Asset
                     $return .= '<script type="text/javascript">' . $script['content'] . '</script>';
                 }
             }
-            $this->scripts = array();
-            return $return;
+            $this->scripts = array();            
         }
+        return $return;        
     }
 }

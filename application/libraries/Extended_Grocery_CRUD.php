@@ -1459,7 +1459,43 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 			}
 		}
 
-		return $output;
+        // sort js so that combination will be better
+        $config_js = array();
+        foreach($output->js_files as $js_file){
+            if(strpos($js_file, base_url('assets/grocery_crud/js/jquery_plugins/config')) === 0){
+                $config_js[] = $js_file;
+            }
+        }
+        $plugin_js = array();
+        foreach($output->js_files as $js_file){
+            if(!in_array($js_file, $config_js) && strpos($js_file, base_url('assets/grocery_crud/js/jquery_plugins')) === 0){
+                $plugin_js[] = $js_file;
+            }
+        }
+        $text_editor_js = array();
+        foreach($output->js_files as $js_file){
+            if(strpos($js_file, base_url('assets/grocery_crud/texteditor')) === 0){
+                $text_editor_js[] = $js_file;
+            }
+        }
+        $theme_js = array();
+        foreach($output->js_files as $js_file){
+            if(strpos($js_file, base_url('assets/grocery_crud/themes')) === 0){
+                $theme_js[] = $js_file;
+            }
+        }
+
+        $other_js = array();
+        foreach($output->js_files as $js_file){
+            if(!in_array($js_file, $config_js) && !in_array($js_file, $plugin_js) && 
+                !in_array($js_file, $text_editor_js) && !in_array($js_file, $theme_js)){
+                $other_js[] = $js_file;
+            }
+        }
+
+        $output->js_files = array_merge($plugin_js, $theme_js, $text_editor_js, $other_js, $config_js);
+        
+        return $output;
 	}
 
 	public function render(){

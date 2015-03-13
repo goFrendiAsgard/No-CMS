@@ -1134,6 +1134,8 @@ class CMS_Controller extends MX_Controller
                 }
             }
         }
+        // save used_theme
+        $this->session->set_userdata('__cms_used_theme', $theme);
 
         // ADD AUTHENTICATED SUFFIX (in case of user has logged in)
         $cms_user_id = $this->cms_user_id();
@@ -1177,26 +1179,32 @@ class CMS_Controller extends MX_Controller
             // add width
             $this->template->append_metadata('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
 
+            $asset = new CMS_Asset();
             // always use grocerycrud's jquery for maximum compatibility
             if($this->cms_is_connect('code.jquery.com')){
                 $jquery_path = 'http://code.jquery.com/jquery-1.10.2.min.js';
                 $migration_path = 'http://code.jquery.com/jquery-migrate-1.2.1.min.js';
-                $this->template->append_js('<script type="text/javascript" src="' . $jquery_path . '"></script>');
-                $this->template->append_js('<script type="text/javascript" src="' . $migration_path . '"></script>');
+                $asset->add_js($jquery_path);
+                $asset->add_js($migration_path);
+                //$this->template->append_js('<script type="text/javascript" src="' . $jquery_path . '"></script>');
+                //$this->template->append_js('<script type="text/javascript" src="' . $migration_path . '"></script>');
             }else{
                 $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
-                $this->template->append_js('<script type="text/javascript" src="' . $jquery_path . '"></script>');
+                $asset->add_js($jquery_path);
+                //$this->template->append_js('<script type="text/javascript" src="' . $jquery_path . '"></script>');
             }            
 
             // ckeditor adjustment thing
-            //$this->template->append_js('<script type="text/javascript" src="{{ site_url }}main/ck_adjust_script"></script>');
-            $this->template->append_js('<script type="text/javascript">'.$this->cms_ck_adjust_script().'</script>');
+            $asset->add_internal_js($this->cms_ck_adjust_script());
+            //$this->template->append_js('<script type="text/javascript">'.$this->cms_ck_adjust_script().'</script>');
 
             // add javascript base_url for ckeditor
-            $this->template->append_js('<script type="text/javascript">var __cms_base_url = "'.base_url().'";</script>');
+            $asset->add_internal_js('var __cms_base_url = "'.base_url().'";');
+            //$this->template->append_js('<script type="text/javascript">var __cms_base_url = "'.base_url().'";</script>');
 
             // check login status
-            $login_code = '<script type="text/javascript">';
+            //$login_code = '<script type="text/javascript">';
+            $login_code = '';
             if($this->cms_user_id()>0){
                 $login_code .= 'var __cms_is_login = true;';
             }else{
@@ -1213,15 +1221,17 @@ class CMS_Controller extends MX_Controller
                     }
                 });
             },60000);';
-            $login_code .= '</script>';
-            $this->template->append_js($login_code);
+            $asset->add_internal_js($login_code);
+            //$login_code .= '</script>';
+            //$this->template->append_js($login_code);
 
             if($this->cms_is_connect('google-analytics.com')){
                 // google analytic
                 $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
                 if (trim($analytic_property_id) != '') {
                     // create analytic code
-                    $analytic_code  = '<script type="text/javascript"> ';
+                    //$analytic_code  = '<script type="text/javascript"> ';
+                    $analytic_code = '';
                     $analytic_code .= 'var _gaq = _gaq || []; ';
                     $analytic_code .= '_gaq.push([\'_setAccount\', \'' . $analytic_property_id . '\']); ';
                     $analytic_code .= '_gaq.push([\'_trackPageview\']); ';
@@ -1230,9 +1240,10 @@ class CMS_Controller extends MX_Controller
                     $analytic_code .= 'ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\'; ';
                     $analytic_code .= 'var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s); ';
                     $analytic_code .= '})(); ';
-                    $analytic_code .= '</script>';
+                    $asset->add_internal_js($analytic_code);
+                    //$analytic_code .= '</script>';
                     // add to the template
-                    $this->template->append_js($analytic_code);
+                    //$this->template->append_js($analytic_code);
                 }
             }
 
@@ -1252,6 +1263,8 @@ class CMS_Controller extends MX_Controller
             }
 
             // append custom css & js
+            $this->template->append_js($asset->compile_js());
+            $this->template->append_css($asset->compile_css());
             $this->template->append_js($custom_js);
             $this->template->append_css($custom_css);
 

@@ -37,6 +37,8 @@ assets/grocery_crud/texteditor/ckeditor/config.js
 assets/kcfinder/config.php
 /site.php
 /hostname.php
+_cache_*.js
+_cache_*.css
 
 # the sql
 modules/*/assets/db/backup*.sql

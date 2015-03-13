@@ -206,3 +206,4 @@ v0.7.5
 + (done, tested) google login fixed, hybridauth updated
 + (done, tested) better grocery-crud themes
 + (done, tested) update chosen
++ (done, tested) make js & css minification works again

@@ -86,13 +86,13 @@ for($i=0; $i<count($slide_list); $i++){
         if(windowTop >= carouselTop){
             var newTop = Math.round((windowTop - carouselTop)*0.8);
             var newOpacity = 1-0.6*(newTop/height);
-            var blur = Math.round(newTop/height * 20);
+            var blur = Math.round(newTop/height * 10);
         }else{
             var newTop = 0;
             var newOpacity = 1;
-            var blur = 1;
+            var blur = 0;
         }
-        $('.carousel-inner .item-image').css('background-position-y', newTop + 'px');
+        $('.carousel-inner .item-image').css('background-position', '0 ' + newTop + 'px');
         $('.carousel-inner .item-image').css('filter', 'blur(' + blur + 'px)');
         $('.carousel-inner .item-image').css('-webkit-filter', 'blur(' + blur + 'px)');
         $('.carousel-inner>.item').css('opacity', newOpacity);
