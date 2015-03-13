@@ -166,7 +166,7 @@ class nds extends CMS_Controller {
         $crud->display_as('db_schema','Database Schema');
         $crud->display_as('db_user','Database User');
         $crud->display_as('db_password','Database Password');
-        $crud->display_as('db_table_prefix','Database Table Prefix');
+        $crud->display_as('db_table_prefix','Database Table Prefix (For Filtering)');
         $crud->display_as('tables','Tables');
 
         $crud->field_type('db_password','password');

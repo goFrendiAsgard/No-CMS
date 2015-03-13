@@ -282,6 +282,8 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
                 $host_array = explode('.', $actual_host_name);
                 $cms_subsite = $host_array[0];
                 define('USE_SUBDOMAIN', TRUE);
+            }else{
+                define('USE_SUBDOMAIN', FALSE);
             }
         }
         // define cms_subsite and wether it is valid or not
@@ -295,6 +297,7 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
     }else{
         define('CMS_SUBSITE', '');
         define('INVALID_SUBSITE', FALSE);
+        define('USE_SUBDOMAIN', FALSE);
     }
     // change the environment based on multisite
     define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site-'.CMS_SUBSITE : 'production');
