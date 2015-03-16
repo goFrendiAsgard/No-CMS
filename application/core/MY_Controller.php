@@ -1150,6 +1150,7 @@ class CMS_Controller extends MX_Controller
         // IT'S SHOW TIME
         if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
             $result = $this->load->view($view_url, $data, TRUE);
+            $result = $custom_css.$custom_js.$result;
         } else {
             // save navigation name
             $this->cms_ci_session('__cms_navigation_name', $navigation_name);
