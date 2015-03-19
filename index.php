@@ -239,6 +239,7 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
     define('CMS_SUBSITE', '');
     define('USE_SUBDOMAIN', FALSE);
     define('INVALID_SUBSITE', FALSE);
+    define('USE_ALIAS', FALSE);
     $available_site = array();
 }else{
     // multisite, can use GET or subdomain
@@ -256,6 +257,7 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
         if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){
             $cms_subsite = $_GET['__cms_subsite'];
             define('USE_SUBDOMAIN', FALSE);
+            define('USE_ALIAS', FALSE);
         }else{
             $actual_host_name = $_SERVER['HTTP_HOST'];
             $address = full_url($_SERVER);
@@ -274,6 +276,7 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
             if(isset($site_alias[$actual_host_name]) && $site_alias[$actual_host_name] != ''){
                 $cms_subsite = $site_alias[$actual_host_name];
                 define('USE_SUBDOMAIN', TRUE);
+                define('USE_ALIAS', TRUE);
             }
             // If there is subdomain, subsite determine from subdomain.
             else if (strlen($actual_host_name)> 0 &&
@@ -282,8 +285,10 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
                 $host_array = explode('.', $actual_host_name);
                 $cms_subsite = $host_array[0];
                 define('USE_SUBDOMAIN', TRUE);
+                define('USE_ALIAS', FALSE);
             }else{
                 define('USE_SUBDOMAIN', FALSE);
+                define('USE_ALIAS', FALSE);
             }
         }
         // define cms_subsite and wether it is valid or not

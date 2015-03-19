@@ -66,7 +66,7 @@ class contact_us extends CMS_Priv_Strict_Controller {
                 if($success){
                     $data['name'] = $name;
                     $data['email'] = $email;
-                    $data['content'] = $content;
+                    $data['content'] = html_entity_decode($content);
                     $this->db->insert($this->cms_complete_table_name('message'), $data);
                     $name = '';
                     $email = '';

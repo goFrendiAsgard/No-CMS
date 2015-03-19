@@ -88,6 +88,7 @@ class CMS_Controller extends MX_Controller
 
         // just for autocompletion, never executed
         if(false) $this->No_CMS_Model = new No_CMS_Model();
+        //$this->output->enable_profiler(1);
     }
 
     public function cms_load_info_model($module_path){

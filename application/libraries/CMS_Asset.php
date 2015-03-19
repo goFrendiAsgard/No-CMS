@@ -166,7 +166,7 @@ class CMS_Asset
 
         // make string to represent resources
         $real_base_url = $base_url;
-        if(USE_SUBDOMAIN && CMS_SUBSITE != ''){
+        if(USE_SUBDOMAIN && CMS_SUBSITE != '' && !USE_ALIAS){
             $real_base_url = str_ireplace('://'.CMS_SUBSITE.'.',  '://', $real_base_url);
         }
         $str = '';
