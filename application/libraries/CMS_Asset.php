@@ -107,9 +107,6 @@ class CMS_Asset
 
     private function minify($content, $mode='css'){
         return preg_replace('/\n(\s*)/i',PHP_EOL, $content);
-        //return $content;
-        //require_once(APPPATH . '/libraries/jsmin.php');
-        //return JSMin::minify($content);
     }
 
     // mode can be css or js

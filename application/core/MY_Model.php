@@ -13,7 +13,7 @@ class CMS_Base_Model extends CI_Model
     public $PRIV_AUTHORIZED           = 4;
     public $PRIV_EXCLUSIVE_AUTHORIZED = 5;
 
-    private $__cms_model_properties;
+    protected static $__cms_model_properties;
 
     public function cms_list_fields($table_name){
         if($this->db instanceof CI_DB_pdo_sqlite_driver){
@@ -75,11 +75,40 @@ class CMS_Base_Model extends CI_Model
 
         // accessing file is faster than accessing database
         // but I think accessing variable is faster than both of them
-        $this->__cms_model_properties = array(
-            'session' => array(),
-            'language_dictionary' => array(),
-            'config' => array()
-        );
+        $query = $this->db->select('real_name')
+                ->from(cms_table_name('main_user'))
+                ->where('user_id', 1)
+                ->get();
+        if(self::$__cms_model_properties == NULL){
+            self::$__cms_model_properties = array();
+        }
+        $default_properties = array(
+                'session' => array(),
+                'language_dictionary' => array(),
+                'config' => array(),
+                'module_name' => array(),
+                'module_path' => array(),
+                'module_version' => array(),
+                'navigation' => array(),
+                'quicklink' => array(),
+                'widget' => array(),
+                'super_admin' => $query->row(),
+                'properties' => array(),
+                'is_config_cached' => FALSE,
+                'is_module_name_cached' => FALSE,
+                'is_module_path_cached' => FALSE,
+                'is_module_version_cached' => FALSE,
+                'is_user_last_active_extended' => FALSE,
+                'is_navigation_cached' => FALSE,
+                'is_quicklink_cached' => FALSE,
+                'is_widget_cached' => FALSE,
+            );
+        foreach($default_properties as $key=>$val){
+            if(!array_key_exists($key, self::$__cms_model_properties)){
+                self::$__cms_model_properties[$key] = $val;
+            }
+        }
+
         // BASE URL, needed by kcfinder
         if(!isset($_SESSION)){
             session_start();
@@ -94,6 +123,10 @@ class CMS_Base_Model extends CI_Model
 
     public function __destruct(){
         @$this->session->unset_userdata('cms_dynamic_widget');
+    }
+
+    public function cms_get_super_admin(){
+        return self::$__cms_model_properties['super_admin'];
     }
 
     /**
@@ -144,15 +177,15 @@ class CMS_Base_Model extends CI_Model
      */
     public function cms_ci_session($key, $value = NULL)
     {
-        if (isset($value)) {
+        if ($value !== NULL) {
             $this->session->set_userdata($key, $value);
-            $this->__cms_model_properties['session'][$key] = $value;
+            self::$__cms_model_properties['session'][$key] = $value;
         }
         // add to __cms_model_properties if not exists
-        if (!isset($this->__cms_model_properties['session'][$key])) {
-            $this->__cms_model_properties['session'][$key] = $this->session->userdata($key);
+        if (!array_key_exists($key, self::$__cms_model_properties['session'])) {
+            self::$__cms_model_properties['session'][$key] = $this->session->userdata($key);
         }
-        return $this->__cms_model_properties['session'][$key];
+        return self::$__cms_model_properties['session'][$key];
     }
 
     /**
@@ -163,7 +196,23 @@ class CMS_Base_Model extends CI_Model
     public function cms_unset_ci_session($key)
     {
         $this->session->unset_userdata($key);
-        unset($this->__cms_model_properties['session'][$key]);
+        unset(self::$__cms_model_properties['session'][$key]);
+    }
+
+    public function cms_cached_property($key, $value = NULL)
+    {
+        if ($value !== NULL) {
+            self::$__cms_model_properties['properties'][$key] = $value;
+        }
+        // add to __cms_model_properties if not exists
+        if (!array_key_exists($key, self::$__cms_model_properties['properties'])) {
+            self::$__cms_model_properties['properties'][$key] = NULL;
+        }
+        return self::$__cms_model_properties['properties'][$key];
+    }
+
+    public function cms_is_property_cached($key){
+        return array_key_exists($key, self::$__cms_model_properties['properties']);    
     }
 
     /** 
@@ -366,6 +415,11 @@ class CMS_Base_Model extends CI_Model
      */
     public function cms_navigations($parent_id = NULL, $max_menu_depth = NULL)
     {
+        
+        if($parent_id == NULL && self::$__cms_model_properties['is_navigation_cached']){
+            return self::$__cms_model_properties['navigation'];
+        }
+
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
         $user_id    = $user_id == ''?0:$user_id;
@@ -388,42 +442,54 @@ class CMS_Base_Model extends CI_Model
             return array();
         }
 
-        $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
-        $query         = $this->db->query("SELECT navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active,
-                    (
-                        (authorization_id = 1) OR
-                        (authorization_id = 2 AND $not_login) OR
-                        (authorization_id = 3 AND $login) OR
+        // $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
+        if(!self::$__cms_model_properties['is_navigation_cached']){
+            $query = $this->db->query("SELECT navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active, parent_id,
                         (
-                            (authorization_id = 4 AND $login) AND
+                            (authorization_id = 1) OR
+                            (authorization_id = 2 AND $not_login) OR
+                            (authorization_id = 3 AND $login) OR
                             (
-                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id =" . addslashes($user_id) . ")>0
-                                    OR $super_user OR
-                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
-                                    WHERE
-                                        gn.navigation_id=n.navigation_id AND
-                                        gn.group_id IN
-                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
-                                )>0
-                            )
-                        ) OR
-                        (
-                            (authorization_id = 5 AND $login) AND
+                                (authorization_id = 4 AND $login) AND
+                                (
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id =" . addslashes($user_id) . ")>0
+                                        OR $super_user OR
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
+                                        WHERE
+                                            gn.navigation_id=n.navigation_id AND
+                                            gn.group_id IN
+                                                (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                    )>0
+                                )
+                            ) OR
                             (
-                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
-                                    WHERE
-                                        gn.navigation_id=n.navigation_id AND
-                                        gn.group_id IN
-                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
-                                )>0
+                                (authorization_id = 5 AND $login) AND
+                                (
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation')." AS gn
+                                        WHERE
+                                            gn.navigation_id=n.navigation_id AND
+                                            gn.group_id IN
+                                                (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                    )>0
+                                )
                             )
-                        )
-                    ) AS allowed
-                FROM ".cms_table_name('main_navigation')." AS n WHERE
-                    $where_is_root ORDER BY n.".$this->db->protect_identifiers('index'));
-        
-        $result        = array();
-        foreach ($query->result() as $row) {
+                        ) AS allowed
+                    FROM ".cms_table_name('main_navigation')." AS n ORDER BY n.".$this->db->protect_identifiers('index'));
+            
+            self::$__cms_model_properties['is_navigation_cached'] = TRUE;
+            self::$__cms_model_properties['navigation'] = $query->result();
+        }
+        $result = array();
+        foreach (self::$__cms_model_properties['navigation'] as $row) {
+            if($parent_id === NULL){
+                if($row->parent_id != NULL){
+                    continue;
+                }
+            }else{
+                if($row->parent_id != $parent_id){
+                    continue;
+                }
+            }
             $children              = $this->cms_navigations($row->navigation_id, $max_menu_depth);
             $have_allowed_children = false;
             foreach ($children as $child) {
@@ -463,6 +529,12 @@ class CMS_Base_Model extends CI_Model
                 "have_allowed_children" => $have_allowed_children
             );
         }
+
+        if($parent_id == NULL){
+            self::$__cms_model_properties['navigation'] = $result;
+            self::$__cms_model_properties['is_navigation_cached'] = TRUE;
+        }
+
         return $result;
     }
 
@@ -473,6 +545,10 @@ class CMS_Base_Model extends CI_Model
      */
     public function cms_quicklinks()
     {
+        if(self::$__cms_model_properties['is_quicklink_cached']){
+            return self::$__cms_model_properties['quicklink'];
+        }
+
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
         $user_id    = $user_id == ''?0:$user_id;
@@ -560,6 +636,10 @@ class CMS_Base_Model extends CI_Model
                 "active" => $row->active,
             );
         }
+
+        self::$__cms_model_properties['quicklink'] = $result;
+        self::$__cms_model_properties['is_quicklink_cached'] = TRUE;
+
         return $result;
     }
 
@@ -579,48 +659,67 @@ class CMS_Base_Model extends CI_Model
         $not_login  = !$user_name ? "(1=1)" : "(1=2)";
         $login      = $user_name ? "(1=1)" : "(1=2)";
         $super_user = ($user_id == 1 || in_array(1,$this->cms_user_group_id())) ? "(1=1)" : "(1=2)";
-
+        
+        /*
         $slug_where = isset($slug)?
             "(((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%')) AND active=1)" :
             "1=1";
         $widget_name_where = isset($widget_name)? "widget_name LIKE '".addslashes($widget_name)."'" : "1=1";
+        */
 
-        $SQL = "SELECT
-                    widget_id, widget_name, is_static, title,
-                    description, url, slug, static_content
-                FROM ".cms_table_name('main_widget')." AS w WHERE
-                    (
-                        (authorization_id = 1) OR
-                        (authorization_id = 2 AND $not_login) OR
-                        (authorization_id = 3 AND $login) OR
+        if(!self::$__cms_model_properties['is_widget_cached']){
+            $SQL = "SELECT
+                        widget_id, widget_name, is_static, title,
+                        description, url, slug, static_content, active
+                    FROM ".cms_table_name('main_widget')." AS w WHERE
                         (
-                            (authorization_id = 4 AND $login) AND
+                            (authorization_id = 1) OR
+                            (authorization_id = 2 AND $not_login) OR
+                            (authorization_id = 3 AND $login) OR
                             (
-                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
-                                    OR $super_user OR
-                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_widget')." AS gw
-                                    WHERE
-                                        gw.widget_id=w.widget_id AND
-                                        gw.group_id IN
-                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
-                                )>0
-                            )
-                        ) OR
-                        (
-                            (authorization_id = 5 AND $login) AND
+                                (authorization_id = 4 AND $login) AND
+                                (
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_user')." AS gu WHERE gu.group_id=1 AND gu.user_id ='" . addslashes($user_id) . "')>0
+                                        OR $super_user OR
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_widget')." AS gw
+                                        WHERE
+                                            gw.widget_id=w.widget_id AND
+                                            gw.group_id IN
+                                                (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                    )>0
+                                )
+                            ) OR
                             (
-                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_widget')." AS gw
-                                    WHERE
-                                        gw.widget_id=w.widget_id AND
-                                        gw.group_id IN
-                                            (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
-                                )>0
+                                (authorization_id = 5 AND $login) AND
+                                (
+                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_widget')." AS gw
+                                        WHERE
+                                            gw.widget_id=w.widget_id AND
+                                            gw.group_id IN
+                                                (SELECT group_id FROM ".cms_table_name('main_group_user')." WHERE user_id = " . addslashes($user_id) . ")
+                                    )>0
+                                )
                             )
-                        )
-                    ) AND $slug_where AND $widget_name_where ORDER BY ".$this->db->protect_identifiers('index');
-        $query  = $this->db->query($SQL);
+                        ) ORDER BY ".$this->db->protect_identifiers('index');
+            $query  = $this->db->query($SQL);
+            self::$__cms_model_properties['widget'] = $query->result();
+            self::$__cms_model_properties['is_widget_cached'] = TRUE;
+        }
         $result = array();
-        foreach ($query->result() as $row) {
+        foreach (self::$__cms_model_properties['widget'] as $row) {
+            if(isset($slug) && $slug != ''){
+                if($row->active != 1 || stripos($row->slug===NULL?'':$row->slug, $slug) === FALSE){
+                    continue;
+                }
+            }
+            
+            if(isset($widget_name)){
+                if(strtolower($row->widget_name) != strtolower($widget_name)){
+                    continue;
+                }
+            }
+
+
             // generate widget content
             $content = '';
             if ($row->is_static == 1) {
@@ -665,12 +764,9 @@ class CMS_Base_Model extends CI_Model
                     $url_segment = explode('/', $url);
                     $module_path = $url_segment[0];
                     $response = '';
-                    // look if module installed
-                    $query = $this->db->select('module_id, module_name')
-                        ->from(cms_table_name('main_module'))
-                        ->where('module_path', $module_path)
-                        ->get();
-                    if($module_path == 'main' || $query->num_rows()>0){
+                    // ensure self::$__cms_model_properties['module_name'] exists. This variable's keys are all available module path
+                    $this->cms_module_name();
+                    if($module_path == 'main' || (array_key_exists($module_path, self::$__cms_model_properties['module_name']) && self::$__cms_model_properties['module_name'][$module_path] != '') ){
                         $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
                         $_REQUEST['__cms_dynamic_widget_module'] = $module_path;
                         $response = @Modules::run($url);
@@ -697,12 +793,12 @@ class CMS_Base_Model extends CI_Model
             }
             // make widget based on slug
             $slugs = explode(',', $row->slug);
-            foreach ($slugs as $slug) {
-                $slug = trim($slug);
-                if (!isset($result[$slug])) {
-                    $result[$slug] = array();
+            foreach ($slugs as $single_slug) {
+                $single_slug = trim($single_slug);
+                if (!isset($result[$single_slug])) {
+                    $result[$single_slug] = array();
                 }
-                $result[$slug][] = array(
+                $result[$single_slug][] = array(
                     "widget_id" => $row->widget_id,
                     "widget_name" => $row->widget_name,
                     "title" => $this->cms_lang($row->title),
@@ -1161,12 +1257,13 @@ class CMS_Base_Model extends CI_Model
     }
 
     private function __cms_extend_user_last_active($user_id){
-        if($user_id > 0){
+        if($user_id > 0 && !self::$__cms_model_properties['is_user_last_active_extended']){
             $this->db->update(cms_table_name('main_user'),
                 array(
                     'last_active'=>microtime(true),
                     'login'=>1),
                 array('user_id'=>$user_id));
+            self::$__cms_model_properties['is_user_last_active_extended'] = TRUE;
         }
     }
 
@@ -2189,16 +2286,19 @@ class CMS_Base_Model extends CI_Model
                 array('version'=>$new_version),
                 array('module_name'=>$module_name));
         }
-        $query = $this->db->select('version')
-            ->from(cms_table_name('main_module'))
-            ->where('module_name', $module_name)
-            ->get();
-        if($query->num_rows()==0){
-            return '0.0.0';
-        }else{
-            $row = $query->row();
-            return $row->version;
-        }       
+        if (!self::$__cms_model_properties['is_module_version_cached']) {
+            $query = $this->db->select('version, module_name')
+                ->from(cms_table_name('main_module'))
+                ->get();
+            foreach($query->result() as $row){                    
+                self::$__cms_model_properties['module_version'][$row->module_name] = $row->version;
+            }
+            self::$__cms_model_properties['is_module_version_cached'] = TRUE;
+        }
+        if(array_key_exists($module_name, self::$__cms_model_properties['module_version'])){
+            return self::$__cms_model_properties['module_version'][$module_name];
+        }
+        return '0.0.0';
     }
 
     /**
@@ -2221,16 +2321,19 @@ class CMS_Base_Model extends CI_Model
                 }
                 return $module;
             } else {
-                $query = $this->db->select('module_path')
-                    ->from(cms_table_name('main_module'))
-                    ->where('module_name', $module_name)
-                    ->get();
-                if ($query->num_rows() > 0) {
-                    $row = $query->row();
-                    return $row->module_path;
-                } else {
-                    return '';
+                if (!self::$__cms_model_properties['is_module_path_cached']) {
+                    $query = $this->db->select('module_path, module_name')
+                        ->from(cms_table_name('main_module'))
+                        ->get();
+                    foreach($query->result() as $row){                    
+                        self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
+                    }
+                    self::$__cms_model_properties['is_module_path_cached'] = TRUE;
                 }
+                if(array_key_exists($module_name, self::$__cms_model_properties['module_path'])){
+                    return self::$__cms_model_properties['module_path'][$module_name];
+                }
+                return '';
             }
         }
     }
@@ -2246,17 +2349,20 @@ class CMS_Base_Model extends CI_Model
         if(!isset($module_path) || is_null($module_path)){
             $module_path = $this->cms_module_path();
         }
-        $query = $this->db->select('module_name')
-            ->from(cms_table_name('main_module'))
-            ->where('module_path', $module_path)
-            ->get();
-        if ($query->num_rows() > 0) {
-            $row = $query->row();
-            return $row->module_name;
-        } else {
-            return '';
-        }
 
+        if (!self::$__cms_model_properties['is_module_name_cached']) {
+            $query = $this->db->select('module_path, module_name')
+                ->from(cms_table_name('main_module'))
+                ->get();
+            foreach($query->result() as $row){                    
+                self::$__cms_model_properties['module_name'][$row->module_path] = $row->module_name;
+            }
+            self::$__cms_model_properties['is_module_name_cached'] = TRUE;
+        }
+        if(array_key_exists($module_path, self::$__cms_model_properties['module_name'])){
+            return self::$__cms_model_properties['module_name'][$module_path];
+        }
+        return '';
     }
 
     /**
@@ -2569,7 +2675,7 @@ class CMS_Base_Model extends CI_Model
         }
         cms_config($name, $value);
         // save as __cms_model_properties too
-        $this->__cms_model_properties['config'][$name] = $value;
+        self::$__cms_model_properties['config'][$name] = $value;
     }
 
     /**
@@ -2594,23 +2700,27 @@ class CMS_Base_Model extends CI_Model
     public function cms_get_config($name, $raw = FALSE)
     {
         $value = cms_config($name);
-        if($value === NULL || !$value){
-            if (!isset($this->__cms_model_properties['config'][$name])) {
-                $query = $this->db->select('value')
+        if($value === NULL || !$value){            
+            if (!self::$__cms_model_properties['is_config_cached']) {
+                $query = $this->db->select('value, config_name')
                     ->from(cms_table_name('main_config'))
-                    ->where('config_name', $name)
                     ->get();
-                if($query->num_rows()>0){
-                    $row    = $query->row();
-                    $value  = $row->value;
-                    $this->__cms_model_properties['config'][$name] = $value;
-                }else{
-                    $value  = NULL;
+                foreach($query->result() as $row){
+                    $value = $row->value;
+                    $config_name = $row->config_name;                    
+                    self::$__cms_model_properties['config'][$config_name] = $value;
+                    cms_config($config_name, $value);
+                    if($config_name == $name){
+                        $found = TRUE;
+                    }
                 }
-            } else {
-                $value = $this->__cms_model_properties['config'][$name];
+                self::$__cms_model_properties['is_config_cached'] = TRUE;
             }
-            cms_config($name, $value);
+            if(array_key_exists($name, self::$__cms_model_properties['config'])){
+                $value = self::$__cms_model_properties['config'][$name];
+            }else{
+                $value = NULL;
+            }
         }
 
         // if raw is false, then don't parse keyword
@@ -2705,7 +2815,7 @@ class CMS_Base_Model extends CI_Model
     public function cms_language_dictionary()
     {
         $language = $this->cms_language();
-        if (count($this->__cms_model_properties['language_dictionary']) == 0) {
+        if (count(self::$__cms_model_properties['language_dictionary']) == 0) {
             $lang = array();
 
             // language setting from all modules but this current module
@@ -2745,9 +2855,9 @@ class CMS_Base_Model extends CI_Model
                 $lang[$row->key] = $row->translation;
             }
 
-            $this->__cms_model_properties['language_dictionary'] = $lang;
+            self::$__cms_model_properties['language_dictionary'] = $lang;
         }        
-        return $this->__cms_model_properties['language_dictionary'];
+        return self::$__cms_model_properties['language_dictionary'];
     }
 
     /**

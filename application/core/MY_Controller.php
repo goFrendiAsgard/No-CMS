@@ -1098,6 +1098,8 @@ class CMS_Controller extends MX_Controller
         if (isset($custom_author) && $custom_author != NULL && $custom_author != ''){
             $author = $custom_author;
         } else {
+            $author = $this->No_CMS_Model->cms_get_super_admin()->real_name;
+            /*
             $query = $this->db->select('real_name')
                 ->from(cms_table_name('main_user'))
                 ->where('user_id', 1)
@@ -1107,7 +1109,7 @@ class CMS_Controller extends MX_Controller
                 $author = $row->real_name;
             }else{
                 $author = '';
-            }
+            }*/
         }
 
 
