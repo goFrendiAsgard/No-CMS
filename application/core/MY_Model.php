@@ -75,10 +75,11 @@ class CMS_Base_Model extends CI_Model
 
         // accessing file is faster than accessing database
         // but I think accessing variable is faster than both of them
-        $query = $this->db->select('real_name')
+        $query = $this->db->select('user_name, real_name')
                 ->from(cms_table_name('main_user'))
                 ->where('user_id', 1)
                 ->get();
+        $super_admin = $query->row();
         if(self::$__cms_model_properties == NULL){
             self::$__cms_model_properties = array();
         }
@@ -89,10 +90,10 @@ class CMS_Base_Model extends CI_Model
                 'module_name' => array(),
                 'module_path' => array(),
                 'module_version' => array(),
-                'navigation' => array(),
-                'quicklink' => array(),
-                'widget' => array(),
-                'super_admin' => $query->row(),
+                'navigation' => array(),        // cache raw query
+                'quicklink' => array(),         // cache already built quicklink
+                'widget' => array(),            // cache raw query
+                'super_admin' => $super_admin,
                 'properties' => array(),
                 'is_config_cached' => FALSE,
                 'is_module_name_cached' => FALSE,
@@ -415,10 +416,6 @@ class CMS_Base_Model extends CI_Model
      */
     public function cms_navigations($parent_id = NULL, $max_menu_depth = NULL)
     {
-        
-        if($parent_id == NULL && self::$__cms_model_properties['is_navigation_cached']){
-            return self::$__cms_model_properties['navigation'];
-        }
 
         $user_name  = $this->cms_user_name();
         $user_id    = $this->cms_user_id();
@@ -528,11 +525,6 @@ class CMS_Base_Model extends CI_Model
                 "allowed" => $row->allowed,
                 "have_allowed_children" => $have_allowed_children
             );
-        }
-
-        if($parent_id == NULL){
-            self::$__cms_model_properties['navigation'] = $result;
-            self::$__cms_model_properties['is_navigation_cached'] = TRUE;
         }
 
         return $result;
@@ -847,13 +839,22 @@ class CMS_Base_Model extends CI_Model
         if (!isset($navigation_name)) {
             $submenus = $this->cms_navigations(NULL, 1);
         } else {
-            $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))->where('navigation_name', $navigation_name)->get();
-            if ($query->num_rows() == 0) {
+            // unused, just called to ensure that the navigation is already cached
+            if(!self::$__cms_model_properties['is_navigation_cached']){
+                $this->cms_navigations();
+            }
+            $navigations = self::$__cms_model_properties['navigation'];
+            $found = FALSE;
+            foreach($navigations as $navigation){
+                if($navigation->navigation_name == $navigation_name){
+                    $found = TRUE;
+                    $navigation_id = $navigation->navigation_id;
+                    $submenus = $this->cms_navigations($navigation_id, 1);
+                    break;
+                }
+            }
+            if(!$found){
                 return '';
-            } else {
-                $row           = $query->row();
-                $navigation_id = $row->navigation_id;
-                $submenus      = $this->cms_navigations($navigation_id, 1);
             }
         }
 
@@ -999,83 +1000,49 @@ class CMS_Base_Model extends CI_Model
      * @author  goFrendiAsgard
      * @param   string navigation_name
      * @return  mixed
-     * @desc    return parent of navigation_name's detail, only used for get_navigation_path
-     */
-    private function __cms_get_navigation_parent($navigation_name)
-    {
-        if (!$navigation_name)
-            return false;
-        $query = $this->db->query("SELECT navigation_id, navigation_name, title, description, url
-                    FROM ".cms_table_name('main_navigation')."
-                    WHERE navigation_id = (
-                        SELECT parent_id FROM ".cms_table_name('main_navigation')."
-                        WHERE navigation_name = '" . addslashes($navigation_name) . "'
-                    )");
-        if ($query->num_rows() == 0)
-            return false;
-        else {
-            foreach ($query->result() as $row) {
-                return array(
-                    "navigation_id" => $row->navigation_id,
-                    "navigation_name" => $row->navigation_name,
-                    "title" => $this->cms_lang($row->title),
-                    "description" => $row->description,
-                    "url" => $row->url
-                );
-            }
-        }
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param   string navigation_name
-     * @return  mixed
-     * @desc    return navigation detail, only used for get_navigation_path
-     */
-    private function __cms_get_navigation($navigation_name)
-    {
-        if (!$navigation_name)
-            return false;
-        $query = $this->db->query("SELECT navigation_id, navigation_name, title, description, url
-                    FROM ".cms_table_name('main_navigation')."
-                    WHERE navigation_name = '" . addslashes($navigation_name) . "'");
-        if ($query->num_rows() == 0)
-            return false;
-        else {
-            foreach ($query->result() as $row) {
-                return array(
-                    "navigation_id" => $row->navigation_id,
-                    "navigation_name" => $row->navigation_name,
-                    "title" => $this->cms_lang($row->title),
-                    "description" => $row->description,
-                    "url" => $row->url
-                );
-            }
-        }
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param   string navigation_name
-     * @return  mixed
      * @desc    return navigation path, used for layout
      */
     public function cms_get_navigation_path($navigation_name = NULL)
     {
-        if (!isset($navigation_name))
+        if (!isset($navigation_name)){
             return array();
-        $result = array(
-            $this->__cms_get_navigation($navigation_name)
-        );
-        while ($parent = $this->__cms_get_navigation_parent($navigation_name)) {
-            $result[]        = $parent;
-            $navigation_name = $parent["navigation_name"];
         }
-        //result should be in reverse order
-        for ($i = 0; $i < ceil(count($result) / 2); $i++) {
-            $temp                            = $result[$i];
-            $result[$i]                      = $result[count($result) - 1 - $i];
-            $result[count($result) - 1 - $i] = $temp;
+        // unused, just called to ensure that the navigation is already cached
+        if(!self::$__cms_model_properties['is_navigation_cached']){
+            $this->cms_navigations();
+        }
+        $navigations = self::$__cms_model_properties['navigation'];
+        // get first node
+        $result = array();
+        $parent_navigation_id = NULL;
+        foreach($navigations as $navigation){
+            if($navigation->navigation_name == $navigation_name){
+                $result[] = array(
+                        'navigation_id' => $navigation->navigation_id,
+                        'navigation_name' => $navigation->navigation_name,
+                        'title' => $this->cms_lang($navigation->title),
+                        'description' => $navigation->description,
+                        'url' => $navigation->url
+                    );
+                $parent_navigation_id = $navigation->parent_id;
+                break;
+            }
+        }
+        while($parent_navigation_id != NULL){
+            foreach($navigations as $navigation){
+                if($navigation->navigation_id == $parent_navigation_id){
+                    $result[] = array(
+                            'navigation_id' => $navigation->navigation_id,
+                            'navigation_name' => $navigation->navigation_name,
+                            'title' => $this->cms_lang($navigation->title),
+                            'description' => $navigation->description,
+                            'url' => $navigation->url
+                        );
+                    $parent_navigation_id = $navigation->parent_id;
+                    break;
+                }
+                log_message('error', print_r(array($result, $parent_navigation_id), TRUE));
+            }
         }
         return $result;
     }
@@ -2287,13 +2254,17 @@ class CMS_Base_Model extends CI_Model
                 array('module_name'=>$module_name));
         }
         if (!self::$__cms_model_properties['is_module_version_cached']) {
-            $query = $this->db->select('version, module_name')
+            $query = $this->db->select('version, module_name, module_path')
                 ->from(cms_table_name('main_module'))
                 ->get();
             foreach($query->result() as $row){                    
                 self::$__cms_model_properties['module_version'][$row->module_name] = $row->version;
+                self::$__cms_model_properties['module_name'][$row->module_path] = $row->module_name;
+                self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
             }
             self::$__cms_model_properties['is_module_version_cached'] = TRUE;
+            self::$__cms_model_properties['is_module_name_cached'] = TRUE;
+            self::$__cms_model_properties['is_module_path_cached'] = TRUE;
         }
         if(array_key_exists($module_name, self::$__cms_model_properties['module_version'])){
             return self::$__cms_model_properties['module_version'][$module_name];
@@ -2322,12 +2293,16 @@ class CMS_Base_Model extends CI_Model
                 return $module;
             } else {
                 if (!self::$__cms_model_properties['is_module_path_cached']) {
-                    $query = $this->db->select('module_path, module_name')
+                    $query = $this->db->select('module_path, module_name, version')
                         ->from(cms_table_name('main_module'))
                         ->get();
                     foreach($query->result() as $row){                    
+                        self::$__cms_model_properties['module_version'][$row->module_name] = $row->version;
+                        self::$__cms_model_properties['module_name'][$row->module_path] = $row->module_name;
                         self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
                     }
+                    self::$__cms_model_properties['is_module_version_cached'] = TRUE;
+                    self::$__cms_model_properties['is_module_name_cached'] = TRUE;
                     self::$__cms_model_properties['is_module_path_cached'] = TRUE;
                 }
                 if(array_key_exists($module_name, self::$__cms_model_properties['module_path'])){
@@ -2351,13 +2326,17 @@ class CMS_Base_Model extends CI_Model
         }
 
         if (!self::$__cms_model_properties['is_module_name_cached']) {
-            $query = $this->db->select('module_path, module_name')
+            $query = $this->db->select('module_path, module_name, version')
                 ->from(cms_table_name('main_module'))
                 ->get();
             foreach($query->result() as $row){                    
+                self::$__cms_model_properties['module_version'][$row->module_name] = $row->version;
                 self::$__cms_model_properties['module_name'][$row->module_path] = $row->module_name;
+                self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
             }
+            self::$__cms_model_properties['is_module_version_cached'] = TRUE;
             self::$__cms_model_properties['is_module_name_cached'] = TRUE;
+            self::$__cms_model_properties['is_module_path_cached'] = TRUE;
         }
         if(array_key_exists($module_path, self::$__cms_model_properties['module_name'])){
             return self::$__cms_model_properties['module_name'][$module_path];
@@ -4251,26 +4230,12 @@ class CMS_Module_Info_Model extends CMS_Base_Model{
 
     public function __construct(){
         parent::__construct();
-        // get module name & module path
-        $query = $this->db->select('version')
-            ->from(cms_table_name('main_module'))
-            ->where(array(
-                'module_name'=> $this->NAME,
-                'module_path'=> $this->cms_module_path(),
-              ))
-            ->get();
-        if ($query->num_rows() == 0) {
-            $this->IS_ACTIVE = FALSE;
-            $this->IS_OLD = FALSE;
-            $this->OLD_VERSION = '0.0.0';
-        } else {
-            $this->IS_ACTIVE = TRUE;
-            $row = $query->row();
-            // TODO: the suck sqlite returning array
-            $row = json_decode(json_encode($row), FALSE);
-            if($this->OLD_VERSION == ''){
-                $this->OLD_VERSION = $row->version;
-            }
+        $this->OLD_VERSION = $this->cms_module_version($this->NAME);
+        if(!in_array($this->NAME, self::$__cms_model_properties['module_version'])){
+            $this->IS_ACTIVE    = FALSE;
+            $this->IS_OLD       = FALSE;
+        }else{
+            $this->IS_ACTIVE    = TRUE;
             if(version_compare($this->VERSION, $this->OLD_VERSION)>0){
                 $this->IS_OLD = TRUE;
             }else{

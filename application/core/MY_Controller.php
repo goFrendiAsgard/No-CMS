@@ -29,11 +29,7 @@ class CMS_Controller extends MX_Controller
         // in case of module is not installed, but the naughty user add navigation manually, show module not installed message
         // however if controllers/_info.php doesn't exists, than it has nothing todo with the module
         if($module_path != 'main' && $module_path != '' && file_exists(FCPATH.'modules/'.$module_path.'/controllers/_info.php')){
-            $query = $this->db->select('module_path')
-                ->from(cms_table_name('main_module'))
-                ->where('module_path', $module_path)
-                ->get();
-            if($query->num_rows() <= 0){
+            if($this->cms_module_name($module_path) == ''){
                 die('<pre>ERROR : Module '.$module_path.' is not installed</pre>');
             }
         }
@@ -88,7 +84,7 @@ class CMS_Controller extends MX_Controller
 
         // just for autocompletion, never executed
         if(false) $this->No_CMS_Model = new No_CMS_Model();
-        //$this->output->enable_profiler(1);
+        // $this->output->enable_profiler(1);
     }
 
     public function cms_load_info_model($module_path){
@@ -1099,17 +1095,6 @@ class CMS_Controller extends MX_Controller
             $author = $custom_author;
         } else {
             $author = $this->No_CMS_Model->cms_get_super_admin()->real_name;
-            /*
-            $query = $this->db->select('real_name')
-                ->from(cms_table_name('main_user'))
-                ->where('user_id', 1)
-                ->get();
-            if($query->num_rows() > 0){
-                $row = $query->row();
-                $author = $row->real_name;
-            }else{
-                $author = '';
-            }*/
         }
 
 
