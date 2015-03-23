@@ -1947,6 +1947,11 @@ class Main extends CMS_Controller
                         display:inline-block!important;
                     }
                 }
+                @media (min-width: 979px) {
+                    body {
+                        padding-top: 50px;
+                    }
+                }
             </style>
             <div class="navbar '.($inverse? 'navbar-inverse' : 'navbar-default').' navbar-fixed-top" role="navigation">
                 <div class="container">

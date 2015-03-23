@@ -34,11 +34,12 @@ for($i=0; $i<count($slide_list); $i++){
     div.carousel-inner{
         opacity:0.85;
     }
-    .item-image{
+    .carousel-inner .item-image{
         margin:auto;
         background-color:black;
         height:100%;
         background-size:cover;
+        /*background-attachment: fixed;*/
     }
     #slideshow-widget{
         margin-bottom:20px;
@@ -84,9 +85,9 @@ for($i=0; $i<count($slide_list); $i++){
         var windowTop = $(window).scrollTop();
         var height = $('div.carousel-inner').height();
         if(windowTop >= carouselTop){
-            var newTop = Math.round((windowTop - carouselTop)*0.8);
+            var newTop = windowTop - carouselTop;
             var newOpacity = 1-0.6*(newTop/height);
-            var blur = Math.round(newTop/height * 10);
+            var blur = Math.round(newTop/height * 5);
         }else{
             var newTop = 0;
             var newOpacity = 1;
@@ -97,5 +98,4 @@ for($i=0; $i<count($slide_list); $i++){
         $('.carousel-inner .item-image').css('-webkit-filter', 'blur(' + blur + 'px)');
         $('.carousel-inner>.item').css('opacity', newOpacity);
     });
-
 </script>
