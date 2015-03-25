@@ -1,8 +1,8 @@
 <?php
     $record_index = 0;
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS); ?>" />
-<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?>" />
+
+
 <style type="text/css">
     #md_table_translations input[type="text"]{
         /*max-width:100px;*/

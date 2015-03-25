@@ -1,9 +1,9 @@
 <?php
     $record_index = 0;
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?>" />
-<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/jquery.ui.datetime.css'); ?>" />
-<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/jquery_plugins/jquery-ui-timepicker-addon.css'); ?>" />
+
+
+
 <style type="text/css">
     #md_table_citizen input[type="text"]{
         max-width:100px;
