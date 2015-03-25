@@ -1459,6 +1459,35 @@ class Extended_Grocery_CRUD extends Grocery_CRUD{
 			}
 		}
 
+        // add some javascript and css so that the detail will be easier
+        $state = $this->getState();
+        if(in_array($state, array('add','edit','success'))){
+            $mandatory_css_files = array(
+                    base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'),
+                    base_url('assets/grocery_crud/css/jquery_plugins/jquery.ui.datetime.css'),
+                    base_url('assets/grocery_crud/css/jquery_plugins/jquery-ui-timepicker-addon.css')
+                );
+            $mandatory_js_files = array(
+                    base_url('assets/grocery_crud/js/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS),
+                    base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'),
+                    base_url('assets/grocery_crud/js/jquery_plugins/ui.multiselect.min.js'),
+                    base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'),
+                    //base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'),
+                    base_url('assets/grocery_crud/js/jquery_plugins/jquery-ui-timepicker-addon.js'),
+                );
+            
+            foreach($mandatory_css_files as $mandatory_css_file){
+                if(!in_array($mandatory_css_file, $output->css_files)){
+                    $output->css_files[] = $mandatory_css_file;
+                }
+            }
+            foreach($mandatory_js_files as $mandatory_js_file){
+                if(!in_array($mandatory_js_file, $this->js_files)){
+                    $output->js_files[] = $mandatory_js_file;
+                }
+            }
+        }
+
         // sort js so that combination will be better
         $config_js = array();
         foreach($output->js_files as $js_file){

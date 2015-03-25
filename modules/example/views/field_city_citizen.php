@@ -42,11 +42,11 @@
 </div>
 
 <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/jquery-ui-1.10.3.custom.min.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui.multiselect.min.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery-ui-timepicker-addon.js'); ?>"></script>
+
+
+
+
+
 <script type="text/javascript">
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

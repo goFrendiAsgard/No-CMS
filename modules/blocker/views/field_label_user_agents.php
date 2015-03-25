@@ -32,10 +32,10 @@
     <input id="md_real_field_user_agents_col" name="md_real_field_user_agents_col" type="hidden" />
 </div>
 
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?>"></script>
+
+
+
+
 <script type="text/javascript">
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -143,6 +143,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
             $crud->field_type('publish_date', 'hidden');
         }else{
             $crud->field_type('status', 'enum', array('draft','published','scheduled'));
+            $crud->field_type('publish_date', 'datetime');
         }
 
 
@@ -156,7 +157,7 @@ class Manage_Article extends CMS_Priv_Strict_Controller {
         $crud->callback_after_insert(array($this,'after_insert'));
         $crud->callback_after_update(array($this,'after_update'));
         $crud->callback_after_delete(array($this,'after_delete'));
-
+        
         $crud->callback_column('photos',array($this, 'callback_column_photos'));
         $crud->callback_field('photos',array($this, 'callback_field_photos'));
         $crud->callback_column('comments',array($this, 'callback_column_comments'));

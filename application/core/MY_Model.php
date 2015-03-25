@@ -1041,8 +1041,13 @@ class CMS_Base_Model extends CI_Model
                     $parent_navigation_id = $navigation->parent_id;
                     break;
                 }
-                log_message('error', print_r(array($result, $parent_navigation_id), TRUE));
             }
+        }
+        //result should be in reverse order
+        for ($i = 0; $i < ceil(count($result) / 2); $i++) {
+            $temp                            = $result[$i];
+            $result[$i]                      = $result[count($result) - 1 - $i];
+            $result[count($result) - 1 - $i] = $temp;
         }
         return $result;
     }
@@ -4231,7 +4236,12 @@ class CMS_Module_Info_Model extends CMS_Base_Model{
     public function __construct(){
         parent::__construct();
         $this->OLD_VERSION = $this->cms_module_version($this->NAME);
-        if(!in_array($this->NAME, self::$__cms_model_properties['module_version'])){
+        $module_path = $this->cms_module_path();
+        
+        $inactive = !array_key_exists($module_path, self::$__cms_model_properties['module_name']) ||
+            self::$__cms_model_properties['module_name'][$module_path] == '';
+        
+        if($inactive){
             $this->IS_ACTIVE    = FALSE;
             $this->IS_OLD       = FALSE;
         }else{

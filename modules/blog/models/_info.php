@@ -7,7 +7,7 @@ class _Info extends CMS_Module_Info_Model{
     public $DEPENDENCIES = array();
     public $NAME         = 'gofrendi.noCMS.blog';
     public $DESCRIPTION  = 'Write articles, upload photos, allow visitors to give comments, rule the world...';
-    public $VERSION      = '0.0.4';
+    public $VERSION      = '0.0.5';
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ class _Info extends CMS_Module_Info_Model{
                 'default' => 'draft',
                 'null' => FALSE,
             ),
-            'publish_date' => $this->TYPE_DATE_NULL,
+            'publish_date' => $this->TYPE_DATETIME_NULL,
         );
         $fields = array();
         foreach($missing_fields as $key=>$value){
@@ -114,6 +114,11 @@ class _Info extends CMS_Module_Info_Model{
             $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Author');
             $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Contributor');
             $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_category'),'Blog Editor');
+        }
+        if($major == 0 && $minor == 0 && $build <= 5){
+            $fields = array('publish_date' => $this->TYPE_DATETIME_NULL);
+            $table_name = $this->cms_complete_table_name('article');
+            $this->dbforge->modify_column($table_name, $fields);
         }
     }
 

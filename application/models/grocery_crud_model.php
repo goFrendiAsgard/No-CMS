@@ -374,7 +374,7 @@ class grocery_CRUD_Model  extends CI_Model  {
         if(!$use_template)
         	$this->db->order_by("{$field_info->selection_table}.{$field_info->title_field_selection_table}");
         $results = $this->db->get($field_info->selection_table)->result();
-
+        
         $results_array = array();
         foreach($results as $row)
         {

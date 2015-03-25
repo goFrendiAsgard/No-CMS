@@ -8,7 +8,7 @@
       var select;
       select = this;
       this.chosen({allow_single_deselect:true, width:'100%'});
-      this.next('.chosen-container').find(".search-field > input").bind('keyup', function() {
+      this.next('.chzn-container').find(".search-field > input").bind('keyup', function() {
         var field, val;
         val = $.trim($(this).attr('value'));
         if (val.length < 2 || val === $(this).data('prevVal')) return false;
@@ -45,7 +45,7 @@
         }, 800);
         return my_timer;
       });
-      return this.next('.chosen-container').find(".chosen-search > input").bind('keyup', function() {
+      return this.next('.chzn-container').find(".chzn-search > input").bind('keyup', function() {
         var field, val;
         val = $.trim($(this).attr('value'));
         if (val.length < 2 || val === $(this).data('prevVal')) return false;

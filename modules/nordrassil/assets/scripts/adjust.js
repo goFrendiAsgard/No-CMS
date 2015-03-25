@@ -1,3 +1,4 @@
+var RESTRICTED_INDEX = {};
 function adjust(changing_field, affected_field, ajax_get_restricted_path){
 	// define ajax path
 	var ajax_path = ajax_get_restricted_path;
@@ -12,15 +13,21 @@ function adjust(changing_field, affected_field, ajax_get_restricted_path){
 		'url' : ajax_path+changing_id,
 		'dataType' : 'json',
 		'success' : function(response){
-			$('#field_'+affected_field+'_chzn ul.chzn-results li').removeClass('hidden');
-			for(var i=0; i<response.length; i++){					
-				var current_option = $('select#field-'+affected_field).children('option[value="'+response[i]+'"]');
-				var index = $('select#field-'+affected_field+' option').index(current_option);
-				$('#field_'+affected_field+'_chzn ul.chzn-results li#field_'+affected_field+'_chzn_o_'+index).addClass('hidden');
-				$('#field_'+affected_field+'_chzn ul.chzn-results li#field_'+affected_field+'_chzn_o_'+index).removeClass('result-selected');
-				//$('#field_'+affected_field+'_chzn ul.chzn-choices li#field_'+affected_field+'_chzn_c_'+index).remove();
-				$('select#field-'+affected_field+' option[value="'+response[i]+'"]').removeAttr('selected');
+			RESTRICTED_INDEX[affected_field] = response;
+			function onchange(){
+				restricted_index = RESTRICTED_INDEX[affected_field];
+				$('#field_'+affected_field+'_chosen ul.chosen-results li').removeClass('hidden');
+				for(var i=0; i<restricted_index.length; i++){
+					var current_option = $('select#field-'+affected_field).children('option[value="'+restricted_index[i]+'"]');
+					var index = $('select#field-'+affected_field+' option').index(current_option);
+					var $option = $('#field_'+affected_field+'_chosen ul.chosen-results li[data-option-array-index="'+index+'"]');
+					$option.addClass('hidden');
+					$option.removeClass('result-selected');
+					$('select#field-'+affected_field+' option[value="'+restricted_index[i]+'"]').removeAttr('selected');
+				}
 			}
+			$('#field_'+affected_field+'_chosen').click(onchange);
+			$('#field_'+affected_field+'_chosen').keyup(onchange);
 		}
 	});
 }

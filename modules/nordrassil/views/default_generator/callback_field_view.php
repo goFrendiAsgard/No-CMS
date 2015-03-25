@@ -42,9 +42,6 @@
 &lt;?php
     $record_index = 0;
 ?&gt;
-<link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'); ?&gt;" />
-<link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/jquery_plugins/jquery.ui.datetime.css'); ?&gt;" />
-<link rel="stylesheet" type="text/css" href="&lt;?php echo base_url('assets/grocery_crud/css/jquery_plugins/jquery-ui-timepicker-addon.css'); ?&gt;" />
 <style type="text/css">
     #<?php echo $table_id; ?> input[type="text"]{
         max-width:100px;
@@ -84,12 +81,6 @@
     <input id="<?php echo $real_input_id; ?>" name="<?php echo $real_input_id; ?>" type="hidden" />
 </div>
 
-<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/jquery-ui-1.10.3.custom.min.js'); ?&gt;"></script>
-<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?&gt;"></script>
-<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui.multiselect.min.js'); ?&gt;"></script>
-<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?&gt;"></script>
-<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?&gt;"></script>
-<script type="text/javascript" src="&lt;?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery-ui-timepicker-addon.js'); ?&gt;"></script>
 <script type="text/javascript">
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

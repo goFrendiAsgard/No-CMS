@@ -2,9 +2,6 @@
     $record_index = 0;
     $upload_path = base_url('modules/'.$module_path.'/assets/uploads').'/';
 ?>
-<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/grocery_crud/css/ui/simple/'.grocery_CRUD::JQUERY_UI_CSS); ?>" />
-<style type="text/css">
-</style>
 
 <table id="md_table_photos" class="table table-striped table-bordered">
     <thead>
@@ -22,10 +19,6 @@
 <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
 <input id="md_real_field_photos_col" name="md_real_field_photos_col" type="hidden" />
 
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/ui/'.grocery_CRUD::JQUERY_UI_JS); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'); ?>"></script>
-<script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery_plugins/jquery.numeric.min.js'); ?>"></script>
 <script type="text/javascript">
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
