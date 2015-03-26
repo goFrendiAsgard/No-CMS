@@ -485,9 +485,9 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    get module list
      */
-    public function cms_get_module_list()
+    public function cms_get_module_list($keyword = NULL)
     {
-        return $this->No_CMS_Model->cms_get_module_list();
+        return $this->No_CMS_Model->cms_get_module_list($keyword);
     }
 
     public function cms_module_version($module_name = NULL){
@@ -521,9 +521,9 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    get layout list
      */
-    protected function cms_get_theme_list()
+    protected function cms_get_theme_list($keyword = NULL)
     {
-        return $this->No_CMS_Model->cms_get_theme_list();
+        return $this->No_CMS_Model->cms_get_theme_list($keyword);
     }
 
     /**

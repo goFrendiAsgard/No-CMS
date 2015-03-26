@@ -128,8 +128,13 @@ class Main extends CMS_Controller
             }
         }
 
+        $keyword = $this->input->post('keyword');
+        if($keyword == ''){
+            $keyword = NULL;
+        }
+        $data['keyword'] = $keyword;
         // show the view
-        $modules = $this->cms_get_module_list();
+        $modules = $this->cms_get_module_list($keyword);
         for($i=0; $i<count($modules); $i++){
             $module = $modules[$i];
             $module_path = $module['module_path'];
@@ -142,7 +147,7 @@ class Main extends CMS_Controller
     public function change_theme($theme = NULL)
     {
         $this->cms_guard_page('main_change_theme');
-        $data = array();
+        $data = array();        
         // upload new theme
         if(CMS_SUBSITE == ''){
 
@@ -173,8 +178,13 @@ class Main extends CMS_Controller
         if (isset($theme)) {
             $this->cms_set_config('site_theme', $theme);
         }
-
-        $data['themes'] = $this->cms_get_theme_list();
+        // keyword
+        $keyword = $this->input->post('keyword');
+        if($keyword == ''){
+            $keyword = NULL;
+        }
+        $data['keyword'] = $keyword;
+        $data['themes'] = $this->cms_get_theme_list($keyword);
         $data['upload_new_theme_caption'] = $this->cms_lang('Upload New Theme');
         $this->view('main/main_change_theme', $data, 'main_change_theme');
     }
@@ -1968,7 +1978,7 @@ class Main extends CMS_Controller
                         <ul class="navbar-nav nav">'.$result.'</ul>
                         <ul class="navbar-nav nav navbar-right">
                             <li class="dropdown" id="__right_navbar">{{ widget_name:navigation_right_partial }}</li>
-                            <li class="dropdown">'.$toggle_editing.'</div>
+                            <li class="dropdown">'.$toggle_editing.'</li></div>
                         </ul>
                     </nav><!--/.nav-collapse -->
                 </div>

@@ -2201,7 +2201,7 @@ class CMS_Base_Model extends CI_Model
      * @return  mixed
      * @desc    get module list
      */
-    public function cms_get_module_list()
+    public function cms_get_module_list($keyword = NULL)
     {        
         $this->load->helper('directory');
         $directories = directory_map(FCPATH.'modules', 1);
@@ -2242,12 +2242,17 @@ class CMS_Base_Model extends CI_Model
                 }
             }
             $module_name = $this->cms_module_name($directory);
-            $module[]    = array(
-                "module_name" => $module_name,
-                "module_path" => $directory,
-                "active" => $module_name != "",
-                "controllers" => $module_controllers,
-            );
+            if($keyword === NULL || ($keyword !== NULL && (
+                stripos($module_name, $keyword) !== FALSE ||
+                stripos($directory, $keyword) !== FALSE
+            ))){
+                $module[]    = array(
+                    "module_name" => $module_name,
+                    "module_path" => $directory,
+                    "active" => $module_name != "",
+                    "controllers" => $module_controllers,
+                );
+            }
         }
         return $module;
     }
@@ -2354,7 +2359,7 @@ class CMS_Base_Model extends CI_Model
      * @return  mixed
      * @desc    get theme list
      */
-    public function cms_get_theme_list()
+    public function cms_get_theme_list($keyword=NULL)
     {
         $this->load->helper('directory');
         $directories = directory_map(FCPATH.'themes', 1);
@@ -2381,10 +2386,12 @@ class CMS_Base_Model extends CI_Model
 
             $layout_name = $directory;
 
-            $themes[] = array(
-                "path" => $directory,
-                "used" => $this->cms_get_config('site_theme') == $layout_name
-            );
+            if($keyword === NULL  || ($keyword !== NULL && stripos($directory, $keyword)!== FAlSE)){
+                $themes[] = array(
+                    "path" => $directory,
+                    "used" => $this->cms_get_config('site_theme') == $layout_name
+                );
+            }
         }
         // the currently used theme should be on the top
         for($i=0; $i<count($themes); $i++){

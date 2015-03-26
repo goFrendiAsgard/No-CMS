@@ -14,6 +14,12 @@
     }
 </style>
 <h3>{{ language:Module Management }}</h3>
+<form class="form-inline" action="<?php echo site_url('main/module_management');?>" method="post" accept-charset="utf-8" style="padding-bottom:20px;">
+    <div class="form-group">
+        <input class="form-control" type="text" name="keyword" size="20" placeholder="Keyword" value="<?=$keyword?>" />
+    </div>&nbsp;
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
 <?php
     for($i=0; $i<count($modules); $i++){        
         $module = $modules[$i];

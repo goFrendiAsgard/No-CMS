@@ -208,3 +208,5 @@ v0.7.5
 + (done, tested) update chosen
 + (done, tested) make js & css minification works again
 + (done, tested) reduce query number
++ (done, tested) new mechanism for master-detail
++ (done, tested) add search module and theme capability
