@@ -1978,7 +1978,7 @@ class Main extends CMS_Controller
                         <ul class="navbar-nav nav">'.$result.'</ul>
                         <ul class="navbar-nav nav navbar-right">
                             <li class="dropdown" id="__right_navbar">{{ widget_name:navigation_right_partial }}</li>
-                            <li class="dropdown">'.$toggle_editing.'</li></div>
+                            <li class="dropdown">'.$toggle_editing.'</li>
                         </ul>
                     </nav><!--/.nav-collapse -->
                 </div>
