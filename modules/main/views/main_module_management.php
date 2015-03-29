@@ -35,56 +35,33 @@
         	echo '<img class="logo" src="'.base_url('assets/nocms/images/icons/package.png').'" />';
         }
         echo '  <br />';
-        echo '  <a id="module_'.$i.'_activate" class="btn btn-success disabled" href="'.site_url($module['module_path'].'/_info/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
-        echo '  <a id="module_'.$i.'_upgrade" class="btn btn-warning disabled" href="'.site_url($module['module_path'].'/_info/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
-        echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger disabled" href="'.site_url($module['module_path'].'/_info/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
-        echo '  <a id="module_'.$i.'_setting" class="btn btn-warning disabled" href="'.site_url($module['module_path'].'/_info/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
+        if($module['active']){
+            if($module['old']){
+                $status = '{{ language:Need upgrade }}';
+                echo '  <a id="module_'.$i.'_upgrade" class="btn btn-warning" href="'.site_url($module['module_path'].'/_info/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
+            }else{
+                $status = '{{ language:Active }}';
+            }
+            echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger" href="'.site_url($module['module_path'].'/_info/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
+            echo '  <a id="module_'.$i.'_setting" class="btn btn-warning" href="'.site_url($module['module_path'].'/_info/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
+        
+        }else{
+            $status = '{{ language:Inactive }}';
+            echo '  <a id="module_'.$i.'_activate" class="btn btn-success" href="'.site_url($module['module_path'].'/_info/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
+            echo '  <a id="module_'.$i.'_setting" class="btn btn-warning" href="'.site_url($module['module_path'].'/_info/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
+        }
         echo '</div>';
         echo '<div class="col-sm-8">';
         echo '  <br />';
-        echo '  <div id="div_module_'.$i.'_info" class="col-sm-12"></div>';
+        echo '  <div id="div_module_'.$i.'_info" class="col-sm-12">';
+        echo '      ('.$module['module_name'].')<br />';
+        echo '      <p>'.$module['description'].'</p>';
+        echo '      <strong>{{ language:Registered Version }}</strong> : '. $module['old_version'].' | ';
+        echo '      <strong>{{ language:Current Version }}</strong> : '. $module['current_version'].' | ';
+        echo '      <strong>{{ language:Status }}</strong> : '.$status;
+        echo '  </div>';
         echo '</div>';
         echo '</div>';
-
-        echo '<script type="text/javascript">'; 
-        echo 'function check_module_status_'.$i.'(){';       
-        echo '  $.ajax({';
-        echo '      url:"'.site_url($module['module_path'].'/_info/status').'",';
-        echo '      dataType:"json",';
-        echo '      success:function(response){';
-        echo '          var status = "";';
-        echo '          if(response.active){';
-        echo '              if(response.old){';
-        echo '                  status += "{{ language:Need upgrade }}";';
-        echo '                  $("#module_'.$i.'_upgrade").removeClass("disabled");';
-        echo '              }else{';
-        echo '                  status += "{{ language:Active }}";';
-        echo '                  $("#module_'.$i.'_setting").removeClass("disabled");';
-        echo '                  $("#module_'.$i.'_deactivate").removeClass("disabled");';
-        echo '              }';
-        echo '          }else{';
-        echo '              status += "{{ language:Inactive }}";';
-        echo '              $("#module_'.$i.'_setting").removeClass("disabled");';
-        echo '              $("#module_'.$i.'_activate").removeClass("disabled");';
-        echo '          }';
-        echo '          var html = "";';
-        echo '          html += "("+response.name+")<br />";';
-        echo '          html += "<p>"+response.description+"</p>";';
-        echo '          html += "<strong>{{ language:Registered Version }}</strong> : "+response.old_version+" | ";';
-        echo '          html += "<strong>{{ language:Current Version }}</strong> : "+response.version+" | ";';
-        echo '          html += "<strong>{{ language:Status }}</strong> : "+status;';
-        echo '          ';
-        echo '          $("#div_module_'.$i.'_info").html(html);';
-        echo '      },';
-        echo '      error:function(xhr, textStatus, errorThrown){';
-        echo '          setTimeout(check_module_status_'.$i.', 10000);';    
-        echo '      }';
-        echo '  })';
-        echo '}';
-        echo '$(document).ready(function(){';
-        echo '  check_module_status_'.$i.'();';
-        echo '})';
-        echo '</script>';
     }
 	echo '<div style="clear:both"></div>';
     if(CMS_SUBSITE == '' && $upload['uploading'] && !$upload['success']){

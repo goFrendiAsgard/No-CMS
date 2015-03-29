@@ -1897,9 +1897,13 @@ class CMS_Module_Info_Controller extends CMS_Controller
         }
     }
 
-    public function status(){
+    public function status($dont_fetch = FALSE){
         if($this->DESCRIPTION === NULL){
-            $this->DESCRIPTION = $this->cms_lang('Just another module');
+            if($dont_fetch){
+                $this->DESCRIPTION = 'Just another module';
+            }else{
+                $this->DESCRIPTION = $this->cms_lang('Just another module');
+            }
         }
         $result = array(
             'active'=>$this->IS_ACTIVE,
@@ -1912,6 +1916,9 @@ class CMS_Module_Info_Controller extends CMS_Controller
             'public'=>$this->PUBLIC,
             'subsite_allowed'=>$this->SUBSITE_ALLOWED,
         );
+        if($dont_fetch){
+            return $result;
+        }
         echo json_encode($result);
     }
 

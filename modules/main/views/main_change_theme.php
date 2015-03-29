@@ -37,6 +37,7 @@
         }
         echo '<div class="caption">';
         echo '<h4>'.$theme['path'].'</h4>';
+        echo '<p>'.$theme['description'].'</p>';
 
         if($theme['used']){
             echo '<p>Theme is in use</p>';

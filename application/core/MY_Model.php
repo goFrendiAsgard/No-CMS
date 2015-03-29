@@ -2242,15 +2242,45 @@ class CMS_Base_Model extends CI_Model
                 }
             }
             $module_name = $this->cms_module_name($directory);
+            // get data from _info controller
+            $this->cms_override_module_path($directory);
+            // initialize the controller
+            $content = '';
+            if(!class_exists('_Info_Controller_'.$directory)){
+                $content = file_get_contents(FCPATH.'modules/'.$directory.'/controllers/_info.php');
+                $content = preg_replace('/class( *)_info/i', 'class _Info_Controller_'.$directory, $content);
+                $content = str_replace('<?php', '', $content);
+                $content = str_replace('?>', '', $content);
+                $content = $content.PHP_EOL;
+            }
+            $content .= '$controller = new _Info_Controller_'.$directory.'();';
+            eval($content);
+            // show the controller
+            $module_info     = $controller->status(TRUE);
+            $module_name     = $module_info['name'];
+            $active          = $module_info['active'];
+            $description     = $module_info['description'];
+            $dependencies    = $module_info['dependencies'];
+            $old             = $module_info['old'];
+            $current_version = $module_info['version'];
+            $old_version     = $module_info['old_version'];
+            $this->cms_reset_overriden_module_path();
+            // searching
             if($keyword === NULL || ($keyword !== NULL && (
                 stripos($module_name, $keyword) !== FALSE ||
-                stripos($directory, $keyword) !== FALSE
+                stripos($directory, $keyword) !== FALSE ||
+                stripos($description, $keyword) !== FALSE
             ))){
                 $module[]    = array(
-                    "module_name" => $module_name,
-                    "module_path" => $directory,
-                    "active" => $module_name != "",
-                    "controllers" => $module_controllers,
+                    'module_name'       => $module_name,
+                    'module_path'       => $directory,
+                    'active'            => $active,
+                    'description'       => $description,
+                    'dependencies'      => $dependencies,
+                    'old'               => $old,
+                    'old_version'       => $old_version,
+                    'current_version'   => $current_version,
+                    'controllers'       => $module_controllers,
                 );
             }
         }
@@ -2386,9 +2416,16 @@ class CMS_Base_Model extends CI_Model
 
             $layout_name = $directory;
 
-            if($keyword === NULL  || ($keyword !== NULL && stripos($directory, $keyword)!== FAlSE)){
+            $description = '';
+            $description_file = FCPATH.'themes/'.$directory.'/description.txt';
+            if(file_exists($description_file)){
+                $description = file_get_contents($description_file);
+            }
+
+            if($keyword === NULL  || ($keyword !== NULL && (stripos($directory, $keyword)!== FAlSE || stripos($description, $keyword) !== FALSE))){
                 $themes[] = array(
                     "path" => $directory,
+                    "description" => $description,
                     "used" => $this->cms_get_config('site_theme') == $layout_name
                 );
             }
