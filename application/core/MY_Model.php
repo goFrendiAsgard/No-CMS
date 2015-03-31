@@ -958,7 +958,7 @@ class CMS_Base_Model extends CI_Model
                                         __adjust_thumbnail_submenu();
                                     }
                                 });
-                            }, 1000);
+                            }, 300000);
                         });
                     </script>
                 ';

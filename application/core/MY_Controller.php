@@ -1209,7 +1209,7 @@ class CMS_Controller extends MX_Controller
                         }
                     }
                 });
-            },60000);';
+            },300000);';
             $asset->add_internal_js($login_code);
             //$login_code .= '</script>';
             //$this->template->append_js($login_code);
