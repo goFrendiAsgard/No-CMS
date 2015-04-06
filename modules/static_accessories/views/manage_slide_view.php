@@ -16,7 +16,7 @@
 <?php
 }
 
-$asset = new CMS_Asset(); 
+$asset = new Cms_asset(); 
 foreach($css_files as $file){
 	$asset->add_css($file);
 } 

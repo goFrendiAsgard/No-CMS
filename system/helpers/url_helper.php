@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -109,8 +120,7 @@ if ( ! function_exists('uri_string'))
 	 */
 	function uri_string()
 	{
-		$CI =& get_instance();
-		return $CI->uri->uri_string();
+		return get_instance()->uri->uri_string();
 	}
 }
 
@@ -127,8 +137,7 @@ if ( ! function_exists('index_page'))
 	 */
 	function index_page()
 	{
-		$CI =& get_instance();
-		return $CI->config->item('index_page');
+		return get_instance()->config->item('index_page');
 	}
 }
 
@@ -150,14 +159,9 @@ if ( ! function_exists('anchor'))
 	{
 		$title = (string) $title;
 
-		if ( ! is_array($uri))
-		{
-			$site_url = preg_match('#^(\w+:)?//#i', $uri) ? $uri : site_url($uri);
-		}
-		else
-		{
-			$site_url = site_url($uri);
-		}
+		$site_url = is_array($uri)
+			? site_url($uri)
+			: preg_match('#^(\w+:)?//#i', $uri) ? $uri : site_url($uri);
 
 		if ($title === '')
 		{
@@ -215,8 +219,12 @@ if ( ! function_exists('anchor_popup'))
 			$window_name = $attributes['window_name'];
 			unset($attributes['window_name']);
 		}
+		else
+		{
+			$window_name = '_blank';
+		}
 
-		foreach (array('width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0') as $key => $val)
+		foreach (array('width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'menubar' => 'no', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0') as $key => $val)
 		{
 			$atts[$key] = isset($attributes[$key]) ? $attributes[$key] : $val;
 			unset($attributes[$key]);
@@ -344,23 +352,24 @@ if ( ! function_exists('safe_mailto'))
 		$x[] = '<'; $x[] = '/'; $x[] = 'a'; $x[] = '>';
 
 		$x = array_reverse($x);
-		ob_start();
 
-	?><script type="text/javascript">
-	//<![CDATA[
-	var l=new Array();
-	<?php
-	for ($i = 0, $c = count($x); $i < $c; $i++) { ?>l[<?php echo $i; ?>]='<?php echo $x[$i]; ?>';<?php } ?>
+		$output = "<script type=\"text/javascript\">\n"
+			."\t//<![CDATA[\n"
+			."\tvar l=new Array();\n";
 
-	for (var i = l.length-1; i >= 0; i=i-1){
-	if (l[i].substring(0, 1) === '|') document.write("&#"+unescape(l[i].substring(1))+";");
-	else document.write(unescape(l[i]));}
-	//]]>
-	</script><?php
+		for ($i = 0, $c = count($x); $i < $c; $i++)
+		{
+			$output .= "\tl[".$i."] = '".$x[$i]."';\n";
+		}
 
-		$buffer = ob_get_contents();
-		ob_end_clean();
-		return $buffer;
+		$output .= "\n\tfor (var i = l.length-1; i >= 0; i=i-1) {\n"
+			."\t\tif (l[i].substring(0, 1) === '|') document.write(\"&#\"+unescape(l[i].substring(1))+\";\");\n"
+			."\t\telse document.write(unescape(l[i]));\n"
+			."\t}\n"
+			."\t//]]>\n"
+			.'</script>';
+
+		return $output;
 	}
 }
 
@@ -482,11 +491,11 @@ if ( ! function_exists('url_title'))
 		$q_separator = preg_quote($separator, '#');
 
 		$trans = array(
-				'&.+?;'			=> '',
-				'[^a-z0-9 _-]'		=> '',
-				'\s+'			=> $separator,
-				'('.$q_separator.')+'	=> $separator
-			);
+			'&.+?;'			=> '',
+			'[^a-z0-9 _-]'		=> '',
+			'\s+'			=> $separator,
+			'('.$q_separator.')+'	=> $separator
+		);
 
 		$str = strip_tags($str);
 		foreach ($trans as $key => $val)
@@ -534,11 +543,16 @@ if ( ! function_exists('redirect'))
 		}
 		elseif ($method !== 'refresh' && (empty($code) OR ! is_numeric($code)))
 		{
-			// Reference: http://en.wikipedia.org/wiki/Post/Redirect/Get
-			$code = (isset($_SERVER['REQUEST_METHOD'], $_SERVER['SERVER_PROTOCOL'])
-					&& $_SERVER['REQUEST_METHOD'] === 'POST'
-					&& $_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.1')
-				? 303 : 302;
+			if (isset($_SERVER['SERVER_PROTOCOL'], $_SERVER['REQUEST_METHOD']) && $_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.1')
+			{
+				$code = ($_SERVER['REQUEST_METHOD'] !== 'GET')
+					? 303	// reference: http://en.wikipedia.org/wiki/Post/Redirect/Get
+					: 307;
+			}
+			else
+			{
+				$code = 302;
+			}
 		}
 
 		switch ($method)
@@ -553,6 +567,3 @@ if ( ! function_exists('redirect'))
 		exit;
 	}
 }
-
-/* End of file url_helper.php */
-/* Location: ./system/helpers/url_helper.php */

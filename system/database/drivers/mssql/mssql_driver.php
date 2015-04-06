@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.3.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -98,8 +109,8 @@ class CI_DB_mssql_driver extends CI_DB {
 	public function db_connect($persistent = FALSE)
 	{
 		$this->conn_id = ($persistent)
-				? @mssql_pconnect($this->hostname, $this->username, $this->password)
-				: @mssql_connect($this->hostname, $this->username, $this->password);
+				? mssql_pconnect($this->hostname, $this->username, $this->password)
+				: mssql_connect($this->hostname, $this->username, $this->password);
 
 		if ( ! $this->conn_id)
 		{
@@ -130,18 +141,6 @@ class CI_DB_mssql_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Persistent database connection
-	 *
-	 * @return	resource
-	 */
-	public function db_pconnect()
-	{
-		return $this->db_connect(TRUE);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Select the database
 	 *
 	 * @param	string	$database
@@ -154,9 +153,9 @@ class CI_DB_mssql_driver extends CI_DB {
 			$database = $this->database;
 		}
 
-		// Note: The brackets are required in the event that the DB name
-		// contains reserved characters
-		if (@mssql_select_db($this->escape_identifiers($database), $this->conn_id))
+		// Note: Escaping is required in the event that the DB name
+		// contains reserved characters.
+		if (mssql_select_db('['.$database.']', $this->conn_id))
 		{
 			$this->database = $database;
 			return TRUE;
@@ -175,7 +174,7 @@ class CI_DB_mssql_driver extends CI_DB {
 	 */
 	protected function _execute($sql)
 	{
-		return @mssql_query($sql, $this->conn_id);
+		return mssql_query($sql, $this->conn_id);
 	}
 
 	// --------------------------------------------------------------------
@@ -247,7 +246,7 @@ class CI_DB_mssql_driver extends CI_DB {
 	 */
 	public function affected_rows()
 	{
-		return @mssql_rows_affected($this->conn_id);
+		return mssql_rows_affected($this->conn_id);
 	}
 
 	// --------------------------------------------------------------------
@@ -280,7 +279,7 @@ class CI_DB_mssql_driver extends CI_DB {
 	 */
 	protected function _db_set_charset($charset)
 	{
-		return (@ini_set('mssql.charset', $charset) !== FALSE);
+		return (ini_set('mssql.charset', $charset) !== FALSE);
 	}
 
 	// --------------------------------------------------------------------
@@ -311,7 +310,7 @@ class CI_DB_mssql_driver extends CI_DB {
 			.' FROM '.$this->escape_identifiers('sysobjects')
 			.' WHERE '.$this->escape_identifiers('type')." = 'U'";
 
-		if ($prefix_limit !== FALSE AND $this->dbprefix !== '')
+		if ($prefix_limit !== FALSE && $this->dbprefix !== '')
 		{
 			$sql .= ' AND '.$this->escape_identifiers('name')." LIKE '".$this->escape_like_str($this->dbprefix)."%' "
 				.sprintf($this->_like_escape_str, $this->_like_escape_chr);
@@ -345,13 +344,8 @@ class CI_DB_mssql_driver extends CI_DB {
 	 * @param	string	$table
 	 * @return	array
 	 */
-	public function field_data($table = '')
+	public function field_data($table)
 	{
-		if ($table === '')
-		{
-			return ($this->db_debug) ? $this->display_error('db_field_param_missing') : FALSE;
-		}
-
 		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, COLUMN_DEFAULT
 			FROM INFORMATION_SCHEMA.Columns
 			WHERE UPPER(TABLE_NAME) = '.$this->escape(strtoupper($table));
@@ -531,10 +525,7 @@ class CI_DB_mssql_driver extends CI_DB {
 	 */
 	protected function _close()
 	{
-		@mssql_close($this->conn_id);
+		mssql_close($this->conn_id);
 	}
 
 }
-
-/* End of file mssql_driver.php */
-/* Location: ./system/database/drivers/mssql/mssql_driver.php */

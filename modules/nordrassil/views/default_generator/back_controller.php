@@ -5,7 +5,7 @@
  *
  * @author No-CMS Module Generator
  */
-class {{ controller_name }} extends CMS_Priv_Strict_Controller {
+class {{ controller_name }} extends CMS_Secure_Controller {
 
     protected $URL_MAP = array();
 
@@ -191,7 +191,7 @@ class {{ controller_name }} extends CMS_Priv_Strict_Controller {
 
         // prepare css and js, add them to config
         $config = array();
-        $asset = new CMS_Asset();
+        $asset = new Cms_asset();
         foreach($output->css_files as $file){
             $asset->add_css($file);
         }

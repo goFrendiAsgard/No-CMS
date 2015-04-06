@@ -4,7 +4,7 @@
  *
  * @author No-CMS Module Generator
  */
-class {{ main_controller }} extends CMS_Priv_Strict_Controller {
+class {{ main_controller }} extends CMS_Secure_Controller {
 
     protected function do_override_url_map($URL_MAP){
         $module_path = $this->cms_module_path();

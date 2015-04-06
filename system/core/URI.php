@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -44,113 +55,89 @@ class CI_URI {
 	 *
 	 * @var	array
 	 */
-	public $keyval =	array();
+	public $keyval = array();
 
 	/**
 	 * Current URI string
 	 *
 	 * @var	string
 	 */
-	public $uri_string;
+	public $uri_string = '';
 
 	/**
 	 * List of URI segments
-	 *
-	 * @var	array
-	 */
-	public $segments =	array();
-
-	/**
-	 * Re-indexed list of URI segments
 	 *
 	 * Starts at 1 instead of 0.
 	 *
 	 * @var	array
 	 */
-	public $rsegments =	array();
+	public $segments = array();
+
+	/**
+	 * List of routed URI segments
+	 *
+	 * Starts at 1 instead of 0.
+	 *
+	 * @var	array
+	 */
+	public $rsegments = array();
+
+	/**
+	 * Permitted URI chars
+	 *
+	 * PCRE character group allowed in URI segments
+	 *
+	 * @var	string
+	 */
+	protected $_permitted_uri_chars;
 
 	/**
 	 * Class constructor
-	 *
-	 * Simply globalizes the $RTR object. The front
-	 * loads the Router class early on so it's not available
-	 * normally as other classes are.
 	 *
 	 * @return	void
 	 */
 	public function __construct()
 	{
 		$this->config =& load_class('Config', 'core');
-		log_message('debug', 'URI Class Initialized');
-	}
 
-	// --------------------------------------------------------------------
-
-	/**
-	 * Fetch URI String
-	 *
-	 * @used-by	CI_Router
-	 * @return	void
-	 */
-	public function _fetch_uri_string()
-	{
-		$protocol = strtoupper($this->config->item('uri_protocol'));
-
-		if ($protocol === 'AUTO')
+		// If query strings are enabled, we don't need to parse any segments.
+		// However, they don't make sense under CLI.
+		if (is_cli() OR $this->config->item('enable_query_strings') !== TRUE)
 		{
-			// Is the request coming from the command line?
+			$this->_permitted_uri_chars = $this->config->item('permitted_uri_chars');
+
+			// If it's a CLI request, ignore the configuration
 			if (is_cli())
 			{
-				$this->_set_uri_string($this->_parse_argv());
-				return;
+				$uri = $this->_parse_argv();
 			}
-
-			// Is there a PATH_INFO variable? This should be the easiest solution.
-			if (isset($_SERVER['PATH_INFO']))
+			else
 			{
-				$this->_set_uri_string($_SERVER['PATH_INFO']);
-				return;
+				$protocol = $this->config->item('uri_protocol');
+				empty($protocol) && $protocol = 'REQUEST_URI';
+
+				switch ($protocol)
+				{
+					case 'AUTO': // For BC purposes only
+					case 'REQUEST_URI':
+						$uri = $this->_parse_request_uri();
+						break;
+					case 'QUERY_STRING':
+						$uri = $this->_parse_query_string();
+						break;
+					case 'PATH_INFO':
+					default:
+						$uri = isset($_SERVER[$protocol])
+							? $_SERVER[$protocol]
+							: $this->_parse_request_uri();
+						break;
+				}
 			}
 
-			// Let's try REQUEST_URI then, this will work in most situations
-			if (($uri = $this->_parse_request_uri()) !== '')
-			{
-				$this->_set_uri_string($uri);
-				return;
-			}
-
-			// No REQUEST_URI either?... What about QUERY_STRING?
-			if (($uri = $this->_parse_query_string()) !== '')
-			{
-				$this->_set_uri_string($uri);
-				return;
-			}
-
-			// As a last ditch effort let's try using the $_GET array
-			if (is_array($_GET) && count($_GET) === 1 && trim(key($_GET), '/') !== '')
-			{
-				$this->_set_uri_string(key($_GET));
-				return;
-			}
-
-			// We've exhausted all our options...
-			$this->uri_string = '';
-			return;
+			$this->_set_uri_string($uri);
 		}
 
-		if ($protocol === 'CLI')
-		{
-			$this->_set_uri_string($this->_parse_argv());
-			return;
-		}
-		elseif (method_exists($this, ($method = '_parse_'.strtolower($protocol))))
-		{
-			$this->_set_uri_string($this->$method());
-			return;
-		}
-
-		$uri = isset($_SERVER[$protocol]) ? $_SERVER[$protocol] : @getenv($protocol);
-		$this->_set_uri_string($uri);
+		log_message('info', 'URI Class Initialized');
 	}
 
 	// --------------------------------------------------------------------
@@ -165,6 +152,36 @@ class CI_URI {
 	{
 		// Filter out control characters and trim slashes
 		$this->uri_string = trim(remove_invisible_characters($str, FALSE), '/');
+
+		if ($this->uri_string !== '')
+		{
+			// Remove the URL suffix, if present
+			if (($suffix = (string) $this->config->item('url_suffix')) !== '')
+			{
+				$slen = strlen($suffix);
+
+				if (substr($this->uri_string, -$slen) === $suffix)
+				{
+					$this->uri_string = substr($this->uri_string, 0, -$slen);
+				}
+			}
+
+			$this->segments[0] = NULL;
+			// Populate the segments array
+			foreach (explode('/', trim($this->uri_string, '/')) as $val)
+			{
+				$val = trim($val);
+				// Filter segments for security
+				$this->filter_uri($val);
+
+				if ($val !== '')
+				{
+					$this->segments[] = $val;
+				}
+			}
+
+			unset($this->segments[0]);
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -175,7 +192,6 @@ class CI_URI {
 	 * Will parse REQUEST_URI and automatically detect the URI from it,
 	 * while fixing the query string if necessary.
 	 *
-	 * @used-by	CI_URI::_fetch_uri_string()
 	 * @return	string
 	 */
 	protected function _parse_request_uri()
@@ -187,15 +203,18 @@ class CI_URI {
 
 		$uri = parse_url($_SERVER['REQUEST_URI']);
 		$query = isset($uri['query']) ? $uri['query'] : '';
-		$uri = isset($uri['path']) ? rawurldecode($uri['path']) : '';
+		$uri = isset($uri['path']) ? $uri['path'] : '';
 
-		if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0)
+		if (isset($_SERVER['SCRIPT_NAME'][0]))
 		{
-			$uri = (string) substr($uri, strlen($_SERVER['SCRIPT_NAME']));
-		}
-		elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0)
-		{
-			$uri = (string) substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
+			if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0)
+			{
+				$uri = (string) substr($uri, strlen($_SERVER['SCRIPT_NAME']));
+			}
+			elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0)
+			{
+				$uri = (string) substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
+			}
 		}
 
 		// This section ensures that even on servers that require the URI to be in the query string (Nginx) a correct
@@ -203,7 +222,7 @@ class CI_URI {
 		if (trim($uri, '/') === '' && strncmp($query, '/', 1) === 0)
 		{
 			$query = explode('?', $query, 2);
-			$uri = rawurldecode($query[0]);
+			$uri = $query[0];
 			$_SERVER['QUERY_STRING'] = isset($query[1]) ? $query[1] : '';
 		}
 		else
@@ -225,36 +244,10 @@ class CI_URI {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Remove relative directory (../) and multi slashes (///)
-	 *
-	 * Do some final cleaning of the URI and return it, currently only used in self::_parse_request_uri()
-	 *
-	 * @param	string	$url
-	 * @return	string
-	 */
-	protected function _remove_relative_directory($uri)
-	{
-		$uris = array();
-		$tok = strtok($uri, '/');
-		while ($tok !== FALSE)
-		{
-			if (( ! empty($tok) OR $tok === '0') && $tok !== '..')
-			{
-				$uris[] = $tok;
-			}
-			$tok = strtok('/');
-		}
-		return implode('/', $uris);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Parse QUERY_STRING
 	 *
 	 * Will parse QUERY_STRING and automatically detect the URI from it.
 	 *
-	 * @used-by	CI_URI::_fetch_uri_string()
 	 * @return	string
 	 */
 	protected function _parse_query_string()
@@ -269,7 +262,7 @@ class CI_URI {
 		{
 			$uri = explode('?', $uri, 2);
 			$_SERVER['QUERY_STRING'] = isset($uri[1]) ? $uri[1] : '';
-			$uri = rawurldecode($uri[0]);
+			$uri = $uri[0];
 		}
 
 		parse_str($_SERVER['QUERY_STRING'], $_GET);
@@ -295,104 +288,45 @@ class CI_URI {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Remove relative directory (../) and multi slashes (///)
+	 *
+	 * Do some final cleaning of the URI and return it, currently only used in self::_parse_request_uri()
+	 *
+	 * @param	string	$url
+	 * @return	string
+	 */
+	protected function _remove_relative_directory($uri)
+	{
+		$uris = array();
+		$tok = strtok($uri, '/');
+		while ($tok !== FALSE)
+		{
+			if (( ! empty($tok) OR $tok === '0') && $tok !== '..')
+			{
+				$uris[] = $tok;
+			}
+			$tok = strtok('/');
+		}
+
+		return implode('/', $uris);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Filter URI
 	 *
 	 * Filters segments for malicious characters.
 	 *
-	 * @used-by	CI_Router
 	 * @param	string	$str
-	 * @return	string
-	 */
-	public function _filter_uri($str)
-	{
-		if ($str !== '' && $this->config->item('permitted_uri_chars') != '' && $this->config->item('enable_query_strings') === FALSE)
-		{
-			// preg_quote() in PHP 5.3 escapes -, so the str_replace() and addition of - to preg_quote() is to maintain backwards
-			// compatibility as many are unaware of how characters in the permitted_uri_chars will be parsed as a regex pattern
-			if ( ! preg_match('|^['.str_replace(array('\\-', '\-'), '-', preg_quote($this->config->item('permitted_uri_chars'), '-')).']+$|i', $str))
-			{
-				show_error('The URI you submitted has disallowed characters.', 400);
-			}
-		}
-
-		// Convert programatic characters to entities and return
-		return str_replace(
-					array('$',     '(',     ')',     '%28',   '%29'), // Bad
-					array('&#36;', '&#40;', '&#41;', '&#40;', '&#41;'), // Good
-					$str);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Remove URL suffix
-	 *
-	 * Removes the suffix from the URL if needed.
-	 *
-	 * @used-by	CI_Router
 	 * @return	void
 	 */
-	public function _remove_url_suffix()
+	public function filter_uri(&$str)
 	{
-		$suffix = (string) $this->config->item('url_suffix');
-
-		if ($suffix === '')
+		if ( ! empty($str) && ! empty($this->_permitted_uri_chars) && ! preg_match('/^['.$this->_permitted_uri_chars.']+$/i'.(UTF8_ENABLED ? 'u' : ''), $str))
 		{
-			return;
+			show_error('The URI you submitted has disallowed characters.', 400);
 		}
-
-		$slen = strlen($suffix);
-
-		if (substr($this->uri_string, -$slen) === $suffix)
-		{
-			$this->uri_string = substr($this->uri_string, 0, -$slen);
-		}
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Explode URI segments
-	 *
-	 * The individual segments will be stored in the $this->segments array.
-	 *
-	 * @see		CI_URI::$segments
-	 * @used-by	CI_Router
-	 * @return	void
-	 */
-	public function _explode_segments()
-	{
-		foreach (explode('/', preg_replace('|/*(.+?)/*$|', '\\1', $this->uri_string)) as $val)
-		{
-			// Filter segments for security
-			$val = trim($this->_filter_uri($val));
-
-			if ($val !== '')
-			{
-				$this->segments[] = $val;
-			}
-		}
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Re-index Segments
-	 *
-	 * Re-indexes the CI_URI::$segment array so that it starts at 1 rather
-	 * than 0. Doing so makes it simpler to use methods like
-	 * CI_URI::segment(n) since there is a 1:1 relationship between the
-	 * segment array and the actual segments.
-	 *
-	 * @used-by	CI_Router
-	 * @return	void
-	 */
-	public function _reindex_segments()
-	{
-		array_unshift($this->segments, NULL);
-		array_unshift($this->rsegments, NULL);
-		unset($this->segments[0]);
-		unset($this->rsegments[0]);
 	}
 
 	// --------------------------------------------------------------------
@@ -701,17 +635,7 @@ class CI_URI {
 	 */
 	public function ruri_string()
 	{
-		global $RTR;
-
-		if (($dir = $RTR->directory) === '/')
-		{
-			$dir = '';
-		}
-
-		return $dir.implode('/', $this->rsegment_array());
+		return ltrim(load_class('Router', 'core')->directory, '/').implode('/', $this->rsegments);
 	}
 
 }
-
-/* End of file URI.php */
-/* Location: ./system/core/URI.php */

@@ -4,7 +4,7 @@
  *
  * @author No-CMS Module Generator
  */
-class _Info extends CMS_Module_Info_Controller {    
+class _Info extends CMS_Module {    
 
     // OVERRIDE THIS FUNCTION TO PROVIDE "Module Setting" FEATURE
     public function setting(){

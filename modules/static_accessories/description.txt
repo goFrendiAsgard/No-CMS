@@ -1,0 +1,9 @@
+{
+    "dependencies"    : [],
+    "name"            : "gofrendi.noCMS.static_accessories",
+    "description"     : "This module contains several widgets",
+    "version"         : "0.0.1",
+    "activate"        : "info/activate",
+    "deactivate"      : "info/deactivate",
+    "upgrade"         : "info/upgrade"
+}

@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 2.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 2.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -62,25 +73,13 @@ class CI_Cache_file extends CI_Driver {
 	/**
 	 * Fetch from cache
 	 *
-	 * @param	mixed	unique key id
-	 * @return	mixed	data on success/false on failure
+	 * @param	string	$id	Cache ID
+	 * @return	mixed	Data on success, FALSE on failure
 	 */
 	public function get($id)
 	{
-		if ( ! file_exists($this->_cache_path.$id))
-		{
-			return FALSE;
-		}
-
-		$data = unserialize(file_get_contents($this->_cache_path.$id));
-
-		if ($data['ttl'] > 0 && time() > $data['time'] + $data['ttl'])
-		{
-			unlink($this->_cache_path.$id);
-			return FALSE;
-		}
-
-		return $data['data'];
+		$data = $this->_get($id);
+		return is_array($data) ? $data['data'] : FALSE;
 	}
 
 	// ------------------------------------------------------------------------
@@ -88,13 +87,13 @@ class CI_Cache_file extends CI_Driver {
 	/**
 	 * Save into cache
 	 *
-	 * @param	string	unique key
-	 * @param	mixed	data to store
-	 * @param	int	length of time (in seconds) the cache is valid
-	 *				- Default is 60 seconds
-	 * @return	bool	true on success/false on failure
+	 * @param	string	$id	Cache ID
+	 * @param	mixed	$data	Data to store
+	 * @param	int	$ttl	Time to live in seconds
+	 * @param	bool	$raw	Whether to store the raw value (unused)
+	 * @return	bool	TRUE on success, FALSE on failure
 	 */
-	public function save($id, $data, $ttl = 60)
+	public function save($id, $data, $ttl = 60, $raw = FALSE)
 	{
 		$contents = array(
 			'time'		=> time(),
@@ -104,7 +103,7 @@ class CI_Cache_file extends CI_Driver {
 
 		if (write_file($this->_cache_path.$id, serialize($contents)))
 		{
-			@chmod($this->_cache_path.$id, 0660);
+			chmod($this->_cache_path.$id, 0640);
 			return TRUE;
 		}
 
@@ -122,6 +121,62 @@ class CI_Cache_file extends CI_Driver {
 	public function delete($id)
 	{
 		return file_exists($this->_cache_path.$id) ? unlink($this->_cache_path.$id) : FALSE;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Increment a raw value
+	 *
+	 * @param	string	$id	Cache ID
+	 * @param	int	$offset	Step/value to add
+	 * @return	New value on success, FALSE on failure
+	 */
+	public function increment($id, $offset = 1)
+	{
+		$data = $this->_get($id);
+
+		if ($data === FALSE)
+		{
+			$data = array('data' => 0, 'ttl' => 60);
+		}
+		elseif ( ! is_int($data['data']))
+		{
+			return FALSE;
+		}
+
+		$new_value = $data['data'] + $offset;
+		return $this->save($id, $new_value, $data['ttl'])
+			? $new_value
+			: FALSE;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Decrement a raw value
+	 *
+	 * @param	string	$id	Cache ID
+	 * @param	int	$offset	Step/value to reduce by
+	 * @return	New value on success, FALSE on failure
+	 */
+	public function decrement($id, $offset = 1)
+	{
+		$data = $this->_get($id);
+
+		if ($data === FALSE)
+		{
+			$data = array('data' => 0, 'ttl' => 60);
+		}
+		elseif ( ! is_int($data['data']))
+		{
+			return FALSE;
+		}
+
+		$new_value = $data['data'] - $offset;
+		return $this->save($id, $new_value, $data['ttl'])
+			? $new_value
+			: FALSE;
 	}
 
 	// ------------------------------------------------------------------------
@@ -200,7 +255,32 @@ class CI_Cache_file extends CI_Driver {
 		return is_really_writable($this->_cache_path);
 	}
 
-}
+	// ------------------------------------------------------------------------
 
-/* End of file Cache_file.php */
-/* Location: ./system/libraries/Cache/drivers/Cache_file.php */
+	/**
+	 * Get all data
+	 *
+	 * Internal method to get all the relevant data about a cache item
+	 *
+	 * @param	string	$id	Cache ID
+	 * @return	mixed	Data array on success or FALSE on failure
+	 */
+	protected function _get($id)
+	{
+		if ( ! file_exists($this->_cache_path.$id))
+		{
+			return FALSE;
+		}
+
+		$data = unserialize(file_get_contents($this->_cache_path.$id));
+
+		if ($data['ttl'] > 0 && time() > $data['time'] + $data['ttl'])
+		{
+			unlink($this->_cache_path.$id);
+			return FALSE;
+		}
+
+		return $data;
+	}
+
+}

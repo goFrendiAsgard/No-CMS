@@ -25,7 +25,7 @@
         $module = $modules[$i];
         $str_status = $module['active']?'module_active':'module_not_active';
         echo '<div class="row well">';
-        echo '<div class="col-sm-4 module_icon">';
+        echo '<div class="col-sm-3 module_icon">';
         echo '<b><i>'.$module['module_path'].'</i></b><br /><br />';
         $image_path = BASEPATH.'../modules/'.$module['module_path'].'/icon.png';
         if(file_exists($image_path)){
@@ -36,22 +36,23 @@
         }
         echo '  <br />';
         if($module['active']){
-            if($module['old']){
+            if($module['old'] && $module['upgrade_link'] != ''){
                 $status = '{{ language:Need upgrade }}';
-                echo '  <a id="module_'.$i.'_upgrade" class="btn btn-warning" href="'.site_url($module['module_path'].'/_info/upgrade').'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
+                echo '  <a id="module_'.$i.'_upgrade" class="btn btn-warning" href="'.$module['upgrade_link'].'"><i class="icon-arrow-up"></i>&nbsp;{{ language:Upgrade }}</a>';
             }else{
                 $status = '{{ language:Active }}';
             }
-            echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger" href="'.site_url($module['module_path'].'/_info/deactivate').'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
-            echo '  <a id="module_'.$i.'_setting" class="btn btn-warning" href="'.site_url($module['module_path'].'/_info/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
-        
+            if($module['deactivate_link'] != ''){
+                echo '  <a id="module_'.$i.'_deactivate" class="btn btn-danger" href="'.$module['deactivate_link'].'"><i class="icon-remove"></i>&nbsp;{{ language:Deactivate }}</a>';
+            }
         }else{
             $status = '{{ language:Inactive }}';
-            echo '  <a id="module_'.$i.'_activate" class="btn btn-success" href="'.site_url($module['module_path'].'/_info/activate').'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
-            echo '  <a id="module_'.$i.'_setting" class="btn btn-warning" href="'.site_url($module['module_path'].'/_info/setting').'"><i class="icon-wrench"></i>&nbsp;{{ language:Settings }}</a>';
+            if($module['activate_link'] != ''){
+                echo '  <a id="module_'.$i.'_activate" class="btn btn-success" href="'.$module['activate_link'].'"><i class="icon-ok"></i>&nbsp;{{ language:Activate }}</a>';
+            }
         }
         echo '</div>';
-        echo '<div class="col-sm-8">';
+        echo '<div class="col-sm-9">';
         echo '  <br />';
         echo '  <div id="div_module_'.$i.'_info" class="col-sm-12">';
         echo '      ('.$module['module_name'].')<br />';

@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -58,21 +69,21 @@ class CI_Output {
 	 *
 	 * @var	array
 	 */
-	public $headers =	array();
+	public $headers = array();
 
 	/**
 	 * List of mime types
 	 *
 	 * @var	array
 	 */
-	public $mimes =		array();
+	public $mimes =	array();
 
 	/**
 	 * Mime-type for the current page
 	 *
 	 * @var	string
 	 */
-	protected $mime_type	= 'text/html';
+	protected $mime_type = 'text/html';
 
 	/**
 	 * Enable Profiler flag
@@ -82,11 +93,18 @@ class CI_Output {
 	public $enable_profiler = FALSE;
 
 	/**
-	 * zLib output compression flag
+	 * php.ini zlib.output_compression flag
 	 *
 	 * @var	bool
 	 */
-	protected $_zlib_oc =		FALSE;
+	protected $_zlib_oc = FALSE;
+
+	/**
+	 * CI output compression flag
+	 *
+	 * @var	bool
+	 */
+	protected $_compress_output = FALSE;
 
 	/**
 	 * List of profiler sections
@@ -102,7 +120,7 @@ class CI_Output {
 	 *
 	 * @var	bool
 	 */
-	public $parse_exec_vars =	TRUE;
+	public $parse_exec_vars = TRUE;
 
 	/**
 	 * Class constructor
@@ -113,12 +131,17 @@ class CI_Output {
 	 */
 	public function __construct()
 	{
-		$this->_zlib_oc = (bool) @ini_get('zlib.output_compression');
+		$this->_zlib_oc = (bool) ini_get('zlib.output_compression');
+		$this->_compress_output = (
+			$this->_zlib_oc === FALSE
+			&& config_item('compress_output') === TRUE
+			&& extension_loaded('zlib')
+		);
 
 		// Get mime types for later
 		$this->mimes =& get_mimes();
 
-		log_message('debug', 'Output Class Initialized');
+		log_message('info', 'Output Class Initialized');
 	}
 
 	// --------------------------------------------------------------------
@@ -163,15 +186,7 @@ class CI_Output {
 	 */
 	public function append_output($output)
 	{
-		if (empty($this->final_output))
-		{
-			$this->final_output = $output;
-		}
-		else
-		{
-			$this->final_output .= $output;
-		}
-
+		$this->final_output .= $output;
 		return $this;
 	}
 
@@ -239,7 +254,7 @@ class CI_Output {
 		}
 
 		$header = 'Content-Type: '.$mime_type
-			.(empty($charset) ? NULL : '; charset='.$charset);
+			.(empty($charset) ? '' : '; charset='.$charset);
 
 		$this->headers[] = array($header, TRUE);
 		return $this;
@@ -376,7 +391,7 @@ class CI_Output {
 	/**
 	 * Display Output
 	 *
-	 * Processes sends the sends finalized output data to the browser along
+	 * Processes and sends finalized output data to the browser along
 	 * with any server headers and profile data. It also stops benchmark
 	 * timers so the page rendering speed and memory usage can be shown.
 	 *
@@ -389,10 +404,11 @@ class CI_Output {
 	 */
 	public function _display($output = '')
 	{
-		// Note:  We use globals because we can't use $CI =& get_instance()
+		// Note:  We use load_class() because we can't use $CI =& get_instance()
 		// since this function is sometimes called by the caching mechanism,
 		// which happens before the CI super object is available.
-		global $BM, $CFG;
+		$BM =& load_class('Benchmark', 'core');
+		$CFG =& load_class('Config', 'core');
 
 		// Grab the super object if we can.
 		if (class_exists('CI_Controller', FALSE))
@@ -406,14 +422,6 @@ class CI_Output {
 		if ($output === '')
 		{
 			$output =& $this->final_output;
-		}
-
-		// --------------------------------------------------------------------
-
-		// Is minify requested?
-		if ($CFG->item('minify_output') === TRUE)
-		{
-			$output = $this->minify($output, $this->mime_type);
 		}
 
 		// --------------------------------------------------------------------
@@ -436,15 +444,14 @@ class CI_Output {
 		if ($this->parse_exec_vars === TRUE)
 		{
 			$memory	= round(memory_get_usage() / 1024 / 1024, 2).'MB';
-
 			$output = str_replace(array('{elapsed_time}', '{memory_usage}'), array($elapsed, $memory), $output);
 		}
 
 		// --------------------------------------------------------------------
 
 		// Is compression requested?
-		if ($CFG->item('compress_output') === TRUE && $this->_zlib_oc === FALSE
-			&& extension_loaded('zlib')
+		if (isset($CI) // This means that we're not serving a cache file, if we were, it would already be compressed
+			&& $this->_compress_output === TRUE
 			&& isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
 		{
 			ob_start('ob_gzhandler');
@@ -468,8 +475,23 @@ class CI_Output {
 		// simply echo out the data and exit.
 		if ( ! isset($CI))
 		{
+			if ($this->_compress_output === TRUE)
+			{
+				if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
+				{
+					header('Content-Encoding: gzip');
+					header('Content-Length: '.strlen($output));
+				}
+				else
+				{
+					// User agent doesn't support gzip compression,
+					// so we'll have to decompress our cache
+					$output = gzinflate(substr($output, 10, -8));
+				}
+			}
+
 			echo $output;
-			log_message('debug', 'Final output sent to browser');
+			log_message('info', 'Final output sent to browser');
 			log_message('debug', 'Total execution time: '.$elapsed);
 			return;
 		}
@@ -506,7 +528,7 @@ class CI_Output {
 			echo $output; // Send it to the browser!
 		}
 
-		log_message('debug', 'Final output sent to browser');
+		log_message('info', 'Final output sent to browser');
 		log_message('debug', 'Total execution time: '.$elapsed);
 	}
 
@@ -530,29 +552,56 @@ class CI_Output {
 			return;
 		}
 
-		$uri =	$CI->config->item('base_url').
-				$CI->config->item('index_page').
-				$CI->uri->uri_string();
+		$uri = $CI->config->item('base_url')
+			.$CI->config->item('index_page')
+			.$CI->uri->uri_string();
+
+		if ($CI->config->item('cache_query_string') && ! empty($_SERVER['QUERY_STRING']))
+		{
+			$uri .= '?'.$_SERVER['QUERY_STRING'];
+		}
 
 		$cache_path .= md5($uri);
 
-		if ( ! $fp = @fopen($cache_path, FOPEN_WRITE_CREATE_DESTRUCTIVE))
+		if ( ! $fp = @fopen($cache_path, 'w+b'))
 		{
 			log_message('error', 'Unable to write cache file: '.$cache_path);
 			return;
 		}
 
-		$expire = time() + ($this->cache_expiration * 60);
-
-		// Put together our serialized info.
-		$cache_info = serialize(array(
-			'expire'	=> $expire,
-			'headers'	=> $this->headers
-		));
-
 		if (flock($fp, LOCK_EX))
 		{
-			fwrite($fp, $cache_info.'ENDCI--->'.$output);
+			// If output compression is enabled, compress the cache
+			// itself, so that we don't have to do that each time
+			// we're serving it
+			if ($this->_compress_output === TRUE)
+			{
+				$output = gzencode($output);
+
+				if ($this->get_header('content-type') === NULL)
+				{
+					$this->set_content_type($this->mime_type);
+				}
+			}
+
+			$expire = time() + ($this->cache_expiration * 60);
+
+			// Put together our serialized info.
+			$cache_info = serialize(array(
+				'expire'	=> $expire,
+				'headers'	=> $this->headers
+			));
+
+			$output = $cache_info.'ENDCI--->'.$output;
+
+			for ($written = 0, $length = strlen($output); $written < $length; $written += $result)
+			{
+				if (($result = fwrite($fp, substr($output, $written))) === FALSE)
+				{
+					break;
+				}
+			}
+
 			flock($fp, LOCK_UN);
 		}
 		else
@@ -560,13 +609,22 @@ class CI_Output {
 			log_message('error', 'Unable to secure a file lock for file at: '.$cache_path);
 			return;
 		}
+
 		fclose($fp);
-		@chmod($cache_path, FILE_WRITE_MODE);
 
-		log_message('debug', 'Cache file written: '.$cache_path);
+		if (is_int($result))
+		{
+			chmod($cache_path, 0640);
+			log_message('debug', 'Cache file written: '.$cache_path);
 
-		// Send HTTP cache-control headers to browser to match file cache settings.
-		$this->set_cache_header($_SERVER['REQUEST_TIME'], $expire);
+			// Send HTTP cache-control headers to browser to match file cache settings.
+			$this->set_cache_header($_SERVER['REQUEST_TIME'], $expire);
+		}
+		else
+		{
+			@unlink($cache_path);
+			log_message('error', 'Unable to write the complete cache content at: '.$cache_path);
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -586,10 +644,16 @@ class CI_Output {
 		$cache_path = ($CFG->item('cache_path') === '') ? APPPATH.'cache/' : $CFG->item('cache_path');
 
 		// Build the file path. The file name is an MD5 hash of the full URI
-		$uri =	$CFG->item('base_url').$CFG->item('index_page').$URI->uri_string;
+		$uri = $CFG->item('base_url').$CFG->item('index_page').$URI->uri_string;
+
+		if ($CFG->item('cache_query_string') && ! empty($_SERVER['QUERY_STRING']))
+		{
+			$uri .= '?'.$_SERVER['QUERY_STRING'];
+		}
+
 		$filepath = $cache_path.md5($uri);
 
-		if ( ! @file_exists($filepath) OR ! $fp = @fopen($filepath, FOPEN_READ))
+		if ( ! file_exists($filepath) OR ! $fp = @fopen($filepath, 'rb'))
 		{
 			return FALSE;
 		}
@@ -664,6 +728,11 @@ class CI_Output {
 		if (empty($uri))
 		{
 			$uri = $CI->uri->uri_string();
+
+			if ($CI->config->item('cache_query_string') && ! empty($_SERVER['QUERY_STRING']))
+			{
+				$uri .= '?'.$_SERVER['QUERY_STRING'];
+			}
 		}
 
 		$cache_path .= md5($CI->config->item('base_url').$CI->config->item('index_page').$uri);
@@ -701,213 +770,10 @@ class CI_Output {
 		else
 		{
 			header('Pragma: public');
-			header('Cache-Control: max-age=' . $max_age . ', public');
+			header('Cache-Control: max-age='.$max_age.', public');
 			header('Expires: '.gmdate('D, d M Y H:i:s', $expiration).' GMT');
 			header('Last-modified: '.gmdate('D, d M Y H:i:s', $last_modified).' GMT');
 		}
 	}
 
-	// --------------------------------------------------------------------
-
-	/**
-	 * Minify
-	 *
-	 * Reduce excessive size of HTML/CSS/JavaScript content.
-	 *
-	 * @param	string	$output	Output to minify
-	 * @param	string	$type	Output content MIME type
-	 * @return	string	Minified output
-	 */
-	public function minify($output, $type = 'text/html')
-	{
-		switch ($type)
-		{
-			case 'text/html':
-
-				if (($size_before = strlen($output)) === 0)
-				{
-					return '';
-				}
-
-				// Find all the <pre>,<code>,<textarea>, and <javascript> tags
-				// We'll want to return them to this unprocessed state later.
-				preg_match_all('{<pre.+</pre>}msU', $output, $pres_clean);
-				preg_match_all('{<code.+</code>}msU', $output, $codes_clean);
-				preg_match_all('{<textarea.+</textarea>}msU', $output, $textareas_clean);
-				preg_match_all('{<script.+</script>}msU', $output, $javascript_clean);
-
-				// Minify the CSS in all the <style> tags.
-				preg_match_all('{<style.+</style>}msU', $output, $style_clean);
-				foreach ($style_clean[0] as $s)
-				{
-					$output = str_replace($s, $this->_minify_js_css($s, 'css', TRUE), $output);
-				}
-
-				// Minify the javascript in <script> tags.
-				foreach ($javascript_clean[0] as $s)
-				{
-					$javascript_mini[] = $this->_minify_js_css($s, 'js', TRUE);
-				}
-
-				// Replace multiple spaces with a single space.
-				$output = preg_replace('!\s{2,}!', ' ', $output);
-
-				// Remove comments (non-MSIE conditionals)
-				$output = preg_replace('{\s*<!--[^\[<>].*(?<!!)-->\s*}msU', '', $output);
-
-				// Remove spaces around block-level elements.
-				$output = preg_replace('/\s*(<\/?(html|head|title|meta|script|link|style|body|table|thead|tbody|tfoot|tr|th|td|h[1-6]|div|p|br)[^>]*>)\s*/is', '$1', $output);
-
-				// Replace mangled <pre> etc. tags with unprocessed ones.
-
-				if ( ! empty($pres_clean))
-				{
-					preg_match_all('{<pre.+</pre>}msU', $output, $pres_messed);
-					$output = str_replace($pres_messed[0], $pres_clean[0], $output);
-				}
-
-				if ( ! empty($codes_clean))
-				{
-					preg_match_all('{<code.+</code>}msU', $output, $codes_messed);
-					$output = str_replace($codes_messed[0], $codes_clean[0], $output);
-				}
-
-				if ( ! empty($textareas_clean))
-				{
-					preg_match_all('{<textarea.+</textarea>}msU', $output, $textareas_messed);
-					$output = str_replace($textareas_messed[0], $textareas_clean[0], $output);
-				}
-
-				if (isset($javascript_mini))
-				{
-					preg_match_all('{<script.+</script>}msU', $output, $javascript_messed);
-					$output = str_replace($javascript_messed[0], $javascript_mini, $output);
-				}
-
-				$size_removed = $size_before - strlen($output);
-				$savings_percent = round(($size_removed / $size_before * 100));
-
-				log_message('debug', 'Minifier shaved '.($size_removed / 1000).'KB ('.$savings_percent.'%) off final HTML output.');
-
-			break;
-
-			case 'text/css':
-
-				return $this->_minify_js_css($output, 'css');
-
-			case 'text/javascript':
-			case 'application/javascript':
-			case 'application/x-javascript':
-
-				return $this->_minify_js_css($output, 'js');
-
-			default: break;
-		}
-
-		return $output;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Minify JavaScript and CSS code
-	 *
-	 * Strips comments and excessive whitespace characters
-	 *
-	 * @param	string	$output
-	 * @param	string	$type	'js' or 'css'
-	 * @param	bool	$tags	Whether $output contains the 'script' or 'style' tag
-	 * @return	string
-	 */
-	protected function _minify_js_css($output, $type, $tags = FALSE)
-	{
-		if ($tags === TRUE)
-		{
-			$tags = array('close' => strrchr($output, '<'));
-
-			$open_length = strpos($output, '>') + 1;
-			$tags['open'] = substr($output, 0, $open_length);
-
-			$output = substr($output, $open_length, -strlen($tags['close']));
-
-			// Strip spaces from the tags
-			$tags = preg_replace('#\s{2,}#', ' ', $tags);
-		}
-
-		$output = trim($output);
-
-		if ($type === 'js')
-		{
-			// Catch all string literals and comment blocks
-			if (preg_match_all('#((?:((?<!\\\)\'|")|(/\*)|(//)).*(?(2)(?<!\\\)\2|(?(3)\*/|\n)))#msuUS', $output, $match, PREG_OFFSET_CAPTURE))
-			{
-				$js_literals = $js_code = array();
-				for ($match = $match[0], $c = count($match), $i = $pos = $offset = 0; $i < $c; $i++)
-				{
-					$js_code[$pos++] = trim(substr($output, $offset, $match[$i][1] - $offset));
-					$offset = $match[$i][1] + strlen($match[$i][0]);
-
-					// Save only if we haven't matched a comment block
-					if ($match[$i][0][0] !== '/')
-					{
-						$js_literals[$pos++] = array_shift($match[$i]);
-					}
-				}
-				$js_code[$pos] = substr($output, $offset);
-
-				// $match might be quite large, so free it up together with other vars that we no longer need
-				unset($match, $offset, $pos);
-			}
-			else
-			{
-				$js_code = array($output);
-				$js_literals = array();
-			}
-
-			$varname = 'js_code';
-		}
-		else
-		{
-			$varname = 'output';
-		}
-
-		// Standartize new lines
-		$$varname = str_replace(array("\r\n", "\r"), "\n", $$varname);
-
-		if ($type === 'js')
-		{
-			$patterns = array(
-				'#\s*([!\#%&()*+,\-./:;<=>?@\[\]^`{|}~])\s*#'	=> '$1',	// Remove spaces following and preceeding JS-wise non-special & non-word characters
-				'#\s{2,}#'					=> ' '		// Reduce the remaining multiple whitespace characters to a single space
-			);
-		}
-		else
-		{
-			$patterns = array(
-				'#/\*.*(?=\*/)\*/#s'	=> '',		// Remove /* block comments */
-				'#\n?//[^\n]*#'		=> '',		// Remove // line comments
-				'#\s*([^\w.\#%])\s*#U'	=> '$1',	// Remove spaces following and preceeding non-word characters, excluding dots, hashes and the percent sign
-				'#\s{2,}#'		=> ' '		// Reduce the remaining multiple space characters to a single space
-			);
-		}
-
-		$$varname = preg_replace(array_keys($patterns), array_values($patterns), $$varname);
-
-		// Glue back JS quoted strings
-		if ($type === 'js')
-		{
-			$js_code += $js_literals;
-			ksort($js_code);
-			$output = implode($js_code);
-			unset($js_code, $js_literals, $varname, $patterns);
-		}
-
-		return is_array($tags)
-			? $tags['open'].$output.$tags['close']
-			: $output;
-	}
-
 }
-
-/* End of file Output.php */
-/* Location: ./system/core/Output.php */

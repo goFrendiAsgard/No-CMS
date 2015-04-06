@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 3.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 3.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -46,8 +57,8 @@ class CI_Cache_wincache extends CI_Driver {
 	 * Look for a value in the cache. If it exists, return the data,
 	 * if not, return FALSE
 	 *
-	 * @param	string
-	 * @return	mixed	value that is stored/FALSE on failure
+	 * @param	string	$id	Cache Ide
+	 * @return	mixed	Value that is stored/FALSE on failure
 	 */
 	public function get($id)
 	{
@@ -63,12 +74,13 @@ class CI_Cache_wincache extends CI_Driver {
 	/**
 	 * Cache Save
 	 *
-	 * @param	string	Unique Key
-	 * @param	mixed	Data to store
-	 * @param	int	Length of time (in seconds) to cache the data
+	 * @param	string	$id	Cache ID
+	 * @param	mixed	$data	Data to store
+	 * @param	int	$ttl	Time to live (in seconds)
+	 * @param	bool	$raw	Whether to store the raw value (unused)
 	 * @return	bool	true on success/false on failure
 	 */
-	public function save($id, $data, $ttl = 60)
+	public function save($id, $data, $ttl = 60, $raw = FALSE)
 	{
 		return wincache_ucache_set($id, $data, $ttl);
 	}
@@ -84,6 +96,40 @@ class CI_Cache_wincache extends CI_Driver {
 	public function delete($id)
 	{
 		return wincache_ucache_delete($id);
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Increment a raw value
+	 *
+	 * @param	string	$id	Cache ID
+	 * @param	int	$offset	Step/value to add
+	 * @return	mixed	New value on success or FALSE on failure
+	 */
+	public function increment($id, $offset = 1)
+	{
+		$success = FALSE;
+		$value = wincache_ucache_inc($id, $offset, $success);
+
+		return ($success === TRUE) ? $value : FALSE;
+	}
+
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Decrement a raw value
+	 *
+	 * @param	string	$id	Cache ID
+	 * @param	int	$offset	Step/value to reduce by
+	 * @return	mixed	New value on success or FALSE on failure
+	 */
+	public function decrement($id, $offset = 1)
+	{
+		$success = FALSE;
+		$value = wincache_ucache_dec($id, $offset, $success);
+
+		return ($success === TRUE) ? $value : FALSE;
 	}
 
 	// ------------------------------------------------------------------------
@@ -148,7 +194,7 @@ class CI_Cache_wincache extends CI_Driver {
 	 */
 	public function is_supported()
 	{
-		if ( ! extension_loaded('wincache'))
+		if ( ! extension_loaded('wincache') OR ! ini_get('wincache.ucenabled'))
 		{
 			log_message('debug', 'The Wincache PHP extension must be loaded to use Wincache Cache.');
 			return FALSE;
@@ -158,6 +204,3 @@ class CI_Cache_wincache extends CI_Driver {
 	}
 
 }
-
-/* End of file Cache_wincache.php */
-/* Location: ./system/libraries/Cache/drivers/Cache_wincache.php */

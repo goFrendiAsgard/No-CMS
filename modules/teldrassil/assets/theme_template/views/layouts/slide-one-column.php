@@ -8,7 +8,7 @@
         <!-- Le styles -->
         <?php
             echo $template['css'];
-            $asset = new CMS_Asset();
+            $asset = new Cms_asset();
             if($__is_bootstrap_cdn_connected){
                 $asset->add_css('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');
             }else{  

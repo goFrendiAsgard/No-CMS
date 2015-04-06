@@ -1,0 +1,9 @@
+{
+    "dependencies"    : [],
+    "name"            : "gofrendi.noCMS.teldrassil",
+    "description"     : "Theme Generator",
+    "version"         : "0.0.1",
+    "activate"        : "info/activate",
+    "deactivate"      : "info/deactivate",
+    "upgrade"         : "info/upgrade"
+}

@@ -1,0 +1,9 @@
+{
+    "dependencies"    : [],
+    "name"            : "gofrendi.noCMS.blog",
+    "description"     : "Write articles, upload photos, allow visitors to give comments, rule the world...",
+    "version"         : "0.0.5",
+    "activate"        : "info/activate",
+    "deactivate"      : "info/deactivate",
+    "upgrade"         : "info/upgrade"
+}

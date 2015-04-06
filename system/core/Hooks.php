@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -54,6 +65,13 @@ class CI_Hooks {
 	public $hooks =	array();
 
 	/**
+	 * Array with class objects to use hooks methods
+	 *
+	 * @var array
+	 */
+	protected $_objects = array();
+
+	/**
 	 * In progress flag
 	 *
 	 * Determines whether hook is in progress, used to prevent infinte loops
@@ -70,8 +88,7 @@ class CI_Hooks {
 	public function __construct()
 	{
 		$CFG =& load_class('Config', 'core');
-
-		log_message('debug', 'Hooks Class Initialized');
+		log_message('info', 'Hooks Class Initialized');
 
 		// If hooks are not enabled in the config file
 		// there is nothing else to do
@@ -81,14 +98,14 @@ class CI_Hooks {
 		}
 
 		// Grab the "hooks" definition file.
-		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/hooks.php'))
-		{
-			include(APPPATH.'config/'.ENVIRONMENT.'/hooks.php');
-		}
-
 		if (file_exists(APPPATH.'config/hooks.php'))
 		{
 			include(APPPATH.'config/hooks.php');
+		}
+
+		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/hooks.php'))
+		{
+			include(APPPATH.'config/'.ENVIRONMENT.'/hooks.php');
 		}
 
 		// If there are no hooks, we're done.
@@ -120,7 +137,7 @@ class CI_Hooks {
 			return FALSE;
 		}
 
-		if (isset($this->hooks[$which][0]) && is_array($this->hooks[$which][0]))
+		if (is_array($this->hooks[$which]) && ! isset($this->hooks[$which]['function']))
 		{
 			foreach ($this->hooks[$which] as $val)
 			{
@@ -147,7 +164,16 @@ class CI_Hooks {
 	 */
 	protected function _run_hook($data)
 	{
-		if ( ! is_array($data))
+		// Closures/lambda functions and array($object, 'method') callables
+		if (is_callable($data))
+		{
+			is_array($data)
+				? $data[0]->{$data[1]}()
+				: $data();
+
+			return TRUE;
+		}
+		elseif ( ! is_array($data))
 		{
 			return FALSE;
 		}
@@ -184,7 +210,7 @@ class CI_Hooks {
 		$function	= empty($data['function']) ? FALSE : $data['function'];
 		$params		= isset($data['params']) ? $data['params'] : '';
 
-		if ($class === FALSE && $function === FALSE)
+		if (empty($function))
 		{
 			return FALSE;
 		}
@@ -195,19 +221,39 @@ class CI_Hooks {
 		// Call the requested class and/or function
 		if ($class !== FALSE)
 		{
-			if ( ! class_exists($class, FALSE))
+			// The object is stored?
+			if (isset($this->_objects[$class]))
 			{
-				require($filepath);
+				if (method_exists($this->_objects[$class], $function))
+				{
+					$this->_objects[$class]->$function($params);
+				}
+				else
+				{
+					return $this->_in_progress = FALSE;
+				}
 			}
+			else
+			{
+				class_exists($class, FALSE) OR require_once($filepath);
 
-			$HOOK = new $class();
-			$HOOK->$function($params);
+				if ( ! class_exists($class, FALSE) OR ! method_exists($class, $function))
+				{
+					return $this->_in_progress = FALSE;
+				}
+
+				// Store the object and execute the method
+				$this->_objects[$class] = new $class();
+				$this->_objects[$class]->$function($params);
+			}
 		}
 		else
 		{
+			function_exists($function) OR require_once($filepath);
+
 			if ( ! function_exists($function))
 			{
-				require($filepath);
+				return $this->_in_progress = FALSE;
 			}
 
 			$function($params);
@@ -218,6 +264,3 @@ class CI_Hooks {
 	}
 
 }
-
-/* End of file Hooks.php */
-/* Location: ./system/core/Hooks.php */

@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2006 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 3.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 3.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -115,7 +126,7 @@ class CI_Migration {
 			$this->{'_'.$key} = $val;
 		}
 
-		log_message('debug', 'Migrations class initialized');
+		log_message('info', 'Migrations Class Initialized');
 
 		// Are they trying to use migrations while it is disabled?
 		if ($this->_migration_enabled !== TRUE)
@@ -179,13 +190,22 @@ class CI_Migration {
 	 * Calls each migration step required to get to the schema version of
 	 * choice
 	 *
-	 * @param	int	$target_version	Target schema version
-	 * @return	mixed	TRUE if already latest, FALSE if failed, int if upgraded
+	 * @param	string	$target_version	Target schema version
+	 * @return	mixed	TRUE if already latest, FALSE if failed, string if upgraded
 	 */
 	public function version($target_version)
 	{
-		$current_version = (int) $this->_get_version();
-		$target_version = (int) $target_version;
+		// Note: We use strings, so that timestamp versions work on 32-bit systems
+		$current_version = $this->_get_version();
+
+		if ($this->_migration_type === 'sequential')
+		{
+			$target_version = sprintf('%03d', $target_version);
+		}
+		else
+		{
+			$target_version = (string) $target_version;
+		}
 
 		$migrations = $this->find_migrations();
 
@@ -224,7 +244,7 @@ class CI_Migration {
 				return FALSE;
 			}
 
-			include_once $file;
+			include_once($file);
 			$class = 'Migration_'.ucfirst(strtolower($this->_get_migration_name(basename($file, '.php'))));
 
 			// Validate the migration file structure
@@ -272,9 +292,9 @@ class CI_Migration {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Set's the schema to the latest migration
+	 * Sets the schema to the latest migration
 	 *
-	 * @return	mixed	TRUE if already latest, FALSE if failed, int if upgraded
+	 * @return	mixed	TRUE if already latest, FALSE if failed, string if upgraded
 	 */
 	public function latest()
 	{
@@ -289,16 +309,16 @@ class CI_Migration {
 		$last_migration = basename(end($migrations));
 
 		// Calculate the last migration step from existing migration
-		// filenames and procceed to the standard version migration
+		// filenames and proceed to the standard version migration
 		return $this->version($this->_get_migration_number($last_migration));
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Set's the schema to the migration version set in config
+	 * Sets the schema to the migration version set in config
 	 *
-	 * @return	mixed	TRUE if already current, FALSE if failed, int if upgraded
+	 * @return	mixed	TRUE if already current, FALSE if failed, string if upgraded
 	 */
 	public function current()
 	{
@@ -359,12 +379,12 @@ class CI_Migration {
 	 * Extracts the migration number from a filename
 	 *
 	 * @param	string	$migration
-	 * @return	int	Numeric portion of a migration filename
+	 * @return	string	Numeric portion of a migration filename
 	 */
 	protected function _get_migration_number($migration)
 	{
-		return sscanf($migration, '%d', $number)
-			? $number : 0;
+		return sscanf($migration, '%[0-9]+', $number)
+			? $number : '0';
 	}
 
 	// --------------------------------------------------------------------
@@ -387,12 +407,12 @@ class CI_Migration {
 	/**
 	 * Retrieves current schema version
 	 *
-	 * @return	int	Current Migration
+	 * @return	string	Current migration version
 	 */
 	protected function _get_version()
 	{
 		$row = $this->db->select('version')->get($this->_migration_table)->row();
-		return $row ? $row->version : 0;
+		return $row ? $row->version : '0';
 	}
 
 	// --------------------------------------------------------------------
@@ -400,12 +420,12 @@ class CI_Migration {
 	/**
 	 * Stores the current schema version
 	 *
-	 * @param	int	$migration	Migration reached
-	 * @return	void	Outputs a report of the migration
+	 * @param	string	$migration	Migration reached
+	 * @return	void
 	 */
 	protected function _update_version($migration)
 	{
-		return $this->db->update($this->_migration_table, array(
+		$this->db->update($this->_migration_table, array(
 			'version' => $migration
 		));
 	}
@@ -424,6 +444,3 @@ class CI_Migration {
 	}
 
 }
-
-/* End of file Migration.php */
-/* Location: ./system/libraries/Migration.php */

@@ -2,26 +2,37 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
- * NOTICE OF LICENSE
+ * This content is released under the MIT License (MIT)
  *
- * Licensed under the Open Software License version 3.0
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
- * This source file is subject to the Open Software License (OSL 3.0) that is
- * bundled with this package in the files license.txt / license.rst.  It is
- * also available through the world wide web at this URL:
- * http://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to obtain it
- * through the world wide web, please send an email to
- * licensing@ellislab.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @package		CodeIgniter
- * @author		EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2013, EllisLab, Inc. (http://ellislab.com/)
- * @license		http://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * @link		http://codeigniter.com
- * @since		Version 1.0
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package	CodeIgniter
+ * @author	EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	http://codeigniter.com
+ * @since	Version 1.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -327,6 +338,13 @@ class CI_Image_lib {
 	public $full_dst_path		= '';
 
 	/**
+	 * File permissions
+	 *
+	 * @var	int
+	 */
+	public $file_permissions = 0644;
+
+	/**
 	 * Name of function to create image
 	 *
 	 * @var string
@@ -374,7 +392,7 @@ class CI_Image_lib {
 			$this->initialize($props);
 		}
 
-		log_message('debug', 'Image Lib Class Initialized');
+		log_message('info', 'Image Lib Class Initialized');
 	}
 
 	// --------------------------------------------------------------------
@@ -493,9 +511,9 @@ class CI_Image_lib {
 		 * Either way, we'll try use realpath to generate the
 		 * full server path in order to more reliably read it.
 		 */
-		if (function_exists('realpath') && @realpath($this->source_image) !== FALSE)
+		if (($full_source_path = realpath($this->source_image)) !== FALSE)
 		{
-			$full_source_path = str_replace('\\', '/', realpath($this->source_image));
+			$full_source_path = str_replace('\\', '/', $full_source_path);
 		}
 		else
 		{
@@ -734,7 +752,7 @@ class CI_Image_lib {
 		{
 			if ($this->source_image !== $this->new_image && @copy($this->full_src_path, $this->full_dst_path))
 			{
-				@chmod($this->full_dst_path, FILE_WRITE_MODE);
+				chmod($this->full_dst_path, $this->file_permissions);
 			}
 
 			return TRUE;
@@ -751,7 +769,7 @@ class CI_Image_lib {
 			if ($this->gd_version() !== FALSE)
 			{
 				$gd_version = str_replace('0', '', $this->gd_version());
-				$v2_override = ($gd_version === 2);
+				$v2_override = ($gd_version == 2);
 			}
 		}
 		else
@@ -810,8 +828,7 @@ class CI_Image_lib {
 		imagedestroy($dst_img);
 		imagedestroy($src_img);
 
-		// Set the file to 666
-		@chmod($this->full_dst_path, FILE_WRITE_MODE);
+		chmod($this->full_dst_path, $this->file_permissions);
 
 		return TRUE;
 	}
@@ -880,8 +897,7 @@ class CI_Image_lib {
 			return FALSE;
 		}
 
-		// Set the file to 777
-		@chmod($this->full_dst_path, FILE_WRITE_MODE);
+		chmod($this->full_dst_path, $this->file_permissions);
 
 		return TRUE;
 	}
@@ -969,7 +985,7 @@ class CI_Image_lib {
 		// we have to rename the temp file.
 		copy($this->dest_folder.'netpbm.tmp', $this->full_dst_path);
 		unlink($this->dest_folder.'netpbm.tmp');
-		@chmod($this->full_dst_path, FILE_WRITE_MODE);
+		chmod($this->full_dst_path, $this->file_permissions);
 
 		return TRUE;
 	}
@@ -1013,8 +1029,7 @@ class CI_Image_lib {
 		imagedestroy($dst_img);
 		imagedestroy($src_img);
 
-		// Set the file to 777
-		@chmod($this->full_dst_path, FILE_WRITE_MODE);
+		chmod($this->full_dst_path, $this->file_permissions);
 
 		return TRUE;
 	}
@@ -1086,8 +1101,7 @@ class CI_Image_lib {
 		// Kill the file handles
 		imagedestroy($src_img);
 
-		// Set the file to 777
-		@chmod($this->full_dst_path, FILE_WRITE_MODE);
+		chmod($this->full_dst_path, $this->file_permissions);
 
 		return TRUE;
 	}
@@ -1198,6 +1212,13 @@ class CI_Image_lib {
 			imagecopymerge($src_img, $wm_img, $x_axis, $y_axis, 0, 0, $wm_width, $wm_height, $this->wm_opacity);
 		}
 
+		// We can preserve transparency for PNG images
+		if ($this->image_type === 3)
+		{
+			imagealphablending($src_img, FALSE);
+			imagesavealpha($src_img, TRUE);
+		}
+
 		// Output the image
 		if ($this->dynamic_output === TRUE)
 		{
@@ -1245,22 +1266,37 @@ class CI_Image_lib {
 		// offset flips itself automatically
 
 		if ($this->wm_vrt_alignment === 'B')
+		{
 			$this->wm_vrt_offset = $this->wm_vrt_offset * -1;
+		}
 
 		if ($this->wm_hor_alignment === 'R')
+		{
 			$this->wm_hor_offset = $this->wm_hor_offset * -1;
+		}
 
 		// Set font width and height
 		// These are calculated differently depending on
 		// whether we are using the true type font or not
 		if ($this->wm_use_truetype === TRUE)
 		{
-			if ($this->wm_font_size === '')
+			if (empty($this->wm_font_size))
 			{
 				$this->wm_font_size = 17;
 			}
 
-			$fontwidth  = $this->wm_font_size-($this->wm_font_size/4);
+			if (function_exists('imagettfbbox'))
+			{
+				$temp = imagettfbbox($this->wm_font_size, 0, $this->wm_font_path, $this->wm_text);
+				$temp = $temp[2] - $temp[0];
+
+				$fontwidth = $temp / strlen($this->wm_text);
+			}
+			else
+			{
+				$fontwidth = $this->wm_font_size - ($this->wm_font_size / 4);
+			}
+
 			$fontheight = $this->wm_font_size;
 			$this->wm_vrt_offset += $this->wm_font_size;
 		}
@@ -1275,12 +1311,14 @@ class CI_Image_lib {
 		$y_axis = $this->wm_vrt_offset + $this->wm_padding;
 
 		if ($this->wm_use_drop_shadow === FALSE)
+		{
 			$this->wm_shadow_distance = 0;
+		}
 
 		$this->wm_vrt_alignment = strtoupper($this->wm_vrt_alignment[0]);
 		$this->wm_hor_alignment = strtoupper($this->wm_hor_alignment[0]);
 
-		// Set verticle alignment
+		// Set vertical alignment
 		if ($this->wm_vrt_alignment === 'M')
 		{
 			$y_axis += ($this->orig_height / 2) + ($fontheight / 2);
@@ -1289,53 +1327,67 @@ class CI_Image_lib {
 		{
 			$y_axis += $this->orig_height - $fontheight - $this->wm_shadow_distance - ($fontheight / 2);
 		}
-
-		$x_shad = $x_axis + $this->wm_shadow_distance;
-		$y_shad = $y_axis + $this->wm_shadow_distance;
-
+		
+		// Set horizontal alignment
+		if ($this->wm_hor_alignment === 'R')
+		{
+			$x_axis += $this->orig_width - ($fontwidth * strlen($this->wm_text)) - $this->wm_shadow_distance;
+		}
+		elseif ($this->wm_hor_alignment === 'C')
+		{
+			$x_axis += floor(($this->orig_width - ($fontwidth * strlen($this->wm_text))) / 2);
+		}
+		
 		if ($this->wm_use_drop_shadow)
 		{
-			// Set horizontal alignment
-			if ($this->wm_hor_alignment === 'R')
-			{
-				$x_shad += $this->orig_width - ($fontwidth * strlen($this->wm_text));
-				$x_axis += $this->orig_width - ($fontwidth * strlen($this->wm_text));
-			}
-			elseif ($this->wm_hor_alignment === 'C')
-			{
-				$x_shad += floor(($this->orig_width - ($fontwidth * strlen($this->wm_text))) / 2);
-				$x_axis += floor(($this->orig_width - ($fontwidth * strlen($this->wm_text))) / 2);
-			}
-
-			/* Set RGB values for text and shadow
+			// Offset from text
+			$x_shad = $x_axis + $this->wm_shadow_distance;
+			$y_shad = $y_axis + $this->wm_shadow_distance;
+				
+			/* Set RGB values for shadow
 			 *
 			 * First character is #, so we don't really need it.
 			 * Get the rest of the string and split it into 2-length
 			 * hex values:
 			 */
-			$txt_color = str_split(substr($this->wm_font_color, 1, 6), 2);
-			$txt_color = imagecolorclosest($src_img, hexdec($txt_color[0]), hexdec($txt_color[1]), hexdec($txt_color[2]));
 			$drp_color = str_split(substr($this->wm_shadow_color, 1, 6), 2);
 			$drp_color = imagecolorclosest($src_img, hexdec($drp_color[0]), hexdec($drp_color[1]), hexdec($drp_color[2]));
-
-			// Add the text to the source image
+			
+			// Add the shadow to the source image
 			if ($this->wm_use_truetype)
 			{
 				imagettftext($src_img, $this->wm_font_size, 0, $x_shad, $y_shad, $drp_color, $this->wm_font_path, $this->wm_text);
-				imagettftext($src_img, $this->wm_font_size, 0, $x_axis, $y_axis, $txt_color, $this->wm_font_path, $this->wm_text);
 			}
 			else
 			{
 				imagestring($src_img, $this->wm_font_size, $x_shad, $y_shad, $this->wm_text, $drp_color);
-				imagestring($src_img, $this->wm_font_size, $x_axis, $y_axis, $this->wm_text, $txt_color);
 			}
+		}
+		
+		/* Set RGB values for text
+		 *
+		 * First character is #, so we don't really need it.
+		 * Get the rest of the string and split it into 2-length
+		 * hex values:
+		 */
+		$txt_color = str_split(substr($this->wm_font_color, 1, 6), 2);
+		$txt_color = imagecolorclosest($src_img, hexdec($txt_color[0]), hexdec($txt_color[1]), hexdec($txt_color[2]));
 
-			// We can preserve transparency for PNG images
-			if ($this->image_type === 3)
-			{
-				imagealphablending($src_img, FALSE);
-				imagesavealpha($src_img, TRUE);
-			}
+		// Add the text to the source image
+		if ($this->wm_use_truetype)
+		{
+			imagettftext($src_img, $this->wm_font_size, 0, $x_axis, $y_axis, $txt_color, $this->wm_font_path, $this->wm_text);
+		}
+		else
+		{
+			imagestring($src_img, $this->wm_font_size, $x_axis, $y_axis, $this->wm_text, $txt_color);
+		}
+		
+		// We can preserve transparency for PNG images
+		if ($this->image_type === 3)
+		{
+			imagealphablending($src_img, FALSE);
+			imagesavealpha($src_img, TRUE);
 		}
 
 		// Output the final image
@@ -1368,45 +1420,45 @@ class CI_Image_lib {
 	public function image_create_gd($path = '', $image_type = '')
 	{
 		if ($path === '')
+		{
 			$path = $this->full_src_path;
+		}
 
 		if ($image_type === '')
+		{
 			$image_type = $this->image_type;
+		}
 
 		switch ($image_type)
 		{
-			case	 1 :
-						if ( ! function_exists('imagecreatefromgif'))
-						{
-							$this->set_error(array('imglib_unsupported_imagecreate', 'imglib_gif_not_supported'));
-							return FALSE;
-						}
+			case 1 :
+				if ( ! function_exists('imagecreatefromgif'))
+				{
+					$this->set_error(array('imglib_unsupported_imagecreate', 'imglib_gif_not_supported'));
+					return FALSE;
+				}
 
-						return imagecreatefromgif($path);
-				break;
+				return imagecreatefromgif($path);
 			case 2 :
-						if ( ! function_exists('imagecreatefromjpeg'))
-						{
-							$this->set_error(array('imglib_unsupported_imagecreate', 'imglib_jpg_not_supported'));
-							return FALSE;
-						}
+				if ( ! function_exists('imagecreatefromjpeg'))
+				{
+					$this->set_error(array('imglib_unsupported_imagecreate', 'imglib_jpg_not_supported'));
+					return FALSE;
+				}
 
-						return imagecreatefromjpeg($path);
-				break;
+				return imagecreatefromjpeg($path);
 			case 3 :
-						if ( ! function_exists('imagecreatefrompng'))
-						{
-							$this->set_error(array('imglib_unsupported_imagecreate', 'imglib_png_not_supported'));
-							return FALSE;
-						}
+				if ( ! function_exists('imagecreatefrompng'))
+				{
+					$this->set_error(array('imglib_unsupported_imagecreate', 'imglib_png_not_supported'));
+					return FALSE;
+				}
 
-						return imagecreatefrompng($path);
-				break;
-
+				return imagecreatefrompng($path);
+			default:
+				$this->set_error(array('imglib_unsupported_imagecreate'));
+				return FALSE;
 		}
-
-		$this->set_error(array('imglib_unsupported_imagecreate'));
-		return FALSE;
 	}
 
 	// --------------------------------------------------------------------
@@ -1765,6 +1817,3 @@ class CI_Image_lib {
 	}
 
 }
-
-/* End of file Image_lib.php */
-/* Location: ./system/libraries/Image_lib.php */

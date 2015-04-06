@@ -31,7 +31,7 @@
         }
     }
 
-    $asset = new CMS_Asset();
+    $asset = new Cms_asset();
     $asset->add_cms_css('grocery_crud/css/jquery_plugins/chosen/chosen.css');
     //$asset->add_cms_css('grocery_crud/themes/flexigrid/css/flexigrid.css');
     echo $asset->compile_css();

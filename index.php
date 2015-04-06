@@ -166,43 +166,40 @@ switch (ERROR_REPORTING)
 // END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
 // --------------------------------------------------------------------
 
-// The "esip" and "domain" function was written by: gustavo.andriulo@vulcabras.com.ar
-// and posted here: http://www.php.net/manual/en/function.parse-url.php
-function esip($ip_addr)
+/*
+ * ---------------------------------------------------------------
+ *  NO CMS PROGRAM
+ * ---------------------------------------------------------------
+ */
+
+function is_ip_address($address)
 {
-    //first of all the format of the ip address is matched
-    if(preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/",$ip_addr))
+    // IP address consists of 4 parts, separated by dot. Every part is integer,
+    // otherwise, it is not IP address
+    if(preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/", $address))
     {
-        //now all the intger values are separated
-        $parts=explode(".",$ip_addr);
-        //now we need to check each part can range from 0-255
+        $parts = explode('.', $address);
         foreach($parts as $ip_parts)
         {
-            if(intval($ip_parts)>255 || intval($ip_parts)<0)
-                return FALSE; //if number is not within range of 0-255
+            // each part of IP address must range from 0 to 255, otherwise it is not IP address
+            if(intval($ip_parts) > 255 || intval($ip_parts) < 0) return FALSE;
         }
         return TRUE;
     }
-    else
-        return FALSE; //if format of ip address doesn't matches
-}
-
-function hostname(){
-    if(file_exists('hostname.php')){
-        include('hostname.php');
-        if(isset($hostname)){
-            return $hostname;
-        }
-    }
-    return NULL;
+    return FALSE;
 }
 
 function domain($domain)
 {
-    $hostname = hostname();
-    if($hostname != NULL){
-        return $hostname;
+    // is $hostname defined in hostname.php
+    if(file_exists('hostname.php')){
+        $hostname = NULL;
+        include('hostname.php');
+        if($hostname != NULL){
+            return $hostname;
+        }
     }
+    // determine the domain heuristically
     $domain_part = explode('.', $domain);
     if(strtolower($domain_part[count($domain_part)-1]) == 'localhost'){
         return 'localhost';
@@ -215,33 +212,26 @@ function domain($domain)
     }
 }
 
-// The "url_origin" and "full_url" function was written by: http://stackoverflow.com/users/175071/timo-huovinen
-// and posted here: http://stackoverflow.com/questions/6768793/get-the-full-url-in-php
-function url_origin($s, $use_forwarded_host=false)
-{
-    $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true:false;
-    $sp = strtolower($s['SERVER_PROTOCOL']);
-    $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
-    $port = $s['SERVER_PORT'];
-    $port = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
-    $host = ($use_forwarded_host && isset($s['HTTP_X_FORWARDED_HOST'])) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
-    $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
-    return $protocol . '://' . $host;
-}
 function full_url($s, $use_forwarded_host=false)
 {
-    return url_origin($s, $use_forwarded_host) . $s['REQUEST_URI'];
+    $ssl        = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true:false;
+    $sp         = strtolower($s['SERVER_PROTOCOL']);
+    $protocol   = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+    $port       = $s['SERVER_PORT'];
+    $port       = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+    $host       = ($use_forwarded_host && isset($s['HTTP_X_FORWARDED_HOST'])) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
+    $host       = isset($host) ? $host : $s['SERVER_NAME'] . $port;
+    return $protocol . '://' . $host . $s['REQUEST_URI'];
 }
 
 // define ENVIRONMENT, CMS_SUBSITE and USE_SUBDOMAIN contants
-if(!file_exists('./'.$application_folder.'/config/database.php')){
-    define('ENVIRONMENT', 'first-time');
-    define('CMS_SUBSITE', '');
-    define('USE_SUBDOMAIN', FALSE);
-    define('INVALID_SUBSITE', FALSE);
-    define('USE_ALIAS', FALSE);
-    $available_site = array();
-}else{
+$ENVIRONMENT        = 'first-time';
+$CMS_SUBSITE        = '';
+$USE_SUBDOMAIN      = FALSE;
+$INVALID_SUBSITE    = FALSE;
+$USE_ALIAS          = FALSE;
+$available_site     = array();
+if(file_exists('./'.$application_folder.'/config/database.php')){
     // multisite, can use GET or subdomain
     // create site.php
     if(!file_exists('./site.php')){
@@ -253,85 +243,65 @@ if(!file_exists('./'.$application_folder.'/config/database.php')){
     }
     require_once('./site.php');
     if(isset($available_site) && is_array($available_site)){
-        $cms_subsite = '';
         if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){
-            $cms_subsite = $_GET['__cms_subsite'];
-            define('USE_SUBDOMAIN', FALSE);
-            define('USE_ALIAS', FALSE);
+            $CMS_SUBSITE = $_GET['__cms_subsite'];
         }else{
-            $actual_host_name = $_SERVER['HTTP_HOST'];
-            $address = full_url($_SERVER);
-            $parsed_url = parse_url($address);
-            $check = esip($parsed_url['host']);
+            $actual_host_name   = $_SERVER['HTTP_HOST'];
+            $address            = full_url($_SERVER);
+            $parsed_url         = parse_url($address);
+            $check              = is_ip_address($parsed_url['host']);
             $stripped_host_name = $parsed_url['host'];
             if ($check == FALSE){
-                if ($stripped_host_name != ""){
-                    $stripped_host_name = domain($stripped_host_name);
-                }else{
-                    $stripped_host_name = domain($address);
-                }
+                $stripped_host_name = $stripped_host_name == '' ? 
+                    domain($stripped_host_name) : domain($address);
             }
 
+            $actual_host_name_parts   = explode('.', $actual_host_name);
+            $stripped_host_name_parts = explode('.', $stripped_host_name);
             // if there is an alias defined
-            if(isset($site_alias[$actual_host_name]) && $site_alias[$actual_host_name] != ''){
-                $cms_subsite = $site_alias[$actual_host_name];
-                define('USE_SUBDOMAIN', TRUE);
-                define('USE_ALIAS', TRUE);
+            if(array_key_exists($actual_host_name, $site_alias) && $site_alias[$actual_host_name] != ''){
+                $CMS_SUBSITE   = $site_alias[$actual_host_name];
+                $USE_SUBDOMAIN = TRUE;
+                $USE_ALIAS     = TRUE;
             }
             // If there is subdomain, subsite determine from subdomain.
-            else if (strlen($actual_host_name)> 0 &&
-                ( count(explode('.',$actual_host_name)) > count(explode('.',$stripped_host_name))) 
+            else if (strlen($actual_host_name)> 0 && ( count($actual_host_name_parts) > count($stripped_host_name_parts)) 
             ){
-                $host_array = explode('.', $actual_host_name);
-                $cms_subsite = $host_array[0];
-                define('USE_SUBDOMAIN', TRUE);
-                define('USE_ALIAS', FALSE);
-            }else{
-                define('USE_SUBDOMAIN', FALSE);
-                define('USE_ALIAS', FALSE);
+                $CMS_SUBSITE = $actual_host_name_parts[0];
             }
         }
         // define cms_subsite and wether it is valid or not
-        if($cms_subsite == '' || in_array($cms_subsite, $available_site)){
-            define('CMS_SUBSITE', $cms_subsite);
-            define('INVALID_SUBSITE', FALSE);
-        }else{
-            define('CMS_SUBSITE', $cms_subsite);
-            define('INVALID_SUBSITE', TRUE);
-        }
+        $INVALID_SUBSITE = ($CMS_SUBSITE == '' || in_array($CMS_SUBSITE, $available_site)) ? FALSE : TRUE;
     }else{
-        define('CMS_SUBSITE', '');
-        define('INVALID_SUBSITE', FALSE);
-        define('USE_SUBDOMAIN', FALSE);
+        $INVALID_SUBSITE    = FALSE;
+        $USE_SUBDOMAIN      = FALSE;
     }
     // change the environment based on multisite
-    define('ENVIRONMENT', CMS_SUBSITE !='' ? 'site-'.CMS_SUBSITE : 'production');
+    $ENVIRONMENT = $CMS_SUBSITE !='' ? 'site-'.$CMS_SUBSITE : 'production';
 }
-// save the subsite to session
-if(!isset($_SESSION)){
-    session_start();
-}
-$_SESSION['__cms_subsite'] = CMS_SUBSITE;
+define('ENVIRONMENT',       $ENVIRONMENT);
+define('CMS_SUBSITE',       $CMS_SUBSITE);
+define('USE_SUBDOMAIN',     $USE_SUBDOMAIN);
+define('INVALID_SUBSITE',   $INVALID_SUBSITE);
+define('USE_ALIAS',         $USE_ALIAS);
 
 // is subsite is invalid then redirect to the main website.
-if( INVALID_SUBSITE ||
-(CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/config/site-'.CMS_SUBSITE)) ){
+if( INVALID_SUBSITE || (CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/config/site-'.CMS_SUBSITE)) ){
     $address = full_url($_SERVER);
-    var_dump($address);
     // determine redirection url
     if(USE_SUBDOMAIN){
-        $address_part = explode('.', $address);
+        $address_part  = explode('.', $address);
         // get the protocol first
-        $protocol = $address_part[0];
+        $protocol      = $address_part[0];
         $protocol_part = explode('://', $protocol);
-        $protocol = $protocol_part[0].'://';
+        $protocol      = $protocol_part[0].'://';
         // remove subdomain
-        $address_part = array_slice($address_part, 1);
-        $address = implode('.', $address_part);
+        $address_part  = array_slice($address_part, 1);
+        $address       = implode('.', $address_part);
         // add the protocol again        
-        $address = $protocol.$address;
+        $address       = $protocol.$address;
     }else{
-        $address_part = explode('/', $address);
+        $address_part     = explode('/', $address);
         $new_address_part = array();
         for($i=0; $i<count($address_part); $i++){
             // remove site-subsite part
@@ -342,10 +312,16 @@ if( INVALID_SUBSITE ||
         }
         $address = implode('/', $new_address_part);
     }
-    
+    // redirect location    
     header('Location: '.$address);
     exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
 }
+
+/*
+ * ---------------------------------------------------------------
+ *  END OF NO CMS PROGRAM
+ * ---------------------------------------------------------------
+ */
 
 /*
  * ---------------------------------------------------------------
@@ -447,13 +423,29 @@ if( INVALID_SUBSITE ||
     define('VIEWPATH', $view_folder);
 
 /*
+ * ---------------------------------------------------------------
+ *  NO CMS AUTOMATIC MIGRATION TO CI-3 CONVENTION
+ * ---------------------------------------------------------------
+ * For effectivity, you should disable these commands once migration complete
+ */
+
+// TODO: write the code
+
+/*
+ * ---------------------------------------------------------------
+ *  END OF AUTOMATIC MIGRATION
+ * ---------------------------------------------------------------
+ */
+
+/*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE
  * --------------------------------------------------------------------
  *
  * And away we go...
  */
-require_once APPPATH.'core/MY_CodeIgniter.php';
+require_once BASEPATH.'core/CodeIgniter.php';
+//require_once APPPATH.'core/MY_CodeIgniter.php';
 
 /* End of file index.php */
 /* Location: ./index.php */
