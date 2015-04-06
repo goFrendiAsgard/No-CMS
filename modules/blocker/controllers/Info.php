@@ -5,15 +5,6 @@
  * @author No-CMS Module Generator
  */
 class Info extends CMS_Module {
-    /////////////////////////////////////////////////////////////////////////////
-    // Default Variables
-    /////////////////////////////////////////////////////////////////////////////
-
-    protected $DEPENDENCIES = array();
-    protected $NAME         = 'admin.blocker';
-    protected $DESCRIPTION  = 'Block spammers, hotlinkers etc (require mod_rewrite to be active) ...';
-    protected $VERSION      = '0.0.0';
-
 
     /////////////////////////////////////////////////////////////////////////////
     // Default Functions

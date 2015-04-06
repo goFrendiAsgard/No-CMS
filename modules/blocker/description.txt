@@ -1,0 +1,9 @@
+{
+    "dependencies"    : [],
+    "name"            : "gofrendi.noCMS.blocker",
+    "description"     : "Block spammers, hotlinkers etc (require mod_rewrite to be active) ...",
+    "version"         : "0.0.0",
+    "activate"        : "info/activate",
+    "deactivate"      : "info/deactivate",
+    "upgrade"         : "info/upgrade"
+}

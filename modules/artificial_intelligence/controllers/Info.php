@@ -6,9 +6,6 @@
  * @author gofrendi
  */
 class Info extends CMS_Module{
-	protected $DEPENDENCIES = array();
-    protected $NAME = 'gofrendi.artificial_intelligence';
-	
     //this should be what happen when user install this module
     protected function do_install(){
         $this->remove_all();

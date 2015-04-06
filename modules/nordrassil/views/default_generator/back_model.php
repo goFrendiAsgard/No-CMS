@@ -5,7 +5,7 @@
  *
  * @author No-CMS Module Generator
  */
-class {{ model_name }}  extends grocery_CRUD_Automatic_Model{
+class {{ model_name }}  extends Grocery_crud_automatic_model{
 
     public function __construct(){
         parent::__construct();

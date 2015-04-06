@@ -47,7 +47,7 @@ class Default_generator extends CMS_Controller{
     }
 
     private function php_class_file_name($class_name, $without_extension = FALSE){
-        $file_name = underscore(humanize($class_name));
+        $file_name = ucfirst(strtolower(underscore(humanize($class_name))));
         if(!$without_extension){
             $file_name .= '.php';
         }
@@ -63,19 +63,19 @@ class Default_generator extends CMS_Controller{
     }
 
     private function front_controller_class_name($stripped_table_name){
-        $controller_name = 'Browse_'.str_replace(' ', '_', humanize($stripped_table_name));
+        $controller_name = 'Browse_'.strtolower(str_replace(' ', '_', humanize($stripped_table_name)));
         return $controller_name;
     }
     private function back_controller_class_name($stripped_table_name){
-        $controller_name = 'Manage_'.str_replace(' ', '_', humanize($stripped_table_name));
+        $controller_name = 'Manage_'.strtolower(str_replace(' ', '_', humanize($stripped_table_name)));
         return $controller_name;
     }
     private function front_model_class_name($stripped_table_name){
-        $controller_name = str_replace(' ', '_', humanize($stripped_table_name)).'_Model';
+        $controller_name = ucfirst(strtolower(str_replace(' ', '_', humanize($stripped_table_name)).'_model'));
         return $controller_name;
     }
     private function back_model_class_name($stripped_table_name){
-        $controller_name = str_replace(' ', '_', 'GroceryCrud_'.humanize($stripped_table_name)).'_Model';
+        $controller_name = ucfirst(strtolower(str_replace(' ', '_', 'grocerycrud_'.humanize($stripped_table_name)).'_model'));
         return $controller_name;
     }
 
@@ -702,14 +702,13 @@ class Default_generator extends CMS_Controller{
             $this->nds->get_drop_table_forge($tables),
             $this->nds->get_create_table_forge($tables),
         );
-        $str = $this->nds->read_view('default_generator/_info_model', NULL, $pattern, $replacement);
-        $this->nds->write_file($project_path.'models/_info.php', $str);
 
-        $str = $this->nds->read_view('default_generator/_info_controller', NULL, $pattern, $replacement);
-        $this->nds->write_file($project_path.'controllers/_info.php', $str);
+        $str = $this->nds->read_view('default_generator/info_controller', NULL, $pattern, $replacement);
+        $this->nds->write_file($project_path.'controllers/Info.php', $str);
 
-        $str = $this->nds->read_view('default_generator/install_setting_view', NULL, $pattern, $replacement);
-        $this->nds->write_file($project_path.'views/install_setting.php', $str);
+        $str = $this->nds->read_view('default_generator/description.txt', NULL, $pattern, $replacement);
+        $this->nds->write_file($project_path.'description.txt', $str);
+
     }
 
     private function create_config(){
