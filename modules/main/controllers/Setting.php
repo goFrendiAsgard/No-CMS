@@ -21,7 +21,7 @@ class Setting extends CMS_Controller{
             'auth_windows_live_app_secret', 'auth_enable_open_id', 'auth_enable_aol');
 
         if(CMS_SUBSITE == ''){
-            $hybridauth_config_file = APPPATH.'/config/hybridauthlib.php';
+            $hybridauth_config_file = APPPATH.'/config/main/hybridauthlib.php';
         }else{
             $hybridauth_config_file = APPPATH.'/config/site-'.CMS_SUBSITE.'/hybridauthlib.php';
         }

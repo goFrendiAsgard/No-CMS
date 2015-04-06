@@ -204,7 +204,7 @@ class CMS_Base_Model extends CI_Model
      */
     public function cms_get_default_controller(){
         if(CMS_SUBSITE == ''){
-            include(APPPATH.'config/routes.php');
+            include(APPPATH.'config/main/routes.php');
         }else{
             include(APPPATH.'config/site-'.CMS_SUBSITE.'/routes.php');
         }
@@ -221,7 +221,7 @@ class CMS_Base_Model extends CI_Model
         $pattern[] = '/(\$route\[(\'|")default_controller(\'|")\] *= *")(.*?)(";)/si';
         $pattern[] = "/(".'\$'."route\[('|\")default_controller('|\")\] *= *')(.*?)(';)/si";
         if(CMS_SUBSITE == ''){
-            $file_name = APPPATH.'config/routes.php';
+            $file_name = APPPATH.'config/main/routes.php';
         }else{
             $file_name = APPPATH.'config/site-'.CMS_SUBSITE.'/routes.php';
         }
@@ -1960,8 +1960,6 @@ class CMS_Base_Model extends CI_Model
             $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
             $this->load->model('installer/install_model');
             $this->load->model($module_path.'/subsite_model');
-            $install_model = new Install_Model();
-            $subsite_model = new Subsite_Model();
             // get these from old setting
             $this->install_model->db_table_prefix              = cms_table_prefix();
             $this->install_model->is_subsite                   = TRUE;
@@ -2023,71 +2021,43 @@ class CMS_Base_Model extends CI_Model
             $this->subsite_model->update_configs();
             $this->cms_reset_overriden_module_path();
 
-            if(!$module_installed){
-                // hack script, will be added and removed in next view
-                $install_module_script = '<script type="text/javascript">
-                    $(document).ready(function(){
-                        var modules =  ["blog", "static_accessories", "contact_us"];
-                        var done = 0;
-                        for(var i=0; i<modules.length; i++){
-                            var module = modules[i];
-                            $.ajax({
-                                "url": "{{ SITE_URL }}/"+module+"/_info/activate/?__cms_subsite='.$this->install_model->subsite.'",
-                                "type": "POST",
-                                "dataType": "json",
-                                "async": true,
-                                "data":{
-                                        "silent" : true,
-                                        "identity": "'.$user_name.'",
-                                        "password": "'.cms_encode($password).'"
-                                    },
-                                "success": function(response){
-                                        if(!response["success"]){
-                                            console.log("error installing "+response["module_path"]);
-                                        }
-                                    },
-                            });
-                        }
-                    });</script>';
-                $this->cms_flash_metadata($install_module_script);
-            }else{
-                // get the new subsite
-                $this->cms_override_module_path($module_path);
-                $t_user = cms_table_name('main_user');
-                $t_subsite = $this->cms_complete_table_name('subsite');
-                $query = $this->db->select('name,use_subdomain')
-                    ->from($t_subsite)
-                    ->join($t_user, $t_user.'.user_id='.$t_subsite.'.user_id')
-                    ->where('user_name', $user_name)
-                    ->order_by($t_subsite.'.id', 'desc')
-                    ->get();
-                $this->cms_reset_overriden_module_path();
-                if($query->num_rows()>0){
-                    $row = $query->row();
-                    $subsite = $row->name;
-                    // get directory
-                    $site_url = site_url();
-                    $site_url = substr($site_url, 0, strlen($site_url)-1);
-                    $site_url_part = explode('/', $site_url);
-                    if(count($site_url_part)>3){
-                        $directory_part = array_slice($site_url_part, 3);
-                        log_message('error',print_r(array($directory_part,$site_url_part), TRUE));
-                        $directory = '/'.implode('/', $directory_part);
-                    }else{
-                        $directory = '';
-                    }
-                    $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
-                    $ssl = $protocol == 'https://';
-                    $port = $_SERVER['SERVER_PORT'];
-                    $port = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
-                    if($row->use_subdomain){
-                        $url = $protocol.$subsite.'.'.$_SERVER['SERVER_NAME'].$port.$directory;
-                    }else{
-                        $url = $protocol.$_SERVER['SERVER_NAME'].$port.$directory.'/site-'.$subsite;
-                    }
-                    $url .= '/main/login';
-                    redirect($url,'refresh');
+            
+            // get the new subsite
+            $this->cms_override_module_path($module_path);
+            $t_user = cms_table_name('main_user');
+            $t_subsite = $this->cms_complete_table_name('subsite');
+            $query = $this->db->select('name,use_subdomain')
+                ->from($t_subsite)
+                ->join($t_user, $t_user.'.user_id='.$t_subsite.'.user_id')
+                ->where('user_name', $user_name)
+                ->order_by($t_subsite.'.id', 'desc')
+                ->get();
+            $this->cms_reset_overriden_module_path();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $subsite = $row->name;
+                // get directory
+                $site_url = site_url();
+                $site_url = substr($site_url, 0, strlen($site_url)-1);
+                $site_url_part = explode('/', $site_url);
+                if(count($site_url_part)>3){
+                    $directory_part = array_slice($site_url_part, 3);
+                    log_message('error',print_r(array($directory_part,$site_url_part), TRUE));
+                    $directory = '/'.implode('/', $directory_part);
+                }else{
+                    $directory = '';
                 }
+                $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
+                $ssl = $protocol == 'https://';
+                $port = $_SERVER['SERVER_PORT'];
+                $port = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+                if($row->use_subdomain){
+                    $url = $protocol.$subsite.'.'.$_SERVER['SERVER_NAME'].$port.$directory;
+                }else{
+                    $url = $protocol.$_SERVER['SERVER_NAME'].$port.$directory.'/site-'.$subsite;
+                }
+                $url .= '/main/login';
+                redirect($url,'refresh');
             }
         }else{
             if ($activation == 'automatic') {

@@ -231,7 +231,7 @@ $USE_SUBDOMAIN      = FALSE;
 $INVALID_SUBSITE    = FALSE;
 $USE_ALIAS          = FALSE;
 $available_site     = array();
-if(file_exists('./'.$application_folder.'/config/database.php')){
+if(file_exists('./'.$application_folder.'/config/main/database.php')){
     // multisite, can use GET or subdomain
     // create site.php
     if(!file_exists('./site.php')){
@@ -277,7 +277,7 @@ if(file_exists('./'.$application_folder.'/config/database.php')){
         $USE_SUBDOMAIN      = FALSE;
     }
     // change the environment based on multisite
-    $ENVIRONMENT = $CMS_SUBSITE !='' ? 'site-'.$CMS_SUBSITE : 'production';
+    $ENVIRONMENT = $CMS_SUBSITE !='' ? 'site-'.$CMS_SUBSITE : 'main';
 }
 define('ENVIRONMENT',       $ENVIRONMENT);
 define('CMS_SUBSITE',       $CMS_SUBSITE);

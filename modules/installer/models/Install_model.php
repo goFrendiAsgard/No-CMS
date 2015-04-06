@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_model extends CI_Model{
-    private $VERSION        = '1.0';
+    private $VERSION        = '1.0.0';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -1236,6 +1236,8 @@ class Install_model extends CI_Model{
     public function complete_config_file_name($file){
         if($this->is_subsite){
             $file = 'site-'.$this->subsite.'/'.$file;
+        }else{
+            $file = 'main/'.$file;
         }
         return $file;
     }
@@ -1266,6 +1268,8 @@ class Install_model extends CI_Model{
             @file_put_contents(FCPATH.'/site.php', $content);
             // make subsite config directory
             mkdir(APPPATH.'config/site-'.$this->subsite);
+        }else{
+            mkdir(APPPATH.'config/main');
         }
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
@@ -1309,7 +1313,7 @@ class Install_model extends CI_Model{
             $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         } else {
             $file = 'database.php';
-            copy(APPPATH.'config/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
+            copy(APPPATH.'config/main/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
         }
 
         // cms_config

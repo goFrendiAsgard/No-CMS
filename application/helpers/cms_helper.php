@@ -72,7 +72,7 @@ function cms_config($key, $value = NULL, $delete = FALSE){
     if(defined('CMS_SUBSITE') && CMS_SUBSITE != ''){
         $file_name = APPPATH.'config/site-'.CMS_SUBSITE.'/cms_config.php';
     }else{
-        $file_name = APPPATH.'config/cms_config.php';
+        $file_name = APPPATH.'config/main/cms_config.php';
     }
     $config_load_alias = 'cms_config';
     return __cms_config($key, $value, $delete, $file_name, $config_load_alias);
