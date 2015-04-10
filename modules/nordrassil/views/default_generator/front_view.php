@@ -43,10 +43,10 @@
         }
     ?&gt;
 </div>
-<div id="record_content"></div>
+<div id="record_content"><?php echo $first_data ?></div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
-    var PAGE = 0;
+    var PAGE = 1;
     var URL = '&lt;?php echo site_url($module_path."/{{ front_controller_import_name }}/get_data"); ?&gt;';
     var ALLOW_NAVIGATE_BACKEND = &lt;?php echo $allow_navigate_backend ? "true" : "false"; ?&gt;;
     var BACKEND_URL = '&lt;?php echo $backend_url; ?&gt;';

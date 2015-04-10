@@ -4,7 +4,7 @@
  *
  * @author No-CMS Module Generator
  */
-class example extends CMS_Secure_Controller {
+class Example extends CMS_Secure_Controller {
 
     protected function do_override_url_map($URL_MAP){
         $module_path = $this->cms_module_path();
@@ -16,7 +16,7 @@ class example extends CMS_Secure_Controller {
 
     public function index(){
     	$data['content'] = $this->cms_submenu_screen($this->cms_complete_navigation_name('index'));
-        $this->view($this->cms_module_path().'/example_index', $data,
+        $this->view($this->cms_module_path().'/Example_index', $data,
             $this->cms_complete_navigation_name('index'));
     }
 }

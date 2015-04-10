@@ -1283,6 +1283,7 @@ class CMS_Controller extends MX_Controller
 
         // parse widgets used_theme & navigation_path
         $result = $this->__cms_parse_widget_theme_path($result, $theme, $layout, $navigation_name);
+        $result = preg_replace('/\n(\s*)/i',PHP_EOL, $result);
 
         if ($return_as_string) {
             return $result;

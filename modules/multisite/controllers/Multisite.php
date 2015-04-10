@@ -14,9 +14,9 @@ class Multisite extends CMS_Secure_Controller {
     protected function do_override_url_map($URL_MAP){
         $module_path = $this->cms_module_path();
         $navigation_name = $this->cms_complete_navigation_name('index');
-        $URL_MAP[$module_path.'/'.$module_path] = $navigation_name;
+        $URL_MAP[$module_path.'/multisite'] = $navigation_name;
         $URL_MAP[$module_path] = $navigation_name;
-        $URL_MAP[$module_path.'/'.$module_path.'/get_data'] = $navigation_name;
+        $URL_MAP[$module_path.'/multisite/get_data'] = $navigation_name;
         $URL_MAP[$module_path.'/get_data'] = $navigation_name;
         return $URL_MAP;
     }
@@ -34,6 +34,7 @@ class Multisite extends CMS_Secure_Controller {
             'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_allow_navigate($this->cms_complete_navigation_name('add_subsite')),
             'backend_url' => site_url($this->cms_module_path().'/add_subsite/index'),
             'module_path' => $this->cms_module_path(),
+            'first_data'  => Modules::run($this->cms_module_path().'/multisite/get_data', 0, '')
         );
         $this->view($this->cms_module_path().'/multisite_index',$data,
             $this->cms_complete_navigation_name('index'));
@@ -137,18 +138,16 @@ class Multisite extends CMS_Secure_Controller {
             $this->cms_complete_navigation_name('index'), $config);
     }
 
-    public function get_data(){
-        // only accept ajax request
-        if(!$this->input->is_ajax_request()) $this->cms_redirect();
+    public function get_data($page=0, $keyword=''){
         // get page and keyword parameter
-        $keyword = $this->input->post('keyword');
-        $page = $this->input->post('page');
-        if(!$keyword) $keyword = '';
-        if(!$page) $page = 0;
+        // get page and keyword parameter
+        $post_keyword   = $this->input->post('keyword');
+        $post_page      = $this->input->post('page');
+        if($keyword == '' && $post_keyword != NULL) $keyword = $post_keyword;
+        if($page == 0 && $post_page != NULL) $page = $post_page;
 
         // get data from model
         $this->load->model($this->cms_module_path().'/subsite_model');
-        $this->subsite_model = new Subsite_Model();
         $result = $this->subsite_model->get_data($keyword, $page);
 
         // get the original site_url (without site-* or subdomain)

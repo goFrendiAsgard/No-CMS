@@ -21,7 +21,9 @@ foreach($articles as $article){
         $(".photo_'.$article['id'].'").click(function(event){
             LOADING = true;
             $("#big_photo_'.$article['id'].'").hide();
-            $("#big_photo_'.$article['id'].'").html("<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" /><br />");
+            $("#big_photo_'.$article['id'].'").html(
+                "<div class=\"col-md-12\" style=\"text-align:right; margin-bottom:10px;\"><a id=\"close_big_photo_'.$article['id'].'\" class=\"btn btn-danger\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></div>"+
+                "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" /><br />");
             $("#big_photo_'.$article['id'].'").fadeIn();
             $("html, body").animate({
                 scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
@@ -29,6 +31,11 @@ foreach($articles as $article){
             $(".photo_'.$article['id'].'").css("opacity", 1);            
             $(this).css("opacity", 0.3);
             event.preventDefault();
+        });
+        $("#close_big_photo_'.$article['id'].'").live("click", function(event){
+            event.preventDefault();
+            $(".photo_'.$article['id'].'").css("opacity", 1);
+            $("#big_photo_'.$article['id'].'").fadeOut();
         });
     </script>';
 

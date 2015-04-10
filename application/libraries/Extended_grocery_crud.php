@@ -65,7 +65,7 @@ class Extended_grocery_crud extends grocery_crud{
         parent::__construct();
         $this->_ci = &get_instance();
         // resolve HMVC set rule callback problem
-        $this->form_validation = $this->_ci->form_validation;
+        //$this->form_validation = $this->_ci->form_validation;
     }
 
     public function set_tabs($data){

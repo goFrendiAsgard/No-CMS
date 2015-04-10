@@ -91,7 +91,9 @@
 </form>
 <div id="record_content">
     <?php
-        if(isset($article) && $article !== FALSE){
+        if($first_data != NULL){
+            echo $first_data;
+        }else if(isset($article) && $article !== FALSE){
             echo '<h2>'.$article['title'].'</h2>';
             echo '('.$article['author'].', '.$article['date'].')'.br();
 
@@ -106,15 +108,23 @@
             echo '<div id="big_photo_'.$article['id'].'"></div>';
             echo '<script type="text/javascript">
                 $(".photo_'.$article['id'].'").click(function(event){
+                    LOADING = true;
                     $("#big_photo_'.$article['id'].'").hide();
-                    $("#big_photo_'.$article['id'].'").html("<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" /><br />");
+                    $("#big_photo_'.$article['id'].'").html(
+                        "<div class=\"col-md-12\" style=\"text-align:right; margin-bottom:10px;\"><a id=\"close_big_photo_'.$article['id'].'\" class=\"btn btn-danger\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></div>"+
+                        "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" /><br />");
                     $("#big_photo_'.$article['id'].'").fadeIn();
                     $("html, body").animate({
                         scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
-                    }, 1000);
+                    }, 1000, "swing", function(){LOADING = false});
                     $(".photo_'.$article['id'].'").css("opacity", 1);            
                     $(this).css("opacity", 0.3);
                     event.preventDefault();
+                });
+                $("#close_big_photo_'.$article['id'].'").live("click", function(event){
+                    event.preventDefault();
+                    $(".photo_'.$article['id'].'").css("opacity", 1);
+                    $("#big_photo_'.$article['id'].'").fadeOut();
                 });
             </script>';
             
@@ -230,7 +240,7 @@
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <script type="text/javascript">
-    var PAGE = 0;
+    var PAGE = 1;
     var URL = '<?php echo site_url($module_path."/blog/get_data"); ?>';
     var ALLOW_NAVIGATE_BACKEND = <?php echo $allow_navigate_backend ? "true" : "false"; ?>;
     var BACKEND_URL = '<?php echo $backend_url; ?>';
@@ -268,6 +278,9 @@
                 'page' : PAGE,
             },
             'success'  : function(response){
+                if(response == ''){
+                    SCROLL_WORK = false;
+                }
                 // show contents
                 $('#record_content').append(response);
 
@@ -298,7 +311,7 @@
         $('textarea[name="<?php echo $secret_code; ?>xcontent"]').autosize();
 
         if(SCROLL_WORK){
-            reset_content();
+            //reset_content();
             $('#record_content_bottom').show();
         }
 

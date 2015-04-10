@@ -1,79 +1,281 @@
 
+
 <!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>File Uploading Class &mdash; CodeIgniter 3.0.0 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/ci-icon.ico"/>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="CodeIgniter 3.0.0 documentation" href="../index.html"/>
+        <link rel="up" title="Libraries" href="index.html"/>
+        <link rel="next" title="Form Validation" href="form_validation.html"/>
+        <link rel="prev" title="Encryption Library" href="encryption.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> CodeIgniter</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../general/welcome.html">Welcome to CodeIgniter</a><ul class="simple">
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation Instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation/downloads.html">Downloading CodeIgniter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html">Installation Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/upgrading.html">Upgrading From a Previous Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">CodeIgniter Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../overview/getting_started.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/at_a_glance.html">CodeIgniter at a Glance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/features.html">Supported Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/appflow.html">Application Flow Chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/mvc.html">Model-View-Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview/goals.html">Architectural Goals</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/static_pages.html">Static pages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/news_section.html">News section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/create_news_items.html">Create news items</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial/conclusion.html">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../general/index.html">General Topics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../general/urls.html">CodeIgniter URLs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/controllers.html">Controllers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/reserved_names.html">Reserved Names</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/views.html">Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/helpers.html">Helpers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/libraries.html">Using CodeIgniter Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/creating_libraries.html">Creating Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/drivers.html">Using CodeIgniter Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/creating_drivers.html">Creating Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/core_classes.html">Creating Core System Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/ancillary_classes.html">Creating Ancillary Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/hooks.html">Hooks - Extending the Framework Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/autoloader.html">Auto-loading Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/common_functions.html">Common Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/compatibility_functions.html">Compatibility Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/routing.html">URI Routing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/errors.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/caching.html">Caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/profiling.html">Profiling Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/cli.html">Running via the CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/managing_apps.html">Managing your Applications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/environments.html">Handling Multiple Environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/alternative_php.html">Alternate PHP Syntax for View Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/security.html">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../general/styleguide.html">PHP Style Guide</a></li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Libraries</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="benchmark.html">Benchmarking Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caching.html">Caching Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calendar.html">Calendaring Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cart.html">Shopping Cart Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html">Config Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email.html">Email Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encrypt.html">Encrypt Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encryption.html">Encryption Library</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">File Uploading Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="form_validation.html">Form Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ftp.html">FTP Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_lib.html">Image Manipulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input.html">Input Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="javascript.html">Javascript Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language.html">Language Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loader.html">Loader Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migration.html">Migrations Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="output.html">Output Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pagination.html">Pagination Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parser.html">Template Parser Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security.html">Security Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sessions.html">Session Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="table.html">HTML Table Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trackback.html">Trackback Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="typography.html">Typography Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit_testing.html">Unit Testing Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uri.html">URI Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_agent.html">User Agent Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xmlrpc.html">XML-RPC and XML-RPC Server Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="zip.html">Zip Encoding Class</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../database/index.html">Database Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../database/examples.html">Quick Start: Usage Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/configuration.html">Database Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/connecting.html">Connecting to a Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/queries.html">Running Queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/results.html">Generating Query Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/helpers.html">Query Helper Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/query_builder.html">Query Builder Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/transactions.html">Transactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/metadata.html">Getting MetaData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/call_function.html">Custom Function Calls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/caching.html">Query Caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/forge.html">Database Manipulation with Database Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/utilities.html">Database Utilities Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database/db_driver_reference.html">Database Driver Reference</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../helpers/index.html">Helpers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/array_helper.html">Array Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/captcha_helper.html">CAPTCHA Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/cookie_helper.html">Cookie Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/date_helper.html">Date Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/directory_helper.html">Directory Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/download_helper.html">Download Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/email_helper.html">Email Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/file_helper.html">File Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/form_helper.html">Form Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/html_helper.html">HTML Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/inflector_helper.html">Inflector Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/language_helper.html">Language Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/number_helper.html">Number Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/path_helper.html">Path Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/security_helper.html">Security Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/smiley_helper.html">Smiley Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/string_helper.html">String Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/text_helper.html">Text Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/typography_helper.html">Typography Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/url_helper.html">URL Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../helpers/xml_helper.html">XML Helper</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributing to CodeIgniter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../documentation/index.html">Writing CodeIgniter Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../DCO.html">Developer&#8217;s Certificate of Origin 1.1</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CodeIgniter</a>
+      </nav>
 
 
-<html>
-	<head>
-		<meta charset="utf-8">
-	    
-	    <title>File Uploading Class &mdash; CodeIgniter 3.0-dev documentation</title>
-
-	    <link rel="stylesheet" href="../_static/asset/css/common.css" type="text/css" />
-	    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-	    <script type="text/javascript">
-	      var DOCUMENTATION_OPTIONS = {
-	        URL_ROOT:    '../',
-	        VERSION:     '3.0-dev',
-	        COLLAPSE_INDEX: false,
-	        FILE_SUFFIX: '.html',
-	        HAS_SOURCE:  false
-	      };
-	    </script>
-	    <script type="text/javascript" src="../_static/jquery.js"></script>
-	    <script type="text/javascript" src="../_static/underscore.js"></script>
-	    <script type="text/javascript" src="../_static/doctools.js"></script>
-	    <link rel="top" title="CodeIgniter 3.0-dev documentation" href="../index.html" />
-	    <link rel="up" title="Libraries" href="index.html" />
-	    <link rel="next" title="Form Validation" href="form_validation.html" />
-	    <link rel="prev" title="Encryption Class" href="encryption.html" /> 
-	</head>
-	<body>
-		<div id="table-contents">
-			<div class="toctree-wrapper compound">
-			<function <lambda> at 0xa808d14>
-			</div>
-		</div>
-
-		<div id="brand" class="ci">
-			<a href="http://codeigniter.com/"><img src="../_static/asset/img/ci-logo.gif" alt="CodeIgniter"></a>
-			<p>3.0-dev User Guide</p>
-		</div><!-- /#brand -->
-
-		<div id="header"><!--
-	--------------------------------
-	Original Google search box block
-	--------------------------------
-	
-<form method="get" action="http://www.google.com/search">
-	<fieldset>
-		<input type="text" name="q" id="q" value="">
-		<input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />
-		<input class="grades" type="submit" value="search">
-	</fieldset>
-</form>
--->
-
-
-<form class="search" action="../search.html" method="get">
-  <input type="text" name="q" id="q" value="" />
-  <input type="submit" value="search" />
-  <input type="hidden" name="check_keywords" value="yes" />
-  <input type="hidden" name="area" value="default" />
-</form>
-			<ul>
-				<li><a href="../index.html">User Guide Home</a>&nbsp;&nbsp; &rsaquo;</li>
-				<li><a href="index.html" accesskey="U">Libraries</a>&nbsp;&nbsp;  &rsaquo;</li>
-				<li><strong>File Uploading Class</strong></li>
-			</ul>
-		</div><!-- /#header -->
-
-		<div class="section body" id="content">
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Libraries</a> &raquo;</li>
+      
+    <li>File Uploading Class</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
   <div class="section" id="file-uploading-class">
 <h1>File Uploading Class<a class="headerlink" href="#file-uploading-class" title="Permalink to this headline">¶</a></h1>
 <p>CodeIgniter&#8217;s File Uploading Class permits files to be uploaded. You can
 set various preferences, restricting the type and size of the files.</p>
-<div class="section" id="the-process">
-<h2>The Process<a class="headerlink" href="#the-process" title="Permalink to this headline">¶</a></h2>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#the-process" id="id1">The Process</a><ul>
+<li><a class="reference internal" href="#creating-the-upload-form" id="id2">Creating the Upload Form</a></li>
+<li><a class="reference internal" href="#the-success-page" id="id3">The Success Page</a></li>
+<li><a class="reference internal" href="#the-controller" id="id4">The Controller</a></li>
+<li><a class="reference internal" href="#the-upload-directory" id="id5">The Upload Directory</a></li>
+<li><a class="reference internal" href="#try-it" id="id6">Try it!</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reference-guide" id="id7">Reference Guide</a><ul>
+<li><a class="reference internal" href="#initializing-the-upload-class" id="id8">Initializing the Upload Class</a></li>
+<li><a class="reference internal" href="#setting-preferences" id="id9">Setting Preferences</a></li>
+<li><a class="reference internal" href="#preferences" id="id10">Preferences</a></li>
+<li><a class="reference internal" href="#setting-preferences-in-a-config-file" id="id11">Setting preferences in a config file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#class-reference" id="id12">Class Reference</a></li>
+</ul>
+</div>
+<div class="custom-index container"></div><div class="section" id="the-process">
+<h2><a class="toc-backref" href="#id1">The Process</a><a class="headerlink" href="#the-process" title="Permalink to this headline">¶</a></h2>
 <p>Uploading a file involves the following general process:</p>
 <ul class="simple">
 <li>An upload form is displayed, allowing a user to select a file and
@@ -87,7 +289,7 @@ uploaded based on the preferences you set.</li>
 <p>To demonstrate this process here is brief tutorial. Afterward you&#8217;ll
 find reference information.</p>
 <div class="section" id="creating-the-upload-form">
-<h3>Creating the Upload Form<a class="headerlink" href="#creating-the-upload-form" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id2">Creating the Upload Form</a><a class="headerlink" href="#creating-the-upload-form" title="Permalink to this headline">¶</a></h3>
 <p>Using a text editor, create a form called upload_form.php. In it, place
 this code and save it to your <strong>application/views/</strong> directory:</p>
 <div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;</span>
@@ -119,7 +321,7 @@ so we can show error messages in the event the user does something
 wrong.</p>
 </div>
 <div class="section" id="the-success-page">
-<h3>The Success Page<a class="headerlink" href="#the-success-page" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id3">The Success Page</a><a class="headerlink" href="#the-success-page" title="Permalink to this headline">¶</a></h3>
 <p>Using a text editor, create a form called upload_success.php. In it,
 place this code and save it to your <strong>application/views/</strong> directory:</p>
 <div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;</span>
@@ -144,8 +346,8 @@ place this code and save it to your <strong>application/views/</strong> director
 </div>
 </div>
 <div class="section" id="the-controller">
-<h3>The Controller<a class="headerlink" href="#the-controller" title="Permalink to this headline">¶</a></h3>
-<p>Using a text editor, create a controller called upload.php. In it, place
+<h3><a class="toc-backref" href="#id4">The Controller</a><a class="headerlink" href="#the-controller" title="Permalink to this headline">¶</a></h3>
+<p>Using a text editor, create a controller called Upload.php. In it, place
 this code and save it to your <strong>application/controllers/</strong> directory:</p>
 <div class="highlight-ci"><div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span>
 
@@ -191,13 +393,13 @@ this code and save it to your <strong>application/controllers/</strong> director
 </div>
 </div>
 <div class="section" id="the-upload-directory">
-<h3>The Upload Directory<a class="headerlink" href="#the-upload-directory" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">The Upload Directory</a><a class="headerlink" href="#the-upload-directory" title="Permalink to this headline">¶</a></h3>
 <p>You&#8217;ll need a destination directory for your uploaded images. Create a
 directory at the root of your CodeIgniter installation called uploads
 and set its file permissions to 777.</p>
 </div>
 <div class="section" id="try-it">
-<h3>Try it!<a class="headerlink" href="#try-it" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Try it!</a><a class="headerlink" href="#try-it" title="Permalink to this headline">¶</a></h3>
 <p>To try your form, visit your site using a URL similar to this one:</p>
 <div class="highlight-ci"><div class="highlight"><pre><span class="nx">example</span><span class="o">.</span><span class="nx">com</span><span class="o">/</span><span class="nx">index</span><span class="o">.</span><span class="nx">php</span><span class="o">/</span><span class="nx">upload</span><span class="o">/</span>
 </pre></div>
@@ -208,9 +410,9 @@ work.</p>
 </div>
 </div>
 <div class="section" id="reference-guide">
-<h2>Reference Guide<a class="headerlink" href="#reference-guide" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Reference Guide</a><a class="headerlink" href="#reference-guide" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="initializing-the-upload-class">
-<h3>Initializing the Upload Class<a class="headerlink" href="#initializing-the-upload-class" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">Initializing the Upload Class</a><a class="headerlink" href="#initializing-the-upload-class" title="Permalink to this headline">¶</a></h3>
 <p>Like most other classes in CodeIgniter, the Upload class is initialized
 in your controller using the <tt class="docutils literal"><span class="pre">$this-&gt;load-&gt;library()</span></tt> method:</p>
 <div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">load</span><span class="o">-&gt;</span><span class="na">library</span><span class="p">(</span><span class="s1">&#39;upload&#39;</span><span class="p">);</span>
@@ -220,7 +422,7 @@ in your controller using the <tt class="docutils literal"><span class="pre">$thi
 $this-&gt;upload</p>
 </div>
 <div class="section" id="setting-preferences">
-<h3>Setting Preferences<a class="headerlink" href="#setting-preferences" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">Setting Preferences</a><a class="headerlink" href="#setting-preferences" title="Permalink to this headline">¶</a></h3>
 <p>Similar to other libraries, you&#8217;ll control what is allowed to be upload
 based on your preferences. In the controller you built above you set the
 following preferences:</p>
@@ -240,7 +442,7 @@ following preferences:</p>
 table describing all available preferences.</p>
 </div>
 <div class="section" id="preferences">
-<h3>Preferences<a class="headerlink" href="#preferences" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">Preferences</a><a class="headerlink" href="#preferences" title="Permalink to this headline">¶</a></h3>
 <p>The following preferences are available. The default value indicates
 what will be used if you do not specify that preference.</p>
 <table border="1" class="docutils">
@@ -269,7 +471,7 @@ directory must be writable and the path can be absolute or relative.</td>
 <td>None</td>
 <td>The mime types corresponding to the types of files you allow to be
 uploaded. Usually the file extension can be used as the mime type.
-Separate multiple types with a pipe.</td>
+Can be either an array or a pipe-separated string.</td>
 </tr>
 <tr class="row-even"><td><strong>file_name</strong></td>
 <td>None</td>
@@ -352,11 +554,19 @@ underscores. This is recommended.</td>
 performed to avoid code injection attacks. DO NOT disable this option
 unless you have no other option as that would cause a security risk.</td>
 </tr>
+<tr class="row-odd"><td><strong>mod_mime_fix</strong></td>
+<td>TRUE</td>
+<td>TRUE/FALSE (boolean)</td>
+<td>If set to TRUE, multiple filename extensions will be suffixed with an
+underscore in order to avoid triggering <a class="reference external" href="http://httpd.apache.org/docs/2.0/mod/mod_mime.html#multipleext">Apache mod_mime</a>.
+DO NOT turn off this option if your upload directory is public, as this
+is a security risk.</td>
+</tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="setting-preferences-in-a-config-file">
-<h3>Setting preferences in a config file<a class="headerlink" href="#setting-preferences-in-a-config-file" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">Setting preferences in a config file</a><a class="headerlink" href="#setting-preferences-in-a-config-file" title="Permalink to this headline">¶</a></h3>
 <p>If you prefer not to set preferences using the above method, you can
 instead put them into a config file. Simply create a new file called the
 upload.php, add the $config array in that file. Then save the file in:
@@ -366,10 +576,53 @@ preferences in a config file.</p>
 </div>
 </div>
 <div class="section" id="class-reference">
-<h2>Class Reference<a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h2>
-<p>The following methods are available:</p>
-<div class="section" id="this-upload-do-upload">
-<h3>$this-&gt;upload-&gt;do_upload()<a class="headerlink" href="#this-upload-do-upload" title="Permalink to this headline">¶</a></h3>
+<h2><a class="toc-backref" href="#id12">Class Reference</a><a class="headerlink" href="#class-reference" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="CI_Upload">
+<em class="property">class </em><tt class="descname">CI_Upload</tt><a class="headerlink" href="#CI_Upload" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="CI_Upload::initialize">
+<tt class="descname">initialize</tt><big>(</big><span class="optional">[</span><em>array $config = array()</em><span class="optional">[</span>, <em>$reset = TRUE</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#CI_Upload::initialize" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$config</strong> (<em>array</em>) &#8211; Preferences</li>
+<li><strong>$reset</strong> (<em>bool</em>) &#8211; Whether to reset preferences (that are not provided in $config) to their defaults</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">CI_Upload instance (method chaining)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">CI_Upload</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="CI_Upload::do_upload">
+<tt class="descname">do_upload</tt><big>(</big><span class="optional">[</span><em>$field = 'userfile'</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#CI_Upload::do_upload" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$field</strong> (<em>string</em>) &#8211; Name of the form field</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">TRUE on success, FALSE on failure</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Performs the upload based on the preferences you&#8217;ve set.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -386,23 +639,62 @@ the <tt class="docutils literal"><span class="pre">do_upload()</span></tt> metho
 <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">do_upload</span><span class="p">(</span><span class="nv">$field_name</span><span class="p">);</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="this-upload-display-errors">
-<h3>$this-&gt;upload-&gt;display_errors()<a class="headerlink" href="#this-upload-display-errors" title="Permalink to this headline">¶</a></h3>
+</dd></dl>
+
+<dl class="method">
+<dt id="CI_Upload::display_errors">
+<tt class="descname">display_errors</tt><big>(</big><span class="optional">[</span><em>$open = '&lt;p&gt;'</em><span class="optional">[</span>, <em>$close = '&lt;/p&gt;'</em><span class="optional">]</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#CI_Upload::display_errors" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$open</strong> (<em>string</em>) &#8211; Opening markup</li>
+<li><strong>$close</strong> (<em>string</em>) &#8211; Closing markup</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Formatted error message(s)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Retrieves any error messages if the <tt class="docutils literal"><span class="pre">do_upload()</span></tt> method returned
 false. The method does not echo automatically, it returns the data so
 you can assign it however you need.</p>
-<div class="section" id="formatting-errors">
-<h4>Formatting Errors<a class="headerlink" href="#formatting-errors" title="Permalink to this headline">¶</a></h4>
-<p>By default the above method wraps any errors within &lt;p&gt; tags. You can
+<p><strong>Formatting Errors</strong></p>
+<blockquote>
+<div><p>By default the above method wraps any errors within &lt;p&gt; tags. You can
 set your own delimiters like this:</p>
 <div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">display_errors</span><span class="p">(</span><span class="s1">&#39;&lt;p&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;/p&gt;&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="this-upload-data">
-<h3>$this-&gt;upload-&gt;data()<a class="headerlink" href="#this-upload-data" title="Permalink to this headline">¶</a></h3>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="CI_Upload::data">
+<tt class="descname">data</tt><big>(</big><span class="optional">[</span><em>$index = NULL</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#CI_Upload::data" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>$data</strong> (<em>string</em>) &#8211; Element to return instead of the full array</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Information about the uploaded file</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">mixed</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>This is a helper method that returns an array containing all of the
 data related to the file you uploaded. Here is the array prototype:</p>
 <div class="highlight-ci"><div class="highlight"><pre><span class="k">Array</span>
@@ -428,55 +720,134 @@ data related to the file you uploaded. Here is the array prototype:</p>
 <div class="highlight-ci"><div class="highlight"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">upload</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">(</span><span class="s1">&#39;file_name&#39;</span><span class="p">);</span>       <span class="c1">// Returns: mypic.jpg</span>
 </pre></div>
 </div>
-<div class="section" id="explanation">
-<h4>Explanation<a class="headerlink" href="#explanation" title="Permalink to this headline">¶</a></h4>
-<p>Here is an explanation of the above array items.</p>
-<p>Item
-Description
-<strong>file_name</strong>
-The name of the file that was uploaded including the file extension.
-<strong>file_type</strong>
-The file&#8217;s Mime type
-<strong>file_path</strong>
-The absolute server path to the file
-<strong>full_path</strong>
-The absolute server path including the file name
-<strong>raw_name</strong>
-The file name without the extension
-<strong>orig_name</strong>
-The original file name. This is only useful if you use the encrypted
-name option.
-<strong>client_name</strong>
-The file name as supplied by the client user agent, prior to any file
-name preparation or incrementing.
-<strong>file_ext</strong>
-The file extension with period
-<strong>file_size</strong>
-The file size in kilobytes
-<strong>is_image</strong>
-Whether the file is an image or not. 1 = image. 0 = not.
-<strong>image_width</strong>
-Image width.
-<strong>image_height</strong>
-Image height
-<strong>image_type</strong>
-Image type. Typically the file extension without the period.
-<strong>image_size_str</strong>
-A string containing the width and height. Useful to put into an image
-tag.</p>
-</div>
-</div>
+<p>Here&#8217;s a table explaining the above-displayed array items:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="86%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>file_name</td>
+<td>Name of the file that was uploaded, including the filename extension</td>
+</tr>
+<tr class="row-odd"><td>file_type</td>
+<td>File MIME type identifier</td>
+</tr>
+<tr class="row-even"><td>file_path</td>
+<td>Absolute server path to the file</td>
+</tr>
+<tr class="row-odd"><td>full_path</td>
+<td>Absolute server path, including the file name</td>
+</tr>
+<tr class="row-even"><td>raw_name</td>
+<td>File name, without the extension</td>
+</tr>
+<tr class="row-odd"><td>orig_name</td>
+<td>Original file name. This is only useful if you use the encrypted name option.</td>
+</tr>
+<tr class="row-even"><td>client_name</td>
+<td>File name as supplied by the client user agent, prior to any file name preparation or incrementing</td>
+</tr>
+<tr class="row-odd"><td>file_ext</td>
+<td>Filename extension, period included</td>
+</tr>
+<tr class="row-even"><td>file_size</td>
+<td>File size in kilobytes</td>
+</tr>
+<tr class="row-odd"><td>is_image</td>
+<td>Whether the file is an image or not. 1 = image. 0 = not.</td>
+</tr>
+<tr class="row-even"><td>image_width</td>
+<td>Image width</td>
+</tr>
+<tr class="row-odd"><td>image_height</td>
+<td>Image height</td>
+</tr>
+<tr class="row-even"><td>image_type</td>
+<td>Image type (usually the file name extension without the period)</td>
+</tr>
+<tr class="row-odd"><td>image_size_str</td>
+<td>A string containing the width and height (useful to put into an image tag)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
 
-		</div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="form_validation.html" class="btn btn-neutral float-right" title="Form Validation">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="encryption.html" class="btn btn-neutral" title="Encryption Library"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
-		<!-- {user_guide_comments} -->
-					
-		<div id="footer">
-			<p class="top"><a href="#header" title="Return to top">Return to top</a></p>
-			<p><a href="http://codeigniter.com/">CodeIgniter</a> &ndash; Copyright &copy; 2013, EllisLab, Inc.</a></p>
-		</div><!-- /#footer -->
-	</body>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014 - 2015, British Columbia Institute of Technology.
+      Last updated on Mar 30, 2015.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'3.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  false
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>

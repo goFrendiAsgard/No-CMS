@@ -23,10 +23,10 @@
         }
     ?>
 </div>
-<div id="record_content" class="row"></div>
+<div id="record_content" class="row"><?php echo $first_data; ?></div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
-    var PAGE = 0;
+    var PAGE = 1;
     var URL = '<?php echo site_url($module_path."/multisite/get_data"); ?>';
     var ALLOW_NAVIGATE_BACKEND = <?php echo $allow_navigate_backend ? "true" : "false"; ?>;
     var BACKEND_URL = '<?php echo $backend_url; ?>';
@@ -80,6 +80,10 @@
                 'page' : PAGE,
             },
             'success'  : function(response){
+                // change loading status
+                if(response == ''){
+                    LOADING = true;
+                }
                 // show contents
                 $('#record_content').append(response);
                 _adjust_thumbnail();
@@ -102,6 +106,7 @@
 
     function reset_content(){
         $('#record_content').html('');
+        LOADING = false;
         PAGE = 0;
         fetch_more_data();
     }
@@ -122,7 +127,7 @@
 
         // scroll
         $(window).scroll(function(){
-            if(!LOADING & !STOP_REQUEST){
+            if(!LOADING && !STOP_REQUEST){
                 if($('#record_content_bottom').position().top <= $(window).scrollTop() + $(window).height() ){
                     LOADING = true;
                     fetch_more_data(false);

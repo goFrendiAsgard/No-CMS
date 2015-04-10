@@ -577,8 +577,8 @@ class Default_generator extends CMS_Controller{
         );
         $replacement = array(
             'index',
-            underscore($this->project_name),
-            underscore($this->project_name),
+            ucfirst(strtolower(underscore($this->project_name))),
+            ucfirst(strtolower(underscore($this->project_name))),
             $this->project_name,
         );
         // main controller

@@ -430,6 +430,14 @@ if( INVALID_SUBSITE || (CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/
  */
 
 // TODO: write the code
+function new_class_name($class_name){
+    return ucfirst(strtolower(trim($class_name, '_')));
+}
+
+function new_load_name($load_name){
+    return strtolower(trim($load_name, '_'));
+}
+
 
 /*
  * ---------------------------------------------------------------
