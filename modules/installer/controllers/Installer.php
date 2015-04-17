@@ -72,13 +72,13 @@ class Installer extends MX_Controller{
         $module_installed = FALSE;
         if($success){
             $this->install_model->build_configuration();
-            $this->install_model->build_database();            
+            $this->install_model->build_database();
             $module_installed = $this->install_model->install_modules();
         }
         $data['module_installed'] = $module_installed;
         $data['success'] = $success;
         $data['admin_user_name'] = $this->install_model->admin_user_name;
-        $data['admin_password'] = $this->install_model->admin_password;        
+        $data['admin_password'] = $this->install_model->admin_password;    
         $this->load->view('installer_install', $data);
     }
 

@@ -92,13 +92,16 @@ class CMS_Base_Model extends CI_Model
             }
         }
 
-        // BASE URL, needed by kcfinder
-        if(!isset($_SESSION)){
-            session_start();
+        // kcfinder
+        include(APPPATH.'config/main/cms_config.php');
+        if(array_key_exists('__cms_chipper', $config)){
+            $chipper = $config['__cms_chipper'];
+        }else{
+            $chipper = 'Love Song Storm Gravity Tonight End of Sorrow Rosier';
         }
-        if(!isset($_SESSION['__base_url'])){
-            $_SESSION['__cms_base_url'] = base_url();
-        }
+        setcookie(cms_encode('__cms_base_url', $chipper),   cms_encode(base_url(), $chipper));
+        setcookie(cms_encode('__cms_subsite', $chipper),    cms_encode(CMS_SUBSITE, $chipper));
+        setcookie(cms_encode('__cms_user_id', $chipper),    cms_encode($this->cms_user_id()));
 
         // extend user last active status
         $this->__cms_extend_user_last_active($this->cms_user_id());
@@ -744,6 +747,7 @@ class CMS_Base_Model extends CI_Model
                     if($module_path == 'main' || (array_key_exists($module_path, self::$__cms_model_properties['module_name']) && self::$__cms_model_properties['module_name'][$module_path] != '') ){
                         $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
                         $_REQUEST['__cms_dynamic_widget_module'] = $module_path;
+                        $url = trim($url, '/');
                         $response = @Modules::run($url);
                         if(strlen($response) == 0){
                             $response = @Modules::run($url.'/index');
@@ -1196,15 +1200,6 @@ class CMS_Base_Model extends CI_Model
             $this->cms_user_id($user_id);
             $this->cms_user_real_name($user_real_name);
             $this->cms_user_email($user_email);
-            // save login status
-
-            // needed by kcfinder
-            if(!isset($_SESSION)){
-                session_start();
-            }
-            if(!isset($_SESSION['__cms_user_id'])){
-                $_SESSION['__cms_user_id'] = $user_id;
-            }
             
             $this->__cms_extend_user_last_active($user_id);
             return TRUE;
@@ -1237,11 +1232,6 @@ class CMS_Base_Model extends CI_Model
         $this->cms_unset_ci_session('cms_user_id');
         $this->cms_unset_ci_session('cms_user_real_name');
         $this->cms_unset_ci_session('cms_user_email');
-        
-        // needed by kcfinder
-        if(isset($_SESSION)){
-            session_unset('__cms_user_id');
-        }
     }
 
     /**
@@ -2240,6 +2230,33 @@ class CMS_Base_Model extends CI_Model
         return $module;
     }
 
+    private function cms_adjust_module(){
+        $query = $this->db->select('module_id, version, module_name, module_path')
+            ->from(cms_table_name('main_module'))
+            ->get();
+        foreach($query->result() as $row){  
+            $json            = file_get_contents(FCPATH.'modules/'.$row->module_path.'/description.txt');
+            $module_info     = @json_decode($json, true);
+            $module_info     = $module_info === NULL? array() : $module_info;
+            $module_name     = $row->module_name;
+            if(array_key_exists('name', $module_info)){
+                $module_name = $module_info['name'];
+                if($row->module_name != $module_name){
+                    $this->db->update(cms_table_name('main_module'),
+                            array('module_name'=>$module_name),
+                            array('module_id'=>$row->module_id)
+                        );
+                }
+            }                  
+            self::$__cms_model_properties['module_version'][$module_name] = $row->version;
+            self::$__cms_model_properties['module_name'][$row->module_path] = $module_name;
+            self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
+        }
+        self::$__cms_model_properties['is_module_version_cached'] = TRUE;
+        self::$__cms_model_properties['is_module_name_cached'] = TRUE;
+        self::$__cms_model_properties['is_module_path_cached'] = TRUE;
+    }
+
     public function cms_module_version($module_name = NULL, $new_version = NULL){
         if($new_version !== NULL){
             $this->db->update(cms_table_name('main_module'),
@@ -2247,17 +2264,7 @@ class CMS_Base_Model extends CI_Model
                 array('module_name'=>$module_name));
         }
         if (!self::$__cms_model_properties['is_module_version_cached']) {
-            $query = $this->db->select('version, module_name, module_path')
-                ->from(cms_table_name('main_module'))
-                ->get();
-            foreach($query->result() as $row){                    
-                self::$__cms_model_properties['module_version'][$row->module_name] = $row->version;
-                self::$__cms_model_properties['module_name'][$row->module_path] = $row->module_name;
-                self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
-            }
-            self::$__cms_model_properties['is_module_version_cached'] = TRUE;
-            self::$__cms_model_properties['is_module_name_cached'] = TRUE;
-            self::$__cms_model_properties['is_module_path_cached'] = TRUE;
+            $this->cms_adjust_module();
         }
         if(array_key_exists($module_name, self::$__cms_model_properties['module_version'])){
             return self::$__cms_model_properties['module_version'][$module_name];
@@ -2286,17 +2293,7 @@ class CMS_Base_Model extends CI_Model
                 return $module;
             } else {
                 if (!self::$__cms_model_properties['is_module_path_cached']) {
-                    $query = $this->db->select('module_path, module_name, version')
-                        ->from(cms_table_name('main_module'))
-                        ->get();
-                    foreach($query->result() as $row){                    
-                        self::$__cms_model_properties['module_version'][$row->module_name] = $row->version;
-                        self::$__cms_model_properties['module_name'][$row->module_path] = $row->module_name;
-                        self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
-                    }
-                    self::$__cms_model_properties['is_module_version_cached'] = TRUE;
-                    self::$__cms_model_properties['is_module_name_cached'] = TRUE;
-                    self::$__cms_model_properties['is_module_path_cached'] = TRUE;
+                    $this->cms_adjust_module();
                 }
                 if(array_key_exists($module_name, self::$__cms_model_properties['module_path'])){
                     return self::$__cms_model_properties['module_path'][$module_name];
@@ -2319,17 +2316,7 @@ class CMS_Base_Model extends CI_Model
         }
 
         if (!self::$__cms_model_properties['is_module_name_cached']) {
-            $query = $this->db->select('module_path, module_name, version')
-                ->from(cms_table_name('main_module'))
-                ->get();
-            foreach($query->result() as $row){                    
-                self::$__cms_model_properties['module_version'][$row->module_name] = $row->version;
-                self::$__cms_model_properties['module_name'][$row->module_path] = $row->module_name;
-                self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
-            }
-            self::$__cms_model_properties['is_module_version_cached'] = TRUE;
-            self::$__cms_model_properties['is_module_name_cached'] = TRUE;
-            self::$__cms_model_properties['is_module_path_cached'] = TRUE;
+            $this->cms_adjust_module();
         }
         if(array_key_exists($module_path, self::$__cms_model_properties['module_name'])){
             return self::$__cms_model_properties['module_name'][$module_path];
@@ -3243,13 +3230,13 @@ class CMS_Base_Model extends CI_Model
     $default_theme=NULL, $default_layout=NULL, $notif_url=NULL)
     {
         //get parent's navigation_id
-        $query = $this->db->select('navigation_id')
+        $query = $this->db->select('navigation_id, navigation_name')
             ->from(cms_table_name('main_navigation'))
             ->where('navigation_name', $parent_name)
             ->get();
         $row   = $query->row();
 
-        $parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+        $parent_id = isset($row->navigation_id) && $row->navigation_name != $navigation_name  ? $row->navigation_id : NULL;
 
         //if it is null, index = max index+1
         if (!isset($index)) {

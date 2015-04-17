@@ -152,15 +152,17 @@ class Multisite extends CMS_Secure_Controller {
 
         // get the original site_url (without site-* or subdomain)
         $site_url = site_url();
-        // remove any site-*
-        $site_url = preg_replace('/site-.*/', '', $site_url);
-        // remove any relevant subdomain
-        include(FCPATH.'site.php');
-        $subdomain_prefixes = $available_site;
-        for($i=0; $i<count($subdomain_prefixes); $i++){
-            $subdomain_prefixes[$i] .= '.';
+        if(CMS_SUBSITE != ''){
+            // remove any site-*
+            $site_url = preg_replace('/site-.*/', '', $site_url);
+            // remove any relevant subdomain
+            include(FCPATH.'site.php');
+            $subdomain_prefixes = $available_site;
+            for($i=0; $i<count($subdomain_prefixes); $i++){
+                $subdomain_prefixes[$i] .= '.';
+            }
+            $site_url = str_replace($subdomain_prefixes, '', $site_url);
         }
-        $site_url = str_replace($subdomain_prefixes, '', $site_url);
 
         $is_admin = $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id());
 

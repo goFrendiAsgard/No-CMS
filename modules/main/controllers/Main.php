@@ -444,19 +444,25 @@ class Main extends CMS_Controller
                     }
                 }
                 $subsite = $sanitized_subsite;
-                // is there any subsite with similar name
-                $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
-                $this->cms_override_module_path($module_path);
-                $t_subsite = $this->cms_complete_table_name('subsite');
-                $query = $this->db->select('name')
-                    ->from($t_subsite)
-                    ->where('name', $subsite)
-                    ->get();
-                if($query->num_rows()>0){
-                    $message = $this->cms_lang("Subsite already used, choose other username");
+                if($subsite == ''){
+                    $message = $this->cms_lang("Subsite is empty or username have no alphabet character");
                     $error = TRUE;
                 }
-                $this->cms_reset_overriden_module_path();
+                if(!$error){
+                    // is there any subsite with similar name
+                    $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
+                    $this->cms_override_module_path($module_path);
+                    $t_subsite = $this->cms_complete_table_name('subsite');
+                    $query = $this->db->select('name')
+                        ->from($t_subsite)
+                        ->where('name', $subsite)
+                        ->get();
+                    if($query->num_rows()>0){
+                        $message = $this->cms_lang("Subsite already used, choose other username");
+                        $error = TRUE;
+                    }
+                    $this->cms_reset_overriden_module_path();
+                }
             }
 
             $data = array(
@@ -915,6 +921,10 @@ class Main extends CMS_Controller
             'column_navigation_name'
         ));
 
+        $crud->callback_before_update(array(
+            $this,
+            'before_update_navigation'
+        ));
         $crud->callback_before_insert(array(
             $this,
             'before_insert_navigation'
@@ -992,6 +1002,15 @@ class Main extends CMS_Controller
             $post_array['authorization_id'] = 1;
         }
 
+        return $post_array;
+    }
+
+    public function before_update_navigation($post_array, $primary_key)
+    {   /*
+        if(array_key_exists('parent_id', $post_array) && is_int($post_array['parent_id'])){
+            $navigation_path = $this->cms_get_navigation_path();
+
+        }*/
         return $post_array;
     }
 

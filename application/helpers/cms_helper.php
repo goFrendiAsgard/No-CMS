@@ -168,6 +168,7 @@ function _xor($data, $chipper=array(1,2,3,4,5,6,7)){
     }
     return $new_data;
 }
+
 function cms_encode($data, $chipper = NULL){
     $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
     $data_array = array();
@@ -195,35 +196,4 @@ function cms_decode($data, $chipper = NULL){
         $decoded_str .= chr($decoded_array[$i]);
     }
     return $decoded_str;
-}
-
-/*
- Rename Install into _Info
-*/
-function cms_update_module_installer(){
-    $ci =& get_instance();
-    $ci->load->helper('directory');
-    $directories = directory_map(FCPATH.'modules', 1);
-    sort($directories);
-    $module      = array();
-    foreach ($directories as $directory) {
-        $directory = str_replace(array('/','\\'),'',$directory);
-        if (!is_dir(FCPATH.'modules/' . $directory))
-            continue;
-
-        // get old and new installer name
-        $old_installer = FCPATH.'modules/' . $directory . '/controllers/install.php';
-        $new_installer = FCPATH.'modules/' . $directory . '/controllers/_info.php';
-
-        if (!file_exists($old_installer) || file_exists($new_installer))
-            continue;
-
-        // make new installer
-        $content = file_get_contents($old_installer);
-        $content = preg_replace('/class( *)Install( *)extends( *)CMS_Module_Installer/i', 
-            'class _Info extends CMS_Module_Info_Controller', $content);
-        file_put_contents($new_installer, $content);
-        unlink($old_installer);
-    }
-
 }

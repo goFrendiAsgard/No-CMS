@@ -13,7 +13,7 @@ class CMS_Model extends CMS_Base_Model{
         if(!self::$module_updated){  
             self::$module_updated = TRUE;          
             $this->__update_module();
-        }        
+        }
     }
 
     private function __update(){
@@ -56,6 +56,7 @@ class CMS_Model extends CMS_Base_Model{
                 $upgrade_link    = $module['upgrade_link'];
                 if($active && $old_version != $current_version){
                     $url = str_replace(site_url(), '', $upgrade_link);
+                    $url = trim($url, '/');
                     $response = @Modules::run($url, $bypass);
                 }
             }

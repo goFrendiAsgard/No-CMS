@@ -72,9 +72,6 @@ class Install_model extends CI_Model{
         );
 
     public function __construct(){
-        // update module installer
-        $this->load->helper('cms_helper');
-        cms_update_module_installer();
         
         $timezone = @date_default_timezone_get();
         if (!isset($timezone) || $timezone == '') {
@@ -98,7 +95,7 @@ class Install_model extends CI_Model{
         $sanitized_subsite = '';
         for($i=0; $i<strlen($subsite); $i++){
             $letter = substr($subsite, $i, 1);
-            if(is_numeric($letter) || strpos('abcdefghijklmnopqrstuvwxyz_', $letter) !== FALSE){
+            if(is_numeric($letter) || strpos('abcdefghijklmnopqrstuvwxyz', $letter) !== FALSE){
                 $sanitized_subsite .= $letter;
             }
         }
@@ -813,11 +810,13 @@ class Install_model extends CI_Model{
     }
 
     protected function insert_user(){
+        $this->load->helper('cms');
         if($this->is_subsite){
             include(APPPATH.'config/site-'.$this->subsite.'/cms_config.php');
             $chipper = $config['__cms_chipper'];
         }else{
-            $chipper = NULL;
+            include(APPPATH.'config/main/cms_config.php');
+            $chipper = $config['__cms_chipper'];
         }
         $array = array(
                 'user_name' => $this->admin_user_name,
@@ -1047,7 +1046,7 @@ class Install_model extends CI_Model{
                 3, 1, 11, 1, '{{ language:Welcome }} {{ user_name }}<br />'.PHP_EOL.'<a href="{{ site_url }}main/logout">{{ language:Logout }}</a><br />',
                 'sidebar, user_widget');
         $sql_list[] = $this->insert_widget('social_plugin', 'Share This Page !!', 'Addthis', 'main/widget_social_plugin',
-                1, 1, 12, 1, '<div class="addthis_sharing_toolbox"></div>'.PHP_EOL.'<!-- Go to www.addthis.com/dashboard to customize your tools -->'.PHP_EOL.'<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4ee44922521f8e39"></script>',
+                1, 0, 12, 1, '<div class="addthis_sharing_toolbox"></div>'.PHP_EOL.'<!-- Go to www.addthis.com/dashboard to customize your tools -->'.PHP_EOL.'<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4ee44922521f8e39"></script>',
                 'sidebar');
         $sql_list[] = $this->insert_widget('google_search', 'Search', 'Search from google', '',
                 1, 0, 13, 1, '<!-- Google Custom Search Element -->'.PHP_EOL.'<div id="cse" style="width: 100%;">Loading</div>'.PHP_EOL.'<script src="http://www.google.com/jsapi" type="text/javascript"></script>'.PHP_EOL.'<script type="text/javascript">// <![CDATA['.PHP_EOL.'    google.load(\'search\', \'1\');'.PHP_EOL.'    google.setOnLoadCallback(function(){var cse = new google.search.CustomSearchControl();cse.draw(\'cse\');}, true);'.PHP_EOL.'// ]]></script>',
@@ -1125,7 +1124,7 @@ class Install_model extends CI_Model{
         $sql_list[] = $this->insert_config('cms_internet_connectivity','UNKNOWN','Is the server connected to the internet?');
         
         // group user
-        $sql_list[] = $this->insert_group_user();
+        $sql_list[] = $this->insert_group_user();        
 
         // TODO: make this better
         $table_name = 'main_language';
@@ -1484,13 +1483,27 @@ class Install_model extends CI_Model{
                                 $url = site_url($module.'/'.$url.'/'.$bypass);
                             }
 
+                            $response = '';
+                            $trial = 0;
                             
-                            $ch = curl_init();
-                            curl_setopt($ch, CURLOPT_COOKIEJAR, '');
-                            curl_setopt($ch, CURLOPT_URL, $url);
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                            $response = @curl_exec($ch);
-                            curl_close($ch);
+                            while($response == '' && $trial < 5){
+                                $ch = curl_init();
+                                curl_setopt($ch, CURLOPT_COOKIEJAR, '');
+                                curl_setopt($ch, CURLOPT_URL, $url);
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                $response = @curl_exec($ch);
+                                curl_close($ch);
+                                if($response != ''){
+                                    $json = @json_decode($response, TRUE);
+                                    if(array_key_exists('success', $json) && $json['success']){
+                                        break;
+                                    }
+                                }
+                                log_message('Invalid response when installing module.'.PHP_EOL.
+                                    '    URL : '.$url.PHP_EOL.
+                                    '    response : '.print_r($response, TRUE));
+                                $trial++;
+                            }
                         }
                     }
                 }

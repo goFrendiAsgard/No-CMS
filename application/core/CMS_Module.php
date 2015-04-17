@@ -195,8 +195,8 @@ class CMS_Module extends CMS_Controller
         $result['message'] = ul($result['message']);
 
         // show result
-        if($bypass != ''){
-            $this->cms_show_json($result);
+        if($bypass != NULL){
+            echo json_encode($result);
         } else if($result['success']) {
             $module_management_url = $this->cms_navigation_url('main_module_management');
             redirect($module_management_url,'refresh');
@@ -328,8 +328,8 @@ class CMS_Module extends CMS_Controller
 
         $result['message'] = ul($result['message']);
 
-        if($silent){
-            $this->cms_show_json($result);
+        if($bypass != NULL){
+            echo json_encode($result);
         } else if($result['success']) {
             $module_management_url = $this->cms_navigation_url('main_module_management');
             redirect($module_management_url,'refresh');
@@ -340,25 +340,25 @@ class CMS_Module extends CMS_Controller
 
     public function bootstrap(){
         // this should be overridden by module developer
-        return FALSE;
+        return TRUE;
     }
 
     protected function do_activate()
     {
         //this should be overridden by module developer
-        return FALSE;
+        return TRUE;
     }
 
     protected function do_deactivate()
     {
         //this should be overridden by module developer
-        return FALSE;
+        return TRUE;
     }
 
     protected function do_upgrade($old_version)
     {
         //this should be overridden by module developer
-        return FALSE;
+        return TRUE;
     }
 
     private final function register_module()

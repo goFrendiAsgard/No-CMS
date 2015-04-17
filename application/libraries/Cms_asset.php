@@ -105,8 +105,17 @@ class Cms_asset
         return str_ireplace('{{ used_theme }}', $used_theme, $path);
     }
 
-    private function minify($content, $mode='css'){
-        return preg_replace('/\n(\s*)/i',PHP_EOL, $content);
+    public function minify($content, $mode='css'){
+        // trim every line
+        $content = explode(PHP_EOL, $content);
+        $new_content = '';
+        foreach($content as $line){
+            $new_content .= trim($line);
+            if($mode == 'js' || stripos($line, '//') !== FALSE){
+                $new_content .= PHP_EOL;
+            }
+        }
+        return $new_content;
     }
 
     // mode can be css or js
@@ -203,12 +212,21 @@ class Cms_asset
                     $content = implode(PHP_EOL, $content);
                     file_put_contents($dir_path.$compiled_file_name, $content);  
                 }
-                // change fcpath
-                $dir_path = str_ireplace(FCPATH, $real_base_url, $dir_path);
-                if($mode == 'js'){
-                    $str .= '<script type="text/javascript" src="'.$dir_path.$compiled_file_name.'"></script>';
+                if(filesize($dir_path.$compiled_file_name) < 1024){
+                    $content = file_get_contents($dir_path.$compiled_file_name);
+                    if($mode == 'js'){
+                        $str .= '<script type="text/javascript">' . $content . '</script>';
+                    }else{
+                        $str .= '<style type="text/css">' . $content . '</style>';
+                    }
                 }else{
-                    $str .= '<link rel="stylesheet" type="text/css" href="'.$dir_path.$compiled_file_name.'" />';
+                    // change fcpath
+                    $dir_path = str_ireplace(FCPATH, $real_base_url, $dir_path);
+                    if($mode == 'js'){
+                        $str .= '<script type="text/javascript" src="'.$dir_path.$compiled_file_name.'"></script>';
+                    }else{
+                        $str .= '<link rel="stylesheet" type="text/css" href="'.$dir_path.$compiled_file_name.'" />';
+                    }
                 }
             }
         }

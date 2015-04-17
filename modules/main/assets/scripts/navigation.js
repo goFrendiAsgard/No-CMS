@@ -2,8 +2,8 @@ $(document).ready(function(){
 	// grid, toggle active/inactive
 	$(".navigation_active").live('click', function(event){
         event.preventDefault();
-		var str = $(this).children('span').html();
-		var $this = $(this);
+        var $this = $(this);
+		var str = $this.children('span').html();
 		$.ajax({
 			url: $(this).attr('target'),
 			dataType: 'json',

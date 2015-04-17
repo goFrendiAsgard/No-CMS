@@ -16,20 +16,39 @@
 // you are using session configuration.
 // See http://kcfinder.sunhater.com/install for setting descriptions
 
-// Native session, the only way to communicate with No-CMS
-if(!isset($_SESSION)){
-    session_start();
-}
-
-$_BASE_URL = isset($_SESSION['__cms_base_url'])? $_SESSION['__cms_base_url'] : '{{ BASE_URL }}';
 $_FCPATH = '{{ FCPATH }}';
 
+// get helper & chipper to decode cookie
+if(!defined('BASEPATH')){ define('BASEPATH',''); }
+include($_FCPATH.'application/config/main/cms_config.php');
+if(array_key_exists('__cms_chipper', $config)){
+    $chipper = $config['__cms_chipper'];
+}else{
+    $chipper = 'Love Song Storm Gravity Tonight End of Sorrow Rosier';
+}
+require_once($_FCPATH.'application/helpers/cms_helper.php');
 
+// function to make things easier
+if(!function_exists('get_decoded_cookie')){
+    function get_decoded_cookie($key, $chipper){
+        $key = cms_encode($key, $chipper);
+        if(array_key_exists($key, $_COOKIE)){
+            return cms_decode($_COOKIE[$key], $chipper);
+        }
+        return NULL;
+    }
+}
+
+// get base url
+$_BASE_URL = get_decoded_cookie('__cms_base_url', $chipper);
+$_BASE_URL = $_BASE_URL !== NULL? $_BASE_URL : '{{ BASE_URL }}';
 
 // get subsite
-$_cms_subsite = isset($_SESSION['__cms_subsite'])? $_SESSION['__cms_subsite'] : NULL;
+$_cms_subsite = get_decoded_cookie('__cms_subsite', $chipper);
+$_cms_subsite = $_cms_subsite !== NULL? $_cms_subsite : '';
 // get user_id
-$_cms_user_id = isset($_SESSION['__cms_user_id'])? $_SESSION['__cms_user_id'] : NULL;
+$_cms_user_id = get_decoded_cookie('__cms_user_id', $chipper);
+$_cms_user_id = $_cms_user_id !== NULL? $_cms_user_id : NULL;
 $_user_dir = $_cms_user_id !== NULL ?  $_cms_user_id : 'no_user';
 $_user_dir = $_cms_subsite == ''? '/main-'.$_user_dir : '/site-'.$_cms_subsite.'-'.$_user_id;
 

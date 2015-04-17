@@ -279,7 +279,7 @@ class uploader {
         $config = &$this->config;
         $file = &$this->file;
         $url = $message = "";
-
+        
         if ($config['disabled'] || !$config['access']['files']['upload']) {
             if (isset($file['tmp_name'])) @unlink($file['tmp_name']);
             $message = $this->label("You don't have permissions to upload files.");

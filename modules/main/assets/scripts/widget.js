@@ -1,7 +1,8 @@
 $(document).ready(function(){
-	$(".widget_active").live('click', function(){
-	    var str = $(this).html();
-	    var $this = $(this);
+	$(".widget_active").live('click', function(event){
+        event.preventDefault();
+        var $this = $(this);
+	    var str = $this.children('span').html();
 	    $.ajax({
 	        url: $(this).attr('target'),
 	        dataType: 'json',
@@ -12,7 +13,7 @@ $(document).ready(function(){
 	                str = 'Active';
 	            }
 	            if(response.success){
-	                $this.html(str);
+	                $this.children('span').html(str);
 	            }
 	        }
 	    });

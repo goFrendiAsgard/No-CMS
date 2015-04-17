@@ -29,8 +29,9 @@ local.properties
 assets/caches/*.js
 assets/caches/*.css
 modules/*/config/module_config_*.php
-application/config/*.php
+application/config/main
 application/config/site-*
+application/helpers/cms_extended_login_helper.php
 /.htaccess
 application/logs/log*.php
 assets/grocery_crud/texteditor/ckeditor/config.js

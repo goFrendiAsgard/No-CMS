@@ -453,7 +453,6 @@ function new_load_name($load_name){
  * And away we go...
  */
 require_once BASEPATH.'core/CodeIgniter.php';
-//require_once APPPATH.'core/MY_CodeIgniter.php';
 
 /* End of file index.php */
 /* Location: ./index.php */
