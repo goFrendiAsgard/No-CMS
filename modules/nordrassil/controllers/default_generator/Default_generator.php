@@ -24,8 +24,8 @@ class Default_generator extends CMS_Controller{
     public function __construct(){
         parent::__construct();
         $this->load->helper('inflector');
-        $this->load->library('nordrassil/NordrassilLib');
-        $this->nds = new NordrassilLib();
+        $this->load->library('nordrassil/nordrassillib');
+        $this->nds = $this->nordrassillib();
     }
 
     private function array_to_quoted_string($array, $key=NULL){

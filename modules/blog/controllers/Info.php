@@ -295,7 +295,7 @@ class Info extends CMS_Module {
         $data = array('category_name' => 'Fun');
         $this->db->insert($table_name, $data);
 
-        if(CMS_SUBSITE == ''){
+        if(CMS_SUBSITE == '' && !defined('CMS_OVERRIDDEN_SUBSITE')){
             // article
             $table_name = $this->cms_complete_table_name('article');
             $data = array('article_title' => 'Scandal, A Pop Rock Girl Band From Osaka',

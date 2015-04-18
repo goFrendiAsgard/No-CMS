@@ -22,7 +22,7 @@ class CMS_Controller extends MX_Controller
     private $__cms_navigation_name    = NULL;
     private $__cms_quicklinks         = NULL;
 
-    protected $__cms_base_model_name  = 'no_cms_model';
+    protected $__cms_base_model_name  = 'no_cms_autoupdate_model';
 
     protected function _guard_controller(){
         $module_path = $this->cms_module_path();
@@ -797,8 +797,8 @@ class CMS_Controller extends MX_Controller
      * @author  goFrendiAsgard
      * @desc    cancel effect created by cms_override_module_path
      */
-    public function cms_reset_overriden_module_path(){
-        $this->{$this->__cms_base_model_name}->cms_reset_overriden_module_path();
+    public function cms_reset_overridden_module_path(){
+        $this->{$this->__cms_base_model_name}->cms_reset_overridden_module_path();
     }
 
     /**

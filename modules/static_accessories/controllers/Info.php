@@ -110,10 +110,17 @@ class Info extends CMS_Module {
         // make copy of 01.jpg and insert it as new slide
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
         $original_file_name = '01.jpg';
-        if(CMS_SUBSITE != ''){
-            $original_file_name = str_pad(rand(3, 11), 2, "0", STR_PAD_LEFT).'.jpg';
+        if(CMS_SUBSITE == '' && !defined(CMS_OVERRIDDEN_SUBSITE)){
+            $original_file_name = str_pad(rand(3, 15), 2, "0", STR_PAD_LEFT).'.jpg';
         }
-        $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . '01.jpg';
+        if(defined('CMS_OVERRIDDEN_SUBSITE')){
+            $file_name = CMS_OVERRIDDEN_SUBSITE.'_';
+        }else if(CMS_SUBSITE != ''){
+            $file_name = CMS_SUBSITE.'_';
+        }else{
+            $file_name = 'main_';
+        }
+        $file_name .= '01.jpg';
         copy($image_path.$original_file_name, $image_path.$file_name);
         $data = array('image_url'=>$file_name,'content'=>'<h1>The first slide image</h1><p>Some awesome descriptions</p>');
         $this->db->insert($this->cms_complete_table_name('slide'),$data);
@@ -121,10 +128,17 @@ class Info extends CMS_Module {
         // make copy of 02.jpg and insert it as new slide
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
         $original_file_name = '02.jpg';
-        if(CMS_SUBSITE != ''){
+        if(CMS_SUBSITE == '' && !defined(CMS_OVERRIDDEN_SUBSITE)){
             $original_file_name = str_pad(rand(3, 15), 2, "0", STR_PAD_LEFT).'.jpg';
         }
-        $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . '02.jpg';
+        if(defined('CMS_OVERRIDDEN_SUBSITE')){
+            $file_name = CMS_OVERRIDDEN_SUBSITE.'_';
+        }else if(CMS_SUBSITE != ''){
+            $file_name = CMS_SUBSITE.'_';
+        }else{
+            $file_name = 'main_';
+        }
+        $file_name .= '02.jpg';
         copy($image_path.$original_file_name, $image_path.$file_name);
         $data = array('image_url'=>$file_name,'content'=>'<h1>The second slide image</h1><p>Another awesome description</p>');
         $this->db->insert($this->cms_complete_table_name('slide'),$data);

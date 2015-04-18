@@ -44,6 +44,9 @@ _cache_*.css
 # the sql
 modules/*/assets/db/backup*.sql
 
+# info module
+modules/*/controllers/Info_*.php
+
 # my private modules
 modules/gis
 modules/typing_defense

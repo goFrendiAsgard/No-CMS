@@ -332,15 +332,14 @@ class Install_model extends CI_Model{
         if (!is_writable(APPPATH.'logs/hybridauth.log')) {
             $success  = FALSE;
             $error_list[] = APPPATH."logs/hybridauth.log is not writable";
-        }
-        // curl
-        if (!in_array('curl', get_loaded_extensions())) {
-            $success  = FALSE;
-            $error_list[] = 'php-curl is not enabled';
-        }
+        }        
         // third party authentication activated
         if ($this->auth_enable_facebook || $this->auth_enable_twitter || $this->auth_enable_google || $this->auth_enable_yahoo || $this->auth_enable_linkedin || $this->auth_enable_myspace || $this->auth_enable_foursquare || $this->auth_enable_windows_live || $this->auth_enable_open_id || $this->auth_enable_aol ) {
-            
+            // curl
+            if (!in_array('curl', get_loaded_extensions())) {
+                $success  = FALSE;
+                $error_list[] = 'php-curl is not enabled';
+            }    
             // facebook
             if($this->auth_enable_facebook){
                 if($this->auth_facebook_app_id == ''){
@@ -1436,10 +1435,10 @@ class Install_model extends CI_Model{
         if (in_array('curl', get_loaded_extensions())) {
             if(count($this->modules) == 0){
                 $modules = array('blog','contact_us','static_accessories');
-                if(!$this->is_subsite){
-                    $modules[] = 'nordrassil';
+                if(!$this->is_subsite){                    
                     $modules[] = 'teldrassil';
                     $modules[] = 'multisite';
+                    $modules[] = 'nordrassil';
                 }
             }else{
                 $modules = $this->modules;
@@ -1467,45 +1466,63 @@ class Install_model extends CI_Model{
                 $bypass = $row->password;
             }  
        
-
+            // call the controller
             if($bypass != ''){
+                if($this->is_subsite){
+                    // for subsite, we should override table prefix etc
+                    define('CMS_OVERRIDDEN_SUBSITE', $this->subsite);
+                }else{
+                    // for non-subsite, at this point the database configuration has been made
+                    // but we still use first-time environment. Thus, we need to change the configuration temporally
+                    copy(APPPATH.'config/first-time/database.php', APPPATH.'config/first-time/database.bak.php');
+                    copy(APPPATH.'config/main/database.php', APPPATH.'config/first-time/database.php');
+                }
+                $executed_controllers = array();
                 foreach($modules as $module){                
                     if(file_exists(FCPATH.'modules/'.$module.'/description.txt')){
                         $json         = file_get_contents(FCPATH.'modules/'.$module.'/description.txt');
                         $module_info  = @json_decode($json, true);
                         $module_info  = $module_info === NULL? array() : $module_info;
                         if(is_array($module_info) && array_key_exists('activate', $module_info)){
-                            $url = $module_info['activate'];  
-                            // get the real url
-                            if($this->is_subsite){
-                                $url = site_url($module.'/'.$url.'/'.$bypass.'/?__cms_subsite='.$this->subsite);
-                            }else{
-                                $url = site_url($module.'/'.$url.'/'.$bypass);
-                            }
-
+                            $url = trim($module_info['activate'],'/');                            
                             $response = '';
-                            $trial = 0;
-                            
-                            while($response == '' && $trial < 5){
-                                $ch = curl_init();
-                                curl_setopt($ch, CURLOPT_COOKIEJAR, '');
-                                curl_setopt($ch, CURLOPT_URL, $url);
-                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                                $response = @curl_exec($ch);
-                                curl_close($ch);
-                                if($response != ''){
-                                    $json = @json_decode($response, TRUE);
-                                    if(array_key_exists('success', $json) && $json['success']){
-                                        break;
-                                    }
+                            // subsite just run the module, it's faster
+                            $url_part = explode('/', $url);
+                            $controller_name = ucfirst($url_part[0]);
+                            $new_controller_name = $controller_name.'_'.strtolower($module);
+                            $controller_file = FCPATH.'modules/'.$module.'/controllers/'.$controller_name.'.php';
+                            $new_controller_file = FCPATH.'modules/'.$module.'/controllers/'.$new_controller_name.'.php';
+                            if(!file_exists($new_controller_file) || date('YmdHis',filemtime($new_controller_file)) <= date('YmdHis',filemtime($controller_file))){
+                                $content = file_get_contents($controller_file);
+                                $content = preg_replace('/class( *)'.$controller_name.'/', 'class '.$new_controller_name, $content);
+                                file_put_contents($new_controller_file, $content);
+                            }
+                            $url_part[0] = strtolower($new_controller_name);
+                            $new_url = implode('/', $url_part);
+                            $response = @Modules::run($module.'/'.$new_url, $bypass);
+                            // look if it is succeed or failed
+                            $success = FALSE;
+                            if($response != ''){
+                                $json = @json_decode($response, TRUE);
+                                if(array_key_exists('success', $json) && $json['success']){
+                                    $success = TRUE;
                                 }
-                                log_message('Invalid response when installing module.'.PHP_EOL.
-                                    '    URL : '.$url.PHP_EOL.
+                            }
+                            if(!$success){
+                                log_message('error', 'Invalid response when installing module.'.PHP_EOL.
+                                    '    URL : '.$module.'/'.$url.PHP_EOL.
                                     '    response : '.print_r($response, TRUE));
-                                $trial++;
                             }
                         }
                     }
+                }
+                if($this->is_subsite){
+                    // put the overridden subsite back to normal
+                    define('CMS_RESET_OVERRIDDEN_SUBSITE', TRUE);
+                }else{
+                    // put the first-time environment back to normal
+                    copy(APPPATH.'config/first-time/database.bak.php', APPPATH.'config/first-time/database.php');
+                    unlink(APPPATH.'config/first-time/database.bak.php');
                 }
                 return TRUE;
             }

@@ -179,9 +179,8 @@ class Info extends CMS_Module {
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('column_option'));
 
-
         // install template
-        $this->load->library($module_path.'/NordrassilLib');
+        $this->load->model($module_path.'/data/nds_model');
         $template_name = 'No-CMS Module';
         $generator_path = 'nordrassil/default_generator/default_generator/index';
         $project_options = array();
@@ -209,7 +208,8 @@ class Info extends CMS_Module {
             array('name'=>'validation_valid_base64', 'description'=>'base64 character validation filter'),
             array('name'=>'upload', 'description'=>'upload field')
         );
-        $this->nordrassillib->install_template($template_name, $generator_path,
+        
+        $this->nds_model->install_template($template_name, $generator_path,
             $project_options, $table_options, $column_options);
         if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
             $this->import_sql(BASEPATH.'../modules/'.$module_path.'/assets/db/example.sql');

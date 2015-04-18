@@ -193,6 +193,7 @@ class Manage_article extends CMS_Secure_Controller {
                 $post_array['publish_date'] = date('Y-m-d', strtotime('+ 30 days'));
             }
         }
+        $post_array['article_url'] = urlencode(url_title($post_array['article_title']));
         return $post_array;
     }
 
@@ -202,7 +203,7 @@ class Manage_article extends CMS_Secure_Controller {
         $this->load->model('article_model');
         // article url / permalink
         if($post_array['article_url'] === NULL || trim($post_array['article_url']) == ''){
-            $url = url_title($post_array['article_title']);
+            $url = urlencode(url_title($this->cms_parse_keyword($post_array['article_title'])));
             $count_url = $this->article_model->get_count_article_url($url);
             if($count_url>0){
                 $index = $count_url;

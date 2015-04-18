@@ -71,6 +71,8 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
 function cms_config($key, $value = NULL, $delete = FALSE){
     if(defined('CMS_SUBSITE') && CMS_SUBSITE != ''){
         $file_name = APPPATH.'config/site-'.CMS_SUBSITE.'/cms_config.php';
+    }else if(!defined('CMS_RESET_OVERRIDDEN_SUBSITE') && defined('CMS_OVERRIDDEN_SUBSITE') && CMS_OVERRIDDEN_SUBSITE != ''){
+        $file_name = APPPATH.'config/site-'.CMS_OVERRIDDEN_SUBSITE.'/cms_config.php';
     }else{
         $file_name = APPPATH.'config/main/cms_config.php';
     }
@@ -98,6 +100,11 @@ function cms_module_config($module_directory, $key, $value = NULL, $delete = FAL
         if(!file_exists($file_name)){
             copy($main_config_file_name, $file_name);
         }
+    }else if((!defined('CMS_RESET_OVERRIDDEN_SUBSITE') && defined('CMS_OVERRIDDEN_SUBSITE') && CMS_OVERRIDDEN_SUBSITE != '')){
+        $file_name = FCPATH.'modules/'.$module_directory.'/config/module_config_'.CMS_OVERRIDDEN_SUBSITE.'.php';
+        if(!file_exists($file_name)){
+            copy($main_config_file_name, $file_name);
+        }
     }else{
         $file_name = $main_config_file_name;
     }
@@ -106,7 +113,7 @@ function cms_module_config($module_directory, $key, $value = NULL, $delete = FAL
 }
 
 
-function cms_table_prefix($new_prefix = NULL){
+function cms_table_prefix($new_prefix = NULL){    
     return cms_config('__cms_table_prefix', $new_prefix);
 }
 
@@ -180,12 +187,22 @@ function cms_encode($data, $chipper = NULL){
         $chipper_array[] = ord($chipper[$i]);
     }
     $encoded_array = _xor($data_array, $chipper_array);
-    $encoded_str = implode('-', $encoded_array);
+    $encoded_str = '';
+    foreach($encoded_array as $char){
+        $encoded_str .= chr($char);
+    }
+    $encoded_str = urlencode(base64_encode($encoded_str));
+    //$encoded_str = implode('-', $encoded_array);
     return $encoded_str;
 }
 function cms_decode($data, $chipper = NULL){
     $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
-    $data_array = explode('-', $data);
+    //$data_array = explode('-', $data);
+    $data = base64_decode(urldecode($data));
+    $data_array = array();
+    for($i=0; $i<strlen($data); $i++){
+        $data_array[] = ord($data[$i]);
+    }
     $chipper_array = array();
     for($i=0; $i<strlen($chipper); $i++){
         $chipper_array[] = ord($chipper[$i]);

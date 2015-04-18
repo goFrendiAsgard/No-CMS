@@ -8,7 +8,7 @@
 
 class CMS_Module extends CMS_Controller
 {
-    protected $__cms_base_model_name  = 'no_cms_base_model';
+    protected $__cms_base_model_name  = 'no_cms_model';
     protected $DEPENDENCIES    = array();
     protected $NAME            = '';
     protected $VERSION         = '0.0.0';

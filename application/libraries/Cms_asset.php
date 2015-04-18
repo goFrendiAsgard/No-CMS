@@ -212,8 +212,9 @@ class Cms_asset
                     $content = implode(PHP_EOL, $content);
                     file_put_contents($dir_path.$compiled_file_name, $content);  
                 }
-                if(filesize($dir_path.$compiled_file_name) < 1024){
-                    $content = file_get_contents($dir_path.$compiled_file_name);
+                // read the file
+                $content = '';
+                if(filesize($dir_path.$compiled_file_name) < 1024 && $content = file_get_contents($dir_path.$compiled_file_name) && strpos($content, '@import') === FALSE){
                     if($mode == 'js'){
                         $str .= '<script type="text/javascript">' . $content . '</script>';
                     }else{

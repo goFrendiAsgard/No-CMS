@@ -461,7 +461,7 @@ class Main extends CMS_Controller
                         $message = $this->cms_lang("Subsite already used, choose other username");
                         $error = TRUE;
                     }
-                    $this->cms_reset_overriden_module_path();
+                    $this->cms_reset_overridden_module_path();
                 }
             }
 
@@ -669,15 +669,15 @@ class Main extends CMS_Controller
         $crud->set_relation_n_n('groups', cms_table_name('main_group_user'), cms_table_name('main_group'), 'user_id', 'group_id', 'group_name');
         $crud->callback_before_insert(array(
             $this,
-            'before_insert_user'
+            '_before_insert_user'
         ));
         $crud->callback_before_delete(array(
             $this,
-            'before_delete_user'
+            '_before_delete_user'
         ));
         $crud->callback_after_update(array(
             $this,
-            'after_update_user'
+            '_after_update_user'
         ));
 
         if ($crud->getState() == 'edit') {
@@ -718,13 +718,13 @@ class Main extends CMS_Controller
         return $input . $caption;
     }
 
-    public function before_insert_user($post_array)
+    public function _before_insert_user($post_array)
     {
         $post_array['password'] = cms_md5($post_array['password']);
         return $post_array;
     }
 
-    public function before_delete_user($primary_key)
+    public function _before_delete_user($primary_key)
     {
         //The super admin user cannot be deleted, a user cannot delete his/her own account
         if (($primary_key == 1) || ($primary_key == $this->cms_user_id())) {
@@ -733,7 +733,7 @@ class Main extends CMS_Controller
         return true;
     }
 
-    public function after_update_user($post_array, $primary_key)
+    public function _after_update_user($post_array, $primary_key)
     {
         // get user activation status
         $user_id = $primary_key;
@@ -777,7 +777,7 @@ class Main extends CMS_Controller
         $crud->set_relation_n_n('privileges', cms_table_name('main_group_privilege'), cms_table_name('main_privilege'), 'group_id', 'privilege_id', 'privilege_name');
         $crud->callback_before_delete(array(
             $this,
-            'before_delete_group'
+            '_before_delete_group'
         ));
 
         $crud->unset_texteditor('description');
@@ -812,7 +812,7 @@ class Main extends CMS_Controller
         $this->view('main/main_group', $output, 'main_group_management', $config);
     }
 
-    public function before_delete_group($primary_key)
+    public function _before_delete_group($primary_key)
     {
         $SQL   = "SELECT user_id FROM ".cms_table_name('main_group_user')." WHERE group_id =" . $primary_key . ";";
         $query = $this->db->query($SQL);
@@ -923,15 +923,15 @@ class Main extends CMS_Controller
 
         $crud->callback_before_update(array(
             $this,
-            'before_update_navigation'
+            '_before_update_navigation'
         ));
         $crud->callback_before_insert(array(
             $this,
-            'before_insert_navigation'
+            '_before_insert_navigation'
         ));
         $crud->callback_before_delete(array(
             $this,
-            'before_delete_navigation'
+            '_before_delete_navigation'
         ));
 
         $crud->set_language($this->cms_language());
@@ -972,7 +972,7 @@ class Main extends CMS_Controller
     }
 
 
-    public function before_insert_navigation($post_array)
+    public function _before_insert_navigation($post_array)
     {
         //get parent's navigation_id
         $query = $this->db->select('navigation_id')
@@ -1005,16 +1005,32 @@ class Main extends CMS_Controller
         return $post_array;
     }
 
-    public function before_update_navigation($post_array, $primary_key)
-    {   /*
-        if(array_key_exists('parent_id', $post_array) && is_int($post_array['parent_id'])){
-            $navigation_path = $this->cms_get_navigation_path();
-
-        }*/
+    public function _before_update_navigation($post_array, $primary_key)
+    {   
+        if(array_key_exists('parent_id', $post_array)){
+            if($post_array['parent_id'] == $primary_key){
+                $post_array['parent_id'] = NULL;
+            }else{
+                $query = $this->db->select('navigation_name')
+                    ->from(cms_table_name('main_navigation'))
+                    ->where('navigation_id', $primary_key)
+                    ->get();
+                if($query->num_rows()>0){
+                    $row = $query->row();
+                    $navigation_path = $this->cms_get_navigation_path($row->navigation_name);
+                    foreach($navigation_path as $navigation){
+                        if($navigation['navigation_id'] == $post_array['parent_id']){
+                            $post_array['parent_id'] = NULL;
+                            break;
+                        }
+                    }
+                }                
+            }
+        }
         return $post_array;
     }
 
-    public function before_delete_navigation($primary_key)
+    public function _before_delete_navigation($primary_key)
     {
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
@@ -1185,7 +1201,7 @@ class Main extends CMS_Controller
 
         $crud->callback_before_insert(array(
             $this,
-            'before_insert_quicklink'
+            '_before_insert_quicklink'
         ));
 
         $crud->callback_column($this->unique_field_name('navigation_id'), array(
@@ -1213,7 +1229,7 @@ class Main extends CMS_Controller
         $this->view('main_quicklink', $output, 'main_quicklink_management', $config);
     }
 
-    public function before_insert_quicklink($post_array)
+    public function _before_insert_quicklink($post_array)
     {
         $query = $this->db->select_max('index')
             ->from(cms_table_name('main_quicklink'))
@@ -1407,12 +1423,12 @@ class Main extends CMS_Controller
 
         $crud->callback_before_insert(array(
             $this,
-            'before_insert_widget'
+            '_before_insert_widget'
         ));
 
         $crud->callback_before_delete(array(
             $this,
-            'before_delete_navigation'
+            '_before_delete_navigation'
         ));
 
         $crud->callback_column('widget_name', array(
@@ -1442,7 +1458,7 @@ class Main extends CMS_Controller
         $this->view('main/main_widget', $output, 'main_widget_management', $config);
     }
 
-    public function before_insert_widget($post_array)
+    public function _before_insert_widget($post_array)
     {
         $query = $this->db->select_max('index')
             ->from(cms_table_name('main_widget'))
@@ -1488,7 +1504,7 @@ class Main extends CMS_Controller
         }
     }
 
-    public function before_delete_widget($primary_key)
+    public function _before_delete_widget($primary_key)
     {
         $query = $this->db->select('widget_id')
             ->from(cms_table_name('main_widget'))
@@ -1611,15 +1627,15 @@ class Main extends CMS_Controller
 
         $crud->callback_after_insert(array(
             $this,
-            'after_insert_config'
+            '_after_insert_config'
         ));
         $crud->callback_after_update(array(
             $this,
-            'after_update_config'
+            '_after_update_config'
         ));
         $crud->callback_before_delete(array(
             $this,
-            'before_delete_config'
+            '_before_delete_config'
         ));
 
         $crud->set_language($this->cms_language());
@@ -1642,13 +1658,13 @@ class Main extends CMS_Controller
         $this->view('main/main_config', $output, 'main_config_management', $config);
     }
 
-    public function after_insert_config($post_array, $primary_key){
+    public function _after_insert_config($post_array, $primary_key){
         // adjust configuration file entry
         cms_config($post_array['config_name'], $post_array['value']);
         return TRUE;
     }
 
-    public function after_update_config($post_array, $primary_key){
+    public function _after_update_config($post_array, $primary_key){
         // adjust configuration file entry
         $query = $this->db->select('config_name')->from(cms_table_name('main_config'))->where('config_id', $primary_key)->get();
         if($query->num_rows()>0){
@@ -1659,7 +1675,7 @@ class Main extends CMS_Controller
         return TRUE;
     }
 
-    public function before_delete_config($primary_key){
+    public function _before_delete_config($primary_key){
         $query = $this->db->select('config_name')->from(cms_table_name('main_config'))->where('config_id', $primary_key)->get();
         if($query->num_rows()>0){
             $row = $query->row();

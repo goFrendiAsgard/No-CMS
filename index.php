@@ -261,13 +261,13 @@ if(file_exists('./'.$application_folder.'/config/main/database.php')){
             // if there is an alias defined
             if(array_key_exists($actual_host_name, $site_alias) && $site_alias[$actual_host_name] != ''){
                 $CMS_SUBSITE   = $site_alias[$actual_host_name];
-                $USE_SUBDOMAIN = TRUE;
                 $USE_ALIAS     = TRUE;
             }
             // If there is subdomain, subsite determine from subdomain.
             else if (strlen($actual_host_name)> 0 && ( count($actual_host_name_parts) > count($stripped_host_name_parts)) 
             ){
                 $CMS_SUBSITE = $actual_host_name_parts[0];
+                $USE_SUBDOMAIN = TRUE;
             }
         }
         // define cms_subsite and wether it is valid or not
