@@ -72,6 +72,7 @@ class Add_subsite extends CMS_Secure_Controller {
     }
 
     public function install(){
+        $module_path = $this->cms_module_path();
         $this->get_input();
         $check_installation = $this->install_model->check_installation();
         $success = $check_installation['success'];
@@ -115,7 +116,7 @@ class Add_subsite extends CMS_Secure_Controller {
             $module_installed = $this->install_model->install_modules();
         }
 
-
+        $this->cms_override_module_path($module_path);
 
         $data = array(
             'name'=> $this->install_model->subsite,

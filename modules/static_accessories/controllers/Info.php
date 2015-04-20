@@ -110,7 +110,7 @@ class Info extends CMS_Module {
         // make copy of 01.jpg and insert it as new slide
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
         $original_file_name = '01.jpg';
-        if(CMS_SUBSITE == '' && !defined(CMS_OVERRIDDEN_SUBSITE)){
+        if(CMS_SUBSITE != '' || defined(CMS_OVERRIDDEN_SUBSITE)){
             $original_file_name = str_pad(rand(3, 15), 2, "0", STR_PAD_LEFT).'.jpg';
         }
         if(defined('CMS_OVERRIDDEN_SUBSITE')){
@@ -128,7 +128,7 @@ class Info extends CMS_Module {
         // make copy of 02.jpg and insert it as new slide
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
         $original_file_name = '02.jpg';
-        if(CMS_SUBSITE == '' && !defined(CMS_OVERRIDDEN_SUBSITE)){
+        if(CMS_SUBSITE != '' || defined(CMS_OVERRIDDEN_SUBSITE)){
             $original_file_name = str_pad(rand(3, 15), 2, "0", STR_PAD_LEFT).'.jpg';
         }
         if(defined('CMS_OVERRIDDEN_SUBSITE')){

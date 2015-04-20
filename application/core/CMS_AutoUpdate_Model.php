@@ -6,10 +6,10 @@ class CMS_AutoUpdate_Model extends CMS_Model{
     public function __construct()
     {
         parent::__construct();
-
+        
         // core seamless update
         $this->__update();
-
+        // module update
         if(!self::$module_updated){  
             self::$module_updated = TRUE;          
             $this->__update_module();

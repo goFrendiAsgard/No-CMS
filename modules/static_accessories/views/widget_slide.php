@@ -39,7 +39,6 @@ for($i=0; $i<count($slide_list); $i++){
         background-color:black;
         height:100%;
         background-size:cover;
-        /*background-attachment: fixed;*/
     }
     #slideshow-widget{
         margin-bottom:20px;
@@ -73,12 +72,45 @@ for($i=0; $i<count($slide_list); $i++){
         if(body_width>=978){
             $('.item-image').each(function(){
                 if($(this).attr('src') !== ''){
-                    //$(this).attr('src', $(this).attr('real-src'));
                     $(this).css('background-image', 'url("' + $(this).attr('real-src')+'")');
                 }
-            });    
+            });
+            // add shadow
+            var id_list = ['.carousel-caption', '.carousel-caption h1', '.carousel-caption h2',
+                '.carousel-caption h3', '.carousel-caption h4', 'carousel-caption p', '.carousel-caption div',
+                '.carousel-caption span'];
+            for(var i=0; i<id_list.length; i++){
+                var selector = id_list[i];
+                if($(selector).length>0){
+                    var color = _rgb2hex($(selector).css('color'));
+                    if(typeof(color) != 'undefined'){                    
+                        var shadow_color = _getContrastYIQ(color);
+                        $(selector).css('text-shadow', '1px 1px 20px '+shadow_color+', -1px -1px  20px'+shadow_color);
+                    }
+                }
+            }
         }
     }
+
+    function _rgb2hex(rgb) {
+        if (  rgb.search("rgb") == -1 ) {
+            return rgb;
+        } else {
+            rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+            function hex(x) {
+                return ("0" + parseInt(x).toString(16)).slice(-2);
+            }
+            return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]); 
+        }
+    }
+    function _getContrastYIQ(hexcolor){
+        var r = parseInt(hexcolor.substr(1,2),16);
+        var g = parseInt(hexcolor.substr(3,2),16);
+        var b = parseInt(hexcolor.substr(4,2),16);
+        var yiq = ((r*299)+(g*587)+(b*114))/1000;
+        return (yiq >= 128) ? '#000000' : '#FFFFFF';
+    }
+
 
     $(window).scroll(function(){
         var carouselTop = $('div.carousel-inner').offset().top;

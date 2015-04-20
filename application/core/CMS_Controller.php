@@ -39,7 +39,7 @@ class CMS_Controller extends MX_Controller
     {
         parent::__construct();
 
-        $this->load->model($this->__cms_base_model_name);
+        $this->load->model($this->__cms_base_model_name);        
 
         /* Standard Libraries */
         $this->load->database();
@@ -51,6 +51,26 @@ class CMS_Controller extends MX_Controller
         $this->load->library('form_validation');
         $this->form_validation->CI =& $this;
         $this->load->driver('session');
+
+        if(!isset($_COOKIE['__sso_login'])){
+            // just use for temporary fix
+            $_COOKIE['__sso_login'] = FALSE;
+        }
+        if(!$_COOKIE['__sso_login'] && $this->__cms_base_model_name == 'no_cms_autoupdate_model' && CMS_SUBSITE != '' && $this->cms_user_id()<=0){
+            setcookie('__sso_login', TRUE, time()+600);
+            if($this->input->get('__origin') == NULL || $this->input->get('__token') == NULL){
+                include(BASEPATH.'../hostname.php');
+                $url         = current_url();
+                $ssl         = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false;
+                $sp          = strtolower($_SERVER['SERVER_PROTOCOL']);
+                $protocol    = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+                $port        = $_SERVER['SERVER_PORT'];
+                $port        = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+                $host        = isset($hostname) ? $hostname : $_SERVER['SERVER_NAME'] . $port;
+                $redirection = $protocol.'://'.$host.'/index.php/main/check_login?__origin='.urlencode($url).'&__server_name='.$_SERVER['SERVER_NAME'];
+                redirect($redirection);
+            }
+        }
 
         // unpublished modules should never be accessed.
         $module_path = $this->cms_module_path();
@@ -459,9 +479,9 @@ class CMS_Controller extends MX_Controller
      * @param   string password
      * @desc    change current profile (user_name, email, real_name and password)
      */
-    protected function cms_do_change_profile($user_name, $email, $real_name, $password = NULL)
+    protected function cms_do_change_profile($email, $real_name, $password = NULL, $user_id = NULL)
     {
-        return $this->{$this->__cms_base_model_name}->cms_do_change_profile($user_name, $email, $real_name, $password);
+        return $this->{$this->__cms_base_model_name}->cms_do_change_profile($email, $real_name, $password, $user_id);
     }
 
     /**
@@ -661,9 +681,9 @@ class CMS_Controller extends MX_Controller
      * @return bool
      * @desc   check if user already exists
      */
-    public function cms_is_user_exists($identity)
+    public function cms_is_user_exists($identity, $exception_user_id = NULL)
     {
-        return $this->{$this->__cms_base_model_name}->cms_is_user_exists($identity);
+        return $this->{$this->__cms_base_model_name}->cms_is_user_exists($identity, $exception_user_id);
     }
 
     /**

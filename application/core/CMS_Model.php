@@ -2047,7 +2047,7 @@ class CMS_Model extends CI_Model
                 }else{
                     $url = $protocol.$_SERVER['SERVER_NAME'].$port.$directory.'/site-'.$subsite;
                 }
-                $url .= '/main/login';
+                $this->cms_do_login($user_name, $password);
                 redirect($url,'refresh');
             }
         }else{
@@ -2098,27 +2098,89 @@ class CMS_Model extends CI_Model
 
     /**
      * @author  goFrendiAsgard
-     * @param   string user_name
+     * @param   string user_id
      * @param   string email
      * @param   string real_name
      * @param   string password
      * @desc    change current profile (user_name, email, real_name and password)
      */
-    public function cms_do_change_profile($user_name, $email, $real_name, $password = NULL)
+    public function cms_do_change_profile($email, $real_name, $password = NULL, $user_id = NULL)
     {
-        $data = array(
-            "user_name" => $user_name,
-            "email" => $email,
-            "real_name" => $real_name,
-            "active" => 1
-        );
-        if (isset($password)) {
-            $data['password'] = cms_md5($password);
+        $user_id = $user_id === NULL? $this->cms_user_id() : $user_id;
+        $query = $this->db->select('user_id, user_name')
+            ->from(cms_table_name('main_user'))
+            ->where('user_id', $user_id)
+            ->get();
+        if($query->num_rows()>0){
+            $user_row = $query->row();
+            $user_name = $user_row->user_name;
+            // update current user table
+            $data = array(
+                "email" => $email,
+                "real_name" => $real_name,
+                "active" => 1
+            );
+            if (isset($password)) {
+                $data['password'] = cms_md5($password);
+            }
+            $where = array(
+                "user_id" => $user_id
+            );        
+            $this->db->update(cms_table_name('main_user'), $data, $where);
+            // update other table
+            if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
+                if(CMS_SUBSITE == ''){
+                    $this->cms_override_module_path($this->cms_module_path('gofrendi.noCMS.multisite'));
+                    $query = $this->db->select('name')
+                        ->from($this->cms_complete_table_name('subsite'))
+                        ->where('user_id', $user_row->user_id)
+                        ->get();
+                    $this->cms_reset_overridden_module_path();
+                    if($query->num_rows()>0){
+                        $subsite_row = $query->row();
+                        // get user
+                        include(APPPATH.'config/site-'.$subsite_row->name.'/cms_config.php');
+                        $chipper = $config['__cms_chipper'];
+                        $table_prefix = $config['__cms_table_prefix'];
+                        $user_table = $table_prefix.'_main_user';
+                        $where = array('user_id'=>1, 'user_name'=>$user_name);
+                        $this->db->update($user_table, $data, $where);
+                    }
+                }
+            }else if(CMS_SUBSITE != ''){
+                if($user_row->user_id == 1){
+                    include(APPPATH.'config/main/cms_config.php');
+                    $chipper = $config['__cms_chipper'];
+                    $cms_table_prefix = $config['__cms_table_prefix'];
+                    include(FCPATH.'modules/multisite/config/module_config.php');
+                    $module_table_prefix = $config['module_table_prefix'];
+                    $query = $this->db->select('user_id')
+                        ->from($cms_table_prefix.'_'.$module_table_prefix.'_subsite')
+                        ->where('name', CMS_SUBSITE)
+                        ->get();
+                    if($query->num_rows()>0){
+                        $subsite_row = $query->row();
+                        $query = $this->db->select('user_id')
+                            ->from($cms_table_prefix.'_main_user')
+                            ->where('user_id', $subsite_row->user_id)
+                            ->get();
+                        if($query->num_rows()>0){
+                            $where = array('user_id'=>$subsite_row->user_id);
+                            $user_table = $cms_table_prefix.'_main_user';
+                            if (isset($password)) {
+                                $data['password'] = cms_md5($password, $chipper);
+                            }
+                            $this->db->update($user_table, $data, $where);    
+                        }
+                    }
+                }
+            }
+            if($user_id == $this->cms_user_id()){
+                $this->cms_user_name($user_name);
+                $this->cms_user_email($email);
+                $this->cms_user_real_name($real_name);
+            }
         }
-        $where = array(
-            "user_name" => $user_name
-        );
-        $this->db->update(cms_table_name('main_user'), $data, $where);
     }
 
     /**
@@ -2190,7 +2252,7 @@ class CMS_Model extends CI_Model
             $json            = file_get_contents(FCPATH.'modules/'.$directory.'/description.txt');
             $module_info     = @json_decode($json, true);
             $module_info     = $module_info === NULL? array() : $module_info;
-            foreach(array('name'=>'', 'description'=>'', 'dependencies'=>array(), 'version'=>'0.0.0') as $key=>$value){
+            foreach(array('name'=>'', 'description'=>'', 'dependencies'=>array(), 'version'=>'0.0.0', 'activate'=>'info/activate', 'deactivate'=>'info/deactivate', 'upgrade'=>'info/upgrade') as $key=>$value){
                 if(!array_key_exists($key, $module_info)){
                     $module_info[$key] = $value;
                 }
@@ -2979,15 +3041,17 @@ class CMS_Model extends CI_Model
      * @return bool
      * @desc   check if user already exists
      */
-    public function cms_is_user_exists($identity)
-    {
-        $query    = $this->db->select('user_name')
-            ->from(cms_table_name('main_user'))
-            ->like('user_name', $identity, 'none')
-            ->or_like('email', $identity, 'none')
-            ->get();
+    public function cms_is_user_exists($identity, $exception_user_id = NULL)
+    {   
+        $query = $this->db->query('SELECT user_id, user_name FROM '.cms_table_name('main_user').' '.
+            'WHERE 
+                (user_name LIKE \''.addslashes($identity).'\' OR email LIKE \''.addslashes($identity).'\') AND
+                (user_id <> '.addslashes($exception_user_id).')');
         $num_rows = $query->num_rows();
-        return $num_rows > 0;
+        if($num_rows > 0){
+            return TRUE;
+        }
+        return FALSE;
     }
 
 

@@ -40,6 +40,7 @@ assets/kcfinder/config.php
 /hostname.php
 _cache_*.js
 _cache_*.css
+application/config/token*.php
 
 # the sql
 modules/*/assets/db/backup*.sql

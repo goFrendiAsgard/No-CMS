@@ -8,7 +8,6 @@
 	var REQUEST_EXISTS = false;
 	var REQUEST = "";
     function check_user_exists(){
-        var user_name =  $('input[name="user_name"]').val();
         var email =  $('input[name="email"]').val();
         var password = $('input[name="password"]').val();
         var confirm_password = $('input[name="confirm_password"]').val();
@@ -21,10 +20,10 @@
         REQUEST = $.ajax({
             "url" : "check_change_profile",
             "type" : "POST",
-            "data" : {"user_name":user_name, "email":email},
+            "data" : {"email":email},
             "dataType" : "json",
             "success" : function(data){
-                if(!data.error && !data.exists && user_name!='' &&
+                if(!data.error && !data.exists && 
                 ((!change_password_checked) || (change_password_checked && password!='' && password==confirm_password)) ){
                     $('input[name="change_profile"]').show();
                     $('input[name="change_profile"]').removeAttr('disabled');
@@ -88,8 +87,7 @@
     echo '<div class="form-group">';
     echo form_label('{{ language:User Name }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_input('user_name', $user_name, 
-        'id="user_name" placeholder="User Name" class="form-control"');
+    echo $user_name;
     echo '</div>';
     echo '</div>';
 

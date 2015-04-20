@@ -1,7 +1,7 @@
 <?php
 $lang['language_alias'] = 'id';
 
-$lang['Complete Menu'] = 'Menu Lengkap';
+$lang['Complete Menu'] = 'Admin';
 $lang['Home'] = 'Rumah';
 $lang['Language'] = 'Bahasa';
 $lang['Third Party Authentication'] = 'Autentikasi Pihak Ke Tiga';
@@ -12,15 +12,15 @@ $lang['Register'] = 'Daftar';
 $lang['No-CMS User Guide'] = 'Panduan Pengguna No-CMS';
 $lang['Change Profile'] = 'Ubah Profil';
 $lang['CMS Management'] = 'Manajemen CMS';
-$lang['Group Management'] = 'Manajemen Grup';
-$lang['User Management'] = 'Manajemen User';
-$lang['Privilege Management'] = 'Manajemen Hak Akses';
-$lang['Navigation Management'] = 'Manajemen Navigasi (Halaman)';
-$lang['Widget Management'] = 'Manajemen Widget';
-$lang['Module Management'] = 'Manajemen Modul';
+$lang['Group Management'] = 'Grup';
+$lang['User Management'] = 'User';
+$lang['Privilege Management'] = 'Hak Akses';
+$lang['Navigation Management'] = 'Navigasi (Halaman)';
+$lang['Widget Management'] = 'Widget';
+$lang['Module Management'] = 'Modul';
 $lang['Change Theme'] = 'Ubah Tema';
-$lang['Quick Link Management'] = 'Manajemen Penghubung Cepat';
-$lang['Configuration Management'] = 'Manajemen Konfigurasi';
+$lang['Quick Link Management'] = 'Penghubung Cepat';
+$lang['Configuration Management'] = 'Konfigurasi';
 
 $lang['User Info'] = 'Informasi Pengguna';
 $lang['Share This Page !!'] = 'Bagikan Halaman Ini !!';

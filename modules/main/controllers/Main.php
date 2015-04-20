@@ -497,20 +497,12 @@ class Main extends CMS_Controller
     public function check_change_profile()
     {
         if ($this->input->is_ajax_request()) {
-            $user_name = $this->input->post('user_name');
             $email = $this->input->post('email');
-            $user_name_exists    = $this->cms_is_user_exists($user_name) && $user_name != $this->cms_user_name();
-            $email_exists        = $this->cms_is_user_exists($email) && $email != $this->cms_user_email();
+            $email_exists        = $this->cms_is_user_exists($email, $this->cms_user_id());
             $valid_email = preg_match('/@.+\./', $email);
             $message   = "";
             $error = FALSE;
-            if ($user_name == "") {
-                $message = $this->cms_lang("Username is empty");
-                $error = TRUE;
-            } else if ($user_name_exists) {
-                $message = $this->cms_lang("Username already exists");
-                $error = TRUE;
-            } else if (!$valid_email){
+            if (!$valid_email){
                 $message = $this->cms_lang("Invalid email address");
                 $error = TRUE;
             } else if ($email_exists){
@@ -518,7 +510,7 @@ class Main extends CMS_Controller
                 $error = TRUE;
             }
             $data = array(
-                "exists" => $user_name_exists || $email_exists,
+                "exists" => $email_exists,
                 "error" => $error,
                 "message" => $message
             );
@@ -532,9 +524,9 @@ class Main extends CMS_Controller
         $SQL   = "SELECT user_name, email, real_name FROM ".cms_table_name('main_user')." WHERE user_id = " . $this->cms_user_id();
         $query = $this->db->query($SQL);
         $row   = $query->row();
+        $user_name = $row->user_name;
 
         //get user input
-        $user_name        = $this->input->post('user_name');
         $email            = $this->input->post('email');
         $real_name        = $this->input->post('real_name');
         $change_password  = $this->input->post('change_password');
@@ -542,24 +534,20 @@ class Main extends CMS_Controller
         $confirm_password = $this->input->post('confirm_password');
         if (!$change_password) {
             $password = NULL;
-        }
-
-        if (!$user_name)
-            $user_name = $row->user_name;
+        }        
         if (!$email)
             $email = $row->email;
         if (!$real_name)
             $real_name = $row->real_name;
 
         //set validation rule
-        $this->form_validation->set_rules('user_name', 'User Name', 'required');
         $this->form_validation->set_rules('email', 'E mail', 'required|valid_email');
         $this->form_validation->set_rules('real_name', 'Real Name', 'required');
         $this->form_validation->set_rules('password', 'Password', 'xss_clean|matches[confirm_password]');
         $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'xss_clean');
 
         if ($this->form_validation->run()) {
-            $this->cms_do_change_profile($user_name, $email, $real_name, $password);
+            $this->cms_do_change_profile($email, $real_name, $password, $this->cms_user_id());
             redirect('','refresh');
         } else {
             $data = array(
@@ -651,8 +639,8 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_user'));
         $crud->set_subject('User');
 
-        $crud->required_fields('user_name','password');
-        $crud->unique_fields('user_name');
+        $crud->required_fields('password');
+        $crud->unique_fields('user_name','email');
         $crud->unset_read();
 
         $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
@@ -686,9 +674,13 @@ class Main extends CMS_Controller
             if ($primary_key == $this->cms_user_id() || $primary_key == 1) {
                 $crud->callback_edit_field('active', array(
                     $this,
-                    'read_only_user_active'
-                ));
+                    '_read_only_user_active'
+                ));                
             }
+            $crud->callback_edit_field('user_name', array(
+                $this,
+                '_read_only_user_user_name'
+            ));
         }
         $crud->set_lang_string('delete_error_message', 'You cannot delete super admin user or your own account');
         $crud->set_language($this->cms_language());
@@ -711,10 +703,17 @@ class Main extends CMS_Controller
         $this->view('main/main_user', $output, 'main_user_management', $config);
     }
 
-    public function read_only_user_active($value, $row)
+    public function _read_only_user_active($value, $row)
     {
         $input   = '<input name="active" value="' . $value . '" type="hidden" />';
         $caption = $value == 0 ? 'Inactive' : 'Active';
+        return $input . $caption;
+    }
+
+    public function _read_only_user_user_name($value, $row)
+    {
+        $input   = '<input name="user_name" value="' . $value . '" type="hidden" />';
+        $caption = $value;
         return $input . $caption;
     }
 
@@ -743,6 +742,8 @@ class Main extends CMS_Controller
             ->get();
         $row = $result->row();
         $active = $row->active;
+        // change profile
+        $this->cms_do_change_profile($post_array['email'], $post_array['real_name'] ,NULL, $primary_key);
         // update subsite
         $this->_cms_set_user_subsite_activation($user_id, $active);
         return TRUE;
@@ -1698,6 +1699,91 @@ class Main extends CMS_Controller
         $this->view('main/main_widget_online_user');
     }
 
+    private function _get_token($unique_id){
+        $token_file = APPPATH.'config/token'.$unique_id.'.php';
+        if(!file_exists($token_file)){
+            return NULL;
+        }
+        if(function_exists('opcache_invalidate')){
+            opcache_invalidate('./site.php');
+        }
+        include($token_file);
+        $token = @json_decode($token, TRUE);
+        return $token;
+    }
+
+    private function _set_token($unique_id, $token){
+        $token = @json_encode($token);
+        $token_file = APPPATH.'config/token'.$unique_id.'.php';
+        $content = '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL;
+        $content .= '$token = \''.$token.'\';';
+        file_put_contents($token_file, $content);
+    }
+
+    private function _remove_token($unique_id){
+        $token_file = APPPATH.'config/token'.$unique_id.'.php';
+        if(file_exists($token_file)){
+            unlink($token_file);
+        }
+    }
+
+    public function check_login(){
+        if(CMS_SUBSITE == ''){
+            // get origin & server name from subsite
+            $original_url   = $this->input->get('__origin');
+            $server_name    = $this->input->get('__server_name');
+            $unique_id      = md5(rand().time());
+            // prepare new record to token list
+            $token = array(
+                    'remote_addr'  => $_SERVER['REMOTE_ADDR'],
+                    'user_agent'   => $_SERVER['HTTP_USER_AGENT'],
+                    'original_url' => $original_url,
+                    'user_name'    => $this->cms_user_name(),
+                    'time'         => time(),
+                );           
+            $this->_set_token($unique_id, $token);
+            // prepare redirection
+            $ssl         = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false;
+            $sp          = strtolower($_SERVER['SERVER_PROTOCOL']);
+            $protocol    = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+            $port        = $_SERVER['SERVER_PORT'];
+            $port        = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+            $host        = isset($hostname) ? $hostname : $_SERVER['SERVER_NAME'] . $port;
+            $redirection = $protocol.'://'.$server_name.'/index.php/main/landing?__origin='.urlencode($original_url).'&__token='.$unique_id;
+            redirect($redirection);
+        }
+    }
+
+    public function landing(){  
+        if(CMS_SUBSITE != ''){
+            $original_url   = $this->input->get('__origin');
+            $unique_id      = $this->input->get('__token');
+            $token          = $this->_get_token($unique_id);
+            if($token != NULL){
+                if($_SERVER['REMOTE_ADDR'] == $token['remote_addr'] && $_SERVER['HTTP_USER_AGENT'] == $token['user_agent'] && 
+                    $original_url == $token['original_url'] && time() < $token['time']+120){
+                    // get user name
+                    $user_name = $token['user_name'];
+                    // get other column in order to emulate login
+                    $query = $this->db->select('user_id, real_name, email')
+                        ->from(cms_table_name('main_user'))
+                        ->where('user_name', $user_name)
+                        ->get();
+                    if($query->num_rows()>0){
+                        $row = $query->row();
+                        $this->cms_user_name($user_name);
+                        $this->cms_user_id($row->user_id);
+                        $this->cms_user_real_name($row->real_name);
+                        $this->cms_user_email($row->email);
+                    }                
+                }
+                
+            }
+            $this->_remove_token($unique_id);
+            redirect($original_url);
+        }
+    }
+
     public function widget_online_user_ajax(){
         $query = $this->db->select('user_name')
             ->from(cms_table_name('main_user'))
@@ -1718,8 +1804,7 @@ class Main extends CMS_Controller
     public function widget_logout()
     {
         $data = array(
-            "user_name" => $this->cms_user_name(),
-            "welcome_lang" => $this->cms_lang('Welcome'),
+            "user_real_name" => $this->cms_user_real_name(),
             "logout_lang" => $this->cms_lang('Logout')
         );
         $this->view('main/main_widget_logout', $data);
