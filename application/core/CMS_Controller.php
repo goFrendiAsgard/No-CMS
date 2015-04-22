@@ -52,26 +52,6 @@ class CMS_Controller extends MX_Controller
         $this->form_validation->CI =& $this;
         $this->load->driver('session');
 
-        if(!isset($_COOKIE['__sso_login'])){
-            // just use for temporary fix
-            $_COOKIE['__sso_login'] = FALSE;
-        }
-        if(!$_COOKIE['__sso_login'] && $this->__cms_base_model_name == 'no_cms_autoupdate_model' && CMS_SUBSITE != '' && $this->cms_user_id()<=0){
-            setcookie('__sso_login', TRUE, time()+600);
-            if($this->input->get('__origin') == NULL || $this->input->get('__token') == NULL){
-                include(BASEPATH.'../hostname.php');
-                $url         = current_url();
-                $ssl         = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false;
-                $sp          = strtolower($_SERVER['SERVER_PROTOCOL']);
-                $protocol    = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
-                $port        = $_SERVER['SERVER_PORT'];
-                $port        = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
-                $host        = isset($hostname) ? $hostname : $_SERVER['SERVER_NAME'] . $port;
-                $redirection = $protocol.'://'.$host.'/index.php/main/check_login?__origin='.urlencode($url).'&__server_name='.$_SERVER['SERVER_NAME'];
-                redirect($redirection);
-            }
-        }
-
         // unpublished modules should never be accessed.
         $module_path = $this->cms_module_path();
         if(CMS_SUBSITE != '' && $module_path != 'main' && $module_path != ''){
@@ -97,6 +77,26 @@ class CMS_Controller extends MX_Controller
         if(!$this->__cms_dynamic_widget){
             // if there is old_url, then save it
             $old_url = $this->session->userdata('cms_old_url');
+        }
+
+        if(!isset($_COOKIE['__sso_login'])){
+            // just use for temporary fix
+            $_COOKIE['__sso_login'] = FALSE;
+        }
+        if(!$this->input->is_ajax_request() && !$this->__cms_dynamic_widget && !$_COOKIE['__sso_login'] && $this->__cms_base_model_name == 'no_cms_autoupdate_model' && CMS_SUBSITE != '' && $this->cms_user_id()<=0){
+            setcookie('__sso_login', TRUE, time()+600);
+            if($this->input->get('__origin') == NULL || $this->input->get('__token') == NULL){
+                include(BASEPATH.'../hostname.php');
+                $url         = current_url();
+                $ssl         = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false;
+                $sp          = strtolower($_SERVER['SERVER_PROTOCOL']);
+                $protocol    = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+                $port        = $_SERVER['SERVER_PORT'];
+                $port        = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+                $host        = isset($hostname) ? $hostname : $_SERVER['SERVER_NAME'] . $port;
+                $redirection = $protocol.'://'.$host.'/index.php/main/check_login?__origin='.urlencode($url).'&__server_name='.$_SERVER['SERVER_NAME'];
+                redirect($redirection);
+            }
         }
 
         //$this->output->enable_profiler(1);
@@ -681,7 +681,7 @@ class CMS_Controller extends MX_Controller
      * @return bool
      * @desc   check if user already exists
      */
-    public function cms_is_user_exists($identity, $exception_user_id = NULL)
+    public function cms_is_user_exists($identity, $exception_user_id = 0)
     {
         return $this->{$this->__cms_base_model_name}->cms_is_user_exists($identity, $exception_user_id);
     }
@@ -1185,27 +1185,13 @@ class CMS_Controller extends MX_Controller
             $this->template->append_metadata('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
 
             $asset = new Cms_asset();
-            // always use grocerycrud's jquery for maximum compatibility
-            if($this->cms_is_connect('code.jquery.com')){
-                $jquery_path = 'http://code.jquery.com/jquery-1.10.2.min.js';
-                $migration_path = 'http://code.jquery.com/jquery-migrate-1.2.1.min.js';
-                $asset->add_js($jquery_path);
-                $asset->add_js($migration_path);
-                //$this->template->append_js('<script type="text/javascript" src="' . $jquery_path . '"></script>');
-                //$this->template->append_js('<script type="text/javascript" src="' . $migration_path . '"></script>');
-            }else{
-                $jquery_path = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
-                $asset->add_js($jquery_path);
-                //$this->template->append_js('<script type="text/javascript" src="' . $jquery_path . '"></script>');
-            }            
+            $asset->add_js(base_url('assets/grocery_crud/js/jquery-1.10.2.min.js'));
 
             // ckeditor adjustment thing
             $asset->add_internal_js($this->cms_ck_adjust_script());
-            //$this->template->append_js('<script type="text/javascript">'.$this->cms_ck_adjust_script().'</script>');
 
             // add javascript base_url for ckeditor
             $asset->add_internal_js('var __cms_base_url = "'.base_url().'";');
-            //$this->template->append_js('<script type="text/javascript">var __cms_base_url = "'.base_url().'";</script>');
 
             // check login status
             //$login_code = '<script type="text/javascript">';
@@ -1227,15 +1213,12 @@ class CMS_Controller extends MX_Controller
                 });
             },300000);';
             $asset->add_internal_js($login_code);
-            //$login_code .= '</script>';
-            //$this->template->append_js($login_code);
 
-            if($this->cms_is_connect('google-analytics.com')){
-                // google analytic
-                $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
-                if (trim($analytic_property_id) != '') {
+            // google analytic
+            $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
+            if (trim($analytic_property_id) != '') {
+                if($this->cms_is_connect('google-analytics.com')){
                     // create analytic code
-                    //$analytic_code  = '<script type="text/javascript"> ';
                     $analytic_code = '';
                     $analytic_code .= 'var _gaq = _gaq || []; ';
                     $analytic_code .= '_gaq.push([\'_setAccount\', \'' . $analytic_property_id . '\']); ';
@@ -1246,9 +1229,6 @@ class CMS_Controller extends MX_Controller
                     $analytic_code .= 'var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s); ';
                     $analytic_code .= '})(); ';
                     $asset->add_internal_js($analytic_code);
-                    //$analytic_code .= '</script>';
-                    // add to the template
-                    //$this->template->append_js($analytic_code);
                 }
             }
 

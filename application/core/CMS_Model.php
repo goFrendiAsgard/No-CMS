@@ -3041,7 +3041,7 @@ class CMS_Model extends CI_Model
      * @return bool
      * @desc   check if user already exists
      */
-    public function cms_is_user_exists($identity, $exception_user_id = NULL)
+    public function cms_is_user_exists($identity, $exception_user_id = 0)
     {   
         $query = $this->db->query('SELECT user_id, user_name FROM '.cms_table_name('main_user').' '.
             'WHERE 

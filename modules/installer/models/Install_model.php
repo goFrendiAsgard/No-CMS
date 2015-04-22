@@ -1042,7 +1042,7 @@ class Install_model extends CI_Model{
                 2, 1, 10, 0, '<form action="{{ site_url }}main/login" method="post" accept-charset="utf-8"><label>Identity</label><br><input type="text" name="identity" value=""><br><label>Password</label><br><input type="password" name="password" value=""><br><input type="submit" name="login" value="Log In"></form>',
                 'sidebar, user_widget');
         $sql_list[] = $this->insert_widget('logout', 'User Info', 'Logout', 'main/widget_logout',
-                3, 1, 11, 1, '{{ user_real_name }}<br /><a href="{{ site_url }}main/logout">{{ language:Logout }}</a><br />'.PHP_EOL.'<a href="{{ site_url }}main/logout">{{ language:Logout }}</a><br />',
+                3, 1, 11, 1, '{{ user_real_name }}<br /><a href="{{ site_url }}main/logout">{{ language:Logout }}</a>',
                 'sidebar, user_widget');
         $sql_list[] = $this->insert_widget('social_plugin', 'Share This Page !!', 'Addthis', 'main/widget_social_plugin',
                 1, 0, 12, 1, '<div class="addthis_sharing_toolbox"></div>'.PHP_EOL.'<!-- Go to www.addthis.com/dashboard to customize your tools -->'.PHP_EOL.'<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-4ee44922521f8e39"></script>',

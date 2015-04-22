@@ -85,7 +85,7 @@ for($i=0; $i<count($slide_list); $i++){
                     var color = _rgb2hex($(selector).css('color'));
                     if(typeof(color) != 'undefined'){                    
                         var shadow_color = _getContrastYIQ(color);
-                        $(selector).css('text-shadow', '1px 1px 20px '+shadow_color+', -1px -1px  20px'+shadow_color);
+                        $(selector).css('text-shadow', '1px 1px '+shadow_color+', 1px 1px 20px '+shadow_color+', -1px -1px  20px'+shadow_color);
                     }
                 }
             }
