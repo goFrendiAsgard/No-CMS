@@ -1,3 +1,3 @@
 <?php
 $lang['Manage Article'] = 'Artikel';
-$lang['Manage Category'] = 'Kategorie';
+$lang['Manage Category'] = 'Kategorien';
