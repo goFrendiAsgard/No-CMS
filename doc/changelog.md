@@ -187,22 +187,18 @@ v0.7.0
 + (done, tested) Add setting for third party authentication
 + (done, tested) Change registration, let registrant upload favicon, logo, set slogan & site name
 + (done, tested) Custom search form
-+ (done, tested) Fix nexted quicklink
++ (done, tested) Fix nested quicklink
 + (done, tested) Automatic module update
 
 v0.7.3
 + (done, tested) Better encryption
 + (done, tested) ommit ck_adjust_script
 + (done, tested) Blog clear fix
-
-v0.7.4
 + (done, tested) Add name length for subsite, check registration user with sanitized site, allow underscore
 + (done, tested) Fix newly registered user redirection
 + (done, tested) Show subsite summary properly even if the table broken
-+ (done, tested) Non perfect CRUD load
++ (done, tested) Imperfect CRUD load
 + (done, tested) Delete subsite
-
-v0.7.5
 + (done, tested) google login fixed, hybridauth updated
 + (done, tested) better grocery-crud themes
 + (done, tested) update chosen
@@ -210,3 +206,7 @@ v0.7.5
 + (done, tested) reduce query number
 + (done, tested) new mechanism for master-detail
 + (done, tested) add search module and theme capability
+
+v1.0.0
++ (done, tested) Using CI 3
++ (done, tested) New module mechanism, reduce AJAX and unnecessary queries.
