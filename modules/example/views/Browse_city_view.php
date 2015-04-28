@@ -65,7 +65,7 @@
 	
 		
 			<p style="margin-left:10px">
-			File: /home/gofrendi/public_html/No-CMS/modules/nordrassil/libraries/NordrassilLib.php<br />
+			File: /home/gofrendi/public_html/No-CMS/modules/nordrassil/libraries/Nordrassillib.php<br />
 			Line: 90<br />
 			Function: view			</p>
 

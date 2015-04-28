@@ -107,7 +107,7 @@ class Info extends CMS_Module {
         $fields = array(
             'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
             'name'=> array("type"=>'varchar', "constraint"=>45, "null"=>TRUE),
-            'status'=> array("type"=>'enum', "constraint"=>array('not set','black list','white list'), "null"=>TRUE)
+            'status'=> array("type"=>'enum("not set","black list","white list")', "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);

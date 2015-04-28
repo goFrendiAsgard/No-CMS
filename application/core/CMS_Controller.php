@@ -98,8 +98,10 @@ class CMS_Controller extends MX_Controller
                 redirect($redirection);
             }
         }
-
-        //$this->output->enable_profiler(1);
+        /*
+        if(!$this->input->is_ajax_request()){
+            $this->output->enable_profiler(1);
+        }*/
     }
 
     public function cms_load_info_model($module_path){
@@ -988,14 +990,19 @@ class CMS_Controller extends MX_Controller
          * CHECK IF THE PAGE IS STATIC  **********************************************************************************
          */
         $data = (array) $data;
-        if ($navigation_name_provided && !isset($data['_content'])) {
-            $query = $this->db->select('navigation_id, static_content')
+        $row_navigation = NULL;
+        if($navigation_name != NULL){
+            $query = $this->db->select('title, page_title, page_keyword, description, default_theme, default_layout, only_content, is_static, static_content')
                 ->from(cms_table_name('main_navigation'))
-                ->where(array('is_static'=>1, 'navigation_name'=>$navigation_name))
+                ->where(array('navigation_name'=>$navigation_name))
                 ->get();
-            if ($query->num_rows() > 0) {
-                $row            = $query->row();
-                $static_content = $row->static_content;
+            if($query->num_rows()>0){
+                $row_navigation = $query->row();
+            }
+        }
+        if ($navigation_name_provided && !isset($data['_content']) && $row_navigation != NULL) {
+            if($row_navigation->is_static == 1){
+                $static_content = $row_navigation->static_content;
                 // static_content should contains string
                 if (!$static_content) {
                     $static_content = '';
@@ -1007,7 +1014,6 @@ class CMS_Controller extends MX_Controller
                 }        
                 $data['cms_content'] = $static_content;
                 $view_url            = 'CMS_View';
-
             }
         }
 
@@ -1026,32 +1032,23 @@ class CMS_Controller extends MX_Controller
         $page_keyword       = NULL;
         $page_description   = NULL;
         $page_author        = NULL;
-        if ($navigation_name_provided) {
-            $query = $this->db->select('title, page_title, page_keyword, description, default_theme, default_layout, only_content')
-                ->from(cms_table_name('main_navigation'))
-                ->where(array('navigation_name'=>$navigation_name))
-                ->get();
-            // get default_theme, and default_title of this page
-            if ($query->num_rows() > 0) {
-                $row           = $query->row();
-                $default_theme = $row->default_theme;
-                $default_layout = $row->default_layout;
-                // title
-                if (isset($row->page_title) && ($row->page_title !== NULL) && $row->page_title != '') {
-                    $page_title = $row->page_title;
-                } else if (isset($row->title) && ($row->title !== NULL) && $row->title != '') {
-                    $page_title = $row->title;
-                }
-                $page_title = isset($page_title) && $page_title !== NULL ? $page_title : '';
-                // keyword
-                $page_keyword = isset($row->page_keyword) && $row->page_keyword !== NULL ? $row->page_keyword : '';
-                // keyword
-                $page_description = isset($row->description) && $row->description !== NULL ? $row->description : '';
-                // only content
-                if (!isset($only_content)) {
-                    $only_content = ($row->only_content == 1);
-                }
-
+        if ($navigation_name_provided && $row_navigation != NULL) {
+            $default_theme = $row_navigation->default_theme;
+            $default_layout = $row_navigation->default_layout;
+            // title
+            if (isset($row_navigation->page_title) && ($row_navigation->page_title !== NULL) && $row_navigation->page_title != '') {
+                $page_title = $row_navigation->page_title;
+            } else if (isset($row_navigation->title) && ($row_navigation->title !== NULL) && $row_navigation->title != '') {
+                $page_title = $row_navigation->title;
+            }
+            $page_title = isset($page_title) && $page_title !== NULL ? $page_title : '';
+            // keyword
+            $page_keyword = isset($row_navigation->page_keyword) && $row_navigation->page_keyword !== NULL ? $row_navigation->page_keyword : '';
+            // keyword
+            $page_description = isset($row_navigation->description) && $row_navigation->description !== NULL ? $row_navigation->description : '';
+            // only content
+            if (!isset($only_content)) {
+                $only_content = ($row_navigation->only_content == 1);
             }
         }
 

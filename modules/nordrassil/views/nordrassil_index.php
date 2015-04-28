@@ -11,7 +11,7 @@
 </style>
 <h4>Generate Project</h4>
 <div class="form form-inline well" style="margin-bottom:20px;">
-    <label>Choose a project </label>
+    <label>Choose a project </label> &nbsp;
     <select id="project_list" class="form-control">
     <?php
         $project_generator_path = array(); 
@@ -23,10 +23,10 @@
             echo '<option value="'.$project_id.'">'.$project_name.'</option>';
         }
     ?>    
-    </select> 
-    and
-    <input id="btn_generate" type="button" value="Generate" class="btn btn-primary"/>
-    or
+    </select> &nbsp; 
+    and &nbsp;
+    <input id="btn_generate" type="button" value="Generate" class="btn btn-primary"/> &nbsp;
+    or &nbsp;
     <a href="<?php echo site_url('nordrassil/data/nds/project/add'); ?>" class="btn btn-success">Make a new Project</a>
     <div id="status" class="alert-info"><b>Hint : </b>Choose a project and generate</div>
 </div>

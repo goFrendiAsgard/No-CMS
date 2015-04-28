@@ -57,11 +57,7 @@ class CMS_Model extends CI_Model
 
         // accessing file is faster than accessing database
         // but I think accessing variable is faster than both of them
-        $query = $this->db->select('user_name, real_name')
-                ->from(cms_table_name('main_user'))
-                ->where('user_id', 1)
-                ->get();
-        $super_admin = $query->row();
+        
         if(self::$__cms_model_properties == NULL){
             self::$__cms_model_properties = array();
         }
@@ -75,7 +71,7 @@ class CMS_Model extends CI_Model
                 'navigation' => array(),        // cache raw query
                 'quicklink' => array(),         // cache already built quicklink
                 'widget' => array(),            // cache raw query
-                'super_admin' => $super_admin,
+                'super_admin' => NULL,
                 'properties' => array(),
                 'is_config_cached' => FALSE,
                 'is_module_name_cached' => FALSE,
@@ -90,6 +86,15 @@ class CMS_Model extends CI_Model
             if(!array_key_exists($key, self::$__cms_model_properties)){
                 self::$__cms_model_properties[$key] = $val;
             }
+        }
+
+        if(self::$__cms_model_properties['super_admin'] === NULL){
+            $query = $this->db->select('user_name, real_name')
+                    ->from(cms_table_name('main_user'))
+                    ->where('user_id', 1)
+                    ->get();
+            $super_admin = $query->row();
+            self::$__cms_model_properties['super_admin'] = $super_admin;
         }
 
         // kcfinder
@@ -2191,14 +2196,11 @@ class CMS_Model extends CI_Model
      */
     public function cms_is_module_active($module_name)
     {
-        $query = $this->db->select('module_id')
-            ->from(cms_table_name('main_module'))
-            ->where('module_name', $module_name)
-            ->get();
-        if ($query->num_rows() > 0) {
+        if (!self::$__cms_model_properties['is_module_path_cached']) {
+            $this->cms_adjust_module();
+        }
+        if(array_key_exists($module_name, self::$__cms_model_properties['module_path'])){
             return true;
-        } else {
-            return false;
         }
         return false;
     }
