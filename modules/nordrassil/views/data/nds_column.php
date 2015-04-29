@@ -15,7 +15,7 @@
 		$asset->add_js($file);
 	}
 	// also add adjust.js which contain of field adjustment function
-	$asset->add_module_js('scripts/adjust.js', '{{ module_path }}');
+	$asset->add_module_js('scripts/adjust.js', $module_path);
 	echo $asset->compile_js();
 	echo '<h4>Column</h4>';
     echo '<div style="padding-bottom: 10px;">';

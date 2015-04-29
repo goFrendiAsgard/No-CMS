@@ -46,6 +46,7 @@ class Nds extends CMS_Controller {
 
         // render
         $output = $crud->render();
+        $output->module_path = $this->cms_module_path();
         $this->view($this->cms_module_path()."/data/nds_template", $output, $this->cms_complete_navigation_name('template'));
     }
 
@@ -192,11 +193,13 @@ class Nds extends CMS_Controller {
 
         // render
         $output = $crud->render();
+        $output->module_path = $this->cms_module_path();
         $output->state = $crud->getState();
         $this->view($this->cms_module_path()."/data/nds_project", $output, $this->cms_complete_navigation_name('project'));
     }
 
     public function _callback_project_after_insert($post_array, $primary_key){
+        set_time_limit(60);
         $this->load->model($this->cms_module_path().'/data/synchronize_model');
         if(!isset($primary_key) || $primary_key == NULL){
             $query = $this->db->select('project_id')->from($this->cms_complete_table_name('project'))
@@ -406,6 +409,7 @@ class Nds extends CMS_Controller {
 
         // render
         $output = $crud->render();
+        $output->module_path = $this->cms_module_path();
         if(isset($project_id) && is_numeric($project_id)){
             $output->project_id = $project_id;
             $this->load->model($this->cms_module_path().'/data/nds_model');
@@ -587,6 +591,7 @@ class Nds extends CMS_Controller {
 
         // render
         $output = $crud->render();
+        $output->module_path = $this->cms_module_path();
         if(isset($table_id) && is_numeric($table_id)){
             $this->load->model($this->cms_module_path().'/data/nds_model');
             $query = $this->db->select('project_id')->from($this->cms_complete_table_name('table'))->where('table_id',$table_id)->get();

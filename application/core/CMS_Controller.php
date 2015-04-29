@@ -98,6 +98,7 @@ class CMS_Controller extends MX_Controller
                 redirect($redirection);
             }
         }
+
         /*
         if(!$this->input->is_ajax_request()){
             $this->output->enable_profiler(1);
@@ -153,8 +154,22 @@ class CMS_Controller extends MX_Controller
      * @return string
      * @desc   return complete table name
      */
-    public function cms_complete_table_name($table_name){
+    public function cms_complete_table_name($table_name, $module_name = NULL){
+        $module_path = $this->cms_module_path($module_name);
+        if($module_path == 'main' or $module_path == ''){
+            return cms_table_name($table_name);
+        }else{
+            if(file_exists(FCPATH.'modules/'.$module_path.'/cms_helper.php')){ 
+                $this->load->helper($module_path.'/cms');
+                if(function_exists('cms_complete_table_name')){
+                    return cms_complete_table_name($table_name);
+                }
+            }
+            return cms_module_table_name($module_path, $table_name);
+        }
+        /*
         return $this->{$this->__cms_base_model_name}->cms_complete_table_name($table_name);
+        */
     }
 
     /**
@@ -163,8 +178,14 @@ class CMS_Controller extends MX_Controller
      * @return string
      * @desc   return complete navigation name
      */
-    public function cms_complete_navigation_name($navigation_name){
-        return $this->{$this->__cms_base_model_name}->cms_complete_navigation_name($navigation_name);
+    public function cms_complete_navigation_name($navigation_name, $module_name = NULL){
+        //return $this->{$this->__cms_base_model_name}->cms_complete_navigation_name($navigation_name);
+        $module_path = $this->cms_module_path($module_name);
+        if($module_path == 'main' or $module_path == ''){
+            return $navigation_name;
+        }else{
+            return cms_module_navigation_name($module_path, $navigation_name);
+        }
     }
 
     /**
@@ -519,7 +540,21 @@ class CMS_Controller extends MX_Controller
      */
     public function cms_module_path($module_name = NULL)
     {
-        return $this->{$this->__cms_base_model_name}->cms_module_path($module_name);
+        if($module_name === NULL){
+            $module_path = '';
+            $reflector = new ReflectionObject($this);
+            $file_name  = $reflector->getFilename();
+            if(strpos($file_name, FCPATH.'modules') === 0){
+                $file_name = trim(str_replace(FCPATH.'modules', '', $file_name), DIRECTORY_SEPARATOR);
+                $file_name_part = explode(DIRECTORY_SEPARATOR, $file_name);
+                if(count($file_name_part)>=2){
+                    $module_path = $file_name_part[0]; 
+                }
+            }
+            return $module_path;
+        }else{
+            return $this->{$this->__cms_base_model_name}->cms_module_path($module_name);
+        }
     }
 
     /**
@@ -674,6 +709,27 @@ class CMS_Controller extends MX_Controller
      */
     public function cms_parse_keyword($value)
     {
+        if(strpos($value, '{{ ') !== FALSE){
+            // module_path & module_name
+            $module_path = $this->cms_module_path();
+            $module_name = $this->cms_module_name($module_path);
+            $module_site_url = site_url($module_path);
+            $module_base_url = base_url('modules/'.$module_path);
+            if ($module_site_url[strlen($module_site_url) - 1] != '/')
+                $module_site_url .= '/';
+            if ($module_base_url[strlen($module_base_url) - 1] != '/')
+                $module_base_url .= '/';
+            $pattern[]     = '/\{\{ module_path \}\}/si';
+            $replacement[] = $module_path;
+            $pattern[]     = '/\{\{ module_site_url \}\}/si';
+            $replacement[] = $module_site_url;
+            $pattern[]     = '/\{\{ module_base_url \}\}/si';
+            $replacement[] = $module_base_url;
+            $pattern[]     = '/\{\{ module_name \}\}/si';
+            $replacement[] = $module_name;
+
+            $value = preg_replace($pattern, $replacement, $value);
+        }
         return $this->{$this->__cms_base_model_name}->cms_parse_keyword($value);
     }
 
@@ -787,40 +843,6 @@ class CMS_Controller extends MX_Controller
         if (!$allowed) {
             $this->cms_redirect();
         }
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param   string tmp_module_path
-     * @desc    pretend to be tmp_module_path to adjust the table prefix. This only affect table name
-     */
-    public function cms_override_table_prefix($tmp_module_path){
-        $this->{$this->__cms_base_model_name}->cms_override_table_prefix($tmp_module_path);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @desc    cancel effect created by cms_override_table_prefix
-     */
-    public function cms_reset_overriden_table_prefix(){
-        $this->{$this->__cms_base_model_name}->cms_reset_overriden_table_prefix();
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @param   string tmp_module_path
-     * @desc    pretend to be tmp_module_path to adjust the table prefix. This only affect table name
-     */
-    public function cms_override_module_path($tmp_module_path){
-        $this->{$this->__cms_base_model_name}->cms_override_module_path($tmp_module_path);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @desc    cancel effect created by cms_override_module_path
-     */
-    public function cms_reset_overridden_module_path(){
-        $this->{$this->__cms_base_model_name}->cms_reset_overridden_module_path();
     }
 
     /**
@@ -1646,7 +1668,15 @@ class CMS_Controller extends MX_Controller
 
     protected function cms_execute_sql($SQL, $separator)
     {
-        $this->{$this->__cms_base_model_name}->cms_execute_sql($SQL, $separator);
+        $queries = explode($separator, $SQL);
+        foreach ($queries as $query) {
+            if(trim($query) == '') continue;
+            $table_prefix = cms_module_table_prefix($this->cms_module_path());
+            $module_prefix = cms_module_prefix($this->cms_module_path());
+            $query = preg_replace('/\{\{ complete_table_name:(.*) \}\}/si', $table_prefix==''? '$1': $table_prefix.'_'.'$1', $query);
+            $query = preg_replace('/\{\{ module_prefix \}\}/si', $module_prefix, $query);
+            $this->db->query($query);
+        }
     }
 
     public function cms_set_editing_mode(){

@@ -26,6 +26,7 @@ class Default_generator extends CMS_Controller{
         $this->load->helper('inflector');
         $this->load->library('nordrassil/nordrassillib');
         $this->nds = $this->nordrassillib;
+        set_time_limit(60);
     }
 
     private function array_to_quoted_string($array, $key=NULL){

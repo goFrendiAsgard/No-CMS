@@ -450,9 +450,9 @@ class Main extends CMS_Controller
                 }
                 if(!$error){
                     // is there any subsite with similar name
-                    $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
-                    $this->cms_override_module_path($module_path);
-                    $t_subsite = $this->cms_complete_table_name('subsite');
+                    // $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
+                    // $this->cms_override_module_path($module_path);
+                    $t_subsite = $this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite');
                     $query = $this->db->select('name')
                         ->from($t_subsite)
                         ->where('name', $subsite)
@@ -461,7 +461,7 @@ class Main extends CMS_Controller
                         $message = $this->cms_lang("Subsite already used, choose other username");
                         $error = TRUE;
                     }
-                    $this->cms_reset_overridden_module_path();
+                    // $this->cms_reset_overridden_module_path();
                 }
             }
 
