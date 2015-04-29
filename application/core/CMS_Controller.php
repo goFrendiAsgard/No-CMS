@@ -39,8 +39,6 @@ class CMS_Controller extends MX_Controller
     {
         parent::__construct();
 
-        $this->load->model($this->__cms_base_model_name);        
-
         /* Standard Libraries */
         $this->load->database();
         $this->load->helper('url');
@@ -52,8 +50,11 @@ class CMS_Controller extends MX_Controller
         $this->form_validation->CI =& $this;
         $this->load->driver('session');
 
-        // unpublished modules should never be accessed.
         $module_path = $this->cms_module_path();
+        $this->load->model($this->__cms_base_model_name);
+        $this->{$this->__cms_base_model_name}->__controller_module_path = $module_path;
+
+        // unpublished modules should never be accessed.        
         if(CMS_SUBSITE != '' && $module_path != 'main' && $module_path != ''){
             $subsite_auth_file = FCPATH.'modules/'.$module_path.'/subsite_auth.php';
             if(file_exists($subsite_auth_file)){
@@ -155,21 +156,7 @@ class CMS_Controller extends MX_Controller
      * @desc   return complete table name
      */
     public function cms_complete_table_name($table_name, $module_name = NULL){
-        $module_path = $this->cms_module_path($module_name);
-        if($module_path == 'main' or $module_path == ''){
-            return cms_table_name($table_name);
-        }else{
-            if(file_exists(FCPATH.'modules/'.$module_path.'/cms_helper.php')){ 
-                $this->load->helper($module_path.'/cms');
-                if(function_exists('cms_complete_table_name')){
-                    return cms_complete_table_name($table_name);
-                }
-            }
-            return cms_module_table_name($module_path, $table_name);
-        }
-        /*
-        return $this->{$this->__cms_base_model_name}->cms_complete_table_name($table_name);
-        */
+        return $this->{$this->__cms_base_model_name}->cms_complete_table_name($table_name, $module_name);
     }
 
     /**
@@ -179,13 +166,7 @@ class CMS_Controller extends MX_Controller
      * @desc   return complete navigation name
      */
     public function cms_complete_navigation_name($navigation_name, $module_name = NULL){
-        //return $this->{$this->__cms_base_model_name}->cms_complete_navigation_name($navigation_name);
-        $module_path = $this->cms_module_path($module_name);
-        if($module_path == 'main' or $module_path == ''){
-            return $navigation_name;
-        }else{
-            return cms_module_navigation_name($module_path, $navigation_name);
-        }
+        return $this->{$this->__cms_base_model_name}->cms_complete_navigation_name($navigation_name, $module_name);
     }
 
     /**
@@ -412,9 +393,169 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    return submenu screen
      */
+    /**
+     * @author  goFrendiAsgard
+     * @param   string navigation_name
+     * @return  string
+     * @desc    return submenu screen
+     */
     public function cms_submenu_screen($navigation_name)
     {
-        return $this->{$this->__cms_base_model_name}->cms_submenu_screen($navigation_name);
+        $submenus = array();
+        if (!isset($navigation_name)) {
+            $submenus = $this->cms_navigations(NULL, 1);
+        } else {
+            $navigations = $this->cms_navigations();
+            $found = FALSE;
+            foreach($navigations as $navigation){
+                if($navigation['navigation_name'] == $navigation_name){
+                    $found = TRUE;
+                    $navigation_id = $navigation['navigation_id'];
+                    $submenus = $this->cms_navigations($navigation_id, 1);
+                    break;
+                }
+            }
+            if(!$found){
+                return '';
+            }
+        }
+
+        $html = '
+        <script type="text/javascript">
+            function __adjust_component(identifier){
+                var max_height = 0;
+                $(identifier).each(function(){
+                    $(this).css("margin-bottom", 0);
+                    if($(this).height()>max_height){
+                        max_height = $(this).height();
+                    }
+                });
+                $(identifier).each(function(){
+                    $(this).height(max_height);
+                    var margin_bottom = 0;
+                    if($(this).height()<max_height){
+                        margin_bottom = max_height - $(this).height();
+                    }
+                    margin_bottom += 10;
+                    $(this).css("margin-bottom", margin_bottom);
+                });
+            }
+            function __adjust_thumbnail_submenu(){
+                __adjust_component(".thumbnail_submenu img");
+                __adjust_component(".thumbnail_submenu div.caption");
+                __adjust_component(".thumbnail_submenu");
+            }
+            $(window).load(function(){
+                __adjust_thumbnail_submenu();
+                // resize
+                $(window).resize(function(){
+                    __adjust_thumbnail_submenu();
+                });
+            });
+        </script>';
+
+        $html .= '<div class="row">';
+        $module_path = $this->cms_module_path();
+        $image_directories = array();
+        if($module_path != ''){
+           $image_directories[] = "modules/$module_path/assets/navigation_icon";
+        }
+        $image_directories[] = "assets/nocms/navigation_icon";
+        foreach($this->cms_get_module_list() as $module_list){
+            $other_module_path = $module_list['module_path'];
+            $image_directories[] = "modules/$other_module_path/assets/navigation_icon";
+        }
+        $submenu_count = count($submenus);
+        foreach ($submenus as $submenu) {
+            $navigation_id   = $submenu["navigation_id"];
+            $navigation_name = $submenu["navigation_name"];
+            $title           = $submenu["title"];
+            $url             = $submenu["url"];
+            $description     = $submenu["description"];
+            $allowed         = $submenu["allowed"];
+            $notif_url       = $submenu["notif_url"];
+            if (!$allowed) continue;
+
+            // check image in current module
+
+            $image_file_names = array();
+            $image_file_names[] = $navigation_name.'.png';
+            if($module_path !== '' && $module_path !== 'main'){
+                $module_prefix = cms_module_prefix($this->cms_module_path());
+                $navigation_parts = explode('_', $navigation_name);
+                if(count($navigation_parts)>0 && $navigation_parts[0] == $module_prefix){
+                    $image_file_names[] = substr($navigation_name, strlen($module_prefix)+1).'.png';
+                }
+            }
+            $image_file_path = '';
+            foreach($image_directories as $image_directory){
+                foreach($image_file_names as $image_file_name){
+                    $image_file_path  = $image_directory.'/'.$image_file_name;
+                    if (!file_exists($image_file_path)) {
+                        $image_file_path = '';
+                    }
+                    if ($image_file_path !== ''){
+                        break;
+                    }
+                }
+                if ($image_file_path !== ''){
+                    break;
+                }
+            }
+
+            $badge = '';
+            if($notif_url != ''){
+                $badge_id = '__cms_notif_submenu_screen_'.$navigation_id;
+                $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
+                $badge.= '<script type="text/javascript">
+                        $(window).load(function(){
+                            setInterval(function(){
+                                $.ajax({
+                                    dataType:"json",
+                                    url: "'.addslashes($notif_url).'",
+                                    success: function(response){
+                                        if(response.success){
+                                            $("#'.$badge_id.'").html(response.notif);
+                                        }
+                                        __adjust_thumbnail_submenu();
+                                    }
+                                });
+                            }, 300000);
+                        });
+                    </script>
+                ';
+            }
+
+
+            // default icon
+            if ($image_file_path == '') {
+                $image_file_path = 'assets/nocms/images/icons/package.png';
+            }
+            $html .= '<a href="' . $url . '" style="text-decoration:none;">';
+            if($submenu_count <= 2){
+                $html .= '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">';
+            }else if($submenu_count % 3 == 0){
+                $html .= '<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">';
+            }else{
+                $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
+            }
+            $html .= '<div class="thumbnail thumbnail_submenu">';
+
+            if ($image_file_path != '') {
+                $html .= '<img style="margin-top:10px; max-height:60px;" src="' . base_url($image_file_path) . '" />';
+            }
+
+            $html .= '<div class="caption">';
+            $html .= '<h4>'.$title.$badge.'</h4>';
+            $html .= '<p>'.$description.'</p>';
+            $html .= '</div>'; // end of div.caption
+            $html .= '</div>'; // end of div.thumbnail
+            $html .= '</div>'; // end of div.col-xs-6 col-sm-4 col-md-3
+            $html .= '</a>';
+        }
+        $html .= '</div>';
+
+        return $html;
     }
 
     /**
@@ -709,27 +850,6 @@ class CMS_Controller extends MX_Controller
      */
     public function cms_parse_keyword($value)
     {
-        if(strpos($value, '{{ ') !== FALSE){
-            // module_path & module_name
-            $module_path = $this->cms_module_path();
-            $module_name = $this->cms_module_name($module_path);
-            $module_site_url = site_url($module_path);
-            $module_base_url = base_url('modules/'.$module_path);
-            if ($module_site_url[strlen($module_site_url) - 1] != '/')
-                $module_site_url .= '/';
-            if ($module_base_url[strlen($module_base_url) - 1] != '/')
-                $module_base_url .= '/';
-            $pattern[]     = '/\{\{ module_path \}\}/si';
-            $replacement[] = $module_path;
-            $pattern[]     = '/\{\{ module_site_url \}\}/si';
-            $replacement[] = $module_site_url;
-            $pattern[]     = '/\{\{ module_base_url \}\}/si';
-            $replacement[] = $module_base_url;
-            $pattern[]     = '/\{\{ module_name \}\}/si';
-            $replacement[] = $module_name;
-
-            $value = preg_replace($pattern, $replacement, $value);
-        }
         return $this->{$this->__cms_base_model_name}->cms_parse_keyword($value);
     }
 
@@ -1668,15 +1788,7 @@ class CMS_Controller extends MX_Controller
 
     protected function cms_execute_sql($SQL, $separator)
     {
-        $queries = explode($separator, $SQL);
-        foreach ($queries as $query) {
-            if(trim($query) == '') continue;
-            $table_prefix = cms_module_table_prefix($this->cms_module_path());
-            $module_prefix = cms_module_prefix($this->cms_module_path());
-            $query = preg_replace('/\{\{ complete_table_name:(.*) \}\}/si', $table_prefix==''? '$1': $table_prefix.'_'.'$1', $query);
-            $query = preg_replace('/\{\{ module_prefix \}\}/si', $module_prefix, $query);
-            $this->db->query($query);
-        }
+        $this->{$this->__cms_base_model_name}->cms_execute_sql($SQL, $separator);
     }
 
     public function cms_set_editing_mode(){

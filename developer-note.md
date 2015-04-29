@@ -70,10 +70,6 @@ HOW TO MAKE NO-CMS
         - `/developer-note.md`
         - `/reset-installation.sh`
         - `/application/config/first-time/third_party_config/*`
-        - `/application/core/MY_CodeIgniter.php` 
-
-            This one overwrite `system/core/CodeIgniter.php` 
-
         - `/application/core/MY_Lang.php`
 
             This one overwrite `system/core/Lang.php`
@@ -86,27 +82,25 @@ HOW TO MAKE NO-CMS
 
             This one overwrite `system/core/Router.php`
 
-        - `/application/core/MY_Controller.php`
-        - `/application/core/MY_Model.php`
-        - `/application/models/no_cms_model.php`
+        - `/application/core/CMS_Model.php`
+        - `/application/core/CMS_AutoUpdate_Model.php`
+        - `/application/core/CMS_Controller.php`
+        - `/application/core/CMS_Secure_Controller.php`
+        - `/application/core/CMS_Module.php`
+        - `/application/core/CMS_REST_Controller.php`
+        - `/application/models/No_cms_model.php`
+        - `/application/models/No_cms_autoupdate_model.php`
         - `/application/models/grocery_crud_generic_model.php`
         - `/application/models/grocery_crud_model_*.php`
         - `/application/views/CMS_View.php`
         - `/application/views/grocery_CRUD.php`
         - `/application/views/welcome_message.php`
-        - `/application/libraries/CMS_Asset.php`
-        - `/application/libraries/Extended_Grocery_CRUD.php`
+        - `/application/libraries/Cms_Asset.php`
+        - `/application/libraries/Extended_grocery_crud.php`
 
             Sometime grocery_crud is lack of things. I usually apply bug-fix here before add pull request to main groceryCRUD repository.
 
-        - `/application/libraries/fake/*`
-
-            This is for intelisense purpose (i.e: if user use eclipse or aptana)
-
-        - `/application/database/*`
-
-            Sometime I need to overwrite CodeIgniter DB Driver. Here are the files. By default CodeIgniter doesn't support to extend DB Driver.
-
+        
         - `/application/config/cms_config.php`
 
             Contains some default configuration
@@ -185,11 +179,6 @@ HOW TO MAKE NO-CMS
         ```
 
     - Move `/application/config/*` into `/application/config/first-time/*`
-    - Edit `/application/config/first-time/config.php`, modify `encryption_key` value
-
-        ```php
-            $config['encryption_key'] = 'namidanoregret';
-        ```
 
     - Edit `/application/config/first-time/config.php`, add this code:
 

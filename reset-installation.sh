@@ -16,4 +16,5 @@ sudo rm -Rf ./application/config/main
 sudo rm -f ./site.php
 sudo rm -f ./application/helpers/cms_extended_login_helper.php
 sudo rm -f ./modules/*/config/module_config_*.php
+sudo rm -f modules/*/controllers/Info_*.php
 sudo chmod 777 . -R

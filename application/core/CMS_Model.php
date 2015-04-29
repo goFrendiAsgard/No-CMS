@@ -12,6 +12,7 @@ class CMS_Model extends CI_Model
     public $PRIV_AUTHENTICATED        = 3;
     public $PRIV_AUTHORIZED           = 4;
     public $PRIV_EXCLUSIVE_AUTHORIZED = 5;
+    public $__controller_module_path  = NULL;
 
     protected static $__cms_model_properties;
 
@@ -81,6 +82,7 @@ class CMS_Model extends CI_Model
                 'is_navigation_cached' => FALSE,
                 'is_quicklink_cached' => FALSE,
                 'is_widget_cached' => FALSE,
+                'is_language_dictionary_cached' => FALSE,
             );
         foreach($default_properties as $key=>$val){
             if(!array_key_exists($key, self::$__cms_model_properties)){
@@ -818,174 +820,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    /**
-     * @author  goFrendiAsgard
-     * @param   string navigation_name
-     * @return  string
-     * @desc    return submenu screen
-     */
-    public function cms_submenu_screen($navigation_name)
-    {
-        $submenus = array();
-        if (!isset($navigation_name)) {
-            $submenus = $this->cms_navigations(NULL, 1);
-        } else {
-            // unused, just called to ensure that the navigation is already cached
-            if(!self::$__cms_model_properties['is_navigation_cached']){
-                $this->cms_navigations();
-            }
-            $navigations = self::$__cms_model_properties['navigation'];
-            $found = FALSE;
-            foreach($navigations as $navigation){
-                if($navigation->navigation_name == $navigation_name){
-                    $found = TRUE;
-                    $navigation_id = $navigation->navigation_id;
-                    $submenus = $this->cms_navigations($navigation_id, 1);
-                    break;
-                }
-            }
-            if(!$found){
-                return '';
-            }
-        }
-
-        $html = '
-        <script type="text/javascript">
-            function __adjust_component(identifier){
-                var max_height = 0;
-                $(identifier).each(function(){
-                    $(this).css("margin-bottom", 0);
-                    if($(this).height()>max_height){
-                        max_height = $(this).height();
-                    }
-                });
-                $(identifier).each(function(){
-                    $(this).height(max_height);
-                    var margin_bottom = 0;
-                    if($(this).height()<max_height){
-                        margin_bottom = max_height - $(this).height();
-                    }
-                    margin_bottom += 10;
-                    $(this).css("margin-bottom", margin_bottom);
-                });
-            }
-            function __adjust_thumbnail_submenu(){
-                __adjust_component(".thumbnail_submenu img");
-                __adjust_component(".thumbnail_submenu div.caption");
-                __adjust_component(".thumbnail_submenu");
-            }
-            $(window).load(function(){
-                __adjust_thumbnail_submenu();
-                // resize
-                $(window).resize(function(){
-                    __adjust_thumbnail_submenu();
-                });
-            });
-        </script>';
-
-        $html .= '<div class="row">';
-        $module_path = $this->cms_module_path();
-        $image_directories = array();
-        if($module_path != ''){
-           $image_directories[] = "modules/$module_path/assets/navigation_icon";
-        }
-        $image_directories[] = "assets/nocms/navigation_icon";
-        foreach($this->cms_get_module_list() as $module_list){
-            $other_module_path = $module_list['module_path'];
-            $image_directories[] = "modules/$other_module_path/assets/navigation_icon";
-        }
-        $submenu_count = count($submenus);
-        foreach ($submenus as $submenu) {
-            $navigation_id   = $submenu["navigation_id"];
-            $navigation_name = $submenu["navigation_name"];
-            $title           = $submenu["title"];
-            $url             = $submenu["url"];
-            $description     = $submenu["description"];
-            $allowed         = $submenu["allowed"];
-            $notif_url       = $submenu["notif_url"];
-            if (!$allowed) continue;
-
-            // check image in current module
-
-            $image_file_names = array();
-            $image_file_names[] = $navigation_name.'.png';
-            if($module_path !== '' && $module_path !== 'main'){
-                $module_prefix = cms_module_prefix($this->cms_module_path());
-                $navigation_parts = explode('_', $navigation_name);
-                if(count($navigation_parts)>0 && $navigation_parts[0] == $module_prefix){
-                    $image_file_names[] = substr($navigation_name, strlen($module_prefix)+1).'.png';
-                }
-            }
-            $image_file_path = '';
-            foreach($image_directories as $image_directory){
-                foreach($image_file_names as $image_file_name){
-                    $image_file_path  = $image_directory.'/'.$image_file_name;
-                    if (!file_exists($image_file_path)) {
-                        $image_file_path = '';
-                    }
-                    if ($image_file_path !== ''){
-                        break;
-                    }
-                }
-                if ($image_file_path !== ''){
-                    break;
-                }
-            }
-
-            $badge = '';
-            if($notif_url != ''){
-                $badge_id = '__cms_notif_submenu_screen_'.$navigation_id;
-                $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
-                $badge.= '<script type="text/javascript">
-                        $(window).load(function(){
-                            setInterval(function(){
-                                $.ajax({
-                                    dataType:"json",
-                                    url: "'.addslashes($notif_url).'",
-                                    success: function(response){
-                                        if(response.success){
-                                            $("#'.$badge_id.'").html(response.notif);
-                                        }
-                                        __adjust_thumbnail_submenu();
-                                    }
-                                });
-                            }, 300000);
-                        });
-                    </script>
-                ';
-            }
-
-
-            // default icon
-            if ($image_file_path == '') {
-                $image_file_path = 'assets/nocms/images/icons/package.png';
-            }
-            $html .= '<a href="' . $url . '" style="text-decoration:none;">';
-            if($submenu_count <= 2){
-                $html .= '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">';
-            }else if($submenu_count % 3 == 0){
-                $html .= '<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">';
-            }else{
-                $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
-            }
-            $html .= '<div class="thumbnail thumbnail_submenu">';
-
-            if ($image_file_path != '') {
-                $html .= '<img style="margin-top:10px; max-height:60px;" src="' . base_url($image_file_path) . '" />';
-            }
-
-            $html .= '<div class="caption">';
-            $html .= '<h4>'.$title.$badge.'</h4>';
-            $html .= '<p>'.$description.'</p>';
-            $html .= '</div>'; // end of div.caption
-            $html .= '</div>'; // end of div.thumbnail
-            $html .= '</div>'; // end of div.col-xs-6 col-sm-4 col-md-3
-            $html .= '</a>';
-        }
-        $html .= '</div>';
-
-        return $html;
-    }
+    
 
     /**
      * @author  goFrendiAsgard
@@ -1997,11 +1832,10 @@ class CMS_Model extends CI_Model
                 $this->install_model->build_database($config);
                 $module_installed = $this->install_model->install_modules();
             }
-            if(!isset($_SESSION)){
-                session_start();
-            }
-            // hack module path by changing the session, don't forget to unset !!!
-            //$this->cms_override_module_path($module_path);
+
+            // TODO: Find a way to bash this dirty trick
+            // This one is necessary to re-index modules
+            $this->cms_adjust_module();
             $data = array(
                 'name'=> $this->install_model->subsite,
                 'description'=>$user_name.' website',
@@ -2012,11 +1846,8 @@ class CMS_Model extends CI_Model
             $this->db->insert($this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite'), $data);
             $this->load->model($this->cms_module_path('gofrendi.noCMS.multisite').'/subsite_model');
             $this->subsite_model->update_configs();
-            //$this->cms_reset_overridden_module_path();
-
             
             // get the new subsite
-            // $this->cms_override_module_path($module_path);
             $t_user = cms_table_name('main_user');
             $t_subsite = $this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite');
             $query = $this->db->select('name,use_subdomain')
@@ -2025,7 +1856,6 @@ class CMS_Model extends CI_Model
                 ->where('user_name', $user_name)
                 ->order_by($t_subsite.'.id', 'desc')
                 ->get();
-            //$this->cms_reset_overridden_module_path();
             if($query->num_rows()>0){
                 $row = $query->row();
                 $subsite = $row->name;
@@ -2035,7 +1865,7 @@ class CMS_Model extends CI_Model
                 $site_url_part = explode('/', $site_url);
                 if(count($site_url_part)>3){
                     $directory_part = array_slice($site_url_part, 3);
-                    log_message('error',print_r(array($directory_part,$site_url_part), TRUE));
+                    log_message('error', print_r(array($directory_part,$site_url_part), TRUE));
                     $directory = '/'.implode('/', $directory_part);
                 }else{
                     $directory = '';
@@ -2320,14 +2150,21 @@ class CMS_Model extends CI_Model
     {
         // hack module path by changing the session, don't forget to unset !!!
         $module_path = '';
-        if($module_name === NULL){
-            $reflector = new ReflectionObject($this);
-            $file_name  = $reflector->getFilename();
-            if(strpos($file_name, FCPATH.'modules') === 0){
-                $file_name = trim(str_replace(FCPATH.'modules', '', $file_name), DIRECTORY_SEPARATOR);
-                $file_name_part = explode(DIRECTORY_SEPARATOR, $file_name);
-                if(count($file_name_part)>=2){
-                    $module_path = $file_name_part[0]; 
+        if($module_name === NULL){           
+            if($this->__controller_module_path != NULL){
+                // no_cms_model and no_cms_autoupdate_model is called by instance controller
+                // thus the position might not be represent the current module path
+                // in this case we need data from controller
+                $module_path = $this->__controller_module_path;
+            }else{
+                $reflector = new ReflectionObject($this);
+                $file_name  = $reflector->getFilename();
+                if(strpos($file_name, FCPATH.'modules') === 0){
+                    $file_name = trim(str_replace(FCPATH.'modules', '', $file_name), DIRECTORY_SEPARATOR);
+                    $file_name_part = explode(DIRECTORY_SEPARATOR, $file_name);
+                    if(count($file_name_part)>=2){
+                        $module_path = $file_name_part[0]; 
+                    }
                 }
             }
         }else{
@@ -2339,27 +2176,6 @@ class CMS_Model extends CI_Model
             }
         }
         return $module_path;
-        /*
-        if(isset($_SESSION['__cms_override_module_path'])){
-            return $_SESSION['__cms_override_module_path'];
-        }else{
-            if (!isset($module_name) || $module_name === NULL) {
-                if(isset($_REQUEST['__cms_dynamic_widget_module'])){
-                    $module = $_REQUEST['__cms_dynamic_widget_module'];
-                }else{
-                    $module = $this->router->fetch_module();
-                }
-                return $module;
-            } else {
-                if (!self::$__cms_model_properties['is_module_path_cached']) {
-                    $this->cms_adjust_module();
-                }
-                if(array_key_exists($module_name, self::$__cms_model_properties['module_path'])){
-                    return self::$__cms_model_properties['module_path'][$module_name];
-                }
-                return '';
-            }
-        }*/
     }
 
     /**
@@ -2842,7 +2658,7 @@ class CMS_Model extends CI_Model
     public function cms_language_dictionary()
     {
         $language = $this->cms_language();
-        if (count(self::$__cms_model_properties['language_dictionary']) == 0) {
+        if (!self::$__cms_model_properties['is_language_dictionary_cached']) {
             $lang = array();
 
             // language setting from all modules but this current module
@@ -2883,6 +2699,7 @@ class CMS_Model extends CI_Model
             }
 
             self::$__cms_model_properties['language_dictionary'] = $lang;
+            self::$__cms_model_properties['is_language_dictionary_cached'] = TRUE;
         }        
         return self::$__cms_model_properties['language_dictionary'];
     }
@@ -2972,7 +2789,7 @@ class CMS_Model extends CI_Model
             $pattern[]     = '/\{\{ module_base_url \}\}/si';
             $replacement[] = $module_base_url;
             $pattern[]     = '/\{\{ module_name \}\}/si';
-            $replacement[] = $module_name;            
+            $replacement[] = $module_name;     
 
             // language
             $pattern[]     = '/\{\{ language \}\}/si';
