@@ -64,11 +64,12 @@
         if(typeof(async) == 'undefined'){
             async = true;
         }
-        $('#content-bottom').html('Load more Subsite ...');
+        $('#content_bottom').html('Load more sites &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
+        
         var keyword = $('#input_search').val();
-        // kill all previous AJAX
+        // don't overflow network with request
         if(RUNNING_REQUEST){
-            REQUEST.abort();
+            return 0;
         }
         RUNNING_REQUEST = true;
         REQUEST = $.ajax({
@@ -98,6 +99,9 @@
                 $('#record_content_bottom').html(bottom_content);
                 RUNNING_REQUEST = false;
                 PAGE ++;
+            },
+            'complete' : function(response){
+                RUNNING_REQUEST = false;
             }
         });
         _adjust_thumbnail();
@@ -130,7 +134,7 @@
             if(!LOADING && !STOP_REQUEST){
                 if($('#record_content_bottom').position().top <= $(window).scrollTop() + $(window).height() ){
                     LOADING = true;
-                    fetch_more_data(false);
+                    fetch_more_data(true);
                     LOADING = false;
                 }
             }

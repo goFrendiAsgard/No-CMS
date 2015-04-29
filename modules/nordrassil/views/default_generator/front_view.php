@@ -61,9 +61,9 @@
         }
         $('#record_content_bottom').html('Load more {{ table_caption }} &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
         var keyword = $('#input_search').val();
-        // kill all previous AJAX
+        // Don't send another request before the first one completed
         if(RUNNING_REQUEST){
-            REQUEST.abort();
+            return 0;
         }
         RUNNING_REQUEST = true;
         REQUEST = $.ajax({
@@ -90,6 +90,9 @@
                 $('#record_content_bottom').html(bottom_content);
                 RUNNING_REQUEST = false;
                 PAGE ++;
+            },
+            'complete' : function(response){
+                RUNNING_REQUEST = false;
             }
         });
 

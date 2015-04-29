@@ -584,10 +584,10 @@ class Default_generator extends CMS_Controller{
         );
         // main controller
         $str = $this->nds->read_view('nordrassil/default_generator/main_controller', NULL, $pattern, $replacement);
-        $this->nds->write_file($this->project_path.'controllers/'.underscore($this->project_name).'.php', $str);
+        $this->nds->write_file($this->project_path.'controllers/'.ucfirst(underscore($this->project_name)).'.php', $str);
         // main view
         $str = $this->nds->read_view('nordrassil/default_generator/main_view', NULL, $pattern, $replacement);
-        $this->nds->write_file($this->project_path.'views/'.underscore($this->project_name).'_index.php', $str);
+        $this->nds->write_file($this->project_path.'views/'.ucfirst(underscore($this->project_name)).'_index.php', $str);
     }
 
     private function create_installer(){

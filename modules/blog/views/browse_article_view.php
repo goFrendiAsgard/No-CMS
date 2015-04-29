@@ -262,9 +262,9 @@
         $('#record_content_bottom').html('Load more Article &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
         var keyword = $('#input_search').val();
         var category = $('#input_category').val();
-        // kill all previous AJAX
+        // Don't start another request until the first one completed
         if(RUNNING_REQUEST){
-            REQUEST.abort();
+            return 0;
         }
         RUNNING_REQUEST = true;
         REQUEST = $.ajax({
@@ -292,6 +292,9 @@
                 $('#record_content_bottom').html(bottom_content);
                 RUNNING_REQUEST = false;
                 PAGE ++;
+            },
+            'complete' : function(response){
+                RUNNING_REQUEST = false;
             }
         });
 
@@ -383,7 +386,7 @@
             if(!LOADING && SCROLL_WORK){
                 if($('#record_content_bottom').position().top <= $(window).scrollTop() + $(window).height() ){
                     LOADING = true;
-                    fetch_more_data(false);
+                    fetch_more_data(true);
                     LOADING = false;
                 }
             }
