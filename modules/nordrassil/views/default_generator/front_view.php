@@ -43,7 +43,7 @@
         }
     ?&gt;
 </div>
-<div id="record_content"><?php echo $first_data ?></div>
+<div id="record_content">&lt;?php echo $first_data ?&gt;</div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
     var PAGE = 1;

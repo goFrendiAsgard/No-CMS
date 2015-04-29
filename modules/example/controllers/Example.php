@@ -19,4 +19,5 @@ class example extends CMS_Secure_Controller {
         $this->view($this->cms_module_path().'/example_index', $data,
             $this->cms_complete_navigation_name('index'));
     }
+
 }

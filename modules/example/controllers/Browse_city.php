@@ -26,7 +26,7 @@ class Browse_city extends CMS_Secure_Controller {
             'module_path' => $this->cms_module_path(),
             'first_data'  => Modules::run($module_path.'/browse_city/get_data', 0, '')
         );
-        $this->view($this->cms_module_path().'/browse_city_view',$data,
+        $this->view($this->cms_module_path().'/Browse_city_view',$data,
             $this->cms_complete_navigation_name('browse_city'));
     }
 
@@ -47,7 +47,7 @@ class Browse_city extends CMS_Secure_Controller {
             'backend_url' => site_url($module_path.'/manage_city/index'),
         );
         $config = array('only_content'=>TRUE);
-        $this->view($cms_module_path.'/browse_city_partial_view',$data,
+        $this->view($module_path.'/Browse_city_partial_view',$data,
            $this->cms_complete_navigation_name('browse_city'), $config);
     }
 

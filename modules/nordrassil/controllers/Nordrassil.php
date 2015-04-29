@@ -17,7 +17,6 @@ class Nordrassil extends CMS_Secure_Controller {
     public function index(){
     	$this->load->model($this->cms_module_path().'/data/nds_model');
 		$data['projects'] = $this->nds_model->get_all_project();
-
     	$data['content'] = $this->cms_submenu_screen($this->cms_complete_navigation_name('index'));
         $this->view($this->cms_module_path().'/nordrassil_index',$data,
             $this->cms_complete_navigation_name('index'));

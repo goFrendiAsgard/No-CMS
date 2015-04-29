@@ -47,7 +47,7 @@ class {{ controller_name }} extends CMS_Secure_Controller {
             'backend_url' => site_url($module_path.'/{{ back_controller_import_name }}/index'),
         );
         $config = array('only_content'=>TRUE);
-        $this->view($cms_module_path.'/{{ front_view_partial_import_name }}',$data,
+        $this->view($module_path.'/{{ front_view_partial_import_name }}',$data,
            $this->cms_complete_navigation_name('{{ navigation_name }}'), $config);
     }
 

@@ -405,17 +405,16 @@ class CMS_Controller extends MX_Controller
         if (!isset($navigation_name)) {
             $submenus = $this->cms_navigations(NULL, 1);
         } else {
-            $navigations = $this->cms_navigations();
-            $found = FALSE;
-            foreach($navigations as $navigation){
-                if($navigation['navigation_name'] == $navigation_name){
-                    $found = TRUE;
-                    $navigation_id = $navigation['navigation_id'];
-                    $submenus = $this->cms_navigations($navigation_id, 1);
-                    break;
-                }
-            }
-            if(!$found){
+            $query = $this->db->select('navigation_id')
+                ->from(cms_table_name('main_navigation'))
+                ->where('navigation_name', $navigation_name)
+                ->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $navigation_id = $row->navigation_id;
+                $submenus = $this->cms_navigations($navigation_id, 1);
+                        
+            }else{
                 return '';
             }
         }
