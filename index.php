@@ -424,24 +424,20 @@ if( INVALID_SUBSITE || (CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/
 
 /*
  * ---------------------------------------------------------------
- *  NO CMS AUTOMATIC MIGRATION TO CI-3 CONVENTION
+ *  OVERRIDE INDEX_PAGE
  * ---------------------------------------------------------------
- * For effectivity, you should disable these commands once migration complete
+ * 
  */
 
-// TODO: write the code
-function new_class_name($class_name){
-    return ucfirst(strtolower(trim($class_name, '_')));
+if(CMS_SUBSITE != '' && !USE_SUBDOMAIN && !USE_ALIAS){
+    include(APPPATH.'config/site-'.CMS_SUBSITE.'/config.php');
+    $index_page = $config['index_page'];
+    $assign_to_config['index_page'] = $index_page.'site-'.CMS_SUBSITE.'/';
 }
-
-function new_load_name($load_name){
-    return strtolower(trim($load_name, '_'));
-}
-
 
 /*
  * ---------------------------------------------------------------
- *  END OF AUTOMATIC MIGRATION
+ *  END OF OVERRIDE INDEX_PAGE
  * ---------------------------------------------------------------
  */
 

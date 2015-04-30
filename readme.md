@@ -65,7 +65,6 @@ Links
 - [__User Guide And Tutorials__](doc/tutorial.md)
 - [Official Website](http://www.getnocms.com)
 - [Blog](http://www.getnocms.com/blog)
-- [Community Forum](http://www.getnocms.com/forum)
 - [Facebook Page](http://facebook.com/nocms)
 - [No-CMS Krabby Patty Recipe (you might not need this)](developer-note.md)
 
