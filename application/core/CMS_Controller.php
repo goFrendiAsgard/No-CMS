@@ -1133,7 +1133,7 @@ class CMS_Controller extends MX_Controller
         $data = (array) $data;
         $row_navigation = NULL;
         if($navigation_name != NULL){
-            $query = $this->db->select('title, page_title, page_keyword, description, default_theme, default_layout, only_content, is_static, static_content')
+            $query = $this->db->select('navigation_id, title, page_title, page_keyword, description, default_theme, default_layout, only_content, is_static, static_content')
                 ->from(cms_table_name('main_navigation'))
                 ->where(array('navigation_name'=>$navigation_name))
                 ->get();
@@ -1149,7 +1149,7 @@ class CMS_Controller extends MX_Controller
                     $static_content = '';
                 }
                 if($this->cms_editing_mode() && $this->cms_allow_navigate('main_navigation_management')){
-                    $static_content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/navigation/edit/'.$row->navigation_id.'">'.
+                    $static_content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/navigation/edit/'.$row_navigation->navigation_id.'">'.
                         '<i class="glyphicon glyphicon-pencil"></i> Edit Page'.
                         '</a></div>'.$static_content;
                 }        
