@@ -1339,6 +1339,8 @@ class Install_model extends CI_Model{
         $this->change_config($file_name, "index_page", $index_page, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $encryption_key = md5(time() . rand());
         $this->change_config($file_name, "encryption_key", $encryption_key, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "sess_cookie_name", $encryption_key, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        
         $table_name = 'ci_sessions';
         if(!trim($this->db_table_prefix) == ''){
             $table_name = $this->db_table_prefix.'_'.$table_name;
