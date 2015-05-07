@@ -349,15 +349,17 @@ class CMS_Model extends CI_Model
      * @return array
      * @desc   get group list of current user
      */
-    public function cms_user_group(){
-        $query = $this->db->select('group_name')
-            ->from(cms_table_name('main_group'))
-            ->join(cms_table_name('main_group_user'), cms_table_name('main_group_user').'.group_id = '.cms_table_name('main_group').'.group_id')
-            ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
-            ->get();
+    public function cms_user_group(){        
         $group_name = array();
-        foreach($query->result() as $row){
-            $group_name[] = $row->group_name;
+        if($this->cms_user_id() != NULL){
+            $query = $this->db->select('group_name')
+                ->from(cms_table_name('main_group'))
+                ->join(cms_table_name('main_group_user'), cms_table_name('main_group_user').'.group_id = '.cms_table_name('main_group').'.group_id')
+                ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
+                ->get();
+            foreach($query->result() as $row){
+                $group_name[] = $row->group_name;
+            }
         }
         return $group_name;
     }
@@ -367,14 +369,16 @@ class CMS_Model extends CI_Model
      * @return array
      * @desc   get group list of current user
      */
-    public function cms_user_group_id(){
-        $query = $this->db->select('group_id')
-            ->from(cms_table_name('main_group_user'))
-            ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
-            ->get();
+    public function cms_user_group_id(){        
         $group_id = array();
-        foreach($query->result() as $row){
-            $group_id[] = $row->group_id;
+        if($this->cms_user_id() != NULL){
+            $query = $this->db->select('group_id')
+                ->from(cms_table_name('main_group_user'))
+                ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
+                ->get();
+            foreach($query->result() as $row){
+                $group_id[] = $row->group_id;
+            }
         }
         return $group_id;
     }
