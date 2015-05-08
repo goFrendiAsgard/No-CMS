@@ -16,7 +16,7 @@ Let's say you already has a table with `user_name`, `email`, `password` and `rea
 
 The table was named `user_table` and was located at another database-schema named `old_db`. You want the users of the old system (graywizard and strider) can login to No-CMS with their own old user-name and password.
 
-First, open up `/application/config/cms_extended_login.php`. If the file is `read-only`, please change the permission by using `chmod 766` first. There should be a function named `extended_login`
+First, open up `/application/helpers/cms_extended_login_helper.php`. If the file is `read-only`, please change the permission by using `chmod 766` first. There should be a function named `extended_login`
 
 ```php
     function extended_login($user_name, $password){
@@ -48,4 +48,4 @@ To make the old-validation system to work, you need to change the function a bit
     }
 ```
 
-Now, your old system's user (of middle earth) can use No-CMS system.
+Now, your old system's user can login to No-CMS system as well.

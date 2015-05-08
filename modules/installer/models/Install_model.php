@@ -460,6 +460,11 @@ class Install_model extends CI_Model{
                 $success  = FALSE;
                 $error_list[] = APPPATH."logs is not writable";
             }
+            // helper directory
+            if (!is_writable(APPPATH.'helpers')) {
+                $success  = FALSE;
+                $error_list[] = APPPATH."helpers is not writable";
+            }
         }
         return array(
                 'success' => $success,
@@ -1241,12 +1246,17 @@ class Install_model extends CI_Model{
     }
 
     public function build_configuration($config = array()){
-        // create hostname.php
         if(!$this->is_subsite){
+            // create hostname.php
             $hostname  = $_SERVER['HTTP_HOST'];
             $content   = '<?php'.PHP_EOL;
             $content  .= '$hostname = "'.$hostname.'";'.PHP_EOL;
-            file_put_contents(FCPATH.'/hostname.php', $content);
+            @file_put_contents(FCPATH.'/hostname.php', $content);
+            // create cms_extended_login_helper.php
+            if(!file_exists(APPPATH.'helpers/cms_extended_login_helper.php')){
+                @copy(FCPATH.'modules/installer/views/cms_extended_login_helper.php', 
+                    APPPATH.'helpers/cms_extended_login_helper.php');
+            }
         }
         // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite
         if($this->is_subsite){

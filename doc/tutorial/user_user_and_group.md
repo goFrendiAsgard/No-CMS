@@ -16,7 +16,7 @@ Group
 
 A user can be a member of several user group, and a user group can contains many user. Group represent user's role. Since a user can has several role, therefore he/she can also be member of several group. User group is important for page with `authorized` authorization type. You can manage group by accessing `CMS Management | Group Management`.
 
-![Group Management](images/user_user_and_group_user_management.png "Figure 2. Group Management")
+![Group Management](images/user_user_and_group_group_management.png "Figure 2. Group Management")
 
 A group can also asociated with [navigation](user_navigation.md) and [privilege](user_privilege.md)
 

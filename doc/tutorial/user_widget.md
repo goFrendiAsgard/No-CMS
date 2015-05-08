@@ -13,11 +13,11 @@ No-CMS has several built-in widgets.
 
 | Widget name/Code                 | Slugs                | Description                                                                                                                                   |
 | :------------------------------- | :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| section_top_fix                  | None                 | Top section (used in [Layout Management](user_layout.md)).<br />This widget usually contains another widgets                                  |
-| section_banner                   | None                 | Banner (used in [Layout Management](user_layout.md).<br />This widget usually contains another widgets                                        |
-| section_left                     | None                 | Left Section (used in [Layout Management](user_layout.md)).<br />This widget usually contains another widgets                                 |
-| section_right                    | None                 | Right Section (used in [Layout Management](user_layout.md)).<br />This widget usually contains another widgets                                |
-| section_bottom                   | None                 | Bottom Section (used in [Layout Management](user_layout.md).<br />This widget usually contains another widgets                                |
+| section_top_fix                  | None                 | Top section (used in [Setting](user_setting.md)).<br />This widget usually contains another widgets                                  |
+| section_banner                   | None                 | Banner (used in [Setting](user_setting.md).<br />This widget usually contains another widgets                                        |
+| section_left                     | None                 | Left Section (used in [Setting](user_setting.md)).<br />This widget usually contains another widgets                                 |
+| section_right                    | None                 | Right Section (used in [Setting](user_setting.md)).<br />This widget usually contains another widgets                                |
+| section_bottom                   | None                 | Bottom Section (used in [Setting](user_setting.md).<br />This widget usually contains another widgets                                |
 | left_navigation                  | None                 | Left navigation, usually put under Left section                                                                                               |
 | top_navigation                   | None                 | Complete top navigation + Quicklink                                                                                                           |
 | quicklink                        | None                 | Quicklink without complete menu                                                                                                               |
@@ -37,7 +37,7 @@ No-CMS has several built-in widgets.
 
 Put a widget:
 
-* To put a widget in a desired location for every pages, you can use [Layout Management](user_layout.md).
+* To put a widget in a desired location for every pages, you can use [Setting](user_setting.md).
 * To put a widget as a content of your page, you can use [Navigation Management](user_navigation.md) and edit the static content.
 * More advance designer/programmer might also like to edit the theme file directly. To do this, please refer to [designer's theme guide](designer_themes.md)
 

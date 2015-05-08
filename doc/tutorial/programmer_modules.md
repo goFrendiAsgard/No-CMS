@@ -11,10 +11,10 @@ Let's start to make a new module:
     /modules
         |--- /new_module
                 |--- /controllers
-                |       |--- pokemon.php
+                |       |--- Pokemon.php
                 |
                 |--- /models
-                |       |--- pokemon_model.php
+                |       |--- Pokemon_model.php
                 |
                 |--- /views
                         |--- pokemon_index.php
@@ -22,7 +22,7 @@ Let's start to make a new module:
 
 Make a controller
 -----------------
-Modify your `/modules/new_module/controllers/pokemon.php` into this:
+Modify your `/modules/new_module/controllers/Pokemon.php` into this:
 ```php
     <?php
     class Pokemon extends CMS_Controller{
@@ -39,7 +39,7 @@ Modify your `/modules/new_module/controllers/pokemon.php` into this:
     }
 ```
 Now, you have a controller in `/modules/new_module/controllers/pokemon.php`.
-A controller should extend `CMS_Controller`, `CMS_Priv_Strict_Controller`, or `CI_Controller` and should has the same name as the file.
+A controller should extend `CMS_Controller`, `CMS_Secure_Controller`, or `CI_Controller` and should has the same name as the file.
 Since your file name is `pokemon.php`, your controller class name should be `Pokemon`.
 In the `Pokemon` Controller, you have a function called `show` that return a bunch of html.
 
@@ -128,7 +128,7 @@ A bit more about view
     $result = $this->view('view_name', $data, 'navigation_code_required', $config, TRUE);
 ```
 
-* In your view, you can also write some "magical" keywords, e.g:
+* In your view, you can also write some `tags`, e.g:
 
 ```html
     <h3>{{ language:Welcome }} {{ user_name }}</h3>
@@ -143,7 +143,7 @@ A bit more about view
     <script type="text/javascript" src="{{ base_url }}/assets/nocms/js/jquery.js"></script>
 ```
 
-* Here is the list of those magical keywords (or also known as tag). Read the documentation for complete list:
+* Here is the list of those `tags`. Read the documentation for complete list:
 
 ```
     {{ user_id }}
@@ -188,7 +188,7 @@ Let's say you have a pokemon table in No-CMS database:
 ```
 You want to show list of pokemons based on the table content.
 
-Now edit your `/modules/new_module/models/pokemon_model.php` into this:
+Now edit your `/modules/new_module/models/Pokemon_model.php` into this:
 ```php
     <?php
     class Pokemon_Model extends CMS_Model{
@@ -207,7 +207,7 @@ Now edit your `/modules/new_module/models/pokemon_model.php` into this:
     }
 ```
 
-Then edit your `/modules/new_module/controllers/pokemon.php` into this:
+Then edit your `/modules/new_module/controllers/Pokemon.php` into this:
 ```php
     <?php
     class Pokemon extends CMS_Controller{
@@ -224,14 +224,6 @@ Then edit your `/modules/new_module/controllers/pokemon.php` into this:
 ```
 
 You can use the same model in many controllers. This will keep your application DRY (Don't repeat yourself).
-
-__NOTE:__ Actually I do not like how CodeIgniter map `$this->load->model('new_module/pokemon_model')` into `$this->pokemon_model`.
-This is both make IDE autocompletion doesn't work and make application less implicit. However you can use this code to keep autocompletion work with very small performance drawback:
-```php
-    $this->load->model('new_module/pokemon_model');
-    $this->pokemon_model = new Pokemon_Model();
-```
-This way, you will have autocompletion and full controll of instance name.
 
 
 Register the page and better authorization
@@ -255,7 +247,7 @@ After register the page, now change your controller a bit:
 
 ```php
     <?php
-    class Pokemon extends CMS_Priv_Strict_Controller{
+    class Pokemon extends CMS_Secure_Controller{
 
         function show(){
             $this->load->model('new_module/pokemon_model');
@@ -268,12 +260,12 @@ After register the page, now change your controller a bit:
     }
 ```
 
-By using `CMS_Priv_Strict_Controller` you do not need to define `navigation_code` when calling `$this->view()`.
+By using `CMS_Secure_Controller` you do not need to define `navigation_code` when calling `$this->view()`.
 
 __Note:__ If you want your url to have the same privilege as other url in the same controller, you can override
 ```php
    <?php
-   class Your_Controller_Name extends CMS_Priv_Strict_Controller{
+   class Your_Controller_Name extends CMS_Secure_Controller{
         /*
          * URL_MAP will be used in case of you have "unregistered function"
          * (e.g : you don't have any navigation name that refer to
@@ -315,12 +307,23 @@ __Note:__ If you want your url to have the same privilege as other url in the sa
 Make module installable
 -----------------------
 To make your module installable, you need to make 2 files. 
-The first one is info model, and the second one is info controller. 
+The first one is `description.txt`, and the second one is `info controller`. 
 
-Let's make your info model (`new_module/models/_info.php`):
+Let's make `description.txt` (`new_module/description.txt`)
+
+```
+{
+    "dependencies"    : [],
+    "name"            : "your_name.new_module",
+    "description"     : "New Module based on tutorial to show pokemons",
+    "version"         : "0.0.0"
+}
+``` 
+
+Let's make your info controller (`new_module/controllers/Info.php`):
 ```php
     <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-    class Install extends CMS_Module_Info_model {
+    class Info extends CMS_Module {
         /////////////////////////////////////////////////////////////////////////////
         // Default Variables
         /////////////////////////////////////////////////////////////////////////////
@@ -468,13 +471,5 @@ Method:
 * public function do_upgrade($old_version)
 
     Your module upgrade logic (will be executed automatically once you change $VERSION)
-
-
-Then make your info controller (`new_module/controllers/_info.php`):
-```php
-    <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-    class _Info extends CMS_Module_Info_Controller {
-    }
-```
 
 Now, you can go to `CMS Management | Module Management` and activate/deactivate new_module
