@@ -1940,7 +1940,7 @@ class Main extends CMS_Controller
         }
     }
 
-    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $no_complete_menu=FALSE, $no_quicklink=FALSE, $inverse = FALSE, $navigations = NULL){
+    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $no_complete_menu=FALSE, $no_quicklink=FALSE, $inverse = FALSE, $navigations = NULL, &$notif = array()){
         $result = '';
         $caption = $this->cms_lang($caption);
 
@@ -1961,26 +1961,10 @@ class Main extends CMS_Controller
                     if($navigation['notif_url'] != ''){
                         $badge_id = '__cms_notif_top_nav_'.$navigation['navigation_id'];
                         $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
-                        $badge.= '<script type="text/javascript">
-                                $(document).ready(function(){
-                                    function __top_nav_get_badge_'.$badge_id.'(){
-                                        $.ajax({
-                                            dataType:"json",
-                                            url: "'.addslashes($navigation['notif_url']).'",
-                                            success: function(response){
-                                                if(response.success){
-                                                    $("#'.$badge_id.'").html(response.notif);
-                                                }
-                                            }
-                                        });
-                                    }
-                                    __top_nav_get_badge_'.$badge_id.'();
-                                    setInterval(function(){
-                                        __top_nav_get_badge_'.$badge_id.'();
-                                    }, 50000);
-                                });
-                            </script>
-                        ';
+                        if(!array_key_exists($navigation['notif_url'], $notif)){
+                            $notif[$navigation['notif_url']] = array();
+                        }
+                        $notif[$navigation['notif_url']][] = $badge_id;
                     }
                     if(!$navigation['allowed'] || !$navigation['active']){
                         $navigation['url'] = '#';
@@ -1990,7 +1974,7 @@ class Main extends CMS_Controller
 
                     if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
                         $result .= '<li class="dropdown-submenu">'.
-                            $text.$this->widget_top_nav($caption, FALSE, $no_complete_menu, $no_quicklink, $inverse, $navigation['child']).'</li>';
+                            $text.$this->widget_top_nav($caption, FALSE, $no_complete_menu, $no_quicklink, $inverse, $navigation['child'], $notif).'</li>';
                     }else{
                         $result .= '<li>'.$text.'</li>';
                     }
@@ -2008,7 +1992,7 @@ class Main extends CMS_Controller
                     $result.'</li>';
             }
             if(!$no_quicklink){
-                $result .= $this->build_quicklink();
+                $result .= $this->build_quicklink(NULL, TRUE, $notif);
             }
             // toggle editing
             if($this->cms_user_is_super_admin()){            
@@ -2021,6 +2005,33 @@ class Main extends CMS_Controller
                 }
             }else{
                 $toggle_editing = '';
+            }
+
+            $load_notif_script = '';
+            $badge_index = 1;
+            foreach($notif as $url=>$badge_id_list){
+                $changer_script = '';
+                foreach($badge_id_list as $badge_id){
+                    $changer_script .= '$("#'.$badge_id.'").html(response.notif);';
+                }
+                $load_notif_script .= '$(document).ready(function(){
+                                    function __get_badge_'.$badge_index.'(){
+                                        $.ajax({
+                                            dataType:"json",
+                                            url: "'.addslashes($url).'",
+                                            success: function(response){
+                                                if(response.success){
+                                                    '.$changer_script.'
+                                                }
+                                            }
+                                        });
+                                    }
+                                    __get_badge_'.$badge_index.'();
+                                    setInterval(function(){
+                                        __get_badge_'.$badge_index.'();
+                                    }, 50000);
+                                });';
+                $badge_index ++;
             }
 
             $result =
@@ -2187,7 +2198,9 @@ class Main extends CMS_Controller
                         }
                     });
                 });
+                '.$load_notif_script.'
             </script>';
+            
             $this->cms_show_html($result);
         }else{
             return $result;
@@ -2223,7 +2236,7 @@ class Main extends CMS_Controller
     }
 
 
-    private function build_quicklink($quicklinks = NULL,$first = TRUE){
+    private function build_quicklink($quicklinks = NULL, $first = TRUE, &$notif=''){
         if(!isset($quicklinks)){
             $quicklinks = $this->cms_quicklinks();
         }
@@ -2253,26 +2266,10 @@ class Main extends CMS_Controller
             if($quicklink['notif_url'] != ''){
                 $badge_id = '__cms_notif_quicklink_'.$quicklink['navigation_id'];
                 $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
-                $badge.= '<script type="text/javascript">
-                        $(document).ready(function(){
-                            function __quicklink_get_badge_'.$badge_id.'(){
-                                $.ajax({
-                                    dataType:"json",
-                                    url: "'.addslashes($quicklink['notif_url']).'",
-                                    success: function(response){
-                                        if(response.success){
-                                            $("#'.$badge_id.'").html(response.notif);
-                                        }
-                                    }
-                                });
-                            }
-                            __quicklink_get_badge_'.$badge_id.'();
-                            setInterval(function(){
-                                __quicklink_get_badge_'.$badge_id.'();
-                            }, 50000);
-                        });
-                    </script>
-                ';
+                if(!array_key_exists($quicklink['notif_url'], $notif)){
+                    $notif[$quicklink['notif_url']] = array();
+                }
+                $notif[$quicklink['notif_url']][] = $badge_id;
             }
             // set active class
             $active = '';
@@ -2301,12 +2298,12 @@ class Main extends CMS_Controller
                         $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                             $icon.$quicklink['title'].$badge.
                             '&nbsp;<span class="caret"></span></a>'; // hidden-sm hidden-xs
-                        $html.= $this->build_quicklink($quicklink['child'],FALSE);
+                        $html.= $this->build_quicklink($quicklink['child'],FALSE, $notif);
                         $html.= '</li>';
                     }else{
                         $html.= '<li class="dropdown-submenu '.$active.'">';
                         $html.= '<a href="'.$quicklink['url'].'">'.$icon.$quicklink['title'].$badge.'</a>';
-                        $html.= $this->build_quicklink($quicklink['child'],FALSE);
+                        $html.= $this->build_quicklink($quicklink['child'],FALSE, $notif);
                         $html.= '</li>';
                     }
                 }else{
@@ -2315,13 +2312,13 @@ class Main extends CMS_Controller
                         $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                             '<span class="anchor-text">'.$icon.$quicklink['title'].$badge.'</span>'.
                             '&nbsp;<span class="caret"></span></a>'; // hidden-sm hidden-xs
-                        $html.= $this->build_quicklink($quicklink['child'],FALSE);
+                        $html.= $this->build_quicklink($quicklink['child'],FALSE, $notif);
                         $html.= '</li>';
                     }else{
                         $html.= '<li class="dropdown-submenu '.$active.'">';
                         $html.= '<a href="'.$quicklink['url'].'">'.
                             '<span>'.$icon.$quicklink['title'].$badge.'</span></a>';
-                        $html.= $this->build_quicklink($quicklink['child'],FALSE);
+                        $html.= $this->build_quicklink($quicklink['child'],FALSE, $notif);
                         $html.= '</li>';
                     }
                 }
