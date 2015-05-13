@@ -136,6 +136,9 @@ class Manage_article extends CMS_Secure_Controller {
         }
         $crud->field_type('date', 'hidden');
         $crud->field_type('allow_comment', 'true_false');
+        $crud->unset_texteditor('article_title');
+        $crud->unset_texteditor('article_url');
+        $crud->unset_texteditor('keyword');
         $crud->unset_texteditor('description');
 
         if($this->cms_user_id() != 1 && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list) && !in_array('Blog Author', $group_name_list)){

@@ -116,6 +116,20 @@ class Info extends CMS_Module {
             $table_name = $this->cms_complete_table_name('article');
             $this->dbforge->modify_column($table_name, $fields);
         }
+        if($major == 0 && $minor == 0 && $build <=6){
+            $fields = array(
+                'article_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+                'article_title' => $this->TYPE_TEXT,
+                'article_url' => $this->TYPE_TEXT,
+            );
+            $table_name = $this->cms_complete_table_name('article');
+            $this->dbforge->modify_column($table_name, $fields);
+            $fields = array(
+                'url' => $this->TYPE_TEXT,
+            );
+            $table_name = $this->cms_complete_table_name('photo');
+            $this->dbforge->modify_column($table_name, $fields);
+        }
     }
 
     
@@ -209,9 +223,9 @@ class Info extends CMS_Module {
         // article
         $fields = array(
                 'article_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-                'article_title' => $this->TYPE_VARCHAR_100_NULL,
-                'article_url' => $this->TYPE_VARCHAR_100_NULL,
-                'keyword' => $this->TYPE_VARCHAR_100_NULL,
+                'article_title' => $this->TYPE_TEXT,
+                'article_url' => $this->TYPE_TEXT,
+                'keyword' => $this->TYPE_TEXT,
                 'description' => $this->TYPE_TEXT,
                 'date' => $this->TYPE_DATETIME_NULL,
                 'author_user_id' => $this->TYPE_INT_UNSIGNED_NULL,
@@ -279,10 +293,7 @@ class Info extends CMS_Module {
                         'constraint' => 10,
                         'unsigned' => TRUE,
                 ),
-                'url' => array(
-                        'type' => 'VARCHAR',
-                        'constraint' => '50',
-                ),
+                'url' => $this->TYPE_TEXT,
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('photo_id', TRUE);
