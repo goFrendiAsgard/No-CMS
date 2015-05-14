@@ -9,6 +9,7 @@ if(typeof(__cms_base_url) == 'undefined'){
     BASE_URL = __cms_base_url;
 }
 
+
 CKEDITOR.editorConfig = function( config )
 {
     // Define changes to default configuration here. For example:
@@ -47,63 +48,65 @@ CKEDITOR.on( 'instanceReady', function( ev )
     writer.indentationChars = '    ';
 
     var dtd = CKEDITOR.dtd;
-    //console.log(dtd);
 
-    // Elements taken as an example are: block-level elements (div or p), list items (li, dd), and table elements (td, tbody).
-    for ( var e in CKEDITOR.tools.extend( {}, dtd.$block, dtd.$listItem, dtd.$tableContent, dtd.$nonEditable ) )
-    {
-        ev.editor.dataProcessor.writer.setRules( e, {
-            // Indicates that an element creates indentation on line breaks that it contains.
-            indent : true,
-            // Inserts a line break before a tag.
-            breakBeforeOpen : true,
-            // Inserts a line break after a tag.
-            breakAfterOpen : true,
-            // Inserts a line break before the closing tag.
-            breakBeforeClose : true,
-            // Inserts a line break after the closing tag.
-            breakAfterClose : false
-        });
-    }
+    if(typeof(ev.editor.dataProcessor.writer.setRules) != 'undefined'){
 
-    for ( var e in CKEDITOR.tools.extend( {}, dtd.$list, dtd.$listItem, dtd.$tableContent ) )
-    {
-        ev.editor.dataProcessor.writer.setRules( e, {
-            indent : true,
-        });
-    }
+        // Elements taken as an example are: block-level elements (div or p), list items (li, dd), and table elements (td, tbody).
+        for ( var e in CKEDITOR.tools.extend( {}, dtd.$block, dtd.$listItem, dtd.$tableContent, dtd.$nonEditable ) )
+        {
+            ev.editor.dataProcessor.writer.setRules( e, {
+                // Indicates that an element creates indentation on line breaks that it contains.
+                indent : true,
+                // Inserts a line break before a tag.
+                breakBeforeOpen : true,
+                // Inserts a line break after a tag.
+                breakAfterOpen : true,
+                // Inserts a line break before the closing tag.
+                breakBeforeClose : true,
+                // Inserts a line break after the closing tag.
+                breakAfterClose : false
+            });
+        }
+
+        for ( var e in CKEDITOR.tools.extend( {}, dtd.$list, dtd.$listItem, dtd.$tableContent ) )
+        {
+            ev.editor.dataProcessor.writer.setRules( e, {
+                indent : true,
+            });
+        }
 
 
-    var indented_element = new Array('table', 'form');
-    for(var e in indented_element){
-        ev.editor.dataProcessor.writer.setRules( e,
+        var indented_element = new Array('table', 'form');
+        for(var e in indented_element){
+            ev.editor.dataProcessor.writer.setRules( e,
+            {
+                indent : true,
+            });
+        }
+
+        var single_tag = new Array('br', 'source');
+        for(var e in single_tag){
+            ev.editor.dataProcessor.writer.setRules( e,
+            {
+                breakAfterOpen : true,
+            });
+        }
+        // You can also apply the rules to a single element.
+        /*
+        ev.editor.dataProcessor.writer.setRules( 'table',
         {
             indent : true,
         });
-    }
 
-    var single_tag = new Array('br', 'source');
-    for(var e in single_tag){
-        ev.editor.dataProcessor.writer.setRules( e,
+        ev.editor.dataProcessor.writer.setRules( 'form',
+        {
+            indent : true,
+        });
+        ev.editor.dataProcessor.writer.setRules( 'source',
         {
             breakAfterOpen : true,
         });
+        */
     }
-    // You can also apply the rules to a single element.
-    /*
-    ev.editor.dataProcessor.writer.setRules( 'table',
-    {
-        indent : true,
-    });
-
-    ev.editor.dataProcessor.writer.setRules( 'form',
-    {
-        indent : true,
-    });
-    ev.editor.dataProcessor.writer.setRules( 'source',
-    {
-        breakAfterOpen : true,
-    });
-    */
 
 });

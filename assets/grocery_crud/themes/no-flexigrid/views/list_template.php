@@ -144,11 +144,17 @@ if($success_message !== null){?>
             </div>
             <div class="btnseparator">
             </div>
-            <div class="pGroup form-inline">
-                <span class="pcontrol form-group">
-                    <label><?php echo $this->l('list_page'); ?></label>
-                    <input name='page' type="text" value="1" size="4" id='crud_page' class="crud_page">
-                    <label><?php echo $this->l('list_paging_of'); ?></label>
+            <div class="pGroup">
+                <span><label><?php echo $this->l('list_page'); ?></label>&nbsp;</span>
+            </div>
+            <div class="pGroup">
+                <span>                    
+                    <input name='page' type="text" value="1" size="4" id='crud_page' class="crud_page">&nbsp;
+                </span>
+            </div>
+            <div class="pGroup">
+                <span>                    
+                    <label><?php echo $this->l('list_paging_of'); ?></label>&nbsp;
                     <label id='last-page-number' class="last-page-number"><?php echo ceil($total_results / $default_per_page)?></label>
                 </span>
             </div>

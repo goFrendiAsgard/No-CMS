@@ -302,14 +302,6 @@ class CMS_Module extends CMS_Controller
             // from _upgrade model
             $this->db->trans_start();
             $module_path = $this->cms_module_path();
-            $model_alias = 'm_'.$module_path.'_info';
-            if(file_exists(FCPATH.'modules/'.$module_path.'/models/_info.php')){
-                $this->load->model($module_path.'/_info', $model_alias);
-                $module_install_model = $this->{$model_alias};
-                if(method_exists($module_install_model,'do_upgrade')){
-                    $module_install_model->do_upgrade($this->OLD_VERSION);
-                }
-            }
             // from do_upgrade function
             if($this->do_upgrade($this->OLD_VERSION) !== FALSE){
                 $data  = array('version' => $this->VERSION);

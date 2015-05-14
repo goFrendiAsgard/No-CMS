@@ -1525,6 +1525,10 @@ class Install_model extends CI_Model{
                                     '    URL : '.$module.'/'.$url.PHP_EOL.
                                     '    response : '.print_r($response, TRUE));
                             }
+                            // keep it clean for non-subsite
+                            if(!$this->is_subsite){
+                                unlink($new_controller_file);
+                            }
                         }
                     }
                 }

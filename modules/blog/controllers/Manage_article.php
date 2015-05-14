@@ -86,7 +86,7 @@ class Manage_article extends CMS_Secure_Controller {
         // displayed columns on add operation
         $crud->add_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
         $crud->required_fields('article_title','status');
-        $crud->unique_fields('article_title');
+        $crud->unique_fields('article_title','article_url');
         $crud->unset_read();
 
         // caption of each columns
@@ -196,12 +196,6 @@ class Manage_article extends CMS_Secure_Controller {
                 $post_array['publish_date'] = date('Y-m-d', strtotime('+ 30 days'));
             }
         }
-        $post_array['article_url'] = urlencode(url_title($post_array['article_title']));
-        return $post_array;
-    }
-
-    public function before_insert($post_array){
-        $post_array = $this->before_insert_or_update($post_array);
         $this->load->helper('url');
         $this->load->model('article_model');
         // article url / permalink
@@ -217,6 +211,11 @@ class Manage_article extends CMS_Secure_Controller {
             }
             $post_array['article_url'] = $url;
         }
+        return $post_array;
+    }
+
+    public function before_insert($post_array){
+        $post_array = $this->before_insert_or_update($post_array);        
 
         // default allow comment value
         if(!isset($post_array['allow_comment']) || !in_array($post_array['allow_comment'],array(0,1))){
