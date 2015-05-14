@@ -629,27 +629,10 @@ class Extended_grocery_crud extends grocery_crud{
     {
         if($field_info->extras == 'text_editor')
         {
-            $editor = $this->config->default_text_editor;
-            switch ($editor) {
-                case 'ckeditor':
-                    $this->set_js_lib($this->default_texteditor_path.'/ckeditor/ckeditor.js');
-                    $this->set_js_lib($this->default_texteditor_path.'/ckeditor/adapters/jquery.js');
-                    $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.ckeditor.config.js');
-                break;
-
-                case 'tinymce':
-                    $this->set_js_lib($this->default_texteditor_path.'/tiny_mce/jquery.tinymce.js');
-                    $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.tine_mce.config.js');
-                break;
-
-                case 'markitup':
-                    $this->set_css($this->default_texteditor_path.'/markitup/skins/markitup/style.css');
-                    $this->set_css($this->default_texteditor_path.'/markitup/sets/default/style.css');
-
-                    $this->set_js_lib($this->default_texteditor_path.'/markitup/jquery.markitup.js');
-                    $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.markitup.config.js');
-                break;
-            }
+            $editor = 'ckeditor';
+            $this->set_js_lib($this->default_texteditor_path.'/ckeditor/ckeditor.js');
+            $this->set_js_lib($this->default_texteditor_path.'/ckeditor/adapters/jquery.js');
+            $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.ckeditor.config.js');
 
             $class_name = $this->config->text_editor_type == 'minimal' ? 'mini-texteditor' : 'texteditor';
 

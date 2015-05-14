@@ -18,6 +18,22 @@ class Blog_widget extends CMS_Controller {
 		$this->view($this->cms_module_path().'/widget_newest', $data);
 	}
 
+    public function popular($how_many=5){
+        $data = array();
+        $data['articles'] = $this->article_model->get_articles(0, $how_many,
+                NULL, NULL, NULL, FALSE, 'visited');
+        $data['module_path'] = $this->cms_module_path();
+        $this->view($this->cms_module_path().'/widget_popular', $data);
+    }
+
+    public function featured($how_many=5){
+        $data = array();
+        $data['articles'] = $this->article_model->get_articles(0, $how_many,
+                NULL, NULL, NULL, TRUE);
+        $data['module_path'] = $this->cms_module_path();
+        $this->view($this->cms_module_path().'/widget_featured', $data);
+    }
+
     public function category(){
         $data = array();
         $data['categories'] = $this->article_model->get_available_category();

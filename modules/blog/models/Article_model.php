@@ -79,11 +79,17 @@ class Article_model extends  CMS_Model{
 
     public function get_available_category(){
         $result = array(''=>'All Category');
-        $query = $this->db->select('category_name')
+        $query = $this->db->select('category_id, category_name')
             ->from($this->cms_complete_table_name('category'))
             ->get();
         foreach($query->result() as $row){
-            $result[$row->category_name] = $row->category_name;
+            $query_article_category = $this->db->select('article_id')
+                ->from($this->cms_complete_table_name('category_article'))
+                ->where('category_id', $row->category_id)
+                ->get();
+            if($query_article_category->num_rows()>0){
+                $result[$row->category_name] = $row->category_name;
+            }
         }
         return $result;
     }
@@ -125,7 +131,7 @@ class Article_model extends  CMS_Model{
         }
     }
 
-    public function get_articles($page, $limit, $category, $archive, $search){
+    public function get_articles($page, $limit, $category, $archive='', $search=NULL, $featured=FALSE, $order_by='date'){
         $words = $search? explode(' ', $search) : array();
 
         $data = array();
@@ -135,6 +141,8 @@ class Article_model extends  CMS_Model{
             WHERE ".$this->cms_complete_table_name('category').".category_id = ".$this->cms_complete_table_name('category_article').".category_id
             AND category_name ='".addslashes($category)."'
             )" : "(1=1)";
+
+        $where_featured = $featured? 'featured=1' : '(1=1)';
 
         if($search){
             $where_search = "(FALSE ";
@@ -161,9 +169,10 @@ class Article_model extends  CMS_Model{
             WHERE
                 $where_category AND
                 $where_search AND 
+                $where_featured AND
                 date LIKE '$archive%' AND
                 (status = 'published' OR (status='scheduled' AND publish_date <= '".$current_date."'))
-            ORDER BY date DESC, article_id DESC
+            ORDER BY ".$order_by." DESC, article_id DESC
             LIMIT $limit OFFSET $offset";
 
         $query = $this->db->query($SQL);

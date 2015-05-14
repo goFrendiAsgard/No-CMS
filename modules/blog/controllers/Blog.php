@@ -125,6 +125,19 @@ class Blog extends CMS_Secure_Controller {
             $config['keyword'] = $article['keyword'];
             $config['description'] = $article['description'];
             $config['author'] = $article['author'];
+            // add visited
+            $query = $this->db->select('visited')
+                ->from($this->cms_complete_table_name('article'))
+                ->where('article_id', $article['id'])
+                ->get();            
+            $row = $query->row();
+            $visited = $row->visited;
+            if($visited === NULL || $visited == ''){
+                $visited = 0;
+            }
+            $this->db->update($this->cms_complete_table_name('article'),
+                array('visited'=>$visited+1),
+                array('article_id'=>$article['id']));
         }
 
         $this->view($this->cms_module_path().'/browse_article_view',$data,

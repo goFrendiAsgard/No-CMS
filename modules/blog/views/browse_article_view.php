@@ -84,7 +84,7 @@
         <?php
             // show add record button
             if($allow_navigate_backend){
-                echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
+                echo '&nbsp;<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
             }
         ?>
     </div>

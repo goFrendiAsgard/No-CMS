@@ -130,6 +130,19 @@ class Info extends CMS_Module {
             $table_name = $this->cms_complete_table_name('photo');
             $this->dbforge->modify_column($table_name, $fields);
         }
+        if($major == 0 && $minor == 0 && $build <=7){
+            $fields = array(
+                'visited' => $this->TYPE_INT_UNSIGNED_NULL,
+                'featured' => $this->TYPE_INT_UNSIGNED_NULL,
+            );
+            $table_name = $this->cms_complete_table_name('article');
+            $this->dbforge->add_column($table_name, $fields);
+            // add popular and featured articles widgets
+            $this->cms_add_widget($this->cms_complete_navigation_name('popular_article'), 'Popular Articles',
+                $this->PRIV_EVERYONE, $module_path.'/blog_widget/popular','sidebar');
+            $this->cms_add_widget($this->cms_complete_navigation_name('featured_article'), 'Featured Articles',
+                $this->PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
+        }
     }
 
     
@@ -143,6 +156,8 @@ class Info extends CMS_Module {
 
         // remove widgets
         $this->cms_remove_widget($this->cms_complete_navigation_name('newest_article'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('popular_article'));
+        $this->cms_remove_widget($this->cms_complete_navigation_name('featured_article'));
         $this->cms_remove_widget($this->cms_complete_navigation_name('article_category'));
         $this->cms_remove_widget($this->cms_complete_navigation_name('content'));
         $this->cms_remove_widget($this->cms_complete_navigation_name('archive'));
@@ -201,6 +216,10 @@ class Info extends CMS_Module {
 
         $this->cms_add_widget($this->cms_complete_navigation_name('newest_article'), 'Newest Articles',
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/newest','sidebar');
+        $this->cms_add_widget($this->cms_complete_navigation_name('popular_article'), 'Popular Articles',
+            $this->PRIV_EVERYONE, $module_path.'/blog_widget/popular','sidebar');
+        $this->cms_add_widget($this->cms_complete_navigation_name('featured_article'), 'Featured Articles',
+            $this->PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
         $this->cms_add_widget($this->cms_complete_navigation_name('article_category'), 'Article Categories',
             $this->PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
         $this->cms_add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
@@ -236,6 +255,8 @@ class Info extends CMS_Module {
                     'default' => 'draft',
                     'null' => FALSE,
                 ),
+                'visited' => $this->TYPE_INT_UNSIGNED_NULL,
+                'featured' => $this->TYPE_INT_UNSIGNED_NULL,
                 'publish_date' => $this->TYPE_DATE_NULL,
         );
         $this->dbforge->add_field($fields);

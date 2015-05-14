@@ -1,8 +1,8 @@
 <style type="text/css">
-    ul._newest_widget { 
+    ul._popular_widget { 
         list-style-type: none; padding-left: 10px;
     }
-    ul._newest_widget li {
+    ul._popular_widget li {
         border-bottom:1px solid gray;
         padding-top: 5px;
         padding-bottom:5px;
@@ -12,7 +12,7 @@
 if(count($articles)==0){
     echo 'Currently there is no article yet';
 }else{
-    echo '<ul class="_newest_widget">';
+    echo '<ul class="_popular_widget">';
     foreach($articles as $article){
         echo '<li>';
         if($module_path == 'blog'){

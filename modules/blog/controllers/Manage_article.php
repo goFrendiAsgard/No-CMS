@@ -80,23 +80,24 @@ class Manage_article extends CMS_Secure_Controller {
         $crud->set_subject('Article');
 
         // displayed columns on list
-        $crud->columns('article_title','author_user_id','status','publish_date','allow_comment','categories','comments');
+        $crud->columns('article_title','author_user_id','status','publish_date','featured','allow_comment','categories','comments');
         // displayed columns on edit operation
-        $crud->edit_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
+        $crud->edit_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','featured','allow_comment','categories','photos','comments');
         // displayed columns on add operation
-        $crud->add_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','allow_comment','categories','photos','comments');
+        $crud->add_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','featured','allow_comment','categories','photos','comments');
         $crud->required_fields('article_title','status');
         $crud->unique_fields('article_title','article_url');
         $crud->unset_read();
 
         // caption of each columns
         $crud->display_as('article_title','Article Title');
-        $crud->display_as('article_url','Article URL (Permalink)');
+        $crud->display_as('article_url','Permalink (Left blank for default)');
         $crud->display_as('date','Created Date');
         $crud->display_as('author_user_id','Author');
         $crud->display_as('content','Content');
         $crud->display_as('keyword','Keyword metadata (comma separated)');
         $crud->display_as('description','Description metadata');
+        $crud->display_as('featured','Featured');
         $crud->display_as('allow_comment','Allow Comment');
         $crud->display_as('categories','Categories');
         $crud->display_as('photos','Photos');
@@ -136,6 +137,7 @@ class Manage_article extends CMS_Secure_Controller {
         }
         $crud->field_type('date', 'hidden');
         $crud->field_type('allow_comment', 'true_false');
+        $crud->field_type('featured', 'true_false');
         $crud->unset_texteditor('article_title');
         $crud->unset_texteditor('article_url');
         $crud->unset_texteditor('keyword');
@@ -385,7 +387,7 @@ class Manage_article extends CMS_Secure_Controller {
 
         // change the comment status into read
         $data = array('read'=>1);
-        $where = array('article_id', $primary_key);
+        $where = array('article_id'=> $primary_key);
         $this->db->update($this->cms_complete_table_name('comment'), $data, $where);
 
         $search = array('<', '>');
