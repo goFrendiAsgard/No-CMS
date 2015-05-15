@@ -43,7 +43,22 @@ foreach($articles as $article){
     echo '<div>';
     echo $article['content'];
     echo '<div style="clear:both;"></div>';
-    echo '</div>';    
+    echo '</div>'; 
+
+    // categories
+    if(count($article['categories'])>0){
+        if($module_path == 'blog'){
+            $module_url = 'blog';
+        }else{
+            $module_url = $module_path.'/blog';
+        }
+        echo '<div style="margin-bottom:20px;">';
+        echo '<b>Categories</b> :&nbsp;';
+        foreach($article['categories'] as $category){
+            echo '<a href="'.site_url($module_url.'/index?category='.$category['name']).'"><span class="label label-primary">'.$category['name'].'</span></a>&nbsp;';
+        }
+        echo '</div>';
+    }   
 
     $comment_count = $article['comment_count'];
     $comment_count_caption = '';

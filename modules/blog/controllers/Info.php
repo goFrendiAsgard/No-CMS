@@ -23,6 +23,7 @@ class Info extends CMS_Module {
 
     // UPGRADE
     public function do_upgrade($old_version){
+        $module_path = $this->cms_module_path();
         // table : blog article
         $table_name = $this->cms_complete_table_name('article');
         $field_list = $this->db->list_fields($table_name);

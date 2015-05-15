@@ -123,7 +123,9 @@ class Article_model extends  CMS_Model{
                     "date" => $row->date,
                     "allow_comment" => $row->allow_comment,
                     "comments" => $this->get_comments($row->article_id),
-                    "photos" => $this->get_photos($row->article_id)
+                    "photos" => $this->get_photos($row->article_id),
+                    "categories" => $this->get_category($row->article_id),
+                    "related_article"=>$this->get_related_article($row->article_id),
             );
             return $result;
         }else{
@@ -189,7 +191,8 @@ class Article_model extends  CMS_Model{
                     "author" => $row->author,
                     "date" => $row->status == 'scheduled'? $row->publish_date: $row->date,
                     "comment_count" => $row->comment_count,
-                    "photos" => $this->get_photos($row->article_id)
+                    "photos" => $this->get_photos($row->article_id),
+                    "categories" => $this->get_category($row->article_id),
             );
         }
         return $data;
@@ -233,6 +236,54 @@ class Article_model extends  CMS_Model{
             $result = array(
                     "url" => $row->url
             );
+            $data[] = $result;
+        }
+        return $data;
+    }
+
+    public function get_category($article_id){
+        $query = $this->db->select('c.category_id, category_name')
+            ->from($this->cms_complete_table_name('category').' as c')
+            ->join($this->cms_complete_table_name('category_article').' as ca', 'ca.category_id = c.category_id')
+            ->where('article_id', $article_id)
+            ->get();
+        $data = array();
+        foreach($query->result() as $row){
+            $result = array(
+                    'id'=>$row->category_id,
+                    'name'=>$row->category_name
+                );
+            $data[] = $result;
+        }
+        return $data;
+    }
+
+    public function get_related_article($article_id){
+        $categories = $this->get_category($article_id);
+        if(count($categories) == 0){
+            $where_category = '(1=1)';
+        }else{
+            $where_category = array();
+            foreach($categories as $category){
+                $category_id = $category['id'];
+                $where_category[] = 'category_id = '.$category_id;
+            }
+            $where_category = implode(' OR ', $where_category);
+        }
+        $sql = 'SELECT a.article_id, a.article_title, a.article_url, a.status, a.date, a.publish_date
+            FROM '.$this->cms_complete_table_name('article').' as a, '.
+            $this->cms_complete_table_name('category_article').' as ca '.
+            'WHERE ca.article_id = a.article_id AND ca.article_id <> '.$article_id.' AND '.$where_category.' LIMIT 4';
+        $query = $this->db->query($sql);
+        $data = array();
+        foreach($query->result() as $row){
+            $result = array(
+                    'id'=>$row->article_id,
+                    'title'=>$row->article_title,
+                    'article_url'=>$row->article_url,
+                    'date' => $row->status == 'scheduled'? $row->publish_date: $row->date,
+                    'photos' => $this->get_photos($row->article_id),
+                );
             $data[] = $result;
         }
         return $data;

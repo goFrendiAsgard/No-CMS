@@ -24,9 +24,9 @@ if(count($articles)==0){
         // get image
         if(count($article['photos'])>0){
             $photo = $article['photos'][0]['url'];
-            $photo = base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo);
+            $photo = base_url('modules/'.$module_path.'/assets/uploads/thumb_'.$photo);
         }else{
-            $photo = base_url('modules/{{ module_path }}/assets/images/text.jpeg');
+            $photo = base_url('modules/'.$module_path.'/assets/images/text.jpeg');
         }
         echo anchor($url,
                     '<div class="row">'.

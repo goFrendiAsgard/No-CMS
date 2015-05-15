@@ -134,6 +134,50 @@
             echo $article['content'];
             echo '<div style="clear:both;"></div>';
             echo '</div>';
+
+            // categories
+            if(count($article['categories'])>0){
+                if($module_path == 'blog'){
+                    $module_url = 'blog';
+                }else{
+                    $module_url = $module_path.'/blog';
+                }
+                echo '<div style="margin-bottom:20px;">';
+                echo '<b>Categories</b> :&nbsp;';
+                foreach($article['categories'] as $category){
+                    echo '<a href="'.site_url($module_url.'/index?category='.$category['name']).'"><span class="label label-primary">'.$category['name'].'</span></a>&nbsp;';
+                }
+                // also get related article
+                if(count($article['related_article'])>0){
+                    echo '<h4>{{ language:Related Article }}</h4>';
+                    foreach($article['related_article'] as $related_article){
+                        // get image
+                        if(count($related_article['photos'])>0){
+                            $photo = $related_article['photos'][0]['url'];
+                            $photo = base_url('modules/'.$module_path.'/assets/uploads/'.$photo);
+                        }else{
+                            $photo = base_url('modules/'.$module_path.'/assets/images/text.jpeg');
+                        }
+                        if($module_path == 'blog'){
+                            $url = site_url('blog/index/'.$related_article['article_url']);
+                        }else{
+                            $url = site_url($module_path.'/blog/index/'.$related_article['article_url']);
+                        }
+                        echo anchor($url,
+                                    '<div class="row well">'.
+                                    '<div class="col-md-4" style="min-height:200px; background-repeat: no-repeat;
+                                        background-attachment: cover; background-position: center; 
+                                        background-color:black;
+                                        background-image:url(\''.$photo.'\')"></div>'.
+                                    '<div class="col-md-8" style="vertical-align:top;">'.
+                                        $related_article['date'].
+                                        '<h4>'.$related_article['title'].'</h4>'.
+                                    '</div>'.
+                                    '</div>');
+                    }
+                }
+                echo '</div>';
+            }
             // edit and delete button
             if($allow_navigate_backend){
                 echo '<div class="edit_delete_record_container">';
@@ -342,7 +386,8 @@
         });
 
         // button search click
-        $('#btn_search').click(function(){
+        $('#btn_search').click(function(event){
+            event.preventDefault();
             reset_content();
         });
         // input category change

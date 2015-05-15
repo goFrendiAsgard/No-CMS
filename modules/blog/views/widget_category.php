@@ -7,7 +7,7 @@
 if($module_path == 'blog'){
     $module_url = 'blog';
 }else{
-    $module_url = '{{ module_path }}/blog';
+    $module_url = $module_path.'/blog';
 }
 echo '<ul class="_category_widget">';
 foreach($categories as $key=>$value){
