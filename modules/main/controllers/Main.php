@@ -912,6 +912,8 @@ class Main extends CMS_Controller
             $state = $crud->getState();
             if($state == 'add'){
                 $crud->field_type('parent_id', 'hidden', $parent_id);
+            }elseif($state == 'edit'){
+                $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
             }
         }else{
             $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
