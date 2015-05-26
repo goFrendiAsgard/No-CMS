@@ -189,20 +189,23 @@ function cms_encode($data, $chipper = NULL){
     $encoded_array = _xor($data_array, $chipper_array);
     $encoded_str = '';
     foreach($encoded_array as $char){
-        $encoded_str .= chr($char);
+        $encoded_str .= urlencode(chr($char));
     }
-    $encoded_str = urlencode(base64_encode($encoded_str));
+    //$encoded_str = urlencode(base64_encode($encoded_str)); 
     //$encoded_str = implode('-', $encoded_array);
     return $encoded_str;
 }
 function cms_decode($data, $chipper = NULL){
     $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
     //$data_array = explode('-', $data);
-    $data = base64_decode(urldecode($data));
+    
+    //$data = base64_decode(urldecode($data));
+    $data = urldecode($data);
     $data_array = array();
     for($i=0; $i<strlen($data); $i++){
         $data_array[] = ord($data[$i]);
     }
+    
     $chipper_array = array();
     for($i=0; $i<strlen($chipper); $i++){
         $chipper_array[] = ord($chipper[$i]);
@@ -213,4 +216,15 @@ function cms_decode($data, $chipper = NULL){
         $decoded_str .= chr($decoded_array[$i]);
     }
     return $decoded_str;
+}
+
+function get_decoded_cookie($key, $chipper){
+    $key = cms_encode($key, $chipper);
+    if(!array_key_exists($key, $_COOKIE)){
+        $key = urldecode($key);
+    }
+    if(array_key_exists($key, $_COOKIE)){
+        return cms_decode($_COOKIE[$key], $chipper);
+    }
+    return NULL;
 }

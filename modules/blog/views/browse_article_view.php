@@ -190,6 +190,7 @@
             }
 
             // comment
+            echo '<a name="comment-form"></a>';
             echo '<div id="article-comment">';
             $odd_row = TRUE;
             foreach($article['comments'] as $comment){
@@ -396,7 +397,7 @@
         });
         
         // reply_comment_link
-        $('.reply_comment_link').click(function(){
+        $('.reply_comment_link').click(function(event){
             var comment_id = $(this).attr('comment_id');
             // move the form
             var html = $('#comment-box').html();
@@ -412,7 +413,7 @@
         });
         
         // reply_cancel_link
-        $('.reply_cancel_link').click(function(){
+        $('.reply_cancel_link').click(function(event){
             var comment_id = $(this).attr('comment_id');
             // move the form
             var html = $('#reply_comment_form_'+comment_id).html();

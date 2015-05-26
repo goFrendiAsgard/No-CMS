@@ -106,10 +106,16 @@ class CMS_Model extends CI_Model
         }else{
             $chipper = 'Love Song Storm Gravity Tonight End of Sorrow Rosier';
         }
-
-        setcookie(cms_encode('__cms_base_url', $chipper),   cms_encode(base_url(), $chipper));
-        setcookie(cms_encode('__cms_subsite', $chipper),    cms_encode(CMS_SUBSITE, $chipper));
-        setcookie(cms_encode('__cms_user_id', $chipper),    cms_encode($this->cms_user_id()));
+        $default_cookie = array(
+                '__cms_base_url' => base_url(),
+                '__cms_subsite' => CMS_SUBSITE,
+                '__cms_user_id' => $this->cms_user_id(),
+            );
+        foreach($default_cookie as $key=>$val){
+            if(!array_key_exists(cms_encode($key, $chipper), $_COOKIE)){
+                setcookie(cms_encode($key, $chipper), cms_encode($val, $chipper));
+            }
+        }
 
         // extend user last active status
         $this->__cms_extend_user_last_active($this->cms_user_id());

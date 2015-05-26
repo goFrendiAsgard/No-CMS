@@ -120,7 +120,6 @@ class browser extends uploader {
             is_readable("{$this->typeDir}/{$this->get['dir']}")
         )
             $this->session['dir'] = path::normalize("{$this->type}/{$this->get['dir']}");
-
         return $this->output();
     }
 

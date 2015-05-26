@@ -32,6 +32,9 @@ require_once($_FCPATH.'application/helpers/cms_helper.php');
 if(!function_exists('get_decoded_cookie')){
     function get_decoded_cookie($key, $chipper){
         $key = cms_encode($key, $chipper);
+        if(!array_key_exists($key, $_COOKIE)){
+            $key = urldecode($key);
+        }       
         if(array_key_exists($key, $_COOKIE)){
             return cms_decode($_COOKIE[$key], $chipper);
         }
