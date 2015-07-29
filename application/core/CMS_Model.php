@@ -34,17 +34,6 @@ class CMS_Model extends CI_Model
     {
         parent::__construct();
 
-        // PHP 5.3 ask for timezone, and throw a warning whenever it is not available
-        // so, just give this one :)
-        $timezone = @date_default_timezone_get();
-        if (!isset($timezone) || $timezone == '') {
-            $timezone = @ini_get('date.timezone');
-        }
-        if (!isset($timezone) || $timezone == '') {
-            $timezone = 'UTC';
-        }
-        date_default_timezone_set($timezone);
-
         // load helpers and libraries
         $this->load->helper('url');
         $this->load->helper('html');

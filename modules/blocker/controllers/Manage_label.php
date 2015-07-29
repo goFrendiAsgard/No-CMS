@@ -42,8 +42,8 @@ class Manage_label extends CMS_Secure_Controller {
             case 'export': break;
             case 'print': break;
         }
-        
-        // unset things 
+
+        // unset things
         $crud->unset_jquery();
         $crud->unset_read();
         // $crud->unset_add();
@@ -71,8 +71,6 @@ class Manage_label extends CMS_Secure_Controller {
         $crud->edit_fields('name','status','ip','referer','user_agents');
         // displayed columns on add operation
         $crud->add_fields('name','status','ip','referer','user_agents');
-        
-        
 
         // caption of each columns
         $crud->display_as('name','Name');
