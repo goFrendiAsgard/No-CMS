@@ -328,6 +328,25 @@ if (!isset($timezone) || $timezone == '') {
 }
 date_default_timezone_set($timezone);
 
+$session_save_path = session_save_path();
+if($session_save_path == ''){
+    // in case of session_save_path is not defined
+    $session_save_path = getcwd() . DIRECTORY_SEPARATOR . 'session';
+    // make .htaccess
+    if(!file_exists($session_save_path.DIRECTORY_SEPARATOR.'session/.htaccess')){
+        mkdir($session_save_path);
+        file_put_contents($session_save_path.DIRECTORY_SEPARATOR.'session/.htaccess', 
+            '<IfModule authz_core_module>'.PHP_EOL.
+            '   Require all denied'.PHP_EOL.
+            '</IfModule>'.PHP_EOL.
+            '<IfModule !authz_core_module>'.PHP_EOL.
+            '   Deny from all'.PHP_EOL.
+            '</IfModule>');
+    }
+    session_save_path($session_save_path);
+}
+
+
 /*
  * ---------------------------------------------------------------
  *  END OF NO CMS PROGRAM

@@ -2,6 +2,7 @@
 sudo chmod 777 . -R
 sudo rm -f ./application/config/*.php
 sudo echo "<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');" > ./application/config/constants.php
+sudo rm -Rf ./session
 sudo rm -f ./application/logs/log*.php
 sudo rm -f ./application/logs/hybridauth.log
 sudo touch ./application/logs/hybridauth.log

@@ -100,10 +100,10 @@ class CMS_Controller extends MX_Controller
             }
         }
 
-        /*
+        
         if(!$this->input->is_ajax_request()){
             $this->output->enable_profiler(1);
-        }*/
+        }
     }
 
     public function cms_load_info_model($module_path){
