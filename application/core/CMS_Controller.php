@@ -100,10 +100,10 @@ class CMS_Controller extends MX_Controller
             }
         }
 
-        
+        /*
         if(!$this->input->is_ajax_request()){
             $this->output->enable_profiler(1);
-        }
+        }*/
     }
 
     public function cms_load_info_model($module_path){
@@ -1581,10 +1581,8 @@ class CMS_Controller extends MX_Controller
             $html = '<div class="cms-widget-slug-'.$slug.'">';
             foreach($widgets[$slug] as $widget){
                 $html.= '<div class="cms-widget-container">';
-                $html.= '<h5>'.$widget['title'].'</h5>';
-                $html.= '<div class="cms-widget-content">'.$widget['content'].'</div>';
-                $html.= '<br />';
-                $html.= '<br />';
+                $html.= '<h3>'.$widget['title'].'</h3>';
+                $html.= '<div class="cms-widget-content" style="margin-bottom:20px;">'.$widget['content'].'</div>';
                 $html.= '</div>';
             }
             $html .= '</div>';

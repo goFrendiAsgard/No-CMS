@@ -1,6 +1,9 @@
 <style type="text/css">
-    ul._archive_widget { 
-        list-style-type: disc; padding-left: 20px;
+    ul._archive_widget a{
+        color: inherit;
+    }
+    ul._archive_widget a:hover{
+        color: inherit;
     }
 </style>
 <?php

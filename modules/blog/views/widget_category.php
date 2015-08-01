@@ -1,6 +1,9 @@
 <style type="text/css">
-    ul._category_widget { 
-        list-style-type: disc; padding-left: 20px;
+    ul._category_widget a{
+        color: inherit;
+    }
+    ul._category_widget a:hover{
+        color: inherit;
     }
 </style>
 <?php

@@ -2,10 +2,15 @@
      ul._featured_widget { 
         list-style-type: none; padding-left: 10px;
     }
-    ul._featured_widget li { 
-        border-bottom:1px solid gray;
+    ul._featured_widget li {
         padding-top: 5px;
         padding-bottom:5px;
+    }
+    ul._featured_widget a{
+        color: inherit;
+    }
+    ul._featured_widget a:hover{
+        color: inherit;
     }
 </style>
 <?php
@@ -34,7 +39,7 @@ if(count($articles)==0){
                         background-attachment: cover; background-position: center; 
                         background-color:black;
                         background-image:url(\''.$photo.'\')"></div>'.
-                    '<div class="col-md-8" style="vertical-align:top;"><h4>'.$article['title'].'</h4></div>'.
+                    '<div class="col-md-8" style="vertical-align:top;">'.$article['title'].'</div>'.
                     '</div>');
         echo '</li>';
     }
