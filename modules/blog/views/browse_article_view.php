@@ -42,7 +42,6 @@
         margin-bottom:45px;
     }
     textarea[name="<?php echo $secret_code; ?>xcontent"]{
-        width:90%;
         resize:none;
     }
     #search-form .form-group{
@@ -53,7 +52,6 @@
         word-wrap: no-wrap;
         white-space: pre-wrap;
         overflow-x: auto;
-        min-width: 385px!important;
         min-height: 75px!important;
         margin-top: 10px!important;
     }
@@ -282,6 +280,9 @@
         }
     ?>
 </div>
+<div class="row" style="padding-bottom:20px">
+    <a id="btn_load_more" class="btn btn-default col-xs-12">{{ language:Load More }}</a>
+</div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <script type="text/javascript">
@@ -298,6 +299,20 @@
         echo 'SCROLL_WORK = false;';
     }
     ?>
+
+    function adjust_load_more_button(){
+        if(SCROLL_WORK){
+            if(screen.width >= 1024){
+                $('#btn_load_more').hide();
+                $('#record_content_bottom').show();            
+            }else{
+                $('#btn_load_more').show();
+                $('#record_content_bottom').hide();
+            }
+        }else{
+            $('#btn_load_more').hide();    
+        }
+    }
 
 
     function fetch_more_data(async){
@@ -351,14 +366,16 @@
         $('#record_content').html('');
         PAGE = 0;
         fetch_more_data();
+        adjust_load_more_button();
     }
 
     // main program
     $(document).ready(function(){
+        adjust_load_more_button();
 
         $('textarea[name="<?php echo $secret_code; ?>xcontent"]').autosize();
 
-        if(SCROLL_WORK){
+        if(SCROLL_WORK && screen.width >= 1024){
             //reset_content();
             $('#record_content_bottom').show();
         }
@@ -429,7 +446,7 @@
 
         // scroll
         $(window).scroll(function(){
-            if(!LOADING && SCROLL_WORK){
+            if(screen.width >= 1024 && !LOADING && SCROLL_WORK){
                 if($('#record_content_bottom').position().top <= $(window).scrollTop() + $(window).height() ){
                     LOADING = true;
                     fetch_more_data(true);
@@ -437,6 +454,17 @@
                 }
             }
         });
+
+        $('#btn_load_more').click(function(){
+            if(!LOADING && SCROLL_WORK){
+                LOADING = true;
+                fetch_more_data(true);
+                LOADING = false;
+            }
+            $(this).hide();
+            event.preventDefault();
+        });
+
 
     });
 

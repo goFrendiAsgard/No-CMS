@@ -44,6 +44,9 @@
     ?&gt;
 </div>
 <div id="record_content">&lt;?php echo $first_data ?&gt;</div>
+<div class="row" style="padding-bottom:20px">
+    <a id="btn_load_more" class="btn btn-default col-xs-12">{{ language:Load More }}</a>
+</div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
     var PAGE = 1;
@@ -54,6 +57,16 @@
     var REQUEST;
     var RUNNING_REQUEST = false;
     var STOP_REQUEST = false;
+
+    function adjust_load_more_button(){
+        if(screen.width >= 1024){
+            $('#btn_load_more').hide();
+            $('#record_content_bottom').show();            
+        }else{
+            $('#btn_load_more').show();
+            $('#record_content_bottom').hide();
+        }
+    }
 
     function fetch_more_data(async){
         if(typeof(async) == 'undefined'){
@@ -102,11 +115,13 @@
         $('#record_content').html('');
         PAGE = 0;
         fetch_more_data();
+        adjust_load_more_button();
     }
 
     // main program
     $(document).ready(function(){
         fetch_more_data();
+        adjust_load_more_button();
 
         // delete click
         $('.delete_record').live('click',function(){
@@ -138,13 +153,24 @@
 
         // scroll
         $(window).scroll(function(){
-            if(!STOP_REQUEST && !LOADING){
+            if(screen.width >= 1024 && !STOP_REQUEST && !LOADING){
                 if($('#record_content_bottom').position().top <= $(window).scrollTop() + $(window).height() ){
                     LOADING = true;
                     fetch_more_data(false);
                     LOADING = false;
                 }
             }
+        });
+
+        // load more click
+        $('#btn_load_more').click(function(){
+            if(!LOADING){
+                LOADING = true;
+                fetch_more_data(true);
+                LOADING = false;
+            }
+            $(this).hide();
+            event.preventDefault();
         });
 
     });
