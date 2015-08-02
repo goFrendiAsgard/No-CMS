@@ -16,6 +16,17 @@ echo $output;
         adjust_publish_date();
     });
     $(document).ready(function(){
+        <?php
+            echo 'var title = \''.str_replace('\'', '\\\'', $title).'\';';
+            echo 'var content = \''.str_replace('\'', '\\\'', 
+                str_replace(array("\r","\n"),"", $content)).'\';';
+            echo 'var status = \''.str_replace('\'', '\\\'', $status).'\';';
+        ?>
+        $('#field-article_title').html(title);
+        CKEDITOR.instances['field-content'].setData(content);
+        $('#field-status').val(status);
+        console.log(status);
+        $('#field-status').trigger("chosen:updated");
         adjust_publish_date();
     });
 </script>

@@ -57,8 +57,14 @@
     }
 </style>
 
-<div id="submenu_screen"><?php echo $submenu_screen; ?></div>
-<form id="search-form" class="form-inline" role="form">
+<?php if($allow_navigate_backend){?>
+<div class="col-xs-12" style="margin-bottom:20px;">
+    <h4>{{ language: Manage }}</h4>
+    <?php echo $submenu_screen; ?>
+</div>
+<?php } ?>
+
+<form id="search-form" class="form-inline col-xs-12" role="form" style="margin-bottom:20px;">
     <div class="form-group">
         <label class="sr-only" for="input_category">Category</label>
         <select id="input_category" class="select-category form-control">
@@ -78,16 +84,41 @@
         <input type="text" name="search" value="<?php echo isset($keyword)? $keyword: ''; ?>" id="input_search" class="input-medium search-query form-control" placeholder="Keyword" />
     </div>    
     <div class="form-group">
-        <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
-        <?php
-            // show add record button
-            if($allow_navigate_backend){
-                echo '&nbsp;<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
-            }
-        ?>
+        <button name="submit" value="Search" id="btn_search" class="btn btn-primary">
+            <i class="glyphicon glyphicon-search"></i> Search
+        </button>
     </div>
 </form>
-<div id="record_content">
+
+<?php if($allow_navigate_backend){?>
+<div class="col-xs-12" style="margin-bottom:20px;">
+    <h4>{{ language: Quick Write }}</h4>
+    <form method="post" action="<?=$backend_url?>/add/">
+        <input id="new_article_title" name="title" class="col-xs-12 form-control" placeholder="{{ language:Title }}" style="margin-bottom:10px;" />
+        <textarea id="new_article_content" name="content" class="col-xs-12 form-control" placeholder="{{ language:Content }}" style="resize:none;"></textarea>
+        <div class="form-inline pull-right" style="margin-top:20px;">
+            <div class="form-group">
+                <select id="new_article_status" name="status" class="form-control">
+                    <option value="draft" selected>Draft</option>
+                    <option value="published">Published</option>
+                </select>
+            </div>
+            <div class="form-group">&nbsp;
+                <button id="new_article_save" class="form-control btn btn-primary">
+                    <i class="glyphicon glyphicon-share-alt"></i> {{ language:Save }}
+                </button>
+            </div>
+            <div class="form-group">&nbsp;
+                <button id="new_article_edit" class="form-control btn btn-primary">
+                    <i class="glyphicon glyphicon-pencil"></i> {{ language:Switch Full Mode }}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<?php } ?>
+
+<div id="record_content" class="col-xs-12">
     <?php
         if($first_data != NULL){
             echo $first_data;
@@ -373,12 +404,35 @@
     $(document).ready(function(){
         adjust_load_more_button();
 
+        $('#new_article_content').autosize();
         $('textarea[name="<?php echo $secret_code; ?>xcontent"]').autosize();
 
         if(SCROLL_WORK && screen.width >= 1024){
             //reset_content();
             $('#record_content_bottom').show();
         }
+
+        // save article
+        $('#new_article_save').click(function(event){
+            var article_title   = $('#new_article_title').val();
+            var article_content = $('#new_article_content').val();
+            var article_status  = $('#new_article_status option:selected').val();
+            $.ajax({
+                url: '{{ module_site_url }}blog/quick_write',
+                type: 'post',
+                data: {
+                    'title'   : article_title,
+                    'content' : article_content,
+                    'status'  : article_status
+                },
+                success: function(response){
+                    $('#new_article_title').val('');
+                    $('#new_article_content').val('');
+                    reset_content();
+                }
+            });
+            event.preventDefault();
+        });
 
         // delete click
         $('.delete_record').live('click',function(){
@@ -455,7 +509,7 @@
             }
         });
 
-        $('#btn_load_more').click(function(){
+        $('#btn_load_more').click(function(event){
             if(!LOADING && SCROLL_WORK){
                 LOADING = true;
                 fetch_more_data(true);

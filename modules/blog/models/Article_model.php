@@ -378,4 +378,16 @@ class Article_model extends  CMS_Model{
         return $notif;
     }
 
+    public function build_content($str){
+        $str_parts = explode(PHP_EOL, $str);
+        $content = '';
+        foreach($str_parts as $part){
+            $part = str_replace(array("\r","\n"),"", $part);
+            if($part != ''){
+                $content .= '<p>'.str_replace(PHP_EOL, '<br />', $part).'</p>';
+            }
+        }
+        return $content;
+    }
+
 }

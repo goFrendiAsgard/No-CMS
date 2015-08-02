@@ -172,4 +172,38 @@ class Blog extends CMS_Secure_Controller {
         $this->view($this->cms_module_path().'/browse_article_partial_view',$data,
            $this->cms_complete_navigation_name('index'), $config);
     }
+
+    public function quick_write(){
+        if($this->cms_user_id() < 1){return NULL;}
+        $title   = $this->input->post('title'); 
+        $content = $this->input->post('content');
+        $status  = $this->input->post('status');      
+        // all data must valid
+        if($title == '' || $content == '' || !in_array($status, array('published', 'draft'))){
+            return NULL;
+        }
+        $this->load->model('blog/article_model');
+        // automatic data
+        $date    = date('Y-m-d H:i:s');
+        $url     = urlencode(url_title($this->cms_parse_keyword($title)));
+        $count_url = $this->article_model->get_count_article_url($url);
+        if($count_url>0){
+            $index = $count_url;
+            while($this->article_model->get_count_article_url($url.'_'.$index)>0){
+                $index++;
+            }
+            $url .= '_'.$index;
+        };
+        $author_user_id = $this->cms_user_id();
+        // insert article
+        $this->db->insert($this->cms_complete_table_name('article'), array(
+                'article_title' => $title,
+                'content' => $content,
+                'status' => $status,
+                'date' => $date,
+                'article_url' => $url,
+                'status' => $status,
+                'author_user_id' => $author_user_id,
+            ));
+    }
 }

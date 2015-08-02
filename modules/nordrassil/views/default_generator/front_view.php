@@ -163,7 +163,7 @@
         });
 
         // load more click
-        $('#btn_load_more').click(function(){
+        $('#btn_load_more').click(function(event){
             if(!LOADING){
                 LOADING = true;
                 fetch_more_data(true);

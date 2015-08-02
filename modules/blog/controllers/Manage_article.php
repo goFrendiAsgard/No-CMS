@@ -186,6 +186,12 @@ class Manage_article extends CMS_Secure_Controller {
         }
         $config['js'] = $asset->compile_js();
 
+        // add values from post
+        $this->load->model('blog/article_model');
+        $output->title = $this->input->post('title');
+        $output->content = $this->article_model->build_content($this->input->post('content'));
+        $output->status = $this->input->post('status');
+
         // show the view
         $this->view($this->cms_module_path().'/manage_article_view', $output,
             $this->cms_complete_navigation_name('manage_article'), $config);
