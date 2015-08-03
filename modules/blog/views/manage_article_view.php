@@ -22,11 +22,16 @@ echo $output;
                 str_replace(array("\r","\n"),"", $content)).'\';';
             echo 'var status = \''.str_replace('\'', '\\\'', $status).'\';';
         ?>
-        $('#field-article_title').html(title);
-        CKEDITOR.instances['field-content'].setData(content);
-        $('#field-status').val(status);
-        console.log(status);
-        $('#field-status').trigger("chosen:updated");
+        if(title != ''){
+            $('#field-article_title').html(title);
+        }
+        if(content != ''){
+            CKEDITOR.instances['field-content'].setData(content);
+        }
+        if(status != ''){
+            $('#field-status').val(status);
+            $('#field-status').trigger("chosen:updated");
+        }
         adjust_publish_date();
     });
 </script>
