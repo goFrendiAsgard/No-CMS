@@ -312,7 +312,7 @@
     ?>
 </div>
 <div class="row" style="padding-bottom:20px">
-    <a id="btn_load_more" class="btn btn-default col-xs-12">{{ language:Load More }}</a>
+    <a id="btn_load_more" class="btn btn-default col-xs-12" style="display:none;">{{ language:Load More }}</a>
 </div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>

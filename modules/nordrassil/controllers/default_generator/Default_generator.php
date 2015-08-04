@@ -739,7 +739,7 @@ class Default_generator extends CMS_Controller{
         $this->nds->make_directory($this->project_path.'helpers/');
         $this->nds->make_directory($this->project_path.'libraries/');
         $this->nds->make_directory($this->project_path.'config/');
-        // create htaccess
+        // create normal htaccess
         $str = $this->nds->read_view('default_generator/htaccess');
         $this->nds->write_file($this->project_path.'assets/db/.htaccess', $str);
         $this->nds->write_file($this->project_path.'assets/languages/.htaccess', $str);
@@ -749,6 +749,19 @@ class Default_generator extends CMS_Controller{
         $this->nds->write_file($this->project_path.'helpers/.htaccess', $str);
         $this->nds->write_file($this->project_path.'libraries/.htaccess', $str);
         $this->nds->write_file($this->project_path.'config/.htaccess', $str);
+        // create anti_php htaccess
+        $str = $this->nds->read_view('default_generator/htaccess_anti_php');
+        $this->nds->write_file($this->project_path.'assets/navigation_icon/.htaccess', $str);
+        $this->nds->write_file($this->project_path.'assets/scripts/.htaccess', $str);
+        $this->nds->write_file($this->project_path.'assets/styles/.htaccess', $str);
+        $this->nds->write_file($this->project_path.'assets/images/.htaccess', $str);
+        $this->nds->write_file($this->project_path.'assets/uploads/.htaccess', $str);
+        // create empty index.html
+        $this->nds->write_file($this->project_path.'assets/navigation_icon/index.html', '');
+        $this->nds->write_file($this->project_path.'assets/scripts/index.html', '');
+        $this->nds->write_file($this->project_path.'assets/styles/index.html', '');
+        $this->nds->write_file($this->project_path.'assets/images/index.html', '');
+        $this->nds->write_file($this->project_path.'assets/uploads/index.html', '');
         // create subsite_auth.php
         $str = $this->nds->read_view('default_generator/subsite_auth.php');
         $this->nds->write_file($this->project_path.'subsite_auth.php', $str);
