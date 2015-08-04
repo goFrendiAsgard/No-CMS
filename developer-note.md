@@ -138,3 +138,16 @@ and (line 228)
         @file_put_contents($this->config['uploadDir'].'index.html', 'Directory Access is forbidden');
     }
 ```
+
+    - Add this code to `system/database/DB_forge.php` line 782, function `_process_fields`
+
+```
+    // BUG FIX ==========
+    $new_constraints = array();
+    foreach($attributes['CONSTRAINT'] as $constraint){
+        $constraint = trim($constraint, '\'');
+        $new_constraints[] = $constraint;
+    }
+    $attributes['CONSTRAINT'] = $new_constraints;
+    // END OF BUG FIX ===
+```

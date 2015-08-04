@@ -74,7 +74,7 @@ class Install_model extends CI_Model{
     public function __construct(){
         parent::__construct();
         // automatically set table prefix based on subsite
-        $this->set_subsite($this->subsite);
+        $this->set_subsite($this->subsite);        
     }
 
     public function set_subsite($subsite = NULL){
@@ -1105,39 +1105,39 @@ class Install_model extends CI_Model{
 
         // language        
         $this->insert_languages(array( 
-                array('name'=>'Afrikaans','code'=>'afrikaans'),
-                array('name'=>'Arabic','code'=>'arabic'),
-                array('name'=>'Bengali','code'=>'bengali'),
-                array('name'=>'Bulgarian','code'=>'bulgarian'),
-                array('name'=>'Catalan','code'=>'catalan'),
-                array('name'=>'Chinese','code'=>'chinese'),
-                array('name'=>'Czech','code'=>'czech'),
-                array('name'=>'Danish','code'=>'danish'),
-                array('name'=>'Dutch','code'=>'dutch'),
-                array('name'=>'English','code'=>'english'),
-                array('name'=>'French','code'=>'french'),
-                array('name'=>'German','code'=>'german'),
-                array('name'=>'Greek','code'=>'greek'),
-                array('name'=>'Hindi','code'=>'hindi'),
-                array('name'=>'Hungarian','code'=>'hungarian'),
-                array('name'=>'Indonesian','code'=>'indonesian'),
-                array('name'=>'Italian','code'=>'italian'),
-                array('name'=>'Japanese','code'=>'japanese'),
-                array('name'=>'Korean','code'=>'korean'),
-                array('name'=>'Mongolian','code'=>'mongolian'),
-                array('name'=>'Norwegian','code'=>'norwegian'),
-                array('name'=>'Persian','code'=>'persian'),
-                array('name'=>'Polish','code'=>'polish'),
-                array('name'=>'Portuguese (Brazil)','code'=>'pt-br.portuguese'),
-                array('name'=>'Portuguese','code'=>'pt-pt.portuguese'),
-                array('name'=>'Romanian','code'=>'romanian'),
-                array('name'=>'Russian','code'=>'russian'),
-                array('name'=>'Slovak','code'=>'slovak'),
-                array('name'=>'Spanish','code'=>'spanish'),
-                array('name'=>'Thai','code'=>'thai'),
-                array('name'=>'Turkish','code'=>'turkish'),
-                array('name'=>'Ukrainian','code'=>'ukrainian'),
-                array('name'=>'Vietnamese','code'=>'vietnamese'),
+                array('Afrikaans','afrikaans'),
+                array('Arabic','arabic'),
+                array('Bengali','bengali'),
+                array('Bulgarian','bulgarian'),
+                array('Catalan','catalan'),
+                array('Chinese','chinese'),
+                array('Czech','czech'),
+                array('Danish','danish'),
+                array('Dutch','dutch'),
+                array('English','english'),
+                array('French','french'),
+                array('German','german'),
+                array('Greek','greek'),
+                array('Hindi','hindi'),
+                array('Hungarian','hungarian'),
+                array('Indonesian','indonesian'),
+                array('Italian','italian'),
+                array('Japanese','japanese'),
+                array('Korean','korean'),
+                array('Mongolian','mongolian'),
+                array('Norwegian','norwegian'),
+                array('Persian','persian'),
+                array('Polish','polish'),
+                array('Portuguese (Brazil)','pt-br.portuguese'),
+                array('Portuguese','pt-pt.portuguese'),
+                array('Romanian','romanian'),
+                array('Russian','russian'),
+                array('Slovak','slovak'),
+                array('Spanish','spanish'),
+                array('Thai','thai'),
+                array('Turkish','turkish'),
+                array('Ukrainian','ukrainian'),
+                array('Vietnamese','vietnamese'),
             ));
 
 

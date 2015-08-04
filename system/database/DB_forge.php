@@ -779,6 +779,14 @@ abstract class CI_DB_forge {
 					case 'ENUM':
 					case 'SET':
 						$attributes['CONSTRAINT'] = $this->db->escape($attributes['CONSTRAINT']);
+						// BUG FIX ==========
+						$new_constraints = array();
+						foreach($attributes['CONSTRAINT'] as $constraint){
+							$constraint = trim($constraint, '\'');
+							$new_constraints[] = $constraint;
+						}
+						$attributes['CONSTRAINT'] = $new_constraints;
+						// END OF BUG FIX ===
 						$field['length'] = is_array($attributes['CONSTRAINT'])
 							? "('".implode("','", $attributes['CONSTRAINT'])."')"
 							: '('.$attributes['CONSTRAINT'].')';

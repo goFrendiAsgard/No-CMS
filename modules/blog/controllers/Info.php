@@ -31,7 +31,8 @@ class Info extends CMS_Module {
             'keyword' => $this->TYPE_VARCHAR_100_NULL,
             'description' => $this->TYPE_TEXT,
             'status' => array(
-                'type' => 'ENUM("draft","published","scheduled")', 
+                'type'=>'enum',
+                'constraint'=>array('draft','published','scheduled'), 
                 'default' => 'draft',
                 'null' => FALSE,
             ),
@@ -252,7 +253,9 @@ class Info extends CMS_Module {
                 'content' => $this->TYPE_TEXT,
                 'allow_comment' => $this->TYPE_INT_UNSIGNED_NULL,
                 'status' => array(
-                    'type' => 'ENUM("draft","published","scheduled")', 
+                    //'type' => 'ENUM("draft","published","scheduled")', 
+                    'type'=>'enum',
+                    'constraint'=>array('draft','published','scheduled'),
                     'default' => 'draft',
                     'null' => FALSE,
                 ),
