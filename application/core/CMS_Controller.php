@@ -85,7 +85,7 @@ class CMS_Controller extends MX_Controller
             $_COOKIE['__sso_login'] = FALSE;
         }
         if(!$this->input->is_ajax_request() && !$this->__cms_dynamic_widget && !$_COOKIE['__sso_login'] && $this->__cms_base_model_name == 'no_cms_autoupdate_model' && CMS_SUBSITE != '' && $this->cms_user_id()<=0){
-            setcookie('__sso_login', TRUE, time()+600);
+            setcookie('__sso_login', TRUE, time()+600, '/');
             if($this->input->get('__origin') == NULL || $this->input->get('__token') == NULL){
                 include(BASEPATH.'../hostname.php');
                 $url         = current_url();
@@ -108,6 +108,16 @@ class CMS_Controller extends MX_Controller
 
     public function cms_load_info_model($module_path){
         return $this->{$this->__cms_base_model_name}->cms_load_info_model($module_path);
+    }
+
+    public function cms_unique_field_name($field_name)
+    {
+        return $this->{$this->__cms_base_model_name}->cms_unique_field_name($field_name);
+    }
+
+    public function cms_random_string($length=10)
+    {
+        return $this->{$this->__cms_base_model_name}->cms_random_string($length);
     }
 
     /** 
@@ -340,6 +350,14 @@ class CMS_Controller extends MX_Controller
      */
     public function cms_do_move_down_quicklink($quicklink_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_down_quicklink($quicklink_id);
+    }
+
+    public function cms_user_table_name(){
+        return $this->{$this->__cms_base_model_name}->cms_user_table_name();
+    }
+
+    public function cms_chipper(){
+        return $this->{$this->__cms_base_model_name}->cms_chipper();  
     }
 
     /**
@@ -629,9 +647,9 @@ class CMS_Controller extends MX_Controller
      * @param   string password
      * @desc    register new user
      */
-    protected function cms_do_register($user_name, $email, $real_name, $password, $subsite_config=array())
+    protected function cms_do_register($user_name, $email, $real_name, $password)
     {
-        return $this->{$this->__cms_base_model_name}->cms_do_register($user_name, $email, $real_name, $password, $subsite_config);
+        return $this->{$this->__cms_base_model_name}->cms_do_register($user_name, $email, $real_name, $password);
     }
 
     /**
@@ -1773,6 +1791,19 @@ class CMS_Controller extends MX_Controller
     {
         $this->{$this->__cms_base_model_name}->cms_remove_quicklink($navigation_name);
     }
+
+    public final function cms_reconfig_route(){
+        $this->{$this->__cms_base_model_name}->cms_reconfig_route();
+    }
+
+    public final function cms_add_route($key, $value){
+        $this->{$this->__cms_base_model_name}->cms_add_route($key, $value);
+    }
+
+    public final function cms_remove_route($key){
+        $this->{$this->__cms_base_model_name}->cms_remove_route($key);
+    }
+
     protected function cms_assign_navigation($navigation_name, $group_name){
         $this->{$this->__cms_base_model_name}->cms_assign_navigation($navigation_name, $group_name);
     }

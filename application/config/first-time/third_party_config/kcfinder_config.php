@@ -18,40 +18,35 @@
 
 $_FCPATH = '{{ FCPATH }}';
 
-// get helper & chipper to decode cookie
+// define basepath
 if(!defined('BASEPATH')){ define('BASEPATH',''); }
-include($_FCPATH.'application/config/main/cms_config.php');
-if(array_key_exists('__cms_chipper', $config)){
-    $chipper = $config['__cms_chipper'];
-}else{
-    $chipper = 'Love Song Storm Gravity Tonight End of Sorrow Rosier';
-}
-require_once($_FCPATH.'application/helpers/cms_helper.php');
 
-// function to make things easier
-if(!function_exists('get_decoded_cookie')){
-    function get_decoded_cookie($key, $chipper){
-        $key = cms_encode($key, $chipper);
-        if(!array_key_exists($key, $_COOKIE)){
-            $key = urldecode($key);
-        }       
-        if(array_key_exists($key, $_COOKIE)){
-            return cms_decode($_COOKIE[$key], $chipper);
-        }
-        return NULL;
+// load secret information
+$info_exists = FALSE;
+if(isset($_COOKIE['__secret_code'])){
+    $secret_code = $_COOKIE['__secret_code'];
+    $file_name   = $_FCPATH.'application/config/tmp/_secret_'.$secret_code.'.php';
+    if(file_exists($file_name)){
+        include($file_name);
+        $secret         = json_decode($secret, TRUE);
+        // get base url
+        $_BASE_URL      = $secret['__cms_base_url'];
+        // get subsite
+        $_cms_subsite   = $secret['__cms_subsite'];
+        // get user_id
+        $_cms_user_id   = $secret['__cms_user_id'];
+        $info_exists    = TRUE;
     }
 }
 
-// get base url
-$_BASE_URL = get_decoded_cookie('__cms_base_url', $chipper);
-$_BASE_URL = $_BASE_URL !== NULL? $_BASE_URL : '{{ BASE_URL }}';
+// provide detail information if 
+if(!$info_exists){
+    $_BASE_URL      = '{{ BASE_URL }}';
+    $_cms_subsite    = '';
+    $_cms_user_id    = NULL;
+}
 
-// get subsite
-$_cms_subsite = get_decoded_cookie('__cms_subsite', $chipper);
-$_cms_subsite = $_cms_subsite !== NULL? $_cms_subsite : '';
-// get user_id
-$_cms_user_id = get_decoded_cookie('__cms_user_id', $chipper);
-$_cms_user_id = $_cms_user_id !== NULL? $_cms_user_id : NULL;
+// determine user_dir
 $_user_dir = $_cms_user_id !== NULL ?  $_cms_user_id : 'no_user';
 $_user_dir = $_cms_subsite == ''? '/main-'.$_user_dir : '/site-'.$_cms_subsite.'-'.$_user_id;
 

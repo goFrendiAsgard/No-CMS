@@ -106,7 +106,7 @@ class Info extends CMS_Module {
         // job
         $fields = array(
             'job_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-            'name'=> array("type"=>'enum', "constraint"=>20, "null"=>TRUE)
+            'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('job_id', TRUE);

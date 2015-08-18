@@ -16,7 +16,7 @@ class Info extends CMS_Module {
     public function do_deactivate(){
         $this->backup_database(array(
             $this->cms_complete_table_name('subsite')
-        ));
+        ));        
         $this->remove_all();
     }
 
@@ -71,6 +71,9 @@ class Info extends CMS_Module {
 
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('subsite'), TRUE);
+
+        // remove route
+        $this->cms_remove_route('main/register');
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -109,6 +112,10 @@ class Info extends CMS_Module {
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('subsite'));
+
+        if(strtoupper($this->cms_get_config('cms_add_subsite_on_register')) == 'TRUE'){
+            $this->cms_add_route('main/register', $module_path.'/multisite/register');
+        }
 
     }
 

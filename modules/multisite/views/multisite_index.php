@@ -15,8 +15,8 @@
 <div class="form form-inline">
     <div class="form-group">
         <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />    
-    </div>
-    <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
+    </div>&nbsp;
+    <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />&nbsp;
     <?php
         if($allow_navigate_backend){
             echo '<a href="'.$backend_url.'/" class="btn btn-default add_record">Add</a>'.PHP_EOL;

@@ -63,12 +63,12 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	'dsn'      => '',
+	'dsn'      => 'mysql:host=127.0.0.1;port=3306;dbname=no_cms',
 	'hostname' => '127.0.0.1',
-	'username' => '',
-	'password' => '',
-	'database' => '',
-	'dbdriver' => '',
+	'username' => 'root',
+	'password' => 'toor',
+	'database' => 'no_cms',
+	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => TRUE,
 	'db_debug' => TRUE,

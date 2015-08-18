@@ -130,6 +130,36 @@
     echo '</div>';
     echo '</div>';
 
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Site Title }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input('site_title', '', 
+        'id="site_title" placeholder="Site Title" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Site Slogan }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo form_input('site_slogan', '', 
+        'id="site_slogan" placeholder="Site Slogan" class="form-control"');
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Site Logo }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo '<input type="file" name="site_logo" id="site_logo" class="form-control" />';
+    echo '</div>';
+    echo '</div>';
+
+    echo '<div class="form-group">';
+    echo form_label('{{ language:Site Favicon }}', ' for="" class="control-label col-sm-4');
+    echo '<div class="col-sm-8">';
+    echo '<input type="file" name="site_favicon" id="site_favicon" class="form-control" />';
+    echo '</div>';
+    echo '</div>';
+
     echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
     echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
     echo '<div id="message" class="alert alert-danger"></div>';

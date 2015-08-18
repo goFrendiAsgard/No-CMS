@@ -207,6 +207,9 @@ v0.7.3
 + (done, tested) new mechanism for master-detail
 + (done, tested) add search module and theme capability
 
-v1.0.0
+v1.0.0 (inner: 0.7.5)
 + (done, tested) Using CI 3
 + (done, tested) New module mechanism, reduce AJAX and unnecessary queries.
++ (done, tested) Route management
++ (done, tested) Hide navigation
++ (done, tested) One user table to avoid duplication and complication

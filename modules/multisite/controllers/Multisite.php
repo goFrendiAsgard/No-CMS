@@ -53,9 +53,31 @@ class Multisite extends CMS_Secure_Controller {
     }
 
     public function edit($site_name){
-        $this->cms_guard_page($this->cms_complete_navigation_name('index'), 'modify_subsite');
+        $this->cms_guard_page($this->cms_complete_navigation_name('index'), 'modify_subsite');        
         $this->load->model($this->cms_module_path().'/subsite_model');
-        $is_super_admin = in_array($this->cms_user_id(), $this->cms_user_group_id());
+        $is_super_admin = $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id());
+        // don't edit if not allowed
+        if(!$is_super_admin){
+            $not_allowed = TRUE;
+            $query = $this->db->select('user_id')
+                ->from($this->cms_complete_table_name('subsite'))
+                ->where('name', $site_name)
+                ->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                if($row->user_id == $this->cms_user_id()){
+                    $not_allowed = FALSE;
+                }
+            }
+            if($not_allowed){
+                $module_path = $this->cms_module_path();
+                if($module_path == 'multisite'){
+                    redirect($module_path);
+                }else{
+                    redirect($module_path.'/multisite');
+                }
+            }
+        }
         // get module and theme list
         $module_list = $this->subsite_model->module_list();
         $theme_list = $this->subsite_model->theme_list();
@@ -190,5 +212,192 @@ class Multisite extends CMS_Secure_Controller {
             $subsite_list[] = $row->name;
         }
         echo json_encode($subsite_list);
+    }
+
+    public function register(){
+        $this->cms_guard_page('main_register');
+
+        // the honey_pot, every fake input should be empty
+        $honey_pot_pass = (strlen($this->input->post('user_name', ''))==0) &&
+            (strlen($this->input->post('email', ''))==0) &&
+            (strlen($this->input->post('real_name', ''))==0) &&
+            (strlen($this->input->post('password', ''))==0) &&
+            (strlen($this->input->post('confirm_password'))==0);
+        if(!$honey_pot_pass){
+            show_404();
+            die();
+        }
+
+        $previous_secret_code = $this->session->userdata('__main_registration_secret_code');
+        if($previous_secret_code === NULL){
+            $previous_secret_code = $this->cms_random_string();
+        }
+
+        $activation = $this->cms_get_config('cms_signup_activation');
+
+        $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
+        $subsite_table_name = $this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite');
+
+        //get user input
+        $user_name        = $this->input->post($previous_secret_code.'user_name');
+        $email            = $this->input->post($previous_secret_code.'email');
+        $real_name        = $this->input->post($previous_secret_code.'real_name');
+        $password         = $this->input->post($previous_secret_code.'password');
+        $confirm_password = $this->input->post($previous_secret_code.'confirm_password');
+
+        //set validation rule
+        $this->form_validation->set_rules($previous_secret_code.'user_name', 'User Name', 'required');
+        $this->form_validation->set_rules($previous_secret_code.'email', 'E mail', 'required|valid_email');
+        $this->form_validation->set_rules($previous_secret_code.'real_name', 'Real Name', 'required');
+        $this->form_validation->set_rules($previous_secret_code.'password', 'Password', 'required|matches['.$previous_secret_code.'confirm_password]');
+        $this->form_validation->set_rules($previous_secret_code.'confirm_password', 'Password Confirmation', 'required');
+
+        // generate new secret code
+        $secret_code = $this->cms_random_string();
+        $this->session->set_userdata('__main_registration_secret_code', $secret_code);
+        if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
+            $configs = array();
+            if(CMS_SUBSITE == '' && $this->cms_is_module_active('gofrendi.noCMS.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
+                $configs['site_name'] = $this->input->post('site_title');
+                $configs['site_slogan'] = $this->input->post('site_slogan');
+                $this->load->library('image_moo');
+                if(isset($_FILES['site_logo'])){
+                    $site_logo = $_FILES['site_logo'];
+                    if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
+                        try{
+                            $file_name = FCPATH.'assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
+                            move_uploaded_file($site_logo['tmp_name'], $file_name);
+                            $this->cms_resize_image($file_name, 800, 125);
+                            $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
+                        }catch(Exception $e){
+                            // do nothing
+                        }
+                    }
+                }
+                if(isset($_FILES['site_favicon'])){
+                    $site_favicon = $_FILES['site_favicon'];
+                    if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
+                        try{
+                            $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
+                            move_uploaded_file($site_favicon['tmp_name'], $file_name);
+                            $this->cms_resize_image($file_name, 64, 64);
+                            $configs['site_favicon'] = '{{ base_url }}assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
+                        }catch(Exception $e){
+                            // do nothing
+                        }
+                    }
+                }
+
+            }
+            $this->cms_do_register($user_name, $email, $real_name, $password, $configs);
+            // create subsite
+            $current_user_id = $this->db->select('user_id')
+                ->from($this->cms_user_table_name())
+                ->where('user_name', $user_name)
+                ->get()->row()->user_id;
+            
+            $this->load->model('installer/install_model');
+            $this->load->model($module_path.'/subsite_model');
+            // get these from old setting
+            $this->install_model->db_table_prefix              = cms_table_prefix();
+            $this->install_model->is_subsite                   = TRUE;
+            $this->install_model->subsite                      = $user_name;
+            $this->install_model->subsite_aliases              = '';
+            $this->install_model->set_subsite();
+            $this->install_model->hide_index                   = TRUE;
+            $this->install_model->gzip_compression             = FALSE;
+            // get these from configuration
+            $configs = $this->cms_get_config('cms_subsite_configs');
+            $configs = @json_decode($configs, TRUE);
+            if(!$configs){
+                $configs = array();
+            }
+            $modules = $this->cms_get_config('cms_subsite_modules');
+            $modules = explode(',', $modules);
+            $new_modules = array();
+            foreach($modules as $module){
+                $module = trim($module);
+                if(!in_array($module, $new_modules)){
+                    $new_modules[] = $module;
+                }
+            }
+            $modules = $new_modules;
+            $this->install_model->configs = $configs;
+            $this->install_model->modules = $modules;
+            // check installation
+            $check_installation = $this->install_model->check_installation();
+            $success = $check_installation['success'];
+            $module_installed = FALSE;
+            if($success){
+                $config = array('subsite_home_content'=> $this->cms_get_config('cms_subsite_home_content', TRUE));                
+                $this->install_model->build_configuration($config);
+                $this->install_model->build_database($config);
+                $module_installed = $this->install_model->install_modules();
+            }
+
+            // TODO: Find a way to bash this dirty trick
+            // This one is necessary to re-index modules
+            //$this->cms_adjust_module();
+            $data = array(
+                'name'=> $this->install_model->subsite,
+                'description'=>$user_name.' website',
+                'use_subdomain'=>$this->cms_get_config('cms_subsite_use_subdomain')=='TRUE'?1:0,
+                'user_id'=>$current_user_id,
+                'active'=>$activation == 'automatic'
+            );
+            $this->db->insert($subsite_table_name, $data);
+            $this->load->model($module_path.'/subsite_model');
+            $this->subsite_model->update_configs();
+            
+            // get the new subsite
+            $t_user = $this->cms_user_table_name();
+            $t_subsite = $subsite_table_name;
+            $query = $this->db->select('name,use_subdomain')
+                ->from($t_subsite)
+                ->join($t_user, $t_user.'.user_id='.$t_subsite.'.user_id')
+                ->where('user_name', $user_name)
+                ->order_by($t_subsite.'.id', 'desc')
+                ->get();
+            if($query->num_rows()>0){
+                $row = $query->row();
+                $subsite = $row->name;
+                // get directory
+                $site_url = site_url();
+                $site_url = substr($site_url, 0, strlen($site_url)-1);
+                $site_url_part = explode('/', $site_url);
+                if(count($site_url_part)>3){
+                    $directory_part = array_slice($site_url_part, 3);
+                    log_message('error', print_r(array($directory_part,$site_url_part), TRUE));
+                    $directory = '/'.implode('/', $directory_part);
+                }else{
+                    $directory = '';
+                }
+                $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
+                $ssl = $protocol == 'https://';
+                $port = $_SERVER['SERVER_PORT'];
+                $port = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
+                if($row->use_subdomain){
+                    $url = $protocol.$subsite.'.'.$_SERVER['SERVER_NAME'].$port.$directory;
+                }else{
+                    $url = $protocol.$_SERVER['SERVER_NAME'].$port.$directory.'/site-'.$subsite;
+                }
+                $this->cms_do_login($user_name, $password);
+                redirect($url,'refresh');
+            }
+            redirect('','refresh');
+        } else {
+            $data = array(
+                "user_name" => $user_name,
+                "email" => $email,
+                "real_name" => $real_name,
+                "register_caption" => $this->cms_lang('Register'),
+                "secret_code" => $secret_code,
+                "multisite_active" => $this->cms_is_module_active('gofrendi.noCMS.multisite'),
+                "add_subsite_on_register" => $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE',
+            );
+            $this->view('multisite/register', $data, 'main_register');
+        }
+
+        
     }
 }

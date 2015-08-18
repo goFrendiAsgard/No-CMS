@@ -7,23 +7,6 @@
  */
 class Main extends CMS_Controller
 {
-    
-    private function unique_field_name($field_name)
-    {
-        return 's'.substr(md5($field_name),0,8); //This s is because is better for a string to begin with a letter and not with a number
-    }
-
-    private function __random_string($length=10)
-    {
-        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-        $size = strlen( $chars );
-        $str = '';
-        for( $i = 0; $i < $length; $i++ ){
-            $str .= $chars[ rand( 0, $size - 1 ) ];
-        }
-        return $str;
-    }
 
     protected function upload($upload_path, $input_file_name = 'userfile', $submit_name = 'upload')
     {
@@ -343,7 +326,7 @@ class Main extends CMS_Controller
 
         $previous_secret_code = $this->session->userdata('__main_registration_secret_code');
         if($previous_secret_code === NULL){
-            $previous_secret_code = $this->__random_string();
+            $previous_secret_code = $this->cms_random_string();
         }
         //get user input
         $user_name        = $this->input->post($previous_secret_code.'user_name');
@@ -360,43 +343,10 @@ class Main extends CMS_Controller
         $this->form_validation->set_rules($previous_secret_code.'confirm_password', 'Password Confirmation', 'required');
 
         // generate new secret code
-        $secret_code = $this->__random_string();
+        $secret_code = $this->cms_random_string();
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
-            $configs = array();
-            if(CMS_SUBSITE == '' && $this->cms_is_module_active('gofrendi.noCMS.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
-                $configs['site_name'] = $this->input->post('site_title');
-                $configs['site_slogan'] = $this->input->post('site_slogan');
-                $this->load->library('image_moo');
-                if(isset($_FILES['site_logo'])){
-                    $site_logo = $_FILES['site_logo'];
-                    if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
-                        try{
-                            $file_name = FCPATH.'assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
-                            move_uploaded_file($site_logo['tmp_name'], $file_name);
-                            $this->cms_resize_image($file_name, 800, 125);
-                            $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
-                        }catch(Exception $e){
-                            // do nothing
-                        }
-                    }
-                }
-                if(isset($_FILES['site_favicon'])){
-                    $site_favicon = $_FILES['site_favicon'];
-                    if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
-                        try{
-                            $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
-                            move_uploaded_file($site_favicon['tmp_name'], $file_name);
-                            $this->cms_resize_image($file_name, 64, 64);
-                            $configs['site_favicon'] = '{{ base_url }}assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
-                        }catch(Exception $e){
-                            // do nothing
-                        }
-                    }
-                }
-
-            }
-            $this->cms_do_register($user_name, $email, $real_name, $password, $configs);
+            $this->cms_do_register($user_name, $email, $real_name, $password);
             redirect('','refresh');
         } else {
             $data = array(
@@ -521,7 +471,7 @@ class Main extends CMS_Controller
     public function change_profile()
     {
         $this->cms_guard_page('main_change_profile');
-        $SQL   = "SELECT user_name, email, real_name FROM ".cms_table_name('main_user')." WHERE user_id = " . $this->cms_user_id();
+        $SQL   = "SELECT user_name, email, real_name FROM ".$this->cms_user_table_name()." WHERE user_id = " . $this->cms_user_id();
         $query = $this->db->query($SQL);
         $row   = $query->row();
         $user_name = $row->user_name;
@@ -632,11 +582,12 @@ class Main extends CMS_Controller
     // USER ====================================================================
     public function user()
     {
+        if(CMS_SUBSITE != ''){redirect('');}
         $this->cms_guard_page('main_user_management');
         $crud = $this->new_crud();
         $crud->unset_jquery();
 
-        $crud->set_table(cms_table_name('main_user'));
+        $crud->set_table($this->cms_user_table_name());
         $crud->set_subject('User');
 
         $crud->required_fields('password');
@@ -719,7 +670,7 @@ class Main extends CMS_Controller
 
     public function _before_insert_user($post_array)
     {
-        $post_array['password'] = cms_md5($post_array['password']);
+        $post_array['password'] = cms_md5($post_array['password'], $this->cms_chipper());
         return $post_array;
     }
 
@@ -737,7 +688,7 @@ class Main extends CMS_Controller
         // get user activation status
         $user_id = $primary_key;
         $result = $this->db->select('active')
-            ->from(cms_table_name('main_user'))
+            ->from($this->cms_user_table_name())
             ->where('user_id', $user_id)
             ->get();
         $row = $result->row();
@@ -773,7 +724,7 @@ class Main extends CMS_Controller
             ->display_as('privileges', 'Privileges');
 
 
-        $crud->set_relation_n_n('users', cms_table_name('main_group_user'), cms_table_name('main_user'), 'group_id', 'user_id', 'user_name');
+        $crud->set_relation_n_n('users', cms_table_name('main_group_user'), $this->cms_user_table_name(), 'group_id', 'user_id', 'user_name');
         $crud->set_relation_n_n('navigations', cms_table_name('main_group_navigation'), cms_table_name('main_navigation'), 'group_id', 'navigation_id', 'navigation_name');
         $crud->set_relation_n_n('privileges', cms_table_name('main_group_privilege'), cms_table_name('main_privilege'), 'group_id', 'privilege_id', 'privilege_name');
         $crud->callback_before_delete(array(
@@ -864,9 +815,9 @@ class Main extends CMS_Controller
         $crud->unique_fields('navigation_name', 'title', 'url');
         $crud->unset_read();
 
-        $crud->columns('navigation_name'/*, 'navigation_child', 'title', 'active'*/);
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->columns('navigation_name');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
         
         // get themes to give options for default_theme field
         $themes     = $this->cms_get_theme_list();
@@ -886,6 +837,7 @@ class Main extends CMS_Controller
             ->display_as('notif_url', 'Notification URL')
             ->display_as('active', 'Active')
             ->display_as('is_static', 'Static')
+            ->display_as('hidden', 'Hidden')
             ->display_as('static_content', 'Static Content')
             ->display_as('authorization_id', 'Authorization')
             ->display_as('groups', 'Groups')
@@ -899,6 +851,7 @@ class Main extends CMS_Controller
         $crud->field_type('only_content', 'true_false');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
+        $crud->field_type('hidden', 'true_false');
         $crud->field_type('bootstrap_glyph','enum',array('glyphicon-adjust', 'glyphicon-align-center', 'glyphicon-align-justify', 'glyphicon-align-left', 'glyphicon-align-right', 'glyphicon-arrow-down', 'glyphicon-arrow-left', 'glyphicon-arrow-right', 'glyphicon-arrow-up', 'glyphicon-asterisk', 'glyphicon-backward', 'glyphicon-ban-circle', 'glyphicon-barcode', 'glyphicon-bell', 'glyphicon-bold', 'glyphicon-book', 'glyphicon-bookmark', 'glyphicon-briefcase', 'glyphicon-bullhorn', 'glyphicon-calendar', 'glyphicon-camera', 'glyphicon-certificate', 'glyphicon-check', 'glyphicon-chevron-down', 'glyphicon-chevron-left', 'glyphicon-chevron-right', 'glyphicon-chevron-up', 'glyphicon-circle-arrow-down', 'glyphicon-circle-arrow-left', 'glyphicon-circle-arrow-right', 'glyphicon-circle-arrow-up', 'glyphicon-cloud', 'glyphicon-cloud-download', 'glyphicon-cloud-upload', 'glyphicon-cog', 'glyphicon-collapse-down', 'glyphicon-collapse-up', 'glyphicon-comment', 'glyphicon-compressed', 'glyphicon-copyright-mark', 'glyphicon-credit-card', 'glyphicon-cutlery', 'glyphicon-dashboard', 'glyphicon-download', 'glyphicon-download-alt', 'glyphicon-earphone', 'glyphicon-edit', 'glyphicon-eject', 'glyphicon-envelope', 'glyphicon-euro', 'glyphicon-exclamation-sign', 'glyphicon-expand', 'glyphicon-export', 'glyphicon-eye-close', 'glyphicon-eye-open', 'glyphicon-facetime-video', 'glyphicon-fast-backward', 'glyphicon-fast-forward', 'glyphicon-file', 'glyphicon-film', 'glyphicon-filter', 'glyphicon-fire', 'glyphicon-flag', 'glyphicon-flash', 'glyphicon-floppy-disk', 'glyphicon-floppy-open', 'glyphicon-floppy-remove', 'glyphicon-floppy-save', 'glyphicon-floppy-saved', 'glyphicon-folder-close', 'glyphicon-folder-open', 'glyphicon-font', 'glyphicon-forward', 'glyphicon-fullscreen', 'glyphicon-gbp', 'glyphicon-gift', 'glyphicon-glass', 'glyphicon-globe', 'glyphicon-hand-down', 'glyphicon-hand-left', 'glyphicon-hand-right', 'glyphicon-hand-up', 'glyphicon-hd-video', 'glyphicon-hdd', 'glyphicon-header', 'glyphicon-headphones', 'glyphicon-heart', 'glyphicon-heart-empty', 'glyphicon-home', 'glyphicon-import', 'glyphicon-inbox', 'glyphicon-indent-left', 'glyphicon-indent-right', 'glyphicon-info-sign', 'glyphicon-italic', 'glyphicon-leaf', 'glyphicon-link', 'glyphicon-list', 'glyphicon-list-alt', 'glyphicon-lock', 'glyphicon-log-in', 'glyphicon-log-out', 'glyphicon-magnet', 'glyphicon-map-marker', 'glyphicon-minus', 'glyphicon-minus-sign', 'glyphicon-move', 'glyphicon-music', 'glyphicon-new-window', 'glyphicon-off', 'glyphicon-ok', 'glyphicon-ok-circle', 'glyphicon-ok-sign', 'glyphicon-open', 'glyphicon-paperclip', 'glyphicon-pause', 'glyphicon-pencil', 'glyphicon-phone', 'glyphicon-phone-alt', 'glyphicon-picture', 'glyphicon-plane', 'glyphicon-play', 'glyphicon-play-circle', 'glyphicon-plus', 'glyphicon-plus-sign', 'glyphicon-print', 'glyphicon-pushpin', 'glyphicon-qrcode', 'glyphicon-question-sign', 'glyphicon-random', 'glyphicon-record', 'glyphicon-refresh', 'glyphicon-registration-mark', 'glyphicon-remove', 'glyphicon-remove-circle', 'glyphicon-remove-sign', 'glyphicon-repeat', 'glyphicon-resize-full', 'glyphicon-resize-horizontal', 'glyphicon-resize-small', 'glyphicon-resize-vertical', 'glyphicon-retweet', 'glyphicon-road', 'glyphicon-save', 'glyphicon-saved', 'glyphicon-screenshot', 'glyphicon-sd-video', 'glyphicon-search', 'glyphicon-send', 'glyphicon-share', 'glyphicon-share-alt', 'glyphicon-shopping-cart', 'glyphicon-signal', 'glyphicon-sort', 'glyphicon-sort-by-alphabet', 'glyphicon-sort-by-alphabet-alt', 'glyphicon-sort-by-attributes', 'glyphicon-sort-by-attributes-alt', 'glyphicon-sort-by-order', 'glyphicon-sort-by-order-alt', 'glyphicon-sound-5-1', 'glyphicon-sound-6-1', 'glyphicon-sound-7-1', 'glyphicon-sound-dolby', 'glyphicon-sound-stereo', 'glyphicon-star', 'glyphicon-star-empty', 'glyphicon-stats', 'glyphicon-step-backward', 'glyphicon-step-forward', 'glyphicon-stop', 'glyphicon-subtitles', 'glyphicon-tag', 'glyphicon-tags', 'glyphicon-tasks', 'glyphicon-text-height', 'glyphicon-text-width', 'glyphicon-th', 'glyphicon-th-large', 'glyphicon-th-list', 'glyphicon-thumbs-down', 'glyphicon-thumbs-up', 'glyphicon-time', 'glyphicon-tint', 'glyphicon-tower', 'glyphicon-transfer', 'glyphicon-trash', 'glyphicon-tree-conifer', 'glyphicon-tree-deciduous', 'glyphicon-unchecked', 'glyphicon-upload', 'glyphicon-usd', 'glyphicon-user', 'glyphicon-volume-down', 'glyphicon-volume-off', 'glyphicon-volume-up', 'glyphicon-warning-sign', 'glyphicon-wrench', 'glyphicon-zoom-in', 'glyphicon-zoom-out'));
         $crud->field_type('index','hidden');
 
@@ -1205,7 +1158,7 @@ class Main extends CMS_Controller
             '_before_insert_quicklink'
         ));
 
-        $crud->callback_column($this->unique_field_name('navigation_id'), array(
+        $crud->callback_column($this->cms_unique_field_name('navigation_id'), array(
             $this,
             'column_quicklink_navigation_id'
         ));
@@ -1687,6 +1640,80 @@ class Main extends CMS_Controller
         return TRUE;
     }
 
+    // ROUTE ====================================================================
+    public function route()
+    {
+        $this->cms_guard_page('main_route_management');
+        $crud = $this->new_crud();
+        $crud->unset_jquery();
+
+        $crud->set_table(cms_table_name('main_route'));
+        $crud->set_subject('Route');
+
+        $crud->required_fields('key', 'value');
+        $crud->unique_fields('key');
+        $crud->unset_read();
+
+        $crud->columns('key', 'value', 'description');
+        $crud->edit_fields('key', 'value', 'description');
+        $crud->add_fields('key', 'value', 'description');
+
+        $crud->display_as('key', 'Key')
+            ->display_as('value', 'Value')
+            ->display_as('description', 'Description');
+
+        $crud->unset_texteditor('key');
+        $crud->unset_texteditor('value');
+        $crud->unset_texteditor('description');
+
+        $crud->callback_after_insert(array(
+            $this,
+            '_after_insert_route'
+        ));
+        $crud->callback_after_delete(array(
+            $this,
+            '_after_delete_route'
+        ));
+        $crud->callback_after_update(array(
+            $this,
+            '_after_update_route'
+        ));
+
+        $crud->set_language($this->cms_language());
+
+        $output = $crud->render();
+
+        // prepare css & js, add them to config
+        $config = array();
+        $asset = new Cms_asset();
+        foreach($output->css_files as $file){
+            $asset->add_css($file);
+        }
+        $config['css'] = $asset->compile_css();
+
+        foreach($output->js_files as $file){
+            $asset->add_js($file);
+        }
+        $config['js'] = $asset->compile_js();
+        // show the view
+        $this->view('main/main_route', $output, 'main_route_management', $config);
+    }
+
+    public function _after_insert_route($post_array, $primary_key){
+        $this->cms_reconfig_route();
+        return TRUE;
+    }
+
+    public function _after_delete_route($primary_key){
+        $this->cms_reconfig_route();
+        return TRUE;
+    }
+
+    public function _after_update_route($post_array, $primary_key){
+        $this->cms_reconfig_route();
+        return TRUE;
+    }
+
     public function json_login_info(){
         $result = array(
             'is_login'=> $this->cms_user_id()>0,
@@ -1700,7 +1727,7 @@ class Main extends CMS_Controller
     }
 
     private function _get_token($unique_id){
-        $token_file = APPPATH.'config/token'.$unique_id.'.php';
+        $token_file = APPPATH.'config/tmp/_token'.$unique_id.'.php';
         if(!file_exists($token_file)){
             return NULL;
         }
@@ -1714,14 +1741,14 @@ class Main extends CMS_Controller
 
     private function _set_token($unique_id, $token){
         $token = @json_encode($token);
-        $token_file = APPPATH.'config/token'.$unique_id.'.php';
+        $token_file = APPPATH.'config/tmp/_token'.$unique_id.'.php';
         $content = '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL;
         $content .= '$token = \''.$token.'\';';
         file_put_contents($token_file, $content);
     }
 
     private function _remove_token($unique_id){
-        $token_file = APPPATH.'config/token'.$unique_id.'.php';
+        $token_file = APPPATH.'config/_token'.$unique_id.'.php';
         if(file_exists($token_file)){
             unlink($token_file);
         }
@@ -1738,7 +1765,7 @@ class Main extends CMS_Controller
                     'remote_addr'  => $_SERVER['REMOTE_ADDR'],
                     'user_agent'   => $_SERVER['HTTP_USER_AGENT'],
                     'original_url' => $original_url,
-                    'user_name'    => $this->cms_user_name(),
+                    'user_id'      => $this->cms_user_id(),
                     'time'         => time(),
                 );           
             $this->_set_token($unique_id, $token);
@@ -1763,15 +1790,17 @@ class Main extends CMS_Controller
                 if($_SERVER['REMOTE_ADDR'] == $token['remote_addr'] && $_SERVER['HTTP_USER_AGENT'] == $token['user_agent'] && 
                     $original_url == $token['original_url'] && time() < $token['time']+120){
                     // get user name
-                    $user_name = $token['user_name'];
+                    $user_id = $token['user_id'];
                     // get other column in order to emulate login
-                    $query = $this->db->select('user_id, real_name, email')
-                        ->from(cms_table_name('main_user'))
-                        ->where('user_name', $user_name)
+                    $query = $this->db->select('user_id, user_name, real_name, email')
+                        ->from($this->cms_user_table_name())
+                        ->where('user_id', $user_id)
                         ->get();
+                    log_message('error', $query->num_rows());
+                    log_message($query->row()->user_id);
                     if($query->num_rows()>0){
                         $row = $query->row();
-                        $this->cms_user_name($user_name);
+                        $this->cms_user_name($row->user_name);
                         $this->cms_user_id($row->user_id);
                         $this->cms_user_real_name($row->real_name);
                         $this->cms_user_email($row->email);
@@ -1786,7 +1815,7 @@ class Main extends CMS_Controller
 
     public function widget_online_user_ajax(){
         $query = $this->db->select('user_name')
-            ->from(cms_table_name('main_user'))
+            ->from($this->cms_user_table_name())
             ->where('login', 1)
             ->where('last_active >=', microtime(true)-70)
             ->get();

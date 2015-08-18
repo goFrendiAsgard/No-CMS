@@ -38,6 +38,7 @@ if(count($articles)==0){
                     '<div class="col-md-4" style="min-height:50px; background-repeat: no-repeat;
                         background-attachment: cover; background-position: center; 
                         background-color:black;
+                        background-size:cover;
                         background-image:url(\''.$photo.'\')"></div>'.
                     '<div class="col-md-8" style="vertical-align:top;">'.$article['title'].'</div>'.
                     '</div>');

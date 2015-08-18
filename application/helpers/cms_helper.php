@@ -130,8 +130,10 @@ function cms_module_prefix($module_directory, $new_prefix = NULL){
     return $module_table_prefix = cms_module_config($module_directory, 'module_prefix', $new_prefix);
 }
 
-function cms_table_name($table_name){
-    $table_prefix = cms_table_prefix();
+function cms_table_name($table_name, $table_prefix = NULL){
+    if($table_prefix === NULL){
+        $table_prefix = cms_table_prefix();
+    }
     if($table_prefix != ''){
         return $table_prefix.'_'.$table_name;
     }else{

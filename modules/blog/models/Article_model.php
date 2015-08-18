@@ -103,7 +103,7 @@ class Article_model extends  CMS_Model{
                 article_id, article_title, article_url, content, date, keyword, description, allow_comment,
                 real_name AS author, author_user_id
             FROM ".$this->cms_complete_table_name('article')."
-            LEFT JOIN ".cms_table_name('main_user')." ON (".cms_table_name('main_user').".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
+            LEFT JOIN ".$this->cms_user_table_name()." ON (".$this->cms_user_table_name().".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
             WHERE $where_article_url";
 
         $query = $this->db->query($SQL);
@@ -166,8 +166,8 @@ class Article_model extends  CMS_Model{
                   WHERE article_id = ".$this->cms_complete_table_name('article').".article_id
                 ) as comment_count
             FROM ".$this->cms_complete_table_name('article')."
-            LEFT JOIN ".cms_table_name('main_user').
-                " ON (".cms_table_name('main_user').".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
+            LEFT JOIN ".$this->cms_user_table_name().
+                " ON (".$this->cms_user_table_name().".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
             WHERE
                 $where_category AND
                 $where_search AND 
@@ -295,7 +295,7 @@ class Article_model extends  CMS_Model{
         $user_id = $row->author_user_id;
         if(isset($user_id) && $user_id>0){
             $query_user = $this->db->select('real_name, user_name, email')
-                ->from(cms_table_name('main_user'))
+                ->from($this->cms_user_table_name())
                 ->where('user_id', $user_id)
                 ->get();
             $row_user = $query_user->row();

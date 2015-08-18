@@ -273,25 +273,24 @@ class Install_model extends CI_Model{
                 $success = FALSE;
                 $error_list[] = '<a class="a-change-tab" href="#" tab="#tab1" component="db_name">Database schema</a> cannot be empty';
             }
-        }
-        if($this->admin_user_name==''){
-            $success = FALSE;
-            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_user_name">Super Admin\'s username</a> is empty';
-        }
-        if($this->admin_real_name==''){
-            $success = FALSE;
-            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_real_name">Super Admin\'s real name</a> is empty';
-        }
-        if($this->admin_password==''){
-            $success = FALSE;
-            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_password">Super Admin\'s password</a> is empty';
-        }else if ($this->admin_password != $this->admin_confirm_password){
-            $success = FALSE;
-            $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_confirm_password">Super Admin\'s password confirmation</a> doesn\'t match';
-        }
-
-        // subsite doesn't need this
-        if(!$this->is_subsite){
+            // admin's user name
+            if($this->admin_user_name==''){
+                $success = FALSE;
+                $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_user_name">Super Admin\'s username</a> is empty';
+            }
+            // admin's real name
+            if($this->admin_real_name==''){
+                $success = FALSE;
+                $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_real_name">Super Admin\'s real name</a> is empty';
+            }
+            // admin's password
+            if($this->admin_password==''){
+                $success = FALSE;
+                $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_password">Super Admin\'s password</a> is empty';
+            }else if ($this->admin_password != $this->admin_confirm_password){
+                $success = FALSE;
+                $error_list[] = '<a class="a-change-tab" href="#" tab="#tab2" component="admin_confirm_password">Super Admin\'s password confirmation</a> doesn\'t match';
+            }
             // No-CMS directory
             if (!is_writable(FCPATH)) {
                 $success  = FALSE;
@@ -328,7 +327,12 @@ class Install_model extends CI_Model{
         if (!is_writable(APPPATH.'logs/hybridauth.log')) {
             $success  = FALSE;
             $error_list[] = APPPATH."logs/hybridauth.log is not writable";
-        }        
+        }
+        // tmp folder
+        if (!is_writable(APPPATH.'config/tmp')) {
+            $success = FALSE;
+            $error_list[] = APPPATH."config/tmp is not writable";
+        }
         // third party authentication activated
         if ($this->auth_enable_facebook || $this->auth_enable_twitter || $this->auth_enable_google || $this->auth_enable_yahoo || $this->auth_enable_linkedin || $this->auth_enable_myspace || $this->auth_enable_foursquare || $this->auth_enable_windows_live || $this->auth_enable_open_id || $this->auth_enable_aol ) {
             // curl
@@ -604,181 +608,192 @@ class Install_model extends CI_Model{
 
         // GROUP
         $fields = array(
-                'group_id' => $type_primary_key,
-                'group_name' => $type_varchar_small_strict,
-                'description' => $type_text,
+                'group_id'      => $type_primary_key,
+                'group_name'    => $type_varchar_small_strict,
+                'description'   => $type_text,
             );
         $sql_list[] = $this->create_table('main_group',$fields);
 
         // WIDGET
         $fields = array(
-                'widget_id' => $type_primary_key,
-                'widget_name' => $type_varchar_large_strict,
-                'title' => $type_varchar_small,
-                'description' => $type_text,
-                'url' => $type_varchar_large,
-                'authorization_id' => $type_foreign_key_default_1,
-                'active' => $type_boolean_true,
-                'index' => $type_index,
-                'is_static' => $type_boolean_false,
-                'static_content' => $type_text,
-                'slug' => $type_varchar_large,
+                'widget_id'         => $type_primary_key,
+                'widget_name'       => $type_varchar_large_strict,
+                'title'             => $type_varchar_small,
+                'description'       => $type_text,
+                'url'               => $type_varchar_large,
+                'authorization_id'  => $type_foreign_key_default_1,
+                'active'            => $type_boolean_true,
+                'index'             => $type_index,
+                'is_static'         => $type_boolean_false,
+                'static_content'    => $type_text,
+                'slug'              => $type_varchar_large,
             );
         $sql_list[] = $this->create_table('main_widget',$fields);
 
         // NAVIGATION
         $fields = array(
-                'navigation_id' => $type_primary_key,
-                'navigation_name' => $type_varchar_large_strict,
-                'parent_id' => $type_foreign_key,
-                'title' => $type_varchar_small_strict,
-                'bootstrap_glyph' => $type_varchar_small,
-                'page_title' => $type_varchar_small,
-                'page_keyword' => $type_varchar_large,
-                'description' => $type_text,
-                'url' => $type_varchar_large,
-                'authorization_id' => $type_foreign_key_default_1,
-                'active' => $type_boolean_true,
-                'index' => $type_index,
-                'is_static' => $type_boolean_false,
-                'static_content' => $type_text,
-                'only_content' => $type_boolean_false,
-                'default_theme' => $type_varchar_small,
-                'default_layout' => $type_varchar_small,
-                'notif_url'=>$type_varchar_large,
-                'children'=>$type_varchar_large,
+                'navigation_id'     => $type_primary_key,
+                'navigation_name'   => $type_varchar_large_strict,
+                'parent_id'         => $type_foreign_key,
+                'title'             => $type_varchar_small_strict,
+                'bootstrap_glyph'   => $type_varchar_small,
+                'page_title'        => $type_varchar_small,
+                'page_keyword'      => $type_varchar_large,
+                'description'       => $type_text,
+                'url'               => $type_varchar_large,
+                'authorization_id'  => $type_foreign_key_default_1,
+                'active'            => $type_boolean_true,
+                'index'             => $type_index,
+                'is_static'         => $type_boolean_false,
+                'static_content'    => $type_text,
+                'only_content'      => $type_boolean_false,
+                'default_theme'     => $type_varchar_small,
+                'default_layout'    => $type_varchar_small,
+                'notif_url'         =>$type_varchar_large,
+                'children'          =>$type_varchar_large,
+                'hidden'            => $type_boolean_false,
             );
         $sql_list[] = $this->create_table('main_navigation',$fields);
 
         // QUICKLINK
         $fields = array(
-                'quicklink_id' => $type_primary_key,
-                'navigation_id' => $type_foreign_key_not_null,
-                'index' => $type_index,
+                'quicklink_id'      => $type_primary_key,
+                'navigation_id'     => $type_foreign_key_not_null,
+                'index'             => $type_index,
             );
         $sql_list[] = $this->create_table('main_quicklink',$fields);
 
         // PRIVILEGE
         $fields = array(
-                'privilege_id' => $type_primary_key,
-                'privilege_name' => $type_varchar_small_strict,
-                'title' => $type_varchar_small_strict,
-                'description' => $type_text,
-                'authorization_id' => $type_foreign_key_default_1,
+                'privilege_id'      => $type_primary_key,
+                'privilege_name'    => $type_varchar_small_strict,
+                'title'             => $type_varchar_small_strict,
+                'description'       => $type_text,
+                'authorization_id'  => $type_foreign_key_default_1,
             );
         $sql_list[] = $this->create_table('main_privilege',$fields);
 
         // USER
         $fields = array(
-                'user_id' => $type_primary_key,
-                'user_name' => $type_varchar_small_strict,
-                'email' => $type_varchar_small,
-                'password' => $type_password,
-                'activation_code' => $type_varchar_small,
-                'real_name' => $type_varchar_large,
-                'active' => $type_boolean_true,
-                'auth_OpenID' => $type_varchar_large,
-                'auth_Facebook' => $type_varchar_large,
-                'auth_Twitter' => $type_varchar_large,
-                'auth_Google' => $type_varchar_large,
-                'auth_Yahoo' => $type_varchar_large,
-                'auth_LinkedIn' => $type_varchar_large,
-                'auth_MySpace' => $type_varchar_large,
-                'auth_Foursquare' => $type_varchar_large,
-                'auth_AOL' => $type_varchar_large,
-                'auth_Live' => $type_varchar_large,
-                'language' => $type_varchar_small,
-                'theme' => $type_varchar_small,
-                'last_active'=>$type_varchar_small,
-                'login'=>$type_boolean_false,
+                'user_id'           => $type_primary_key,
+                'user_name'         => $type_varchar_small_strict,
+                'email'             => $type_varchar_small,
+                'password'          => $type_password,
+                'activation_code'   => $type_varchar_small,
+                'real_name'         => $type_varchar_large,
+                'active'            => $type_boolean_true,
+                'auth_OpenID'       => $type_varchar_large,
+                'auth_Facebook'     => $type_varchar_large,
+                'auth_Twitter'      => $type_varchar_large,
+                'auth_Google'       => $type_varchar_large,
+                'auth_Yahoo'        => $type_varchar_large,
+                'auth_LinkedIn'     => $type_varchar_large,
+                'auth_MySpace'      => $type_varchar_large,
+                'auth_Foursquare'   => $type_varchar_large,
+                'auth_AOL'          => $type_varchar_large,
+                'auth_Live'         => $type_varchar_large,
+                'language'          => $type_varchar_small,
+                'theme'             => $type_varchar_small,
+                'last_active'       => $type_varchar_small,
+                'login'             => $type_boolean_false,
             );
         $sql_list[] = $this->create_table('main_user',$fields);
 
         // GROUP WIDGET
         $fields = array(
-                'id' => $type_primary_key,
-                'group_id' => $type_foreign_key_not_null,
-                'widget_id' => $type_foreign_key_not_null,
+                'id'            => $type_primary_key,
+                'group_id'      => $type_foreign_key_not_null,
+                'widget_id'     => $type_foreign_key_not_null,
             );
         $sql_list[] = $this->create_table('main_group_widget',$fields);
 
         // GROUP NAVIGATION
         $fields = array(
-                'id' => $type_primary_key,
-                'group_id' => $type_foreign_key_not_null,
+                'id'            => $type_primary_key,
+                'group_id'      => $type_foreign_key_not_null,
                 'navigation_id' => $type_foreign_key_not_null,
             );
         $sql_list[] = $this->create_table('main_group_navigation',$fields);
 
         // GROUP PRIVILEGE
         $fields = array(
-                'id' => $type_primary_key,
-                'group_id' => $type_foreign_key_not_null,
-                'privilege_id' => $type_foreign_key_not_null,
+                'id'            => $type_primary_key,
+                'group_id'      => $type_foreign_key_not_null,
+                'privilege_id'  => $type_foreign_key_not_null,
             );
         $sql_list[] = $this->create_table('main_group_privilege',$fields);
 
         // GROUP USER
         $fields = array(
-                'id' => $type_primary_key,
-                'group_id' => $type_foreign_key_not_null,
-                'user_id' => $type_foreign_key_not_null,
+                'id'        => $type_primary_key,
+                'group_id'  => $type_foreign_key_not_null,
+                'user_id'   => $type_foreign_key_not_null,
             );
         $sql_list[] = $this->create_table('main_group_user',$fields);
 
         // MODULE
         $fields = array(
-                'module_id' => $type_primary_key,
-                'module_name' => $type_varchar_small_strict,
-                'module_path' => $type_varchar_large_strict,
-                'version' => $type_varchar_small,
-                'user_id' => $type_foreign_key,
+                'module_id'     => $type_primary_key,
+                'module_name'   => $type_varchar_small_strict,
+                'module_path'   => $type_varchar_large_strict,
+                'version'       => $type_varchar_small,
+                'user_id'       => $type_foreign_key,
             );
         $sql_list[] = $this->create_table('main_module',$fields);
 
         // MODULE DEPENDENCY
         $fields = array(
-                'module_dependency_id' => $type_primary_key,
-                'module_id' => $type_foreign_key_not_null,
-                'parent_id' => $type_foreign_key_not_null,
+                'module_dependency_id'  => $type_primary_key,
+                'module_id'             => $type_foreign_key_not_null,
+                'parent_id'             => $type_foreign_key_not_null,
             );
         $sql_list[] = $this->create_table('main_module_dependency',$fields);
 
         // CONFIG
         $fields = array(
-                'config_id' => $type_primary_key,
-                'config_name' => $type_varchar_small_strict,
-                'value' => $type_text,
-                'description' => $type_text,
+                'config_id'     => $type_primary_key,
+                'config_name'   => $type_varchar_small_strict,
+                'value'         => $type_text,
+                'description'   => $type_text,
             );
         $sql_list[] = $this->create_table('main_config',$fields);
 
         // CI SESSION
         $fields = array(
-                'session_id' => $type_varchar_small_strict,
-                'ip_address' => $type_ip_address,
-                'user_agent' => $type_user_agent,
+                'session_id'    => $type_varchar_small_strict,
+                'ip_address'    => $type_ip_address,
+                'user_agent'    => $type_user_agent,
                 'last_activity' => $type_int,
-                'user_data' => $type_text,
+                'user_data'     => $type_text,
             );
         $sql_list[] = $this->create_table('ci_sessions',$fields);
 
         // LANGUAGE
         $fields = array(
-                'language_id' => $type_primary_key,
-                'name' => $type_varchar_small_strict,
-                'code' => $type_text,
-                'iso_code' => $type_text,
+                'language_id'   => $type_primary_key,
+                'name'          => $type_varchar_small_strict,
+                'code'          => $type_text,
+                'iso_code'      => $type_text,
             );
         $sql_list[] = $this->create_table('main_language',$fields);
+
         // DETAIL LANGUAGE
         $fields = array(
-                'detail_language_id' => $type_primary_key,
-                'id_language' => $type_int,
-                'key' => $type_varchar_small_strict,
-                'translation' => $type_varchar_small_strict,
+                'detail_language_id'    => $type_primary_key,
+                'id_language'           => $type_int,
+                'key'                   => $type_varchar_small_strict,
+                'translation'           => $type_varchar_small_strict,
             );
         $sql_list[] = $this->create_table('main_detail_language',$fields);
+
+        // ROUTES
+        $fields = array(
+                'route_id'      => $type_primary_key,
+                'key'           => $type_text,
+                'value'         => $type_text,
+                'description'   => $type_text,
+            );
+        $sql_list[] = $this->create_table('main_route', $fields);
 
         return $sql_list;
     }
@@ -913,7 +928,9 @@ class Install_model extends CI_Model{
             ));
 
         // user
-        $sql_list[] = $this->insert_user();
+        if(!$this->is_subsite){
+            $sql_list[] = $this->insert_user();
+        }
 
         // navigation
         if($this->is_subsite){
@@ -944,8 +961,6 @@ class Install_model extends CI_Model{
                     4, 3, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_privilege_management', 4, 'Privilege Management', 'Privilege Management', NULL, 'Privilege Management', 'main/privilege',
                     4, 2, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
-                array('main_user_management', 4, 'User Management', 'User Management', NULL, 'Manage User', 'main/user',
-                    4, 1, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_module_management', 4, 'Module Management', 'Module Management', NULL, 'Install Or Uninstall Thirdparty Module', 'main/module_management',
                     4, 5, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_change_theme', 4, 'Change Theme', 'Change Theme', NULL, 'Change Theme', 'main/change_theme',
@@ -958,8 +973,10 @@ class Install_model extends CI_Model{
                     4, 8, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_config_management', 4, 'Configuration Management', 'Configuration Management', NULL, 'Manage Configuration Parameters', 'main/config',
                     4, 9, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
-                array('main_setting', 4, 'Setting', 'CMS Setting', NULL, 'CMS Setting', 'main/setting',
+                array('main_route_management', 4, 'Route Management', 'Route Management', NULL, 'Manage Routes', 'main/route',
                     4, 10, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
+                array('main_setting', 4, 'Setting', 'CMS Setting', NULL, 'CMS Setting', 'main/setting',
+                    4, 11, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_index', NULL, 'Home', 'Home', NULL, 'A Free CodeIgniter Based CMS Framework', 'main/index',
                     1, 1, 1, 1, $main_index_content, 0, 'glyphicon-home', NULL, 'slide'),
                 array('main_language', NULL, 'Language', 'Language', NULL, 'Choose the language', 'main/language',
@@ -968,6 +985,13 @@ class Install_model extends CI_Model{
                     1, 2, 1, 0, NULL, 0),
             ));
 
+        // only supersite has user management
+        if(!$this->is_subsite){
+            $sql_list[] = $this->insert_navigations(array(
+                array('main_user_management', 4, 'User Management', 'User Management', NULL, 'Manage User', 'main/user',
+                    4, 1, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
+            ));                
+        }
         
         
         // quicklink
@@ -1430,7 +1454,7 @@ class Install_model extends CI_Model{
             // determine user table name
             $user_table_name = 'main_user';
             if($this->is_subsite){
-                include(APPPATH.'config/site-'.$this->subsite.'/cms_config.php');
+                include(APPPATH.'config/main/cms_config.php');
                 $prefix = $config['__cms_table_prefix'];
             }else{
                 $prefix = $this->db_table_prefix;
@@ -1482,7 +1506,7 @@ class Install_model extends CI_Model{
                             }
                             $url_part[0] = strtolower($new_controller_name);
                             $new_url = implode('/', $url_part);
-                            $response = @Modules::run($module.'/'.$new_url, $bypass);
+                            $response = Modules::run($module.'/'.$new_url, $bypass);
                             // look if it is succeed or failed
                             $success = FALSE;
                             if($response != ''){

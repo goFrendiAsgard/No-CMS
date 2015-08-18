@@ -110,7 +110,7 @@ class Manage_article extends CMS_Secure_Controller {
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if($state == 'list' || $state == 'ajax_list' || $state == 'export' || $state == 'print' || $state == 'success'){
-            $crud->set_relation('author_user_id', cms_table_name('main_user'), 'user_name');
+            $crud->set_relation('author_user_id', $this->cms_user_table_name(), 'user_name');
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -404,7 +404,7 @@ class Manage_article extends CMS_Secure_Controller {
             $user_id = $row['author_user_id'];
             if($user_id>0){
                 $query_user = $this->db->select('real_name, email')
-                    ->from(cms_table_name('main_user'))
+                    ->from($this->cms_user_table_name())
                     ->where('user_id', $user_id)
                     ->get();
                 $row_user = $query_user->row();

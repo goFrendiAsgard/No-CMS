@@ -123,13 +123,15 @@ class CMS_Module extends CMS_Controller
         if($bypass === NULL){
             return FALSE;
         }
-        $query = $this->db->select('password')
-            ->from(cms_table_name('main_user'))
+        $query = $this->db->select('user_id, password')
+            ->from($this->cms_user_table_name())
             ->where('user_id', 1)
             ->get();
         if($query->num_rows()>0){
             $row = $query->row();
+            log_message('error', $row->password);
             if($row->password == $bypass){
+                log_message('error', 'Bypass berhasil');
                 return TRUE;
             }
         }
@@ -195,7 +197,7 @@ class CMS_Module extends CMS_Controller
         $result['message'] = ul($result['message']);
 
         // show result
-        if($bypass != NULL){
+        if($bypass !== NULL){
             echo json_encode($result);
         } else if($result['success']) {
             $module_management_url = $this->cms_navigation_url('main_module_management');

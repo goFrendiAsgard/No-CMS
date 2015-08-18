@@ -70,7 +70,7 @@ class Hauth extends CMS_Controller {
                         $status = $this->cms_third_party_status();
                         $identifier = $status[$provider]['identifier'];
                         $query = $this->db->select('auth_'.$provider)
-                            ->from(cms_table_name('main_user'))
+                            ->from($this->cms_user_table_name())
                             ->where('auth_'.$provider, $identifier)
                             ->get();
                         // if it is not, let's humbly ask the user's email
