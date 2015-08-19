@@ -582,7 +582,6 @@ class Main extends CMS_Controller
     // USER ====================================================================
     public function user()
     {
-        if(CMS_SUBSITE != ''){redirect('');}
         $this->cms_guard_page('main_user_management');
         $crud = $this->new_crud();
         $crud->unset_jquery();
@@ -594,10 +593,18 @@ class Main extends CMS_Controller
         $crud->unique_fields('user_name','email');
         $crud->unset_read();
 
-        $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
-        $crud->edit_fields('user_name', 'email', 'real_name', 'active', 'groups');
-        $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups');
-        $crud->field_type('active', 'true_false');
+        if(CMS_SUBSITE == ''){
+            $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
+            $crud->edit_fields('user_name', 'email', 'real_name', 'active', 'groups');
+            $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups');
+            $crud->field_type('active', 'true_false');
+        } else{
+            $crud->columns('user_name', 'real_name', 'active', 'groups');
+            $crud->edit_fields('user_name', 'groups');
+            $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups');
+            $crud->field_type('active', 'true_false');
+            $crud->unset_delete();
+        }
 
         $crud->display_as('user_name', 'User Name')
             ->display_as('email', 'Email')
@@ -693,10 +700,12 @@ class Main extends CMS_Controller
             ->get();
         $row = $result->row();
         $active = $row->active;
-        // change profile
-        $this->cms_do_change_profile($post_array['email'], $post_array['real_name'] ,NULL, $primary_key);
-        // update subsite
-        $this->_cms_set_user_subsite_activation($user_id, $active);
+        if(CMS_SUBSITE == ''){
+            // change profile
+            $this->cms_do_change_profile($post_array['email'], $post_array['real_name'] ,NULL, $primary_key);
+            // update subsite
+            $this->_cms_set_user_subsite_activation($user_id, $active);
+        }
         return TRUE;
     }
 

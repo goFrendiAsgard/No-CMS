@@ -129,9 +129,7 @@ class CMS_Module extends CMS_Controller
             ->get();
         if($query->num_rows()>0){
             $row = $query->row();
-            log_message('error', $row->password);
             if($row->password == $bypass){
-                log_message('error', 'Bypass berhasil');
                 return TRUE;
             }
         }

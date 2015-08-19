@@ -88,25 +88,6 @@ class CMS_Model extends CI_Model
             self::$__cms_model_properties['super_admin'] = $super_admin;
         }
 
-        // kcfinder
-        /*
-        include(APPPATH.'config/main/cms_config.php');
-        if(array_key_exists('__cms_chipper', $config)){
-            $chipper = $config['__cms_chipper'];
-        }else{
-            $chipper = 'Love Song Storm Gravity Tonight End of Sorrow Rosier';
-        }
-        $default_cookie = array(
-                '__cms_base_url' => base_url(),
-                '__cms_subsite' => CMS_SUBSITE,
-                '__cms_user_id' => $this->cms_user_id(),
-            );
-        foreach($default_cookie as $key=>$val){
-            if(!array_key_exists(cms_encode($key, $chipper), $_COOKIE)){
-                setcookie(cms_encode($key, $chipper), cms_encode($val, $chipper));
-            }
-        }*/
-
         // KCFINDER's stuffs =========
 
         // clear old secret files
@@ -1077,18 +1058,40 @@ class CMS_Model extends CI_Model
         $user_real_name = NULL;
         $user_email = NULL;
         $login_succeed = FALSE;
-        // do the query
-        $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".$this->cms_user_table_name()." WHERE
-                (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
-                password = '" . cms_md5($password, $this->cms_chipper()) . "' AND
-                active = 1");
-        if($query->num_rows()>0){
-            $row            = $query->row();
-            $user_name      = $row->user_name;
-            $user_id        = $row->user_id;
-            $user_real_name = $row->real_name;
-            $user_email     = $row->email;
-            $login_succeed  = TRUE;
+
+        // try to login as a user of specific 
+        if(CMS_SUBSITE != ''){
+            $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".$this->cms_user_table_name()." WHERE
+                    (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
+                    password = '" . cms_md5($password) . "' AND
+                    subsite = '" . CMS_SUBSITE . "' AND
+                    active = 1");
+            if($query->num_rows()>0){
+                $row            = $query->row();
+                $user_name      = $row->user_name;
+                $user_id        = $row->user_id;
+                $user_real_name = $row->real_name;
+                $user_email     = $row->email;
+                $login_succeed  = TRUE;
+            }
+        }
+
+        // if login not succeed, try to login as user
+        if(!$login_succeed){
+            // do the query
+            $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".$this->cms_user_table_name()." WHERE
+                    (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
+                    password = '" . cms_md5($password, $this->cms_chipper()) . "' AND
+                    subsite IS NULL AND
+                    active = 1");
+            if($query->num_rows()>0){
+                $row            = $query->row();
+                $user_name      = $row->user_name;
+                $user_id        = $row->user_id;
+                $user_real_name = $row->real_name;
+                $user_email     = $row->email;
+                $login_succeed  = TRUE;
+            }
         }
         
         if(!$login_succeed){

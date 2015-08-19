@@ -674,30 +674,33 @@ class Install_model extends CI_Model{
         $sql_list[] = $this->create_table('main_privilege',$fields);
 
         // USER
-        $fields = array(
-                'user_id'           => $type_primary_key,
-                'user_name'         => $type_varchar_small_strict,
-                'email'             => $type_varchar_small,
-                'password'          => $type_password,
-                'activation_code'   => $type_varchar_small,
-                'real_name'         => $type_varchar_large,
-                'active'            => $type_boolean_true,
-                'auth_OpenID'       => $type_varchar_large,
-                'auth_Facebook'     => $type_varchar_large,
-                'auth_Twitter'      => $type_varchar_large,
-                'auth_Google'       => $type_varchar_large,
-                'auth_Yahoo'        => $type_varchar_large,
-                'auth_LinkedIn'     => $type_varchar_large,
-                'auth_MySpace'      => $type_varchar_large,
-                'auth_Foursquare'   => $type_varchar_large,
-                'auth_AOL'          => $type_varchar_large,
-                'auth_Live'         => $type_varchar_large,
-                'language'          => $type_varchar_small,
-                'theme'             => $type_varchar_small,
-                'last_active'       => $type_varchar_small,
-                'login'             => $type_boolean_false,
-            );
-        $sql_list[] = $this->create_table('main_user',$fields);
+        if(!$this->is_subsite){
+            $fields = array(
+                    'user_id'           => $type_primary_key,
+                    'user_name'         => $type_varchar_small_strict,
+                    'email'             => $type_varchar_small,
+                    'password'          => $type_password,
+                    'activation_code'   => $type_varchar_small,
+                    'real_name'         => $type_varchar_large,
+                    'active'            => $type_boolean_true,
+                    'auth_OpenID'       => $type_varchar_large,
+                    'auth_Facebook'     => $type_varchar_large,
+                    'auth_Twitter'      => $type_varchar_large,
+                    'auth_Google'       => $type_varchar_large,
+                    'auth_Yahoo'        => $type_varchar_large,
+                    'auth_LinkedIn'     => $type_varchar_large,
+                    'auth_MySpace'      => $type_varchar_large,
+                    'auth_Foursquare'   => $type_varchar_large,
+                    'auth_AOL'          => $type_varchar_large,
+                    'auth_Live'         => $type_varchar_large,
+                    'language'          => $type_varchar_small,
+                    'theme'             => $type_varchar_small,
+                    'last_active'       => $type_varchar_small,
+                    'login'             => $type_boolean_false,
+                    'subsite'           => $type_varchar_large,
+                );
+            $sql_list[] = $this->create_table('main_user',$fields);
+        }
 
         // GROUP WIDGET
         $fields = array(
@@ -957,6 +960,8 @@ class Install_model extends CI_Model{
                     3, 8, 1, 0, NULL, 0),
                 array('main_group_management', 4, 'Group Management', 'Group Management', NULL, 'Group Management', 'main/group',
                     4, 0, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
+                array('main_user_management', 4, 'User Management', 'User Management', NULL, 'Manage User', 'main/user',
+                    4, 1, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_navigation_management', 4, 'Navigation Management', 'Navigation Management', NULL, 'Navigation management', 'main/navigation',
                     4, 3, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_privilege_management', 4, 'Privilege Management', 'Privilege Management', NULL, 'Privilege Management', 'main/privilege',
@@ -984,19 +989,11 @@ class Install_model extends CI_Model{
                 array('main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', NULL, 'Third Party Authentication', 'main/hauth/index',
                     1, 2, 1, 0, NULL, 0),
             ));
-
-        // only supersite has user management
-        if(!$this->is_subsite){
-            $sql_list[] = $this->insert_navigations(array(
-                array('main_user_management', 4, 'User Management', 'User Management', NULL, 'Manage User', 'main/user',
-                    4, 1, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
-            ));                
-        }
         
         
         // quicklink
         $sql_list[] = $this->insert_quicklinks(array(
-                array(18, 1),
+                array(19, 1),
                 array(5,2),
                 array(2,3),
                 array(4,4),
@@ -1122,10 +1119,7 @@ class Install_model extends CI_Model{
                 array('cms_subsite_modules','blog,contact_us,static_accessories','Comma Separated Format, Modules that is going to be installed by default for new Subsite'),
                 array('cms_subsite_configs','{}','JSON Format, Configuration value for new subsite'),
                 array('cms_internet_connectivity','UNKNOWN','Is the server connected to the internet?'),
-            ));
-        
-        // group user
-        $sql_list[] = $this->insert_group_users(array(array(1,1)));        
+            ));      
 
         // language        
         $this->insert_languages(array( 
