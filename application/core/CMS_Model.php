@@ -89,35 +89,63 @@ class CMS_Model extends CI_Model
         }
 
         // KCFINDER's stuffs =========
+        if(!$this->input->is_ajax_request()){
+            // clear old secret files
+            $clean_timer_file = APPPATH.'config/tmp/_time.php';
+            if(!file_exists($clean_timer_file)){
+                $content = '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL;
+                $content .= '$last = '.time().';';
+                file_put_contents($clean_timer_file, $content);
+            }
+            include($clean_timer_file);
+            $last == isset($last)? $last : 0;
+            if(time() - $last >= 300){
+                $files = scandir(APPPATH.'config/tmp');
+                foreach($files as $file){
+                    if(in_array($file, array('.', '..'))){
+                        continue;
+                    }else if(substr($file, 0, 7) == '_secret' || substr($file, 0, 6) == '_token'){
+                        $file = APPPATH.'config/tmp/'.$file;
+                        if(filemtime($file) < strtotime('-1 hour')){
+                            unlink($file);
+                        }
+                    }
+                }
+                $content = '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL;
+                $content .= '$last = '.time().';';
+                file_put_contents($clean_timer_file, $content);
+            }
 
-        // clear old secret files
-        $files = scandir(APPPATH.'config/tmp');
-        foreach($files as $file){
-            if(in_array($file, array('.', '..'))){
-                continue;
-            }else if(substr($file, 0, 7) == '_secret'){
-                $file = APPPATH.'config/tmp/'.$file;
-                if(filemtime($file) < strtotime('-1 hour')){
-                    unlink($file);
+            // create secret data and save
+            $secret_data = array(
+                    '__cms_base_url' => base_url(),
+                    '__cms_subsite'  => CMS_SUBSITE,
+                    '__cms_user_id'  => $this->cms_user_id(),
+                );
+            $secret_data = json_encode($secret_data);
+            // set cookie
+            if(!isset($_COOKIE['__secret_code'])){
+                $secret_code = $this->cms_random_string(20);
+                setcookie('__secret_code', $secret_code, time() + 300, '/');
+            }else{
+                $secret_code = $_COOKIE['__secret_code'];
+            }
+            $secret_file = APPPATH.'config/tmp/_secret_'.$secret_code.'.php';
+            // only rewrite secret if necessary
+            $rewrite_secret_file = TRUE;
+            if(file_exists($secret_file)){
+                include($secret_file);
+                $secret = isset($secret)? $secret : '';
+                if($secret == $secret_data){
+                    $rewrite_secret_file = FALSE;
                 }
             }
+            if($rewrite_secret_file){
+                $content = '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL;
+                $content .= '$secret = \''.$secret_data.'\';';
+                file_put_contents($secret_file, $content);
+            }
         }
-
-        // create secret data and save
-        $secret_data = array(
-                '__cms_base_url' => base_url(),
-                '__cms_subsite'  => CMS_SUBSITE,
-                '__cms_user_id'  => $this->cms_user_id(),
-            );
-        if(!isset($_COOKIE['__secret_code'])){
-            $secret_code = $this->cms_random_string(20);
-            setcookie('__secret_code', $secret_code, time() + 300, '/');
-        }else{
-            $secret_code = $_COOKIE['__secret_code'];
-        }
-        $content = '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL;
-        $content .= '$secret = \''.json_encode($secret_data).'\';';
-        file_put_contents(APPPATH.'config/tmp/_secret_'.$secret_code.'.php', $content);
 
         // END OF KCFINDER's stuffs ====
 

@@ -49,8 +49,6 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         $old_version = cms_config('__cms_version');
         $current_version = '0.7.6';
 
-        
-
         if($old_version == $current_version){ return 0; }
         // get major, minor and rev version
         $old_version_component = explode('-', $old_version);
@@ -76,16 +74,23 @@ class CMS_AutoUpdate_Model extends CMS_Model{
     }
 
     private function __mutate_user_fk($table_name, $fk_name, $subsite, $module_name = NULL){ 
-              
-        $subsite_config_file = APPPATH.'config/site-'.$row->name.'/cms_config.php';
-        if(!file_exists($subsite_config_file)){ return FALSE; }
+        // GET MAIN TABLE PREFIX
+        $main_config_file = APPPATH.'config/main/cms_config.php';
+        if(!file_exists($main_config_file)){ return FALSE; }
+        include($main_config_file);
+        $main_table_prefix   = $config['__cms_table_prefix'];
+        $main_table_prefix   = $main_table_prefix == ''? '' : $main_table_prefix.'_';
 
-        // GET TABLE PREFIX & MODULE PREFIX
+        // GET SUBSITE TABLE PREFIX
+        $subsite_config_file = APPPATH.'config/site-'.$subsite.'/cms_config.php';
+        if(!file_exists($subsite_config_file)){ return FALSE; }
         include($subsite_config_file);
-        $table_prefix           = $config['__cms_table_prefix'];
-        $table_prefix           = $table_prefix == ''? '' : $table_prefix.'_';
+        $subsite_table_prefix   = $config['__cms_table_prefix'];
+        $subsite_table_prefix   = $subsite_table_prefix == ''? '' : $subsite_table_prefix.'_';
+
+        // GET MODULE PREFIX
         $module_table_prefix    = '';
-        if($module != NULL){
+        if($module_name != NULL){
             $module_path = $this->cms_module_path($module_name);
             $module_config_file = FCPATH.'modules/'.$module_path.'/config/module_config.php';
             if(!file_exists($module_config_file)){ return FALSE; }
@@ -94,17 +99,17 @@ class CMS_AutoUpdate_Model extends CMS_Model{
             $module_table_prefix = $config['module_table_prefix'];
             $module_table_prefix = $module_table_prefix == ''? '' : $module_table_prefix.'_';            
         }
-        $multisite_config_file = FCPATH.'modules/'.$this->cms_get_module_path('gofrendi.noCMS.multisite').'/config/module_config.php';
+        $multisite_config_file = FCPATH.'modules/'.$this->cms_module_path('gofrendi.noCMS.multisite').'/config/module_config.php';
         if(!file_exists($multisite_config_file)){ return FALSE; }
         include($multisite_config_file);
+        $multisite_table_prefix = $config['module_table_prefix'];
         $multisite_table_prefix = $multisite_table_prefix == ''? '' : $multisite_table_prefix.'_';
 
         // GET TABLE NAMES
-        $table_name                   = $table_prefix . $module_table_prefix . $table_name;
+        $table_name                   = $subsite_table_prefix . $module_table_prefix . $table_name;
         $main_user_table_name         = $this->cms_user_table_name();
-        $subsite_user_table_name      = $table_prefix . 'main_user';        
-        $multisite_subsite_table_name = $multisite_table_prefix.'subsite';
-
+        $subsite_user_table_name      = $subsite_table_prefix . 'main_user';        
+        $multisite_subsite_table_name = $main_table_prefix.$multisite_table_prefix.'subsite';
 
         // get new admin user_id
         $new_admin_user_id = $this->db->select('user_id')
@@ -115,6 +120,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         $this->db->update($table_name,
             array($fk_name => $new_admin_user_id),
             array($fk_name => 1));
+        
 
         // get current existing user_name (which is not specified in current subsite)
         $existing_user_names  = array();
@@ -209,14 +215,14 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         
         // determine config path
         $config_path = CMS_SUBSITE == ''?
-            APPATH.'config/main/' :
-            APPATH.'config/site-'.CMS_SUBSITE.'/';
+            APPPATH.'config/main/' :
+            APPPATH.'config/site-'.CMS_SUBSITE.'/';
         $original_route_config = $config_path.'routes.php';
         $extended_route_config = $config_path.'extended_routes.php';
         // include extended route to default route
         file_put_contents($original_route_config, 
             file_get_contents($original_route_config).PHP_EOL.
-            'include(APPPATH.\'config/extended_routes.php\');'.PHP_EOL);
+            'include(\'extended_routes.php\');'.PHP_EOL);
         // add extended routes
         file_put_contents($extended_route_config, 
             '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL.
@@ -234,15 +240,38 @@ class CMS_AutoUpdate_Model extends CMS_Model{
             $query = $this->db->select('name')
                 ->from($this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite'))
                 ->get();
-            foreach($query->result() as $row){
+            foreach($query->result() as $row){                
                 $subsite = $row->name;
+                
+                if($subsite == 'puribunda'){continue;}
+
+                // get module installation
+                $subsite_config_file = APPPATH.'config/site-'.$subsite.'/cms_config.php';
+                if(!file_exists($subsite_config_file)){ return FALSE; }
+                include($subsite_config_file);
+                $subsite_table_prefix   = $config['__cms_table_prefix'];
+                $subsite_table_prefix   = $subsite_table_prefix == ''? '' : $subsite_table_prefix.'_';
+
+                // get installed module
+                $query = $this->db->select('module_name')
+                    ->from($subsite_table_prefix.'main_module')
+                    ->get();
+                $installed_module_name = array();
+                foreach($query->result() as $row){
+                    $installed_module_name[] = $row->module_name;
+                }
+
                 $this->__mutate_user_fk('main_group_user', 'user_id', $subsite);
-                $this->__mutate_user_fk('article', 'author_user_id', $subsite, 'gofrendi.noCMS.blog');
-                $this->__mutate_user_fk('comment', 'author_user_id', $subsite, 'gofrendi.noCMS.blog');
-                $this->__mutate_user_fk('item', 'user_id', $subsite, 'gofrendi.noCMS.shop');
-                $this->__mutate_user_fk('order', 'user_id', $subsite, 'gofrendi.noCMS.shop');
-                $this->__mutate_user_fk('order', 'last_editor_user_id', $subsite, 'gofrendi.noCMS.shop');
-            }           
+                if(in_array('gofrendi.noCMS.blog', $installed_module_name)){
+                    $this->__mutate_user_fk('article', 'author_user_id', $subsite, 'gofrendi.noCMS.blog');
+                    $this->__mutate_user_fk('comment', 'author_user_id', $subsite, 'gofrendi.noCMS.blog');
+                }
+                if(in_array('gofrendi.noCMS.shop', $installed_module_name)){
+                    $this->__mutate_user_fk('item', 'user_id', $subsite, 'gofrendi.noCMS.shop');
+                    $this->__mutate_user_fk('order', 'user_id', $subsite, 'gofrendi.noCMS.shop');
+                    $this->__mutate_user_fk('order', 'last_editor_user_id', $subsite, 'gofrendi.noCMS.shop');
+                }
+            }
         }
     }
     
