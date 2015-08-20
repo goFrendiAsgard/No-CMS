@@ -587,6 +587,35 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table($this->cms_user_table_name());
+        if(CMS_SUBSITE == ''){
+            $crud->where('subsite is NULL');
+        }else{
+            $crud->where('subsite', CMS_SUBSITE);
+
+            // get super admin of this subsite
+            $main_config_file = APPPATH.'config/main/cms_config.php';
+            include($main_config_file);
+            $main_table_prefix   = $config['__cms_table_prefix'];
+            $main_table_prefix   = $main_table_prefix == ''? '' : $main_table_prefix.'_';
+            // get module table prefix
+            $multisite_config_file = FCPATH.'modules/'.$this->cms_module_path('gofrendi.noCMS.multisite').'/config/module_config.php';
+            include($multisite_config_file);
+            $multisite_table_prefix = $config['module_table_prefix'];
+            $multisite_table_prefix = $multisite_table_prefix == ''? '' : $multisite_table_prefix.'_';
+            // get subsite table
+            $subsite_table = $main_table_prefix . $multisite_table_prefix . 'subsite';
+
+            $query = $this->db->select('user_id')
+                ->from($subsite_table)
+                ->where('name', CMS_SUBSITE)
+                ->get();
+            if($query->num_rows() > 0){
+                $row = $query->row();
+                $admin_user_id = $row->user_id;
+                $crud->or_where('user_id', $admin_user_id);
+            }
+
+        }
         $crud->set_subject('User');
 
         $crud->required_fields('password');
@@ -596,12 +625,12 @@ class Main extends CMS_Controller
         if(CMS_SUBSITE == ''){
             $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
             $crud->edit_fields('user_name', 'email', 'real_name', 'active', 'groups');
-            $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups');
+            $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
             $crud->field_type('active', 'true_false');
         } else{
             $crud->columns('user_name', 'real_name', 'active', 'groups');
             $crud->edit_fields('user_name', 'groups');
-            $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups');
+            $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
             $crud->field_type('active', 'true_false');
             $crud->unset_delete();
         }
@@ -611,6 +640,8 @@ class Main extends CMS_Controller
             ->display_as('real_name', 'Real Name')
             ->display_as('active', 'Active')
             ->display_as('groups', 'Groups');
+
+        $crud->field_type('subsite', 'hidden');
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_user'), cms_table_name('main_group'), 'user_id', 'group_id', 'group_name');
         $crud->callback_before_insert(array(
@@ -677,7 +708,12 @@ class Main extends CMS_Controller
 
     public function _before_insert_user($post_array)
     {
-        $post_array['password'] = cms_md5($post_array['password'], $this->cms_chipper());
+        // password
+        $post_array['password'] = CMS_SUBSITE == ''?
+            cms_md5($post_array['password'], $this->cms_chipper()):
+            cms_md5($post_array['password']);
+        // subsite
+        $post_array['subsite'] = CMS_SUBSITE == ''? NULL : CMS_SUBSITE; 
         return $post_array;
     }
 

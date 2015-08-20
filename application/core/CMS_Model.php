@@ -1087,7 +1087,7 @@ class CMS_Model extends CI_Model
         $user_email = NULL;
         $login_succeed = FALSE;
 
-        // try to login as a user of specific 
+        // try to login as a user of specific subsite
         if(CMS_SUBSITE != ''){
             $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".$this->cms_user_table_name()." WHERE
                     (user_name = '" . addslashes($identity) . "' OR email = '" . addslashes($identity) . "') AND
@@ -1104,7 +1104,7 @@ class CMS_Model extends CI_Model
             }
         }
 
-        // if login not succeed, try to login as user
+        // if login not succeed, try to login as main user
         if(!$login_succeed){
             // do the query
             $query = $this->db->query("SELECT user_id, user_name, real_name, email FROM ".$this->cms_user_table_name()." WHERE
@@ -1903,10 +1903,13 @@ class CMS_Model extends CI_Model
         $activation = $this->cms_get_config('cms_signup_activation');
         $data = array(
             "user_name" => $user_name,
-            "email" => $email,
+            "email"     => $email,
             "real_name" => $real_name,
-            "password" => cms_md5($password, $this->cms_chipper()),
-            "active" => $activation == 'automatic'
+            "password"  => CMS_SUBSITE == '' ? 
+                cms_md5($password, $this->cms_chipper()) :
+                cms_md5($password),
+            "active"    => $activation == 'automatic'
+            "subsite"   => CMS_SUBSITE,
         );
         $this->db->insert($this->cms_user_table_name(), $data);
         // send activation code if needed
@@ -1944,13 +1947,14 @@ class CMS_Model extends CI_Model
     public function cms_do_change_profile($email, $real_name, $password = NULL, $user_id = NULL)
     {
         $user_id = $user_id === NULL? $this->cms_user_id() : $user_id;
-        $query = $this->db->select('user_id, user_name')
+        $query = $this->db->select('user_id, user_name, subsite')
             ->from($this->cms_user_table_name())
             ->where('user_id', $user_id)
             ->get();
         if($query->num_rows()>0){
-            $user_row = $query->row();
-            $user_name = $user_row->user_name;
+            $user_row       = $query->row();
+            $user_name      = $user_row->user_name;
+            $user_subsite   = $user_row->subsite;
             // update current user table
             $data = array(
                 "email" => $email,
@@ -1958,7 +1962,12 @@ class CMS_Model extends CI_Model
                 "active" => 1
             );
             if (isset($password)) {
-                $data['password'] = cms_md5($password, $this->cms_chipper());
+                // if user is defined in subsite then use current chipper
+                if($user_subsite == NULL){
+                    $data['password'] = cms_md5($password, $this->cms_chipper());
+                }else{
+                    $data['password'] = cms_md5($password);
+                }
             }
             $where = array(
                 "user_id" => $user_id
