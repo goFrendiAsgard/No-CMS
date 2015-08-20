@@ -597,22 +597,31 @@ class Main extends CMS_Controller
             include($main_config_file);
             $main_table_prefix   = $config['__cms_table_prefix'];
             $main_table_prefix   = $main_table_prefix == ''? '' : $main_table_prefix.'_';
-            // get module table prefix
-            $multisite_config_file = FCPATH.'modules/'.$this->cms_module_path('gofrendi.noCMS.multisite').'/config/module_config.php';
-            include($multisite_config_file);
-            $multisite_table_prefix = $config['module_table_prefix'];
-            $multisite_table_prefix = $multisite_table_prefix == ''? '' : $multisite_table_prefix.'_';
-            // get subsite table
-            $subsite_table = $main_table_prefix . $multisite_table_prefix . 'subsite';
-
-            $query = $this->db->select('user_id')
-                ->from($subsite_table)
-                ->where('name', CMS_SUBSITE)
+            // get multisite module path
+            $query = $this->db->select('module_path')
+                ->from($main_table_prefix.'main_module')
+                ->where('module_name', 'gofrendi.noCMS.multisite')
                 ->get();
-            if($query->num_rows() > 0){
+            if($query->num_rows()>0){
                 $row = $query->row();
-                $admin_user_id = $row->user_id;
-                $crud->or_where('user_id', $admin_user_id);
+                $multisite_module_path = $row->module_path;
+                // get module table prefix
+                $multisite_config_file = FCPATH.'modules/'.$multisite_module_path.'/config/module_config.php';
+                include($multisite_config_file);
+                $multisite_table_prefix = $config['module_table_prefix'];
+                $multisite_table_prefix = $multisite_table_prefix == ''? '' : $multisite_table_prefix.'_';
+                // get subsite table
+                $subsite_table = $main_table_prefix . $multisite_table_prefix . 'subsite';
+
+                $query = $this->db->select('user_id')
+                    ->from($subsite_table)
+                    ->where('name', CMS_SUBSITE)
+                    ->get();
+                if($query->num_rows() > 0){
+                    $row = $query->row();
+                    $admin_user_id = $row->user_id;
+                    $crud->or_where('user_id', $admin_user_id);
+                }
             }
 
         }
@@ -628,7 +637,7 @@ class Main extends CMS_Controller
             $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
             $crud->field_type('active', 'true_false');
         } else{
-            $crud->columns('user_name', 'real_name', 'active', 'groups');
+            $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
             $crud->edit_fields('user_name', 'groups');
             $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
             $crud->field_type('active', 'true_false');
