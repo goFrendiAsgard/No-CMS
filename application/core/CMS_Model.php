@@ -1908,7 +1908,7 @@ class CMS_Model extends CI_Model
             "password"  => CMS_SUBSITE == '' ? 
                 cms_md5($password, $this->cms_chipper()) :
                 cms_md5($password),
-            "active"    => $activation == 'automatic'
+            "active"    => $activation == 'automatic',
             "subsite"   => CMS_SUBSITE,
         );
         $this->db->insert($this->cms_user_table_name(), $data);
