@@ -323,15 +323,15 @@ class CMS_Model extends CI_Model
         $hostname = $hostname === NULL? 'google.com' : $hostname;
         // return from session if we have look for it before
         if($this->cms_ci_session('cms_connect_'.$hostname)){
-            // if last connect attempt is more than 60 seconds, try again
-            if(microtime(true) - $this->cms_ci_session('cms_last_contact_'.$hostname) > 60){
+            // if last connect attempt is more than 300 seconds, try again
+            if(microtime(true) - $this->cms_ci_session('cms_last_contact_'.$hostname) > 300){
                 $this->cms_unset_ci_session('cms_connect_'.$hostname);
                 return $this->cms_is_connect($hostname, $port);
             }
             return $this->cms_ci_session('cms_connect_'.$hostname);
         }
         // we never look for it before, now look for it and save on session
-        $connected = @fsockopen($hostname, $port);
+        $connected = @fsockopen($hostname, $port, $errno, $errstr, 5);
         if ($connected){
             $is_conn = true; //action when connected
             fclose($connected);

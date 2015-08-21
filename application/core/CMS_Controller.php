@@ -1430,7 +1430,6 @@ class CMS_Controller extends MX_Controller
                     }
                 }
             }
-            $data['__is_bootstrap_cdn_connected'] = $this->cms_is_connect('bootstrapcdn.com');
             $result = $this->template->build($view_url, $data, TRUE);
         }
 
