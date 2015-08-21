@@ -8,12 +8,7 @@
         <!-- Le styles -->
         <?php
             echo $template['css'];
-            $asset = new Cms_asset();
-            if($__is_bootstrap_cdn_connected){
-                $asset->add_css('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css');
-            }else{  
-                $asset->add_cms_css('bootstrap/css/bootstrap.min.css');
-            }
+            $asset = new CMS_Asset();
             $asset->add_themes_css('bootstrap.min.css', '{{ used_theme }}', 'default');
             $asset->add_themes_css('style.css', '{{ used_theme }}', 'default');
             echo $asset->compile_css();
@@ -25,11 +20,7 @@
     <body>
         <?php
             echo $template['js'];
-            if($__is_bootstrap_cdn_connected){
-                $asset->add_js('//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js');
-            }else{  
-                $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
-            }
+            $asset->add_cms_js("bootstrap/js/bootstrap.min.js");
             $asset->add_themes_js('script.js', '{{ used_theme }}', 'default');
             echo $asset->compile_js();
         ?>
@@ -38,8 +29,6 @@
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
         <script type="text/javascript">{{ widget_name:section_custom_script }}</script>
-        <div id="__background-image"></div>
-        <div id="__background-color"></div>
         {{ widget_name:section_top_fix }}
         {{ widget_name:static_accessories_slideshow }}
         <div class="container">
