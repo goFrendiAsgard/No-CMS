@@ -3469,7 +3469,7 @@ class CMS_Model extends CI_Model
         file_put_contents($extended_route_config, $content);
     }
 
-    public final function cms_add_route($key, $value, $description = NULL){
+    public final function cms_add_route($key, $value, $description = ''){
         $query = $this->db->select('key')
             ->from(cms_table_name('main_route'))
             ->where('key', $key)

@@ -197,7 +197,7 @@ class Info extends CMS_Module {
                     ->where('article_id', $article_id)
                     ->get();
                 $index = 1;
-                foreach($query_photo as $row_photo){
+                foreach($query_photo->result() as $row_photo){
                     $photo_id = $row_photo->photo_id;
                     $this->db->update($this->cms_complete_table_name('photo'),
                             array('index' => $index),

@@ -1801,8 +1801,8 @@ class CMS_Controller extends MX_Controller
         $this->{$this->__cms_base_model_name}->cms_reconfig_route();
     }
 
-    public final function cms_add_route($key, $value){
-        $this->{$this->__cms_base_model_name}->cms_add_route($key, $value);
+    public final function cms_add_route($key, $value, $description = ''){
+        $this->{$this->__cms_base_model_name}->cms_add_route($key, $value, $description);
     }
 
     public final function cms_remove_route($key){
