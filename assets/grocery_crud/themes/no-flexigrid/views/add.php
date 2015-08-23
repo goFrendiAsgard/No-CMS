@@ -23,6 +23,7 @@
     <div class='form-div form-horizontal row'>
         <?php
             $this->tabs = isset($this->tabs)? $this->tabs : NULL;
+            $this->tab_glyphicons = isset($this->tab_glyphicons)? $this->tab_glyphicons : NULL;
             $this->outside_tab = isset($this->outside_tab)? $this->outside_tab : 0;                
             $counter = 0;
             $tab_index=-1;
@@ -44,7 +45,11 @@
                             echo '<ul class="nav nav-tabs" role="tablist">';
                             $active = 'active';
                             foreach($this->tabs as $key=>$val){
-                                echo '<li class="'.$active.'"><a href="#'.str_replace(' ','',$key).'" role="tab" data-toggle="tab">'.$key.'</a></li>';
+                                $caption = $key;
+                                if(array_key_exists($key, $this->tab_glyphicons)){
+                                    $caption = '<i class ="glyphicon ' . $this->tab_glyphicons[$key] . '"></i>&nbsp;' . $key;
+                                }
+                                echo '<li class="'.$active.'"><a href="#'.str_replace(' ','',$key).'" role="tab" data-toggle="tab">'.$caption.'</a></li>';
                                 $active = '';
                             }
                             echo '</ul>';

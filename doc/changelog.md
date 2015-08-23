@@ -213,3 +213,6 @@ v1.0.0 (inner: 0.7.5)
 + (done, tested) Route management
 + (done, tested) Hide navigation
 + (done, tested) One user table to avoid duplication and complication
++ (done, tested) Create routes for blog to make url cleaner
++ (done, tested) Add caption to blog's photo
++ (done, tested) Add moderation setting

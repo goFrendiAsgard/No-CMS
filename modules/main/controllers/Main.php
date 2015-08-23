@@ -345,7 +345,9 @@ class Main extends CMS_Controller
         // generate new secret code
         $secret_code = $this->cms_random_string();
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
-        if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name)) {
+        if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name) && 
+        !$this->cms_is_user_exists($email) && preg_match('/@.+\./', $email) && 
+        $user_name != '' && $email != '') {
             $this->cms_do_register($user_name, $email, $real_name, $password);
             redirect('','refresh');
         } else {
@@ -384,35 +386,6 @@ class Main extends CMS_Controller
             } else if ($email_exists){
                 $message = $this->cms_lang("Email already used");
                 $error = TRUE;
-            } else if($this->cms_is_module_active('gofrendi.noCMS.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
-                $subsite = strtolower($user_name);
-                $sanitized_subsite = '';
-                for($i=0; $i<strlen($subsite); $i++){
-                    $letter = substr($subsite, $i, 1);
-                    if(is_numeric($letter) || strpos('abcdefghijklmnopqrstuvwxyz_', $letter) !== FALSE){
-                        $sanitized_subsite .= $letter;
-                    }
-                }
-                $subsite = $sanitized_subsite;
-                if($subsite == ''){
-                    $message = $this->cms_lang("Subsite is empty or username have no alphabet character");
-                    $error = TRUE;
-                }
-                if(!$error){
-                    // is there any subsite with similar name
-                    // $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
-                    // $this->cms_override_module_path($module_path);
-                    $t_subsite = $this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite');
-                    $query = $this->db->select('name')
-                        ->from($t_subsite)
-                        ->where('name', $subsite)
-                        ->get();
-                    if($query->num_rows()>0){
-                        $message = $this->cms_lang("Subsite already used, choose other username");
-                        $error = TRUE;
-                    }
-                    // $this->cms_reset_overridden_module_path();
-                }
             }
 
             $data = array(

@@ -29,6 +29,7 @@ class Extended_grocery_crud extends grocery_crud{
 
     protected $outside_tab       = 0;
     protected $tabs              = NULL;
+    protected $tab_glyphicons    = array();
     protected $field_half_width  = array();
     protected $field_one_third_width = array();
     protected $field_two_third_width = array();
@@ -72,6 +73,10 @@ class Extended_grocery_crud extends grocery_crud{
         $this->tabs = $data;
     }
 
+    public function set_tab_glyphicons($data){
+        $this->tab_glyphicons = $data;
+    }
+
     public function set_outside_tab($data){
         $this->outside_tab = $data;
     }
@@ -101,6 +106,13 @@ class Extended_grocery_crud extends grocery_crud{
             $this->tabs = array();
         }
         $this->tabs[$key] = $count;
+    }
+
+    public function add_tab_glyphicon($glyphicon){
+        if($this->tab_glyphicons == NULL){
+            $this->tab_glyphicons = array();
+        }
+        $this->tab_glyphicons[$key] = $glyphicon;
     }
 
     protected function set_default_Model()

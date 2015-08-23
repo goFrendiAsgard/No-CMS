@@ -2,7 +2,7 @@
     "dependencies"    : [],
     "name"            : "gofrendi.noCMS.blog",
     "description"     : "Write articles, upload photos, allow visitors to give comments, rule the world...",
-    "version"         : "0.0.8",
+    "version"         : "0.0.9",
     "activate"        : "info/activate",
     "deactivate"      : "info/deactivate",
     "upgrade"         : "info/upgrade"

@@ -20,11 +20,6 @@
         margin-top: 5px;
         display:none;
     }
-    img.photo_thumbnail{
-        width: auto;
-        height: 75px;
-        margin: 5px;
-    }
     div#article-comment{
         margin-top : 30px;
         padding-top : 20px;
@@ -54,6 +49,21 @@
         overflow-x: auto;
         min-height: 75px!important;
         margin-top: 10px!important;
+    }
+    .photo_thumbnail{
+        width : 150px;
+        height : 75px;
+        background-color : black;
+        background-repeat : no-repeat;
+        background-position:center;
+        margin:5px;
+        display:inline-block;
+    }
+    .small_photo{
+        text-align:center;
+    }
+    .photo_caption{
+        display:none;
     }
 </style>
 
@@ -99,8 +109,8 @@
         <div class="form-inline pull-right" style="margin-top:20px;">
             <div class="form-group">
                 <select id="new_article_status" name="status" class="form-control">
-                    <option value="draft" selected>Draft</option>
-                    <option value="published">Published</option>
+                    <option value="published" selected>Published</option>
+                    <option value="draft">Draft</option>
                 </select>
             </div>
             <div class="form-group">&nbsp;
@@ -127,21 +137,25 @@
             echo '('.$article['author'].', '.$article['date'].')'.br();
 
             // photos
-            echo '<div id="small_photo_'.$article['id'].'">';            
+            echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';            
             foreach($article['photos'] as $photo){
-                echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
-                echo '<img class="photo_thumbnail" src="'.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).'" />';
+                echo '<a class="photo_'.$article['id'].'" photo_id="'.$photo['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
+                echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
+                echo '<div id="photo_caption_'.$photo['id'].'" class="photo_caption">'.$photo['caption'].'</div>';
                 echo '</a>';
             }
-            echo '</div>';
-            echo '<div id="big_photo_'.$article['id'].'"></div>';
+            echo '<div id="big_photo_'.$article['id'].'" class="row"></div>';
+            echo '</div>';            
             echo '<script type="text/javascript">
                 $(".photo_'.$article['id'].'").click(function(event){
                     LOADING = true;
+                    var photo_caption = $("#photo_caption_"+$(this).attr("photo_id")).html();
                     $("#big_photo_'.$article['id'].'").hide();
                     $("#big_photo_'.$article['id'].'").html(
                         "<div class=\"col-md-12\" style=\"text-align:right; margin-bottom:10px;\"><a id=\"close_big_photo_'.$article['id'].'\" class=\"btn btn-danger\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></div>"+
-                        "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" /><br />");
+                        "<div class=\"col-md-12 lead\" style=\"text-align:left;\">" + photo_caption + "</div>"+
+                        "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" />"
+                    );
                     $("#big_photo_'.$article['id'].'").fadeIn();
                     $("html, body").animate({
                         scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
@@ -170,11 +184,16 @@
                     $module_url = 'blog';
                 }else{
                     $module_url = $module_path.'/blog';
-                }
+                }                
                 echo '<div style="margin-bottom:20px;">';
                 echo '<b>Categories</b> :&nbsp;';
                 foreach($article['categories'] as $category){
-                    echo '<a href="'.site_url($module_url.'/index?category='.$category['name']).'"><span class="label label-primary">'.$category['name'].'</span></a>&nbsp;';
+                    if($category_route_exists){
+                        $url = $module_url.'/category/'.$category['name'];
+                    }else{
+                        $url = $module_url.'/index?category='.$category['name'];
+                    }
+                    echo '<a href="'.site_url($url).'"><span class="label label-primary">'.$category['name'].'</span></a>&nbsp;';
                 }
                 // also get related article
                 if(count($article['related_article'])>0){

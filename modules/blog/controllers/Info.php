@@ -145,6 +145,85 @@ class Info extends CMS_Module {
             $this->cms_add_widget($this->cms_complete_navigation_name('featured_article'), 'Featured Articles',
                 $this->PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
         }
+        if($major == 0 && $minor == 0 && $build <= 8){
+            $this->cms_add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
+                $module_path.'/setting', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                NULL, 'Blog Setting', NULL, NULL, 'default-one-column'
+            );
+
+            // add configuration
+            $this->cms_add_config($this->cms_complete_navigation_name('moderation'), 'FALSE', 'Is comment in blog need moderation?');
+
+            // publication status
+            $fields = array(
+                    'status' => $this->TYPE_VARCHAR_50_NULL,
+                );
+            $this->dbforge->add_field($fields);
+            $this->dbforge->add_key('status', TRUE);
+            $this->dbforge->create_table($this->cms_complete_table_name('publication_status'));
+
+            $table_name = $this->cms_complete_table_name('publication_status');
+            $data = array('status'=>'draft');
+            $this->db->insert($table_name, $data);
+            $data = array('status'=>'published');
+            $this->db->insert($table_name, $data);
+            $data = array('status'=>'scheduled');
+            $this->db->insert($table_name, $data);
+
+            // comment
+            $fields = array(
+                'approved' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null' => FALSE, 'default' => 0,),
+            );
+            $table_name = $this->cms_complete_table_name('comment');
+            $this->dbforge->add_column($table_name, $fields);
+
+            $this->db->update($this->cms_complete_table_name('comment'), array('approved' => 1));
+
+            // photo
+            $fields = array(
+                'index'     => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null' => FALSE, 'default' => 0,),
+                'caption'   => $this->TYPE_TEXT,
+            );
+            $table_name = $this->cms_complete_table_name('photo');
+            $this->dbforge->add_column($table_name, $fields);
+
+            $query = $this->db->select('article_id')
+                ->from($this->cms_complete_table_name('article'))
+                ->get();
+            foreach($query->result() as $row){
+                $article_id = $row->article_id;
+                $query_photo = $this->db->select('photo_id')
+                    ->from($this->cms_complete_table_name('photo'))
+                    ->where('article_id', $article_id)
+                    ->get();
+                $index = 1;
+                foreach($query_photo as $row_photo){
+                    $photo_id = $row_photo->photo_id;
+                    $this->db->update($this->cms_complete_table_name('photo'),
+                            array('index' => $index),
+                            array('photo_id' => $photo_id)
+                        );
+                    $index++;
+                }
+            }
+
+            // route
+            if($module_path == 'blog'){
+                $controller_path = 'blog';
+            }else{
+                $controller_path = $module_path.'/blog';
+            }
+            $this->cms_add_route($controller_path.'/(:any)\.html',    $controller_path.'/index/$1', 
+                'Route to blog\'s article');
+            $this->cms_add_route($controller_path.'/category/(:any)', $controller_path.'/index//$1', 
+                'Route to blog\'s category');
+            $this->cms_add_route($controller_path.'/archive/(:any)',  $controller_path.'/index///$1', 
+                'Route to blog\'s archive');
+            $this->cms_add_route($controller_path.'/category',  $controller_path.'/index/', 
+                'Route to blog\'s category');
+            $this->cms_add_route($controller_path.'/archive',  $controller_path.'/index/', 
+                'Route to blog\'s archive');
+        }
     }
 
     
@@ -181,10 +260,7 @@ class Info extends CMS_Module {
         $this->dbforge->drop_table($this->cms_complete_table_name('category_article'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('category'), TRUE);
         $this->dbforge->drop_table($this->cms_complete_table_name('article'), TRUE);
-        /*
-        $this->import_sql(BASEPATH.'../modules/'.$module_path.
-            '/assets/db/uninstall.sql');
-         */
+        $this->dbforge->drop_table($this->cms_complete_table_name('publication_status'), TRUE);
 
     }
 
@@ -213,6 +289,10 @@ class Info extends CMS_Module {
             $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
             NULL, 'Add, edit, and delete categories. Each article can has one or more categories', NULL, NULL, 'default-one-column'
         );
+        $this->cms_add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
+            $module_path.'/setting', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            NULL, 'Blog Setting', NULL, NULL, 'default-one-column'
+        );
 
         $this->cms_add_quicklink($this->cms_complete_navigation_name('index'));
 
@@ -238,8 +318,33 @@ class Info extends CMS_Module {
         $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Contributor');
         $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_category'),'Blog Editor');
 
+        // add configuration
+        $this->cms_add_config($this->cms_complete_navigation_name('moderation'), 'FALSE', 'Is comment in blog need moderation?');
 
-        // import install.sql
+        // add routes
+        if($module_path == 'blog'){
+            $controller_path = 'blog';
+        }else{
+            $controller_path = $module_path.'/blog';
+        }
+        $this->cms_add_route($controller_path.'/(:any)\.html',    $controller_path.'/index/$1', 
+            'Route to blog\'s article');
+        $this->cms_add_route($controller_path.'/category/(:any)', $controller_path.'/index//$1', 
+            'Route to blog\'s category');
+        $this->cms_add_route($controller_path.'/archive/(:any)',  $controller_path.'/index///$1', 
+            'Route to blog\'s archive');
+        $this->cms_add_route($controller_path.'/category',  $controller_path.'/index/', 
+            'Route to blog\'s category');
+        $this->cms_add_route($controller_path.'/archive',  $controller_path.'/index/', 
+            'Route to blog\'s archive');
+
+        // publication status
+        $fields = array(
+                'status' => $this->TYPE_VARCHAR_50_NULL,
+            );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('status', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('publication_status'));
 
         // article
         $fields = array(
@@ -252,13 +357,7 @@ class Info extends CMS_Module {
                 'author_user_id' => $this->TYPE_INT_UNSIGNED_NULL,
                 'content' => $this->TYPE_TEXT,
                 'allow_comment' => $this->TYPE_INT_UNSIGNED_NULL,
-                'status' => array(
-                    //'type' => 'ENUM("draft","published","scheduled")', 
-                    'type'=>'enum',
-                    'constraint'=>array('draft','published','scheduled'),
-                    'default' => 'draft',
-                    'null' => FALSE,
-                ),
+                'status' => array('type'=>'varchar', 'constraint' => 20, 'default' => 'draft', 'null' => FALSE,),
                 'visited' => $this->TYPE_INT_UNSIGNED_NULL,
                 'featured' => $this->TYPE_INT_UNSIGNED_NULL,
                 'publish_date' => $this->TYPE_DATE_NULL,
@@ -298,13 +397,8 @@ class Info extends CMS_Module {
                 'website' => $this->TYPE_VARCHAR_50_NULL,
                 'content' => $this->TYPE_TEXT,
                 'parent_comment_id' => $this->TYPE_INT_UNSIGNED_NULL,
-                'read' => array(
-                    'type' => 'INT',
-                    'constraint' => 20,
-                    'unsigned' => TRUE,
-                    'null' => FALSE,
-                    'default' => 0,
-                )
+                'read' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null' => FALSE, 'default' => 0,),
+                'approved'=>array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null' => FALSE, 'default' => 0,),
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('comment_id', TRUE);
@@ -313,16 +407,24 @@ class Info extends CMS_Module {
         // photo
         $fields = array(
                 'photo_id' => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
-                'article_id' => array(
-                        'type' => 'INT',
-                        'constraint' => 10,
-                        'unsigned' => TRUE,
-                ),
+                'article_id' => array('type' => 'INT', 'constraint' => 10, 'unsigned' => TRUE,),
                 'url' => $this->TYPE_TEXT,
+                'index'     => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null' => FALSE, 'default' => 0,),
+                'caption'   => $this->TYPE_TEXT,
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('photo_id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('photo'));
+
+        // publication status
+        $table_name = $this->cms_complete_table_name('publication_status');
+        $data = array('status'=>'draft');
+        $this->db->insert($table_name, $data);
+        $data = array('status'=>'published');
+        $this->db->insert($table_name, $data);
+        $data = array('status'=>'scheduled');
+        $this->db->insert($table_name, $data);
+
 
         // category
         $table_name = $this->cms_complete_table_name('category');
@@ -330,6 +432,7 @@ class Info extends CMS_Module {
         $this->db->insert($table_name, $data);
         $data = array('category_name' => 'Fun');
         $this->db->insert($table_name, $data);
+
 
         if(CMS_SUBSITE == '' && !defined('CMS_OVERRIDDEN_SUBSITE')){
             // article
@@ -353,15 +456,23 @@ class Info extends CMS_Module {
 
             // photos
             $table_name = $this->cms_complete_table_name('photo');
-            for($i=1; $i<6; $i++){
+            for($i=1; $i<9; $i++){
                 $file_name = $this->duplicate_file('0'.$i.'.jpg');
-                $data = array('article_id'=>1, 'url'=>$file_name);
+                $data = array(
+                        'article_id'=>1, 
+                        'url'=>$file_name, 
+                        'index' => $i, 
+                        'caption' => 'Caption for the #'.$i.' photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... '.
+                            'Nemurenai yoru nando sugitemo nee uketomete. '.
+                            'Ima sugu aitai namida tomaranai furetakute. '.
+                            'Suki dakara furushikute'
+                    );
                 $this->db->insert($table_name, $data);
             }
 
             // comment
             $table_name = $this->cms_complete_table_name('comment');
-            $data = array('article_id'=>1, 'author_user_id'=>1, 'read'=>0, 'date'=>'2013-03-25 09:53:16', 'content'=>'Great comment for great article');
+            $data = array('article_id'=>1, 'author_user_id'=>1, 'read'=>0, 'date'=>'2013-03-25 09:53:16', 'content'=>'Great comment for great article', 'approved'=>1);
             $this->db->insert($table_name, $data);
         }
 

@@ -1,7 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 foreach($articles as $article){
-    $article_url = $module_path=='blog'? 'blog/index/': '{{ module_path }}/blog/index/';
-    $article_url .= $article['article_url'];
+    if($article_route_exists){
+        $article_url = $module_path=='blog'? 'blog/': '{{ module_path }}/blog/';
+        $article_url .= $article['article_url'].'.html';
+    }else{
+        $article_url = $module_path=='blog'? 'blog/index/': '{{ module_path }}/blog/index/';
+        $article_url .= $article['article_url'];
+    }
 
     // title & author
     echo '<div id="record_'.$article['id'].'">';
@@ -9,21 +14,25 @@ foreach($articles as $article){
     echo '('.$article['author'].', '.$article['date'].')';
 
     // photos
-    echo '<div id="small_photo_'.$article['id'].'">';            
+    echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';            
     foreach($article['photos'] as $photo){
-        echo '<a class="photo_'.$article['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
-        echo '<img class="photo_thumbnail" src="'.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).'" />';
+        echo '<a class="photo_'.$article['id'].'" photo_id="'.$photo['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
+        echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
+        echo '<div id="photo_caption_'.$photo['id'].'" class="photo_caption">'.$photo['caption'].'</div>';
         echo '</a>';
     }
-    echo '</div>';
-    echo '<div id="big_photo_'.$article['id'].'"></div>';
+    echo '<div id="big_photo_'.$article['id'].'" class="row"></div>';
+    echo '</div>';            
     echo '<script type="text/javascript">
         $(".photo_'.$article['id'].'").click(function(event){
             LOADING = true;
+            var photo_caption = $("#photo_caption_"+$(this).attr("photo_id")).html();
             $("#big_photo_'.$article['id'].'").hide();
             $("#big_photo_'.$article['id'].'").html(
                 "<div class=\"col-md-12\" style=\"text-align:right; margin-bottom:10px;\"><a id=\"close_big_photo_'.$article['id'].'\" class=\"btn btn-danger\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></div>"+
-                "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" /><br />");
+                "<div class=\"col-md-12 lead\" style=\"text-align:left;\">" + photo_caption + "</div>"+
+                "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" />"
+            );
             $("#big_photo_'.$article['id'].'").fadeIn();
             $("html, body").animate({
                 scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
@@ -55,7 +64,12 @@ foreach($articles as $article){
         echo '<div style="margin-bottom:20px;">';
         echo '<b>Categories</b> :&nbsp;';
         foreach($article['categories'] as $category){
-            echo '<a href="'.site_url($module_url.'/index?category='.$category['name']).'"><span class="label label-primary">'.$category['name'].'</span></a>&nbsp;';
+            if($category_route_exists){
+                $url = $module_url.'/category/'.$category['name'];
+            }else{
+                $url = $module_url.'/index?category='.$category['name'];
+            }
+            echo '<a href="'.site_url($url).'"><span class="label label-primary">'.$category['name'].'</span></a>&nbsp;';
         }
         echo '</div>';
     }   

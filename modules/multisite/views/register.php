@@ -21,7 +21,7 @@
         }
         REQUEST_EXISTS = true;
         REQUEST = $.ajax({
-            "url" : "check_registration",
+            "url" : "<?=site_url('{{ module_path }}/multisite/check_registration')?>",
             "type" : "POST",
             "data" : {"user_name":user_name, "email":email},
             "dataType" : "json",

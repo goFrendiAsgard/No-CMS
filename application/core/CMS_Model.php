@@ -62,7 +62,11 @@ class CMS_Model extends CI_Model
                 'quicklink' => array(),         // cache already built quicklink
                 'widget' => array(),            // cache raw query
                 'super_admin' => NULL,
+                'group_name' => array(),
+                'group_id' => array(), 
                 'properties' => array(),
+                'route' => array(),
+                'is_super_admin' => FALSE,
                 'is_config_cached' => FALSE,
                 'is_module_name_cached' => FALSE,
                 'is_module_path_cached' => FALSE,
@@ -72,6 +76,10 @@ class CMS_Model extends CI_Model
                 'is_quicklink_cached' => FALSE,
                 'is_widget_cached' => FALSE,
                 'is_language_dictionary_cached' => FALSE,
+                'is_group_name_cached' => FALSE,
+                'is_group_id_cached' => FALSE,
+                'is_super_admin_cached' => FALSE,
+                'is_route_cached' => FALSE,
             );
         foreach($default_properties as $key=>$val){
             if(!array_key_exists($key, self::$__cms_model_properties)){
@@ -397,24 +405,26 @@ class CMS_Model extends CI_Model
         return $this->cms_ci_session('cms_user_id', $user_id);
     }
 
-    /**
-     * @author goFrendiAsgard
-     * @return array
-     * @desc   get group list of current user
-     */
-    public function cms_user_group(){        
+    private function cms_adjust_group(){
+        $group_id   = array();
         $group_name = array();
         if($this->cms_user_id() != NULL){
-            $query = $this->db->select('group_name')
-                ->from(cms_table_name('main_group'))
-                ->join(cms_table_name('main_group_user'), cms_table_name('main_group_user').'.group_id = '.cms_table_name('main_group').'.group_id')
+            $t_group_user = cms_table_name('main_group_user');
+            $t_group  = cms_table_name('main_group');
+            $query = $this->db->select($t_group_user.'.group_id, group_name')
+                ->from($t_group_user)
+                ->join($t_group, $t_group.'.group_id = '.$t_group_user.'.group_id')
                 ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
                 ->get();
             foreach($query->result() as $row){
-                $group_name[] = $row->group_name;
+                $group_id[]     = $row->group_id;
+                $group_name[]   = $row->group_name;
             }
         }
-        return $group_name;
+        self::$__cms_model_properties['group_id']   = $group_id;
+        self::$__cms_model_properties['group_name'] = $group_name;
+        self::$__cms_model_properties['is_group_id_cached']   = TRUE;
+        self::$__cms_model_properties['is_group_name_cached'] = TRUE;
     }
 
     /**
@@ -422,18 +432,23 @@ class CMS_Model extends CI_Model
      * @return array
      * @desc   get group list of current user
      */
-    public function cms_user_group_id(){        
-        $group_id = array();
-        if($this->cms_user_id() != NULL){
-            $query = $this->db->select('group_id')
-                ->from(cms_table_name('main_group_user'))
-                ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
-                ->get();
-            foreach($query->result() as $row){
-                $group_id[] = $row->group_id;
-            }
+    public function cms_user_group(){
+        if (!self::$__cms_model_properties['is_group_name_cached']) {
+            $this->cms_adjust_group();
         }
-        return $group_id;
+        return self::$__cms_model_properties['group_name'];
+    }
+
+    /**
+     * @author goFrendiAsgard
+     * @return array
+     * @desc   get group list of current user
+     */
+    public function cms_user_group_id(){
+        if (!self::$__cms_model_properties['is_group_id_cached']) {
+            $this->cms_adjust_group();
+        }
+        return self::$__cms_model_properties['group_id'];
     }
 
     /**
@@ -490,14 +505,9 @@ class CMS_Model extends CI_Model
                 }
             }
         }
+
         // normal flow
-        $query = $this->db->select('group_name')
-            ->from(cms_table_name('main_group'))
-            ->join(cms_table_name('main_group_user'), cms_table_name('main_group_user').'.group_id = '.cms_table_name('main_group').'.group_id')
-            ->where(cms_table_name('main_group_user').'.user_id', $this->cms_user_id())
-            ->where(cms_table_name('main_group').'.group_id', 1)
-            ->get();
-        return $query->num_rows()>0;
+        return in_array(1, $this->cms_user_group_id());
     }
 
     /**
@@ -1070,6 +1080,20 @@ class CMS_Model extends CI_Model
             }
             return FALSE;
         }
+    }
+
+    public function cms_route_key_exists($route_key)
+    {
+        if(!self::$__cms_model_properties['is_route_cached']){
+            $query = $this->db->select('key, value')
+                ->from(cms_table_name('main_route'))
+                ->get();
+            self::$__cms_model_properties['route'] = array();
+            foreach($query->result() as $row){
+                self::$__cms_model_properties['route'][$row->key] = $row->value;
+            }
+        }
+        return array_key_exists($route_key, self::$__cms_model_properties['route']);
     }
 
     /**
@@ -3464,6 +3488,24 @@ class CMS_Model extends CI_Model
         $this->db->delete(cms_table_name('main_route'),
             array('key'=>$key));
         $this->cms_reconfig_route();
+    }
+
+    public final function cms_add_config($config_name, $value, $description = NULL){
+        $query = $this->db->select('config_id')
+            ->from(cms_table_name('main_config'))
+            ->where('config_name', $config_name)
+            ->get();
+        $data = array('config_name' => $config_name, 'value' => $value, 'description' => $description);
+        if($query->num_rows() > 0){
+            $config_id = $query->row()->config_id;
+            $this->db->update(cms_table_name('main_config'), $data, array('config_id' => $config_id));
+        }else{
+            $this->db->insert(cms_table_name('main_config'), $data);
+        }
+    }
+
+    public final function cms_remove_config($config_name){
+        $this->db->delete(cms_table_name('main_config'), array('config_name' => $config_name));
     }
 
     public final function cms_assign_navigation($navigation_name, $group_name){

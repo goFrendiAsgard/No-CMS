@@ -30,8 +30,20 @@ class Manage_article extends CMS_Secure_Controller {
         $state_info = $crud->getStateInfo();
         $primary_key = isset($state_info->primary_key)? $state_info->primary_key : NULL;
 
+        $super_admin_user_id = array(1);
+        if(CMS_SUBSITE != ''){
+            $query = $this->db->select('user_id')
+                ->from($subsite_table)
+                ->where('name', CMS_SUBSITE)
+                ->get();
+            if($query->num_rows() > 0){
+                $row = $query->row();
+                $super_admin_user_id[] = $row->user_id;
+            }
+        }
+
         $allow_continue = TRUE;
-        if($this->cms_user_id() != 1 && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list) && isset($primary_key) && $primary_key !== NULL){
+        if(!in_array($this->cms_user_id(), $super_admin_user_id) && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list) && isset($primary_key) && $primary_key !== NULL){
             $query = $this->db->select('author_user_id')
                 ->from($this->cms_complete_table_name('article'))
                 ->where(array('article_id'=> $primary_key, 'author_user_id'=> $this->cms_user_id()))
@@ -72,7 +84,7 @@ class Manage_article extends CMS_Secure_Controller {
         $crud->set_table($this->cms_complete_table_name('article'));
 
         // only super admin or blog editor able to edit other's article
-        if($this->cms_user_id() != 1 && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list)){
+        if(!in_array($this->cms_user_id(), $super_admin_user_id) && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list)){
             $crud->where('author_user_id', $this->cms_user_id());
         }
 
@@ -82,15 +94,16 @@ class Manage_article extends CMS_Secure_Controller {
         // displayed columns on list
         $crud->columns('article_title','author_user_id','status','publish_date','featured','allow_comment','categories','comments');
         // displayed columns on edit operation
-        $crud->edit_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','featured','allow_comment','categories','photos','comments');
+        $crud->edit_fields('article_title','article_url','date','status','publish_date','author_user_id','content','categories','keyword','description','featured','allow_comment','photos','comments');
         // displayed columns on add operation
-        $crud->add_fields('article_title','article_url','date','status','publish_date','author_user_id','content','keyword','description','featured','allow_comment','categories','photos','comments');
+        $crud->add_fields('article_title','article_url','date','status','publish_date','author_user_id','content','categories','keyword','description','featured','allow_comment','photos','comments');
         $crud->required_fields('article_title','status');
         $crud->unique_fields('article_title','article_url');
         $crud->unset_read();
 
         // caption of each columns
         $crud->display_as('article_title','Article Title');
+        $crud->display_as('status', 'Publication Status');
         $crud->display_as('article_url','Permalink (Left blank for default)');
         $crud->display_as('date','Created Date');
         $crud->display_as('author_user_id','Author');
@@ -111,6 +124,9 @@ class Manage_article extends CMS_Secure_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if($state == 'list' || $state == 'ajax_list' || $state == 'export' || $state == 'print' || $state == 'success'){
             $crud->set_relation('author_user_id', $this->cms_user_table_name(), 'user_name');
+        }
+        if(in_array($this->cms_user_id(), $super_admin_user_id) || in_array(1, $group_id_list) || in_array('Blog Editor', $group_name_list) || in_array('Blog Author', $group_name_list)){
+            $crud->set_relation('status', $this->cms_complete_table_name('publication_status'), 'status');
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,11 +159,22 @@ class Manage_article extends CMS_Secure_Controller {
         $crud->unset_texteditor('keyword');
         $crud->unset_texteditor('description');
 
-        if($this->cms_user_id() != 1 && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list) && !in_array('Blog Author', $group_name_list)){
+        $crud->set_outside_tab(6);
+        $crud->set_tabs(array(
+                'Setting'   => 4,
+                'Photos'    => 1,
+                'Comments'  => 1,
+            ));
+        $crud->set_tab_glyphicons(array(
+                'Setting'   => 'glyphicon-th-list',
+                'Photos'    => 'glyphicon-picture',
+                'Comments'  => 'glyphicon-comment',
+            ));
+
+        if(!in_array($this->cms_user_id(), $super_admin_user_id) && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list) && !in_array('Blog Author', $group_name_list)){
             $crud->field_type('status', 'hidden', 'draft');
             $crud->field_type('publish_date', 'hidden');
         }else{
-            $crud->field_type('status', 'enum', array('draft','published','scheduled'));
             $crud->field_type('publish_date', 'datetime');
         }
 
@@ -277,7 +304,7 @@ class Manage_article extends CMS_Secure_Controller {
         $insert_records = $data['insert'];
         $update_records = $data['update'];
         $delete_records = $data['delete'];
-        $real_column_names = array('photo_id', 'url');
+        $real_column_names = array('photo_id', 'url', 'caption', 'index');
         $set_column_names = array();
         $many_to_many_column_names = array();
         $many_to_many_relation_tables = array();
@@ -305,12 +332,30 @@ class Manage_article extends CMS_Secure_Controller {
             move_uploaded_file($tmp_name, $upload_path.$file_name);
             $data = array(
                 'url' => $file_name,
+                'index' => $insert_record['data']['index'],
             );
             $data['article_id'] = $primary_key;
             $this->db->insert($this->cms_complete_table_name('photo'), $data);
 
             $thumbnail_name = 'thumb_'.$file_name;
             $this->image_moo->load($upload_path.$file_name)->resize(800,75)->save($upload_path.$thumbnail_name,true);
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  UPDATED DATA
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        foreach($update_records as $update_record){
+            $detail_primary_key = $update_record['primary_key'];
+            $data = array();
+            foreach($update_record['data'] as $key=>$value){
+                if(in_array($key, $set_column_names)){
+                    $data[$key] = implode(',', $value);
+                }else if(in_array($key, $real_column_names)){
+                    $data[$key] = $value;
+                }
+            }
+            $data['article_id'] = $primary_key;
+            $this->db->update($this->cms_complete_table_name('photo'),
+                 $data, array('photo_id'=>$detail_primary_key));            
         }
 
 
@@ -323,7 +368,8 @@ class Manage_article extends CMS_Secure_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $data = json_decode($this->input->post('md_real_field_comments_col'), TRUE);
         $delete_records = $data['delete'];
-        $real_column_names = array('comment_id', 'date', 'author_user_id', 'name', 'email', 'website', 'content');
+        $update_records = $data['update'];
+        $real_column_names = array('comment_id', 'date', 'author_user_id', 'name', 'email', 'website', 'content', 'approved');
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  DELETED DATA
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -331,6 +377,23 @@ class Manage_article extends CMS_Secure_Controller {
             $detail_primary_key = $delete_record['primary_key'];
             $this->db->delete($this->cms_complete_table_name('comment'),
                  array('comment_id'=>$detail_primary_key));
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  UPDATED DATA
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        foreach($update_records as $update_record){
+            $detail_primary_key = $update_record['primary_key'];
+            $data = array();
+            foreach($update_record['data'] as $key=>$value){
+                if(in_array($key, $set_column_names)){
+                    $data[$key] = implode(',', $value);
+                }else if(in_array($key, $real_column_names)){
+                    $data[$key] = $value;
+                }
+            }
+            $data['article_id'] = $primary_key;
+            $this->db->update($this->cms_complete_table_name('comment'),
+                 $data, array('comment_id'=>$detail_primary_key));            
         }
         return TRUE;
     }
@@ -343,11 +406,18 @@ class Manage_article extends CMS_Secure_Controller {
         $date_format = $this->config->item('grocery_crud_date_format');
 
         if(!isset($primary_key)) $primary_key = -1;
-        $query = $this->db->select('photo_id, url')
+        $query = $this->db->select('photo_id, url, caption, index')
             ->from($this->cms_complete_table_name('photo'))
             ->where('article_id', $primary_key)
+            ->order_by('index')
             ->get();
         $result = $query->result_array();
+
+        for($i=0; $i<count($result); $i++){
+            if($result[$i]['caption'] === NULL){
+                $result[$i]['caption'] = '';
+            }
+        }
 
         // get options
         $options = array();
@@ -385,9 +455,11 @@ class Manage_article extends CMS_Secure_Controller {
         $date_format = $this->config->item('grocery_crud_date_format');
 
         if(!isset($primary_key)) $primary_key = -1;
-        $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content')
+        $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content, approved')
             ->from($this->cms_complete_table_name('comment'))
             ->where('article_id', $primary_key)
+            ->order_by('comment_id', 'desc')
+            ->order_by('approved')
             ->get();
         $result = $query->result_array();
 

@@ -1,11 +1,18 @@
 <?php
     $record_index = 0;
 ?>
+<style type="text/css">
+    .sub-caption{
+        min-width : 80px;
+        font-weight : bold;
+        display : inline-block;
+    }
+</style>
 
 <table id="md_table_comments" class="table table-striped table-bordered">
     <thead>
         <tr>
-            <th style="width:300px;">Comment Summary</th>
+            <th style="width:350px;">Comment Summary</th>
             <th style="width:100px;">Action</th>
         </tr>
     </thead>
@@ -95,28 +102,45 @@
         if(typeof(value) != 'undefined' && value.hasOwnProperty('content')){
             comment_content = value.content;
         }
+
+        var comment_approved = 0;
+        var caption          = 'Approve';
+        var status           = 'Waiting for Approval';
+        if(typeof(value) != 'undefined' && value.hasOwnProperty('approved')){
+            comment_approved = value.approved;
+            if(comment_approved == 1){
+                caption     = 'Cancel Approval';
+                status      = 'Approved';
+            }
+        }
+        
         component += '<td>';
-        component += '<div style="font-size:smaller;">';
-        component += 'author : '+comment_name+', '+comment_date;
+        component += '<div style="margin-bottom:10px;">';
+        component += '<div class="sub-caption">author</div> : '+comment_name+', '+comment_date;
         component += '<br />';
-        component += 'email : '+(comment_email==''?
+        component += '<div class="sub-caption">email</div> : '+(comment_email==''?
           'Not available': '<a href="mailto:'+comment_email+'">'+comment_email+'</a>');
         component += '<br />';
-        component += 'website : '+(comment_website?
+        component += '<div class="sub-caption">website</div> : '+(comment_website?
           'Not available': '<a href="'+comment_email+'" target="BLANK">'+comment_website+'</a>');
+        component += '<br />';
+        component += '<div class="sub-caption">approved</div> : <span id="comment_approved_'+RECORD_INDEX_comments+'">'+status;
         component += '</div>';
-        component += '<div style="margin-top:10px; padding-left:10px;">';
+        component += '<div">';
         component += comment_content;
         component += '</div>';
         component += '</td>';
 
+        
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         component += '<td>';
-        component += '<input class="md_field_comments_delete btn btn-default" record_index="'+RECORD_INDEX_comments+'" primary_key="" type="button" value="Delete" /></td>';
+        component += '<a class="btn btn-primary toggle_comment_approve" record_index="'+RECORD_INDEX_comments+'" href="#">' + caption + '</a><br /><br />';
+        component += '<input class="md_field_comments_delete btn btn-danger" record_index="'+RECORD_INDEX_comments+'" primary_key="" type="button" value="Delete" /></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,6 +205,43 @@
                         });
                         break;
                     }
+                }
+            }
+            synchronize_comments();
+        });
+
+        $('.toggle_comment_approve').click(function(event){
+            event.preventDefault();
+            var record_index = $(this).attr('record_index');
+            var record_index_found = false;
+            var new_val = 0;
+            for(var i=0; i<DATA_comments.insert.length; i++){
+                if(DATA_comments.insert[i].record_index == record_index){
+                    record_index_found = true;
+                    // insert value
+                    new_val = DATA_comments.insert[i].data.approved == 1 ? 0 : 1;
+                    DATA_comments.insert[i].data.approved = JSON.stringify(new_val);
+                    break;
+                }
+            }
+            if(!record_index_found){
+                for(var i=0; i<DATA_comments.update.length; i++){
+                    if(DATA_comments.update[i].record_index == record_index){
+                        record_index_found = true;
+                        // edit value
+                        new_val = DATA_comments.update[i].data.approved == 1 ? 0 : 1;
+                        DATA_comments.update[i].data.approved = JSON.stringify(new_val);
+                        break;
+                    }
+                }
+            }
+            if(record_index_found){
+                if(new_val == 0){
+                    $(this).html('Approve');
+                    $('#comment_approved_'+record_index).html('Waiting for Approval');
+                }else{
+                    $(this).html('Cancel Approval');
+                    $('#comment_approved_'+record_index).html('Approved');
                 }
             }
             synchronize_comments();

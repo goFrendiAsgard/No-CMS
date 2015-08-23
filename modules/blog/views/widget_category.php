@@ -17,7 +17,9 @@ foreach($categories as $key=>$value){
     echo '<li>';    
     // key
     if($key == ''){
-        $url = $module_url.'/index';
+        $url = $module_url;
+    }else if($category_route_exists){
+        $url = $module_url.'/category/'.$key;
     }else{
         $url = $module_url.'/index?category='.$key;
     }

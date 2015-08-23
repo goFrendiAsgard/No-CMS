@@ -195,7 +195,7 @@ class CMS_Module extends CMS_Controller
         $result['message'] = ul($result['message']);
 
         // show result
-        if($bypass !== NULL){
+        if($bypass){
             echo json_encode($result);
         } else if($result['success']) {
             $module_management_url = $this->cms_navigation_url('main_module_management');

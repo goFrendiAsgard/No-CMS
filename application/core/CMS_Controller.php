@@ -106,16 +106,16 @@ class CMS_Controller extends MX_Controller
         }*/
     }
 
-    public function cms_load_info_model($module_path){
+    protected function cms_load_info_model($module_path){
         return $this->{$this->__cms_base_model_name}->cms_load_info_model($module_path);
     }
 
-    public function cms_unique_field_name($field_name)
+    protected function cms_unique_field_name($field_name)
     {
         return $this->{$this->__cms_base_model_name}->cms_unique_field_name($field_name);
     }
 
-    public function cms_random_string($length=10)
+    protected function cms_random_string($length=10)
     {
         return $this->{$this->__cms_base_model_name}->cms_random_string($length);
     }
@@ -124,7 +124,7 @@ class CMS_Controller extends MX_Controller
      * @author goFrendiAsgard
      * @desc   get default_controller
      */
-    public function cms_get_default_controller(){
+    protected function cms_get_default_controller(){
         return $this->{$this->__cms_base_model_name}->cms_get_default_controller();
     }
 
@@ -133,7 +133,7 @@ class CMS_Controller extends MX_Controller
      * @param  string $value
      * @desc   set default_controller to value
      */
-    public function cms_set_default_controller($value){
+    protected function cms_set_default_controller($value){
         $this->{$this->__cms_base_model_name}->cms_set_default_controller($value);
     }
 
@@ -143,7 +143,7 @@ class CMS_Controller extends MX_Controller
      * @param  int    $port
      * @desc   is it able to go to some site?
      */
-    public function cms_is_connect($hostname=NULL, $port=80){ 
+    protected function cms_is_connect($hostname=NULL, $port=80){ 
         return $this->{$this->__cms_base_model_name}->cms_is_connect($hostname, $port);
     }
 
@@ -152,7 +152,7 @@ class CMS_Controller extends MX_Controller
      * @return Grocery_CRUD
      * @desc   return Grocery_CRUD
      */
-    public function new_crud(){
+    protected function new_crud(){
         $this->load->library('Extended_grocery_crud');
         $crud = new Extended_grocery_crud();
         $crud->set_theme('no-flexigrid');
@@ -165,7 +165,7 @@ class CMS_Controller extends MX_Controller
      * @return string
      * @desc   return complete table name
      */
-    public function cms_complete_table_name($table_name, $module_name = NULL){
+    protected function cms_complete_table_name($table_name, $module_name = NULL){
         return $this->{$this->__cms_base_model_name}->cms_complete_table_name($table_name, $module_name);
     }
 
@@ -175,7 +175,7 @@ class CMS_Controller extends MX_Controller
      * @return string
      * @desc   return complete navigation name
      */
-    public function cms_complete_navigation_name($navigation_name, $module_name = NULL){
+    protected function cms_complete_navigation_name($navigation_name, $module_name = NULL){
         return $this->{$this->__cms_base_model_name}->cms_complete_navigation_name($navigation_name, $module_name);
     }
 
@@ -186,7 +186,7 @@ class CMS_Controller extends MX_Controller
      * @return mixed
      * @desc   if value specified, this will set CI_Session["key"], else it will return CI_session["key"]
      */
-    public function cms_ci_session($key, $value = NULL)
+    protected function cms_ci_session($key, $value = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_ci_session($key, $value);
     }
@@ -196,7 +196,7 @@ class CMS_Controller extends MX_Controller
      * @param  string $key
      * @desc   unset CI_session["key"]
      */
-    public function cms_unset_ci_session($key)
+    protected function cms_unset_ci_session($key)
     {
         return $this->{$this->__cms_base_model_name}->cms_unset_ci_session($key);
     }
@@ -269,31 +269,31 @@ class CMS_Controller extends MX_Controller
         return $this->{$this->__cms_base_model_name}->cms_user_is_super_admin();
     }
 
-    public function cms_do_move_widget_after($src_widget_id, $dst_widget_id){
+    protected function cms_do_move_widget_after($src_widget_id, $dst_widget_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_widget_after($src_widget_id, $dst_widget_id);
     }
 
-    public function cms_do_move_widget_before($src_widget_id, $dst_widget_id){
+    protected function cms_do_move_widget_before($src_widget_id, $dst_widget_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_widget_before($src_widget_id, $dst_widget_id);
     }
 
-    public function cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id){
+    protected function cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id);
     }
 
-    public function cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id){
+    protected function cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id);
     }
 
-    public function cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id){
+    protected function cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id);
     }
 
-    public function cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id){
+    protected function cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id);
     }
 
-    public function cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id){
+    protected function cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id);
     }
 
@@ -303,7 +303,7 @@ class CMS_Controller extends MX_Controller
      * @param   string navigation_name
      * @desc    move navigation up
      */
-    public function cms_do_move_up_navigation($navigation_name){
+    protected function cms_do_move_up_navigation($navigation_name){
         $this->{$this->__cms_base_model_name}->cms_do_move_up_navigation($navigation_name);
     }
 
@@ -312,7 +312,7 @@ class CMS_Controller extends MX_Controller
      * @param   string navigation_name
      * @desc    move navigation down
      */
-    public function cms_do_move_down_navigation($navigation_name){
+    protected function cms_do_move_down_navigation($navigation_name){
         $this->{$this->__cms_base_model_name}->cms_do_move_down_navigation($navigation_name);
     }
 
@@ -321,7 +321,7 @@ class CMS_Controller extends MX_Controller
      * @param   string widget_name
      * @desc    move widget up
      */
-    public function cms_do_move_up_widget($widget_name){
+    protected function cms_do_move_up_widget($widget_name){
         $this->{$this->__cms_base_model_name}->cms_do_move_up_widget($widget_name);
     }
 
@@ -330,7 +330,7 @@ class CMS_Controller extends MX_Controller
      * @param   string widget_name
      * @desc    move widget down
      */
-    public function cms_do_move_down_widget($widget_name){
+    protected function cms_do_move_down_widget($widget_name){
         $this->{$this->__cms_base_model_name}->cms_do_move_down_widget($widget_name);
     }
 
@@ -339,7 +339,7 @@ class CMS_Controller extends MX_Controller
      * @param   int quicklink id
      * @desc    move quicklink up
      */
-    public function cms_do_move_up_quicklink($quicklink_id){
+    protected function cms_do_move_up_quicklink($quicklink_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_up_quicklink($quicklink_id);
     }
 
@@ -348,15 +348,15 @@ class CMS_Controller extends MX_Controller
      * @param   int quicklink id
      * @desc    move quicklink down
      */
-    public function cms_do_move_down_quicklink($quicklink_id){
+    protected function cms_do_move_down_quicklink($quicklink_id){
         $this->{$this->__cms_base_model_name}->cms_do_move_down_quicklink($quicklink_id);
     }
 
-    public function cms_user_table_name(){
+    protected function cms_user_table_name(){
         return $this->{$this->__cms_base_model_name}->cms_user_table_name();
     }
 
-    public function cms_chipper(){
+    protected function cms_chipper(){
         return $this->{$this->__cms_base_model_name}->cms_chipper();  
     }
 
@@ -367,7 +367,7 @@ class CMS_Controller extends MX_Controller
      * @desc    return navigation child if parent_id specified, else it will return root navigation
      *           the max depth of menu is depended on max_menud_depth
      */
-    public function cms_navigations($parent_id = NULL, $max_menu_depth = NULL)
+    protected function cms_navigations($parent_id = NULL, $max_menu_depth = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_navigations($parent_id, $max_menu_depth);
     }
@@ -377,7 +377,7 @@ class CMS_Controller extends MX_Controller
      * @return mixed
      * @desc   return quick links
      */
-    public function cms_quicklinks()
+    protected function cms_quicklinks()
     {
         return $this->{$this->__cms_base_model_name}->cms_quicklinks();
     }
@@ -389,7 +389,7 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    return widgets
      */
-    public function cms_widgets($slug = NULL, $widget_name = NULL)
+    protected function cms_widgets($slug = NULL, $widget_name = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_widgets($slug, $widget_name);
     }
@@ -400,7 +400,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    return url of navigation
      */
-    public function cms_navigation_url($navigation_name)
+    protected function cms_navigation_url($navigation_name)
     {
         return $this->{$this->__cms_base_model_name}->cms_navigation_url($navigation_name);
     }
@@ -417,7 +417,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    return submenu screen
      */
-    public function cms_submenu_screen($navigation_name)
+    protected function cms_submenu_screen($navigation_name)
     {
         $submenus = array();
         if (!isset($navigation_name)) {
@@ -580,8 +580,9 @@ class CMS_Controller extends MX_Controller
      * @param   string navigation_name
      * @return  mixed
      * @desc    return navigation path, used for layout
-     */
-    public function cms_get_navigation_path($navigation_name = NULL)
+     **/
+    
+    protected function cms_get_navigation_path($navigation_name = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_get_navigation_path($navigation_name);
     }
@@ -591,7 +592,7 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    return privileges of current user
      */
-    public function cms_privileges()
+    protected function cms_privileges()
     {
         return $this->{$this->__cms_base_model_name}->cms_privileges();
     }
@@ -616,6 +617,11 @@ class CMS_Controller extends MX_Controller
     protected function cms_have_privilege($privilege_name)
     {
         return $this->{$this->__cms_base_model_name}->cms_have_privilege($privilege_name);
+    }
+
+    protected function cms_route_key_exists($route_key)
+    {
+        return $this->{$this->__cms_base_model_name}->cms_route_key_exists($route_key);
     }
 
     /**
@@ -681,12 +687,12 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    get module list
      */
-    public function cms_get_module_list($keyword = NULL)
+    protected function cms_get_module_list($keyword = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_get_module_list($keyword);
     }
 
-    public function cms_module_version($module_name = NULL){
+    protected function cms_module_version($module_name = NULL){
         return $this->{$this->__cms_base_model_name}->cms_module_version();    
     }
 
@@ -696,7 +702,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    get module_path (folder name) of specified module_name (name space)
      */
-    public function cms_module_path($module_name = NULL)
+    protected function cms_module_path($module_name = NULL)
     {
         if($module_name === NULL){
             $module_path = '';
@@ -721,7 +727,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    get module_name (name space) of specified module_path (folder name)
      */
-    public function cms_module_name($path = NULL)
+    protected function cms_module_name($path = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_module_name($path);
     }
@@ -822,7 +828,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    get configuration variable
      */
-    public function cms_get_config($name, $raw = False)
+    protected function cms_get_config($name, $raw = False)
     {
         return $this->{$this->__cms_base_model_name}->cms_get_config($name, $raw);
     }
@@ -843,7 +849,7 @@ class CMS_Controller extends MX_Controller
      * @return	array list of available languages
      * @desc	get available languages
      */
-    public function cms_language_list()
+    protected function cms_language_list()
     {
         return $this->{$this->__cms_base_model_name}->cms_language_list();
     }
@@ -854,7 +860,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    get translation of key in site_language
      */
-    public function cms_lang($key, $module = NULL)
+    protected function cms_lang($key, $module = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_lang($key, $module);
     }
@@ -865,7 +871,7 @@ class CMS_Controller extends MX_Controller
      * @return string
      * @desc   parse keyword like @site_url and @base_url
      */
-    public function cms_parse_keyword($value)
+    protected function cms_parse_keyword($value)
     {
         return $this->{$this->__cms_base_model_name}->cms_parse_keyword($value);
     }
@@ -876,7 +882,7 @@ class CMS_Controller extends MX_Controller
      * @return bool
      * @desc   check if user already exists
      */
-    public function cms_is_user_exists($identity, $exception_user_id = 0)
+    protected function cms_is_user_exists($identity, $exception_user_id = 0)
     {
         return $this->{$this->__cms_base_model_name}->cms_is_user_exists($identity, $exception_user_id);
     }
@@ -955,7 +961,7 @@ class CMS_Controller extends MX_Controller
      * @param string or array privilege_required
      * @desc guard a page from unauthorized access
      */
-    public function cms_guard_page($navigation_name = NULL, $privilege_required = NULL)
+    protected function cms_guard_page($navigation_name = NULL, $privilege_required = NULL)
     {
         $privilege_required = isset($privilege_required) ? $privilege_required : array();
         // check if allowed
@@ -987,7 +993,7 @@ class CMS_Controller extends MX_Controller
      * @param   string content
      * @desc    flash content to be served as metadata on next call of $this->view in controller
      */
-    public function cms_flash_metadata($content){
+    protected function cms_flash_metadata($content){
         $this->{$this->__cms_base_model_name}->cms_flash_metadata($content);
     }
 
@@ -1637,7 +1643,7 @@ class CMS_Controller extends MX_Controller
     }
 
 
-    public function cms_layout_exists($theme, $layout)
+    protected function cms_layout_exists($theme, $layout)
     {
         if(CMS_SUBSITE != ''){
             $subsite_auth_file = FCPATH.'themes/'.$theme.'/subsite_auth.php';
@@ -1713,7 +1719,7 @@ class CMS_Controller extends MX_Controller
      * @author goFrendiAsgard
      * @return array providers
      */
-    public function cms_third_party_providers()
+    protected function cms_third_party_providers()
     {
         return $this->{$this->__cms_base_model_name}->cms_third_party_providers();
     }
@@ -1723,7 +1729,7 @@ class CMS_Controller extends MX_Controller
      * @return array status
      * @desc return all status from third-party provider
      */
-    public function cms_third_party_status()
+    protected function cms_third_party_status()
     {
         return $this->{$this->__cms_base_model_name}->cms_third_party_status();
     }
@@ -1733,7 +1739,7 @@ class CMS_Controller extends MX_Controller
      * @return boolean success
      * @desc login/register by using third-party provider
      */
-    public function cms_third_party_login($provider, $email = NULL)
+    protected function cms_third_party_login($provider, $email = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_third_party_login($provider, $email);
     }
@@ -1803,6 +1809,14 @@ class CMS_Controller extends MX_Controller
         $this->{$this->__cms_base_model_name}->cms_remove_route($key);
     }
 
+    public final function cms_add_config($config_name, $value, $description = NULL){
+        $this->{$this->__cms_base_model_name}->cms_add_config($config_name, $value, $description);
+    }
+
+    public final function cms_remove_config($config_name){
+        $this->{$this->__cms_base_model_name}->cms_remove_config($config_name);
+    }
+
     protected function cms_assign_navigation($navigation_name, $group_name){
         $this->{$this->__cms_base_model_name}->cms_assign_navigation($navigation_name, $group_name);
     }
@@ -1818,15 +1832,15 @@ class CMS_Controller extends MX_Controller
         $this->{$this->__cms_base_model_name}->cms_execute_sql($SQL, $separator);
     }
 
-    public function cms_set_editing_mode(){
+    protected function cms_set_editing_mode(){
         $this->{$this->__cms_base_model_name}->cms_set_editing_mode();
     }
 
-    public function cms_unset_editing_mode(){
+    protected function cms_unset_editing_mode(){
         $this->{$this->__cms_base_model_name}->cms_unset_editing_mode();
     }
 
-    public function cms_editing_mode(){
+    protected function cms_editing_mode(){
         if($this->cms_user_is_super_admin()){
             return $this->{$this->__cms_base_model_name}->cms_editing_mode();
         }else{

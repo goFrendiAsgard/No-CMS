@@ -36,9 +36,9 @@ class CMS_AutoUpdate_Model extends CMS_Model{
                 $active          = $module['active'];
                 $upgrade_link    = $module['upgrade_link'];
                 if($active && $old_version != $current_version){
-                    $url = str_replace(site_url(), '', $upgrade_link);
-                    $url = trim($url, '/');
-                    $response = @Modules::run($url, $bypass);
+                    $url        = str_replace(site_url(), '', $upgrade_link);
+                    $url        = trim($url, '/');
+                    $response   = Modules::run($url, $bypass);
                 }
             }
         }

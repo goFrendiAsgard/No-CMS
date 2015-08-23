@@ -26,9 +26,21 @@ class Blog extends CMS_Secure_Controller {
         return $str;
     }
 
-    public function index($article_url = NULL){
+    public function index($article_url = NULL, $filter_category = NULL, $filter_archive = NULL, $filter_keyword = NULL){
         $module_path = $this->cms_module_path();
         $this->load->model($module_path.'/article_model');
+
+        $article_url = $article_url == ''? NULL : $article_url;
+        $filter_category = $this->input->get('category') == NULL?
+            $filter_category : $this->input->get('category');        
+        $filter_archive  = $this->input->get('archive')  == NULL?
+            $filter_archive : $this->input->get('archive');
+        $filter_keyword  = $this->input->get('keyword')  == NULL?
+            $filter_keyword : $this->input->get('keyword');
+        $filter_category = $filter_category == ''? NULL : $filter_category;
+        $filter_archive  = $filter_archive  == ''? NULL : $filter_archive;
+        $filter_keyword  = $filter_keyword  == ''? NULL : $filter_keyword;
+
 
         // the honey_pot, every fake input should be empty
         $honey_pot_pass = (strlen($this->input->post('name', ''))==0) &&
@@ -83,10 +95,10 @@ class Blog extends CMS_Secure_Controller {
         $first_data = NULL;
         if($article_url === NULL){
             $first_data = Modules::run($module_path.'/blog/get_data', 
-                    $this->input->get('keyword'),
+                    $filter_keyword,
                     0,
-                    $this->input->get('category'),
-                    $this->input->get('archive')
+                    $filter_category,
+                    $filter_archive
                 );
         }
 
@@ -96,9 +108,9 @@ class Blog extends CMS_Secure_Controller {
             'backend_url' => site_url($this->cms_module_path().'/manage_article/index'),
             'first_data'=> $first_data,
             'categories'=>$this->article_model->get_available_category(),
-            'chosen_category' => $this->input->get('category'),
-            'archive' => $this->input->get('archive'),
-            'keyword' => $this->input->get('keyword'),
+            'chosen_category' => $filter_category,
+            'archive' => $filter_archive,
+            'keyword' => $filter_keyword,
             'module_path' => $this->cms_module_path(),
             'is_user_login' => $this->cms_user_id()>0,
             'secret_code' => $secret_code,
@@ -115,23 +127,20 @@ class Blog extends CMS_Secure_Controller {
             'form_url'=> $this->cms_module_path() == 'blog'?
                 site_url($this->cms_module_path().'/index/'.$article_url.'/#comment-form') :
                 site_url($this->cms_module_path().'/blog/index/'.$article_url.'/#comment-form'),
+            'category_route_exists' => $this->cms_route_key_exists('blog/category/(:any)'),
         );
 
         $config = array();
-        if(isset($article_url)){
+        if(isset($article_url) && $article_url != ''){
             $article = $this->article_model->get_single_article($article_url);
             $data['article'] = $article;
             $config['title'] = $article['title'];
             $config['keyword'] = $article['keyword'];
             $config['description'] = $article['description'];
             $config['author'] = $article['author'];
+
             // add visited
-            $query = $this->db->select('visited')
-                ->from($this->cms_complete_table_name('article'))
-                ->where('article_id', $article['id'])
-                ->get();            
-            $row = $query->row();
-            $visited = $row->visited;
+            $visited = $article['visited'];
             if($visited === NULL || $visited == ''){
                 $visited = 0;
             }
@@ -167,6 +176,8 @@ class Blog extends CMS_Secure_Controller {
             'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
             'module_path' => $this->cms_module_path(),
             'user_id' => $this->cms_user_id(),
+            'article_route_exists'=>$this->cms_route_key_exists('blog/(:any)\.html'),
+            'category_route_exists' => $this->cms_route_key_exists('blog/category/(:any)'),
         );
         $config = array('only_content'=>TRUE);
         $this->view($this->cms_module_path().'/browse_article_partial_view',$data,

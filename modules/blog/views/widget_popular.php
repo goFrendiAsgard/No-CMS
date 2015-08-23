@@ -19,13 +19,14 @@ if(count($articles)==0){
 }else{
     echo '<ul class="_popular_widget">';
     foreach($articles as $article){
-        echo '<li>';
-        // get url
-        if($module_path == 'blog'){
-            $url = site_url('blog/index/'.$article['article_url']);
+        if($article_route_exists){
+            $article_url = $module_path=='blog'? 'blog/': '{{ module_path }}/blog/';
+            $article_url .= $article['article_url'].'.html';
         }else{
-            $url = site_url('{{ module_path }}/blog/index/'.$article['article_url']);
+            $article_url = $module_path=='blog'? 'blog/index/': '{{ module_path }}/blog/index/';
+            $article_url .= $article['article_url'];
         }
+        echo '<li>';
         // get image
         if(count($article['photos'])>0){
             $photo = $article['photos'][0]['url'];
@@ -33,7 +34,7 @@ if(count($articles)==0){
         }else{
             $photo = base_url('modules/'.$module_path.'/assets/images/text.jpeg');
         }
-        echo anchor($url,
+        echo anchor($article_url,
                     '<div class="row">'.
                     '<div class="col-md-4" style="min-height:50px; background-repeat: no-repeat;
                         background-attachment: cover; background-position: center; 

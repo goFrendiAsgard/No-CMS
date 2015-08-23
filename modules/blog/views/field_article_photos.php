@@ -3,10 +3,28 @@
     $upload_path = base_url('modules/'.$module_path.'/assets/uploads').'/';
 ?>
 
+<style type="text/css">
+    ._photo-preview{
+        width : 150px;
+        height : 75px;
+        background-color : black;
+        background-repeat : no-repeat;
+        background-position:center;
+    }
+    .md_field_photos_col_index{
+        width : 50px;
+    }
+    .md_field_photos_col_caption{
+        width : 257px;
+    }
+</style>
+
 <table id="md_table_photos" class="table table-striped table-bordered">
     <thead>
         <tr>
-            <th style="width:300px;">Photo</th>
+            <th style="width:50px;">Index</th>
+            <th style="width:150px;">Photo</th>
+            <th style="width:300px;">Caption</th>
             <th style="width:100px;">Action</th>
         </tr>
     </thead>
@@ -60,6 +78,20 @@
         var component = '<tr id="md_field_photos_tr_'+RECORD_INDEX_photos+'" class="md_field_photos_tr">';
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
+        //    FIELD "index"
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        var field_value = 0;
+        if(typeof(value) != 'undefined' && value.hasOwnProperty('index')){
+            field_value = value.index;
+        }
+        component += '<td>';
+        component += '<input id="md_field_photos_col_index_'+RECORD_INDEX_photos+
+              '" record_index="'+RECORD_INDEX_photos+
+              '" class="md_field_photos_col md_field_photos_col_index form-control" column_name="index" type="text"'+
+              ' name="md_field_photos_col_index_'+RECORD_INDEX_photos+'" value="'+field_value+'" />';
+        component += '</td>';
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "url"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         var field_value = '';
@@ -68,14 +100,28 @@
         }
         component += '<td>';
         if(field_value != ''){
-            component += '<img src="'+UPLOAD_PATH+'thumb_'+field_value+'" />';
+            component += '<div class="_photo-preview" style="background-image:url(\''+UPLOAD_PATH+'thumb_'+field_value+'\')"></div>';
         }else{
             component += '<input id="md_field_photos_col_url_'+RECORD_INDEX_photos+
                   '" record_index="'+RECORD_INDEX_photos+
-                  '" class="md_field_photos_col" column_name="url" type="file"'+
+                  '" class="md_field_photos_col form-control" column_name="url" type="file"'+
                   ' name="md_field_photos_col_url_'+RECORD_INDEX_photos+'" value="'+field_value+'"/>';
         }
 
+        component += '</td>';
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        //    FIELD "caption"
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        var field_value = '';
+        if(typeof(value) != 'undefined' && value.hasOwnProperty('caption')){
+            field_value = value.caption;
+        }
+        component += '<td>';
+        component += '<textarea id="md_field_photos_col_caption_'+RECORD_INDEX_photos+
+              '" record_index="'+RECORD_INDEX_photos+
+              '" class="md_field_photos_col md_field_photos_col_caption form-control" column_name="caption"'+
+              ' name="md_field_photos_col_caption_'+RECORD_INDEX_photos+'">'+field_value+'</textarea>';
         component += '</td>';
 
 
@@ -124,7 +170,19 @@
             // new data
             var data = new Object();
 
-            data.url = '';
+            data.url     = '';
+            data.caption = '';
+            data.index   = 0;
+            for(var i=0; i<DATA_photos.update.length; i++){
+                if(parseInt(DATA_photos.update[i].data.index) >= data.index){
+                    data.index = parseInt(DATA_photos.update[i].data.index) + 1;
+                }
+            }
+            for(var i=0; i<DATA_photos.insert.length; i++){
+                if(parseInt(DATA_photos.insert[i].data.index) >= data.index){
+                    data.index = parseInt(DATA_photos.insert[i].data.index) + 1;
+                }
+            }
             // insert data to the DATA_photos
             DATA_photos.insert.push({
                 'record_index' : RECORD_INDEX_photos,
@@ -184,6 +242,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         $('.md_field_photos_col').live('change', function(){
             var value = $(this).val();
+            var old_value = null;
             var column_name = $(this).attr('column_name');
             var record_index = $(this).attr('record_index');
             var record_index_found = false;
@@ -194,10 +253,12 @@
             if(typeof(value)=='undefined'){
                 value = '';
             }
+            // change DATA_photos
             for(var i=0; i<DATA_photos.insert.length; i++){
                 if(DATA_photos.insert[i].record_index == record_index){
                     record_index_found = true;
                     // insert value
+                    eval('old_value = DATA_photos.insert['+i+'].data.'+column_name+';');
                     eval('DATA_photos.insert['+i+'].data.'+column_name+' = '+JSON.stringify(value)+';');
                     break;
                 }
@@ -207,8 +268,28 @@
                     if(DATA_photos.update[i].record_index == record_index){
                         record_index_found = true;
                         // edit value
+                        eval('old_value = DATA_photos.update['+i+'].data.'+column_name+';');
                         eval('DATA_photos.update['+i+'].data.'+column_name+' = '+JSON.stringify(value)+';');
                         break;
+                    }
+                }
+            }
+            // if the changed column is index, perform swap value
+            if(column_name == 'index'){
+                for(var i=0; i<DATA_photos.insert.length; i++){
+                    if(parseInt(DATA_photos.insert[i].data.index) == parseInt(value)){
+                        var other_record_index = DATA_photos.insert[i].record_index;
+                        if(other_record_index == record_index){continue;}
+                        DATA_photos.insert[i].data.index = old_value;
+                        $('#md_field_photos_col_index_'+other_record_index).val(old_value);
+                    }
+                }
+                for(var i=0; i<DATA_photos.update.length; i++){
+                    if(parseInt(DATA_photos.update[i].data.index) == parseInt(value)){
+                        var other_record_index = DATA_photos.update[i].record_index;
+                        if(other_record_index == record_index){continue;}
+                        DATA_photos.update[i].data.index = old_value;
+                        $('#md_field_photos_col_index_'+other_record_index).val(old_value);
                     }
                 }
             }

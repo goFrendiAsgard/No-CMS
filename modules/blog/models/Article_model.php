@@ -101,7 +101,7 @@ class Article_model extends  CMS_Model{
         $SQL = "
             SELECT
                 article_id, article_title, article_url, content, date, keyword, description, allow_comment,
-                real_name AS author, author_user_id
+                real_name AS author, author_user_id, visited
             FROM ".$this->cms_complete_table_name('article')."
             LEFT JOIN ".$this->cms_user_table_name()." ON (".$this->cms_user_table_name().".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
             WHERE $where_article_url";
@@ -126,6 +126,7 @@ class Article_model extends  CMS_Model{
                     "photos" => $this->get_photos($row->article_id),
                     "categories" => $this->get_category($row->article_id),
                     "related_article"=>$this->get_related_article($row->article_id),
+                    "visited"=>$row->visited,
             );
             return $result;
         }else{
@@ -217,6 +218,7 @@ class Article_model extends  CMS_Model{
                     'date' => date('Y-m-d H:i:s'),
                     'read' => 0,
                     'parent_comment_id'=>$parent_comment_id,
+                    'approved' => $this->cms_get_config($this->cms_complete_navigation_name('moderation')) == TRUE? 1 : 0,
             );
             if(isset($cms_user_id) && ($cms_user_id>0)){
                 $data['author_user_id'] = $cms_user_id;
@@ -226,16 +228,19 @@ class Article_model extends  CMS_Model{
     }
 
     public function get_photos($article_id){
-        $query = $this->db->select('url')
+        $query = $this->db->select('photo_id, caption, url')
             ->from($this->cms_complete_table_name('photo'))
             ->where('article_id', $article_id)
+            ->order_by('index')
             ->get();
 
         $data = array();
         foreach($query->result() as $row){
             $result = array(
-                    "url" => $row->url
-            );
+                    "id"      => $row->photo_id,
+                    "caption" => $row->caption,
+                    "url"     => $row->url
+                );
             $data[] = $result;
         }
         return $data;
@@ -308,6 +313,15 @@ class Article_model extends  CMS_Model{
         $email = $email === NULL ? '' : $email;
         $website = $row->website === NULL ? '' : $row->website;
         $this->load->helper('url');
+
+
+        if(!$this->cms_is_connect('www.gravatar.com')){
+            $real_base_url = base_url();
+            if(USE_SUBDOMAIN && CMS_SUBSITE != '' && !USE_ALIAS){
+                $real_base_url = $base_url;
+                $real_base_url = str_ireplace('://'.CMS_SUBSITE.'.',  '://', $real_base_url);
+            }
+        }
         $result = array(
                 "comment_id" => $row->comment_id,
                 "date" => date('Y-m-d'),
@@ -315,7 +329,9 @@ class Article_model extends  CMS_Model{
                 "name" => $name,
                 "website" => prep_url($website),
                 "email" => $email,
-                "gravatar_url" => 'http://www.gravatar.com/avatar/'.md5($email).'?s=32&r=pg&d=identicon'
+                "gravatar_url" => $this->cms_is_connect('www.gravatar.com')? 
+                    'http://www.gravatar.com/avatar/'.md5($email).'?s=32&r=pg&d=identicon':
+                    $real_base_url.'modules/'.$this->cms_module_path().'/assets/images/user.png',
         );
         return $result;
     }
@@ -324,6 +340,7 @@ class Article_model extends  CMS_Model{
         $this->db->select('comment_id, date, author_user_id, name, email, website, content')
             ->from($this->cms_complete_table_name('comment'))
             ->where('article_id', $article_id)
+            ->where('approved', 1)
             ->order_by('date');
         if($nested){
             $this->db->where('parent_comment_id', NULL);

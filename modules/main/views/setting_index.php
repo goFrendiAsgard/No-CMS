@@ -672,7 +672,7 @@
             </div>
 
         </div>
-        <input type="submit" class="btn btn-primary btn-lg" value="Apply Changes">
+        <button class="btn btn-primary btn-lg">Apply Changes</button>
     </form>
 </div>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
