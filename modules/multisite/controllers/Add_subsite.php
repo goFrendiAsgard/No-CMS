@@ -31,7 +31,12 @@ class Add_subsite extends CMS_Secure_Controller {
     }
 
     public function index(){
-        $data = NULL;
+        $this->load->model($this->cms_module_path().'/subsite_model');        
+        $data = array(
+                'theme_list'    => $this->subsite_model->public_theme_list(),
+                'layout_list'   => $this->subsite_model->layout_list(),
+                'template_list' => $this->subsite_model->template_list(),
+            );
         $this->view($this->cms_module_path().'/add_subsite_index', $data, $this->cms_complete_navigation_name('add_subsite'));
     }
 
@@ -46,16 +51,37 @@ class Add_subsite extends CMS_Secure_Controller {
         $check_installation = $this->install_model->check_installation();
         $success = $check_installation['success'];
 
-        $configs = $this->cms_get_config('cms_subsite_configs');
+        $this->load->model($this->cms_module_path().'/subsite_model');
+        $template = $this->subsite_model->get_single_template($this->input->post('template'));
+        $homepage_layout = $this->input->post('homepage_layout');
+        $default_layout = $this->input->post('default_layout');
+        $theme = $this->input->post('theme');
+
+        // get configs
+        $configs = $template != NULL? $template->configuration: $this->cms_get_config('cms_subsite_configs');
         $configs = @json_decode($configs, TRUE);
         if(!$configs){
             $configs = array();
         }
-        $modules = $this->cms_get_config('cms_subsite_modules');
-        $modules = explode(',', $modules);
-        for($i=0; $i<count($modules); $i++){
-            $modules[$i] = trim($modules[$i]);
+        if($theme != ''){
+            $configs['site_theme'] = $theme;
         }
+        if($default_layout != ''){
+            $configs['site_layout'] = $default_layout;
+        }
+
+        // get modules
+        $modules = $template != NULL? $template->modules: $this->cms_get_config('cms_subsite_modules');
+        $modules = explode(',', $modules);
+        $new_modules = array();
+        foreach($modules as $module){
+            $module = trim($module);
+            if(!in_array($module, $new_modules)){
+                $new_modules[] = $module;
+            }
+        }
+        $modules = $new_modules;
+
         $this->install_model->configs = $configs;
         $this->install_model->modules = $modules;
 
@@ -76,10 +102,13 @@ class Add_subsite extends CMS_Secure_Controller {
         }
 
         $module_installed = FALSE;
-        if($success){
-            $config = array('subsite_home_content'=> $this->cms_get_config('cms_subsite_home_content', TRUE));
+        if($success){            
             $this->install_model->configs = $configs;
             $this->install_model->modules = $modules;
+            $config = array(
+                    'subsite_home_content'=> $template != NULL? $template->homepage: $this->cms_get_config('cms_subsite_home_content', TRUE),
+                    'subsite_homepage_layout' => $homepage_layout,
+                );
             $this->install_model->build_configuration($config);
             $this->install_model->build_database($config);
             $module_installed = $this->install_model->install_modules();

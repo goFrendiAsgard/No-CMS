@@ -35,34 +35,82 @@
             text-decoration: underline;
             font-weight: bold;
         }
-    </style>    
+    </style>
 </head>
 <body>
             <form class="form-horizontal" action="<?php echo site_url('multisite/add_subsite/install'); ?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
-            
+
                 <h3>Site Setting</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="subsite">Subsite</label>
                     <div class="controls col-md-8">
-                        <input type="text" id="subsite" name="subsite" value="" class="input form-control" placeholder="Subsite">                               
+                        <input type="text" id="subsite" name="subsite" value="" class="input form-control" placeholder="Subsite">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="aliases">Aliases</label>
                     <div class="controls col-md-8">
-                        <input type="text" id="aliases" name="aliases" value="" class="input form-control" placeholder="Aliases, comma separated (e.g: somedomain.com, other.com)">                               
+                        <input type="text" id="aliases" name="aliases" value="" class="input form-control" placeholder="Aliases, comma separated (e.g: somedomain.com, other.com)">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="logo">Logo</label>
                     <div class="controls col-md-8">
-                        <input type="file" id="logo" name="logo" value="" class="input form-control" placeholder="logo">                               
+                        <input type="file" id="logo" name="logo" value="" class="input form-control" placeholder="logo">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="description">Description</label>
                     <div class="controls col-md-8">
-                        <textarea id="description" name="description" class="input form-control" placeholder="description"></textarea>                               
+                        <textarea id="description" name="description" class="input form-control" placeholder="description"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="theme">Theme</label>
+                    <div class="controls col-md-8">
+                        <select id="theme" name="theme" class="input form-control" placeholder="Theme">
+                            <?php
+                                foreach($theme_list as $theme){
+                                    echo '<option value="'.$theme.'">'.$theme.'</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="homepage_layout">Homepage Layout</label>
+                    <div class="controls col-md-8">
+                        <select id="homepage_layout" name="homepage_layout" class="input form-control" placeholder="Homepage Layout">
+                            <?php
+                                foreach($layout_list as $homepage_layout){
+                                    echo '<option value="'.$homepage_layout.'">'.$homepage_layout.'</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="default_layout">Default Layout</label>
+                    <div class="controls col-md-8">
+                        <select id="default_layout" name="default_layout" class="input form-control" placeholder="Default Layout">
+                            <?php
+                                foreach($layout_list as $default_layout){
+                                    echo '<option value="'.$default_layout.'">'.$default_layout.'</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="template">Template</label>
+                    <div class="controls col-md-8">
+                        <select id="template" name="template" class="input form-control" placeholder="template">
+                            <?php
+                                foreach($template_list as $template){
+                                    echo '<option value="'.$template['name'].'">'.$template['name'].'</option>';
+                                }
+                            ?>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -87,9 +135,9 @@
                         <ul id="ul-warning-message"></ul>
                     </div>
                     <div id="div-success-message" class="alert alert-success">
-                        <strong>GREAT !!!</strong>, you can now install <span id="span-subsite"></span> without worrying anything.                        
+                        <strong>GREAT !!!</strong>, you can now install <span id="span-subsite"></span> without worrying anything.
                     </div>
-                                     
+
                 </div>
             </form>
         </div>
@@ -205,7 +253,7 @@
                 },
                 error: function(xhr, textStatus, errorThrown){
                     if(textStatus != 'abort'){
-                        setTimeout(check, 1000);    
+                        setTimeout(check, 1000);
                     }
                 }
             });

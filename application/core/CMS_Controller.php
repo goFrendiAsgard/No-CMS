@@ -1313,6 +1313,8 @@ class CMS_Controller extends MX_Controller
             $layout = $layout . '_' . $layout_suffix;
         }
 
+        $data['__is_bootstrap_cdn_connected'] = FALSE;
+
         // IT'S SHOW TIME
         if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
             $result = $this->load->view($view_url, $data, TRUE);

@@ -101,14 +101,17 @@ class Subsite_model extends  CMS_Model{
             ->from($this->cms_complete_table_name('subsite').' as subsite')
             ->where('name',$subsite_name)
             ->get();
-        $row = $query->row();
-        $current_user_id = $this->cms_user_id();
-        $group_id_array = $this->cms_user_group_id();
-        $row->allow_edit = $current_user_id == $row->user_id || in_array(1, $group_id_array);
-        $row->themes = $this->explode_and_trim($row->themes);
-        $row->modules = $this->explode_and_trim($row->modules);
-        $row->logo = $this->get_actual_logo($row->name);
-        return $row;
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $current_user_id = $this->cms_user_id();
+            $group_id_array = $this->cms_user_group_id();
+            $row->allow_edit = $current_user_id == $row->user_id || in_array(1, $group_id_array);
+            $row->themes = $this->explode_and_trim($row->themes);
+            $row->modules = $this->explode_and_trim($row->modules);
+            $row->logo = $this->get_actual_logo($row->name);
+            return $row;
+        }
+        return NULL;
     }
 
     public function module_list($subsite=NULL){
@@ -118,11 +121,13 @@ class Subsite_model extends  CMS_Model{
         $module      = array();
         foreach ($directories as $directory) {
             $directory = str_replace(array('/','\\'),'',$directory);
-            if (!is_dir(FCPATH . 'modules/' . $directory))
+            if (!is_dir(FCPATH . 'modules/' . $directory)){
                 continue;
+            }
 
-            if (!file_exists(FCPATH . 'modules/' . $directory . '/controllers/install.php'))
+            if (!file_exists(FCPATH . 'modules/' . $directory . '/controllers/install.php')){
                 continue;
+            }
 
             // unpublished module should not be shown
             $subsite_auth_file = FCPATH . 'modules/' . $directory . '/subsite_auth.php';
@@ -145,8 +150,9 @@ class Subsite_model extends  CMS_Model{
         $themes      = array();
         foreach ($directories as $directory) {
             $directory = str_replace(array('/','\\'),'',$directory);
-            if (!is_dir(FCPATH.'themes/' . $directory))
+            if (!is_dir(FCPATH.'themes/' . $directory)){
                 continue;
+            }
 
             $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
             if(file_exists($subsite_auth_file)){
@@ -245,6 +251,79 @@ class Subsite_model extends  CMS_Model{
             file_put_contents($file_name, $content);
         }
 
+    }
+
+    public function public_theme_list(){
+        $this->load->helper('directory');
+        $directories = directory_map(FCPATH.'themes', 1);
+        sort($directories);
+        $themes      = array();
+        $neutral_theme_exists = FALSE;
+        foreach ($directories as $directory) {
+            $directory = str_replace(array('/','\\'),'',$directory);
+            if (!is_dir(FCPATH.'themes/' . $directory)){
+                continue;
+            }
+
+            $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
+            if(file_exists($subsite_auth_file)){
+                unset($public);
+                unset($subsite_allowed);
+                include($subsite_auth_file);
+                if(isset($public) && is_bool($public) && $public){
+                    if($directory == 'neutral'){
+                        $neutral_theme_exists = TRUE;
+                        continue;
+                    }
+                    $themes[] = $directory;
+                }
+            }
+        }
+        if($neutral_theme_exists){
+            $themes = array('neutral') + $themes;
+        }
+        return $themes;
+    }
+
+    public function layout_list(){
+        $this->load->helper('directory');
+        $files = directory_map(FCPATH.'themes/neutral/views/layouts', 1);
+        sort($files);
+        $layout = array();
+        foreach($files as $file){
+            if(!is_file(FCPATH.'themes/neutral/views/layouts/'.$file) || substr($file, -4, 4) != '.php'){
+                continue;
+            }
+            $layout[] = substr($file,0,-4);
+        }
+        return $layout;
+    }
+
+    public function template_list(){
+        $query = $this->db->select('name, icon, description')
+            ->from($this->cms_complete_table_name('template'))
+            ->get();
+        $template = array();
+        foreach($query->result() as $row){
+            $template[] = array(
+                    'name'        => $row->name,
+                    'icon'        => $row->icon,
+                    'description' => $row->description
+                );
+        }
+        return $template;
+    }
+
+    public function get_single_template($name){
+        $query = $this->db->select('name, icon, description, homepage, configuration, modules')
+            ->from($this->cms_complete_table_name('template'))
+            ->where('name', $name)
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            return $row;
+        }
+        return NULL;
     }
 
 }

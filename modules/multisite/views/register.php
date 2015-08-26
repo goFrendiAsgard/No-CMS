@@ -160,6 +160,50 @@
     echo '</div>';
     echo '</div>';
 
+    echo'<div class="form-group">';
+    echo'<label class="control-label col-md-4" for="theme">Theme</label>';
+    echo'<div class="controls col-md-8">';
+    echo'<select id="theme" name="theme" class="input form-control" placeholder="Theme">';
+    foreach($theme_list as $theme){
+        echo '<option value="'.$theme.'">'.$theme.'</option>';
+    }
+    echo'</select>';
+    echo'</div>';
+    echo'</div>';
+
+    echo'<div class="form-group">';
+    echo'<label class="control-label col-md-4" for="homepage_layout">Homepage Layout</label>';
+    echo'<div class="controls col-md-8">';
+    echo'<select id="homepage_layout" name="homepage_layout" class="input form-control" placeholder="Homepage Layout">';
+    foreach($layout_list as $homepage_layout){
+        echo '<option value="'.$homepage_layout.'">'.$homepage_layout.'</option>';
+    }
+    echo'</select>';
+    echo'</div>';
+    echo'</div>';
+
+    echo'<div class="form-group">';
+    echo'<label class="control-label col-md-4" for="default_layout">Default Layout</label>';
+    echo'<div class="controls col-md-8">';
+    echo'<select id="default_layout" name="default_layout" class="input form-control" placeholder="Default Layout">';
+    foreach($layout_list as $default_layout){
+        echo '<option value="'.$default_layout.'">'.$default_layout.'</option>';
+    }
+    echo'</select>';
+    echo'</div>';
+    echo'</div>';
+
+    echo'<div class="form-group">';
+    echo'<label class="control-label col-md-4" for="template">Template</label>';
+    echo'<div class="controls col-md-8">';
+    echo'<select id="template" name="template" class="input form-control" placeholder="template">';
+    foreach($template_list as $template){
+        echo '<option value="'.$template['name'].'">'.$template['name'].'</option>';
+    }
+    echo'</select>';
+    echo'</div>';
+                </div>
+
     echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
     echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
     echo '<div id="message" class="alert alert-danger"></div>';

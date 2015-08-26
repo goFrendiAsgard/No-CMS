@@ -14,39 +14,41 @@ foreach($articles as $article){
     echo '('.$article['author'].', '.$article['date'].')';
 
     // photos
-    echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';            
-    foreach($article['photos'] as $photo){
-        echo '<a class="photo_'.$article['id'].'" photo_id="'.$photo['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
-        echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
-        echo '<div id="photo_caption_'.$photo['id'].'" class="photo_caption">'.$photo['caption'].'</div>';
-        echo '</a>';
+    if(count($article['photos'])>0){
+        echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';            
+        foreach($article['photos'] as $photo){
+            echo '<a class="photo_'.$article['id'].'" photo_id="'.$photo['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
+            echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
+            echo '<div id="photo_caption_'.$photo['id'].'" class="photo_caption">'.$photo['caption'].'</div>';
+            echo '</a>';
+        }
+        echo '<div id="big_photo_'.$article['id'].'" class="row"></div>';
+        echo '</div>';            
+        echo '<script type="text/javascript">
+            $(".photo_'.$article['id'].'").click(function(event){
+                LOADING = true;
+                var photo_caption = $("#photo_caption_"+$(this).attr("photo_id")).html();
+                $("#big_photo_'.$article['id'].'").hide();
+                $("#big_photo_'.$article['id'].'").html(
+                    "<div class=\"col-md-12\" style=\"text-align:right; margin-bottom:10px;\"><a id=\"close_big_photo_'.$article['id'].'\" class=\"btn btn-danger\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></div>"+
+                    "<div class=\"col-md-12 lead\" style=\"text-align:left;\">" + photo_caption + "</div>"+
+                    "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" />"
+                );
+                $("#big_photo_'.$article['id'].'").fadeIn();
+                $("html, body").animate({
+                    scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
+                }, 1000, "swing", function(){LOADING = false});
+                $(".photo_'.$article['id'].'").css("opacity", 1);            
+                $(this).css("opacity", 0.3);
+                event.preventDefault();
+            });
+            $("#close_big_photo_'.$article['id'].'").live("click", function(event){
+                event.preventDefault();
+                $(".photo_'.$article['id'].'").css("opacity", 1);
+                $("#big_photo_'.$article['id'].'").fadeOut();
+            });
+        </script>';
     }
-    echo '<div id="big_photo_'.$article['id'].'" class="row"></div>';
-    echo '</div>';            
-    echo '<script type="text/javascript">
-        $(".photo_'.$article['id'].'").click(function(event){
-            LOADING = true;
-            var photo_caption = $("#photo_caption_"+$(this).attr("photo_id")).html();
-            $("#big_photo_'.$article['id'].'").hide();
-            $("#big_photo_'.$article['id'].'").html(
-                "<div class=\"col-md-12\" style=\"text-align:right; margin-bottom:10px;\"><a id=\"close_big_photo_'.$article['id'].'\" class=\"btn btn-danger\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></div>"+
-                "<div class=\"col-md-12 lead\" style=\"text-align:left;\">" + photo_caption + "</div>"+
-                "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" />"
-            );
-            $("#big_photo_'.$article['id'].'").fadeIn();
-            $("html, body").animate({
-                scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
-            }, 1000, "swing", function(){LOADING = false});
-            $(".photo_'.$article['id'].'").css("opacity", 1);            
-            $(this).css("opacity", 0.3);
-            event.preventDefault();
-        });
-        $("#close_big_photo_'.$article['id'].'").live("click", function(event){
-            event.preventDefault();
-            $(".photo_'.$article['id'].'").css("opacity", 1);
-            $("#big_photo_'.$article['id'].'").fadeOut();
-        });
-    </script>';
 
     // content
     echo '<div>';

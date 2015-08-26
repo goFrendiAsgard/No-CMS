@@ -27,26 +27,50 @@ class Info extends CMS_Module {
         $minor        = $version_part[1];
         $build        = $version_part[2];
         $module_path  = $this->cms_module_path();
-        // Add your migration logic here.        
-        // table : subsite
-        $table_name = $this->cms_complete_table_name('subsite');
-        $field_list = $this->db->list_fields($table_name);
-        $missing_fields = array(
-            'user_id'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'active'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE, "default"=>1),
-        );
-        $fields = array();
-        foreach($missing_fields as $key=>$value){
-            if(!in_array($key, $field_list)){
-                $fields[$key] = $value;
+
+        if($major <= 0 && $minor <= 0 && $build <= 1){
+            // Add your migration logic here.        
+            // table : subsite
+            $table_name = $this->cms_complete_table_name('subsite');
+            $field_list = $this->db->list_fields($table_name);
+            $missing_fields = array(
+                'user_id'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE),
+                'active'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE, "default"=>1),
+            );
+            $fields = array();
+            foreach($missing_fields as $key=>$value){
+                if(!in_array($key, $field_list)){
+                    $fields[$key] = $value;
+                }
             }
+            $this->dbforge->add_column($table_name, $fields);
         }
-        $this->dbforge->add_column($table_name, $fields);
         if($major <= 0 && $minor <= 0 && $build <= 2){
             $fields = array(
                 'name' => array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
             );
             $this->dbforge->modify_column($this->cms_complete_table_name('subsite'), $fields);
+        }
+        if($major <= 0 && $minor <= 0 && $build <= 3){
+            $fields = array(
+                'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+                'name'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
+                'icon'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
+                'description'=> array("type"=>'text', "null"=>TRUE),
+                'homepage'=>array("type"=>'text', "null"=>TRUE),
+                'configuration'=>array("type"=>'text', "null"=>TRUE),
+                'modules'=>array("type"=>'text', "null"=>TRUE),
+            );
+            $this->dbforge->add_field($fields);
+            $this->dbforge->add_key('id', TRUE);
+            $this->dbforge->create_table($this->cms_complete_table_name('manage_template'));
+
+            if(CMS_SUBSITE == ''){
+                $this->cms_add_navigation($this->cms_complete_navigation_name('template'), 'Manage Template',
+                    $module_path.'/manage_template', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                    NULL, NULL, NULL, NULL, 'default-one-column'
+                );
+            }
         }
     }
 
@@ -61,6 +85,7 @@ class Info extends CMS_Module {
         if(CMS_SUBSITE == ''){
             // remove navigations
             $this->cms_remove_navigation($this->cms_complete_navigation_name('add_subsite'));
+            $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_template'));
             // remove privileges
             $this->cms_remove_privilege('modify_subsite');
         }
@@ -71,6 +96,7 @@ class Info extends CMS_Module {
 
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('subsite'), TRUE);
+        $this->dbforge->drop_table($this->cms_complete_table_name('template'), TRUE);
 
         // remove route
         $this->cms_remove_route('main/register');
@@ -93,6 +119,11 @@ class Info extends CMS_Module {
                 $module_path.'/add_subsite', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
                 NULL, 'Browse subsites', 'glyphicon-plus', NULL, 'default-one-column'
             );
+
+            $this->cms_add_navigation($this->cms_complete_navigation_name('manage_template'), 'Manage Template',
+                $module_path.'/manage_template', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                NULL, NULL, NULL, NULL, 'default-one-column'
+            );
         }
 
 
@@ -112,6 +143,19 @@ class Info extends CMS_Module {
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('subsite'));
+
+        $fields = array(
+            'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
+            'name'=> array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
+            'icon'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
+            'description'=> array("type"=>'text', "null"=>TRUE),
+            'homepage'=>array("type"=>'text', "null"=>TRUE),
+            'configuration'=>array("type"=>'text', "null"=>TRUE),
+            'modules'=>array("type"=>'text', "null"=>TRUE),
+        );
+        $this->dbforge->add_field($fields);
+        $this->dbforge->add_key('id', TRUE);
+        $this->dbforge->create_table($this->cms_complete_table_name('template'));
 
         if(strtoupper($this->cms_get_config('cms_add_subsite_on_register')) == 'TRUE'){
             $this->cms_add_route('main/register', $module_path.'/multisite/register');

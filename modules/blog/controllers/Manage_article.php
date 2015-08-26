@@ -32,13 +32,40 @@ class Manage_article extends CMS_Secure_Controller {
 
         $super_admin_user_id = array(1);
         if(CMS_SUBSITE != ''){
-            $query = $this->db->select('user_id')
-                ->from($subsite_table)
-                ->where('name', CMS_SUBSITE)
-                ->get();
-            if($query->num_rows() > 0){
-                $row = $query->row();
-                $super_admin_user_id[] = $row->user_id;
+            // GET MAIN TABLE PREFIX
+            $main_config_file = APPPATH.'config/main/cms_config.php';
+            if(file_exists($main_config_file)){ 
+                include($main_config_file);
+                $main_table_prefix   = $config['__cms_table_prefix'];
+                $main_table_prefix   = $main_table_prefix == ''? '' : $main_table_prefix.'_';
+
+                // GET MODULE TABLE PREFIX
+                $query = $this->db->select('module_path')
+                    ->from($main_table_prefix.'main_module')
+                    ->where('module_name', 'gofrendi.noCMS.module')
+                    ->get();
+                if($query->num_rows()>0){
+                    $row = $query->row;
+                    $module_path = $row->module_path;
+                    $module_config_file = FCPATH.'modules/'.$module_path.'/config/module_config.php';
+                    if(!file_exists($module_config_file)){
+                        // get module table prefix
+                        include($module_config_file);
+                        $module_table_prefix = $config['module_table_prefix'];
+                        $module_table_prefix = $module_table_prefix == ''? '' : $module_table_prefix.'_';
+
+                        $subsite_table_ = $main_table_prefix.$module_table_prefix.'subsite';
+
+                        $query = $this->db->select('user_id')
+                            ->from($subsite_table)
+                            ->where('name', CMS_SUBSITE)
+                            ->get();
+                        if($query->num_rows() > 0){
+                            $row = $query->row();
+                            $super_admin_user_id[] = $row->user_id;
+                        }
+                    }
+                }
             }
         }
 

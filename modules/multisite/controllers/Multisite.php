@@ -308,13 +308,28 @@ class Multisite extends CMS_Secure_Controller {
             $this->install_model->set_subsite();
             $this->install_model->hide_index                   = TRUE;
             $this->install_model->gzip_compression             = FALSE;
-            // get these from configuration
-            $configs = $this->cms_get_config('cms_subsite_configs');
+
+            $this->load->model($this->cms_module_path().'/subsite_model');
+            $template = $this->subsite_model->get_single_template($this->input->post('template'));
+            $homepage_layout = $this->input->post('homepage_layout');
+            $default_layout = $this->input->post('default_layout');
+            $theme = $this->input->post('theme');
+
+            // get configs
+            $configs = $template != NULL? $template->configuration: $this->cms_get_config('cms_subsite_configs');
             $configs = @json_decode($configs, TRUE);
             if(!$configs){
                 $configs = array();
             }
-            $modules = $this->cms_get_config('cms_subsite_modules');
+            if($theme != ''){
+                $configs['site_theme'] = $theme;
+            }
+            if($default_layout != ''){
+                $configs['site_layout'] = $default_layout;
+            }
+
+            // get modules
+            $modules = $template != NULL? $template->modules: $this->cms_get_config('cms_subsite_modules');
             $modules = explode(',', $modules);
             $new_modules = array();
             foreach($modules as $module){
@@ -324,6 +339,7 @@ class Multisite extends CMS_Secure_Controller {
                 }
             }
             $modules = $new_modules;
+
             $this->install_model->configs = $configs;
             $this->install_model->modules = $modules;
             // check installation
@@ -331,7 +347,10 @@ class Multisite extends CMS_Secure_Controller {
             $success = $check_installation['success'];
             $module_installed = FALSE;
             if($success){
-                $config = array('subsite_home_content'=> $this->cms_get_config('cms_subsite_home_content', TRUE));                
+                $config = array(
+                        'subsite_home_content'=> $template != NULL? $template->homepage: $this->cms_get_config('cms_subsite_home_content', TRUE),
+                        'subsite_homepage_layout' => $homepage_layout,
+                    );
                 $this->install_model->build_configuration($config);
                 $this->install_model->build_database($config);
                 $module_installed = $this->install_model->install_modules();
@@ -389,14 +408,18 @@ class Multisite extends CMS_Secure_Controller {
             redirect('','refresh');
         } else {
             $data = array(
-                "user_name" => $user_name,
-                "email" => $email,
-                "real_name" => $real_name,
-                "register_caption" => $this->cms_lang('Register'),
-                "secret_code" => $secret_code,
-                "multisite_active" => $this->cms_is_module_active('gofrendi.noCMS.multisite'),
-                "add_subsite_on_register" => $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE',
+                'user_name' => $user_name,
+                'email' => $email,
+                'real_name' => $real_name,
+                'register_caption' => $this->cms_lang('Register'),
+                'secret_code' => $secret_code,
+                'multisite_active' => $this->cms_is_module_active('gofrendi.noCMS.multisite'),
+                'add_subsite_on_register' => $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE',
+                'theme_list'    => $this->subsite_model->public_theme_list(),
+                'layout_list'   => $this->subsite_model->layout_list(),
+                'template_list' => $this->subsite_model->template_list(),
             );
+
             $this->view('multisite/register', $data, 'main_register');
         }
         

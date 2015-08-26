@@ -1823,8 +1823,6 @@ class Main extends CMS_Controller
                         ->from($this->cms_user_table_name())
                         ->where('user_id', $user_id)
                         ->get();
-                    log_message('error', $query->num_rows());
-                    log_message($query->row()->user_id);
                     if($query->num_rows()>0){
                         $row = $query->row();
                         $this->cms_user_name($row->user_name);
