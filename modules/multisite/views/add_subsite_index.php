@@ -83,7 +83,8 @@
                         <select id="homepage_layout" name="homepage_layout" class="input form-control" placeholder="Homepage Layout">
                             <?php
                                 foreach($layout_list as $homepage_layout){
-                                    echo '<option value="'.$homepage_layout.'">'.$homepage_layout.'</option>';
+                                    $selected = $homepage_layout == 'slide'? 'selected' : '';
+                                    echo '<option value="'.$homepage_layout.'" '.$selected.'>'.$homepage_layout.'</option>';
                                 }
                             ?>
                         </select>
@@ -95,7 +96,8 @@
                         <select id="default_layout" name="default_layout" class="input form-control" placeholder="Default Layout">
                             <?php
                                 foreach($layout_list as $default_layout){
-                                    echo '<option value="'.$default_layout.'">'.$default_layout.'</option>';
+                                    $selected = $default_layout == 'default'? 'selected' : '';
+                                    echo '<option value="'.$default_layout.'" '.$selected.'>'.$default_layout.'</option>';
                                 }
                             ?>
                         </select>

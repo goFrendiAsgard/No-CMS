@@ -176,7 +176,8 @@
     echo'<div class="controls col-md-8">';
     echo'<select id="homepage_layout" name="homepage_layout" class="input form-control" placeholder="Homepage Layout">';
     foreach($layout_list as $homepage_layout){
-        echo '<option value="'.$homepage_layout.'">'.$homepage_layout.'</option>';
+        $selected = $homepage_layout == 'slide'? 'selected' : '';
+        echo '<option value="'.$homepage_layout.'" '.$selected.'>'.$homepage_layout.'</option>';
     }
     echo'</select>';
     echo'</div>';
@@ -187,7 +188,8 @@
     echo'<div class="controls col-md-8">';
     echo'<select id="default_layout" name="default_layout" class="input form-control" placeholder="Default Layout">';
     foreach($layout_list as $default_layout){
-        echo '<option value="'.$default_layout.'">'.$default_layout.'</option>';
+        $selected = $default_layout == 'default'? 'selected' : '';
+        echo '<option value="'.$default_layout.'" '.$selected.'>'.$default_layout.'</option>';
     }
     echo'</select>';
     echo'</div>';
@@ -202,7 +204,7 @@
     }
     echo'</select>';
     echo'</div>';
-                </div>
+    echo'</div>';
 
     echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
     echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';

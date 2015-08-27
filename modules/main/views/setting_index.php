@@ -55,10 +55,10 @@
 <?php } ?>
 <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab1" data-toggle="tab">Configurations</a></li>
-        <li><a href="#tab2" data-toggle="tab">Images</a></li>
-        <li><a href="#tab3" data-toggle="tab">Sections</a></li>
-        <li><a href="#tab4" data-toggle="tab">Third Party Authentication</a></li>
+        <li class="active"><a href="#tab1" data-toggle="tab"><i class="glyphicon glyphicon-cog"></i> Configurations</a></li>
+        <li><a href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Images</a></li>
+        <li><a href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Sections</a></li>
+        <li><a href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
     </ul>
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
         <div class="tab-content">

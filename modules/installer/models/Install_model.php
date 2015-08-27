@@ -1127,8 +1127,9 @@ class Install_model extends CI_Model{
                 array('cms_internet_connectivity','UNKNOWN','Is the server connected to the internet?'),
             );
         for($i=0; $i<count($config_data); $i++){
-            foreach($configs as $key=>$val){
-                if($key == $config_data[$i]){
+            foreach($this->configs as $key=>$val){
+                log_message('error', $key.' '.$val);
+                if($key == $config_data[$i][0]){
                     $config_data[$i][1] = $val;
                     break;
                 }

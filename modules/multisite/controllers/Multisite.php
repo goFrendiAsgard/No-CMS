@@ -237,6 +237,7 @@ class Multisite extends CMS_Secure_Controller {
 
         $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
         $subsite_table_name = $this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite');
+        $this->load->model($module_path.'/subsite_model');
 
         //get user input
         $user_name        = $this->input->post($previous_secret_code.'user_name');
@@ -299,7 +300,7 @@ class Multisite extends CMS_Secure_Controller {
                 ->get()->row()->user_id;
             
             $this->load->model('installer/install_model');
-            $this->load->model($module_path.'/subsite_model');
+
             // get these from old setting
             $this->install_model->db_table_prefix              = cms_table_prefix();
             $this->install_model->is_subsite                   = TRUE;
@@ -366,8 +367,7 @@ class Multisite extends CMS_Secure_Controller {
                 'user_id'=>$current_user_id,
                 'active'=>$activation == 'automatic'
             );
-            $this->db->insert($subsite_table_name, $data);
-            $this->load->model($module_path.'/subsite_model');
+            $this->db->insert($subsite_table_name, $data);            
             $this->subsite_model->update_configs();
             
             // get the new subsite
