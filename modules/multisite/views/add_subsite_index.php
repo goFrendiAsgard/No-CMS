@@ -72,9 +72,17 @@
                             <?php
                                 foreach($theme_list as $theme){
                                     echo '<option value="'.$theme.'">'.$theme.'</option>';
-                                }
+                                }                                
                             ?>
                         </select>
+                        <p class="help-block">Theme used for the new site</p>
+                        <div>                            
+                            <?php
+                                foreach($theme_list as $theme){
+                                    echo '<img style="width:100%; display:none;" class="img-theme" id="img-theme-'.str_replace(' ','_',$theme).'" real-src="{{ base_url }}themes/'.$theme.'/preview.png" />';
+                                }
+                            ?>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -113,6 +121,16 @@
                                 }
                             ?>
                         </select>
+                        <p class="help-block">Template used for the new site</p>
+                        <div>                            
+                            <?php
+                                foreach($template_list as $template){
+                                    $template_name = str_replace(' ','_',$template['name']);
+                                    echo '<img style="width:100%; display:none;" class="img-template" id="img-template-'.$template_name.'" real-src="{{ module_base_url }}assets/uploads/'.$template['icon'].'" />';
+                                    echo '<p style="display:none;" class="desc-template" id="desc-template-'.$template_name.'">'.$template['description'].'</p>';
+                                }
+                            ?>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -150,8 +168,10 @@
         var SUCCESS = false;
 
         $(document).ready(function(){
-            // check things
+            // check things            
             check();
+            adjust_theme();
+            adjust_template();
         });
         $("input, select").change(function(){
             check();
@@ -159,6 +179,23 @@
         $("input:not(#db_name), select").keyup(function(){
             check();
         });
+
+        function adjust_theme(){
+            var value = $('#theme option:selected').val().replace(/ /g, '_');
+            $('.img-theme').hide();
+            $('#img-theme-'+value).attr('src', $('#img-theme-'+value).attr('real-src')).show();
+        }
+        $('#theme').change(function(event){adjust_theme();});
+
+        function adjust_template(){
+            var value = $('#template option:selected').val().replace(/ /g, '_');
+            console.log(value);
+            $('.img-template').hide();
+            $('.desc-template').hide();
+            $('#img-template-'+value).attr('src', $('#img-template-'+value).attr('real-src')).show();
+            $('#desc-template-'+value).show();
+        }
+        $('#template').change(function(event){adjust_template();});
 
         // next or previous step
         $(".btn-change-tab").click(function(){

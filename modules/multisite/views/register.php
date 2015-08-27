@@ -7,80 +7,6 @@
         display:none;
     }
 </style>
-<script type="text/javascript">
-	var REQUEST_EXISTS = false;
-	var REQUEST = "";
-    function check_user_exists(){
-        var user_name =  $('input[name="<?=$secret_code?>user_name"]').val();
-        var email = $('input[name="<?=$secret_code?>email"]').val();
-        var password = $('input[name="<?=$secret_code?>password"]').val();        
-        var confirm_password = $('input[name="<?=$secret_code?>confirm_password"]').val();
-        $("#img_ajax_loader").show();
-        if(REQUEST_EXISTS){
-        	REQUEST.abort();
-        }
-        REQUEST_EXISTS = true;
-        REQUEST = $.ajax({
-            "url" : "<?=site_url('{{ module_path }}/multisite/check_registration')?>",
-            "type" : "POST",
-            "data" : {"user_name":user_name, "email":email},
-            "dataType" : "json",
-            "success" : function(data){
-            	if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
-                    $('input[name="register"]').show();
-                    $('input[name="register"]').removeAttr('disabled');
-                    console.log($('input[name="register"]'));
-                }else{
-                    $('input[name="register"]').hide();
-                    $('input[name="register"]').attr('disabled', 'disabled');
-                }
-
-            	// get message from server + local check
-                var message = '';
-                if(data.message!=''){
-                    message += data.message+'<br />';
-                }
-                if(password == ''){
-                    message += '{{ language:Password is empty }}<br />';
-                }
-                if(password != confirm_password){
-                    message += '{{ language:Confirm password doesn\'t match }}';
-                }
-
-                if(message != $('#message').html()){
-                    $('#message').html(message);
-                }
-                REQUEST_EXISTS = false;
-                $("#img_ajax_loader").hide();
-            },
-            error: function(xhr, textStatus, errorThrown){
-                if(textStatus != 'abort'){
-                    setTimeout(check_user_exists, 10000);    
-                }
-            }
-        });
-    }
-
-    function capitaliseFirstLetter(string)
-    {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    $(document).ready(function(){
-
-        check_user_exists();
-
-        $('#form-register input').keyup(function(){
-            check_user_exists();
-        });
-
-        $('#<?=$secret_code?>user_name').keyup(function(){
-            var value = $('#<?=$secret_code?>user_name').val();
-            $('#site_title').val(capitaliseFirstLetter(value));
-            $('#site_slogan').val('Website ' + capitaliseFirstLetter(value));
-        });
-    });
-</script>
 <h3>{{ language:Register }}</h3>
 <?php
     echo form_open_multipart('main/register', 'id="form-register" class="form form-horizontal"');
@@ -168,6 +94,12 @@
         echo '<option value="'.$theme.'">'.$theme.'</option>';
     }
     echo'</select>';
+    echo'<p class="help-block">Theme used for the new site</p>';
+    echo'<div>';
+    foreach($theme_list as $theme){
+        echo '<img style="width:100%; display:none;" class="img-theme" id="img-theme-'.str_replace(' ','_',$theme).'" real-src="{{ base_url }}themes/'.$theme.'/preview.png" />';
+    }
+    echo'</div>';
     echo'</div>';
     echo'</div>';
 
@@ -203,6 +135,14 @@
         echo '<option value="'.$template['name'].'">'.$template['name'].'</option>';
     }
     echo'</select>';
+    echo'<p class="help-block">Template used for the new site</p>';
+    echo'<div>';
+    foreach($template_list as $template){
+        $template_name = str_replace(' ','_',$template['name']);
+        echo '<img style="width:100%; display:none;" class="img-template" id="img-template-'.$template_name.'" real-src="{{ module_base_url }}assets/uploads/'.$template['icon'].'" />';
+        echo '<p style="display:none;" class="desc-template" id="desc-template-'.$template_name.'">'.$template['description'].'</p>';
+    }
+    echo'</div>';
     echo'</div>';
     echo'</div>';
 
@@ -213,4 +153,95 @@
     echo '</div></div>';
     echo form_close();
 ?>
+<script type="text/javascript">
+    var REQUEST_EXISTS = false;
+    var REQUEST = "";
+    function check_user_exists(){
+        var user_name =  $('input[name="<?=$secret_code?>user_name"]').val();
+        var email = $('input[name="<?=$secret_code?>email"]').val();
+        var password = $('input[name="<?=$secret_code?>password"]').val();        
+        var confirm_password = $('input[name="<?=$secret_code?>confirm_password"]').val();
+        $("#img_ajax_loader").show();
+        if(REQUEST_EXISTS){
+            REQUEST.abort();
+        }
+        REQUEST_EXISTS = true;
+        REQUEST = $.ajax({
+            "url" : "<?=site_url('{{ module_path }}/multisite/check_registration')?>",
+            "type" : "POST",
+            "data" : {"user_name":user_name, "email":email},
+            "dataType" : "json",
+            "success" : function(data){
+                if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
+                    $('input[name="register"]').show();
+                    $('input[name="register"]').removeAttr('disabled');
+                    console.log($('input[name="register"]'));
+                }else{
+                    $('input[name="register"]').hide();
+                    $('input[name="register"]').attr('disabled', 'disabled');
+                }
 
+                // get message from server + local check
+                var message = '';
+                if(data.message!=''){
+                    message += data.message+'<br />';
+                }
+                if(password == ''){
+                    message += '{{ language:Password is empty }}<br />';
+                }
+                if(password != confirm_password){
+                    message += '{{ language:Confirm password doesn\'t match }}';
+                }
+
+                if(message != $('#message').html()){
+                    $('#message').html(message);
+                }
+                REQUEST_EXISTS = false;
+                $("#img_ajax_loader").hide();
+            },
+            error: function(xhr, textStatus, errorThrown){
+                if(textStatus != 'abort'){
+                    setTimeout(check_user_exists, 10000);    
+                }
+            }
+        });
+    }
+
+    function capitaliseFirstLetter(string)
+    {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function adjust_theme(){
+        var value = $('#theme option:selected').val().replace(/ /g, '_');
+        $('.img-theme').hide();
+        $('#img-theme-'+value).attr('src', $('#img-theme-'+value).attr('real-src')).show();
+    }
+    $('#theme').change(function(event){adjust_theme();});
+
+    function adjust_template(){
+        var value = $('#template option:selected').val().replace(/ /g, '_');
+        $('.img-template').hide();
+        $('.desc-template').hide();
+        $('#img-template-'+value).attr('src', $('#img-template-'+value).attr('real-src')).show();
+        $('#desc-template-'+value).show();
+    }
+    $('#template').change(function(event){adjust_template();});
+
+    $(document).ready(function(){
+
+        check_user_exists();
+        adjust_theme();
+        adjust_template();
+
+        $('#form-register input').keyup(function(){
+            check_user_exists();
+        });
+
+        $('#<?=$secret_code?>user_name').keyup(function(){
+            var value = $('#<?=$secret_code?>user_name').val();
+            $('#site_title').val(capitaliseFirstLetter(value));
+            $('#site_slogan').val('Website ' + capitaliseFirstLetter(value));
+        });
+    });
+</script>
