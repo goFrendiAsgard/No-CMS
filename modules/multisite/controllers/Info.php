@@ -6,6 +6,49 @@
  */
 class Info extends CMS_Module {
 
+    public $templates;
+
+    public function __construct(){
+        parent::__construct();
+        $this->templates = array(
+            array(
+                    'name'          =>'Blog', 
+                    'description'   =>'Blog website', 
+                    'homepage'      =>'{{ widget_name:blog }}',
+                    'configuration' => '{}',
+                    'modules'       => 'blog, static_accessories, contact_us',
+                ),
+            array(
+                    'name'          => 'Static Portofolio 1',
+                    'description'   => 'Static Portofolio 1',
+                    'homepage'      => '<!-- Page Heading -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-lg-12">'.PHP_EOL.'        <h1 class="page-header">Page Heading'.PHP_EOL.'            <small>Secondary Text</small>'.PHP_EOL.'        </h1>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<!-- Project One -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-7">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x300" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-md-5">'.PHP_EOL.'        <h3>Project One</h3>'.PHP_EOL.'        <h4>Subheading</h4>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium veniam exercitationem expedita laborum at voluptate. Labore, voluptates totam at aut nemo deserunt rem magni pariatur quos perspiciatis atque eveniet unde.</p>'.PHP_EOL.'        <a class="btn btn-primary" href="#">View Project <span class="glyphicon glyphicon-chevron-right"></span></a>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<hr>'.PHP_EOL.''.PHP_EOL.'<!-- Project Two -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-7">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x300" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-md-5">'.PHP_EOL.'        <h3>Project Two</h3>'.PHP_EOL.'        <h4>Subheading</h4>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, odit velit cumque vero doloremque repellendus distinctio maiores rem expedita a nam vitae modi quidem similique ducimus! Velit, esse totam tempore.</p>'.PHP_EOL.'        <a class="btn btn-primary" href="#">View Project <span class="glyphicon glyphicon-chevron-right"></span></a>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<hr>'.PHP_EOL.''.PHP_EOL.'<!-- Project Three -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-7">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x300" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-md-5">'.PHP_EOL.'        <h3>Project Three</h3>'.PHP_EOL.'        <h4>Subheading</h4>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis, temporibus, dolores, at, praesentium ut unde repudiandae voluptatum sit ab debitis suscipit fugiat natus velit excepturi amet commodi deleniti alias possimus!</p>'.PHP_EOL.'        <a class="btn btn-primary" href="#">View Project <span class="glyphicon glyphicon-chevron-right"></span></a>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<hr>'.PHP_EOL.''.PHP_EOL.'<!-- Project Four -->'.PHP_EOL.'<div class="row">'.PHP_EOL.''.PHP_EOL.'    <div class="col-md-7">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x300" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-md-5">'.PHP_EOL.'        <h3>Project Four</h3>'.PHP_EOL.'        <h4>Subheading</h4>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, quidem, consectetur, officia rem officiis illum aliquam perspiciatis aspernatur quod modi hic nemo qui soluta aut eius fugit quam in suscipit?</p>'.PHP_EOL.'        <a class="btn btn-primary" href="#">View Project <span class="glyphicon glyphicon-chevron-right"></span></a>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<hr>'.PHP_EOL.''.PHP_EOL.'<!-- Project Five -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-7">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x300" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-md-5">'.PHP_EOL.'        <h3>Project Five</h3>'.PHP_EOL.'        <h4>Subheading</h4>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, quo, minima, inventore voluptatum saepe quos nostrum provident ex quisquam hic odio repellendus atque porro distinctio quae id laboriosam facilis dolorum.</p>'.PHP_EOL.'        <a class="btn btn-primary" href="#">View Project <span class="glyphicon glyphicon-chevron-right"></span></a>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->',
+                    'configuration' => '{}',
+                    'modules'       => 'blog, static_accessories, contact_us',
+                ),
+            array(
+                    'name'          => 'Static Portofolio 2',
+                    'description'   => 'Static Portofolio 2',
+                    'homepage'      => '<!-- Page Header -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-lg-12">'.PHP_EOL.'        <h1 class="page-header">Page Heading'.PHP_EOL.'            <small>Secondary Text</small>'.PHP_EOL.'        </h1>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<!-- Projects Row -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-6 portfolio-item">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x400" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'        <h3>'.PHP_EOL.'            <a href="#">Project One</a>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-md-6 portfolio-item">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x400" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'        <h3>'.PHP_EOL.'            <a href="#">Project Two</a>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<!-- Projects Row -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-6 portfolio-item">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x400" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'        <h3>'.PHP_EOL.'            <a href="#">Project Three</a>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-md-6 portfolio-item">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x400" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'        <h3>'.PHP_EOL.'            <a href="#">Project Four</a>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<!-- Projects Row -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-6 portfolio-item">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x400" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'        <h3>'.PHP_EOL.'            <a href="#">Project Five</a>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-md-6 portfolio-item">'.PHP_EOL.'        <a href="#">'.PHP_EOL.'            <img class="img-responsive" src="http://placehold.it/700x400" alt="">'.PHP_EOL.'        </a>'.PHP_EOL.'        <h3>'.PHP_EOL.'            <a href="#">Project Six</a>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->',
+                    'configuration' => '{}',
+                    'modules'       => 'blog, static_accessories, contact_us',
+                ),
+            array(
+                    'name'          => 'Small Business',
+                    'description'   => 'Small Business',
+                    'homepage'      => '<!-- Heading Row -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-8">'.PHP_EOL.'        <img class="img-responsive img-rounded" src="http://placehold.it/900x350" alt="">'.PHP_EOL.'    </div>'.PHP_EOL.'    <!-- /.col-md-8 -->'.PHP_EOL.'    <div class="col-md-4">'.PHP_EOL.'        <h1>Business Name or Tagline</h1>'.PHP_EOL.'        <p>This is a template that is great for small businesses. It doesn\'t have too much fancy flare to it, but it makes a great use of the standard Bootstrap core components. Feel free to use this template for any project you want!</p>'.PHP_EOL.'        <a class="btn btn-primary btn-lg" href="#">Call to Action!</a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <!-- /.col-md-4 -->'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<hr>'.PHP_EOL.''.PHP_EOL.'<!-- Call to Action Well -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-lg-12">'.PHP_EOL.'        <div class="well text-center">'.PHP_EOL.'            This is a well that is a great spot for a business tagline or phone number for easy access!'.PHP_EOL.'        </div>'.PHP_EOL.'    </div>'.PHP_EOL.'    <!-- /.col-lg-12 -->'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->'.PHP_EOL.''.PHP_EOL.'<!-- Content Row -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-md-4">'.PHP_EOL.'        <h2>Heading 1</h2>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe rem nisi accusamus error velit animi non ipsa placeat. Recusandae, suscipit, soluta quibusdam accusamus a veniam quaerat eveniet eligendi dolor consectetur.</p>'.PHP_EOL.'        <a class="btn btn-default" href="#">More Info</a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <!-- /.col-md-4 -->'.PHP_EOL.'    <div class="col-md-4">'.PHP_EOL.'        <h2>Heading 2</h2>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe rem nisi accusamus error velit animi non ipsa placeat. Recusandae, suscipit, soluta quibusdam accusamus a veniam quaerat eveniet eligendi dolor consectetur.</p>'.PHP_EOL.'        <a class="btn btn-default" href="#">More Info</a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <!-- /.col-md-4 -->'.PHP_EOL.'    <div class="col-md-4">'.PHP_EOL.'        <h2>Heading 3</h2>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe rem nisi accusamus error velit animi non ipsa placeat. Recusandae, suscipit, soluta quibusdam accusamus a veniam quaerat eveniet eligendi dolor consectetur.</p>'.PHP_EOL.'        <a class="btn btn-default" href="#">More Info</a>'.PHP_EOL.'    </div>'.PHP_EOL.'    <!-- /.col-md-4 -->'.PHP_EOL.'</div>'.PHP_EOL.'<!-- /.row -->',
+                    'configuration' => '{}',
+                    'modules'       => 'blog, static_accessories, contact_us',
+                ),
+            array(
+                    'name'          => 'About Team',
+                    'description'   => 'About Team',
+                    'homepage'      => '<!-- Introduction Row -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-lg-12">'.PHP_EOL.'        <h1 class="page-header">About Us'.PHP_EOL.'            <small>It\'s Nice to Meet You!</small>'.PHP_EOL.'        </h1>'.PHP_EOL.'        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sint, explicabo dolores ipsam aliquam inventore corrupti eveniet quisquam quod totam laudantium repudiandae obcaecati ea consectetur debitis velit facere nisi expedita vel?</p>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.''.PHP_EOL.'<!-- Team Members Row -->'.PHP_EOL.'<div class="row">'.PHP_EOL.'    <div class="col-lg-12">'.PHP_EOL.'        <h2 class="page-header">Our Team</h2>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-lg-4 col-sm-6 text-center">'.PHP_EOL.'        <img class="img-circle img-responsive img-center" src="http://placehold.it/200x200" alt="">'.PHP_EOL.'        <h3>John Smith'.PHP_EOL.'            <small>Job Title</small>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-lg-4 col-sm-6 text-center">'.PHP_EOL.'        <img class="img-circle img-responsive img-center" src="http://placehold.it/200x200" alt="">'.PHP_EOL.'        <h3>John Smith'.PHP_EOL.'            <small>Job Title</small>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-lg-4 col-sm-6 text-center">'.PHP_EOL.'        <img class="img-circle img-responsive img-center" src="http://placehold.it/200x200" alt="">'.PHP_EOL.'        <h3>John Smith'.PHP_EOL.'            <small>Job Title</small>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-lg-4 col-sm-6 text-center">'.PHP_EOL.'        <img class="img-circle img-responsive img-center" src="http://placehold.it/200x200" alt="">'.PHP_EOL.'        <h3>John Smith'.PHP_EOL.'            <small>Job Title</small>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-lg-4 col-sm-6 text-center">'.PHP_EOL.'        <img class="img-circle img-responsive img-center" src="http://placehold.it/200x200" alt="">'.PHP_EOL.'        <h3>John Smith'.PHP_EOL.'            <small>Job Title</small>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>'.PHP_EOL.'    </div>'.PHP_EOL.'    <div class="col-lg-4 col-sm-6 text-center">'.PHP_EOL.'        <img class="img-circle img-responsive img-center" src="http://placehold.it/200x200" alt="">'.PHP_EOL.'        <h3>John Smith'.PHP_EOL.'            <small>Job Title</small>'.PHP_EOL.'        </h3>'.PHP_EOL.'        <p>What does this team member to? Keep it short! This is also a great spot for social links!</p>'.PHP_EOL.'    </div>'.PHP_EOL.'</div>',
+                    'configuration' => '{}',
+                    'modules'       => 'blog, static_accessories, contact_us',
+                ),
+        );
+    }
+
     // ACTIVATION
     public function do_activate(){
         $this->remove_all();
@@ -72,6 +115,8 @@ class Info extends CMS_Module {
                 );
             }
         }
+
+        $this->insert_templates();
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -157,10 +202,24 @@ class Info extends CMS_Module {
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('template'));
 
+        $this->insert_templates();        
+
         if(strtoupper($this->cms_get_config('cms_add_subsite_on_register')) == 'TRUE'){
             $this->cms_add_route('main/register', $module_path.'/multisite/register');
         }
 
+    }
+
+    public function insert_templates(){
+        foreach($this->templates as $template){
+            $query = $this->db->select('name')
+                ->from($this->cms_complete_table_name('template'))
+                ->where('name', $template['name'])
+                ->get();
+            if($query->num_rows() == 0){
+                $this->db->insert($this->cms_complete_table_name('template'),$template);
+            }
+        }
     }
 
     // EXPORT DATABASE
