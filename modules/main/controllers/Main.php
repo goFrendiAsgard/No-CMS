@@ -897,9 +897,14 @@ class Main extends CMS_Controller
             $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
         }
 
+
         $crud->callback_column(cms_table_name('main_navigation').'.navigation_name', array(
             $this,
-            'column_navigation_name'
+            '_column_navigation_name'
+        ));
+        $crud->callback_column('navigation_name', array(
+            $this,
+            '_column_navigation_name'
         ));
 
         $crud->callback_before_update(array(
@@ -1029,7 +1034,7 @@ class Main extends CMS_Controller
         }
     }
 
-    public function column_navigation_name($value, $row)
+    public function _column_navigation_name($value, $row)
     {
         if(!isset($_SESSION)){
             session_start();
@@ -2007,6 +2012,7 @@ class Main extends CMS_Controller
 
             $result .= '<ul class="dropdown-menu">';
             foreach($navigations as $navigation){
+                if($navigation['hidden']){continue;}
                 if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
                     $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == ''? 'icon-white': $navigation['bootstrap_glyph'];
                     // make text
@@ -2300,6 +2306,10 @@ class Main extends CMS_Controller
         $html = '';
 
         foreach($quicklinks as $quicklink){
+            // if navigation hidden, skip it
+            if($quicklink['hidden']){
+                continue;
+            }
             // if navigation is not active then skip it
             if((!$quicklink['allowed'] || !$quicklink['active']) && !$quicklink['have_allowed_children']){
                 continue;

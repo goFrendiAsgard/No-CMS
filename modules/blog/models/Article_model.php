@@ -147,13 +147,35 @@ class Article_model extends  CMS_Model{
 
         $where_featured = $featured? 'featured=1' : '(1=1)';
 
+        // to use LIKE in postgre, the field should be converted to text
+        if((isset($this->db->driver) && $this->db->driver == 'postgre') || (isset($this->db->subdriver) && $this->db->subdriver == 'pgsql')){
+            $date_field_as_string = 'date::text';
+        }else{
+            $date_field_as_string = 'date';
+        }
+
         if($search){
+            // relevance (this sql works for mysql)
+            if((isset($this->db->driver) && ($this->db->driver == 'mysql' || $this->db->driver == 'mysqli')) || (isset($this->db->subdriver) && ($this->db->subdriver == 'mysql' || $this->db->subdriver == 'mysqli'))){
+                $key = 'COUNT(article_id)>0';
+            }else if((isset($this->db->driver) && $this->db->driver == 'postgre') || (isset($this->db->subdriver) &&$this->db->subdriver == 'pgsql')){
+                $key = '(COUNT(article_id)>0)::int';
+            }else{
+                $key = 'COUNT(article_id)';
+            }
+            $relevance = '( 0';
+            foreach($words as $word){
+                $relevance .= '+ (SELECT '.$key.' FROM '.$this->cms_complete_table_name('article')." WHERE article_title LIKE '%".addslashes($word)."%' OR content LIKE '%".addslashes($word)."%')";
+            }
+            $relevance .= ')';
+            // where search
             $where_search = "(FALSE ";
             foreach($words as $word){
                 $where_search .= " OR (article_title LIKE '%".addslashes($word)."%' OR content LIKE '%".addslashes($word)."%')";
             }
             $where_search .=")";
         }else{
+            $relevance = '1';
             $where_search = "(1=1)";
         }
         $current_date = date('Y-m-d').' 23:59:59';
@@ -161,11 +183,12 @@ class Article_model extends  CMS_Model{
         $SQL = "
             SELECT
                 article_id, article_title, article_url, content, date, allow_comment, author_user_id,
-                real_name AS author, publish_date, status,
+                real_name AS author, publish_date, status, visited,
                 (
                   SELECT COUNT(comment_id) FROM ".$this->cms_complete_table_name('comment')."
                   WHERE article_id = ".$this->cms_complete_table_name('article').".article_id
-                ) as comment_count
+                ) as comment_count,
+                ".$relevance." AS relevance
             FROM ".$this->cms_complete_table_name('article')."
             LEFT JOIN ".$this->cms_user_table_name().
                 " ON (".$this->cms_user_table_name().".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
@@ -173,9 +196,9 @@ class Article_model extends  CMS_Model{
                 $where_category AND
                 $where_search AND 
                 $where_featured AND
-                date LIKE '$archive%' AND
+                $date_field_as_string LIKE '$archive%' AND
                 (status = 'published' OR (status='scheduled' AND publish_date <= '".$current_date."'))
-            ORDER BY ".$order_by." DESC, article_id DESC
+            ORDER BY relevance DESC, ".$order_by." DESC, article_id DESC
             LIMIT $limit OFFSET $offset";
 
         $query = $this->db->query($SQL);
@@ -194,6 +217,7 @@ class Article_model extends  CMS_Model{
                     "comment_count" => $row->comment_count,
                     "photos" => $this->get_photos($row->article_id),
                     "categories" => $this->get_category($row->article_id),
+                    "visited" => $row->visited,
             );
         }
         return $data;

@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_model extends CI_Model{
-    private $VERSION        = '1.0.0';
+    private $VERSION        = '0.7.7';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -649,8 +649,8 @@ class Install_model extends CI_Model{
                 'only_content'      => $type_boolean_false,
                 'default_theme'     => $type_varchar_small,
                 'default_layout'    => $type_varchar_small,
-                'notif_url'         =>$type_varchar_large,
-                'children'          =>$type_varchar_large,
+                'notif_url'         => $type_varchar_large,
+                'children'          => $type_varchar_large,
                 'hidden'            => $type_boolean_false,
             );
         $sql_list[] = $this->create_table('main_navigation',$fields);
@@ -875,7 +875,12 @@ class Install_model extends CI_Model{
         $data = $this->turn_into_associative_array($data, array('navigation_name',
             'parent_id', 'title', 'page_title', 'page_keyword', 'description',
             'url', 'authorization_id', 'index', 'active', 'is_static', 'static_content',
-            'only_content', 'bootstrap_glyph', 'default_theme', 'default_layout'));
+            'only_content', 'bootstrap_glyph', 'default_theme', 'default_layout', 'hidden'));
+        for($i=0; $i<count($data); $i++){
+            if(!isset($data[$i]['hidden']) || $data[$i]['hidden'] == NULL){
+                $data[$i]['hidden'] = 0;
+            }
+        }
         return $this->insert_batch('main_navigation', $data);
     }
 
@@ -961,7 +966,7 @@ class Install_model extends CI_Model{
                 array('main_management', NULL, 'CMS Management', 'CMS Management', NULL, 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management',
                     4, 9, 1, 0, NULL, 0),
                 array('main_register', NULL, 'Register', 'Register', NULL, 'New User Registration', 'main/register',
-                    2, 7, 1, 0, NULL, 0),
+                    2, 7, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_change_profile', NULL, 'Change Profile', 'Change Profile', NULL, 'Change Current Profile', 'main/change_profile',
                     3, 8, 1, 0, NULL, 0),
                 array('main_group_management', 4, 'Group Management', 'Group Management', NULL, 'Group Management', 'main/group',
@@ -994,6 +999,8 @@ class Install_model extends CI_Model{
                     1, 3, 1, 0, NULL, 0),
                 array('main_third_party_auth', NULL, 'Third Party Authentication', 'Third Party Authentication', NULL, 'Third Party Authentication', 'main/hauth/index',
                     1, 2, 1, 0, NULL, 0),
+                array('main_404', NULL, '404 Not Found', '404 Page', NULL, '404 Not Found', 'not_found',
+                    1, 9, 1, 1, '<h1>404 Page not found</h1><p>Sorry, the page does not exists.<br /><a class="btn btn-primary" href="{{ site_url }}">Please go back <i class="glyphicon glyphicon-home"></i></a></p>', 0, NULL, NULL, 'default-one-column', 1),
             ));
         
         
@@ -1379,6 +1386,7 @@ class Install_model extends CI_Model{
         $equal_sign = '=';
 
         $this->change_config($file_name, "default_controller", 'main', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        $this->change_config($file_name, "404_override", 'not_found', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
         // hybridauth
         $file_name = APPPATH.'config/'.$this->complete_config_file_name('hybridauthlib.php');

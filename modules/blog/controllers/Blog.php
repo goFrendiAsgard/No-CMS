@@ -139,14 +139,21 @@ class Blog extends CMS_Secure_Controller {
             $config['description'] = $article['description'];
             $config['author'] = $article['author'];
 
-            // add visited
-            $visited = $article['visited'];
-            if($visited === NULL || $visited == ''){
-                $visited = 0;
+            $article_id = $article['id'];
+            if(!isset($_SESSION['__blog_visited'])){
+                $_SESSION['__blog_visited'] = array();
             }
-            $this->db->update($this->cms_complete_table_name('article'),
-                array('visited'=>$visited+1),
-                array('article_id'=>$article['id']));
+            if(!in_array($article_id, $_SESSION['__blog_visited'])){
+                $_SESSION['__blog_visited'][] = $article_id;
+                // add visited
+                $visited = $article['visited'];
+                if($visited === NULL || $visited == ''){
+                    $visited = 0;
+                }
+                $this->db->update($this->cms_complete_table_name('article'),
+                    array('visited'=>$visited+1),
+                    array('article_id'=>$article['id']));
+            }
         }
 
         $this->view($this->cms_module_path().'/browse_article_view',$data,

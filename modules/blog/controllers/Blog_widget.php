@@ -21,8 +21,14 @@ class Blog_widget extends CMS_Controller {
 
     public function popular($how_many=5){
         $data = array();
-        $data['articles'] = $this->article_model->get_articles(0, $how_many,
+        $articles = $this->article_model->get_articles(0, $how_many,
                 NULL, NULL, NULL, FALSE, 'visited');
+        $data['articles'] = array();
+        foreach($articles as $article){
+            if($article['visited']>0){
+                $data['articles'][] = $article;
+            }
+        }
         $data['module_path'] = $this->cms_module_path();
         $data['article_route_exists'] = $this->cms_route_key_exists('blog/(:any)\.html');
         $this->view($this->cms_module_path().'/widget_popular', $data);

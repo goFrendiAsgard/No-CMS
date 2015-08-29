@@ -1748,11 +1748,11 @@ class CMS_Controller extends MX_Controller
 
     protected final function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1, 
         $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL,
-        $default_theme=NULL, $default_layout=NULL, $notif_url=NULL)
+        $default_theme=NULL, $default_layout=NULL, $notif_url=NULL, $hidden = 0, $static_content = '')
     {
         $this->{$this->__cms_base_model_name}->cms_add_navigation($navigation_name, $title, $url, $authorization_id, 
             $parent_name, $index, $description, $bootstrap_glyph,
-            $default_theme, $default_layout, $notif_url);
+            $default_theme, $default_layout, $notif_url, $hidden, $static_content);
     }
 
     protected final function cms_remove_navigation($navigation_name)

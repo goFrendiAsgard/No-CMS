@@ -572,9 +572,8 @@ class CMS_Model extends CI_Model
                                     )>0
                                 )
                             )
-                        ) AS allowed
-                    FROM ".cms_table_name('main_navigation')." AS n  WHERE hidden <> 1 ORDER BY n.".$this->db->protect_identifiers('index'));
-            
+                        ) AS allowed, hidden
+                    FROM ".cms_table_name('main_navigation')." AS n  ORDER BY n.".$this->db->protect_identifiers('index'));
             self::$__cms_model_properties['is_navigation_cached'] = TRUE;
             self::$__cms_model_properties['navigation'] = $query->result();
         }
@@ -625,7 +624,8 @@ class CMS_Model extends CI_Model
                 "active" => $row->active,
                 "child" => $children,
                 "allowed" => $row->allowed,
-                "have_allowed_children" => $have_allowed_children
+                "have_allowed_children" => $have_allowed_children,
+                "hidden" => $row->hidden,
             );
         }
 
@@ -651,7 +651,7 @@ class CMS_Model extends CI_Model
         $super_user = $this->cms_user_is_super_admin() ? "(1=1)" : "(1=2)";
 
         $query  = $this->db->query("
-                        SELECT q.navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active,
+                        SELECT q.navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active, hidden,
                         (
                             (authorization_id = 1) OR
                             (authorization_id = 2 AND $not_login) OR
@@ -727,6 +727,7 @@ class CMS_Model extends CI_Model
                 "is_static" => $row->is_static,
                 "child" => $children,
                 "active" => $row->active,
+                "hidden" => $row->hidden,
             );
         }
 
@@ -3136,7 +3137,7 @@ class CMS_Model extends CI_Model
     }
 
     public final function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL,
-    $default_theme=NULL, $default_layout=NULL, $notif_url=NULL)
+    $default_theme=NULL, $default_layout=NULL, $notif_url=NULL, $hidden=0, $static_content = '')
     {
         //get parent's navigation_id
         $query = $this->db->select('navigation_id, navigation_name')
@@ -3196,6 +3197,8 @@ class CMS_Model extends CI_Model
             "default_theme"=>$default_theme,
             "default_layout"=>$default_layout,
             "notif_url"=>$notif_url,
+            "hidden"=>$hidden,
+            "static_content"=>$static_content,
         );
         if (isset($parent_id)) {
             $data['parent_id'] = $parent_id;

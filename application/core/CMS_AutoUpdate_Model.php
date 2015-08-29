@@ -47,7 +47,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
     private function __update(){
 
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.6';
+        $current_version = '0.7.7';
 
         if($old_version == $current_version){ return 0; }
         // get major, minor and rev version
@@ -63,6 +63,11 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         // 0.7.6
         if($major_version <= '0' && $minor_version <= '7' && $rev_version < '6'){
             $this->__update_to_0_7_6();
+        }
+
+        // 0.7.7
+        if($major_version <= '0' && $minor_version <= '7' && $rev_version < '7'){
+            $this->__update_to_0_7_7();
         }
 
         // TODO : Write your upgrade script here
@@ -273,6 +278,50 @@ class CMS_AutoUpdate_Model extends CMS_Model{
                 }
             }
         }
+    }
+
+    private function __update_to_0_7_7(){
+        // make route for 404_override
+        $pattern = array();
+        $pattern[] = '/(\$route\[(\'|")404_override(\'|")\] *= *")(.*?)(";)/si';
+        $pattern[] = "/(".'\$'."route\[('|\")404_override('|\")\] *= *')(.*?)(';)/si";
+        if(CMS_SUBSITE == ''){
+            $file_name = APPPATH.'config/main/routes.php';
+        }else{
+            $file_name = APPPATH.'config/site-'.CMS_SUBSITE.'/routes.php';
+        }
+        $str = file_get_contents($file_name);
+        $replacement = '${1}main/not_found${5}';
+        $found = FALSE;
+        foreach($pattern as $single_pattern){
+            if(preg_match($single_pattern,$str)){
+                $found = TRUE;
+                break;
+            }
+        }
+        if(!$found){
+            $str .= PHP_EOL.'$route[\'404_override\'] = \'not_found\';';
+        }
+        else{
+            $str = preg_replace($pattern, $replacement, $str);
+        }
+        @chmod($file_name,0777);
+        if(strpos($str, '<?php') !== FALSE && strpos($str, '$route') !== FALSE){
+            @file_put_contents($file_name, $str);
+            @chmod($file_name,0555);
+        }
+
+        // make register default-one-column
+        $this->db->update(cms_table_name('main_navigation'), 
+            array('default_layout'=>'default-one-column'), 
+            array('navigation_name'=>'main_register'));
+
+        // add 404 navigation
+        $this->cms_add_navigation('main_404', '404 Not Found', 'not_found', 1, 
+                NULL, 9, '404 Not found page', NULL,
+                NULL, 'default-one-column', NULL, 1,
+                '<h1>404 Page not found</h1><p>Sorry, the page does not exists.<br /><a class="btn btn-primary" href="{{ site_url }}">Please go back <i class="glyphicon glyphicon-home"></i></a></p>' 
+            );
     }
     
 }
