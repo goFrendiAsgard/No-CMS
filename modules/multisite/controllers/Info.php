@@ -111,7 +111,7 @@ class Info extends CMS_Module {
             );
             $this->dbforge->add_field($fields);
             $this->dbforge->add_key('id', TRUE);
-            $this->dbforge->create_table($this->cms_complete_table_name('manage_template'));
+            $this->dbforge->create_table($this->cms_complete_table_name('template'));
 
             if(CMS_SUBSITE == ''){
                 $this->cms_add_navigation($this->cms_complete_navigation_name('template'), 'Manage Template',
