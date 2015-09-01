@@ -8,7 +8,9 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         parent::__construct();
         
         // core seamless update
+        $this->db->trans_start();
         $this->__update();
+        $this->db->trans_complete();
         // module update
         if(!self::$module_updated){  
             self::$module_updated = TRUE;          
@@ -47,7 +49,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
     private function __update(){
 
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.7';
+        $current_version = '0.7.9';
 
         if($old_version == $current_version){ return 0; }
         // get major, minor and rev version
@@ -68,6 +70,11 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         // 0.7.7
         if($major_version <= '0' && $minor_version <= '7' && $rev_version < '7'){
             $this->__update_to_0_7_7();
+        }
+
+        // 0.7.8
+        if($major_version <= '0' && $minor_version <- '7' && $rev_version <= '8'){
+            $this->__update_to_0_7_8();
         }
 
         // TODO : Write your upgrade script here
@@ -322,6 +329,15 @@ class CMS_AutoUpdate_Model extends CMS_Model{
                 NULL, 'default-one-column', NULL, 1,
                 '<h1>404 Page not found</h1><p>Sorry, the page does not exists.<br /><a class="btn btn-primary" href="{{ site_url }}">Please go back <i class="glyphicon glyphicon-home"></i></a></p>' 
             );
+    }
+
+    private function __update_to_0_7_9(){
+        $fields = array(
+                'description' => array(
+                        'null' => TRUE,
+                    ),
+            );
+        $this->dbforge->modify_column(cms_table_name('main_route'), $fields);
     }
     
 }
