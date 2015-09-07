@@ -8,13 +8,92 @@
 class Article_model extends  CMS_Model{
     public $page_break_separator = '';
 
+    protected static $__article_properties;
+
+    public function __construct(){
+        parent::__construct();
+        $this->page_break_separator = "/<div(\s)*style(\s)*=(\s)*\"page-break-after(\s)*:(\s)*always(;)*\"(\s)*>(\s)*<span(\s)*style(\s)*=(\s)*\"display(\s)*:(\s)*none(;)*\">(\s)*&nbsp;(\s)*<\/span>(\s)*<\/div>/i";
+        if(self::$__article_properties == NULL){
+            self::$__article_properties = array();
+        }
+        $default_properties = array(
+                'is_article_cached'             => FALSE,
+                'is_category_cached'            => FALSE,
+                'is_category_article_cached'    => FALSE,
+                'articles'                      => array(),
+                'categories'                    => array(),
+                'article_categories'            => array(),
+                'photos'                        => array(),
+            );
+        foreach($default_properties as $key=>$val){
+            if(!array_key_exists($key, self::$__article_properties)){
+                self::$__article_properties[$key] = $default_properties[$key];
+            }
+        }
+    }
+
+    protected function __cache_articles(){
+        if(!self::$__article_properties['is_article_cached']){
+            self::$__article_properties['articles'] = array();
+            $query = $this->db->select('article_id, article_title, article_url, status, date, publish_date, featured, visited')
+                ->from($this->cms_complete_table_name('article'))
+                ->get();
+            self::$__article_properties['articles'] = array();
+            foreach($query->result() as $row){
+                self::$__article_properties['articles'][] = array(
+                        'article_id'        => $row->article_id,
+                        'article_title'     => $row->article_title,
+                        'article_url'       => $row->article_url,
+                        'date'              => $row->status == 'scheduled'? $row->publish_date: $row->date,
+                        'featured'          => $row->featured == 1,
+                        'visited'           => $row->visited,
+                    );
+            }
+            self::$__article_properties['is_article_cached'] = TRUE;
+        }
+        return self::$__article_properties['articles'];
+    }
+
+    protected function __cache_categories(){
+        if(!self::$__article_properties['is_category_cached']){
+            self::$__article_properties['categories'] = array();
+            $query = $this->db->select('category_id, category_name')
+                ->from($this->cms_complete_table_name('category'))
+                ->get();
+            self::$__article_properties['categories'] = array();
+            foreach($query->result() as $row){
+                self::$__article_properties['category'][] = array(
+                        'category_id'   => $row->category_id,
+                        'category_name' => $row->category_name,
+                    );
+            }
+            self::$__article_properties['is_category_cached'] = TRUE;
+        }
+        return self::$__article_properties['categories'];
+    }
+
+    protected function __cache_category_articles(){
+        if(!self::$__article_properties['is_category_article_cached']){
+            self::$__article_properties['category_articles'] = array();
+            $query = $this->db->select('category_id, article_id')
+                ->from($this->cms_complete_table_name('category_article'))
+                ->get();
+            self::$__article_properties['category_articles'] = array();
+            foreach($query->result() as $row){
+                self::$__article_properties['category_articles'][] = array(
+                        'category_id'   => $row->category_id,
+                        'article_id'    => $row->article_id,
+                    );
+            }
+            self::$__article_properties['is_category_article_cached'] = TRUE;
+        }
+        return self::$__article_properties['category_articles'];
+    }
+
     public function get_archive(){
-        $query = $this->db->select('date')
-            ->from($this->cms_complete_table_name('article'))
-            ->get();
         $data = array();
-        foreach($query->result() as $row){
-            $str = substr($row->date, 0, 7);
+        foreach($this->__cache_articles() as $article){
+            $str = substr($article['date'], 0, 7);
             if(!in_array($str, $data)){
                 $data[] = $str;
             }
@@ -49,46 +128,33 @@ class Article_model extends  CMS_Model{
 		return $result;
 	}
 
-
-    public function __construct(){
-        parent::__construct();
-        $this->page_break_separator = "/<div(\s)*style(\s)*=(\s)*\"page-break-after(\s)*:(\s)*always(;)*\"(\s)*>(\s)*<span(\s)*style(\s)*=(\s)*\"display(\s)*:(\s)*none(;)*\">(\s)*&nbsp;(\s)*<\/span>(\s)*<\/div>/i";
-    }
-
     public function get_count_article_url($article_url){
-        $query = $this->db->select('article_id')
-            ->from($this->cms_complete_table_name('article'))
-            ->where('article_url', $article_url)
-            ->get();
-        return $query->num_rows();
+        $result = 0;
+        foreach($this->__cache_articles() as $article){
+            if($article['article_url'] == $article_url){
+                $result ++;
+            }
+        }
+        return $result;
     }
 
     public function get_article_url($article_id){
-        $query = $this->db->select('article_id, article_url')
-            ->from($this->cms_complete_table_name('article'))
-            ->where('article_id', $article_id)
-            ->get();
-        if($query->num_rows()>0){
-            $row = $query->row();
-            return $row->article_url;
-        }else{
-            return false;
+        foreach($this->__cache_articles() as $article){
+            if($article['article_id'] == $article_id){
+                return $article['article_url'];
+            }
         }
+        return FALSE;
     }
 
 
     public function get_available_category(){
         $result = array(''=>'All Category');
-        $query = $this->db->select('category_id, category_name')
-            ->from($this->cms_complete_table_name('category'))
-            ->get();
-        foreach($query->result() as $row){
-            $query_article_category = $this->db->select('article_id')
-                ->from($this->cms_complete_table_name('category_article'))
-                ->where('category_id', $row->category_id)
-                ->get();
-            if($query_article_category->num_rows()>0){
-                $result[$row->category_name] = $row->category_name;
+        foreach($this->__cache_categories() as $category){
+            foreach($this->__cache_category_articles() as $category_article){
+                if($category['category_id'] == $category_article['category_id']){
+                    $result[$category['category_name']] = $category['category_name'];
+                }
             }
         }
         return $result;
@@ -101,7 +167,7 @@ class Article_model extends  CMS_Model{
         $SQL = "
             SELECT
                 article_id, article_title, article_url, content, date, keyword, description, allow_comment,
-                real_name AS author, author_user_id, visited
+                real_name AS author, author_user_id, visited, status, publish_date
             FROM ".$this->cms_complete_table_name('article')."
             LEFT JOIN ".$this->cms_user_table_name()." ON (".$this->cms_user_table_name().".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
             WHERE $where_article_url";
@@ -120,7 +186,7 @@ class Article_model extends  CMS_Model{
                     "keyword" => $this->cms_parse_keyword($row->keyword),
                     "description" => $this->cms_parse_keyword($row->description),
                     "author" => $row->author,
-                    "date" => $row->date,
+                    "date" => $row->status == 'scheduled'? $row->publish_date: $row->date,
                     "allow_comment" => $row->allow_comment,
                     "comments" => $this->get_comments($row->article_id),
                     "photos" => $this->get_photos($row->article_id),
@@ -194,7 +260,7 @@ class Article_model extends  CMS_Model{
                 " ON (".$this->cms_user_table_name().".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
             WHERE
                 $where_category AND
-                $where_search AND 
+                $where_search AND
                 $where_featured AND
                 $date_field_as_string LIKE '$archive%' AND
                 (status = 'published' OR (status='scheduled' AND publish_date <= '".$current_date."'))
@@ -252,6 +318,10 @@ class Article_model extends  CMS_Model{
     }
 
     public function get_photos($article_id){
+        // return from cache if cache exists
+        if(array_key_exists($article_id, self::$__article_properties['photos'])){
+            return self::$__article_properties['photos'][$article_id];
+        }
         $query = $this->db->select('photo_id, caption, url')
             ->from($this->cms_complete_table_name('photo'))
             ->where('article_id', $article_id)
@@ -267,22 +337,24 @@ class Article_model extends  CMS_Model{
                 );
             $data[] = $result;
         }
+        self::$__article_properties['photos'][$article_id] = $data;
         return $data;
     }
 
     public function get_category($article_id){
-        $query = $this->db->select('c.category_id, category_name')
-            ->from($this->cms_complete_table_name('category').' as c')
-            ->join($this->cms_complete_table_name('category_article').' as ca', 'ca.category_id = c.category_id')
-            ->where('article_id', $article_id)
-            ->get();
         $data = array();
-        foreach($query->result() as $row){
-            $result = array(
-                    'id'=>$row->category_id,
-                    'name'=>$row->category_name
-                );
-            $data[] = $result;
+        foreach($this->__cache_category_articles() as $category_article){
+            if($category_article['article_id'] == $article_id){
+                foreach($this->__cache_categories() as $category){
+                    if($category['category_id'] == $category_article['category_id']){
+                        $result = array(
+                                'id'=>$category['category_id'],
+                                'name'=>$category['category_name']
+                            );
+                        $data[] = $result;
+                    }
+                }
+            }
         }
         return $data;
     }
@@ -317,7 +389,7 @@ class Article_model extends  CMS_Model{
         }
         return $data;
     }
-    
+
     private function preprocess_comment($row){
         $search = array('<', '>');
         $replace = array('&lt;', '&gt;');
@@ -353,7 +425,7 @@ class Article_model extends  CMS_Model{
                 "name" => $name,
                 "website" => prep_url($website),
                 "email" => $email,
-                "gravatar_url" => $this->cms_is_connect('www.gravatar.com')? 
+                "gravatar_url" => $this->cms_is_connect('www.gravatar.com')?
                     'http://www.gravatar.com/avatar/'.md5($email).'?s=32&r=pg&d=identicon':
                     $real_base_url.'modules/'.$this->cms_module_path().'/assets/images/user.png',
         );
@@ -383,7 +455,7 @@ class Article_model extends  CMS_Model{
         }
         return $data;
     }
-    
+
     public function get_child_comment($comment_id, $level){
         $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content')
             ->from($this->cms_complete_table_name('comment'))

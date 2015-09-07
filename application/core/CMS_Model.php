@@ -26,7 +26,7 @@ class CMS_Model extends CI_Model
             }
             return $field_list;
         }else{
-            return $this->db->list_fields($table_name);   
+            return $this->db->list_fields($table_name);
         }
     }
 
@@ -47,7 +47,7 @@ class CMS_Model extends CI_Model
 
         // accessing file is faster than accessing database
         // but I think accessing variable is faster than both of them
-        
+
         if(self::$__cms_model_properties == NULL || (defined('CMS_OVERRIDDEN_SUBSITE') && !defined('CMS_RESET_OVERRIDDEN_SUBSITE'))){
             self::$__cms_model_properties = array();
         }
@@ -63,7 +63,7 @@ class CMS_Model extends CI_Model
                 'widget' => array(),            // cache raw query
                 'super_admin' => NULL,
                 'group_name' => array(),
-                'group_id' => array(), 
+                'group_id' => array(),
                 'properties' => array(),
                 'route' => array(),
                 'is_super_admin' => FALSE,
@@ -180,7 +180,7 @@ class CMS_Model extends CI_Model
         if($module_path == 'main' or $module_path == ''){
             return cms_table_name($table_name);
         }else{
-            if(file_exists(FCPATH.'modules/'.$module_path.'/cms_helper.php')){ 
+            if(file_exists(FCPATH.'modules/'.$module_path.'/cms_helper.php')){
                 $this->load->helper($module_path.'/cms');
                 if(function_exists('cms_complete_table_name')){
                     return cms_complete_table_name($table_name);
@@ -249,7 +249,7 @@ class CMS_Model extends CI_Model
     }
 
     public function cms_is_property_cached($key){
-        return array_key_exists($key, self::$__cms_model_properties['properties']);    
+        return array_key_exists($key, self::$__cms_model_properties['properties']);
     }
 
     public function cms_unique_field_name($field_name)
@@ -267,7 +267,7 @@ class CMS_Model extends CI_Model
         return $str;
     }
 
-    /** 
+    /**
      * @author goFrendiAsgard
      * @desc   get default_controller
      */
@@ -459,7 +459,7 @@ class CMS_Model extends CI_Model
     public function cms_user_is_super_admin(){
         if($this->cms_user_id()==1){
             return TRUE;
-        }else if(CMS_SUBSITE != ''){            
+        }else if(CMS_SUBSITE != ''){
             // get cms table prefix
             include(APPPATH.'config/main/cms_config.php');
             $cms_table_prefix = $config['__cms_table_prefix'];
@@ -477,7 +477,7 @@ class CMS_Model extends CI_Model
                 $row = $query->row();
                 $module_path = $row->module_path;
                 // get multisite module's table prefix
-                include(FCPATH.'modules/'.$module_path.'/config/module_config.php');          
+                include(FCPATH.'modules/'.$module_path.'/config/module_config.php');
                 $module_table_prefix = $config['module_table_prefix'];
                 // get complete subsite table name
                 $subsite_table_name = '';
@@ -498,7 +498,7 @@ class CMS_Model extends CI_Model
                     ->where('name', CMS_SUBSITE)
                     ->get();
                 if($query->num_rows() > 0){
-                    $row = $query->row();                    
+                    $row = $query->row();
                     if($row->user_id == $this->cms_user_id()){
                         return TRUE;
                     }
@@ -753,7 +753,7 @@ class CMS_Model extends CI_Model
         $not_login  = !$user_name ? "(1=1)" : "(1=2)";
         $login      = $user_name ? "(1=1)" : "(1=2)";
         $super_user = $this->cms_user_is_super_admin() ? "(1=1)" : "(1=2)";
-        
+
         /*
         $slug_where = isset($slug)?
             "(((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%')) AND active=1)" :
@@ -805,7 +805,7 @@ class CMS_Model extends CI_Model
                     continue;
                 }
             }
-            
+
             if(isset($widget_name)){
                 if(strtolower($row->widget_name) != strtolower($widget_name)){
                     continue;
@@ -821,7 +821,7 @@ class CMS_Model extends CI_Model
                     $content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/widget/edit/'.$row->widget_id.'">'.
                         '<i class="glyphicon glyphicon-pencil"></i>'.
                         '</a></div>'.$content;
-                } 
+                }
             } else {
                 // url
                 $url = $row->url;
@@ -923,7 +923,7 @@ class CMS_Model extends CI_Model
             $url = $row->url;
             if($url == '' || $url === NULL){
                 $navigation_name = $row->navigation_name;
-                $url = 'main/static_page/'.$navigation_name; 
+                $url = 'main/static_page/'.$navigation_name;
             }
             return $url;
         }else{
@@ -931,7 +931,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    
+
 
     /**
      * @author  goFrendiAsgard
@@ -1093,6 +1093,7 @@ class CMS_Model extends CI_Model
             foreach($query->result() as $row){
                 self::$__cms_model_properties['route'][$row->key] = $row->value;
             }
+            self::$__cms_model_properties['is_route_cached'] = TRUE;
         }
         return array_key_exists($route_key, self::$__cms_model_properties['route']);
     }
@@ -1146,7 +1147,7 @@ class CMS_Model extends CI_Model
                 $login_succeed  = TRUE;
             }
         }
-        
+
         if(!$login_succeed){
             $this->load->helper('cms_extended_login');
             if(function_exists('extended_login')){
@@ -1187,7 +1188,7 @@ class CMS_Model extends CI_Model
             $this->cms_user_id($user_id);
             $this->cms_user_real_name($user_real_name);
             $this->cms_user_email($user_email);
-            
+
             $this->__cms_extend_user_last_active($user_id);
             return TRUE;
         }
@@ -1214,7 +1215,7 @@ class CMS_Model extends CI_Model
         $this->db->update($this->cms_user_table_name(),
             array('login'=>0),
             array('user_id'=>$this->cms_user_id()));
-        
+
         $this->cms_unset_ci_session('cms_user_name');
         $this->cms_unset_ci_session('cms_user_id');
         $this->cms_unset_ci_session('cms_user_real_name');
@@ -1930,7 +1931,7 @@ class CMS_Model extends CI_Model
             "user_name" => $user_name,
             "email"     => $email,
             "real_name" => $real_name,
-            "password"  => CMS_SUBSITE == '' ? 
+            "password"  => CMS_SUBSITE == '' ?
                 cms_md5($password, $this->cms_chipper()) :
                 cms_md5($password),
             "active"    => $activation == 'automatic',
@@ -1996,9 +1997,9 @@ class CMS_Model extends CI_Model
             }
             $where = array(
                 "user_id" => $user_id
-            );        
+            );
             $this->db->update($this->cms_user_table_name(), $data, $where);
-            
+
             if($user_id == $this->cms_user_id()){
                 $this->cms_user_name($user_name);
                 $this->cms_user_email($email);
@@ -2030,7 +2031,7 @@ class CMS_Model extends CI_Model
      * @desc    get module list
      */
     public function cms_get_module_list($keyword = NULL)
-    {        
+    {
         $this->load->helper('directory');
         $directories = directory_map(FCPATH.'modules', 1);
         sort($directories);
@@ -2117,7 +2118,7 @@ class CMS_Model extends CI_Model
         $query = $this->db->select('module_id, version, module_name, module_path')
             ->from(cms_table_name('main_module'))
             ->get();
-        foreach($query->result() as $row){  
+        foreach($query->result() as $row){
             $json            = file_get_contents(FCPATH.'modules/'.$row->module_path.'/description.txt');
             $module_info     = @json_decode($json, true);
             $module_info     = $module_info === NULL? array() : $module_info;
@@ -2130,7 +2131,7 @@ class CMS_Model extends CI_Model
                             array('module_id'=>$row->module_id)
                         );
                 }
-            }                  
+            }
             self::$__cms_model_properties['module_version'][$module_name] = $row->version;
             self::$__cms_model_properties['module_name'][$row->module_path] = $module_name;
             self::$__cms_model_properties['module_path'][$row->module_name] = $row->module_path;
@@ -2165,7 +2166,7 @@ class CMS_Model extends CI_Model
     {
         // hack module path by changing the session, don't forget to unset !!!
         $module_path = '';
-        if($module_name === NULL){           
+        if($module_name === NULL){
             if($this->__controller_module_path != NULL){
                 // no_cms_model and no_cms_autoupdate_model is called by instance controller
                 // thus the position might not be represent the current module path
@@ -2178,7 +2179,7 @@ class CMS_Model extends CI_Model
                     $file_name = trim(str_replace(FCPATH.'modules', '', $file_name), DIRECTORY_SEPARATOR);
                     $file_name_part = explode(DIRECTORY_SEPARATOR, $file_name);
                     if(count($file_name_part)>=2){
-                        $module_path = $file_name_part[0]; 
+                        $module_path = $file_name_part[0];
                     }
                 }
             }
@@ -2422,7 +2423,7 @@ class CMS_Model extends CI_Model
         $config['bcc_batch_mode'] = (boolean) $this->cms_get_config('cms_email_bcc_batch_mode');
         $config['bcc_batch_size'] = (integer) $this->cms_get_config('cms_email_bcc_batch_size');
 
-        $ssl = $this->email->smtp_crypto === 'ssl'? 'ssl://' : ''; 
+        $ssl = $this->email->smtp_crypto === 'ssl'? 'ssl://' : '';
         // if protocol is (not smtp) or (is smtp and able to connect)
         if($config['protocol'] != 'smtp' || ($config['protocol'] == 'smtp' && $this->cms_is_connect($ssl.$config['smtp_host'], $config['smtp_port']))){
             $message = $this->cms_parse_keyword($message);
@@ -2449,7 +2450,7 @@ class CMS_Model extends CI_Model
     public function cms_resize_image($file_name, $nWidth, $nHeight){
         // original code: http://stackoverflow.com/questions/16977853/resize-images-with-transparency-in-php
 
-        
+
         // read image
         $im = @imagecreatefrompng($file_name);
         if($im){
@@ -2532,7 +2533,7 @@ class CMS_Model extends CI_Model
             $this->db->insert(cms_table_name('main_config'), $data);
         }
         cms_config($name, $value);
-        // add-subsite-on-register setting influence whether main_register route exists or not 
+        // add-subsite-on-register setting influence whether main_register route exists or not
         if($name == 'cms_add_subsite_on_register'){
             if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
                 $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
@@ -2572,14 +2573,14 @@ class CMS_Model extends CI_Model
     public function cms_get_config($name, $raw = FALSE)
     {
         $value = cms_config($name);
-        if($value === NULL || !$value){            
+        if($value === NULL || !$value){
             if (!self::$__cms_model_properties['is_config_cached']) {
                 $query = $this->db->select('value, config_name')
                     ->from(cms_table_name('main_config'))
                     ->get();
                 foreach($query->result() as $row){
                     $value = $row->value;
-                    $config_name = $row->config_name;                    
+                    $config_name = $row->config_name;
                     self::$__cms_model_properties['config'][$config_name] = $value;
                     cms_config($config_name, $value);
                     if($config_name == $name){
@@ -2729,7 +2730,7 @@ class CMS_Model extends CI_Model
 
             self::$__cms_model_properties['language_dictionary'] = $lang;
             self::$__cms_model_properties['is_language_dictionary_cached'] = TRUE;
-        }        
+        }
         return self::$__cms_model_properties['language_dictionary'];
     }
 
@@ -2818,7 +2819,7 @@ class CMS_Model extends CI_Model
             $pattern[]     = '/\{\{ module_base_url \}\}/si';
             $replacement[] = $module_base_url;
             $pattern[]     = '/\{\{ module_name \}\}/si';
-            $replacement[] = $module_name;     
+            $replacement[] = $module_name;
 
             // language
             $pattern[]     = '/\{\{ language \}\}/si';
@@ -2884,9 +2885,9 @@ class CMS_Model extends CI_Model
      * @desc   check if user already exists
      */
     public function cms_is_user_exists($identity, $exception_user_id = 0)
-    {   
+    {
         $query = $this->db->query('SELECT user_id, user_name FROM '.$this->cms_user_table_name().' '.
-            'WHERE 
+            'WHERE
                 (user_name LIKE \''.addslashes($identity).'\' OR email LIKE \''.addslashes($identity).'\') AND
                 (user_id <> '.addslashes($exception_user_id).')');
         $num_rows = $query->num_rows();
@@ -3066,7 +3067,7 @@ class CMS_Model extends CI_Model
         } else { // no identifier match, register it to the database
             $third_party_email        = $status[$provider]['email'];
             $third_party_display_name = $status[$provider]['firstName'];
-            
+
             // well, twitter sucks... it doesn't allow us to retrieve user's email
             if($third_party_email === NULL){
                 $third_party_email = $email != NULL? $email : $new_user_name.'@unknown.com';
@@ -3184,7 +3185,7 @@ class CMS_Model extends CI_Model
                 return NULL;
             }
         }
-        
+
         $data = array(
             "navigation_name" => $navigation_name,
             "title" => $title,
@@ -3468,7 +3469,7 @@ class CMS_Model extends CI_Model
         foreach($query->result() as $row){
             $content .= '$route[\''.$row->key.'\'] = \''.$row->value.'\';'.PHP_EOL;
         }
-        // write extended route 
+        // write extended route
         file_put_contents($extended_route_config, $content);
     }
 

@@ -54,7 +54,7 @@ class CMS_Controller extends MX_Controller
         $this->load->model($this->__cms_base_model_name);
         $this->{$this->__cms_base_model_name}->__controller_module_path = $module_path;
 
-        // unpublished modules should never be accessed.        
+        // unpublished modules should never be accessed.
         if(CMS_SUBSITE != '' && $module_path != 'main' && $module_path != ''){
             $subsite_auth_file = FCPATH.'modules/'.$module_path.'/subsite_auth.php';
             if(file_exists($subsite_auth_file)){
@@ -120,7 +120,7 @@ class CMS_Controller extends MX_Controller
         return $this->{$this->__cms_base_model_name}->cms_random_string($length);
     }
 
-    /** 
+    /**
      * @author goFrendiAsgard
      * @desc   get default_controller
      */
@@ -143,7 +143,7 @@ class CMS_Controller extends MX_Controller
      * @param  int    $port
      * @desc   is it able to go to some site?
      */
-    protected function cms_is_connect($hostname=NULL, $port=80){ 
+    protected function cms_is_connect($hostname=NULL, $port=80){
         return $this->{$this->__cms_base_model_name}->cms_is_connect($hostname, $port);
     }
 
@@ -357,7 +357,7 @@ class CMS_Controller extends MX_Controller
     }
 
     protected function cms_chipper(){
-        return $this->{$this->__cms_base_model_name}->cms_chipper();  
+        return $this->{$this->__cms_base_model_name}->cms_chipper();
     }
 
     /**
@@ -431,7 +431,7 @@ class CMS_Controller extends MX_Controller
                 $row = $query->row();
                 $navigation_id = $row->navigation_id;
                 $submenus = $this->cms_navigations($navigation_id, 1);
-                        
+
             }else{
                 return '';
             }
@@ -581,7 +581,7 @@ class CMS_Controller extends MX_Controller
      * @return  mixed
      * @desc    return navigation path, used for layout
      **/
-    
+
     protected function cms_get_navigation_path($navigation_name = NULL)
     {
         return $this->{$this->__cms_base_model_name}->cms_get_navigation_path($navigation_name);
@@ -693,7 +693,7 @@ class CMS_Controller extends MX_Controller
     }
 
     protected function cms_module_version($module_name = NULL){
-        return $this->{$this->__cms_base_model_name}->cms_module_version();    
+        return $this->{$this->__cms_base_model_name}->cms_module_version();
     }
 
     /**
@@ -712,7 +712,7 @@ class CMS_Controller extends MX_Controller
                 $file_name = trim(str_replace(FCPATH.'modules', '', $file_name), DIRECTORY_SEPARATOR);
                 $file_name_part = explode(DIRECTORY_SEPARATOR, $file_name);
                 if(count($file_name_part)>=2){
-                    $module_path = $file_name_part[0]; 
+                    $module_path = $file_name_part[0];
                 }
             }
             return $module_path;
@@ -1040,7 +1040,7 @@ class CMS_Controller extends MX_Controller
                             });
                         }
                     });
-                    
+
                     /* when form submit, adjust ck editor */
                     $(document).ajaxSend(function(event, xhr, settings) {
                         if(settings.url == $("#crudForm").attr("action")){
@@ -1176,7 +1176,7 @@ class CMS_Controller extends MX_Controller
                     $static_content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/navigation/edit/'.$row_navigation->navigation_id.'">'.
                         '<i class="glyphicon glyphicon-pencil"></i> Edit Page'.
                         '</a></div>'.$static_content;
-                }        
+                }
                 $data['cms_content'] = $static_content;
                 $view_url            = 'CMS_View';
             }
@@ -1746,11 +1746,11 @@ class CMS_Controller extends MX_Controller
         return $this->{$this->__cms_base_model_name}->cms_third_party_login($provider, $email);
     }
 
-    protected final function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1, 
+    protected final function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1,
         $parent_name = NULL, $index = NULL, $description = NULL, $bootstrap_glyph=NULL,
         $default_theme=NULL, $default_layout=NULL, $notif_url=NULL, $hidden = 0, $static_content = '')
     {
-        $this->{$this->__cms_base_model_name}->cms_add_navigation($navigation_name, $title, $url, $authorization_id, 
+        $this->{$this->__cms_base_model_name}->cms_add_navigation($navigation_name, $title, $url, $authorization_id,
             $parent_name, $index, $description, $bootstrap_glyph,
             $default_theme, $default_layout, $notif_url, $hidden, $static_content);
     }
@@ -1777,10 +1777,10 @@ class CMS_Controller extends MX_Controller
         $this->{$this->__cms_base_model_name}->cms_remove_group($group_name);
     }
 
-    protected function cms_add_widget($widget_name, $title=NULL, $authorization_id = 1, $url = NULL, $slug = NULL, 
+    protected function cms_add_widget($widget_name, $title=NULL, $authorization_id = 1, $url = NULL, $slug = NULL,
         $index = NULL, $description = NULL)
     {
-        $this->{$this->__cms_base_model_name}->cms_add_widget($widget_name, $title, $authorization_id, $url, $slug, $index, 
+        $this->{$this->__cms_base_model_name}->cms_add_widget($widget_name, $title, $authorization_id, $url, $slug, $index,
             $description);
     }
 

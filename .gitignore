@@ -48,6 +48,8 @@ modules/*/assets/db/backup*.sql
 # info module
 modules/*/controllers/Info_*.php
 
+.tags*
+
 # my private modules
 modules/gis
 modules/typing_defense
