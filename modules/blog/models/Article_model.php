@@ -62,7 +62,7 @@ class Article_model extends  CMS_Model{
                 ->get();
             self::$__article_properties['categories'] = array();
             foreach($query->result() as $row){
-                self::$__article_properties['category'][] = array(
+                self::$__article_properties['categories'][] = array(
                         'category_id'   => $row->category_id,
                         'category_name' => $row->category_name,
                     );

@@ -113,21 +113,7 @@ for($i=0; $i<count($slide_list); $i++){
 
 
     $(window).scroll(function(){
-        var carouselTop = $('div.carousel-inner').offset().top;
         var windowTop = $(window).scrollTop();
-        var height = $('div.carousel-inner').height();
-        if(windowTop >= carouselTop){
-            var newTop = windowTop - carouselTop;
-            var newOpacity = 1-0.6*(newTop/height);
-            var blur = Math.round(newTop/height * 5);
-        }else{
-            var newTop = 0;
-            var newOpacity = 1;
-            var blur = 0;
-        }
-        $('.carousel-inner .item-image').css('background-position', '0 ' + newTop + 'px');
-        $('.carousel-inner .item-image').css('filter', 'blur(' + blur + 'px)');
-        $('.carousel-inner .item-image').css('-webkit-filter', 'blur(' + blur + 'px)');
-        $('.carousel-inner>.item').css('opacity', newOpacity);
+        $('.carousel-inner .item-image').css('background-position', '0 ' + windowTop + 'px');
     });
 </script>

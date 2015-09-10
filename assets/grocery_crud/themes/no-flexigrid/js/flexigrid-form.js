@@ -1,6 +1,6 @@
 // addition by gofrendi
 function __add_form_control_class(){
-    $('.flexigrid input[type!="button"][type!="checkbox"], .flexigrid select, .flexigrid textarea').each(function(){
+    $('.flexigrid input[type!="button"][type!="checkbox"][type!="submit"], .flexigrid select, .flexigrid textarea').each(function(){
         if(!$(this).hasClass('form-control')){
             $(this).addClass('form-control');
         }

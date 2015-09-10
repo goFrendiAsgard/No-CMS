@@ -182,14 +182,14 @@
                         <div class="form-group">
                             <label class="control-label col-md-4" for="cms_subsite_home_content">Default Subsite Homepage Content</label>
                             <div class="controls col-md-8">
-                                <textarea class="text-area-section" id="cms_subsite_home_content" name="cms_subsite_home_content" class="form-control"><?php echo $config_list['cms_subsite_home_content'] ?></textarea>
+                                <textarea class="text-area-section form-control" id="cms_subsite_home_content" name="cms_subsite_home_content" class="form-control"><?php echo $config_list['cms_subsite_home_content'] ?></textarea>
                                 <p class="help-block">Default Subsite Homepage Content</p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-md-4" for="cms_subsite_configs">Default Configurations for New Subsite</label>
                             <div class="controls col-md-8">
-                                <textarea class="text-area-section" id="cms_subsite_configs" name="cms_subsite_configs" class="form-control"><?php echo $config_list['cms_subsite_configs'] ?></textarea>
+                                <textarea class="text-area-section form-control" id="cms_subsite_configs" name="cms_subsite_configs" class="form-control"><?php echo $config_list['cms_subsite_configs'] ?></textarea>
                                 <p class="help-block">Default configuration for new subsite (JSON Format). I.e:<br />
                                 {"site_footer" : "Powered by me", "site_name" : "Another cool website"}
                                 </p>
@@ -198,7 +198,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-4" for="cms_subsite_modules">Default Modules for New Subsite</label>
                             <div class="controls col-md-8">
-                                <textarea class="text-area-section" id="cms_subsite_modules" name="cms_subsite_modules" class="form-control"><?php echo $config_list['cms_subsite_modules'] ?></textarea>
+                                <textarea class="text-area-section form-control" id="cms_subsite_modules" name="cms_subsite_modules" class="form-control"><?php echo $config_list['cms_subsite_modules'] ?></textarea>
                                 <p class="help-block">Default modules for new subsite (Comma Separated)</p>
                             </div>
                         </div>                        
@@ -243,7 +243,7 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="cms_email_forgot_message">Forgot Password Mail Message</label>
                     <div class="controls col-md-8">
-                        <textarea class="text-area-section" id="cms_email_forgot_message" name="cms_email_forgot_message" class="form-control"><?php echo $config_list['cms_email_forgot_message'] ?></textarea>
+                        <textarea class="text-area-section form-control" id="cms_email_forgot_message" name="cms_email_forgot_message" class="form-control"><?php echo $config_list['cms_email_forgot_message'] ?></textarea>
                         <p class="help-block">Forgot password mail message</p>
                     </div>
                 </div>
@@ -257,7 +257,7 @@
                 <div class="form-group cms_signup_activation_dependend">
                     <label class="control-label col-md-4" for="cms_email_signup_message">User Activation Mail Message</label>
                     <div class="controls col-md-8">
-                        <textarea class="text-area-section" id="cms_email_signup_message" name="cms_email_signup_message" class="form-control"><?php echo $config_list['cms_email_signup_message'] ?></textarea>
+                        <textarea class="text-area-section form-control" id="cms_email_signup_message" name="cms_email_signup_message" class="form-control"><?php echo $config_list['cms_email_signup_message'] ?></textarea>
                         <p class="help-block">User activation mail message</p>
                     </div>
                 </div>
@@ -337,14 +337,14 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_top_fix">Custom Style</label>
                     <div class="controls col-md-8">
-                        <textarea id="section_custom_style" name="section_custom_style" class="text-area-section"><?php show_static_content($section_widget_list, 'section_custom_style'); ?></textarea>
+                        <textarea id="section_custom_style" name="section_custom_style" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_custom_style'); ?></textarea>
                         <p class="help-block">Custom CSS (You can use this to customize your theme etc)</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_top_fix">Custom Script</label>
                     <div class="controls col-md-8">
-                        <textarea id="section_custom_script" name="section_custom_script" class="text-area-section"><?php show_static_content($section_widget_list, 'section_custom_script'); ?></textarea>
+                        <textarea id="section_custom_script" name="section_custom_script" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_custom_script'); ?></textarea>
                         <p class="help-block">Custom Javascript</p>
                     </div>
                 </div>
@@ -352,9 +352,9 @@
                     <label class="control-label col-md-4" for="section_top_fix">Top Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
-                        <textarea id="section_top_fix" name="section_top_fix" class="text-area-section"><?php echo show_static_content($section_widget_list, 'section_top_fix'); ?></textarea>
+                        <textarea id="section_top_fix" name="section_top_fix" class="text-area-section form-control"><?php echo show_static_content($section_widget_list, 'section_top_fix'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of top section</p>
                     </div>
                 </div>
@@ -362,9 +362,9 @@
                     <label class="control-label col-md-4" for="section_top_fix">Navigation Bar's Right Partial</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
-                        <textarea id="navigation_right_partial" name="navigation_right_partial" class="text-area-section"><?php show_static_content($section_widget_list, 'navigation_right_partial'); ?></textarea>
+                        <textarea id="navigation_right_partial" name="navigation_right_partial" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'navigation_right_partial'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of navigation bar's right partial (don't put too much thing here)</p>
                     </div>
                 </div>
@@ -372,9 +372,9 @@
                     <label class="control-label col-md-4" for="section_banner">Banner Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
-                        <textarea id="section_banner" name="section_banner" class="text-area-section"><?php show_static_content($section_widget_list, 'section_banner'); ?></textarea>
+                        <textarea id="section_banner" name="section_banner" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_banner'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of banner section</p>
                     </div>
                 </div>
@@ -382,9 +382,9 @@
                     <label class="control-label col-md-4" for="section_left">Left Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
-                        <textarea id="section_left" name="section_left" class="text-area-section"><?php show_static_content($section_widget_list, 'section_left'); ?></textarea>
+                        <textarea id="section_left" name="section_left" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_left'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of left Section</p>
                     </div>
                 </div>
@@ -392,9 +392,9 @@
                     <label class="control-label col-md-4" for="section_right">Right Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
-                        <textarea id="section_right" name="section_right" class="text-area-section"><?php show_static_content($section_widget_list, 'section_right'); ?></textarea>
+                        <textarea id="section_right" name="section_right" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_right'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of right section</p>
                     </div>
                 </div>
@@ -402,9 +402,9 @@
                     <label class="control-label col-md-4" for="section_bottom">Bottom Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
-                        <textarea id="section_bottom" name="section_bottom" class="text-area-section"><?php show_static_content($section_widget_list, 'section_bottom'); ?></textarea>
+                        <textarea id="section_bottom" name="section_bottom" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_bottom'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of bottom section</p>
                     </div>
                 </div>
@@ -734,7 +734,8 @@
         // when calling chosen, the select should be visible, that's why I need to do this:
         $('#tab3').removeClass('active');
         $('#tab1').addClass('active');
-        // make text area autosize
+        // make text area autosize 
+        $(".chosen-select").chosen({width: "250px"});
         $('.text-area-section').autosize();
 
         // add widget or whatever to the section at current caret

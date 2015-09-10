@@ -114,12 +114,12 @@
                 </select>
             </div>
             <div class="form-group">&nbsp;
-                <button id="new_article_save" class="form-control btn btn-primary">
+                <button id="new_article_save" class="btn btn-primary">
                     <i class="glyphicon glyphicon-share-alt"></i> {{ language:Save }}
                 </button>
             </div>
             <div class="form-group">&nbsp;
-                <button id="new_article_edit" class="form-control btn btn-primary">
+                <button id="new_article_edit" class="btn btn-primary">
                     <i class="glyphicon glyphicon-pencil"></i> {{ language:Switch Full Mode }}
                 </button>
             </div>

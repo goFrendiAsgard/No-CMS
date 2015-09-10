@@ -392,8 +392,12 @@ div.colCopy {
 }
 div.pGroup {
 	float:left;
-	height:30px;
+	height:60px;
 	margin:0px 5px;
+	display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
 }
 .flexigrid div.pDiv .pPageStat,.flexigrid div.pDiv .pcontrol {
 	position:relative;
@@ -567,8 +571,8 @@ textarea.texteditor, textarea.mini-texteditor
         margin-right:5px;
     }
     .flexigrid input, .flexigrid select{/*
-        width:auto;*/
-        height:auto;
+        width:auto;
+        height:auto;*/
     }
 }
 #ajax_list tbody{
@@ -587,7 +591,7 @@ textarea.texteditor, textarea.mini-texteditor
 }
 
 #crudForm{
-    padding-bottom: 145px;
+    padding-bottom: 255px;
 }
 .chzn-results{
     max-height: 200px!important;

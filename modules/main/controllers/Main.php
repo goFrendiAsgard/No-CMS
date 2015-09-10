@@ -1949,6 +1949,7 @@ class Main extends CMS_Controller
         }
         $result .= '<ul  class="dropdown-menu nav nav-pills nav-stacked" '.($first?'id="_first-left-dropdown"':'').'>';
         foreach($navigations as $navigation){
+            if($navigation['hidden']){continue;}
             if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
                 // create badge if needed
                 $badge = '';
@@ -2101,6 +2102,7 @@ class Main extends CMS_Controller
                 @media (min-width: 750px){
                     .dropdown-submenu{
                         position:relative;
+                        overflow:initial!important;
                     }
 
                     .dropdown-submenu > .dropdown-menu
@@ -2214,6 +2216,8 @@ class Main extends CMS_Controller
                             }
                         }
                     }
+                    var navbar_height = $(".navbar").height();
+                    $("body").css("padding-top", navbar_height);
                 }
 
                 // MAIN PROGRAM

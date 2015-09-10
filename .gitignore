@@ -53,24 +53,19 @@ modules/*/controllers/Info_*.php
 # my private modules
 modules/gis
 modules/typing_defense
-modules/academic
 modules/ssc
 modules/gis_assignment
 modules/library_app
 modules/pmb_online
 modules/town_project
 modules/loanword_searchengine
-modules/year_book
 modules/stiki_ibk
 modules/pendaftaran_wisuda
 modules/library_app
 modules/shop
 modules/pbfrontend
 modules/artificial_intelligence/assets/data/1_*
-modules/beritaduka
 modules/conference
 modules/oepet
-modules/fakebill
-modules/rekam_medik
 modules/breast_cancer
-modules/shop_manager
+modules/dmsbengkel

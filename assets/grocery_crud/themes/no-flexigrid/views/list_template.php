@@ -147,10 +147,8 @@ if($success_message !== null){?>
             <div class="pGroup">
                 <span><label><?php echo $this->l('list_page'); ?></label>&nbsp;</span>
             </div>
-            <div class="pGroup">
-                <span>                    
-                    <input name='page' type="text" value="1" size="4" id='crud_page' class="crud_page">&nbsp;
-                </span>
+            <div class="pGroup">         
+                <input name='page' type="text" value="1" size="4" id='crud_page' class="crud_page">&nbsp;
             </div>
             <div class="pGroup">
                 <span>                    
