@@ -2,9 +2,6 @@
     $record_index = 0;
 ?>
 <style type="text/css">
-    #md_table_citizen input[type="text"]{
-        max-width:100px;
-    }
     #md_table_citizen .chzn-drop input[type="text"]{
         max-width:240px;
     }

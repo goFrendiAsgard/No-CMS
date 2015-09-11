@@ -665,7 +665,7 @@ class Default_generator extends CMS_Controller{
                 $add_front_navigations .= $str.PHP_EOL;
             }
         }
-        $add_navigations = $add_front_navigations.$add_back_navigations;
+        $add_navigations = trim($add_front_navigations.$add_back_navigations);
 
         ////////////////////////////////////////////////////////////////
         // CREATE INSTALLER
@@ -689,6 +689,7 @@ class Default_generator extends CMS_Controller{
             'project_caption',
             'drop_table_forge',
             'create_table_forge',
+            'insert_table',
         );
         $replacement = array(
             underscore($this->cms_user_name()).'.'.underscore($this->project_name),
@@ -702,6 +703,7 @@ class Default_generator extends CMS_Controller{
             humanize($this->project_name),
             $this->nds->get_drop_table_forge($tables),
             $this->nds->get_create_table_forge($tables),
+            $this->nds->get_insert_table($tables),
         );
 
         $str = $this->nds->read_view('default_generator/info_controller', NULL, $pattern, $replacement);

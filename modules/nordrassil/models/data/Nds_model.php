@@ -31,7 +31,7 @@ class Nds_model extends CMS_Model{
         return $query->result();
     }
     public function get_table_by_project($project_id){
-        $query = $this->db->select('table_id, name, caption')
+        $query = $this->db->select('table_id, name, caption, data')
             ->from($this->cms_complete_table_name('table'))
             ->where('project_id', $project_id)
             ->order_by('priority')
@@ -53,6 +53,7 @@ class Nds_model extends CMS_Model{
                 $options[] = $option_row->name;
             }
             $row->options = $options;
+            $row->data = @json_decode($row->data);
             // add options to table
             $new_result[] = $row;
         }
@@ -158,7 +159,7 @@ class Nds_model extends CMS_Model{
 
             // add tables
             $tables = array();
-            $query = $this->db->select('table_id, name, caption')
+            $query = $this->db->select('table_id, name, caption, data')
                 ->from($this->cms_complete_table_name('table'))
                 ->where('project_id', $project_id)
                 ->order_by('priority')
@@ -176,6 +177,7 @@ class Nds_model extends CMS_Model{
                 }
                 $table['stripped_name'] = $this->strip_table_prefix($table['name'], $db_table_prefix);
                 $table['caption'] = addslashes($table['caption']);
+                $table['data'] = @json_decode($table['data'], TRUE);
 
                 // get table options
                 $table_options = array();
@@ -398,6 +400,31 @@ class Nds_model extends CMS_Model{
         foreach($tables as $table){
             $table_name = $table['stripped_name'];
             $php[] = '$this->dbforge->drop_table($this->cms_complete_table_name(\''.$table_name.'\'), TRUE);';
+        }
+        $php = array_reverse($php);
+        return implode(PHP_EOL.'        ',$php);
+    }
+
+    public function get_insert_table($tables){
+        $php = array();
+        foreach($tables as $table){
+            $table_name = $table['stripped_name'];
+            $data       = $table['data'];
+            if(is_array($data)){
+                $syntax  = '$this->db->insert_batch($this->cms_complete_table_name(\''.$table_name.'\'), array(' . PHP_EOL;
+                foreach($data as $record){
+                    $field_pairs = array();
+                    if(is_array($record)){
+                        foreach($record as $key=>$value){
+                            $field_pairs[] = "'".addslashes($key)."' => '".addslashes($value)."'";
+                        }
+                    }
+                    $field_pairs = implode(', ', $field_pairs);
+                    $syntax .= '            array('.$field_pairs.'),'.PHP_EOL;
+                }
+                $syntax .= '        ));';
+                $php[]   = $syntax;
+            }            
         }
         $php = array_reverse($php);
         return implode(PHP_EOL.'        ',$php);
@@ -707,6 +734,7 @@ class Nds_model extends CMS_Model{
             $caption        = $this->_pop($table, 'caption');
             $columns        = $this->_pop($table, 'columns', array());
             $table_options  = $this->_pop($table, 'options', array());
+            $table_data     = $this->_pop($table, 'data', array());
 
             // insert table and get table_id
             $this->db->insert($this->cms_complete_table_name('table'), array(
@@ -714,6 +742,7 @@ class Nds_model extends CMS_Model{
                     'caption'       => $caption,
                     'project_id'    => $project_id,
                     'priority'      => $table_priority,
+                    'data'          => @json_encode($table_data),
                 ));
             $table_id = $this->db->insert_id();
             $table_name = $name;

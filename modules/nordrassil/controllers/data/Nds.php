@@ -370,9 +370,11 @@ class Nds extends CMS_Controller {
         $crud->unset_read();
 
         // displayed columns on edit operation
-        $crud->edit_fields('project_id','name','caption','priority','options','columns');
+        $crud->edit_fields('project_id','name','caption','priority','options','columns', 'data');
         // displayed columns on add operation
         $crud->add_fields('project_id','name','caption','priority','options');
+
+        $crud->unset_texteditor('data');
 
         $crud->set_rules('priority','Priority','numeric');
 
@@ -382,6 +384,7 @@ class Nds extends CMS_Controller {
         $crud->display_as('priority','Order Priority');
         $crud->display_as('options','Options');
         $crud->display_as('columns','Columns');
+        $crud->display_as('data', 'Data (JSON Format)');
         
         $crud->set_relation_n_n('options',$this->cms_complete_table_name('table_option'),
             $this->cms_complete_table_name('template_option'),'table_id','option_id','name', 

@@ -54,10 +54,14 @@ class Info extends CMS_Module {
             $module_path.'/{{ main_controller }}', $this->PRIV_EVERYONE);
 
         // add navigations
-{{ add_navigations }}
+        {{ add_navigations }}
 
         // create tables
         {{ create_table_forge }}
+
+
+        // insert data
+        {{ insert_table }}
 
     }
 

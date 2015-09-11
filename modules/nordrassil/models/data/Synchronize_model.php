@@ -125,12 +125,37 @@ class Synchronize_model extends CMS_Model{
                 $caption = $this->humanize($row['TABLE_NAME']);
             }
             $table_name = $row['TABLE_NAME'];
+            $save_table_name = addslashes($table_name);
+
+            // get column names
+            $SQL =
+                "SELECT
+                    COLUMN_NAME
+                FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$save_db_schema' AND TABLE_NAME='$save_table_name'";
+            $result_column = mysqli_query($this->connection, $SQL);
+            $column_names = array();
+            while($row_column = mysqli_fetch_array($result_column)){
+                $column_names[] = $row_column['COLUMN_NAME'];
+            }
+            // get the data and turn it into json
+            $table_data = array();
+            $SQL = 'SELECT * FROM '.$save_db_schema.'.'.$save_table_name;
+            $result_table = mysqli_query($this->connection, $SQL);
+            while($row_table = mysqli_fetch_array($result_table)){
+                $record = array();
+                foreach($column_names as $column_name){
+                    $record[$column_name] = $row_table[$column_name];
+                }
+                $table_data[] = $record;
+            }
+
             // inserting the table
             $data = array(
                     'project_id' => $project_id,
-                    'name'=> $table_name,
-                    'caption' => $caption,
-                    'priority' => $priority,
+                    'name'       => $table_name,
+                    'caption'    => $caption,
+                    'priority'   => $priority,
+                    'data'       => @json_encode($table_data),
                 );
             $query = $this->db->select('table_id')
                 ->from($this->cms_complete_table_name('table'))
@@ -139,6 +164,12 @@ class Synchronize_model extends CMS_Model{
             if($query->num_rows()>0){
                 $row = $query->row();
                 $table_id = $row->table_id;
+                // don't change caption and priority
+                unset($data['caption']);
+                unset($data['priority']);
+                $this->db->update($this->cms_complete_table_name('table'), 
+                    $data, 
+                    array('table_id' => $table_id));
             }else{
                 $this->db->insert($this->cms_complete_table_name('table'), $data);
                 $priority++;

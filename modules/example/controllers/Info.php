@@ -101,7 +101,6 @@ class Info extends CMS_Module {
             $module_path.'/manage_city', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
-
         // create tables
         // job
         $fields = array(
@@ -153,9 +152,9 @@ class Info extends CMS_Module {
             'city_id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
             'country_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
             'name'=> array("type"=>'varchar', "constraint"=>20, "null"=>TRUE),
-            'tourism'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
-            'commodity'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE),
-            'citizen'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
+            'tourism'=> array("type"=>'varchar', "constraint"=>11, "null"=>TRUE),
+            'commodity'=> array("type"=>'varchar', "constraint"=>11, "null"=>TRUE),
+            'citizen'=> array("type"=>'varchar', "constraint"=>11, "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('city_id', TRUE);
@@ -168,7 +167,7 @@ class Info extends CMS_Module {
             'name'=> array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
             'birthdate'=> array("type"=>'date', "null"=>TRUE),
             'job_id'=> array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'hobby'=> array("type"=>'varchar', "constraint"=>255, "null"=>TRUE)
+            'hobby'=> array("type"=>'varchar', "constraint"=>11, "null"=>TRUE)
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('citizen_id', TRUE);
@@ -205,6 +204,26 @@ class Info extends CMS_Module {
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('citizen_hobby'));
 
+
+
+        // insert data
+        $this->db->insert_batch($this->cms_complete_table_name('tourism'), array(
+            array('tourism_id' => '1', 'name' => 'Amusement Park'),
+            array('tourism_id' => '2', 'name' => 'Beach'),
+        ));
+        $this->db->insert_batch($this->cms_complete_table_name('country'), array(
+            array('country_id' => '1', 'name' => 'USA'),
+            array('country_id' => '2', 'name' => 'Indonesia'),
+            array('country_id' => '3', 'name' => 'Japan'),
+        ));
+        $this->db->insert_batch($this->cms_complete_table_name('hobby'), array(
+            array('hobby_id' => '1', 'name' => 'Reading'),
+            array('hobby_id' => '2', 'name' => 'Gardenning'),
+        ));
+        $this->db->insert_batch($this->cms_complete_table_name('job'), array(
+            array('job_id' => '1', 'name' => 'Teacher'),
+            array('job_id' => '2', 'name' => 'Programmer'),
+        ));
 
     }
 

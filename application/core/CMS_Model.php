@@ -2119,17 +2119,20 @@ class CMS_Model extends CI_Model
             ->from(cms_table_name('main_module'))
             ->get();
         foreach($query->result() as $row){
-            $json            = file_get_contents(FCPATH.'modules/'.$row->module_path.'/description.txt');
-            $module_info     = @json_decode($json, true);
-            $module_info     = $module_info === NULL? array() : $module_info;
             $module_name     = $row->module_name;
-            if(array_key_exists('name', $module_info)){
-                $module_name = $module_info['name'];
-                if($row->module_name != $module_name){
-                    $this->db->update(cms_table_name('main_module'),
-                            array('module_name'=>$module_name),
-                            array('module_id'=>$row->module_id)
-                        );
+            if(file_exists(FCPATH.'modules/'.$row->module_path.'/description.txt')){
+                $json            = file_get_contents(FCPATH.'modules/'.$row->module_path.'/description.txt');
+                $module_info     = @json_decode($json, true);
+                $module_info     = $module_info === NULL? array() : $module_info;
+                
+                if(array_key_exists('name', $module_info)){
+                    $module_name = $module_info['name'];
+                    if($row->module_name != $module_name){
+                        $this->db->update(cms_table_name('main_module'),
+                                array('module_name'=>$module_name),
+                                array('module_id'=>$row->module_id)
+                            );
+                    }
                 }
             }
             self::$__cms_model_properties['module_version'][$module_name] = $row->version;

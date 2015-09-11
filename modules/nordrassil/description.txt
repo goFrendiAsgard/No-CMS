@@ -2,7 +2,7 @@
     "dependencies"    : [],
     "name"            : "gofrendi.noCMS.nordrassil",
     "description"     : "Module Generator",
-    "version"         : "0.0.2",
+    "version"         : "0.0.3",
     "activate"        : "info/activate",
     "deactivate"      : "info/deactivate",
     "upgrade"         : "info/upgrade"
