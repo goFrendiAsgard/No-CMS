@@ -43,9 +43,6 @@
     $record_index = 0;
 ?&gt;
 <style type="text/css">
-    #<?php echo $table_id; ?> input[type="text"]{
-        max-width:100px;
-    }
     #<?php echo $table_id; ?> .chzn-drop input[type="text"]{
         max-width:240px;
     }
