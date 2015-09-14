@@ -410,7 +410,7 @@ class Nds_model extends CMS_Model{
         foreach($tables as $table){
             $table_name = $table['stripped_name'];
             $data       = $table['data'];
-            if(is_array($data)){
+            if(is_array($data) && count($data)>0){
                 $syntax  = '$this->db->insert_batch($this->cms_complete_table_name(\''.$table_name.'\'), array(' . PHP_EOL;
                 foreach($data as $record){
                     $field_pairs = array();

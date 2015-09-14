@@ -42,7 +42,7 @@ $(document).ajaxComplete(function(){
 });
 
 function js_datetime_to_php(js_datetime){
-    if(typeof(js_datetime)=='undefined' || js_datetime == ''){
+    if(typeof(js_datetime)=='undefined' || js_datetime == '' || js_datetime == null){
         return '';
     }
     var datetime_array = js_datetime.split(' ');
@@ -52,7 +52,7 @@ function js_datetime_to_php(js_datetime){
     return php_date + ' ' + time;
 }
 function php_datetime_to_js(php_datetime){
-    if(typeof(php_datetime)=='undefined' || php_datetime == ''){
+    if(typeof(php_datetime)=='undefined' || php_datetime == '' || php_datetime == null){
         return '';
     }
     var datetime_array = php_datetime.split(' ');
@@ -63,7 +63,7 @@ function php_datetime_to_js(php_datetime){
 }
 
 function js_date_to_php(js_date){
-    if(typeof(js_date)=='undefined' || js_date == ''){
+    if(typeof(js_date)=='undefined' || js_date == '' || js_date == null){
         return '';
     }
     var date = '';

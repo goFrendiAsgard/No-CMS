@@ -31,6 +31,10 @@ footer{
     border-image: none !important;
 }
 
+.navbar.navbar .dropdown-menu li > a, .navbar-default.navbar .dropdown-menu li > a {
+    padding: 8px 16px!important;
+}
+
 #__section-content{
     overflow-x: auto;
     overflow-y: hidden;

@@ -49,7 +49,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
     private function __update(){
 
         $old_version = cms_config('__cms_version');
-        $current_version = '0.7.9';
+        $current_version = '0.8.0';
 
         if($old_version == $current_version){ return 0; }
         // get major, minor and rev version
@@ -338,6 +338,15 @@ class CMS_AutoUpdate_Model extends CMS_Model{
                     ),
             );
         $this->dbforge->modify_column(cms_table_name('main_route'), $fields);
+    }
+
+    private function __update_to_0_8_0(){
+        $fields = array(
+                'config_name' => array(
+                        'constraint' => 100,
+                    ),
+            );
+        $this->dbforge->modify_column(cms_table_name('main_config'), $fields);    
     }
     
 }

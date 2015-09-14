@@ -63,7 +63,7 @@
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
         <div class="tab-content">
 
-            <div class="tab-pane" id="tab1">
+            <div class="tab-pane active" id="tab1">
                 <h3>Site Configurations</h3>
                 <hr /><h4>General</h4>
                 <div class="form-group">
@@ -332,7 +332,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane active" id="tab3">
+            <div class="tab-pane" id="tab3">
                 <h3>Sections</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_top_fix">Custom Style</label>
@@ -732,11 +732,11 @@
 
     $(document).ready(function(){
         // when calling chosen, the select should be visible, that's why I need to do this:
-        $('#tab3').removeClass('active');
-        $('#tab1').addClass('active');
+        //$('#tab3').removeClass('active');
+        //$('#tab1').addClass('active');
         // make text area autosize 
         $(".chosen-select").chosen({width: "250px"});
-        $('.text-area-section').autosize();
+        //$('.text-area-section').autosize();
 
         // add widget or whatever to the section at current caret
         $('.btn-tag-add').click(function(){
@@ -750,5 +750,9 @@
         // adjust input visibility
         _adjust_input_visibility();
         $('#cms_signup_activation, #cms_email_protocol').change(_adjust_input_visibility);
+    });
+    // textarea autosize later
+    $("a[href='#tab3']").on('shown.bs.tab', function(e) {
+        $('.text-area-section').autosize();
     });
 </script>

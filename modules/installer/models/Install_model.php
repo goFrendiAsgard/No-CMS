@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_model extends CI_Model{
-    private $VERSION        = '0.7.9';
+    private $VERSION        = '0.8.0';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -755,7 +755,7 @@ class Install_model extends CI_Model{
         // CONFIG
         $fields = array(
                 'config_id'     => $type_primary_key,
-                'config_name'   => $type_varchar_small_strict,
+                'config_name'   => $type_varchar_large_strict,
                 'value'         => $type_text,
                 'description'   => $type_text,
             );
