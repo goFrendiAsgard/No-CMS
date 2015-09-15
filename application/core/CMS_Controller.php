@@ -499,8 +499,7 @@ class CMS_Controller extends MX_Controller
             $image_file_names[] = $navigation_name.'.png';
             if($module_path !== '' && $module_path !== 'main'){
                 $module_prefix = cms_module_prefix($this->cms_module_path());
-                $navigation_parts = explode('_', $navigation_name);
-                if(count($navigation_parts)>0 && $navigation_parts[0] == $module_prefix){
+                if(substr($navigation_name, 0, strlen($module_prefix)) == $module_prefix){
                     $image_file_names[] = substr($navigation_name, strlen($module_prefix)+1).'.png';
                 }
             }
@@ -508,7 +507,7 @@ class CMS_Controller extends MX_Controller
             foreach($image_directories as $image_directory){
                 foreach($image_file_names as $image_file_name){
                     $image_file_path  = $image_directory.'/'.$image_file_name;
-                    if (!file_exists($image_file_path)) {
+                    if (!file_exists(FCPATH.$image_file_path)) {
                         $image_file_path = '';
                     }
                     if ($image_file_path !== ''){

@@ -3498,6 +3498,7 @@ class CMS_Model extends CI_Model
     }
 
     public final function cms_add_config($config_name, $value, $description = NULL){
+        //log_message('error', $config_name);
         $query = $this->db->select('config_id')
             ->from(cms_table_name('main_config'))
             ->where('config_name', $config_name)
