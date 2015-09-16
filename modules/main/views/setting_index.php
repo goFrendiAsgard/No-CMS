@@ -736,7 +736,7 @@
         //$('#tab1').addClass('active');
         // make text area autosize 
         $(".chosen-select").chosen({width: "250px"});
-        //$('.text-area-section').autosize();
+        $('#tab1 .text-area-section').autosize();
 
         // add widget or whatever to the section at current caret
         $('.btn-tag-add').click(function(){
@@ -753,6 +753,6 @@
     });
     // textarea autosize later
     $("a[href='#tab3']").on('shown.bs.tab', function(e) {
-        $('.text-area-section').autosize();
+        $('#tab3 .text-area-section').autosize();
     });
 </script>
