@@ -66,7 +66,7 @@ class Synchronize_model extends CMS_Model{
         */
 
 
-        // select the current nor_project
+        // select the current nordrassil_project
         $query = $this->db->select('db_server, db_user, db_password, db_schema, db_port, db_table_prefix')
             ->from($this->cms_complete_table_name('project'))
             ->where(array('project_id'=>$project_id))
@@ -85,6 +85,83 @@ class Synchronize_model extends CMS_Model{
             $this->connection = mysqli_connect($this->db_server, $this->db_user, $this->db_password, 'information_schema', $this->db_port);
             mysqli_select_db($this->connection, 'information_schema');
             $this->create_table($project_id);
+
+            // get tables
+            $t_query = $this->db->select('table_id, name')
+                ->from($this->cms_complete_table_name('table'))
+                ->where('project_id', $project_id)
+                ->get();
+            $table_result = array();            
+            foreach($t_query->result() as $row){
+                $table_result[] = $row;
+            }
+            // sort table by name's length, descending
+            for($i=count($table_result)-1; $i>0; $i--){
+                for($j=0; $j<$i; $j++){
+                    if(strlen($table_result[$j]->name) > strlen($table_result[$j+1]->name)){
+                        $tmp = $table_result[$j];
+                        $table_result[$j] = $table_result[$j+1];
+                        $table_result[$j+1] = $tmp;
+                    }
+                }
+            }
+            // now loop for each column in each table to automatically determine relationship
+            foreach($table_result as $current_table){
+                // get columns of current_table
+                $current_column_query = $this->db->select('column_id, name, role, caption')
+                    ->from($this->cms_complete_table_name('column'))
+                    ->where('table_id', $current_table->table_id)
+                    ->get();
+                foreach($current_column_query->result() as $current_column){
+                    if($current_column->role != ''){continue;}
+                    // get another tables and compare the field
+                    foreach($table_result as $other_table){
+                        if($current_table->table_id == $other_table->table_id){continue;}
+                        // get stripped table name
+                        $stripped_table_name = $other_table->name;
+                        if(substr($stripped_table_name, 0, strlen($this->db_table_prefix)) == $this->db_table_prefix){
+                            $stripped_table_name = substr($stripped_table_name, strlen($this->db_table_prefix));
+                            $stripped_table_name = trim($stripped_table_name, '_');
+                            $stripped_table_name = trim($stripped_table_name, '-');
+                        }
+                        // if name matched
+                        if(preg_match('/(.*)id(.*)'.$stripped_table_name.'(.*)/i', $current_column->name) == 1 || preg_match('/(.*)'.$stripped_table_name.'(.*)id(.*)/i', $current_column->name) == 1){
+                            // get lookup column of other table
+                            $other_lookup_column = NULL;
+                            $primary_column      = NULL;
+                            $other_column_query = $this->db->select('column_id, name, role')
+                                ->from($this->cms_complete_table_name('column'))
+                                ->where('table_id', $current_table->table_id)
+                                ->get();
+                            foreach($other_column_query->result() as $other_column){
+                                if($other_column->role == 'primary'){
+                                    $primary_column = $other_column;
+                                }
+                                if($other_column->role == ''){
+                                    $other_lookup_column = $other_column;
+                                }
+                                if($other_lookup_column != NULL){
+                                    break;
+                                }
+                            }
+                            // if lookup column not found, use primary column as lookup column too
+                            if($other_lookup_column == NULL){
+                                $other_lookup_column = $primary_column;
+                            }
+                            // build relationship
+                            $this->db->update($this->cms_complete_table_name('column'),
+                                array(
+                                        'role' => 'lookup',
+                                        'lookup_table_id' => $other_table->table_id,
+                                        'lookup_column_id' => $other_lookup_column->column_id,
+                                        'caption' => trim(trim($current_column->caption, 'Id'), ' '),
+                                    ),
+                                array('column_id' => $current_column->column_id));
+                        }
+                    }
+                }
+            }
+
             return TRUE;
         }else{
             return FALSE;
@@ -311,6 +388,33 @@ class Synchronize_model extends CMS_Model{
                         $this->db->insert($t_column_option, $data);
                     }
                 }
+            }
+        }
+
+        // add primary key if not exists
+        $query = $this->db->select('column_id, name, role')
+            ->from($this->cms_complete_table_name('column'))
+            ->where('table_id', $table_id)
+            ->get();
+        $primary_key_exists = FALSE;
+        $id_exists = FALSE;
+        foreach($query->result() as $row){
+            if($row->role == 'primary'){
+                $primary_key_exists = TRUE;
+                break;
+            }
+            if($row->name == 'id'){
+                $id_exists = TRUE;
+            }
+        }
+        if(!$primary_key_exists){
+            if($id_exists){
+                $this->db->update($this->cms_complete_table_name('column'),
+                    array('role' => 'primary', 'data_type' => 'int', 'data_size' => 10),
+                    array('table_id' => $table_id, 'name' => 'id'));
+            }else{
+                $this->db->insert($this->cms_complete_table_name('column'),
+                    array('name' => 'id', 'role' => 'primary', 'table_id' => $table_id, 'data_type' => 'int', 'data_size' => 10));
             }
         }
 

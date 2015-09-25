@@ -886,17 +886,19 @@ class Main extends CMS_Controller
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_navigation'), cms_table_name('main_group'), 'navigation_id', 'group_id', 'group_name');
 
-        if(isset($parent_id) && intval($parent_id)>0){
-            $crud->where(cms_table_name('main_navigation').'.parent_id', $parent_id);
-            $state = $crud->getState();
-            if($state == 'add'){
-                $crud->field_type('parent_id', 'hidden', $parent_id);
-            }elseif($state == 'edit'){
+        if(!array_key_exists('search_text', $this->input->post())){
+            if(isset($parent_id) && intval($parent_id)>0){
+                $crud->where(cms_table_name('main_navigation').'.parent_id', $parent_id);
+                $state = $crud->getState();
+                if($state == 'add'){
+                    $crud->field_type('parent_id', 'hidden', $parent_id);
+                }elseif($state == 'edit'){
+                    $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
+                }
+            }else{
+                $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
                 $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
             }
-        }else{
-            $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
-            $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
         }
 
 

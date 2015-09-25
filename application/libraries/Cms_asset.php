@@ -213,14 +213,20 @@ class Cms_asset
                     file_put_contents($dir_path.$compiled_file_name, $content);  
                 }
                 // read the file
-                $content = '';
-                if(filesize($dir_path.$compiled_file_name) < 1024 && $content = file_get_contents($dir_path.$compiled_file_name) && strpos($content, '@import') === FALSE){
-                    if($mode == 'js'){
-                        $str .= '<script type="text/javascript">' . $content . '</script>';
-                    }else{
-                        $str .= '<style type="text/css">' . $content . '</style>';
+                $into_internal = FALSE;
+                if(filesize($dir_path.$compiled_file_name) < 1024){
+                    $content = file_get_contents($dir_path.$compiled_file_name);
+                    if(strpos($content, '@import') === FALSE){
+                        if($mode == 'js'){
+                            $str .= '<script type="text/javascript">' . $content . '</script>';
+                        }else{
+                            $str .= '<style type="text/css">' . $content . '</style>';
+                        }
+                        $into_internal = TRUE;
                     }
-                }else{
+                }
+                // if more than 1024 byte
+                if(!$into_internal){
                     // change fcpath
                     $dir_path = str_ireplace(FCPATH, $real_base_url, $dir_path);
                     if($mode == 'js'){

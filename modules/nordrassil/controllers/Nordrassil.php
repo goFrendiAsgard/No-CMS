@@ -22,7 +22,7 @@ class Nordrassil extends CMS_Secure_Controller {
         ini_set('xdebug.var_display_max_data', 1024);
         var_dump($this->nds_model->get_table_by_project(1));
         */
-		$data['projects'] = $this->nds_model->get_all_project();
+        $data['projects'] = $this->nds_model->get_all_project();
     	$data['content'] = $this->cms_submenu_screen($this->cms_complete_navigation_name('index'));
         $this->view($this->cms_module_path().'/nordrassil_index',$data,
             $this->cms_complete_navigation_name('index'));

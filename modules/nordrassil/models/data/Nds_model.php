@@ -61,7 +61,10 @@ class Nds_model extends CMS_Model{
         return $result;
     }
     public function get_column_by_table($table_id){
-        $query = $this->db->select('column_id, name, caption, data_type, data_size, role')
+        $query = $this->db->select('column_id, name, caption, table_id, data_type, data_size, role, 
+                lookup_table_id, lookup_column_id, relation_table_id, relation_table_column_id,
+                relation_selection_column_id, relation_priority_column_id, 
+                selection_table_id, selection_column_id')
             ->from($this->cms_complete_table_name('column'))
             ->where('table_id', $table_id)
             ->order_by('priority')
@@ -83,6 +86,18 @@ class Nds_model extends CMS_Model{
                 $options[] = $option_row->name;
             }
             $row->options = $options;
+            // get relationship table and column name
+            $row->table_name = $this->get_table_name($row->table_id);
+            $row->table_primary_key = $this->get_primary_key($row->table_id);
+            $row->lookup_table_name = $this->get_table_name($row->lookup_table_id);
+            $row->lookup_column_name = $this->get_column_name($row->lookup_column_id);
+            $row->relation_table_name = $this->get_table_name($row->relation_table_id);
+            $row->relation_table_column_name = $this->get_column_name($row->relation_table_column_id);
+            $row->relation_selection_column_name = $this->get_column_name($row->relation_selection_column_id);
+            $row->relation_priority_column_name = $this->get_column_name($row->relation_priority_column_id);
+            $row->selection_table_name = $this->get_table_name($row->selection_table_id);
+            $row->selection_table_primary_key = $this->get_primary_key($row->selection_table_id);
+            $row->selection_column_name = $this->get_column_name($row->selection_column_id);
             // add options to table
             $new_result[] = $row;
         }
@@ -261,6 +276,9 @@ class Nds_model extends CMS_Model{
     }
 
     public function get_project_name($project_id){
+        if($project_id == NULL){
+            return '';
+        }
         $query = $this->db->select('name')->from($this->cms_complete_table_name('project'))->where('project_id',$project_id)->get();
         if($query->num_rows()>0){
             $row = $query->row();
@@ -271,6 +289,9 @@ class Nds_model extends CMS_Model{
     }
 
     public function get_table_name($table_id){
+        if($table_id == NULL){
+            return '';
+        }
         $query = $this->db->select('name')->from($this->cms_complete_table_name('table'))->where('table_id',$table_id)->get();
         if($query->num_rows()>0){
             $row = $query->row();
@@ -281,6 +302,9 @@ class Nds_model extends CMS_Model{
     }
 
     public function get_column_name($column_id){
+        if($column_id == NULL){
+            return '';
+        }
         $query = $this->db->select('name')->from($this->cms_complete_table_name('column'))->where('column_id',$column_id)->get();
         if($query->num_rows()>0){
             $row = $query->row();
@@ -291,6 +315,9 @@ class Nds_model extends CMS_Model{
     }
 
     public function get_primary_key($table_id){
+        if($table_id == NULL){
+            return '';
+        }
         $query = $this->db->select('name')
             ->from($this->cms_complete_table_name('column'))
             ->where(array('table_id'=>$table_id, 'role'=>'primary'))
@@ -341,7 +368,7 @@ class Nds_model extends CMS_Model{
         }
     }
 
-    public function get_create_table_forge($tables){
+    public function get_create_table_forge($tables, $default_fields = array()){
         $php = array();
         foreach($tables as $table){
             $table_name = $table['stripped_name'];
@@ -349,14 +376,25 @@ class Nds_model extends CMS_Model{
             $primary_key_name = NULL;
             $field_list = array();
             foreach($columns as $column){
+                $column_name_space = '';
+                $column_type_space = '';
+                $column_size_space = '';
                 $column_name = $column['name'];
                 $column_type = $column['data_type'];
                 $column_size = $column['data_size'];
+                while(strlen($column_name) + strlen($column_name_space) < 20){
+                    $column_name_space .= ' ';
+                }
+                while(strlen($column_type) + strlen($column_type_space) < 10){
+                    $column_type_space .= ' ';
+                }
+                while(strlen($column_size) + strlen($column_size_space) < 3){
+                    $column_size_space .= ' ';
+                }
                 $column_value_selection_mode = $column['value_selection_mode'];
                 $column_value_selection_item = $column['value_selection_item'];
                 if($column['role'] == 'primary'){
                     $primary_key_name = $column_name;
-
                 }
                 $composed_type = '$this->TYPE_VARCHAR_50_NULL';
                 if($column['role'] == 'primary'){
@@ -365,9 +403,9 @@ class Nds_model extends CMS_Model{
                     if($column_type == 'varchar' && $column_value_selection_mode != ''){ // SET and ENUM
                         $constraint = 'array('.$column_value_selection_item.')';
                         //$constraint = $column_value_selection_item;
-                        $composed_type = 'array("type"=>\''.$column_value_selection_mode.'\', "constraint"=>'.$constraint.', "null"=>TRUE)';
+                        $composed_type = 'array("type" => \''.$column_value_selection_mode.'\','.$column_type_space.' "constraint" => '.$constraint.', "null" => TRUE)';
                     }else if(in_array($column_type, $this->type_without_length)){ // column without length
-                        $composed_type = 'array("type"=>\''.$column_type.'\', "null"=>TRUE)';
+                        $composed_type = 'array("type" => \''.$column_type.'\','.$column_type_space.' "null" => TRUE)';
                     }else{ // normal column
                         if(!isset($column_size) || $column_size == ''){
                             $column_size = 11;
@@ -376,11 +414,26 @@ class Nds_model extends CMS_Model{
                             $column_type = $this->detault_data_type;
                             $column_size = 255;
                         }
-                        $composed_type = 'array("type"=>\''.$column_type.'\', "constraint"=>'.$column_size.', "null"=>TRUE)';
+                        $column_type_space = '';
+                        $column_size_space = '';
+                        while(strlen($column_type) + strlen($column_type_space) < 10){
+                            $column_type_space .= ' ';
+                        }
+                        while(strlen($column_size) + strlen($column_size_space) < 3){
+                            $column_size_space .= ' ';
+                        }
+                        $composed_type = 'array("type" => \''.$column_type.'\','.$column_type_space.' "constraint" => '.$column_size.','.$column_size_space.' "null" => TRUE)';
                     }
 
                 }
-                $field_list[] = "'$column_name'". '=> '.$composed_type;
+                $field_list[] = "'$column_name'" .$column_name_space. ' => '.$composed_type;
+            }
+            foreach($default_fields as $key=>$val){
+                $column_name_space = '';
+                while(strlen($key) + strlen($column_name_space) < 20){
+                    $column_name_space .= ' ';
+                }
+                $field_list[] = "'$key'". $column_name_space. ' => '.$val;
             }
             $create_forge  = '// '.$table_name.PHP_EOL;
             $create_forge .= '        $fields = array('.PHP_EOL.'            '.implode(','.PHP_EOL.'            ', $field_list).PHP_EOL.'        );'.PHP_EOL;
@@ -399,7 +452,11 @@ class Nds_model extends CMS_Model{
         $php = array();
         foreach($tables as $table){
             $table_name = $table['stripped_name'];
-            $php[] = '$this->dbforge->drop_table($this->cms_complete_table_name(\''.$table_name.'\'), TRUE);';
+            $space = '';
+            while(strlen($table_name) + strlen($space) < 20){
+                $space .= ' ';
+            }
+            $php[] = '$this->dbforge->drop_table($this->cms_complete_table_name(\''.$table_name.'\'),'.$space.' TRUE);';
         }
         $php = array_reverse($php);
         return implode(PHP_EOL.'        ',$php);
@@ -592,67 +649,73 @@ class Nds_model extends CMS_Model{
     public function before_delete_project($id){
         $query = $this->db->select('table_id')->from($this->cms_complete_table_name('table'))->where('project_id',$id)->get();
         foreach($query->result() as $row){
-            $this->before_delete_table($row->table_id);
+            $this->before_delete_table($row->table_id, FALSE);
             $this->db->delete($this->cms_complete_table_name('table'),array('table_id'=>$row->table_id));
         }
         $this->db->delete($this->cms_complete_table_name('project_option'),array('project_id'=>$id));
     }
 
-    public function before_delete_table($id){
-        // get current project_id & priority
-        $query = $this->db->select('project_id, priority')
-            ->from($this->cms_complete_table_name('table'))
-            ->where('table_id', $id)
-            ->get();
-        $row = $query->row();
-        $project_id = $row->project_id;
-        $priority   = $row->priority;
-        // adjust priority
-        $query = $this->db->select('table_id, priority')
-            ->from($this->cms_complete_table_name('table'))
-            ->where('project_id', $project_id)
-            ->where('priority >', $priority)
-            ->get();
-        foreach($query->result() as $row){
-            $table_id = $row->table_id;
-            $priority = $row->priority;
-            $data = array('priority' => $priority-1);
-            $where = array('table_id'=>$table_id);
-            $this->db->update($this->cms_complete_table_name('table'), $data, $where);
+    public function before_delete_table($id, $sorting = TRUE){
+        if($sorting){
+            // get current project_id & priority
+            $query = $this->db->select('project_id, priority')
+                ->from($this->cms_complete_table_name('table'))
+                ->where('table_id', $id)
+                ->get();
+            $row = $query->row();
+            $project_id = $row->project_id;
+            $priority   = $row->priority;
+            // adjust priority
+            $query = $this->db->select('table_id, priority')
+                ->from($this->cms_complete_table_name('table'))
+                ->where('project_id', $project_id)
+                ->where('priority >', $priority)
+                ->get();
+            foreach($query->result() as $row){
+                $table_id = $row->table_id;
+                $priority = $row->priority;
+                $data = array('priority' => $priority-1);
+                $where = array('table_id'=>$table_id);
+                $this->db->update($this->cms_complete_table_name('table'), $data, $where);
+            }
         }
         // delete all related column
         $query = $this->db->select('column_id')->from($this->cms_complete_table_name('column'))->where('table_id',$id)->get();
         foreach($query->result() as $row){
-            $this->before_delete_column($row->column_id);
+            $this->before_delete_column($row->column_id, FALSE);
             $this->db->delete($this->cms_complete_table_name('column'),array('column_id'=>$row->column_id));
         }
         // delete all related table option
         $this->db->delete($this->cms_complete_table_name('table_option'),array('table_id'=>$id));
     }
 
-    public function before_delete_column($id){
-        // get current project_id & priority
-        $query = $this->db->select('table_id, priority')
-            ->from($this->cms_complete_table_name('column'))
-            ->where('column_id', $id)
-            ->get();
-        $row = $query->row();
-        $table_id = $row->table_id;
-        $priority   = $row->priority;
-        // adjust priority
-        $query = $this->db->select('column_id, priority')
-            ->from($this->cms_complete_table_name('column'))
-            ->where('table_id', $table_id)
-            ->where('priority >', $priority)
-            ->get();
-        foreach($query->result() as $row){
-            $column_id = $row->column_id;
-            $priority = $row->priority;
-            $data = array('priority' => $priority-1);
-            $where = array('column_id'=>$column_id);
-            $this->db->update($this->cms_complete_table_name('column'), $data, $where);
+    public function before_delete_column($id, $sorting = TRUE){
+        if($sorting){
+            // get current project_id & priority
+            $query = $this->db->select('table_id, priority')
+                ->from($this->cms_complete_table_name('column'))
+                ->where('column_id', $id)
+                ->get();
+            $row = $query->row();
+            $table_id = $row->table_id;
+            $priority   = $row->priority;
+            // adjust priority
+            $query = $this->db->select('column_id, priority')
+                ->from($this->cms_complete_table_name('column'))
+                ->where('table_id', $table_id);
+            if($priority != NULL){
+                $query = $query->where('priority >', $priority);
+            }
+            $query = $query->get();
+            foreach($query->result() as $row){
+                $column_id = $row->column_id;
+                $priority = $row->priority;
+                $data = array('priority' => $priority-1);
+                $where = array('column_id'=>$column_id);
+                $this->db->update($this->cms_complete_table_name('column'), $data, $where);
+            }
         }
-        // delte column option
+        // delete column option
         $this->db->delete($this->cms_complete_table_name('column_option'),array('column_id'=>$id));
     }
 
@@ -859,10 +922,13 @@ class Nds_model extends CMS_Model{
     }
     private function _get_table_id($id_dict, $table_name = NULL){
         if($table_name === NULL) return NULL;
+        if(!array_key_exists($table_name, $id_dict)) return NULL;
         return $id_dict[$table_name]['id'];
     }
     private function _get_column_id($id_dict, $table_name, $column_name = NULL){
         if($table_name === NULL || $column_name === NULL) return NULL;
+        if(!array_key_exists($table_name, $id_dict)) return NULL;
+        if(!array_key_exists($column_name, $id_dict[$table_name]['columns'])){return NULL;}
         return $id_dict[$table_name]['columns'][$column_name];
     }
 

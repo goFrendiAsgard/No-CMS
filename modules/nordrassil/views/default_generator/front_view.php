@@ -34,11 +34,11 @@
 </style>
 <div class="form form-inline">
     <div class="form-group">
-        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />    
+        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />&nbsp;    
     </div>
-    <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />
+    <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />&nbsp;
     &lt;?php
-        if($allow_navigate_backend){
+        if($allow_navigate_backend && $have_add_privilege){
             echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
         }
     ?&gt;
@@ -49,14 +49,16 @@
 </div>
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
-    var PAGE = 1;
-    var URL = '&lt;?php echo site_url($module_path."/{{ front_controller_import_name }}/get_data"); ?&gt;';
+    var PAGE                   = 1;
+    var URL                    = '&lt;?php echo site_url($module_path."/{{ front_controller_import_name }}/get_data"); ?&gt;';
     var ALLOW_NAVIGATE_BACKEND = &lt;?php echo $allow_navigate_backend ? "true" : "false"; ?&gt;;
-    var BACKEND_URL = '&lt;?php echo $backend_url; ?&gt;';
-    var LOADING = false;
+    var HAVE_ADD_PRIVILEGE     = &lt;?php echo $have_add_privilege ? "true" : "false"; ?&gt;;
+    var BACKEND_URL            = '&lt;?php echo $backend_url; ?&gt;';
+    var LOADING                = false;
+    var RUNNING_REQUEST        = false;
+    var STOP_REQUEST           = false;
     var REQUEST;
-    var RUNNING_REQUEST = false;
-    var STOP_REQUEST = false;
+    
 
     function adjust_load_more_button(){
         if(screen.width >= 1024){
@@ -97,7 +99,7 @@
 
                 // show bottom contents
                 var bottom_content = 'No more {{ table_caption }} to show.';
-                if(ALLOW_NAVIGATE_BACKEND){
+                if(ALLOW_NAVIGATE_BACKEND && HAVE_ADD_PRIVILEGE){
                     bottom_content += '&nbsp; <a href="&lt;?php echo $backend_url; ?&gt;/add/" class="add_record">Add new</a>';
                 }
                 $('#record_content_bottom').html(bottom_content);

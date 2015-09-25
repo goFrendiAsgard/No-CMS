@@ -1079,7 +1079,7 @@ class CMS_Controller extends MX_Controller
      * @return  string or null
      * @desc    replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
      */
-    protected function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE)
+    public function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE)
     {
         $this->load->library('template');
         $result   = NULL;

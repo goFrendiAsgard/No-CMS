@@ -42,16 +42,54 @@ class Manage_city extends CMS_Secure_Controller {
             case 'print': break;
         }
 
-        // unset things
+        // unset jquery (we use No-CMS's default jquery)
         $crud->unset_jquery();
+
+        // unset read, comment if you need privilege to read       
         $crud->unset_read();
-        // $crud->unset_add();
-        // $crud->unset_edit();
-        // $crud->unset_delete();
-        // $crud->unset_list();
-        // $crud->unset_back_to_list();
-        // $crud->unset_print();
-        // $crud->unset_export();
+        // privilege to read (uncomment if you need it)
+        /*
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('read_city'))){
+            $crud->unset_read();
+        }
+        */
+
+        // privilege to add
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('add_city'))){
+            $crud->unset_add();
+        }
+
+        // privilege to edit
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('edit_city'))){
+            $crud->unset_edit();
+        }
+
+        // privilege to delete
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('delete_city'))){
+            $crud->unset_delete();
+        }
+
+        // privilege to list (uncomment if you need it)
+        /*
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('list_city'))){
+            $crud->unset_list();
+        }
+        */
+
+        // privilege to back_to_list
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('back_to_list_city'))){
+            $crud->unset_back_to_list();
+        }
+
+        // privilege to print
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('print_city'))){
+            $crud->unset_print();
+        }
+
+        // privilege to export
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('export_city'))){
+            $crud->unset_export();
+        }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)
@@ -86,11 +124,11 @@ class Manage_city extends CMS_Secure_Controller {
         $crud->set_subject('City');
 
         // displayed columns on list
-        $crud->columns('country_id','name','tourism','commodity','citizen');
+        $crud->columns('country_id', 'name', 'tourism', 'commodity', 'citizen');
         // displayed columns on edit operation
-        $crud->edit_fields('country_id','name','tourism','commodity','citizen');
+        $crud->edit_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_updated_by', '_updated_at');
         // displayed columns on add operation
-        $crud->add_fields('country_id','name','tourism','commodity','citizen');
+        $crud->add_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_created_by', '_created_at');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)
@@ -167,7 +205,10 @@ class Manage_city extends CMS_Secure_Controller {
         //      $crud->field_type( $field_name , $field_type, $value  );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        $crud->field_type('_created_at', 'hidden');
+        $crud->field_type('_created_by', 'hidden');
+        $crud->field_type('_updated_by', 'hidden');
+        $crud->field_type('_updated_at', 'hidden');
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -236,6 +277,8 @@ class Manage_city extends CMS_Secure_Controller {
 
     public function _before_insert($post_array){
         $post_array = $this->_before_insert_or_update($post_array);
+        $post_array['_created_at'] = date('Y-m-d H:i:s');
+        $post_array['_created_by'] = $this->cms_user_id();
         // HINT : Put your code here
         return $post_array;
     }
@@ -248,6 +291,8 @@ class Manage_city extends CMS_Secure_Controller {
 
     public function _before_update($post_array, $primary_key){
         $post_array = $this->_before_insert_or_update($post_array, $primary_key);
+        $post_array['_updated_at'] = date('Y-m-d H:i:s');
+        $post_array['_updated_by'] = $this->cms_user_id();
         // HINT : Put your code here
         return $post_array;
     }

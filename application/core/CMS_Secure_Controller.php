@@ -76,7 +76,7 @@ class CMS_Secure_Controller extends CMS_Controller
         return $config;
     }
 
-    protected function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE)
+    public function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE)
     {
         if (is_bool($navigation_name) && count($config) == 0) {
             $return_as_string = $navigation_name;
@@ -91,6 +91,6 @@ class CMS_Secure_Controller extends CMS_Controller
         }
         $navigation_name = $this->cms_override_navigation_name($navigation_name);
         $config          = $this->cms_override_config($config);
-        parent::view($view_url, $data, $navigation_name, $config, $return_as_string);
+        return parent::view($view_url, $data, $navigation_name, $config, $return_as_string);
     }
 }

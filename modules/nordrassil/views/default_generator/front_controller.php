@@ -21,10 +21,13 @@ class {{ controller_name }} extends CMS_Secure_Controller {
     public function index(){
         $module_path = $this->cms_module_path();
         $data = array(
-            'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('{{ backend_navigation_name }}')),
-            'backend_url' => site_url($this->cms_module_path().'/{{ back_controller_import_name }}/index'),
-            'module_path' => $this->cms_module_path(),
-            'first_data'  => Modules::run($module_path.'/{{ front_controller_import_name }}/get_data', 0, '')
+            'allow_navigate_backend'    => $this->cms_allow_navigate($this->cms_complete_navigation_name('{{ backend_navigation_name }}')),
+            'have_add_privilege'        => $this->cms_have_privilege($this->cms_complete_navigation_name('add_{{ stripped_table_name }}')),
+            'have_edit_privilege'       => $this->cms_have_privilege($this->cms_complete_navigation_name('edit_{{ stripped_table_name }}')),
+            'have_delete_privilege'     => $this->cms_have_privilege($this->cms_complete_navigation_name('delete_{{ stripped_table_name }}')),
+            'backend_url'               => site_url($this->cms_module_path().'/{{ back_controller_import_name }}/index'),
+            'module_path'               => $this->cms_module_path(),
+            'first_data'                => Modules::run($module_path.'/{{ front_controller_import_name }}/get_data', 0, '')
         );
         $this->view($this->cms_module_path().'/{{ front_view_import_name }}',$data,
             $this->cms_complete_navigation_name('{{ navigation_name }}'));
@@ -42,9 +45,12 @@ class {{ controller_name }} extends CMS_Secure_Controller {
         $this->{{ model_name }} = new {{ model_name }}();
         $result = $this->{{ model_name }}->get_data($keyword, $page);
         $data = array(
-            'result'=>$result,
+            'result'                 =>$result,
             'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('{{ backend_navigation_name }}')),
-            'backend_url' => site_url($module_path.'/{{ back_controller_import_name }}/index'),
+            'have_add_privilege'     => $this->cms_have_privilege($this->cms_complete_navigation_name('add_{{ stripped_table_name }}')),
+            'have_edit_privilege'    => $this->cms_have_privilege($this->cms_complete_navigation_name('edit_{{ stripped_table_name }}')),
+            'have_delete_privilege'  => $this->cms_have_privilege($this->cms_complete_navigation_name('delete_{{ stripped_table_name }}')),
+            'backend_url'            => site_url($module_path.'/{{ back_controller_import_name }}/index'),
         );
         $config = array('only_content'=>TRUE);
         $this->view($module_path.'/{{ front_view_partial_import_name }}',$data,

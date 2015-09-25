@@ -246,6 +246,7 @@ class Default_generator extends CMS_Controller{
                 'front_model_import_name',
                 'front_controller_import_name',
                 'back_controller_import_name',
+                'stripped_table_name',
             );
             $replacement = array(
                 $save_project_name,
@@ -260,6 +261,7 @@ class Default_generator extends CMS_Controller{
                 underscore(humanize($this->front_model_class_name($stripped_table_name))),
                 underscore(humanize($this->front_controller_class_name($stripped_table_name))),
                 underscore(humanize($this->back_controller_class_name($stripped_table_name))),
+                $stripped_table_name,
             );
             // prepare data
             $data = array(
@@ -309,10 +311,17 @@ class Default_generator extends CMS_Controller{
             $columns = $table['columns'];
             // get field_list and display_as command
             $field_list_array = array();
+            $add_field_list_array = array();
+            $edit_field_list_array = array();
             $display_as_array = array();
             $set_relation_array = array();
             $set_relation_n_n_array = array();
             $hide_field_array = array();
+            foreach(array('_created_at', '_created_by', '_updated_by', '_updated_at') as $column_name){
+                $hide_field_array[] = $this->nds->read_view('nordrassil/default_generator/controller_partial/hide_field',NULL,
+                        'field_name',$column_name
+                    );
+            }
             $enum_set_array = array();
             $detail_callback_call_array = array();
             $detail_callback_declaration_array = array();
@@ -331,6 +340,8 @@ class Default_generator extends CMS_Controller{
                 $column_caption = $column['caption'];
                 // field_list
                 $field_list_array[] = '\''.$column['name'].'\'';
+                $add_field_list_array[] = '\''.$column['name'].'\'';
+                $edit_field_list_array[] = '\''.$column['name'].'\'';
                 // display_as
                 $display_as_array[] = $this->nds->read_view('nordrassil/default_generator/controller_partial/display_as',NULL,
                     array('column_name', 'column_caption'),
@@ -465,7 +476,15 @@ class Default_generator extends CMS_Controller{
                     $this->nds->write_file($this->project_path.'views/field_'.underscore($stripped_table_name).'_'.underscore($column_name).'.php', $str);
                 }
             }
-            $field_list = implode(',',$field_list_array);
+            // add some default fields
+            $add_field_list_array[] = '\'_created_by\'';
+            $add_field_list_array[] = '\'_created_at\'';
+            $edit_field_list_array[] = '\'_updated_by\'';
+            $edit_field_list_array[] = '\'_updated_at\'';
+            // build string
+            $field_list = implode(', ',$field_list_array);
+            $add_field_list = implode(', ',$add_field_list_array);
+            $edit_field_list = implode(', ',$edit_field_list_array);
             $display_as = implode(PHP_EOL, $display_as_array);
             $set_relation = implode(PHP_EOL, $set_relation_array);
             $set_relation_n_n = implode(PHP_EOL, $set_relation_n_n_array);
@@ -509,6 +528,8 @@ class Default_generator extends CMS_Controller{
                 'model_import_name',
                 'view_import_name',
                 'field_list',
+                'add_field_list',
+                'edit_field_list',
                 'display_as',
                 'set_relation',
                 'set_relation_n_n',
@@ -534,6 +555,8 @@ class Default_generator extends CMS_Controller{
                 $this->back_model_file_name($stripped_table_name, TRUE),
                 $this->back_view_file_name($stripped_table_name, TRUE),
                 $field_list,
+                $add_field_list,
+                $edit_field_list,
                 $display_as,
                 $set_relation,
                 $set_relation_n_n,
@@ -625,7 +648,7 @@ class Default_generator extends CMS_Controller{
                 $remove_front_navigations .= $str.PHP_EOL;
             }
         }
-        $remove_navigations = $remove_front_navigations.$remove_back_navigations;
+        $remove_navigations = trim($remove_front_navigations.$remove_back_navigations);
 
         ////////////////////////////////////////////////////////////////
         // ADD NAVIGATIONS
@@ -668,6 +691,30 @@ class Default_generator extends CMS_Controller{
         $add_navigations = trim($add_front_navigations.$add_back_navigations);
 
         ////////////////////////////////////////////////////////////////
+        // ADD and REMOVE PRIVILEGES
+        ////////////////////////////////////////////////////////////////
+        $add_privileges = '';
+        $remove_privileges = '';
+
+        foreach($tables as $table){
+            $table_name = $table['name'];
+            $stripped_table_name = $table['stripped_name'];
+            if(!$table['options']['dont_make_form']){
+                $pattern = array('stripped_table_name');
+                $replacement = array($stripped_table_name);
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_privileges',NULL,
+                    $pattern, $replacement);
+                $add_privileges .= $str.PHP_EOL;
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_privileges',NULL,
+                    $pattern, $replacement);
+                $remove_privileges .= $str.PHP_EOL;
+            }
+        }
+
+        $add_privileges = trim($add_privileges);
+        $remove_privileges = trim($remove_privileges);
+
+        ////////////////////////////////////////////////////////////////
         // CREATE INSTALLER
         ////////////////////////////////////////////////////////////////
         $backup_table_list = array();
@@ -690,6 +737,8 @@ class Default_generator extends CMS_Controller{
             'drop_table_forge',
             'create_table_forge',
             'insert_table',
+            'add_privileges',
+            'remove_privileges'
         );
         $replacement = array(
             underscore($this->cms_user_name()).'.'.underscore($this->project_name),
@@ -702,8 +751,15 @@ class Default_generator extends CMS_Controller{
             underscore($this->project_name),
             humanize($this->project_name),
             $this->nds->get_drop_table_forge($tables),
-            $this->nds->get_create_table_forge($tables),
+            $this->nds->get_create_table_forge($tables, array(
+                    '_created_at' => '$this->TYPE_DATETIME_NULL',
+                    '_updated_at' => '$this->TYPE_DATETIME_NULL',
+                    '_created_by' => '$this->TYPE_INT_SIGNED_NULL',
+                    '_updated_by' => '$this->TYPE_INT_SIGNED_NULL', 
+                )),
             $this->nds->get_insert_table($tables),
+            $add_privileges,
+            $remove_privileges
         );
 
         $str = $this->nds->read_view('default_generator/info_controller', NULL, $pattern, $replacement);

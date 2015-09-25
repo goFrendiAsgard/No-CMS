@@ -20,8 +20,8 @@ class Nordrassillib{
     public function get_drop_table_forge($tables){
         return $this->ci->nds_model->get_drop_table_forge($tables);
     }
-    public function get_create_table_forge($tables){
-        return $this->ci->nds_model->get_create_table_forge($tables);
+    public function get_create_table_forge($tables, $default_fields = array()){
+        return $this->ci->nds_model->get_create_table_forge($tables, $default_fields);
     }
     public function get_insert_table($tables){
     	return $this->ci->nds_model->get_insert_table($tables);

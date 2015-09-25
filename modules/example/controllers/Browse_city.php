@@ -21,10 +21,13 @@ class Browse_city extends CMS_Secure_Controller {
     public function index(){
         $module_path = $this->cms_module_path();
         $data = array(
-            'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_city')),
-            'backend_url' => site_url($this->cms_module_path().'/manage_city/index'),
-            'module_path' => $this->cms_module_path(),
-            'first_data'  => Modules::run($module_path.'/browse_city/get_data', 0, '')
+            'allow_navigate_backend'    => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_city')),
+            'have_add_privilege'        => $this->cms_have_privilege($this->cms_complete_navigation_name('add_city')),
+            'have_edit_privilege'       => $this->cms_have_privilege($this->cms_complete_navigation_name('edit_city')),
+            'have_delete_privilege'     => $this->cms_have_privilege($this->cms_complete_navigation_name('delete_city')),
+            'backend_url'               => site_url($this->cms_module_path().'/manage_city/index'),
+            'module_path'               => $this->cms_module_path(),
+            'first_data'                => Modules::run($module_path.'/browse_city/get_data', 0, '')
         );
         $this->view($this->cms_module_path().'/Browse_city_view',$data,
             $this->cms_complete_navigation_name('browse_city'));
@@ -42,9 +45,12 @@ class Browse_city extends CMS_Secure_Controller {
         $this->City_model = new City_model();
         $result = $this->City_model->get_data($keyword, $page);
         $data = array(
-            'result'=>$result,
+            'result'                 =>$result,
             'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_city')),
-            'backend_url' => site_url($module_path.'/manage_city/index'),
+            'have_add_privilege'     => $this->cms_have_privilege($this->cms_complete_navigation_name('add_city')),
+            'have_edit_privilege'    => $this->cms_have_privilege($this->cms_complete_navigation_name('edit_city')),
+            'have_delete_privilege'  => $this->cms_have_privilege($this->cms_complete_navigation_name('delete_city')),
+            'backend_url'            => site_url($module_path.'/manage_city/index'),
         );
         $config = array('only_content'=>TRUE);
         $this->view($module_path.'/Browse_city_partial_view',$data,

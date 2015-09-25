@@ -42,16 +42,54 @@ class {{ controller_name }} extends CMS_Secure_Controller {
             case 'print': break;
         }
 
-        // unset things
+        // unset jquery (we use No-CMS's default jquery)
         $crud->unset_jquery();
+
+        // unset read, comment if you need privilege to read       
         $crud->unset_read();
-        // $crud->unset_add();
-        // $crud->unset_edit();
-        // $crud->unset_delete();
-        // $crud->unset_list();
-        // $crud->unset_back_to_list();
-        // $crud->unset_print();
-        // $crud->unset_export();
+        // privilege to read (uncomment if you need it)
+        /*
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('read_{{ table_name }}'))){
+            $crud->unset_read();
+        }
+        */
+
+        // privilege to add
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('add_{{ table_name }}'))){
+            $crud->unset_add();
+        }
+
+        // privilege to edit
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('edit_{{ table_name }}'))){
+            $crud->unset_edit();
+        }
+
+        // privilege to delete
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('delete_{{ table_name }}'))){
+            $crud->unset_delete();
+        }
+
+        // privilege to list (uncomment if you need it)
+        /*
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('list_{{ table_name }}'))){
+            $crud->unset_list();
+        }
+        */
+
+        // privilege to back_to_list
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('back_to_list_{{ table_name }}'))){
+            $crud->unset_back_to_list();
+        }
+
+        // privilege to print
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('print_{{ table_name }}'))){
+            $crud->unset_print();
+        }
+
+        // privilege to export
+        if(!$this->cms_have_privilege($this->cms_complete_navigation_name('export_{{ table_name }}'))){
+            $crud->unset_export();
+        }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)
@@ -88,9 +126,9 @@ class {{ controller_name }} extends CMS_Secure_Controller {
         // displayed columns on list
         $crud->columns({{ field_list }});
         // displayed columns on edit operation
-        $crud->edit_fields({{ field_list }});
+        $crud->edit_fields({{ edit_field_list }});
         // displayed columns on add operation
-        $crud->add_fields({{ field_list }});
+        $crud->add_fields({{ add_field_list }});
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)
@@ -222,6 +260,8 @@ class {{ controller_name }} extends CMS_Secure_Controller {
 
     public function _before_insert($post_array){
         $post_array = $this->_before_insert_or_update($post_array);
+        $post_array['_created_at'] = date('Y-m-d H:i:s');
+        $post_array['_created_by'] = $this->cms_user_id();
         // HINT : Put your code here
         return $post_array;
     }
@@ -234,6 +274,8 @@ class {{ controller_name }} extends CMS_Secure_Controller {
 
     public function _before_update($post_array, $primary_key){
         $post_array = $this->_before_insert_or_update($post_array, $primary_key);
+        $post_array['_updated_at'] = date('Y-m-d H:i:s');
+        $post_array['_updated_by'] = $this->cms_user_id();
         // HINT : Put your code here
         return $post_array;
     }

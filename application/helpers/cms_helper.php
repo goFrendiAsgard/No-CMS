@@ -180,6 +180,7 @@ function _xor($data, $chipper=array(1,2,3,4,5,6,7)){
 
 function cms_encode($data, $chipper = NULL){
     $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
+    $data .= '';
     $data_array = array();
     $chipper_array = array();
     for($i=0; $i<strlen($data); $i++){

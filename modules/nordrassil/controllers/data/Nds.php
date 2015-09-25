@@ -99,14 +99,15 @@ class Nds extends CMS_Controller {
         $crud->display_as('name','Name');
         $crud->display_as('description','Description');
         $crud->display_as('option_type','Option Type');
-
-        $crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
+        
         $crud->unset_texteditor('description');
         $crud->field_type('option_type', 'enum', array('project','table','column'));
 
         if(isset($template_id) && intval($template_id)>0){
             $crud->where($this->cms_complete_table_name('template_option').'.template_id', $template_id);
             $crud->field_type('template_id', 'hidden', $template_id);
+        }else{
+            $crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');    
         }
 
         $crud->callback_column($this->unique_field_name('template_id'),array($this,'_callback_column_template_option_template_id'));
@@ -235,7 +236,7 @@ class Nds extends CMS_Controller {
         $url = site_url($this->cms_module_path().'/data/nds/table');
         $caption = 'Table';
         $this->load->model('/data/nds_model');
-        $action =  $this->get_detail_action($caption, $url, $primary_key, TRUE);
+        $action =  $this->get_detail_action($caption, $url, $primary_key, FALSE);
         $result = $this->nds_model->get_table_by_project($primary_key);
         return $action.br().$this->get_detail_data($result, $url, $primary_key, 'table_id');
     }
@@ -244,7 +245,7 @@ class Nds extends CMS_Controller {
         $url = site_url($this->cms_module_path().'/data/nds/table');
         $caption = 'Table';
         $this->load->model('/data/nds_model');
-        $result = $this->nds_model->get_table_by_project($primary_key);
+        $result = $this->nds_model->get_table_by_project($primary_key, FALSE);
         // action
         $action = $this->get_detail_action($caption, $url, $primary_key);
         $action.= ' | '.anchor(
@@ -358,10 +359,10 @@ class Nds extends CMS_Controller {
         if(isset($project_id) && intval($project_id)>0){
             $crud->where($this->cms_complete_table_name('table').'.project_id', $project_id);
             // displayed columns on list
-            $crud->columns('name', 'options', 'priority', 'columns');
+            $crud->columns('name', 'options', 'columns');
         }else{
             // displayed columns on list
-            $crud->columns('project_id', 'name', 'options', 'priority', 'columns');
+            $crud->columns('project_id', 'name', 'options', 'columns');
         }
         $crud->order_by('priority');
 
@@ -482,7 +483,24 @@ class Nds extends CMS_Controller {
     }
 
     public function _callback_column_table_name($value, $row){
-        return '<b>' . $value . '</b>' . br() . '(' . $row->caption . ')<a id="rec-'.$row->table_id.'" name="rec-'.$row->table_id.'">&nbsp;</a>';
+        $html = '<b>' . $value . '</b>' . br() . '(' . $row->caption . ')<a id="rec-'.$row->table_id.'" name="rec-'.$row->table_id.'">&nbsp;</a>';
+        
+        // TODO: code this
+        if(isset($_SESSION['__mark_move_table_id'][$row->project_id]) && $_SESSION['__mark_move_table_id'][$row->project_id] != NULL){
+            $mark_move_table_id = $_SESSION['__mark_move_table_id'][$row->project_id];
+            if($row->table_id == $mark_move_table_id){
+                // cancel link
+                $html .= '<br /><a href="'.site_url($this->cms_module_path().'/data/nds/table_move_cancel/'.$row->project_id).'"><i class="glyphicon glyphicon-repeat"></i> Undo</a>';
+            }else{
+                // paste before, paste after, paste inside
+                $html .= ' <br /><a href="'.site_url($this->cms_module_path().'/data/nds/table_move_before/'.$row->project_id.'/'.$row->table_id).'"><i class="glyphicon glyphicon-open"></i> Put Before</a>';
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/data/nds/table_move_after/'.$row->project_id.'/'.$row->table_id).'"><i class="glyphicon glyphicon-save"></i> Put After</a>';
+            }
+        }else{
+            $html .= '<br /><a href="'.site_url($this->cms_module_path().'/data/nds/table_mark_move/'.$row->project_id.'/'.$row->table_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
+        }
+
+        return $html;
     }
 
     public function _callback_column_table_columns($value, $row){
@@ -491,7 +509,7 @@ class Nds extends CMS_Controller {
         $caption = 'Column';
         $this->load->model('/data/nds_model');
         $result = $this->nds_model->get_column_by_table($primary_key);
-        $action = $this->get_detail_action($caption, $url, $primary_key, TRUE);
+        $action = $this->get_detail_action($caption, $url, $primary_key, FALSE);
         return $action.br().$this->get_detail_data($result, $url, $primary_key, 'column_id');
     }
 
@@ -500,7 +518,7 @@ class Nds extends CMS_Controller {
         $caption = 'Column';
         $this->load->model('/data/nds_model');
         $result = $this->nds_model->get_column_by_table($primary_key);
-        $action = $this->get_detail_action($caption, $url, $primary_key);
+        $action = $this->get_detail_action($caption, $url, $primary_key, FALSE);
         $data = $this->get_detail_data($result, $url, $primary_key, 'column_id');
         return $action.br().$data;
     }
@@ -518,10 +536,10 @@ class Nds extends CMS_Controller {
         if(isset($table_id) && intval($table_id)>0){
             $crud->where($this->cms_complete_table_name('column').'.table_id', $table_id);
             // displayed columns on list
-            $crud->columns('name','options','priority');
+            $crud->columns('name','options');
         }else{
             // displayed columns on list
-            $crud->columns('table_id','name','options','priority');
+            $crud->columns('table_id','name','options');
         }
         $crud->order_by('priority');
 
@@ -663,22 +681,230 @@ class Nds extends CMS_Controller {
     }
 
     public function _callback_column_column_name($value, $row){
+        $this->load->model($this->cms_module_path().'/nds_model');
         if($row->role == NULL || $row->role == '' || $row->role == 'primary' || $row->role == 'lookup'){
             $description = $row->data_type. '(' . $row->data_size . ')';
             if($row->role != NULL && $row->role != ''){
                 $description .= ' <span class="badge">'.ucfirst($row->role).'</span>';
+                if($row->role == 'lookup'){
+                    // get lookup detail
+                    $lookup_table_name = $this->nds_model->get_table_name($row->lookup_table_id);
+                    $lookup_column_name = $this->nds_model->get_column_name($row->lookup_column_id);
+                    $description .= br().$lookup_table_name.'.'.$lookup_column_name;
+                }
             }
         }else{
             $description = '<span class="badge">'.ucfirst($row->role).'</span>';
+            // get detail description
+            $table_name = $this->nds_model->get_table_name($row->table_id);
+            $table_primary_key = $this->nds_model->get_primary_key($row->table_id);
+            $relation_table_name = $this->nds_model->get_table_name($row->relation_table_id);
+            $relation_table_column_name = $this->nds_model->get_column_name($row->relation_table_column_id);
+            if($row->role == 'detail one to many'){
+                $description .= br().$table_name.'.'.$table_primary_key.' = '.$relation_table_name.'.'.$relation_table_column_name;
+            }else if($row->role == 'detail many to many'){
+                $selection_table_name = $this->nds_model->get_table_name($row->selection_table_id);
+                $selection_table_primary_key = $this->nds_model->get_primary_key($row->selection_table_id);
+                $selection_column_name = $this->nds_model->get_column_name($row->selection_column_id);
+                $relation_selection_column_name = $this->nds_model->get_column_name($row->relation_selection_column_id);
+                $description .= br().$selection_table_name.'.'.$selection_column_name.br().
+                    $relation_table_name.'.'.$relation_selection_column_name.' = '.$selection_table_name.'.'.$selection_table_primary_key.br().
+                    $relation_table_name.'.'.$relation_table_column_name.' = '.$table_name.'.'.$table_primary_key;
+            }
         }
-        return '<b>' . $value . '</b>' . ', ' . $description . br() .
-            '(' . $row->caption . ')<a id="rec-'.$row->column_id.'" name="rec-'.$row->column_id.'">&nbsp;</a>';
+        $html = '<b>' . $value . '</b> (' . $row->caption . ')'. br() . 
+            $description . '<a id="rec-'.$row->column_id.'" name="rec-'.$row->column_id.'">&nbsp;</a>';
+
+        // TODO: code this
+        if(isset($_SESSION['__mark_move_column_id'][$row->table_id]) && $_SESSION['__mark_move_column_id'][$row->table_id] != NULL){
+            $mark_move_column_id = $_SESSION['__mark_move_column_id'][$row->table_id];
+            if($row->column_id == $mark_move_column_id){
+                // cancel link
+                $html .= '<br /><a href="'.site_url($this->cms_module_path().'/data/nds/column_move_cancel/'.$row->table_id).'"><i class="glyphicon glyphicon-repeat"></i> Undo</a>';
+            }else{
+                // paste before, paste after, paste inside
+                $html .= '<br /><a href="'.site_url($this->cms_module_path().'/data/nds/column_move_before/'.$row->table_id.'/'.$row->column_id).'"><i class="glyphicon glyphicon-open"></i> Put Before</a>';
+                $html .= ' | <a href="'.site_url($this->cms_module_path().'/data/nds/column_move_after/'.$row->table_id.'/'.$row->column_id).'"><i class="glyphicon glyphicon-save"></i> Put After</a>';
+            }
+        }else{
+            $html .= '<br /><a href="'.site_url($this->cms_module_path().'/data/nds/column_mark_move/'.$row->table_id.'/'.$row->column_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
+        }
+
+        return $html;
     }
 
     public function _callback_column_column_table_id($value, $row){
         $parent_key = $row->table_id;
         $url = site_url($this->cms_module_path().'/data/nds/table');
         return $this->get_back_to_parent_action($value, $url, $parent_key);
+    }
+
+    public function table_mark_move($project_id, $table_id){
+        if(!isset($_SESSION)){
+            session_start();
+            $_SESSION['__mark_move_table_id'] = array();
+        }
+        $_SESSION['__mark_move_table_id'][$project_id] = $table_id;
+        redirect($this->cms_module_path().'/data/Nds/table/'.$project_id,'refresh');
+    }
+
+    public function table_move_cancel($project_id){
+        if(!isset($_SESSION)){
+            session_start();
+            $_SESSION['__mark_move_table_id'] = array();
+        }
+        $table_id = $_SESSION['__mark_move_table_id'][$project_id];
+        $_SESSION['__mark_move_table_id'][$project_id] = NULL;
+        redirect($this->cms_module_path().'/data/Nds/table/'.$project_id,'refresh');
+    }
+
+    public function table_move_before($project_id, $dst_table_id){
+        if(!isset($_SESSION)){
+            session_start();
+            $_SESSION['__mark_move_table_id'] = array();
+        }
+        $src_table_id = $_SESSION['__mark_move_table_id'][$project_id];
+        $this->do_move_table_before($project_id, $src_table_id, $dst_table_id);
+        $_SESSION['__mark_move_table_id'][$project_id] = NULL;
+        redirect($this->cms_module_path().'/data/Nds/table/'.$project_id,'refresh');
+    }
+    public function table_move_after($project_id, $dst_table_id){
+        if(!isset($_SESSION)){
+            session_start();
+            $_SESSION['__mark_move_table_id'] = array();
+        }
+        $src_table_id = $_SESSION['__mark_move_table_id'][$project_id];
+        $this->do_move_table_after($project_id, $src_table_id, $dst_table_id);
+        $_SESSION['__mark_move_table_id'][$project_id] = NULL;
+        redirect($this->cms_module_path().'/data/Nds/table/'.$project_id,'refresh');
+    }
+
+    private function do_move_table_before($project_id, $src_table_id, $dst_table_id){
+        $priority = $this->db->select('priority')
+            ->from($this->cms_complete_table_name('table'))
+            ->where('table_id', $dst_table_id)
+            ->get()->row()->priority;
+        // move other tables down
+        $query = $this->db->select('table_id, priority')
+            ->from($this->cms_complete_table_name('table'))
+            ->where('project_id', $project_id)
+            ->where('priority >=', $priority)
+            ->get();
+        foreach($query->result() as $row){
+            $this->db->update($this->cms_complete_table_name('table'),
+                array('priority' => $row->priority+1),
+                array('table_id' => $row->table_id));
+        }
+        // put this table in the right
+        $this->db->update($this->cms_complete_table_name('table'),
+            array('priority' => $priority),
+            array('table_id' => $src_table_id));
+    }
+
+    private function do_move_table_after($project_id, $src_table_id, $dst_table_id){
+        $priority = $this->db->select('priority')
+            ->from($this->cms_complete_table_name('table'))
+            ->where('table_id', $dst_table_id)
+            ->get()->row()->priority;
+        // move other tables down
+        $query = $this->db->select('table_id, priority')
+            ->from($this->cms_complete_table_name('table'))
+            ->where('project_id', $project_id)
+            ->where('priority >', $priority)
+            ->get();
+        foreach($query->result() as $row){
+            $this->db->update($this->cms_complete_table_name('table'),
+                array('priority' => $row->priority+1),
+                array('table_id' => $row->table_id));
+        }
+        // put this table in the right
+        $this->db->update($this->cms_complete_table_name('table'),
+            array('priority' => $priority+1),
+            array('table_id' => $src_table_id));
+    }
+
+    public function column_mark_move($table_id, $column_id){
+        if(!isset($_SESSION)){
+            session_start();
+            $_SESSION['__mark_move_column_id'] = array();
+        }
+        $_SESSION['__mark_move_column_id'][$table_id] = $column_id;
+        redirect($this->cms_module_path().'/data/Nds/column/'.$table_id,'refresh');
+    }
+
+    public function column_move_cancel($table_id){
+        if(!isset($_SESSION)){
+            session_start();
+            $_SESSION['__mark_move_column_id'] = array();
+        }
+        $column_id = $_SESSION['__mark_move_column_id'][$table_id];
+        $_SESSION['__mark_move_column_id'][$table_id] = NULL;
+        redirect($this->cms_module_path().'/data/Nds/column/'.$table_id,'refresh');
+    }
+
+    public function column_move_before($table_id, $dst_column_id){
+        if(!isset($_SESSION)){
+            session_start();
+            $_SESSION['__mark_move_column_id'] = array();
+        }
+        $src_column_id = $_SESSION['__mark_move_column_id'][$table_id];
+        $this->do_move_column_before($table_id, $src_column_id, $dst_column_id);
+        $_SESSION['__mark_move_column_id'][$table_id] = NULL;
+        redirect($this->cms_module_path().'/data/Nds/column/'.$table_id,'refresh');
+    }
+    public function column_move_after($table_id, $dst_column_id){
+        if(!isset($_SESSION)){
+            session_start();
+            $_SESSION['__mark_move_column_id'] = array();
+        }
+        $src_column_id = $_SESSION['__mark_move_column_id'][$table_id];
+        $this->do_move_column_after($table_id, $src_column_id, $dst_column_id);
+        $_SESSION['__mark_move_column_id'][$table_id] = NULL;
+        redirect($this->cms_module_path().'/data/Nds/column/'.$table_id,'refresh');
+    }
+
+    private function do_move_column_before($table_id, $src_column_id, $dst_column_id){
+        $priority = $this->db->select('priority')
+            ->from($this->cms_complete_table_name('column'))
+            ->where('column_id', $dst_column_id)
+            ->get()->row()->priority;
+        // move other tables down
+        $query = $this->db->select('column_id, priority')
+            ->from($this->cms_complete_table_name('column'))
+            ->where('table_id', $table_id)
+            ->where('priority >=', $priority)
+            ->get();
+        foreach($query->result() as $row){
+            $this->db->update($this->cms_complete_table_name('column'),
+                array('priority' => $row->priority+1),
+                array('column_id' => $row->column_id));
+        }
+        // put this table in the right
+        $this->db->update($this->cms_complete_table_name('column'),
+            array('priority' => $priority),
+            array('column_id' => $src_column_id));
+    }
+
+    private function do_move_column_after($table_id, $src_column_id, $dst_column_id){
+        $priority = $this->db->select('priority')
+            ->from($this->cms_complete_table_name('column'))
+            ->where('column_id', $dst_column_id)
+            ->get()->row()->priority;
+        // move other tables down
+        $query = $this->db->select('column_id, priority')
+            ->from($this->cms_complete_table_name('column'))
+            ->where('table_id', $table_id)
+            ->where('priority >', $priority)
+            ->get();
+        foreach($query->result() as $row){
+            $this->db->update($this->cms_complete_table_name('column'),
+                array('priority' => $row->priority+1),
+                array('column_id' => $row->column_id));
+        }
+        // put this table in the right
+        $this->db->update($this->cms_complete_table_name('column'),
+            array('priority' => $priority+1),
+            array('column_id' => $src_column_id));
     }
 
     private function unique_field_name($field_name) {
@@ -750,19 +976,31 @@ class Nds extends CMS_Controller {
                     if(strlen($options)>70){
                         $options = substr($options, 0, 66).' ...';
                     }
-                    if(isset($row->data_type) && $row->data_type !== NULL && $row->data_type != ''){
+                    if(isset($row->data_type) && $row->data_type !== NULL && $row->data_type != '' && $row->role != 'detail one to many' && $row->role != 'detail many to many'){
                         if(isset($row->role) && $row->role !== NULL && $row->role != ''){
+                            $role_description = '<span class="badge">'.$row->role.'</span>';
+                            if($row->role == 'lookup'){
+                                $role_description .= br().$row->lookup_table_name.'.'.$row->lookup_column_name;
+                            }
                             $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'.
-                                $row->data_type.'('.$row->data_size.'), '. $row->role;
-                            $caption .= $options == ''? '' : ' | '.$options;
+                                $row->data_type.'('.$row->data_size.') '. $role_description;
+                            $caption .= $options == ''? '' : br().$options;
                         }else{
                             $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'.
                                 $row->data_type.'('.$row->data_size.')';
                             $caption .= $options == ''? '' : ' | '.$options;
                         }
                     }else if(isset($row->role) && $row->role !== NULL && $row->role != ''){
+                        $role_description = '<span class="badge">'.$row->role.'</span>';
+                        if($row->role == 'detail one to many'){
+                            $role_description .= br().$row->table_name.'.'.$row->table_primary_key.' = '.$row->relation_table_name.'.'.$row->relation_table_column_name;
+                        }else if($row->role == 'detail many to many'){
+                            $role_description .= br().$row->selection_table_name.'.'.$row->selection_column_name.br().
+                                $row->relation_table_name.'.'.$row->relation_selection_column_name.' = '.$row->selection_table_name.'.'.$row->selection_table_primary_key.br().
+                                $row->relation_table_name.'.'.$row->relation_table_column_name.' = '.$row->table_name.'.'.$row->table_primary_key;
+                        }
                         $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'.
-                            $row->role;
+                            $role_description;
                         $caption .= $options == ''? '' : ' | '.$options;
                     }else{
                         $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')';
