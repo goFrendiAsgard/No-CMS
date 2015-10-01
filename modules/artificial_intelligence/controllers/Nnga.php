@@ -51,7 +51,7 @@ class Nnga extends CMS_Controller {
         $ga_elitism_rate = $this->input->post('ga_elitism_rate');
 
         //set validation rule
-        $this->form_validation->set_rules('nn_hidden_neuron_count', 'Hidden Neuron Count', 'xss_clean');
+        $this->form_validation->set_rules('nn_hidden_neuron_count', 'Hidden Neuron Count');
         $this->form_validation->set_rules('nn_learning_rate', 'Learning Rate', 'required');
         $this->form_validation->set_rules('nn_max_loop', 'NN Max Loop', 'required');
         $this->form_validation->set_rules('nn_max_mse', 'Max MSE', 'required');

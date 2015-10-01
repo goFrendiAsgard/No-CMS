@@ -131,7 +131,7 @@ class Main extends CMS_Controller
     public function change_theme($theme = NULL)
     {
         $this->cms_guard_page('main_change_theme');
-        $data = array();        
+        $data = array();
         // upload new theme
         if(CMS_SUBSITE == ''){
 
@@ -345,8 +345,8 @@ class Main extends CMS_Controller
         // generate new secret code
         $secret_code = $this->cms_random_string();
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
-        if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name) && 
-        !$this->cms_is_user_exists($email) && preg_match('/@.+\./', $email) && 
+        if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name) &&
+        !$this->cms_is_user_exists($email) && preg_match('/@.+\./', $email) &&
         $user_name != '' && $email != '') {
             $this->cms_do_register($user_name, $email, $real_name, $password);
             redirect('','refresh');
@@ -457,7 +457,7 @@ class Main extends CMS_Controller
         $confirm_password = $this->input->post('confirm_password');
         if (!$change_password) {
             $password = NULL;
-        }        
+        }
         if (!$email)
             $email = $row->email;
         if (!$real_name)
@@ -466,8 +466,8 @@ class Main extends CMS_Controller
         //set validation rule
         $this->form_validation->set_rules('email', 'E mail', 'required|valid_email');
         $this->form_validation->set_rules('real_name', 'Real Name', 'required');
-        $this->form_validation->set_rules('password', 'Password', 'xss_clean|matches[confirm_password]');
-        $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'xss_clean');
+        $this->form_validation->set_rules('password', 'Password', 'matches[confirm_password]');
+        $this->form_validation->set_rules('confirm_password', 'Password Confirmation');
 
         if ($this->form_validation->run()) {
             $this->cms_do_change_profile($email, $real_name, $password, $this->cms_user_id());
@@ -646,7 +646,7 @@ class Main extends CMS_Controller
                 $crud->callback_edit_field('active', array(
                     $this,
                     '_read_only_user_active'
-                ));                
+                ));
             }
             $crud->callback_edit_field('user_name', array(
                 $this,
@@ -695,7 +695,7 @@ class Main extends CMS_Controller
             cms_md5($post_array['password'], $this->cms_chipper()):
             cms_md5($post_array['password']);
         // subsite
-        $post_array['subsite'] = CMS_SUBSITE == ''? NULL : CMS_SUBSITE; 
+        $post_array['subsite'] = CMS_SUBSITE == ''? NULL : CMS_SUBSITE;
         return $post_array;
     }
 
@@ -834,7 +834,7 @@ class Main extends CMS_Controller
                 $crud->field_type('navigation_name','readonly');
                 $crud->required_fields('title');
             }else{
-                $crud->required_fields('navigation_name', 'title');    
+                $crud->required_fields('navigation_name', 'title');
             }
         }else{
             $crud->required_fields('navigation_name', 'title');
@@ -845,7 +845,7 @@ class Main extends CMS_Controller
         $crud->columns('navigation_name');
         $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
         $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
-        
+
         // get themes to give options for default_theme field
         $themes     = $this->cms_get_theme_list();
         $theme_path = array();
@@ -942,8 +942,8 @@ class Main extends CMS_Controller
         }
         $output->navigation_path = $navigation_path;
         $output->is_insert = $crud->getState() == 'add';
-        
-        $output->undeleted_id = $undeleted_id;        
+
+        $output->undeleted_id = $undeleted_id;
 
         // prepare css & js, add them to config
         $config = array();
@@ -996,7 +996,7 @@ class Main extends CMS_Controller
     }
 
     public function _before_update_navigation($post_array, $primary_key)
-    {   
+    {
         if(array_key_exists('parent_id', $post_array)){
             if($post_array['parent_id'] == $primary_key){
                 $post_array['parent_id'] = NULL;
@@ -1014,7 +1014,7 @@ class Main extends CMS_Controller
                             break;
                         }
                     }
-                }                
+                }
             }
         }
         return $post_array;
@@ -1373,13 +1373,13 @@ class Main extends CMS_Controller
             if(in_array($primary_key, $undeleted_id)){
                 $crud->field_type('widget_name','readonly');
             }else{
-                $crud->required_fields('widget_name');   
+                $crud->required_fields('widget_name');
             }
         }else{
             $crud->required_fields('widget_name');
         }
 
-        
+
         $crud->unique_fields('widget_name');
         $crud->unset_read();
 
@@ -1803,7 +1803,7 @@ class Main extends CMS_Controller
                     'original_url' => $original_url,
                     'user_id'      => $this->cms_user_id(),
                     'time'         => time(),
-                );           
+                );
             $this->_set_token($unique_id, $token);
             // prepare redirection
             $ssl         = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false;
@@ -1817,13 +1817,13 @@ class Main extends CMS_Controller
         }
     }
 
-    public function landing(){  
+    public function landing(){
         if(CMS_SUBSITE != ''){
             $original_url   = $this->input->get('__origin');
             $unique_id      = $this->input->get('__token');
             $token          = $this->_get_token($unique_id);
             if($token != NULL){
-                if($_SERVER['REMOTE_ADDR'] == $token['remote_addr'] && $_SERVER['HTTP_USER_AGENT'] == $token['user_agent'] && 
+                if($_SERVER['REMOTE_ADDR'] == $token['remote_addr'] && $_SERVER['HTTP_USER_AGENT'] == $token['user_agent'] &&
                     $original_url == $token['original_url'] && time() < $token['time']+120){
                     // get user name
                     $user_id = $token['user_id'];
@@ -1838,9 +1838,9 @@ class Main extends CMS_Controller
                         $this->cms_user_id($row->user_id);
                         $this->cms_user_real_name($row->real_name);
                         $this->cms_user_email($row->email);
-                    }                
+                    }
                 }
-                
+
             }
             $this->_remove_token($unique_id);
             redirect($original_url);
@@ -2060,7 +2060,7 @@ class Main extends CMS_Controller
                 $result .= $this->build_quicklink(NULL, TRUE, $notif);
             }
             // toggle editing
-            if($this->cms_user_is_super_admin()){            
+            if($this->cms_user_is_super_admin()){
                 if($this->cms_editing_mode()){
                     $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_off" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
                         <i class="glyphicon glyphicon-eye-open"></i> Toggle View</a></span>';
@@ -2268,7 +2268,7 @@ class Main extends CMS_Controller
                 });
                 '.$load_notif_script.'
             </script>';
-            
+
             $this->cms_show_html($result);
         }else{
             return $result;

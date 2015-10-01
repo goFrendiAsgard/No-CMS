@@ -49,7 +49,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
     private function __update(){
 
         $old_version = cms_config('__cms_version');
-        $current_version = '0.8.0';
+        $current_version = '0.8.1';
 
         if($old_version == $current_version){ return 0; }
         // get major, minor and rev version
@@ -73,8 +73,22 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         }
 
         // 0.7.8
-        if($major_version <= '0' && $minor_version <- '7' && $rev_version <= '8'){
+        if($major_version <= '0' && $minor_version <= '7' && $rev_version <= '8'){
             $this->__update_to_0_7_8();
+        }
+
+        // 0.8.1
+        if($major_version <= '0' && $minor_version <= '8' && $rev_version <= '1'){
+            // make extended route inclussion absolute
+            $pattern = 'include(\'extended_routes.php\');';
+            if(CMS_SUBSITE == ''){
+                $path = APPPATH.'/config/main/routes.php';
+                $replace = 'include(APPPATH.\'config/main/extended_routes.php\');';
+            }else{
+                $path = APPPATH.'/config/site-'.CMS_SUBSITE.'/routes.php';
+                $replace = 'include(APPPATH.\'config/site-'.CMS_SUBSITE.'/extended_routes.php\');';
+            }
+            file_put_contents($path, str_replace($pattern, $replace, file_get_contents($path)));
         }
 
         // TODO : Write your upgrade script here

@@ -675,8 +675,8 @@
         <button class="btn btn-primary btn-lg">Apply Changes</button>
     </form>
 </div>
-<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery.autosize.js"></script>
 <?php
+    $asset->add_cms_js("nocms/js/jquery.autosize.js");
     $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
     $asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
     echo $asset->compile_js();

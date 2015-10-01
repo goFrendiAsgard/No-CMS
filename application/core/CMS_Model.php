@@ -1935,7 +1935,7 @@ class CMS_Model extends CI_Model
                 cms_md5($password, $this->cms_chipper()) :
                 cms_md5($password),
             "active"    => $activation == 'automatic',
-            "subsite"   => CMS_SUBSITE,
+            "subsite"   => CMS_SUBSITE == ''? NULL : CMS_SUBSITE,
         );
         $this->db->insert($this->cms_user_table_name(), $data);
         // send activation code if needed
@@ -2124,7 +2124,7 @@ class CMS_Model extends CI_Model
                 $json            = file_get_contents(FCPATH.'modules/'.$row->module_path.'/description.txt');
                 $module_info     = @json_decode($json, true);
                 $module_info     = $module_info === NULL? array() : $module_info;
-                
+
                 if(array_key_exists('name', $module_info)){
                     $module_name = $module_info['name'];
                     if($row->module_name != $module_name){

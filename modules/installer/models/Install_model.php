@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_model extends CI_Model{
-    private $VERSION        = '0.8.0';
+    private $VERSION        = '0.8.1';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -1387,6 +1387,14 @@ class Install_model extends CI_Model{
 
         $this->change_config($file_name, "default_controller", 'main', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "404_override", 'not_found', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
+        
+        if($this->is_subsite){
+            // extended_route_path
+            $include_extended_route = 'include(APPPATH.\'config/site-'.$this->subsite.'/extended_routes.php\');';
+        }else{
+            $include_extended_route = 'include(APPPATH.\'config/main/extended_routes.php\');';
+        }
+        file_put_contents($file_name, file_get_contents($file_name).PHP_EOL.PHP_EOL.$include_extended_route);
 
         // hybridauth
         $file_name = APPPATH.'config/'.$this->complete_config_file_name('hybridauthlib.php');
@@ -1454,6 +1462,7 @@ class Install_model extends CI_Model{
             $site_content = $this->load->view($view_name, NULL, TRUE);
             file_put_contents(FCPATH.'site.php', $site_content);
         }
+
     }
 
     public function install_modules(){
