@@ -85,7 +85,7 @@ class CMS_Module extends CMS_Controller
             if(isset($subsite_allowed) && is_array($subsite_allowed)){
                 $this->SUBSITE_ALLOWED = $subsite_allowed;
             }
-        }       
+        }
     }
 
     public function status($dont_fetch = FALSE){

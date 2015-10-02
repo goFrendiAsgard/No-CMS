@@ -50,6 +50,8 @@ class CMS_Controller extends MX_Controller
         $this->form_validation->CI =& $this;
         $this->load->driver('session');
 
+        $this->JQUERY_PATH = base_url('assets/grocery_crud/js/jquery-1.10.2.min.js');
+
         $module_path = $this->cms_module_path();
         $this->load->model($this->__cms_base_model_name);
         $this->{$this->__cms_base_model_name}->__controller_module_path = $module_path;
@@ -827,7 +829,7 @@ class CMS_Controller extends MX_Controller
      * @return  string
      * @desc    get configuration variable
      */
-    protected function cms_get_config($name, $raw = False)
+    protected function cms_get_config($name, $raw = FALSE)
     {
         return $this->{$this->__cms_base_model_name}->cms_get_config($name, $raw);
     }
@@ -1348,7 +1350,7 @@ class CMS_Controller extends MX_Controller
             $this->template->append_metadata('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
 
             $asset = new Cms_asset();
-            $asset->add_js(base_url('assets/grocery_crud/js/jquery-1.10.2.min.js'));
+            $asset->add_js($this->JQUERY_PATH);
 
             // ckeditor adjustment thing
             $asset->add_internal_js($this->cms_ck_adjust_script());
@@ -1447,7 +1449,7 @@ class CMS_Controller extends MX_Controller
         $result = $this->__cms_parse_widget_theme_path($result, $theme, $layout, $navigation_name);
         $this->load->library('cms_asset');
         $asset = new Cms_asset();
-        $result = $asset->minify($result);
+        $result = $asset->minify($result, 'js');
 
         if ($return_as_string) {
             return $result;

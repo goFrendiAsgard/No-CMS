@@ -6,6 +6,11 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
     $pattern[] = '/(\$config\[(\'|")'.$key.'(\'|")\] *= *")(.*?)(";)/si';
     $pattern[] = "/(".'\$'."config\[('|\")".$key."('|\")\] *= *')(.*?)(';)/si";
 
+    if(strpos($value, '\';') !== FALSE || strpos($value, '";') !== FALSE){
+        $delete = TRUE;
+        $value = NULL;
+    }
+
     if($delete){
         $replacement = '';
         $str = file_get_contents($file_name);
@@ -29,7 +34,7 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
                 $config = array();
             }
             if(key_exists($key, $config)){
-                $value = $config[$key];
+                $value = stripslashes($config[$key]);
             }else{
                 $value = '';
             }
@@ -113,7 +118,7 @@ function cms_module_config($module_directory, $key, $value = NULL, $delete = FAL
 }
 
 
-function cms_table_prefix($new_prefix = NULL){    
+function cms_table_prefix($new_prefix = NULL){
     return cms_config('__cms_table_prefix', $new_prefix);
 }
 
@@ -194,21 +199,21 @@ function cms_encode($data, $chipper = NULL){
     foreach($encoded_array as $char){
         $encoded_str .= urlencode(chr($char));
     }
-    //$encoded_str = urlencode(base64_encode($encoded_str)); 
+    //$encoded_str = urlencode(base64_encode($encoded_str));
     //$encoded_str = implode('-', $encoded_array);
     return $encoded_str;
 }
 function cms_decode($data, $chipper = NULL){
     $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
     //$data_array = explode('-', $data);
-    
+
     //$data = base64_decode(urldecode($data));
     $data = urldecode($data);
     $data_array = array();
     for($i=0; $i<strlen($data); $i++){
         $data_array[] = ord($data[$i]);
     }
-    
+
     $chipper_array = array();
     for($i=0; $i<strlen($chipper); $i++){
         $chipper_array[] = ord($chipper[$i]);

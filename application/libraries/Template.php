@@ -118,7 +118,7 @@ class Template
 			// Let's use this obvious default
 			$this->_theme_locations = array(APPPATH . 'themes/');
 		}
-		
+
 		// Theme was set
 		if ($this->_theme)
 		{
@@ -713,7 +713,7 @@ class Template
 
 		// If using themes store this for later, available to all views
 		$this->_ci->load->vars('template_views', $view_folder);
-		
+
 		return $view_folder;
 	}
 
@@ -753,7 +753,7 @@ class Template
 			{
 				// Load content and pass through the parser
 				$content = $this->_ci->parser->parse_string($this->_ci->load->file(
-					$override_view_path.$view.self::_ext($view), 
+					$override_view_path.$view.self::_ext($view),
 					TRUE
 				), $data, TRUE);
 			}
@@ -761,7 +761,7 @@ class Template
 			else
 			{
 				$this->_ci->load->vars($data);
-				
+
 				// Load it directly, bypassing $this->load->view() as ME resets _ci_view
 				$content = $this->_ci->load->file(
 					$override_view_path.$view.self::_ext($view),

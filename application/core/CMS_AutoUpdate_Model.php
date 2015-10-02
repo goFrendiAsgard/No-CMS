@@ -6,14 +6,14 @@ class CMS_AutoUpdate_Model extends CMS_Model{
     public function __construct()
     {
         parent::__construct();
-        
+
         // core seamless update
         $this->db->trans_start();
         $this->__update();
         $this->db->trans_complete();
         // module update
-        if(!self::$module_updated){  
-            self::$module_updated = TRUE;          
+        if(!self::$module_updated){
+            self::$module_updated = TRUE;
             $this->__update_module();
         }
     }
@@ -58,7 +58,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         $old_version_component = explode('.', $old_version_component);
         $major_version = $old_version_component[0];
         $minor_version = $old_version_component[1];
-        $rev_version = $old_version_component[2]; 
+        $rev_version = $old_version_component[2];
 
         $this->load->dbforge();
 
@@ -99,7 +99,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         }
     }
 
-    private function __mutate_user_fk($table_name, $fk_name, $subsite, $module_name = NULL){ 
+    private function __mutate_user_fk($table_name, $fk_name, $subsite, $module_name = NULL){
         // GET MAIN TABLE PREFIX
         $main_config_file = APPPATH.'config/main/cms_config.php';
         if(!file_exists($main_config_file)){ return FALSE; }
@@ -123,7 +123,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
             // get module table prefix
             include($module_config_file);
             $module_table_prefix = $config['module_table_prefix'];
-            $module_table_prefix = $module_table_prefix == ''? '' : $module_table_prefix.'_';            
+            $module_table_prefix = $module_table_prefix == ''? '' : $module_table_prefix.'_';
         }
         $multisite_config_file = FCPATH.'modules/'.$this->cms_module_path('gofrendi.noCMS.multisite').'/config/module_config.php';
         if(!file_exists($multisite_config_file)){ return FALSE; }
@@ -134,7 +134,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         // GET TABLE NAMES
         $table_name                   = $subsite_table_prefix . $module_table_prefix . $table_name;
         $main_user_table_name         = $this->cms_user_table_name();
-        $subsite_user_table_name      = $subsite_table_prefix . 'main_user';        
+        $subsite_user_table_name      = $subsite_table_prefix . 'main_user';
         $multisite_subsite_table_name = $main_table_prefix.$multisite_table_prefix.'subsite';
 
         // get new admin user_id
@@ -146,7 +146,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         $this->db->update($table_name,
             array($fk_name => $new_admin_user_id),
             array($fk_name => 1));
-        
+
 
         // get current existing user_name (which is not specified in current subsite)
         $existing_user_names  = array();
@@ -188,7 +188,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
                 $index ++;
             }
             $user_name = $new_user_name;
-            $forbidden_user_names[] = $user_name;            
+            $forbidden_user_names[] = $user_name;
             if(!in_array($user_name, $existing_user_names)){
                 // insert to main user table name
                 $this->db->insert($main_user_table_name,array(
@@ -238,7 +238,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
 
         // add navigation
         $this->cms_add_navigation('main_route_management', 'Route', 'main/route', 4, 'main_management');
-        
+
         // determine config path
         $config_path = CMS_SUBSITE == ''?
             APPPATH.'config/main/' :
@@ -246,19 +246,19 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         $original_route_config = $config_path.'routes.php';
         $extended_route_config = $config_path.'extended_routes.php';
         // include extended route to default route
-        file_put_contents($original_route_config, 
+        file_put_contents($original_route_config,
             file_get_contents($original_route_config).PHP_EOL.
             'include(\'extended_routes.php\');'.PHP_EOL);
         // add extended routes
-        file_put_contents($extended_route_config, 
+        file_put_contents($extended_route_config,
             '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL.
             '$routes = array();'.PHP_EOL);
 
         // copy new configuration setting
         $content = file_get_contents(APPPATH.'config/first-time/third_party_config/kcfinder_config.php');
         $content = str_replace(
-            array('{{ FCPATH }}', '{{ BASE_URL }}'), 
-            array(FCPATH, base_url()), 
+            array('{{ FCPATH }}', '{{ BASE_URL }}'),
+            array(FCPATH, base_url()),
             $content);
         file_put_contents(FCPATH.'assets/kcfinder/config.php', $content);
 
@@ -266,9 +266,9 @@ class CMS_AutoUpdate_Model extends CMS_Model{
             $query = $this->db->select('name')
                 ->from($this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite'))
                 ->get();
-            foreach($query->result() as $row){                
+            foreach($query->result() as $row){
                 $subsite = $row->name;
-                
+
                 if($subsite == 'puribunda'){continue;}
 
                 // get module installation
@@ -333,15 +333,15 @@ class CMS_AutoUpdate_Model extends CMS_Model{
         }
 
         // make register default-one-column
-        $this->db->update(cms_table_name('main_navigation'), 
-            array('default_layout'=>'default-one-column'), 
+        $this->db->update(cms_table_name('main_navigation'),
+            array('default_layout'=>'default-one-column'),
             array('navigation_name'=>'main_register'));
 
         // add 404 navigation
-        $this->cms_add_navigation('main_404', '404 Not Found', 'not_found', 1, 
+        $this->cms_add_navigation('main_404', '404 Not Found', 'not_found', 1,
                 NULL, 9, '404 Not found page', NULL,
                 NULL, 'default-one-column', NULL, 1,
-                '<h1>404 Page not found</h1><p>Sorry, the page does not exists.<br /><a class="btn btn-primary" href="{{ site_url }}">Please go back <i class="glyphicon glyphicon-home"></i></a></p>' 
+                '<h1>404 Page not found</h1><p>Sorry, the page does not exists.<br /><a class="btn btn-primary" href="{{ site_url }}">Please go back <i class="glyphicon glyphicon-home"></i></a></p>'
             );
     }
 
@@ -360,7 +360,7 @@ class CMS_AutoUpdate_Model extends CMS_Model{
                         'constraint' => 100,
                     ),
             );
-        $this->dbforge->modify_column(cms_table_name('main_config'), $fields);    
+        $this->dbforge->modify_column(cms_table_name('main_config'), $fields);
     }
-    
+
 }

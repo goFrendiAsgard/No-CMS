@@ -31,6 +31,7 @@ assets/caches/*.css
 modules/*/config/module_config_*.php
 application/config/main
 application/config/site-*
+application/config/tmp/*.php
 application/helpers/cms_extended_login_helper.php
 /.htaccess
 application/logs/log*.php

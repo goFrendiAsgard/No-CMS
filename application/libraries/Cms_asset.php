@@ -99,7 +99,7 @@ class Cms_asset
     }
 
     private function parse_path($path){
-        $this->ci->load->model('No_CMS_Model');        
+        $this->ci->load->model('No_CMS_Model');
         $used_theme = $this->ci->session->userdata('__cms_used_theme');
         $path = $this->ci->No_CMS_Model->cms_parse_keyword($path);
         return str_ireplace('{{ used_theme }}', $used_theme, $path);
@@ -178,7 +178,7 @@ class Cms_asset
         $str = '';
         foreach($compiled_resources as $compiled_resource){
             if($compiled_resource['type'] == 'internal'){
-                if($mode == 'js'){                    
+                if($mode == 'js'){
                     $str .= '<script type="text/javascript">'.$compiled_resource['content'].'</script>';
                 }else{
                     $str .= '<style type="text/css">'.$compiled_resource['content'].'</style>';
@@ -210,7 +210,7 @@ class Cms_asset
                         $content[] = $this->minify(file_get_contents($dir_path.$file_name), $mode);
                     }
                     $content = implode(PHP_EOL, $content);
-                    file_put_contents($dir_path.$compiled_file_name, $content);  
+                    file_put_contents($dir_path.$compiled_file_name, $content);
                 }
                 // read the file
                 $into_internal = FALSE;
@@ -241,8 +241,8 @@ class Cms_asset
     }
 
     public function compile_css($combine = TRUE)
-    {        
-        if ($combine) {            
+    {
+        if ($combine) {
             $return = $this->combine($this->styles, 'css');
             $this->styles = array();
         } else {
@@ -254,14 +254,14 @@ class Cms_asset
                     $return .= '<style type="text/css">' . $style['content'] . '</style>';
                 }
             }
-            $this->styles = array();            
+            $this->styles = array();
         }
         return $return;
     }
 
     public function compile_js($combine = TRUE)
     {
-        if ($combine) {            
+        if ($combine) {
             $return = $this->combine($this->scripts, 'js');
             $this->scripts = array();
         } else {
@@ -273,8 +273,8 @@ class Cms_asset
                     $return .= '<script type="text/javascript">' . $script['content'] . '</script>';
                 }
             }
-            $this->scripts = array();            
+            $this->scripts = array();
         }
-        return $return;        
+        return $return;
     }
 }

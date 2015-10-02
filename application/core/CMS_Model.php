@@ -2905,7 +2905,7 @@ class CMS_Model extends CI_Model
      * @author goFrendiAsgard
      * @param  string expression
      * @return string
-     * @desc return a "save" pattern which is not replace anything inside HTML tag, and
+     * @desc return a "save" pattern which is not replace input value, and
      * anything between <textarea></textarea> and <option></option>
      */
     public function cms_escape_template($str)

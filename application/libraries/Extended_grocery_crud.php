@@ -55,9 +55,9 @@ class Extended_grocery_crud extends grocery_crud{
     /* Added by Go Frendi. to modify search form, do this:
     $crud->unset_default_search();
     $crud->search_form_components = '<input name=....';
-    */ 
+    */
     public $unset_default_search   = false;
-    public $search_form_components = '';    
+    public $search_form_components = '';
 
     // fix issue http://www.grocerycrud.com/forums/topic/1975-bug-in-the-search/
     protected $unsearchable_field = array();
@@ -228,7 +228,7 @@ class Extended_grocery_crud extends grocery_crud{
             $this->_theme_view('list.php',$data);
         }
     }
-    
+
     /* Fix issue: http://www.grocerycrud.com/forums/topic/61-default-field-values-for-add-form/ */
     protected function get_add_input_fields($field_values = null)
     {
@@ -424,7 +424,7 @@ class Extended_grocery_crud extends grocery_crud{
                             {
                                 //$this->or_like($search_field, $search_text);
                                 $search_where .= " OR " .
-                                    $this->basic_model->protect_identifiers($search_field). 
+                                    $this->basic_model->protect_identifiers($search_field).
                                     " LIKE '%" . $escaped_text . "%'";
                             }
                         }
@@ -432,7 +432,7 @@ class Extended_grocery_crud extends grocery_crud{
                         {
                             //$this->or_like($temp_relation[$column->field_name], $search_text);
                             $search_where .= " OR " .
-                                    $this->basic_model->protect_identifiers($temp_relation[$column->field_name]). 
+                                    $this->basic_model->protect_identifiers($temp_relation[$column->field_name]).
                                     " LIKE '%" . $escaped_text . "%'";
                         }
                     }
@@ -475,7 +475,7 @@ class Extended_grocery_crud extends grocery_crud{
                         $real_search_field = $search_field_part[count($search_field_part)-1];
                         if(in_array($real_search_field, $actual_columns)){
                             //$this->or_like($basic_table.'.'.$real_search_field, $search_text);
-                            $search_where .= " OR " . 
+                            $search_where .= " OR " .
                                 $this->basic_model->protect_identifiers($basic_table.'.'.$real_search_field).
                                 " LIKE '%" . $escaped_text . "%'";
                         }
@@ -1471,7 +1471,7 @@ class Extended_grocery_crud extends grocery_crud{
                     //base_url('assets/grocery_crud/js/jquery_plugins/jquery.ui.datetime.js'),
                     base_url('assets/grocery_crud/js/jquery_plugins/jquery-ui-timepicker-addon.js'),
                 );
-            
+
             foreach($mandatory_css_files as $mandatory_css_file){
                 if(!in_array($mandatory_css_file, $output->css_files)){
                     $output->css_files[] = $mandatory_css_file;
@@ -1512,14 +1512,14 @@ class Extended_grocery_crud extends grocery_crud{
 
         $other_js = array();
         foreach($output->js_files as $js_file){
-            if(!in_array($js_file, $config_js) && !in_array($js_file, $plugin_js) && 
+            if(!in_array($js_file, $config_js) && !in_array($js_file, $plugin_js) &&
                 !in_array($js_file, $text_editor_js) && !in_array($js_file, $theme_js)){
                 $other_js[] = $js_file;
             }
         }
 
         $output->js_files = array_merge($plugin_js, $theme_js, $text_editor_js, $other_js, $config_js);
-        
+
         return $output;
 	}
 

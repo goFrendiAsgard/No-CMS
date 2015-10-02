@@ -16,7 +16,7 @@
  * @author		Alexandre Tedeschi
  * @author		Phil Sturgeon
  * @link		http://bitbucket.org/philsturgeon/codeigniter-unzip
- * @license     
+ * @license
  * @version     1.0.0
  */
 class Unzip {
@@ -494,7 +494,7 @@ class Unzip {
 					foreach ($this->central_dir_list as $filename => $details)
 					{
 						$i = $this->_get_file_header($fh, $details['relative_offset']);
-						
+
 						$this->compressed_list[$filename]['file_name'] = $filename;
 						$this->compressed_list[$filename]['compression_method'] = $details['compression_method'];
 						$this->compressed_list[$filename]['version_needed'] = $details['version_needed'];
