@@ -56,6 +56,14 @@ class CMS_Module extends CMS_Controller
     protected $TYPE_VARCHAR_200_NULL = array( 'type' => 'VARCHAR', 'constraint' => 200, 'null'=>TRUE, );
     protected $TYPE_VARCHAR_250_NULL = array( 'type' => 'VARCHAR', 'constraint' => 250, 'null'=>TRUE, );
 
+    // TODO: Complete this
+    protected $NAVIGATIONS = array();
+    protected $CONFIGURATIONS = array();
+    protected $PRIVILEGES = array();
+    protected $GROUPS = array();
+    protected $TABLES = array();
+    protected $DATA = array();
+
 
     public function __construct(){
         parent::__construct();

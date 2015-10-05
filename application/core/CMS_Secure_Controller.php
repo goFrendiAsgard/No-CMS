@@ -1,24 +1,27 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+
+if (!defined('BASEPATH')) {
+    exit('No direct script access allowed');
+}
 
 /**
- * CMS_Secure_Controller class
+ * CMS_Secure_Controller class.
  *
  * @author gofrendi
  */
-
 class CMS_Secure_Controller extends CMS_Controller
 {
     private $navigation_name = '';
 
     protected $URL_MAP = array();
-    protected $ALLOW_UNKNOWN_NAVIGATION_NAME = FALSE;
+    protected $ALLOW_UNKNOWN_NAVIGATION_NAME = false;
 
     public function __construct()
     {
         parent::__construct();
         $this->URL_MAP = $this->do_override_url_map($this->URL_MAP);
         $uriString = $this->uri->uri_string();
-        $navigation_name = NULL;
+        $navigation_name = null;
         if (isset($this->URL_MAP[$uriString])) {
             if (!isset($navigation_name)) {
                 $navigation_name = $this->cms_navigation_name($this->URL_MAP[$uriString]);
@@ -27,8 +30,8 @@ class CMS_Secure_Controller extends CMS_Controller
                 $navigation_name = $this->URL_MAP[$uriString];
             }
         } else {
-            foreach ($this->URL_MAP as $key=>$value) {
-                if($uriString == $this->cms_parse_keyword($key)){
+            foreach ($this->URL_MAP as $key => $value) {
+                if ($uriString == $this->cms_parse_keyword($key)) {
                     if (!isset($navigation_name)) {
                         $navigation_name = $this->cms_navigation_name($key);
                     }
@@ -46,8 +49,8 @@ class CMS_Secure_Controller extends CMS_Controller
         if (!$this->__cms_dynamic_widget && $uriString != '' && !$this->ALLOW_UNKNOWN_NAVIGATION_NAME && !isset($navigation_name)) {
             if ($this->input->is_ajax_request()) {
                 $response = array(
-                    'success' => FALSE,
-                    'message' => 'unauthorized access'
+                    'success' => false,
+                    'message' => 'unauthorized access',
                 );
                 $this->cms_show_json($response);
                 die();
@@ -58,7 +61,8 @@ class CMS_Secure_Controller extends CMS_Controller
         $this->navigation_name = $navigation_name;
     }
 
-    protected function do_override_url_map($URL_MAP){
+    protected function do_override_url_map($URL_MAP)
+    {
         return $URL_MAP;
     }
 
@@ -67,30 +71,33 @@ class CMS_Secure_Controller extends CMS_Controller
         if (!isset($navigation_name) || $navigation_name == '') {
             $navigation_name = $this->navigation_name;
         }
+
         return $navigation_name;
     }
 
     protected function cms_override_config($config)
     {
-        $config['always_allow'] = TRUE;
+        $config['always_allow'] = true;
+
         return $config;
     }
 
-    public function view($view_url, $data = NULL, $navigation_name = NULL, $config = NULL, $return_as_string = FALSE)
+    public function view($view_url, $data = null, $navigation_name = null, $config = null, $return_as_string = false)
     {
         if (is_bool($navigation_name) && count($config) == 0) {
             $return_as_string = $navigation_name;
-            $navigation_name  = NULL;
-            $config           = NULL;
-        } else if (is_bool($config)) {
+            $navigation_name = null;
+            $config = null;
+        } elseif (is_bool($config)) {
             $return_as_string = $config;
-            $config           = NULL;
+            $config = null;
         }
         if (!isset($config) || !is_array($config)) {
             $config = array();
         }
         $navigation_name = $this->cms_override_navigation_name($navigation_name);
-        $config          = $this->cms_override_config($config);
+        $config = $this->cms_override_config($config);
+
         return parent::view($view_url, $data, $navigation_name, $config, $return_as_string);
     }
 }

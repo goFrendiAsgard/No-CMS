@@ -41,4 +41,5 @@ Here are some names of considerable contributors:
 * Cesarliws <-- Portuguese translation
 * Ivan Tcholakov <-- make things works with latest CI 3.0
 * Will Abbott <-- make better English translation
+* Alfredo Nelson Cosco <-- xssclean bugfix, suggest `how to clean up` in FAQ
 * Everyone who was involved by creating issue & pull requests in github. I cannot write every names there. But No-CMS can't be better without them :)

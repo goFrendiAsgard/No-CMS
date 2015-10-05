@@ -1,66 +1,71 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+
+if (!defined('BASEPATH')) {
+    exit('No direct script access allowed');
+}
 
 /**
- * The Main Controller of No-CMS
+ * The Main Controller of No-CMS.
  *
  * @author gofrendi
  */
 class Main extends CMS_Controller
 {
-
     protected function upload($upload_path, $input_file_name = 'userfile', $submit_name = 'upload')
     {
         $data = array(
-            "uploading" => TRUE,
-            "success" => FALSE,
-            "message" => ""
+            'uploading' => true,
+            'success' => false,
+            'message' => '',
         );
         if (isset($_POST[$submit_name])) {
-            $config['upload_path']   = $upload_path;
+            $config['upload_path'] = $upload_path;
             $config['allowed_types'] = 'zip';
-            $config['max_size']      = 8 * 1024;
-            $config['overwrite']     = TRUE;
+            $config['max_size'] = 8 * 1024;
+            $config['overwrite'] = true;
             $this->load->library('upload', $config);
             if (!$this->upload->do_upload($input_file_name)) {
-                $data['uploading'] = TRUE;
-                $data['success']   = FALSE;
-                $data['message']   = $this->upload->display_errors();
+                $data['uploading'] = true;
+                $data['success'] = false;
+                $data['message'] = $this->upload->display_errors();
             } else {
                 $this->load->library('unzip');
                 $upload_data = $this->upload->data();
                 $this->unzip->extract($upload_data['full_path']);
                 unlink($upload_data['full_path']);
-                $data['uploading'] = TRUE;
-                $data['success']   = TRUE;
-                $data['message']   = '';
+                $data['uploading'] = true;
+                $data['success'] = true;
+                $data['message'] = '';
             }
         } else {
-            $data['uploading'] = FALSE;
-            $data['success']   = FALSE;
-            $data['message']   = '';
+            $data['uploading'] = false;
+            $data['success'] = false;
+            $data['message'] = '';
         }
+
         return $data;
     }
 
-    protected function recurse_copy($src,$dst) {
+    protected function recurse_copy($src, $dst)
+    {
         $dir = opendir($src);
         @mkdir($dst);
-        while(false !== ( $file = readdir($dir)) ) {
-            if (( $file != '.' ) && ( $file != '..' )) {
-                if ( is_dir($src . '/' . $file) ) {
-                    $this->recurse_copy($src . '/' . $file,$dst . '/' . $file);
-                }
-                else {
-                    copy($src . '/' . $file,$dst . '/' . $file);
+        while (false !== ($file = readdir($dir))) {
+            if (($file != '.') && ($file != '..')) {
+                if (is_dir($src.'/'.$file)) {
+                    $this->recurse_copy($src.'/'.$file, $dst.'/'.$file);
+                } else {
+                    copy($src.'/'.$file, $dst.'/'.$file);
                 }
             }
         }
         closedir($dir);
     }
 
-    protected function rrmdir($dir) {
-        foreach(glob($dir . '/*') as $file) {
-            if(is_dir($file)){
+    protected function rrmdir($dir)
+    {
+        foreach (glob($dir.'/*') as $file) {
+            if (is_dir($file)) {
                 $this->rrmdir($file);
             } else {
                 unlink($file);
@@ -75,37 +80,36 @@ class Main extends CMS_Controller
         $this->cms_guard_page('main_module_management');
         $data = array();
         // upload new theme
-        if(CMS_SUBSITE == ''){
-            if(isset($_FILES['userfile'])){
+        if (CMS_SUBSITE == '') {
+            if (isset($_FILES['userfile'])) {
                 // upload new module
-                $directory = basename($_FILES['userfile']['name'],'.zip');
+                $directory = basename($_FILES['userfile']['name'], '.zip');
 
                 // subsite_auth
                 $subsite_auth_file = FCPATH.'modules/'.$directory.'/subsite_auth.php';
                 $backup_subsite_auth_file = FCPATH.'modules/'.$directory.'_subsite_auth.php';
-                $subsite_backup = FALSE;
-                if(file_exists($subsite_auth_file)){
+                $subsite_backup = false;
+                if (file_exists($subsite_auth_file)) {
                     copy($subsite_auth_file, $backup_subsite_auth_file);
-                    $subsite_backup = TRUE;
+                    $subsite_backup = true;
                 }
                 // config
                 $config_dir = FCPATH.'modules/'.$directory.'/config';
                 $backup_config_dir = FCPATH.'modules/'.$directory.'_config';
-                $config_backup = FALSE;
-                if(file_exists($config_dir) && is_dir($config_dir)){
+                $config_backup = false;
+                if (file_exists($config_dir) && is_dir($config_dir)) {
                     $this->recurse_copy($config_dir, $backup_config_dir);
-                    $config_backup = TRUE;
+                    $config_backup = true;
                 }
             }
 
-
             $data['upload'] = $this->upload(FCPATH.'modules/', 'userfile', 'upload');
-            if($data['upload']['success']){
-                if($subsite_backup){
+            if ($data['upload']['success']) {
+                if ($subsite_backup) {
                     copy($backup_subsite_auth_file, $subsite_auth_file);
                     unlink($backup_subsite_auth_file);
                 }
-                if($config_backup){
+                if ($config_backup) {
                     $this->recurse_copy($backup_config_dir, $config_dir);
                     $this->rrmdir($backup_config_dir);
                 }
@@ -113,13 +117,13 @@ class Main extends CMS_Controller
         }
 
         $keyword = $this->input->post('keyword');
-        if($keyword == ''){
-            $keyword = NULL;
+        if ($keyword == '') {
+            $keyword = null;
         }
         $data['keyword'] = $keyword;
         // show the view
         $modules = $this->cms_get_module_list($keyword);
-        for($i=0; $i<count($modules); $i++){
+        for ($i = 0; $i < count($modules); ++$i) {
             $module = $modules[$i];
             $module_path = $module['module_path'];
         }
@@ -128,30 +132,29 @@ class Main extends CMS_Controller
         $this->view('main/main_module_management', $data, 'main_module_management');
     }
 
-    public function change_theme($theme = NULL)
+    public function change_theme($theme = null)
     {
         $this->cms_guard_page('main_change_theme');
         $data = array();
         // upload new theme
-        if(CMS_SUBSITE == ''){
-
-            if(isset($_FILES['userfile'])){
+        if (CMS_SUBSITE == '') {
+            if (isset($_FILES['userfile'])) {
                 // upload theme
-                $directory = basename($_FILES['userfile']['name'],'.zip');
+                $directory = basename($_FILES['userfile']['name'], '.zip');
 
                 // subsite_auth
                 $subsite_auth_file = FCPATH.'themes'.$directory.'/subsite_auth.php';
                 $backup_subsite_auth_file = FCPATH.'themes/'.$directory.'_subsite_auth.php';
-                $subsite_backup = FALSE;
-                if(file_exists($subsite_auth_file)){
+                $subsite_backup = false;
+                if (file_exists($subsite_auth_file)) {
                     copy($subsite_auth_file, $backup_subsite_auth_file);
-                    $subsite_backup = TRUE;
+                    $subsite_backup = true;
                 }
             }
 
             $data['upload'] = $this->upload('./themes/', 'userfile', 'upload');
-            if($data['upload']['success']){
-                if($subsite_backup){
+            if ($data['upload']['success']) {
+                if ($subsite_backup) {
                     copy($backup_subsite_auth_file, $subsite_auth_file);
                     unlink($backup_subsite_auth_file);
                 }
@@ -164,8 +167,8 @@ class Main extends CMS_Controller
         }
         // keyword
         $keyword = $this->input->post('keyword');
-        if($keyword == ''){
-            $keyword = NULL;
+        if ($keyword == '') {
+            $keyword = null;
         }
         $data['keyword'] = $keyword;
         $data['themes'] = $this->cms_get_theme_list($keyword);
@@ -176,7 +179,7 @@ class Main extends CMS_Controller
     //this is used for the real static page which doesn't has any URL in navigation management
     public function static_page($navigation_name)
     {
-        $this->view('CMS_View', NULL, $navigation_name);
+        $this->view('CMS_View', null, $navigation_name);
     }
 
     public function login()
@@ -200,52 +203,52 @@ class Main extends CMS_Controller
             if ($this->cms_do_login($identity, $password)) {
                 //if old_url exist, redirect to old_url, else redirect to main/index
                 if (isset($old_url)) {
-                    $this->session->set_userdata('cms_old_url', NULL);
+                    $this->session->set_userdata('cms_old_url', null);
                     // seek for the closest url that exist in navigation table to avoid something like manage_x/index/edit/1/error to be appeared
                     $old_url_part = explode('/', $old_url);
-                    while(count($old_url_part)>0){
+                    while (count($old_url_part) > 0) {
                         $query = $this->db->select('url')
                             ->from(cms_table_name('main_navigation'))
                             ->like('url', implode('/', $old_url_part))
                             ->get();
-                        if($query->num_rows()>0){
+                        if ($query->num_rows() > 0) {
                             $row = $query->row();
                             $old_url = $row->url;
                             break;
-                        }else{
+                        } else {
                             $new_old_url_part = array();
-                            for($i=0; $i<count($old_url_part)-1; $i++){
+                            for ($i = 0; $i < count($old_url_part) - 1; ++$i) {
                                 $new_old_url_part[] = $old_url_part[$i];
                             }
                             $old_url_part = $new_old_url_part;
                         }
                     }
-                    redirect($old_url,'refresh');
+                    redirect($old_url, 'refresh');
                 } else {
-                    redirect('','refresh');
+                    redirect('', 'refresh');
                 }
             } else {
 
                 //view login again
                 $data = array(
-                    "identity" => $identity,
-                    "message" => '{{ language:Error }}: {{ language:Login Failed }}',
-                    "providers" => $this->cms_third_party_providers(),
-                    "login_caption" => $this->cms_lang("Login"),
-                    "register_caption" => $this->cms_lang("Register"),
-                    "allow_register"=> $allow_register,
+                    'identity' => $identity,
+                    'message' => '{{ language:Error }}: {{ language:Login Failed }}',
+                    'providers' => $this->cms_third_party_providers(),
+                    'login_caption' => $this->cms_lang('Login'),
+                    'register_caption' => $this->cms_lang('Register'),
+                    'allow_register' => $allow_register,
                 );
                 $this->view('main/main_login', $data, 'main_login');
             }
         } else {
             //view login again
             $data = array(
-                "identity" => $identity,
-                "message" => '',
-                "providers" => $this->cms_third_party_providers(),
-                "login_caption" => $this->cms_lang("Login"),
-                "register_caption" => $this->cms_lang("Register"),
-                "allow_register" => $allow_register,
+                'identity' => $identity,
+                'message' => '',
+                'providers' => $this->cms_third_party_providers(),
+                'login_caption' => $this->cms_lang('Login'),
+                'register_caption' => $this->cms_lang('Register'),
+                'allow_register' => $allow_register,
             );
             $this->view('main/main_login', $data, 'main_login');
         }
@@ -254,10 +257,10 @@ class Main extends CMS_Controller
     public function activate($activation_code)
     {
         $this->cms_activate_account($activation_code);
-        redirect('','refresh');
+        redirect('', 'refresh');
     }
 
-    public function forgot($activation_code = NULL)
+    public function forgot($activation_code = null)
     {
         $this->cms_guard_page('main_forgot');
         if (isset($activation_code)) {
@@ -270,15 +273,15 @@ class Main extends CMS_Controller
             if ($this->form_validation->run()) {
                 if ($this->cms_valid_activation_code($activation_code)) {
                     $this->cms_activate_account($activation_code, $password);
-                    redirect('','refresh');
+                    redirect('', 'refresh');
                 } else {
                     $main_forgot_url = $this->cms_navigation_url('main_forgot');
-                    redirect($main_forgot_url,'refresh');
+                    redirect($main_forgot_url, 'refresh');
                 }
             } else {
                 $data = array(
-                    "activation_code" => $activation_code,
-                    "change_caption" => $this->cms_lang('Change'),
+                    'activation_code' => $activation_code,
+                    'change_caption' => $this->cms_lang('Change'),
                 );
                 $this->view('main/main_forgot_change_password', $data, 'main_forgot');
             }
@@ -290,19 +293,19 @@ class Main extends CMS_Controller
             $this->form_validation->set_rules('identity', 'Identity', 'required');
 
             if ($this->form_validation->run()) {
-                if ($this->cms_generate_activation_code($identity, TRUE, 'FORGOT')) {
-                    redirect('','refresh');
+                if ($this->cms_generate_activation_code($identity, true, 'FORGOT')) {
+                    redirect('', 'refresh');
                 } else {
                     $data = array(
-                        "identity" => $identity,
-                        "send_activation_code_caption"=> $this->cms_lang('Send activation code to my email'),
+                        'identity' => $identity,
+                        'send_activation_code_caption' => $this->cms_lang('Send activation code to my email'),
                     );
                     $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
                 }
             } else {
                 $data = array(
-                    "identity" => $identity,
-                    "send_activation_code_caption"=> $this->cms_lang('Send activation code to my email'),
+                    'identity' => $identity,
+                    'send_activation_code_caption' => $this->cms_lang('Send activation code to my email'),
                 );
                 $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
             }
@@ -314,25 +317,25 @@ class Main extends CMS_Controller
         $this->cms_guard_page('main_register');
 
         // the honey_pot, every fake input should be empty
-        $honey_pot_pass = (strlen($this->input->post('user_name', ''))==0) &&
-            (strlen($this->input->post('email', ''))==0) &&
-            (strlen($this->input->post('real_name', ''))==0) &&
-            (strlen($this->input->post('password', ''))==0) &&
-            (strlen($this->input->post('confirm_password'))==0);
-        if(!$honey_pot_pass){
+        $honey_pot_pass = (strlen($this->input->post('user_name', '')) == 0) &&
+            (strlen($this->input->post('email', '')) == 0) &&
+            (strlen($this->input->post('real_name', '')) == 0) &&
+            (strlen($this->input->post('password', '')) == 0) &&
+            (strlen($this->input->post('confirm_password')) == 0);
+        if (!$honey_pot_pass) {
             show_404();
             die();
         }
 
         $previous_secret_code = $this->session->userdata('__main_registration_secret_code');
-        if($previous_secret_code === NULL){
+        if ($previous_secret_code === null) {
             $previous_secret_code = $this->cms_random_string();
         }
         //get user input
-        $user_name        = $this->input->post($previous_secret_code.'user_name');
-        $email            = $this->input->post($previous_secret_code.'email');
-        $real_name        = $this->input->post($previous_secret_code.'real_name');
-        $password         = $this->input->post($previous_secret_code.'password');
+        $user_name = $this->input->post($previous_secret_code.'user_name');
+        $email = $this->input->post($previous_secret_code.'email');
+        $real_name = $this->input->post($previous_secret_code.'real_name');
+        $password = $this->input->post($previous_secret_code.'password');
         $confirm_password = $this->input->post($previous_secret_code.'confirm_password');
 
         //set validation rule
@@ -349,16 +352,16 @@ class Main extends CMS_Controller
         !$this->cms_is_user_exists($email) && preg_match('/@.+\./', $email) &&
         $user_name != '' && $email != '') {
             $this->cms_do_register($user_name, $email, $real_name, $password);
-            redirect('','refresh');
+            redirect('', 'refresh');
         } else {
             $data = array(
-                "user_name" => $user_name,
-                "email" => $email,
-                "real_name" => $real_name,
-                "register_caption" => $this->cms_lang('Register'),
-                "secret_code" => $secret_code,
-                "multisite_active" => $this->cms_is_module_active('gofrendi.noCMS.multisite'),
-                "add_subsite_on_register" => $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE',
+                'user_name' => $user_name,
+                'email' => $email,
+                'real_name' => $real_name,
+                'register_caption' => $this->cms_lang('Register'),
+                'secret_code' => $secret_code,
+                'multisite_active' => $this->cms_is_module_active('gofrendi.noCMS.multisite'),
+                'add_subsite_on_register' => $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE',
             );
             $this->view('main/main_register', $data, 'main_register');
         }
@@ -369,45 +372,46 @@ class Main extends CMS_Controller
         if ($this->input->is_ajax_request()) {
             $user_name = $this->input->post('user_name');
             $email = $this->input->post('email');
-            $user_name_exists    = $this->cms_is_user_exists($user_name);
-            $email_exists        = $this->cms_is_user_exists($email);
+            $user_name_exists = $this->cms_is_user_exists($user_name);
+            $email_exists = $this->cms_is_user_exists($email);
             $valid_email = preg_match('/@.+\./', $email);
-            $message   = "";
-            $error = FALSE;
-            if ($user_name == "") {
-                $message = $this->cms_lang("Username is empty");
-                $error = TRUE;
-            } else if ($user_name_exists) {
-                $message = $this->cms_lang("Username already exists");
-                $error = TRUE;
-            } else if (!$valid_email){
-                $message = $this->cms_lang("Invalid email address");
-                $error = TRUE;
-            } else if ($email_exists){
-                $message = $this->cms_lang("Email already used");
-                $error = TRUE;
+            $message = '';
+            $error = false;
+            if ($user_name == '') {
+                $message = $this->cms_lang('Username is empty');
+                $error = true;
+            } elseif ($user_name_exists) {
+                $message = $this->cms_lang('Username already exists');
+                $error = true;
+            } elseif (!$valid_email) {
+                $message = $this->cms_lang('Invalid email address');
+                $error = true;
+            } elseif ($email_exists) {
+                $message = $this->cms_lang('Email already used');
+                $error = true;
             }
 
             $data = array(
-                "exists" => $user_name_exists || $email_exists,
-                "error" => $error,
-                "message" => $message
+                'exists' => $user_name_exists || $email_exists,
+                'error' => $error,
+                'message' => $message,
             );
             $this->cms_show_json($data);
         }
     }
 
-    public function get_layout($theme=''){
-        if($this->input->is_ajax_request()){
-            if($theme == ''){
+    public function get_layout($theme = '')
+    {
+        if ($this->input->is_ajax_request()) {
+            if ($theme == '') {
                 $theme = $this->cms_get_config('site_theme');
             }
             $layout_list = array('');
             $this->load->helper('directory');
             $files = directory_map('themes/'.$theme.'/views/layouts/', 1);
             sort($files);
-            foreach($files as $file){
-                if(is_dir('themes/'.$theme.'/views/layouts/'.$file)){
+            foreach ($files as $file) {
+                if (is_dir('themes/'.$theme.'/views/layouts/'.$file)) {
                     continue;
                 }
                 $file = str_ireplace('.php', '', $file);
@@ -421,21 +425,21 @@ class Main extends CMS_Controller
     {
         if ($this->input->is_ajax_request()) {
             $email = $this->input->post('email');
-            $email_exists        = $this->cms_is_user_exists($email, $this->cms_user_id());
+            $email_exists = $this->cms_is_user_exists($email, $this->cms_user_id());
             $valid_email = preg_match('/@.+\./', $email);
-            $message   = "";
-            $error = FALSE;
-            if (!$valid_email){
-                $message = $this->cms_lang("Invalid email address");
-                $error = TRUE;
-            } else if ($email_exists){
-                $message = $this->cms_lang("Email already used");
-                $error = TRUE;
+            $message = '';
+            $error = false;
+            if (!$valid_email) {
+                $message = $this->cms_lang('Invalid email address');
+                $error = true;
+            } elseif ($email_exists) {
+                $message = $this->cms_lang('Email already used');
+                $error = true;
             }
             $data = array(
-                "exists" => $email_exists,
-                "error" => $error,
-                "message" => $message
+                'exists' => $email_exists,
+                'error' => $error,
+                'message' => $message,
             );
             $this->cms_show_json($data);
         }
@@ -444,24 +448,26 @@ class Main extends CMS_Controller
     public function change_profile()
     {
         $this->cms_guard_page('main_change_profile');
-        $SQL   = "SELECT user_name, email, real_name FROM ".$this->cms_user_table_name()." WHERE user_id = " . $this->cms_user_id();
+        $SQL = 'SELECT user_name, email, real_name FROM '.$this->cms_user_table_name().' WHERE user_id = '.$this->cms_user_id();
         $query = $this->db->query($SQL);
-        $row   = $query->row();
+        $row = $query->row();
         $user_name = $row->user_name;
 
         //get user input
-        $email            = $this->input->post('email');
-        $real_name        = $this->input->post('real_name');
-        $change_password  = $this->input->post('change_password');
-        $password         = $this->input->post('password');
+        $email = $this->input->post('email');
+        $real_name = $this->input->post('real_name');
+        $change_password = $this->input->post('change_password');
+        $password = $this->input->post('password');
         $confirm_password = $this->input->post('confirm_password');
         if (!$change_password) {
-            $password = NULL;
+            $password = null;
         }
-        if (!$email)
+        if (!$email) {
             $email = $row->email;
-        if (!$real_name)
+        }
+        if (!$real_name) {
             $real_name = $row->real_name;
+        }
 
         //set validation rule
         $this->form_validation->set_rules('email', 'E mail', 'required|valid_email');
@@ -471,13 +477,13 @@ class Main extends CMS_Controller
 
         if ($this->form_validation->run()) {
             $this->cms_do_change_profile($email, $real_name, $password, $this->cms_user_id());
-            redirect('','refresh');
+            redirect('', 'refresh');
         } else {
             $data = array(
-                "user_name" => $user_name,
-                "email" => $email,
-                "real_name" => $real_name,
-                "change_profile_caption" => $this->cms_lang('Change Profile'),
+                'user_name' => $user_name,
+                'email' => $email,
+                'real_name' => $real_name,
+                'change_profile_caption' => $this->cms_lang('Change Profile'),
             );
             $this->view('main/main_change_profile', $data, 'main_change_profile');
         }
@@ -486,14 +492,14 @@ class Main extends CMS_Controller
     public function logout()
     {
         $this->cms_do_logout();
-        redirect('','refresh');
+        redirect('', 'refresh');
     }
 
     public function index()
     {
         $this->cms_guard_page('main_index');
         $data = array(
-            "submenu_screen" => $this->cms_submenu_screen(NULL)
+            'submenu_screen' => $this->cms_submenu_screen(null),
         );
         $this->view('main/main_index', $data, 'main_index');
     }
@@ -502,21 +508,21 @@ class Main extends CMS_Controller
     {
         $this->cms_guard_page('main_management');
         $data = array(
-            "submenu_screen" => $this->cms_submenu_screen('main_management')
+            'submenu_screen' => $this->cms_submenu_screen('main_management'),
         );
         $this->view('main/main_management', $data, 'main_management');
     }
 
-    public function language($language = NULL)
+    public function language($language = null)
     {
         $this->cms_guard_page('main_language');
         if (isset($language)) {
             $this->cms_language($language);
-            redirect('','refresh');
+            redirect('', 'refresh');
         } else {
             $data = array(
-                "language_list" => $this->cms_language_list(),
-                "current_language" => $this->cms_language()
+                'language_list' => $this->cms_language_list(),
+                'current_language' => $this->cms_language(),
             );
             $this->view('main/main_language', $data, 'main_language');
         }
@@ -560,56 +566,55 @@ class Main extends CMS_Controller
         $crud->unset_jquery();
 
         $crud->set_table($this->cms_user_table_name());
-        if(CMS_SUBSITE == ''){
+        if (CMS_SUBSITE == '') {
             $crud->where('subsite is NULL');
-        }else{
+        } else {
             $crud->where('subsite', CMS_SUBSITE);
 
             // get super admin of this subsite
             $main_config_file = APPPATH.'config/main/cms_config.php';
-            include($main_config_file);
-            $main_table_prefix   = $config['__cms_table_prefix'];
-            $main_table_prefix   = $main_table_prefix == ''? '' : $main_table_prefix.'_';
+            include $main_config_file;
+            $main_table_prefix = $config['__cms_table_prefix'];
+            $main_table_prefix = $main_table_prefix == '' ? '' : $main_table_prefix.'_';
             // get multisite module path
             $query = $this->db->select('module_path')
                 ->from($main_table_prefix.'main_module')
                 ->where('module_name', 'gofrendi.noCMS.multisite')
                 ->get();
-            if($query->num_rows()>0){
+            if ($query->num_rows() > 0) {
                 $row = $query->row();
                 $multisite_module_path = $row->module_path;
                 // get module table prefix
                 $multisite_config_file = FCPATH.'modules/'.$multisite_module_path.'/config/module_config.php';
-                include($multisite_config_file);
+                include $multisite_config_file;
                 $multisite_table_prefix = $config['module_table_prefix'];
-                $multisite_table_prefix = $multisite_table_prefix == ''? '' : $multisite_table_prefix.'_';
+                $multisite_table_prefix = $multisite_table_prefix == '' ? '' : $multisite_table_prefix.'_';
                 // get subsite table
-                $subsite_table = $main_table_prefix . $multisite_table_prefix . 'subsite';
+                $subsite_table = $main_table_prefix.$multisite_table_prefix.'subsite';
 
                 $query = $this->db->select('user_id')
                     ->from($subsite_table)
                     ->where('name', CMS_SUBSITE)
                     ->get();
-                if($query->num_rows() > 0){
+                if ($query->num_rows() > 0) {
                     $row = $query->row();
                     $admin_user_id = $row->user_id;
                     $crud->or_where('user_id', $admin_user_id);
                 }
             }
-
         }
         $crud->set_subject('User');
 
         $crud->required_fields('password');
-        $crud->unique_fields('user_name','email');
+        $crud->unique_fields('user_name', 'email');
         $crud->unset_read();
 
-        if(CMS_SUBSITE == ''){
+        if (CMS_SUBSITE == '') {
             $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
             $crud->edit_fields('user_name', 'email', 'real_name', 'active', 'groups');
             $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
             $crud->field_type('active', 'true_false');
-        } else{
+        } else {
             $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
             $crud->edit_fields('user_name', 'groups');
             $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
@@ -628,29 +633,29 @@ class Main extends CMS_Controller
         $crud->set_relation_n_n('groups', cms_table_name('main_group_user'), cms_table_name('main_group'), 'user_id', 'group_id', 'group_name');
         $crud->callback_before_insert(array(
             $this,
-            '_before_insert_user'
+            '_before_insert_user',
         ));
         $crud->callback_before_delete(array(
             $this,
-            '_before_delete_user'
+            '_before_delete_user',
         ));
         $crud->callback_after_update(array(
             $this,
-            '_after_update_user'
+            '_after_update_user',
         ));
 
         if ($crud->getState() == 'edit') {
-            $state_info  = $crud->getStateInfo();
+            $state_info = $crud->getStateInfo();
             $primary_key = $state_info->primary_key;
             if ($primary_key == $this->cms_user_id() || $primary_key == 1) {
                 $crud->callback_edit_field('active', array(
                     $this,
-                    '_read_only_user_active'
+                    '_read_only_user_active',
                 ));
             }
             $crud->callback_edit_field('user_name', array(
                 $this,
-                '_read_only_user_user_name'
+                '_read_only_user_user_name',
             ));
         }
         $crud->set_lang_string('delete_error_message', 'You cannot delete super admin user or your own account');
@@ -661,12 +666,12 @@ class Main extends CMS_Controller
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
-        foreach($output->css_files as $file){
+        foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
         $config['css'] = $asset->compile_css();
 
-        foreach($output->js_files as $file){
+        foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
         $config['js'] = $asset->compile_js();
@@ -676,26 +681,29 @@ class Main extends CMS_Controller
 
     public function _read_only_user_active($value, $row)
     {
-        $input   = '<input name="active" value="' . $value . '" type="hidden" />';
+        $input = '<input name="active" value="'.$value.'" type="hidden" />';
         $caption = $value == 0 ? 'Inactive' : 'Active';
-        return $input . $caption;
+
+        return $input.$caption;
     }
 
     public function _read_only_user_user_name($value, $row)
     {
-        $input   = '<input name="user_name" value="' . $value . '" type="hidden" />';
+        $input = '<input name="user_name" value="'.$value.'" type="hidden" />';
         $caption = $value;
-        return $input . $caption;
+
+        return $input.$caption;
     }
 
     public function _before_insert_user($post_array)
     {
         // password
-        $post_array['password'] = CMS_SUBSITE == ''?
-            cms_md5($post_array['password'], $this->cms_chipper()):
+        $post_array['password'] = CMS_SUBSITE == '' ?
+            cms_md5($post_array['password'], $this->cms_chipper()) :
             cms_md5($post_array['password']);
         // subsite
-        $post_array['subsite'] = CMS_SUBSITE == ''? NULL : CMS_SUBSITE;
+        $post_array['subsite'] = CMS_SUBSITE == '' ? null : CMS_SUBSITE;
+
         return $post_array;
     }
 
@@ -705,6 +713,7 @@ class Main extends CMS_Controller
         if (($primary_key == 1) || ($primary_key == $this->cms_user_id())) {
             return false;
         }
+
         return true;
     }
 
@@ -718,13 +727,14 @@ class Main extends CMS_Controller
             ->get();
         $row = $result->row();
         $active = $row->active;
-        if(CMS_SUBSITE == ''){
+        if (CMS_SUBSITE == '') {
             // change profile
-            $this->cms_do_change_profile($post_array['email'], $post_array['real_name'] ,NULL, $primary_key);
+            $this->cms_do_change_profile($post_array['email'], $post_array['real_name'], null, $primary_key);
             // update subsite
             $this->_cms_set_user_subsite_activation($user_id, $active);
         }
-        return TRUE;
+
+        return true;
     }
 
     // GROUP ===================================================================
@@ -750,17 +760,15 @@ class Main extends CMS_Controller
             ->display_as('navigations', 'Navigations')
             ->display_as('privileges', 'Privileges');
 
-
         $crud->set_relation_n_n('users', cms_table_name('main_group_user'), $this->cms_user_table_name(), 'group_id', 'user_id', 'user_name');
         $crud->set_relation_n_n('navigations', cms_table_name('main_group_navigation'), cms_table_name('main_navigation'), 'group_id', 'navigation_id', 'navigation_name');
         $crud->set_relation_n_n('privileges', cms_table_name('main_group_privilege'), cms_table_name('main_privilege'), 'group_id', 'privilege_id', 'privilege_name');
         $crud->callback_before_delete(array(
             $this,
-            '_before_delete_group'
+            '_before_delete_group',
         ));
 
         $crud->unset_texteditor('description');
-
 
         $crud->set_lang_string('delete_error_message', $this->cms_lang('You cannot delete admin group or group which is not empty, please empty the group first'));
 
@@ -771,19 +779,19 @@ class Main extends CMS_Controller
         $query = $this->db->select('group_id')->distinct()
             ->from(cms_table_name('main_group_user'))
             ->get();
-        foreach($query->result() as $row){
+        foreach ($query->result() as $row) {
             $output->undeleted_id[] = $row->group_id;
         }
 
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
-        foreach($output->css_files as $file){
+        foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
         $config['css'] = $asset->compile_css();
 
-        foreach($output->js_files as $file){
+        foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
         $config['js'] = $asset->compile_js();
@@ -793,7 +801,7 @@ class Main extends CMS_Controller
 
     public function _before_delete_group($primary_key)
     {
-        $SQL   = "SELECT user_id FROM ".cms_table_name('main_group_user')." WHERE group_id =" . $primary_key . ";";
+        $SQL = 'SELECT user_id FROM '.cms_table_name('main_group_user').' WHERE group_id ='.$primary_key.';';
         $query = $this->db->query($SQL);
         $count = $query->num_rows();
 
@@ -801,11 +809,12 @@ class Main extends CMS_Controller
         if ($primary_key == 1 || $count > 0) {
             return false;
         }
+
         return true;
     }
 
     // NAVIGATION ==============================================================
-    public function navigation($parent_id=NULL)
+    public function navigation($parent_id = null)
     {
         $this->cms_guard_page('main_navigation_management');
         $crud = $this->new_crud();
@@ -821,33 +830,33 @@ class Main extends CMS_Controller
         $undeleted_id = array();
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
-            ->like('navigation_name','main_','after')
-            ->like('url','main/','after')
+            ->like('navigation_name', 'main_', 'after')
+            ->like('url', 'main/', 'after')
             ->get();
-        foreach($query->result() as $row){
+        foreach ($query->result() as $row) {
             $undeleted_id[] = $row->navigation_id;
         }
 
-        if($state == 'update' || $state == 'edit' || $state == 'update_validation'){
+        if ($state == 'update' || $state == 'edit' || $state == 'update_validation') {
             $primary_key = $state_info->primary_key;
-            if(in_array($primary_key, $undeleted_id)){
-                $crud->field_type('navigation_name','readonly');
+            if (in_array($primary_key, $undeleted_id)) {
+                $crud->field_type('navigation_name', 'readonly');
                 $crud->required_fields('title');
-            }else{
+            } else {
                 $crud->required_fields('navigation_name', 'title');
             }
-        }else{
+        } else {
             $crud->required_fields('navigation_name', 'title');
         }
         $crud->unique_fields('navigation_name', 'title', 'url');
         $crud->unset_read();
 
         $crud->columns('navigation_name');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url','notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
 
         // get themes to give options for default_theme field
-        $themes     = $this->cms_get_theme_list();
+        $themes = $this->cms_get_theme_list();
         $theme_path = array();
         foreach ($themes as $theme) {
             $theme_path[] = $theme['path'];
@@ -879,49 +888,48 @@ class Main extends CMS_Controller
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
         $crud->field_type('hidden', 'true_false');
-        $crud->field_type('bootstrap_glyph','enum',array('glyphicon-adjust', 'glyphicon-align-center', 'glyphicon-align-justify', 'glyphicon-align-left', 'glyphicon-align-right', 'glyphicon-arrow-down', 'glyphicon-arrow-left', 'glyphicon-arrow-right', 'glyphicon-arrow-up', 'glyphicon-asterisk', 'glyphicon-backward', 'glyphicon-ban-circle', 'glyphicon-barcode', 'glyphicon-bell', 'glyphicon-bold', 'glyphicon-book', 'glyphicon-bookmark', 'glyphicon-briefcase', 'glyphicon-bullhorn', 'glyphicon-calendar', 'glyphicon-camera', 'glyphicon-certificate', 'glyphicon-check', 'glyphicon-chevron-down', 'glyphicon-chevron-left', 'glyphicon-chevron-right', 'glyphicon-chevron-up', 'glyphicon-circle-arrow-down', 'glyphicon-circle-arrow-left', 'glyphicon-circle-arrow-right', 'glyphicon-circle-arrow-up', 'glyphicon-cloud', 'glyphicon-cloud-download', 'glyphicon-cloud-upload', 'glyphicon-cog', 'glyphicon-collapse-down', 'glyphicon-collapse-up', 'glyphicon-comment', 'glyphicon-compressed', 'glyphicon-copyright-mark', 'glyphicon-credit-card', 'glyphicon-cutlery', 'glyphicon-dashboard', 'glyphicon-download', 'glyphicon-download-alt', 'glyphicon-earphone', 'glyphicon-edit', 'glyphicon-eject', 'glyphicon-envelope', 'glyphicon-euro', 'glyphicon-exclamation-sign', 'glyphicon-expand', 'glyphicon-export', 'glyphicon-eye-close', 'glyphicon-eye-open', 'glyphicon-facetime-video', 'glyphicon-fast-backward', 'glyphicon-fast-forward', 'glyphicon-file', 'glyphicon-film', 'glyphicon-filter', 'glyphicon-fire', 'glyphicon-flag', 'glyphicon-flash', 'glyphicon-floppy-disk', 'glyphicon-floppy-open', 'glyphicon-floppy-remove', 'glyphicon-floppy-save', 'glyphicon-floppy-saved', 'glyphicon-folder-close', 'glyphicon-folder-open', 'glyphicon-font', 'glyphicon-forward', 'glyphicon-fullscreen', 'glyphicon-gbp', 'glyphicon-gift', 'glyphicon-glass', 'glyphicon-globe', 'glyphicon-hand-down', 'glyphicon-hand-left', 'glyphicon-hand-right', 'glyphicon-hand-up', 'glyphicon-hd-video', 'glyphicon-hdd', 'glyphicon-header', 'glyphicon-headphones', 'glyphicon-heart', 'glyphicon-heart-empty', 'glyphicon-home', 'glyphicon-import', 'glyphicon-inbox', 'glyphicon-indent-left', 'glyphicon-indent-right', 'glyphicon-info-sign', 'glyphicon-italic', 'glyphicon-leaf', 'glyphicon-link', 'glyphicon-list', 'glyphicon-list-alt', 'glyphicon-lock', 'glyphicon-log-in', 'glyphicon-log-out', 'glyphicon-magnet', 'glyphicon-map-marker', 'glyphicon-minus', 'glyphicon-minus-sign', 'glyphicon-move', 'glyphicon-music', 'glyphicon-new-window', 'glyphicon-off', 'glyphicon-ok', 'glyphicon-ok-circle', 'glyphicon-ok-sign', 'glyphicon-open', 'glyphicon-paperclip', 'glyphicon-pause', 'glyphicon-pencil', 'glyphicon-phone', 'glyphicon-phone-alt', 'glyphicon-picture', 'glyphicon-plane', 'glyphicon-play', 'glyphicon-play-circle', 'glyphicon-plus', 'glyphicon-plus-sign', 'glyphicon-print', 'glyphicon-pushpin', 'glyphicon-qrcode', 'glyphicon-question-sign', 'glyphicon-random', 'glyphicon-record', 'glyphicon-refresh', 'glyphicon-registration-mark', 'glyphicon-remove', 'glyphicon-remove-circle', 'glyphicon-remove-sign', 'glyphicon-repeat', 'glyphicon-resize-full', 'glyphicon-resize-horizontal', 'glyphicon-resize-small', 'glyphicon-resize-vertical', 'glyphicon-retweet', 'glyphicon-road', 'glyphicon-save', 'glyphicon-saved', 'glyphicon-screenshot', 'glyphicon-sd-video', 'glyphicon-search', 'glyphicon-send', 'glyphicon-share', 'glyphicon-share-alt', 'glyphicon-shopping-cart', 'glyphicon-signal', 'glyphicon-sort', 'glyphicon-sort-by-alphabet', 'glyphicon-sort-by-alphabet-alt', 'glyphicon-sort-by-attributes', 'glyphicon-sort-by-attributes-alt', 'glyphicon-sort-by-order', 'glyphicon-sort-by-order-alt', 'glyphicon-sound-5-1', 'glyphicon-sound-6-1', 'glyphicon-sound-7-1', 'glyphicon-sound-dolby', 'glyphicon-sound-stereo', 'glyphicon-star', 'glyphicon-star-empty', 'glyphicon-stats', 'glyphicon-step-backward', 'glyphicon-step-forward', 'glyphicon-stop', 'glyphicon-subtitles', 'glyphicon-tag', 'glyphicon-tags', 'glyphicon-tasks', 'glyphicon-text-height', 'glyphicon-text-width', 'glyphicon-th', 'glyphicon-th-large', 'glyphicon-th-list', 'glyphicon-thumbs-down', 'glyphicon-thumbs-up', 'glyphicon-time', 'glyphicon-tint', 'glyphicon-tower', 'glyphicon-transfer', 'glyphicon-trash', 'glyphicon-tree-conifer', 'glyphicon-tree-deciduous', 'glyphicon-unchecked', 'glyphicon-upload', 'glyphicon-usd', 'glyphicon-user', 'glyphicon-volume-down', 'glyphicon-volume-off', 'glyphicon-volume-up', 'glyphicon-warning-sign', 'glyphicon-wrench', 'glyphicon-zoom-in', 'glyphicon-zoom-out'));
-        $crud->field_type('index','hidden');
+        $crud->field_type('bootstrap_glyph', 'enum', array('glyphicon-adjust', 'glyphicon-align-center', 'glyphicon-align-justify', 'glyphicon-align-left', 'glyphicon-align-right', 'glyphicon-arrow-down', 'glyphicon-arrow-left', 'glyphicon-arrow-right', 'glyphicon-arrow-up', 'glyphicon-asterisk', 'glyphicon-backward', 'glyphicon-ban-circle', 'glyphicon-barcode', 'glyphicon-bell', 'glyphicon-bold', 'glyphicon-book', 'glyphicon-bookmark', 'glyphicon-briefcase', 'glyphicon-bullhorn', 'glyphicon-calendar', 'glyphicon-camera', 'glyphicon-certificate', 'glyphicon-check', 'glyphicon-chevron-down', 'glyphicon-chevron-left', 'glyphicon-chevron-right', 'glyphicon-chevron-up', 'glyphicon-circle-arrow-down', 'glyphicon-circle-arrow-left', 'glyphicon-circle-arrow-right', 'glyphicon-circle-arrow-up', 'glyphicon-cloud', 'glyphicon-cloud-download', 'glyphicon-cloud-upload', 'glyphicon-cog', 'glyphicon-collapse-down', 'glyphicon-collapse-up', 'glyphicon-comment', 'glyphicon-compressed', 'glyphicon-copyright-mark', 'glyphicon-credit-card', 'glyphicon-cutlery', 'glyphicon-dashboard', 'glyphicon-download', 'glyphicon-download-alt', 'glyphicon-earphone', 'glyphicon-edit', 'glyphicon-eject', 'glyphicon-envelope', 'glyphicon-euro', 'glyphicon-exclamation-sign', 'glyphicon-expand', 'glyphicon-export', 'glyphicon-eye-close', 'glyphicon-eye-open', 'glyphicon-facetime-video', 'glyphicon-fast-backward', 'glyphicon-fast-forward', 'glyphicon-file', 'glyphicon-film', 'glyphicon-filter', 'glyphicon-fire', 'glyphicon-flag', 'glyphicon-flash', 'glyphicon-floppy-disk', 'glyphicon-floppy-open', 'glyphicon-floppy-remove', 'glyphicon-floppy-save', 'glyphicon-floppy-saved', 'glyphicon-folder-close', 'glyphicon-folder-open', 'glyphicon-font', 'glyphicon-forward', 'glyphicon-fullscreen', 'glyphicon-gbp', 'glyphicon-gift', 'glyphicon-glass', 'glyphicon-globe', 'glyphicon-hand-down', 'glyphicon-hand-left', 'glyphicon-hand-right', 'glyphicon-hand-up', 'glyphicon-hd-video', 'glyphicon-hdd', 'glyphicon-header', 'glyphicon-headphones', 'glyphicon-heart', 'glyphicon-heart-empty', 'glyphicon-home', 'glyphicon-import', 'glyphicon-inbox', 'glyphicon-indent-left', 'glyphicon-indent-right', 'glyphicon-info-sign', 'glyphicon-italic', 'glyphicon-leaf', 'glyphicon-link', 'glyphicon-list', 'glyphicon-list-alt', 'glyphicon-lock', 'glyphicon-log-in', 'glyphicon-log-out', 'glyphicon-magnet', 'glyphicon-map-marker', 'glyphicon-minus', 'glyphicon-minus-sign', 'glyphicon-move', 'glyphicon-music', 'glyphicon-new-window', 'glyphicon-off', 'glyphicon-ok', 'glyphicon-ok-circle', 'glyphicon-ok-sign', 'glyphicon-open', 'glyphicon-paperclip', 'glyphicon-pause', 'glyphicon-pencil', 'glyphicon-phone', 'glyphicon-phone-alt', 'glyphicon-picture', 'glyphicon-plane', 'glyphicon-play', 'glyphicon-play-circle', 'glyphicon-plus', 'glyphicon-plus-sign', 'glyphicon-print', 'glyphicon-pushpin', 'glyphicon-qrcode', 'glyphicon-question-sign', 'glyphicon-random', 'glyphicon-record', 'glyphicon-refresh', 'glyphicon-registration-mark', 'glyphicon-remove', 'glyphicon-remove-circle', 'glyphicon-remove-sign', 'glyphicon-repeat', 'glyphicon-resize-full', 'glyphicon-resize-horizontal', 'glyphicon-resize-small', 'glyphicon-resize-vertical', 'glyphicon-retweet', 'glyphicon-road', 'glyphicon-save', 'glyphicon-saved', 'glyphicon-screenshot', 'glyphicon-sd-video', 'glyphicon-search', 'glyphicon-send', 'glyphicon-share', 'glyphicon-share-alt', 'glyphicon-shopping-cart', 'glyphicon-signal', 'glyphicon-sort', 'glyphicon-sort-by-alphabet', 'glyphicon-sort-by-alphabet-alt', 'glyphicon-sort-by-attributes', 'glyphicon-sort-by-attributes-alt', 'glyphicon-sort-by-order', 'glyphicon-sort-by-order-alt', 'glyphicon-sound-5-1', 'glyphicon-sound-6-1', 'glyphicon-sound-7-1', 'glyphicon-sound-dolby', 'glyphicon-sound-stereo', 'glyphicon-star', 'glyphicon-star-empty', 'glyphicon-stats', 'glyphicon-step-backward', 'glyphicon-step-forward', 'glyphicon-stop', 'glyphicon-subtitles', 'glyphicon-tag', 'glyphicon-tags', 'glyphicon-tasks', 'glyphicon-text-height', 'glyphicon-text-width', 'glyphicon-th', 'glyphicon-th-large', 'glyphicon-th-list', 'glyphicon-thumbs-down', 'glyphicon-thumbs-up', 'glyphicon-time', 'glyphicon-tint', 'glyphicon-tower', 'glyphicon-transfer', 'glyphicon-trash', 'glyphicon-tree-conifer', 'glyphicon-tree-deciduous', 'glyphicon-unchecked', 'glyphicon-upload', 'glyphicon-usd', 'glyphicon-user', 'glyphicon-volume-down', 'glyphicon-volume-off', 'glyphicon-volume-up', 'glyphicon-warning-sign', 'glyphicon-wrench', 'glyphicon-zoom-in', 'glyphicon-zoom-out'));
+        $crud->field_type('index', 'hidden');
 
         $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name');
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_navigation'), cms_table_name('main_group'), 'navigation_id', 'group_id', 'group_name');
 
-        if(!array_key_exists('search_text', $this->input->post())){
-            if(isset($parent_id) && intval($parent_id)>0){
+        if (!array_key_exists('search_text', $this->input->post())) {
+            if (isset($parent_id) && intval($parent_id) > 0) {
                 $crud->where(cms_table_name('main_navigation').'.parent_id', $parent_id);
                 $state = $crud->getState();
-                if($state == 'add'){
+                if ($state == 'add') {
                     $crud->field_type('parent_id', 'hidden', $parent_id);
-                }elseif($state == 'edit'){
+                } elseif ($state == 'edit') {
                     $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
                 }
-            }else{
-                $crud->where(array(cms_table_name('main_navigation').'.parent_id' => NULL));
+            } else {
+                $crud->where(array(cms_table_name('main_navigation').'.parent_id' => null));
                 $crud->set_relation('parent_id', cms_table_name('main_navigation'), 'navigation_name');
             }
         }
 
-
         $crud->callback_column(cms_table_name('main_navigation').'.navigation_name', array(
             $this,
-            '_column_navigation_name'
+            '_column_navigation_name',
         ));
         $crud->callback_column('navigation_name', array(
             $this,
-            '_column_navigation_name'
+            '_column_navigation_name',
         ));
 
         $crud->callback_before_update(array(
             $this,
-            '_before_update_navigation'
+            '_before_update_navigation',
         ));
         $crud->callback_before_insert(array(
             $this,
-            '_before_insert_navigation'
+            '_before_insert_navigation',
         ));
         $crud->callback_before_delete(array(
             $this,
-            '_before_delete_navigation'
+            '_before_delete_navigation',
         ));
 
         $crud->set_language($this->cms_language());
@@ -929,12 +937,12 @@ class Main extends CMS_Controller
         $output = $crud->render();
 
         $navigation_path = array();
-        if(isset($parent_id) && intval($parent_id)>0){
+        if (isset($parent_id) && intval($parent_id) > 0) {
             $this->db->select('navigation_name')
                 ->from(cms_table_name('main_navigation'))
                 ->where('navigation_id', $parent_id);
             $query = $this->db->get();
-            if($query->num_rows()>0){
+            if ($query->num_rows() > 0) {
                 $row = $query->row();
                 $navigation_name = $row->navigation_name;
                 $navigation_path = $this->cms_get_navigation_path($navigation_name);
@@ -948,12 +956,12 @@ class Main extends CMS_Controller
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
-        foreach($output->css_files as $file){
+        foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
         $config['css'] = $asset->compile_css();
 
-        foreach($output->js_files as $file){
+        foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
         $config['js'] = $asset->compile_js();
@@ -961,29 +969,28 @@ class Main extends CMS_Controller
         $this->view('main/main_navigation', $output, 'main_navigation_management', $config);
     }
 
-
     public function _before_insert_navigation($post_array)
     {
         //get parent's navigation_id
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
-            ->where('navigation_id', is_int($post_array['parent_id'])? $post_array['parent_id']: NULL)
+            ->where('navigation_id', is_int($post_array['parent_id']) ? $post_array['parent_id'] : null)
             ->get();
-        $row   = $query->row();
+        $row = $query->row();
 
-        $parent_id = isset($row->navigation_id) ? $row->navigation_id : NULL;
+        $parent_id = isset($row->navigation_id) ? $row->navigation_id : null;
 
         //index = max index+1
         $query = $this->db->select_max('index')
             ->from(cms_table_name('main_navigation'))
             ->where('parent_id', $parent_id)
             ->get();
-        $row   = $query->row();
+        $row = $query->row();
         $index = $row->index;
-        if (!isset($index)){
+        if (!isset($index)) {
             $index = 1;
-        }else{
-            $index = $index+1;
+        } else {
+            $index = $index + 1;
         }
 
         $post_array['index'] = $index;
@@ -997,26 +1004,27 @@ class Main extends CMS_Controller
 
     public function _before_update_navigation($post_array, $primary_key)
     {
-        if(array_key_exists('parent_id', $post_array)){
-            if($post_array['parent_id'] == $primary_key){
-                $post_array['parent_id'] = NULL;
-            }else{
+        if (array_key_exists('parent_id', $post_array)) {
+            if ($post_array['parent_id'] == $primary_key) {
+                $post_array['parent_id'] = null;
+            } else {
                 $query = $this->db->select('navigation_name')
                     ->from(cms_table_name('main_navigation'))
                     ->where('navigation_id', $primary_key)
                     ->get();
-                if($query->num_rows()>0){
+                if ($query->num_rows() > 0) {
                     $row = $query->row();
                     $navigation_path = $this->cms_get_navigation_path($row->navigation_name);
-                    foreach($navigation_path as $navigation){
-                        if($navigation['navigation_id'] == $post_array['parent_id']){
-                            $post_array['parent_id'] = NULL;
+                    foreach ($navigation_path as $navigation) {
+                        if ($navigation['navigation_id'] == $post_array['parent_id']) {
+                            $post_array['parent_id'] = null;
                             break;
                         }
                     }
                 }
             }
         }
+
         return $post_array;
     }
 
@@ -1025,22 +1033,23 @@ class Main extends CMS_Controller
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
             ->where('navigation_id', $primary_key)
-            ->like('navigation_name','main_','after')
-            ->like('url','main/','after')
+            ->like('navigation_name', 'main_', 'after')
+            ->like('url', 'main/', 'after')
             ->get();
-        if($query->num_rows() == 0){
+        if ($query->num_rows() == 0) {
             $this->db->delete(cms_table_name('main_quicklink'), array(
-                'navigation_id' => $primary_key
+                'navigation_id' => $primary_key,
             ));
+
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     public function _column_navigation_name($value, $row)
     {
-        if(!isset($_SESSION)){
+        if (!isset($_SESSION)) {
             session_start();
         }
 
@@ -1050,26 +1059,26 @@ class Main extends CMS_Controller
         $query = $this->db->get();
         $child_count = $query->num_rows();
         // determine need_child class
-        if($child_count>0){
-            $can_be_expanded = TRUE;
+        if ($child_count > 0) {
+            $can_be_expanded = true;
             $need_child = ' need-child';
-        }else{
-            $can_be_expanded = FALSE;
+        } else {
+            $can_be_expanded = false;
             $need_child = '';
         }
 
-        $html  = '<a name="'.$row->navigation_id.'"></a>';
-        $html .= '<span>' .$value . '<br />(' . $row->title . ')</span>';
-        $html .= '<input type="hidden" class="navigation_id' . $need_child . '" value="'.$row->navigation_id.'" /><br />';
+        $html = '<a name="'.$row->navigation_id.'"></a>';
+        $html .= '<span>'.$value.'<br />('.$row->title.')</span>';
+        $html .= '<input type="hidden" class="navigation_id'.$need_child.'" value="'.$row->navigation_id.'" /><br />';
         // active or not
-        $target = site_url($this->cms_module_path() . '/toggle_navigation_active/' . $row->navigation_id);
+        $target = site_url($this->cms_module_path().'/toggle_navigation_active/'.$row->navigation_id);
         if ($row->active == 0) {
-            $html .= '<a href="#" target="' . $target . '" class="navigation_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Inactive</span></a>';
+            $html .= '<a href="#" target="'.$target.'" class="navigation_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Inactive</span></a>';
         } else {
-            $html .= '<a href="#" target="' . $target . '" class="navigation_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Active</span></a>';
+            $html .= '<a href="#" target="'.$target.'" class="navigation_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Active</span></a>';
         }
         // expand
-        if($can_be_expanded){
+        if ($can_be_expanded) {
             $html .= ' | <a href="#" class="expand-collapse-children" target="'.$row->navigation_id.'"><i class="glyphicon glyphicon-chevron-up"></i> Collapse</a>';
         }
         // add children
@@ -1077,67 +1086,72 @@ class Main extends CMS_Controller
             '<i class="glyphicon glyphicon-plus"></i> '.$this->cms_lang('Add Child')
             .'</a>';
 
-        if(isset($_SESSION['__mark_move_navigation_id'])){
+        if (isset($_SESSION['__mark_move_navigation_id'])) {
             $mark_move_navigation_id = $_SESSION['__mark_move_navigation_id'];
-            if($row->navigation_id == $mark_move_navigation_id){
+            if ($row->navigation_id == $mark_move_navigation_id) {
                 // cancel link
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_move_cancel').'"><i class="glyphicon glyphicon-repeat"></i> Undo</a>';
-            }else{
+            } else {
                 // paste before, paste after, paste inside
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_move_before/'.$row->navigation_id).'"><i class="glyphicon glyphicon-open"></i> Put Before</a>';
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_move_after/'.$row->navigation_id).'"><i class="glyphicon glyphicon-save"></i> Put After</a>';
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_move_into/'.$row->navigation_id).'"><i class="glyphicon glyphicon-import"></i> Put Into</a>';
             }
-        }else{
+        } else {
             $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_mark_move/'.$row->navigation_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
         }
 
         return $html;
     }
 
-    public function navigation_mark_move($navigation_id){
-        if(!isset($_SESSION)){
+    public function navigation_mark_move($navigation_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $_SESSION['__mark_move_navigation_id'] = $navigation_id;
-        redirect($this->cms_module_path().'/navigation#'.$navigation_id,'refresh');
+        redirect($this->cms_module_path().'/navigation#'.$navigation_id, 'refresh');
     }
 
-    public function navigation_move_cancel(){
-        if(!isset($_SESSION)){
+    public function navigation_move_cancel()
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $navigation_id = $_SESSION['__mark_move_navigation_id'];
         unset($_SESSION['__mark_move_navigation_id']);
-        redirect($this->cms_module_path().'/navigation#'.$navigation_id,'refresh');
+        redirect($this->cms_module_path().'/navigation#'.$navigation_id, 'refresh');
     }
 
-    public function navigation_move_before($dst_navigation_id){
-        if(!isset($_SESSION)){
+    public function navigation_move_before($dst_navigation_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $src_navigation_id = $_SESSION['__mark_move_navigation_id'];
         $this->cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id);
         unset($_SESSION['__mark_move_navigation_id']);
-        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id,'refresh');
+        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id, 'refresh');
     }
-    public function navigation_move_after($dst_navigation_id){
-        if(!isset($_SESSION)){
+    public function navigation_move_after($dst_navigation_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $src_navigation_id = $_SESSION['__mark_move_navigation_id'];
         $this->cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id);
         unset($_SESSION['__mark_move_navigation_id']);
-        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id,'refresh');
+        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id, 'refresh');
     }
-    public function navigation_move_into($dst_navigation_id){
-        if(!isset($_SESSION)){
+    public function navigation_move_into($dst_navigation_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $src_navigation_id = $_SESSION['__mark_move_navigation_id'];
         $this->cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id);
         unset($_SESSION['__mark_move_navigation_id']);
-        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id,'refresh');
+        redirect($this->cms_module_path().'/navigation#'.$src_navigation_id, 'refresh');
     }
 
     public function toggle_navigation_active($navigation_id)
@@ -1146,19 +1160,19 @@ class Main extends CMS_Controller
             $this->db->select('active')->from(cms_table_name('main_navigation'))->where('navigation_id', $navigation_id);
             $query = $this->db->get();
             if ($query->num_rows() > 0) {
-                $row       = $query->row();
+                $row = $query->row();
                 $new_value = ($row->active == 0) ? 1 : 0;
                 $this->db->update(cms_table_name('main_navigation'), array(
-                    'active' => $new_value
+                    'active' => $new_value,
                 ), array(
-                    'navigation_id' => $navigation_id
+                    'navigation_id' => $navigation_id,
                 ));
                 $this->cms_show_json(array(
-                    'success' => true
+                    'success' => true,
                 ));
             } else {
                 $this->cms_show_json(array(
-                    'success' => false
+                    'success' => false,
                 ));
             }
         }
@@ -1187,16 +1201,16 @@ class Main extends CMS_Controller
         $crud->order_by('index', 'asc');
 
         $crud->set_relation('navigation_id', cms_table_name('main_navigation'), 'navigation_name');
-        $crud->field_type('index','hidden');
+        $crud->field_type('index', 'hidden');
 
         $crud->callback_before_insert(array(
             $this,
-            '_before_insert_quicklink'
+            '_before_insert_quicklink',
         ));
 
         $crud->callback_column($this->cms_unique_field_name('navigation_id'), array(
             $this,
-            'column_quicklink_navigation_id'
+            'column_quicklink_navigation_id',
         ));
 
         $crud->set_language($this->cms_language());
@@ -1206,12 +1220,12 @@ class Main extends CMS_Controller
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
-        foreach($output->css_files as $file){
+        foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
         $config['css'] = $asset->compile_css();
 
-        foreach($output->js_files as $file){
+        foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
         $config['js'] = $asset->compile_js();
@@ -1224,12 +1238,12 @@ class Main extends CMS_Controller
         $query = $this->db->select_max('index')
             ->from(cms_table_name('main_quicklink'))
             ->get();
-        $row   = $query->row();
+        $row = $query->row();
         $index = $row->index;
-        if (!isset($index)){
+        if (!isset($index)) {
             $index = 1;
-        }else{
-            $index = $index+1;
+        } else {
+            $index = $index + 1;
         }
 
         $post_array['index'] = $index;
@@ -1239,61 +1253,65 @@ class Main extends CMS_Controller
 
     public function column_quicklink_navigation_id($value, $row)
     {
-        $html  = '<a name="'.$row->quicklink_id.'"></a>';
-        $html .= '<span>' .$value . '</span>';
+        $html = '<a name="'.$row->quicklink_id.'"></a>';
+        $html .= '<span>'.$value.'</span>';
         $html .= '<input type="hidden" class="quicklink_id" value="'.$row->quicklink_id.'" />';
 
-        if(isset($_SESSION['__mark_move_quicklink_id'])){
+        if (isset($_SESSION['__mark_move_quicklink_id'])) {
             $mark_move_quicklink_id = $_SESSION['__mark_move_quicklink_id'];
-            if($row->quicklink_id == $mark_move_quicklink_id){
+            if ($row->quicklink_id == $mark_move_quicklink_id) {
                 // cancel link
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/quicklink_move_cancel').'"><i class="glyphicon glyphicon-repeat"></i> Undo</a>';
-            }else{
+            } else {
                 // paste before, paste after, paste inside
                 $html .= '<br /><a href="'.site_url($this->cms_module_path().'/quicklink_move_before/'.$row->quicklink_id).'"><i class="glyphicon glyphicon-open"></i> Put Before</a>';
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/quicklink_move_after/'.$row->quicklink_id).'"><i class="glyphicon glyphicon-save"></i> Put After</a>';
             }
-        }else{
+        } else {
             $html .= ' | <a href="'.site_url($this->cms_module_path().'/quicklink_mark_move/'.$row->quicklink_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
         }
 
         return $html;
     }
 
-    public function quicklink_mark_move($quicklink_id){
-        if(!isset($_SESSION)){
+    public function quicklink_mark_move($quicklink_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $_SESSION['__mark_move_quicklink_id'] = $quicklink_id;
-        redirect($this->cms_module_path().'/quicklink#'.$quicklink_id,'refresh');
+        redirect($this->cms_module_path().'/quicklink#'.$quicklink_id, 'refresh');
     }
 
-    public function quicklink_move_cancel(){
-        if(!isset($_SESSION)){
+    public function quicklink_move_cancel()
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $quicklink_id = $_SESSION['__mark_move_quicklink_id'];
         unset($_SESSION['__mark_move_quicklink_id']);
-        redirect($this->cms_module_path().'/quicklink#'.$quicklink_id,'refresh');
+        redirect($this->cms_module_path().'/quicklink#'.$quicklink_id, 'refresh');
     }
 
-    public function quicklink_move_before($dst_quicklink_id){
-        if(!isset($_SESSION)){
+    public function quicklink_move_before($dst_quicklink_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $src_quicklink_id = $_SESSION['__mark_move_quicklink_id'];
         $this->cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id);
         unset($_SESSION['__mark_move_quicklink_id']);
-        redirect($this->cms_module_path().'/quicklink#'.$src_quicklink_id,'refresh');
+        redirect($this->cms_module_path().'/quicklink#'.$src_quicklink_id, 'refresh');
     }
-    public function quicklink_move_after($dst_quicklink_id){
-        if(!isset($_SESSION)){
+    public function quicklink_move_after($dst_quicklink_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $src_quicklink_id = $_SESSION['__mark_move_quicklink_id'];
         $this->cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id);
         unset($_SESSION['__mark_move_quicklink_id']);
-        redirect($this->cms_module_path().'/quicklink#'.$src_quicklink_id,'refresh');
+        redirect($this->cms_module_path().'/quicklink#'.$src_quicklink_id, 'refresh');
     }
 
     // PRIVILEGE ===============================================================
@@ -1310,9 +1328,9 @@ class Main extends CMS_Controller
         $crud->unique_fields('privilege_name');
         $crud->unset_read();
 
-        $crud->columns('privilege_name','title','description');
-        $crud->edit_fields('privilege_name','title','description','authorization_id','groups');
-        $crud->add_fields('privilege_name','title','description','authorization_id','groups');
+        $crud->columns('privilege_name', 'title', 'description');
+        $crud->edit_fields('privilege_name', 'title', 'description', 'authorization_id', 'groups');
+        $crud->add_fields('privilege_name', 'title', 'description', 'authorization_id', 'groups');
 
         $crud->set_relation('authorization_id', cms_table_name('main_authorization'), 'authorization_name'); //, 'groups');
 
@@ -1333,12 +1351,12 @@ class Main extends CMS_Controller
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
-        foreach($output->css_files as $file){
+        foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
         $config['css'] = $asset->compile_css();
 
-        foreach($output->js_files as $file){
+        foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
         $config['js'] = $asset->compile_js();
@@ -1362,23 +1380,22 @@ class Main extends CMS_Controller
         $undeleted_id = array();
         $query = $this->db->select('widget_id')
             ->from(cms_table_name('main_widget'))
-            ->like('widget_name','section_','after')
+            ->like('widget_name', 'section_', 'after')
             ->get();
-        foreach($query->result() as $row){
+        foreach ($query->result() as $row) {
             $undeleted_id[] = $row->widget_id;
         }
 
-        if($state == 'update' || $state == 'edit' || $state == 'update_validation'){
+        if ($state == 'update' || $state == 'edit' || $state == 'update_validation') {
             $primary_key = $state_info->primary_key;
-            if(in_array($primary_key, $undeleted_id)){
-                $crud->field_type('widget_name','readonly');
-            }else{
+            if (in_array($primary_key, $undeleted_id)) {
+                $crud->field_type('widget_name', 'readonly');
+            } else {
                 $crud->required_fields('widget_name');
             }
-        }else{
+        } else {
             $crud->required_fields('widget_name');
         }
-
 
         $crud->unique_fields('widget_name');
         $crud->unset_read();
@@ -1413,17 +1430,17 @@ class Main extends CMS_Controller
 
         $crud->callback_before_insert(array(
             $this,
-            '_before_insert_widget'
+            '_before_insert_widget',
         ));
 
         $crud->callback_before_delete(array(
             $this,
-            '_before_delete_navigation'
+            '_before_delete_navigation',
         ));
 
         $crud->callback_column('widget_name', array(
             $this,
-            'column_widget_name'
+            'column_widget_name',
         ));
 
         $crud->set_language($this->cms_language());
@@ -1435,12 +1452,12 @@ class Main extends CMS_Controller
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
-        foreach($output->css_files as $file){
+        foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
         $config['css'] = $asset->compile_css();
 
-        foreach($output->js_files as $file){
+        foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
         $config['js'] = $asset->compile_js();
@@ -1453,12 +1470,12 @@ class Main extends CMS_Controller
         $query = $this->db->select_max('index')
             ->from(cms_table_name('main_widget'))
             ->get();
-        $row   = $query->row();
+        $row = $query->row();
         $index = $row->index;
-        if (!isset($index)){
+        if (!isset($index)) {
             $index = 1;
-        }else{
-            $index = $index+1;
+        } else {
+            $index = $index + 1;
         }
 
         $post_array['index'] = $index;
@@ -1476,19 +1493,19 @@ class Main extends CMS_Controller
             $this->db->select('active')->from(cms_table_name('main_widget'))->where('widget_id', $widget_id);
             $query = $this->db->get();
             if ($query->num_rows() > 0) {
-                $row       = $query->row();
+                $row = $query->row();
                 $new_value = ($row->active == 0) ? 1 : 0;
                 $this->db->update(cms_table_name('main_widget'), array(
-                    'active' => $new_value
+                    'active' => $new_value,
                 ), array(
-                    'widget_id' => $widget_id
+                    'widget_id' => $widget_id,
                 ));
                 $this->cms_show_json(array(
-                    'success' => true
+                    'success' => true,
                 ));
             } else {
                 $this->cms_show_json(array(
-                    'success' => false
+                    'success' => false,
                 ));
             }
         }
@@ -1499,86 +1516,90 @@ class Main extends CMS_Controller
         $query = $this->db->select('widget_id')
             ->from(cms_table_name('main_widget'))
             ->where('widget_id', $primary_key)
-            ->like('widget_name','section_','after')
+            ->like('widget_name', 'section_', 'after')
             ->get();
-        if($query->num_rows() == 0){
+        if ($query->num_rows() == 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     public function column_widget_name($value, $row)
     {
-        if(!isset($_SESSION)){
+        if (!isset($_SESSION)) {
             session_start();
         }
 
-        $html  = '<a name="'.$row->widget_id.'"></a>';
-        $html .= '<span>' .$value . ' (' . $row->title . ')</span>';
+        $html = '<a name="'.$row->widget_id.'"></a>';
+        $html .= '<span>'.$value.' ('.$row->title.')</span>';
         $html .= '<input type="hidden" class="widget_id" value="'.$row->widget_id.'" /><br />';
-        if(isset($row->slug) && $row->slug != NULL && $row->slug != ''){
-            $html .= '<span style="font-size:smaller;">' . $row->slug . '</span><br />';
+        if (isset($row->slug) && $row->slug != null && $row->slug != '') {
+            $html .= '<span style="font-size:smaller;">'.$row->slug.'</span><br />';
         }
         // active or not
-        $target = site_url($this->cms_module_path() . '/toggle_widget_active/' . $row->widget_id);
+        $target = site_url($this->cms_module_path().'/toggle_widget_active/'.$row->widget_id);
         if ($row->active == 0) {
-            $html .= '<a href="#" target="' . $target . '" class="widget_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Inactive</span></a>';
+            $html .= '<a href="#" target="'.$target.'" class="widget_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Inactive</span></a>';
         } else {
-            $html .= '<a href="#" target="' . $target . '" class="widget_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Active</span></a>';
+            $html .= '<a href="#" target="'.$target.'" class="widget_active"><i class="glyphicon glyphicon-eye-open"></i> <span>Active</span></a>';
         }
 
-        if(isset($_SESSION['__mark_move_widget_id'])){
+        if (isset($_SESSION['__mark_move_widget_id'])) {
             $mark_move_widget_id = $_SESSION['__mark_move_widget_id'];
-            if($row->widget_id == $mark_move_widget_id){
+            if ($row->widget_id == $mark_move_widget_id) {
                 // cancel link
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/widget_move_cancel').'"><i class="glyphicon glyphicon-repeat"></i> Undo</a>';
-            }else{
+            } else {
                 // paste before, paste after, paste inside
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/widget_move_before/'.$row->widget_id).'"><i class="glyphicon glyphicon-open"></i> Put Before</a>';
                 $html .= ' | <a href="'.site_url($this->cms_module_path().'/widget_move_after/'.$row->widget_id).'"><i class="glyphicon glyphicon-save"></i> Put After</a>';
             }
-        }else{
+        } else {
             $html .= ' | <a href="'.site_url($this->cms_module_path().'/widget_mark_move/'.$row->widget_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
         }
 
         return $html;
     }
 
-    public function widget_mark_move($widget_id){
-        if(!isset($_SESSION)){
+    public function widget_mark_move($widget_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $_SESSION['__mark_move_widget_id'] = $widget_id;
-        redirect($this->cms_module_path().'/widget#'.$widget_id,'refresh');
+        redirect($this->cms_module_path().'/widget#'.$widget_id, 'refresh');
     }
 
-    public function widget_move_cancel(){
-        if(!isset($_SESSION)){
+    public function widget_move_cancel()
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $widget_id = $_SESSION['__mark_move_widget_id'];
         unset($_SESSION['__mark_move_widget_id']);
-        redirect($this->cms_module_path().'/widget#'.$widget_id,'refresh');
+        redirect($this->cms_module_path().'/widget#'.$widget_id, 'refresh');
     }
 
-    public function widget_move_before($dst_widget_id){
-        if(!isset($_SESSION)){
+    public function widget_move_before($dst_widget_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $src_widget_id = $_SESSION['__mark_move_widget_id'];
         $this->cms_do_move_widget_before($src_widget_id, $dst_widget_id);
         unset($_SESSION['__mark_move_widget_id']);
-        redirect($this->cms_module_path().'/widget#'.$src_widget_id,'refresh');
+        redirect($this->cms_module_path().'/widget#'.$src_widget_id, 'refresh');
     }
-    public function widget_move_after($dst_widget_id){
-        if(!isset($_SESSION)){
+    public function widget_move_after($dst_widget_id)
+    {
+        if (!isset($_SESSION)) {
             session_start();
         }
         $src_widget_id = $_SESSION['__mark_move_widget_id'];
         $this->cms_do_move_widget_after($src_widget_id, $dst_widget_id);
         unset($_SESSION['__mark_move_widget_id']);
-        redirect($this->cms_module_path().'/widget#'.$src_widget_id,'refresh');
+        redirect($this->cms_module_path().'/widget#'.$src_widget_id, 'refresh');
     }
 
     // CONFIG ==================================================================
@@ -1607,25 +1628,25 @@ class Main extends CMS_Controller
         $crud->unset_texteditor('value');
 
         $operation = $crud->getState();
-        if ( $operation == 'edit' || $operation == 'update' || $operation == 'update_validation') {
+        if ($operation == 'edit' || $operation == 'update' || $operation == 'update_validation') {
             $crud->field_type('config_name', 'readonly');
             $crud->field_type('description', 'readonly');
-        }else if( $operation == 'add' || $operation == 'insert' || $operation == 'insert_validation'){
+        } elseif ($operation == 'add' || $operation == 'insert' || $operation == 'insert_validation') {
             //$crud->set_rules('config_name', 'Configuration Key', 'required');
             $crud->required_fields('config_name');
         }
 
         $crud->callback_after_insert(array(
             $this,
-            '_after_insert_config'
+            '_after_insert_config',
         ));
         $crud->callback_after_update(array(
             $this,
-            '_after_update_config'
+            '_after_update_config',
         ));
         $crud->callback_before_delete(array(
             $this,
-            '_before_delete_config'
+            '_before_delete_config',
         ));
 
         $crud->set_language($this->cms_language());
@@ -1635,12 +1656,12 @@ class Main extends CMS_Controller
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
-        foreach($output->css_files as $file){
+        foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
         $config['css'] = $asset->compile_css();
 
-        foreach($output->js_files as $file){
+        foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
         $config['js'] = $asset->compile_js();
@@ -1648,32 +1669,38 @@ class Main extends CMS_Controller
         $this->view('main/main_config', $output, 'main_config_management', $config);
     }
 
-    public function _after_insert_config($post_array, $primary_key){
+    public function _after_insert_config($post_array, $primary_key)
+    {
         // adjust configuration file entry
         cms_config($post_array['config_name'], $post_array['value']);
-        return TRUE;
+
+        return true;
     }
 
-    public function _after_update_config($post_array, $primary_key){
+    public function _after_update_config($post_array, $primary_key)
+    {
         // adjust configuration file entry
         $query = $this->db->select('config_name')->from(cms_table_name('main_config'))->where('config_id', $primary_key)->get();
-        if($query->num_rows()>0){
+        if ($query->num_rows() > 0) {
             $row = $query->row();
             $config_name = $row->config_name;
             cms_config($config_name, $post_array['value']);
         }
-        return TRUE;
+
+        return true;
     }
 
-    public function _before_delete_config($primary_key){
+    public function _before_delete_config($primary_key)
+    {
         $query = $this->db->select('config_name')->from(cms_table_name('main_config'))->where('config_id', $primary_key)->get();
-        if($query->num_rows()>0){
+        if ($query->num_rows() > 0) {
             $row = $query->row();
             $config_name = $row->config_name;
             // delete configuration file entry
-            cms_config($config_name, '', TRUE);
+            cms_config($config_name, '', true);
         }
-        return TRUE;
+
+        return true;
     }
 
     // ROUTE ====================================================================
@@ -1704,15 +1731,15 @@ class Main extends CMS_Controller
 
         $crud->callback_after_insert(array(
             $this,
-            '_after_insert_route'
+            '_after_insert_route',
         ));
         $crud->callback_after_delete(array(
             $this,
-            '_after_delete_route'
+            '_after_delete_route',
         ));
         $crud->callback_after_update(array(
             $this,
-            '_after_update_route'
+            '_after_update_route',
         ));
 
         $crud->set_language($this->cms_language());
@@ -1722,12 +1749,12 @@ class Main extends CMS_Controller
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
-        foreach($output->css_files as $file){
+        foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
         $config['css'] = $asset->compile_css();
 
-        foreach($output->js_files as $file){
+        foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
         $config['js'] = $asset->compile_js();
@@ -1735,47 +1762,58 @@ class Main extends CMS_Controller
         $this->view('main/main_route', $output, 'main_route_management', $config);
     }
 
-    public function _after_insert_route($post_array, $primary_key){
+    public function _after_insert_route($post_array, $primary_key)
+    {
         $this->cms_reconfig_route();
-        return TRUE;
+
+        return true;
     }
 
-    public function _after_delete_route($primary_key){
+    public function _after_delete_route($primary_key)
+    {
         $this->cms_reconfig_route();
-        return TRUE;
+
+        return true;
     }
 
-    public function _after_update_route($post_array, $primary_key){
+    public function _after_update_route($post_array, $primary_key)
+    {
         $this->cms_reconfig_route();
-        return TRUE;
+
+        return true;
     }
 
-    public function json_login_info(){
+    public function json_login_info()
+    {
         $result = array(
-            'is_login'=> $this->cms_user_id()>0,
-            'user_name'=>$this->cms_user_name(),
+            'is_login' => $this->cms_user_id() > 0,
+            'user_name' => $this->cms_user_name(),
         );
         $this->cms_show_json($result);
     }
 
-    public function widget_online_user(){
+    public function widget_online_user()
+    {
         $this->view('main/main_widget_online_user');
     }
 
-    private function _get_token($unique_id){
+    private function _get_token($unique_id)
+    {
         $token_file = APPPATH.'config/tmp/_token'.$unique_id.'.php';
-        if(!file_exists($token_file)){
-            return NULL;
+        if (!file_exists($token_file)) {
+            return;
         }
-        if(function_exists('opcache_invalidate')){
+        if (function_exists('opcache_invalidate')) {
             opcache_invalidate('./site.php');
         }
-        include($token_file);
-        $token = @json_decode($token, TRUE);
+        include $token_file;
+        $token = @json_decode($token, true);
+
         return $token;
     }
 
-    private function _set_token($unique_id, $token){
+    private function _set_token($unique_id, $token)
+    {
         $token = @json_encode($token);
         $token_file = APPPATH.'config/tmp/_token'.$unique_id.'.php';
         $content = '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL;
@@ -1783,48 +1821,51 @@ class Main extends CMS_Controller
         file_put_contents($token_file, $content);
     }
 
-    private function _remove_token($unique_id){
+    private function _remove_token($unique_id)
+    {
         $token_file = APPPATH.'config/_token'.$unique_id.'.php';
-        if(file_exists($token_file)){
+        if (file_exists($token_file)) {
             unlink($token_file);
         }
     }
 
-    public function check_login(){
-        if(CMS_SUBSITE == ''){
+    public function check_login()
+    {
+        if (CMS_SUBSITE == '') {
             // get origin & server name from subsite
-            $original_url   = $this->input->get('__origin');
-            $server_name    = $this->input->get('__server_name');
-            $unique_id      = md5(rand().time());
+            $original_url = $this->input->get('__origin');
+            $server_name = $this->input->get('__server_name');
+            $unique_id = md5(rand().time());
             // prepare new record to token list
             $token = array(
-                    'remote_addr'  => $_SERVER['REMOTE_ADDR'],
-                    'user_agent'   => $_SERVER['HTTP_USER_AGENT'],
+                    'remote_addr' => $_SERVER['REMOTE_ADDR'],
+                    'user_agent' => $_SERVER['HTTP_USER_AGENT'],
                     'original_url' => $original_url,
-                    'user_id'      => $this->cms_user_id(),
-                    'time'         => time(),
+                    'user_id' => $this->cms_user_id(),
+                    'time' => time(),
                 );
             $this->_set_token($unique_id, $token);
             // prepare redirection
-            $ssl         = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true:false;
-            $sp          = strtolower($_SERVER['SERVER_PROTOCOL']);
-            $protocol    = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
-            $port        = $_SERVER['SERVER_PORT'];
-            $port        = ((!$ssl && $port=='80') || ($ssl && $port=='443')) ? '' : ':'.$port;
-            $host        = isset($hostname) ? $hostname : $_SERVER['SERVER_NAME'] . $port;
+            $ssl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true : false;
+            $sp = strtolower($_SERVER['SERVER_PROTOCOL']);
+            $protocol = substr($sp, 0, strpos($sp, '/')).(($ssl) ? 's' : '');
+            $port = $_SERVER['SERVER_PORT'];
+            $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':'.$port;
+            $host = isset($hostname) ? $hostname : $_SERVER['SERVER_NAME'].$port;
             $redirection = $protocol.'://'.$server_name.'/index.php/main/landing?__origin='.urlencode($original_url).'&__token='.$unique_id;
             redirect($redirection);
         }
     }
 
-    public function landing(){
-        if(CMS_SUBSITE != ''){
-            $original_url   = $this->input->get('__origin');
-            $unique_id      = $this->input->get('__token');
-            $token          = $this->_get_token($unique_id);
-            if($token != NULL){
-                if($_SERVER['REMOTE_ADDR'] == $token['remote_addr'] && $_SERVER['HTTP_USER_AGENT'] == $token['user_agent'] &&
-                    $original_url == $token['original_url'] && time() < $token['time']+120){
+    public function landing()
+    {
+        if (CMS_SUBSITE != '') {
+            $original_url = $this->input->get('__origin');
+            $unique_id = $this->input->get('__token');
+            $token = $this->_get_token($unique_id);
+            if ($token != null) {
+                if ($_SERVER['REMOTE_ADDR'] == $token['remote_addr'] && $_SERVER['HTTP_USER_AGENT'] == $token['user_agent'] &&
+                    $original_url == $token['original_url'] && time() < $token['time'] + 120) {
                     // get user name
                     $user_id = $token['user_id'];
                     // get other column in order to emulate login
@@ -1832,7 +1873,7 @@ class Main extends CMS_Controller
                         ->from($this->cms_user_table_name())
                         ->where('user_id', $user_id)
                         ->get();
-                    if($query->num_rows()>0){
+                    if ($query->num_rows() > 0) {
                         $row = $query->row();
                         $this->cms_user_name($row->user_name);
                         $this->cms_user_id($row->user_id);
@@ -1840,26 +1881,26 @@ class Main extends CMS_Controller
                         $this->cms_user_email($row->email);
                     }
                 }
-
             }
             $this->_remove_token($unique_id);
             redirect($original_url);
         }
     }
 
-    public function widget_online_user_ajax(){
+    public function widget_online_user_ajax()
+    {
         $query = $this->db->select('user_name')
             ->from($this->cms_user_table_name())
             ->where('login', 1)
-            ->where('last_active >=', microtime(true)-70)
+            ->where('last_active >=', microtime(true) - 70)
             ->get();
         $user_name_list = array();
-        foreach($query->result() as $row){
+        foreach ($query->result() as $row) {
             $user_name_list[] = $row->user_name;
         }
-        if(count($user_name_list)>0){
+        if (count($user_name_list) > 0) {
             echo implode(', ', $user_name_list);
-        }else{
+        } else {
             echo 'No user online';
         }
     }
@@ -1867,8 +1908,8 @@ class Main extends CMS_Controller
     public function widget_logout()
     {
         $data = array(
-            "user_real_name" => $this->cms_user_real_name(),
-            "logout_lang" => $this->cms_lang('Logout')
+            'user_real_name' => $this->cms_user_real_name(),
+            'logout_lang' => $this->cms_lang('Logout'),
         );
         $this->view('main/main_widget_logout', $data);
     }
@@ -1878,13 +1919,16 @@ class Main extends CMS_Controller
         $this->login();
     }
 
-    public function widget_left_nav($first = TRUE, $navigations = NULL){
-        if(!isset($navigations)){
+    public function widget_left_nav($first = true, $navigations = null)
+    {
+        if (!isset($navigations)) {
             $navigations = $this->cms_navigations();
         }
 
-        if(count($navigations) == 0) return '';
-        if($first){
+        if (count($navigations) == 0) {
+            return '';
+        }
+        if ($first) {
             $result = '<style type="text/css">
                 .dropdown-submenu{
                     position:relative;
@@ -1946,19 +1990,21 @@ class Main extends CMS_Controller
                 }
             }
             </style>';
-        }else{
+        } else {
             $result = '';
         }
-        $result .= '<ul  class="dropdown-menu nav nav-pills nav-stacked" '.($first?'id="_first-left-dropdown"':'').'>';
-        foreach($navigations as $navigation){
-            if($navigation['hidden']){continue;}
-            if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
+        $result .= '<ul  class="dropdown-menu nav nav-pills nav-stacked" '.($first ? 'id="_first-left-dropdown"' : '').'>';
+        foreach ($navigations as $navigation) {
+            if ($navigation['hidden']) {
+                continue;
+            }
+            if (($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']) {
                 // create badge if needed
                 $badge = '';
-                if($quicklink['notif_url'] != ''){
+                if ($quicklink['notif_url'] != '') {
                     $badge_id = '__cms_notif_left_navigation_'.$quicklink['navigation_id'];
                     $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
-                    $badge.= '<script type="text/javascript">
+                    $badge .= '<script type="text/javascript">
                             $(document).ready(function(){
                                 setInterval(function(){
                                     $.ajax({
@@ -1977,70 +2023,74 @@ class Main extends CMS_Controller
                 }
                 // set active class
                 $active = '';
-                if($this->cms_ci_session('__cms_navigation_name') == $quicklink['navigation_name']){
+                if ($this->cms_ci_session('__cms_navigation_name') == $quicklink['navigation_name']) {
                     $active = 'active';
                 }
                 // make text
                 $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
-                if($navigation['allowed'] && $navigation['active']){
+                if ($navigation['allowed'] && $navigation['active']) {
                     $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$icon.$navigation['title'].$badge.'</a>';
-                }else{
+                } else {
                     $text = $icon.$navigation['title'].$badge;
                 }
 
-                if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
-                    $result .= '<li class="dropdown-submenu '.$active.'">'.$text.$this->widget_left_nav(FALSE, $navigation['child']).'</li>';
-                }else{
+                if (count($navigation['child']) > 0 && $navigation['have_allowed_children']) {
+                    $result .= '<li class="dropdown-submenu '.$active.'">'.$text.$this->widget_left_nav(false, $navigation['child']).'</li>';
+                } else {
                     $result .= '<li class="'.$active.'">'.$text.'</li>';
                 }
             }
         }
         $result .= '</ul>';
         // show up
-        if($first){
+        if ($first) {
             $this->cms_show_html($result);
-        }else{
+        } else {
             return $result;
         }
     }
 
-    public function widget_top_nav($caption = 'Complete Menu', $first = TRUE, $no_complete_menu=FALSE, $no_quicklink=FALSE, $inverse = FALSE, $navigations = NULL, &$notif = array()){
+    public function widget_top_nav($caption = 'Complete Menu', $first = true, $no_complete_menu = false, $no_quicklink = false, $inverse = false, $navigations = null, &$notif = array())
+    {
         $result = '';
         $caption = $this->cms_lang($caption);
 
-        if(!$no_complete_menu){
-            if(!isset($navigations)){
+        if (!$no_complete_menu) {
+            if (!isset($navigations)) {
                 $navigations = $this->cms_navigations();
             }
-            if(count($navigations) == 0) return '';
-
+            if (count($navigations) == 0) {
+                return '';
+            }
 
             $result .= '<ul class="dropdown-menu">';
-            foreach($navigations as $navigation){
-                if($navigation['hidden']){continue;}
-                if(($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']){
-                    $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == ''? 'icon-white': $navigation['bootstrap_glyph'];
+            foreach ($navigations as $navigation) {
+                if ($navigation['hidden']) {
+                    continue;
+                }
+                if (($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']) {
+                    $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == '' ? 'icon-white' : $navigation['bootstrap_glyph'];
                     // make text
                     $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
                     $badge = '';
-                    if($navigation['notif_url'] != ''){
+                    if ($navigation['notif_url'] != '') {
                         $badge_id = '__cms_notif_top_nav_'.$navigation['navigation_id'];
                         $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
-                        if(!array_key_exists($navigation['notif_url'], $notif)){
+                        if (!array_key_exists($navigation['notif_url'], $notif)) {
                             $notif[$navigation['notif_url']] = array();
                         }
                         $notif[$navigation['notif_url']][] = $badge_id;
                     }
-                    if(!$navigation['allowed'] || !$navigation['active']){
+                    if (!$navigation['allowed'] || !$navigation['active']) {
                         $navigation['url'] = '#';
                     }
                     $text = '<a href="'.$navigation['url'].'">'.$icon.
                         $navigation['title'].$badge.'</a>';
 
-                    if(count($navigation['child'])>0 && $navigation['have_allowed_children']){
+                    if (count($navigation['child']) > 0 && $navigation['have_allowed_children']) {
                         $result .= '<li class="dropdown-submenu">'.
-                            $text.$this->widget_top_nav($caption, FALSE, $no_complete_menu, $no_quicklink, $inverse, $navigation['child'], $notif).'</li>';
-                    }else{
+                            $text.$this->widget_top_nav($caption, false, $no_complete_menu, $no_quicklink, $inverse, $navigation['child'], $notif).'</li>';
+                    } else {
                         $result .= '<li>'.$text.'</li>';
                     }
                 }
@@ -2049,34 +2099,34 @@ class Main extends CMS_Controller
         }
 
         // show up
-        if($first){
-            if(!$no_complete_menu && $this->cms_user_id() > 0){
+        if ($first) {
+            if (!$no_complete_menu && $this->cms_user_id() > 0) {
                 //  hidden-sm hidden-xs
                 $result = '<li class="dropdown">'.
                     '<a class="dropdown-toggle" data-toggle="dropdown" href="#">'.$caption.' <span class="caret"></span></a>'.
                     $result.'</li>';
             }
-            if(!$no_quicklink){
-                $result .= $this->build_quicklink(NULL, TRUE, $notif);
+            if (!$no_quicklink) {
+                $result .= $this->build_quicklink(null, true, $notif);
             }
             // toggle editing
-            if($this->cms_user_is_super_admin()){
-                if($this->cms_editing_mode()){
+            if ($this->cms_user_is_super_admin()) {
+                if ($this->cms_editing_mode()) {
                     $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_off" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
                         <i class="glyphicon glyphicon-eye-open"></i> Toggle View</a></span>';
-                }else{
+                } else {
                     $toggle_editing = '<span class="hidden-sm hidden-xs"><a id="__toggle_editing_on" href="#" class="btn btn-primary" style="font-size:small; transform:translateY(25%);">
                         <i class="glyphicon glyphicon-pencil"></i> Toggle Edit</a></span>';
                 }
-            }else{
+            } else {
                 $toggle_editing = '';
             }
 
             $load_notif_script = '';
             $badge_index = 1;
-            foreach($notif as $url=>$badge_id_list){
+            foreach ($notif as $url => $badge_id_list) {
                 $changer_script = '';
-                foreach($badge_id_list as $badge_id){
+                foreach ($badge_id_list as $badge_id) {
                     $changer_script .= '$("#'.$badge_id.'").html(response.notif);';
                 }
                 $load_notif_script .= '$(document).ready(function(){
@@ -2096,7 +2146,7 @@ class Main extends CMS_Controller
                                         __get_badge_'.$badge_index.'();
                                     }, 50000);
                                 });';
-                $badge_index ++;
+                ++$badge_index;
             }
 
             $result =
@@ -2161,7 +2211,7 @@ class Main extends CMS_Controller
                     }
                 }
             </style>
-            <div class="navbar '.($inverse? 'navbar-inverse' : 'navbar-default').' navbar-fixed-top" role="navigation">
+            <div class="navbar '.($inverse ? 'navbar-inverse' : 'navbar-default').' navbar-fixed-top" role="navigation">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -2270,42 +2320,49 @@ class Main extends CMS_Controller
             </script>';
 
             $this->cms_show_html($result);
-        }else{
+        } else {
             return $result;
         }
     }
 
-    public function set_editing_mode(){
+    public function set_editing_mode()
+    {
         $this->cms_set_editing_mode();
     }
 
-    public function unset_editing_mode(){
+    public function unset_editing_mode()
+    {
         $this->cms_unset_editing_mode();
     }
 
-    public function widget_top_nav_no_quicklink($caption = 'Complete Menu'){
-        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, FALSE, NULL);
+    public function widget_top_nav_no_quicklink($caption = 'Complete Menu')
+    {
+        $this->widget_top_nav($caption, true, false, true, false, null);
     }
 
-    public function widget_quicklink(){
-        $this->widget_top_nav('', TRUE, TRUE, FALSE, FALSE, NULL);
+    public function widget_quicklink()
+    {
+        $this->widget_top_nav('', true, true, false, false, null);
     }
 
-    public function widget_top_nav_inverse($caption = 'Complete Menu'){
-        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, TRUE, NULL);
+    public function widget_top_nav_inverse($caption = 'Complete Menu')
+    {
+        $this->widget_top_nav($caption, true, false, true, true, null);
     }
 
-    public function widget_top_nav_no_quicklink_inverse($caption = 'Complete Menu'){
-        $this->widget_top_nav($caption, TRUE, FALSE, TRUE, TRUE, NULL);
+    public function widget_top_nav_no_quicklink_inverse($caption = 'Complete Menu')
+    {
+        $this->widget_top_nav($caption, true, false, true, true, null);
     }
 
-    public function widget_quicklink_inverse(){
-        $this->widget_top_nav('', TRUE, TRUE, FALSE, TRUE, NULL);
+    public function widget_quicklink_inverse()
+    {
+        $this->widget_top_nav('', true, true, false, true, null);
     }
 
-
-    private function build_quicklink($quicklinks = NULL, $first = TRUE, &$notif=''){
-        if(!isset($quicklinks)){
+    private function build_quicklink($quicklinks = null, $first = true, &$notif = '')
+    {
+        if (!isset($quicklinks)) {
             $quicklinks = $this->cms_quicklinks();
         }
 
@@ -2313,93 +2370,94 @@ class Main extends CMS_Controller
         $current_navigation_path = $this->cms_get_navigation_path($current_navigation_name);
         $html = '';
 
-        foreach($quicklinks as $quicklink){
+        foreach ($quicklinks as $quicklink) {
             // if navigation hidden, skip it
-            if($quicklink['hidden']){
+            if ($quicklink['hidden']) {
                 continue;
             }
             // if navigation is not active then skip it
-            if((!$quicklink['allowed'] || !$quicklink['active']) && !$quicklink['have_allowed_children']){
+            if ((!$quicklink['allowed'] || !$quicklink['active']) && !$quicklink['have_allowed_children']) {
                 continue;
             }
             // create icon if needed
             $icon = '';
-            if($first){
+            if ($first) {
                 $icon_class = $quicklink['bootstrap_glyph'].' icon-white';
-            }else{
+            } else {
                 $icon_class = $quicklink['bootstrap_glyph'];
             }
-            if($quicklink['bootstrap_glyph'] != '' || !$first){
-                $icon_class = $icon_class==''? 'icon-white': $icon_class;
+            if ($quicklink['bootstrap_glyph'] != '' || !$first) {
+                $icon_class = $icon_class == '' ? 'icon-white' : $icon_class;
                 $icon = '<span class="glyphicon '.$icon_class.'"></span>&nbsp;';
             }
             // create badge if needed
             $badge = '';
-            if($quicklink['notif_url'] != ''){
+            if ($quicklink['notif_url'] != '') {
                 $badge_id = '__cms_notif_quicklink_'.$quicklink['navigation_id'];
                 $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
-                if(!array_key_exists($quicklink['notif_url'], $notif)){
+                if (!array_key_exists($quicklink['notif_url'], $notif)) {
                     $notif[$quicklink['notif_url']] = array();
                 }
                 $notif[$quicklink['notif_url']][] = $badge_id;
             }
             // set active class
             $active = '';
-            if($current_navigation_name == $quicklink['navigation_name']){
+            if ($current_navigation_name == $quicklink['navigation_name']) {
                 $active = 'active';
-            }else{
-                foreach($current_navigation_path as $navigation_parent){
-                    if($quicklink['navigation_name'] == $navigation_parent['navigation_name']){
+            } else {
+                foreach ($current_navigation_path as $navigation_parent) {
+                    if ($quicklink['navigation_name'] == $navigation_parent['navigation_name']) {
                         $active = 'active';
                         break;
                     }
                 }
             }
-            if(!$quicklink['allowed'] || !$quicklink['active']){
+            if (!$quicklink['allowed'] || !$quicklink['active']) {
                 $quicklink['url'] = '#';
             }
             // create li based on child availability
-            if(count($quicklink['child'])==0 || !$quicklink['have_allowed_children']){
-                $html.= '<li class="'.$active.'">';
-                $html.= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].$badge.'</span>');
-                $html.= '</li>';
-            }else{
-                if(!$quicklink['allowed'] || !$quicklink['active']){
-                    if($first){
-                        $html.= '<li class="dropdown '.$active.'">';
-                        $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
+            if (count($quicklink['child']) == 0 || !$quicklink['have_allowed_children']) {
+                $html .= '<li class="'.$active.'">';
+                $html .= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].$badge.'</span>');
+                $html .= '</li>';
+            } else {
+                if (!$quicklink['allowed'] || !$quicklink['active']) {
+                    if ($first) {
+                        $html .= '<li class="dropdown '.$active.'">';
+                        $html .= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                             $icon.$quicklink['title'].$badge.
                             '&nbsp;<span class="caret"></span></a>'; // hidden-sm hidden-xs
-                        $html.= $this->build_quicklink($quicklink['child'],FALSE, $notif);
-                        $html.= '</li>';
-                    }else{
-                        $html.= '<li class="dropdown-submenu '.$active.'">';
-                        $html.= '<a href="'.$quicklink['url'].'">'.$icon.$quicklink['title'].$badge.'</a>';
-                        $html.= $this->build_quicklink($quicklink['child'],FALSE, $notif);
-                        $html.= '</li>';
+                        $html .= $this->build_quicklink($quicklink['child'], false, $notif);
+                        $html .= '</li>';
+                    } else {
+                        $html .= '<li class="dropdown-submenu '.$active.'">';
+                        $html .= '<a href="'.$quicklink['url'].'">'.$icon.$quicklink['title'].$badge.'</a>';
+                        $html .= $this->build_quicklink($quicklink['child'], false, $notif);
+                        $html .= '</li>';
                     }
-                }else{
-                    if($first){
-                        $html.= '<li class="dropdown '.$active.'">';
-                        $html.= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
+                } else {
+                    if ($first) {
+                        $html .= '<li class="dropdown '.$active.'">';
+                        $html .= '<a class="dropdown-toggle" data-toggle="dropdown" href="'.$quicklink['url'].'">'.
                             '<span class="anchor-text">'.$icon.$quicklink['title'].$badge.'</span>'.
                             '&nbsp;<span class="caret"></span></a>'; // hidden-sm hidden-xs
-                        $html.= $this->build_quicklink($quicklink['child'],FALSE, $notif);
-                        $html.= '</li>';
-                    }else{
-                        $html.= '<li class="dropdown-submenu '.$active.'">';
-                        $html.= '<a href="'.$quicklink['url'].'">'.
+                        $html .= $this->build_quicklink($quicklink['child'], false, $notif);
+                        $html .= '</li>';
+                    } else {
+                        $html .= '<li class="dropdown-submenu '.$active.'">';
+                        $html .= '<a href="'.$quicklink['url'].'">'.
                             '<span>'.$icon.$quicklink['title'].$badge.'</span></a>';
-                        $html.= $this->build_quicklink($quicklink['child'],FALSE, $notif);
-                        $html.= '</li>';
+                        $html .= $this->build_quicklink($quicklink['child'], false, $notif);
+                        $html .= '</li>';
                     }
                 }
             }
         }
 
-        if(!$first){
+        if (!$first) {
             $html = '<ul class="dropdown-menu">'.$html.'</ul>';
         }
+
         return $html;
     }
 }
