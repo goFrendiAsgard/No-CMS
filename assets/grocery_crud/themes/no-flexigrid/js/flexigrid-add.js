@@ -27,7 +27,7 @@ $(function(){
 			url: validation_url,
 			dataType: 'json',
 			cache: 'false',
-			beforeSend: function(){
+			beforeSend: function(x){
 				$("#FormLoading").show();
 			},
 			success: function(data){
@@ -42,7 +42,7 @@ $(function(){
 						},
 						success: function(result){
 							$("#FormLoading").fadeOut("slow");
-							data = $.parseJSON( result );
+							data = JSON.parse(result);
 							if(data.success)
 							{
 								var data_unique_hash = my_crud_form.closest(".flexigrid").attr("data-unique-hash");
@@ -55,7 +55,7 @@ $(function(){
 										window.location = data.success_list_url;
 									} else {
 										$(".ui-dialog-content").dialog("close");
-										success_message(data.success_message);
+										success_message(decodeHtml(data.success_message));
 									}
 
 									return true;
@@ -65,7 +65,7 @@ $(function(){
 									$(this).removeClass('field_error');
 								});
 								clearForm();
-								form_success_message(data.success_message);
+								form_success_message(decodeHtml(data.success_message));
 							}
 							else
 							{
@@ -88,7 +88,7 @@ $(function(){
 
 				}
 			},
-			error: function(){
+			error: function(requestObject, error, errorThrown){
 				error_message (message_insert_error);
 				$("#FormLoading").hide();
 			}
@@ -143,4 +143,10 @@ function clearForm()
 	$('.chosen-multiple-select, .chosen-select, .ajax-chosen-select').each(function(){
 		$(this).trigger("chosen:updated");
 	});
+}
+
+function decodeHtml(html) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
 }

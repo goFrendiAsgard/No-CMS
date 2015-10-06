@@ -1,5 +1,7 @@
 #!/bin/sh
 for i in *.php
-do 
-   echo -e "\n\t\$lang['list_view'] = 'View';" >> $i
+do
+   echo "\n" >> $i
+   echo "\t/* Added in version 1.5.2 */" >> $i
+   echo "\t\$lang['list_more'] = 'More';\n" >> $i
 done

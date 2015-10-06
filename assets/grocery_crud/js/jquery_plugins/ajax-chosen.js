@@ -7,8 +7,8 @@
     return $.fn.ajaxChosen = function(options, callback) {
       var select;
       select = this;
-      this.chosen({allow_single_deselect:true, width:'100%'});
-      this.next('.chosen-container').find(".search-field > input").bind('keyup', function() {
+      this.chosen({allow_single_deselect:true});
+      this.next('.chzn-container').find(".search-field > input").bind('keyup', function() {
         var field, val;
         val = $.trim($(this).attr('value'));
         if (val.length < 2 || val === $(this).data('prevVal')) return false;
@@ -33,7 +33,7 @@
           $.each(items, function(value, text) {
             return $("<option />").attr('value', value).html(text).appendTo(select);
           });
-          select.trigger("chosen:updated");
+          select.trigger("liszt:updated");
           field.attr('value', val);
           if (typeof success !== "undefined" && success !== null) return success();
         };
@@ -45,7 +45,7 @@
         }, 800);
         return my_timer;
       });
-      return this.next('.chosen-container').find(".chosen-search > input").bind('keyup', function() {
+      return this.next('.chzn-container').find(".chzn-search > input").bind('keyup', function() {
         var field, val;
         val = $.trim($(this).attr('value'));
         if (val.length < 2 || val === $(this).data('prevVal')) return false;
@@ -69,7 +69,7 @@
           $.each(items, function(value, text) {
             return $("<option />").attr('value', value).html(text).appendTo(select);
           });
-          select.trigger("chosen:updated");
+          select.trigger("liszt:updated");
           field.attr('value', val);
           if (typeof success !== "undefined" && success !== null) return success();
         };

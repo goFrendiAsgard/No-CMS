@@ -45,7 +45,7 @@ class Manage_city extends CMS_Secure_Controller {
         // unset jquery (we use No-CMS's default jquery)
         $crud->unset_jquery();
 
-        // unset read, comment if you need privilege to read       
+        // unset read, comment if you need privilege to read
         $crud->unset_read();
         // privilege to read (uncomment if you need it)
         /*
@@ -102,7 +102,7 @@ class Manage_city extends CMS_Secure_Controller {
         //     $html .= '<input type="button" value="Search" class="crud_search btn btn-primary form-control" id="crud_search" />';
         //     $crud->set_search_form_components($html);
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+
         // set custom grocery crud model, uncomment to use.
         /*
         $this->load->model('grocery_crud_model');
@@ -148,13 +148,15 @@ class Manage_city extends CMS_Secure_Controller {
         $crud->display_as('commodity','Commodity');
         $crud->display_as('citizen','Citizen');
 
+        $crud->set_rules('name', 'Name', 'callback_name_check');
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
         // (documentation: http://www.grocerycrud.com/documentation/options_functions/required_fields)
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->required_fields('name');
+        //$crud->required_fields('name');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -162,7 +164,7 @@ class Manage_city extends CMS_Secure_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->unique_fields('name');
+        //$crud->unique_fields('name');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -235,6 +237,18 @@ class Manage_city extends CMS_Secure_Controller {
 
         $this->crud = $crud;
         return $crud;
+    }
+
+    public function name_check($str){
+        if ($str == 'test')
+        {
+            $this->form_validation->set_message('name_check', 'Test 2 must not be test');
+            return FALSE;
+        }
+        else
+        {
+            return TRUE;
+        }
     }
 
     public function index(){

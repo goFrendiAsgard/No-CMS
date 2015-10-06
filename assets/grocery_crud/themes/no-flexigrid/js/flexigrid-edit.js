@@ -55,13 +55,13 @@ $(function(){
 										window.location = data.success_list_url;
 									} else {
 										$(".ui-dialog-content").dialog("close");
-										success_message(data.success_message);
+										success_message(decodeHtml(data.success_message));
 									}
 
 									return true;
 								}
 
-								form_success_message(data.success_message);
+								form_success_message(decodeHtml(data.success_message));
 							}
 							else
 							{
@@ -112,3 +112,8 @@ $(function(){
 	}
 });
 
+function decodeHtml(html) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}

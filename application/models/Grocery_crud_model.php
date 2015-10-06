@@ -12,7 +12,7 @@
  * @package    	grocery CRUD
  * @copyright  	Copyright (c) 2010 through 2012, John Skoumbourdis
  * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
- * @version    	1.2
+ * @version    	1.4.2
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -24,10 +24,10 @@
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.2
+ * @version    	1.5.2
  * @link		http://www.grocerycrud.com/documentation
  */
-class Grocery_crud_model  extends CI_Model  {
+class grocery_CRUD_Model  extends CI_Model  {
 
 	protected $primary_key = null;
 	protected $table_name = null;
@@ -184,12 +184,9 @@ class Grocery_crud_model  extends CI_Model  {
     		$select = $this->relation_n_n_queries($select);
 
     		$this->db->select($select,false);
-
-    		return $this->db->get($this->table_name)->num_rows();
     	}
 
-    	return $this->db->count_all_results($this->table_name);
-
+		return $this->db->get($this->table_name)->num_rows();
     }
 
     function set_basic_table($table_name = null)
@@ -374,7 +371,7 @@ class Grocery_crud_model  extends CI_Model  {
         if(!$use_template)
         	$this->db->order_by("{$field_info->selection_table}.{$field_info->title_field_selection_table}");
         $results = $this->db->get($field_info->selection_table)->result();
-        
+
         $results_array = array();
         foreach($results as $row)
         {

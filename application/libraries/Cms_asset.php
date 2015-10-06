@@ -131,18 +131,30 @@ class Cms_asset
                 $path_part = explode('/', $path);
                 $file_name = $path_part[count($path_part)-1];
                 $dir_path  = substr($path, 0, strlen($path)-strlen($file_name));
+                /*
                 if(in_array($dir_path.$file_name, $this->skipped_resources)){
                     $type = 'skipped';
                     $dir_path = str_ireplace($base_url, FCPATH, $dir_path);
-                    $last_modified_date = date('YmdHis',filemtime($dir_path.$file_name));
+                    if(file_exists($dir_path.$file_name)){
+                        $last_modified_date = date('YmdHis',filemtime($dir_path.$file_name));
+                    }else{
+                        $last_modified_date = 0;
+                    }
                 }else if(strpos($dir_path, $base_url) === 0){
                     $type = 'external';
                     $dir_path = str_ireplace($base_url, FCPATH, $dir_path);
-                    $last_modified_date = date('YmdHis',filemtime($dir_path.$file_name));
+                    if(file_exists($dir_path.$file_name)){
+                        $last_modified_date = date('YmdHis',filemtime($dir_path.$file_name));
+                    }else{
+                        $last_modified_date = 0;
+                    }
                 }else{
                     $type = 'cdn';
                     $last_modified_date = 0;
-                }
+                }*/
+                $type = 'cdn';
+                $last_modified_date = 0;
+
                 if(count($compiled_resources)>0 && $compiled_resources[$last_index]['type'] == $type && $compiled_resources[$last_index]['dir_path'] == $dir_path){
                     $compiled_resources[$last_index]['file_name'][] = $file_name;
                     if($last_modified_date > $compiled_resources[$last_index]['modified_time']){

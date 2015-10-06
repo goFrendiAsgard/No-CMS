@@ -76,3 +76,12 @@
 
 	/* Added in version 1.4 */
 	$lang['list_view'] = 'Εμφάνιση';
+
+	/* Added in version 1.5.1 */
+	$lang['ui_day'] = 'ηη';
+	$lang['ui_month'] = 'μμ';
+	$lang['ui_year'] = 'χχχχ';
+
+	/* Added in version 1.5.2 */
+	$lang['list_more'] = 'More';
+
