@@ -91,7 +91,7 @@ class Synchronize_model extends CMS_Model{
                 ->from($this->cms_complete_table_name('table'))
                 ->where('project_id', $project_id)
                 ->get();
-            $table_result = array();            
+            $table_result = array();
             foreach($t_query->result() as $row){
                 $table_result[] = $row;
             }
@@ -131,7 +131,7 @@ class Synchronize_model extends CMS_Model{
                             $primary_column      = NULL;
                             $other_column_query = $this->db->select('column_id, name, role')
                                 ->from($this->cms_complete_table_name('column'))
-                                ->where('table_id', $current_table->table_id)
+                                ->where('table_id', $other_table->table_id)
                                 ->get();
                             foreach($other_column_query->result() as $other_column){
                                 if($other_column->role == 'primary'){
@@ -244,8 +244,8 @@ class Synchronize_model extends CMS_Model{
                 // don't change caption and priority
                 unset($data['caption']);
                 unset($data['priority']);
-                $this->db->update($this->cms_complete_table_name('table'), 
-                    $data, 
+                $this->db->update($this->cms_complete_table_name('table'),
+                    $data,
                     array('table_id' => $table_id));
             }else{
                 $this->db->insert($this->cms_complete_table_name('table'), $data);

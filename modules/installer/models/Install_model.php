@@ -1469,11 +1469,12 @@ class Install_model extends CI_Model{
         if (in_array('curl', get_loaded_extensions())) {
             if(count($this->modules) == 0){
                 $modules = array('blog','contact_us','static_accessories');
+                /*
                 if(!$this->is_subsite){
                     $modules[] = 'teldrassil';
                     $modules[] = 'multisite';
                     $modules[] = 'nordrassil';
-                }
+                }*/
             }else{
                 $modules = $this->modules;
             }

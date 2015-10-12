@@ -750,12 +750,11 @@ class Default_generator extends CMS_Controller{
             }
             $create_forge  = '// '.$table_name.PHP_EOL;
             $create_forge .= '        \''.$table_name.'\' => array('.PHP_EOL;
-            $create_forge .= '            \'fields\' => array('.PHP_EOL.'                '.implode(','.PHP_EOL.'                ', $field_list).','.PHP_EOL.'            ),'.PHP_EOL;
             if(isset($primary_key_name)){
-                $create_forge .= '            \'key\' => \''.$primary_key_name.'\''.PHP_EOL;
+                $create_forge .= '            \'key\'    => \''.$primary_key_name.'\','.PHP_EOL;
             }
+            $create_forge .= '            \'fields\' => array('.PHP_EOL.'                '.implode(','.PHP_EOL.'                ', $field_list).','.PHP_EOL.'            ),'.PHP_EOL;
             $create_forge .= '        ),';
-            //$create_forge .= '        $this->dbforge->create_table($this->cms_complete_table_name(\''.$table_name.'\'));'.PHP_EOL;
 
             $php[] = $create_forge;
         }
