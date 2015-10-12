@@ -252,7 +252,7 @@ if(file_exists('./'.$application_folder.'/config/main/database.php')){
             $check              = is_ip_address($parsed_url['host']);
             $stripped_host_name = $parsed_url['host'];
             if ($check == FALSE){
-                $stripped_host_name = $stripped_host_name == '' ? 
+                $stripped_host_name = $stripped_host_name == '' ?
                     domain($stripped_host_name) : domain($address);
             }
 
@@ -264,7 +264,7 @@ if(file_exists('./'.$application_folder.'/config/main/database.php')){
                 $USE_ALIAS     = TRUE;
             }
             // If there is subdomain, subsite determine from subdomain.
-            else if (strlen($actual_host_name)> 0 && ( count($actual_host_name_parts) > count($stripped_host_name_parts)) 
+            else if (strlen($actual_host_name)> 0 && ( count($actual_host_name_parts) > count($stripped_host_name_parts))
             ){
                 $CMS_SUBSITE = $actual_host_name_parts[0];
                 $USE_SUBDOMAIN = TRUE;
@@ -285,6 +285,13 @@ define('USE_SUBDOMAIN',     $USE_SUBDOMAIN);
 define('INVALID_SUBSITE',   $INVALID_SUBSITE);
 define('USE_ALIAS',         $USE_ALIAS);
 
+// No-CMS privilege constants
+define('PRIV_EVERYONE',             1);
+define('PRIV_NOT_AUTHENTICATED',    2);
+define('PRIV_AUTHENTICATED',        3);
+define('PRIV_AUTHORIZED',           4);
+define('PRIV_EXCLUSIVE_AUTHORIZED', 5);
+
 // is subsite is invalid then redirect to the main website.
 if( INVALID_SUBSITE || (CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/config/site-'.CMS_SUBSITE)) ){
     $address = full_url($_SERVER);
@@ -298,7 +305,7 @@ if( INVALID_SUBSITE || (CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/
         // remove subdomain
         $address_part  = array_slice($address_part, 1);
         $address       = implode('.', $address_part);
-        // add the protocol again        
+        // add the protocol again
         $address       = $protocol.$address;
     }else{
         $address_part     = explode('/', $address);
@@ -312,7 +319,7 @@ if( INVALID_SUBSITE || (CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/
         }
         $address = implode('/', $new_address_part);
     }
-    // redirect location    
+    // redirect location
     header('Location: '.$address);
     exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
 }
@@ -335,7 +342,7 @@ if($session_save_path == ''){
     // make .htaccess
     if(!file_exists($session_save_path.DIRECTORY_SEPARATOR.'session/.htaccess')){
         mkdir($session_save_path);
-        file_put_contents($session_save_path.DIRECTORY_SEPARATOR.'session/.htaccess', 
+        file_put_contents($session_save_path.DIRECTORY_SEPARATOR.'session/.htaccess',
             '<IfModule authz_core_module>'.PHP_EOL.
             '   Require all denied'.PHP_EOL.
             '</IfModule>'.PHP_EOL.
@@ -456,7 +463,7 @@ if($session_save_path == ''){
  * ---------------------------------------------------------------
  *  OVERRIDE INDEX_PAGE
  * ---------------------------------------------------------------
- * 
+ *
  */
 
 if(CMS_SUBSITE != '' && !USE_SUBDOMAIN && !USE_ALIAS){

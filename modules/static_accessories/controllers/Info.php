@@ -54,25 +54,25 @@ class Info extends CMS_Module {
 
         // parent of all navigations
         $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Accessories Widgets',
-            $module_path.'/static_accessories', $this->PRIV_AUTHORIZED, 'main_management');
+            $module_path.'/static_accessories', PRIV_AUTHORIZED, 'main_management');
 
         // add navigations
         $this->cms_add_navigation($this->cms_complete_navigation_name('manage_slide'), 'Slideshow',
-            $module_path.'/manage_slide', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_slide', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
         $this->cms_add_navigation($this->cms_complete_navigation_name('manage_tab_content'), 'Tabbed Content',
-            $module_path.'/manage_tab_content', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_tab_content', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
         $this->cms_add_navigation($this->cms_complete_navigation_name('manage_visitor_counter'), 'Visitor',
-            $module_path.'/manage_visitor_counter', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_visitor_counter', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
         $this->cms_add_widget($this->cms_complete_navigation_name('slideshow'), 'Slide Show',
-            $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/slide');
+            PRIV_EVERYONE, $module_path.'/static_accessories_widget/slide');
         $this->cms_add_widget($this->cms_complete_navigation_name('tab'), 'Tabbed Content',
-            $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/tab');
+            PRIV_EVERYONE, $module_path.'/static_accessories_widget/tab');
         $this->cms_add_widget($this->cms_complete_navigation_name('visitor_count'), 'Visitor Count',
-            $this->PRIV_EVERYONE, $module_path.'/static_accessories_widget/visitor_counter');
+            PRIV_EVERYONE, $module_path.'/static_accessories_widget/visitor_counter');
 
 
         // create tables

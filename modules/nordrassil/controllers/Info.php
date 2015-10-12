@@ -93,7 +93,7 @@ class Info extends CMS_Module {
         $fields = array(
             'template_id'       => $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
             'name'              => array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
-            'generator_path'    => array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),            
+            'generator_path'    => array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('template_id', TRUE);
@@ -223,15 +223,15 @@ class Info extends CMS_Module {
             array('name'=>'validation_valid_base64', 'description'=>'base64 character validation filter'),
             array('name'=>'upload', 'description'=>'upload field')
         );
-        
+
         $this->nds_model->install_template($template_name, $generator_path,
             $project_options, $table_options, $column_options);
 
-        
+
         // insert project
         $this->db->insert($this->cms_complete_table_name('project'),
             array(
-                'project_id'=>1, 'template_id'=>1, 'name'=>'example', 'db_server'=>'localhost', 
+                'project_id'=>1, 'template_id'=>1, 'name'=>'example', 'db_server'=>'localhost',
                 'db_port'=>'3306', 'db_schema'=>'town', 'db_user'=>'root', 'db_password'=>'toor', 'db_table_prefix'=>'twn'));
         // insert table
         $this->db->insert_batch($this->cms_complete_table_name('table'), array(
@@ -254,7 +254,7 @@ class Info extends CMS_Module {
             array('id' => 4, 'option_id' => 1, 'table_id' => 1),
             array('id' => 5, 'option_id' => 3, 'table_id' => 3),
         ));
-        // insert column 
+        // insert column
         $this->db->insert_batch($this->cms_complete_table_name('column'), array(
             array('column_id' => 1, 'table_id' => 1, 'name' => 'citizen_id', 'caption' => 'Citizen Id', 'data_type' => 'int', 'data_size' => 10, 'role' => 'primary', 'lookup_table_id' => NULL, 'lookup_column_id' => NULL, 'relation_table_id' => NULL, 'relation_table_column_id' => NULL, 'relation_selection_column_id' => NULL, 'relation_priority_column_id' => NULL, 'selection_table_id' => NULL, 'selection_column_id' => NULL, 'priority' => 0, 'value_selection_mode' => NULL, 'value_selection_item' => NULL),
             array('column_id' => 2, 'table_id' => 1, 'name' => 'city_id', 'caption' => 'City', 'data_type' => 'int', 'data_size' => 10, 'role' => 'lookup', 'lookup_table_id' => 3, 'lookup_column_id' => 11, 'relation_table_id' => NULL, 'relation_table_column_id' => NULL, 'relation_selection_column_id' => NULL, 'relation_priority_column_id' => NULL, 'selection_table_id' => NULL, 'selection_column_id' => NULL, 'priority' => 1, 'value_selection_mode' => NULL, 'value_selection_item' => NULL),
@@ -311,44 +311,6 @@ class Info extends CMS_Module {
     // IMPORT SQL FILE
     private function import_sql($file_name){
         $this->cms_execute_SQL(file_get_contents($file_name), '/*split*/');
-    }
-
-    // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){
-        if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
-            $module_path = $this->cms_module_path();
-            $this->load->dbutil();
-            $sql = '';
-
-            // create DROP TABLE syntax
-            for($i=count($table_names)-1; $i>=0; $i--){
-                $table_name = $this->cms_complete_table_name($table_names[$i]);
-                $table_names[$i] = $table_name;
-                $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-            }
-            if($sql !='')$sql.= PHP_EOL;
-
-            // create CREATE TABLE and INSERT syntax
-
-            $prefs = array(
-                    'tables'      => $table_names,
-                    'ignore'      => array(),
-                    'format'      => 'txt',
-                    'filename'    => 'mybackup.sql',
-                    'add_drop'    => FALSE,
-                    'add_insert'  => TRUE,
-                    'newline'     => PHP_EOL
-                  );
-            $sql.= $this->dbutil->backup($prefs);
-
-            //write file
-            $file_name = 'backup_'.date('Y-m-d_G-i-s').'.sql';
-            file_put_contents(
-                    BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-                    $sql
-                );
-        }
-
     }
 
 }

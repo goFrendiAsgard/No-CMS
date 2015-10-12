@@ -366,7 +366,7 @@ class CMS_AutoUpdate_Model extends CMS_Model
     }
 
     private function __update_to_0_7_8(){
-        
+
     }
 
     private function __update_to_0_7_9()

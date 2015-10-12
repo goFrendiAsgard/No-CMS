@@ -14,7 +14,7 @@ class Info extends CMS_Module {
             array(
                     'name'          => 'Blog',
                     'icon'          => 'Blog.png',
-                    'description'   => 'Blog website', 
+                    'description'   => 'Blog website',
                     'homepage'      => '{{ widget_name:blog_content }}',
                     'configuration' => '{}',
                     'modules'       => 'blog, static_accessories, contact_us',
@@ -64,7 +64,7 @@ class Info extends CMS_Module {
     public function do_deactivate(){
         $this->backup_database(array(
             $this->cms_complete_table_name('subsite')
-        ));        
+        ));
         $this->remove_all();
     }
 
@@ -77,7 +77,7 @@ class Info extends CMS_Module {
         $module_path  = $this->cms_module_path();
 
         if($major <= 0 && $minor <= 0 && $build <= 1){
-            // Add your migration logic here.        
+            // Add your migration logic here.
             // table : subsite
             $table_name = $this->cms_complete_table_name('subsite');
             $field_list = $this->db->list_fields($table_name);
@@ -115,7 +115,7 @@ class Info extends CMS_Module {
 
             if(CMS_SUBSITE == ''){
                 $this->cms_add_navigation($this->cms_complete_navigation_name('template'), 'Manage Template',
-                    $module_path.'/manage_template', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                    $module_path.'/manage_template', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
                     NULL, NULL, NULL, NULL, 'default-one-column'
                 );
             }
@@ -158,20 +158,21 @@ class Info extends CMS_Module {
 
         // parent of all navigations
         $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Multisite',
-            ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), $this->PRIV_EVERYONE, NULL,
+            ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), PRIV_EVERYONE, NULL,
             NULL, 'Browse subsites', 'glyphicon-dashboard');
+
 
         if(CMS_SUBSITE == ''){
             // add privileges
             $this->cms_add_privilege('modify_subsite', 'Modify subsite');
             // add navigations
             $this->cms_add_navigation($this->cms_complete_navigation_name('add_subsite'), 'Add Subsite',
-                $module_path.'/add_subsite', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                $module_path.'/add_subsite', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
                 NULL, 'Browse subsites', 'glyphicon-plus', NULL, 'default-one-column'
             );
 
             $this->cms_add_navigation($this->cms_complete_navigation_name('manage_template'), 'Manage Template',
-                $module_path.'/manage_template', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                $module_path.'/manage_template', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
                 NULL, NULL, NULL, NULL, 'default-one-column'
             );
         }
@@ -207,7 +208,7 @@ class Info extends CMS_Module {
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('template'));
 
-        $this->insert_templates();        
+        $this->insert_templates();
 
         if(strtoupper($this->cms_get_config('cms_add_subsite_on_register')) == 'TRUE'){
             $this->cms_add_route('main/register', $module_path.'/multisite/register');
@@ -225,43 +226,6 @@ class Info extends CMS_Module {
                 $this->db->insert($this->cms_complete_table_name('template'),$template);
             }
         }
-    }
-
-    // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){
-        if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
-            $module_path = $this->cms_module_path();
-            $this->load->dbutil();
-            $sql = '';
-
-            // create DROP TABLE syntax
-            for($i=count($table_names)-1; $i>=0; $i--){
-                $table_name = $table_names[$i];
-                $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-            }
-            if($sql !='')$sql.= PHP_EOL;
-
-            // create CREATE TABLE and INSERT syntax
-
-            $prefs = array(
-                    'tables'      => $table_names,
-                    'ignore'      => array(),
-                    'format'      => 'txt',
-                    'filename'    => 'mybackup.sql',
-                    'add_drop'    => FALSE,
-                    'add_insert'  => TRUE,
-                    'newline'     => PHP_EOL
-                  );
-            $sql.= @$this->dbutil->backup($prefs);
-
-            //write file
-            $file_name = 'backup_'.date('Y-m-d_G-i-s').'.sql';
-            file_put_contents(
-                    BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-                    $sql
-                );
-        }
-
     }
 
 }

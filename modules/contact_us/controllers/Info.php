@@ -68,7 +68,7 @@ class Info extends CMS_Module {
 
         // remove parent of all navigations
         $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
-        
+
         // drop tables
         $this->dbforge->drop_table($this->cms_complete_table_name('message'), TRUE);
     }
@@ -79,16 +79,16 @@ class Info extends CMS_Module {
 
         // parent of all navigations
         $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Contact Us',
-            $module_path.'/contact_us', $this->PRIV_EVERYONE, NULL, NULL, 'Contact Us Menu', 'glyphicon-envelope');
+            $module_path.'/contact_us', PRIV_EVERYONE, NULL, NULL, 'Contact Us Menu', 'glyphicon-envelope');
 
         // add navigations
         $this->cms_add_navigation($this->cms_complete_navigation_name('manage_message'), 'Manage Message',
-            $module_path.'/manage_message', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+            $module_path.'/manage_message', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
         );
 
         $this->cms_add_quicklink($this->cms_complete_navigation_name('index'));
 
-        
+
         // create tables
         // message
         $fields = array(
@@ -101,43 +101,6 @@ class Info extends CMS_Module {
         $this->dbforge->add_key('id', TRUE);
         $this->dbforge->create_table($this->cms_complete_table_name('message'));
 
-        
-    }
-
-    // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){         
-        if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
-            $module_path = $this->cms_module_path();
-            $this->load->dbutil();
-            $sql = '';
-            
-            // create DROP TABLE syntax
-            for($i=count($table_names)-1; $i>=0; $i--){
-                $table_name = $table_names[$i];
-                $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-            }
-            if($sql !='')$sql.= PHP_EOL;
-
-            // create CREATE TABLE and INSERT syntax 
-            
-            $prefs = array(
-                    'tables'      => $table_names,
-                    'ignore'      => array(),
-                    'format'      => 'txt',
-                    'filename'    => 'mybackup.sql',
-                    'add_drop'    => FALSE,
-                    'add_insert'  => TRUE,
-                    'newline'     => PHP_EOL
-                  );
-            $sql.= @$this->dbutil->backup($prefs);        
-
-            //write file
-            $file_name = 'backup_'.date('Y-m-d_G-i-s').'.sql';
-            file_put_contents(
-                    BASEPATH.'../modules/'.$module_path.'/assets/db/'.$file_name,
-                    $sql
-                );
-        }       
 
     }
 }

@@ -4,7 +4,7 @@
  *
  * @author No-CMS Module Generator
  */
-class Info extends CMS_Module {    
+class Info extends CMS_Module {
 
     public function do_activate(){
         $this->remove_all();
@@ -14,7 +14,7 @@ class Info extends CMS_Module {
     // DEACTIVATION
     public function do_deactivate(){
         $this->backup_database(array(
-            
+
         ));
         $this->remove_all();
     }
@@ -36,7 +36,7 @@ class Info extends CMS_Module {
         $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
 
         // drop tables
-        
+
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -45,52 +45,14 @@ class Info extends CMS_Module {
 
         // parent of all navigations
         $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Theme Generator',
-            $module_path == 'teldrassil'? $module_path: $module_path.'/teldrassil', $this->PRIV_AUTHORIZED, 
+            $module_path == 'teldrassil'? $module_path: $module_path.'/teldrassil', PRIV_AUTHORIZED,
                 "main_management", NULL, 'Theme Generator', NULL, NULL, 'default-one-column');
 
         // add navigations
 
 
         // create tables
-        
 
-    }
-
-    // EXPORT DATABASE
-    private function backup_database($table_names, $limit = 100){
-        if($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli'){
-            $module_path = $this->cms_module_path();
-            $this->load->dbutil();
-            $sql = '';
-
-            // create DROP TABLE syntax
-            for($i=count($table_names)-1; $i>=0; $i--){
-                $table_name = $table_names[$i];
-                $sql .= 'DROP TABLE IF EXISTS `'.$table_name.'`; '.PHP_EOL;
-            }
-            if($sql !='')$sql.= PHP_EOL;
-
-            // create CREATE TABLE and INSERT syntax
-
-            $prefs = array(
-                    'tables'      => $table_names,
-                    'ignore'      => array(),
-                    'format'      => 'txt',
-                    'filename'    => 'mybackup.sql',
-                    'add_drop'    => FALSE,
-                    'add_insert'  => TRUE,
-                    'newline'     => PHP_EOL
-                  );
-            $sql.= @$this->dbutil->backup($prefs);
-
-            //write file
-            chmod(FCPATH.'modules/'.$module_path.'/assets/db/', 0777);
-            $file_name = 'backup_'.date('Y-m-d_G-i-s').'.sql';
-            file_put_contents(
-                    FCPATH.'modules/'.$module_path.'/assets/db/'.$file_name,
-                    $sql
-                );
-        }
 
     }
 

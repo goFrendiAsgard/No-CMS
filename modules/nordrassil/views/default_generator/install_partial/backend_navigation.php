@@ -1,0 +1,15 @@
+            // Manage {{ table_caption }}
+            array(
+                'entity_name'       => '{{ stripped_table_name }}',
+                'url'               => '{{ back_controller_name }}',
+                'authorization_id'  => PRIV_AUTHORIZED,
+                'default_layout'    => 'default-one-column',
+                'title'             => 'Manage {{ table_caption }}',
+                'parent_name'       => '{{ navigation_parent_name }}',
+                'index'             => NULL,
+                'description'       => NULL,
+                'bootstrap_glyph'   => NULL,
+                'notification_url'  => NULL,
+                'hidden'            => NULL,
+                'static_content'    => NULL,
+            ),

@@ -379,7 +379,7 @@ Let's make your info controller (`new_module/controllers/Info.php`):
 
             // parent of all navigations
             $this->cms_add_navigation('pokemon_list', 'Pokemon List',
-                $module_path.'/pokemon/show', $this->PRIV_EVERYONE);
+                $module_path.'/pokemon/show', PRIV_EVERYONE);
 
             // create table
             $fields = array(

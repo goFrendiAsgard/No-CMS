@@ -86,7 +86,7 @@ class Info extends CMS_Module {
             ->get();
         if($query->num_rows()>0){
             $this->cms_add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
-                $this->PRIV_EVERYONE, $this->cms_module_path().'/blog_widget/archive', 'sidebar');
+                PRIV_EVERYONE, $this->cms_module_path().'/blog_widget/archive', 'sidebar');
         }
 
         // add widget blog
@@ -96,7 +96,7 @@ class Info extends CMS_Module {
             ->get();
         if($query->num_rows() == 0){
             $this->cms_add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
-                $this->PRIV_EVERYONE, $this->cms_module_path());
+                PRIV_EVERYONE, $this->cms_module_path());
         }
 
         $version_part = explode('.', $old_version);
@@ -141,13 +141,13 @@ class Info extends CMS_Module {
             $this->dbforge->add_column($table_name, $fields);
             // add popular and featured articles widgets
             $this->cms_add_widget($this->cms_complete_navigation_name('popular_article'), 'Popular Articles',
-                $this->PRIV_EVERYONE, $module_path.'/blog_widget/popular','sidebar');
+                PRIV_EVERYONE, $module_path.'/blog_widget/popular','sidebar');
             $this->cms_add_widget($this->cms_complete_navigation_name('featured_article'), 'Featured Articles',
-                $this->PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
+                PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
         }
         if($major == 0 && $minor == 0 && $build <= 8){
             $this->cms_add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
-                $module_path.'/setting', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                $module_path.'/setting', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
                 NULL, 'Blog Setting', NULL, NULL, 'default-one-column'
             );
 
@@ -275,39 +275,39 @@ class Info extends CMS_Module {
             $parent_url = $module_path.'/blog';
         }
         $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
-            $parent_url, $this->PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil', NULL, NULL,
+            $parent_url, PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil', NULL, NULL,
             $this->cms_module_path().'/notif/new_comment'
         );
 
         // add navigations
         $this->cms_add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',
-            $module_path.'/manage_article', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            $module_path.'/manage_article', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
             NULL, 'Add, edit, and delete blog articles', NULL, NULL, 'default-one-column',
             $this->cms_module_path().'/notif/new_comment'
         );
         $this->cms_add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
-            $module_path.'/manage_category', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            $module_path.'/manage_category', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
             NULL, 'Add, edit, and delete categories. Each article can has one or more categories', NULL, NULL, 'default-one-column'
         );
         $this->cms_add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
-            $module_path.'/setting', $this->PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            $module_path.'/setting', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
             NULL, 'Blog Setting', NULL, NULL, 'default-one-column'
         );
 
         $this->cms_add_quicklink($this->cms_complete_navigation_name('index'));
 
         $this->cms_add_widget($this->cms_complete_navigation_name('newest_article'), 'Newest Articles',
-            $this->PRIV_EVERYONE, $module_path.'/blog_widget/newest','sidebar');
+            PRIV_EVERYONE, $module_path.'/blog_widget/newest','sidebar');
         $this->cms_add_widget($this->cms_complete_navigation_name('popular_article'), 'Popular Articles',
-            $this->PRIV_EVERYONE, $module_path.'/blog_widget/popular','sidebar');
+            PRIV_EVERYONE, $module_path.'/blog_widget/popular','sidebar');
         $this->cms_add_widget($this->cms_complete_navigation_name('featured_article'), 'Featured Articles',
-            $this->PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
+            PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
         $this->cms_add_widget($this->cms_complete_navigation_name('article_category'), 'Article Categories',
-            $this->PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
+            PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
         $this->cms_add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
-            $this->PRIV_EVERYONE, $module_path);
+            PRIV_EVERYONE, $module_path);
         $this->cms_add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
-            $this->PRIV_EVERYONE, $module_path.'/blog_widget/archive', 'sidebar');
+            PRIV_EVERYONE, $module_path.'/blog_widget/archive', 'sidebar');
 
         // create groups and assign
         $this->cms_add_group('Blog Editor', 'Can Add, Edit, Delete & Publish other\'s articles');

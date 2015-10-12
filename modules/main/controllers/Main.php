@@ -824,9 +824,6 @@ class Main extends CMS_Controller
 
         $crud->unset_jquery();
 
-        $crud->set_table(cms_table_name('main_navigation'));
-        $crud->set_subject('Navigation (Page)');
-
         $undeleted_id = array();
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
@@ -836,6 +833,9 @@ class Main extends CMS_Controller
         foreach ($query->result() as $row) {
             $undeleted_id[] = $row->navigation_id;
         }
+
+        $crud->set_table(cms_table_name('main_navigation'));
+        $crud->set_subject('Navigation (Page)');
 
         if ($state == 'update' || $state == 'edit' || $state == 'update_validation') {
             $primary_key = $state_info->primary_key;
@@ -895,7 +895,7 @@ class Main extends CMS_Controller
 
         $crud->set_relation_n_n('groups', cms_table_name('main_group_navigation'), cms_table_name('main_group'), 'navigation_id', 'group_id', 'group_name');
 
-        if (!array_key_exists('search_text', $this->input->post())) {
+        if (!array_key_exists('search_text', $this->input->post()) || $this->input->post('search_text') == '') {
             if (isset($parent_id) && intval($parent_id) > 0) {
                 $crud->where(cms_table_name('main_navigation').'.parent_id', $parent_id);
                 $state = $crud->getState();

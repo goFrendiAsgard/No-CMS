@@ -3,7 +3,7 @@
                 $this->cms_complete_navigation_name('{{ back_navigation_name }}'),  //  Navigation name
                 'Manage {{ table_caption }}',  // Title
                 $module_path.'/{{ back_controller_name }}',  // URL Path 
-                $this->PRIV_AUTHORIZED,   // Authorization
+                PRIV_AUTHORIZED,   // Authorization
                 $this->cms_complete_navigation_name('{{ navigation_parent_name }}'),  // Parent Navigation Name
                 NULL,                   // Index
                 NULL,                   // Description

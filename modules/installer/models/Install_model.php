@@ -74,7 +74,7 @@ class Install_model extends CI_Model{
     public function __construct(){
         parent::__construct();
         // automatically set table prefix based on subsite
-        $this->set_subsite($this->subsite);        
+        $this->set_subsite($this->subsite);
     }
 
     public function set_subsite($subsite = NULL){
@@ -339,7 +339,7 @@ class Install_model extends CI_Model{
             if (!in_array('curl', get_loaded_extensions())) {
                 $success  = FALSE;
                 $error_list[] = 'php-curl is not enabled';
-            }    
+            }
             // facebook
             if($this->auth_enable_facebook){
                 if($this->auth_facebook_app_id == ''){
@@ -816,10 +816,10 @@ class Install_model extends CI_Model{
             }
             return $return;
         }
-        
+
     }
 
-    protected function turn_into_associative_array($array, $keys){        
+    protected function turn_into_associative_array($array, $keys){
         if(array_keys($array) == range(0, count($array) - 1)){
             $new_array = array();
             foreach($array as $row){
@@ -926,11 +926,11 @@ class Install_model extends CI_Model{
                 array('Unauthenticated', 'Only non-member visitor, they who hasn\'t log in yet (e.g:view member registration page)'),
                 array('Authenticated', 'Only member (e.g:change password)'),
                 array('Authorized', 'Only member with certain privilege (depend on group)'),
-                array('Exclusive Authorized', 'Even Super Admin cannot access this if not allowed'),        
+                array('Exclusive Authorized', 'Even Super Admin cannot access this if not allowed'),
             ));
 
         // group
-        $sql_list[] = $this->insert_groups(array( 
+        $sql_list[] = $this->insert_groups(array(
                 array('Super Admin', 'Every member of this group can do everything possible, but only programmer can turn the impossible into real :D'),
                 array('Employee', 'Group Example')
             ));
@@ -1002,8 +1002,8 @@ class Install_model extends CI_Model{
                 array('main_404', NULL, '404 Not Found', '404 Page', NULL, '404 Not Found', 'not_found',
                     1, 9, 1, 1, '<h1>404 Page not found</h1><p>Sorry, the page does not exists.<br /><a class="btn btn-primary" href="{{ site_url }}">Please go back <i class="glyphicon glyphicon-home"></i></a></p>', 0, NULL, NULL, 'default-one-column', 1),
             ));
-        
-        
+
+
         // quicklink
         $sql_list[] = $this->insert_quicklinks(array(
                 array(19, 1),
@@ -1012,7 +1012,7 @@ class Install_model extends CI_Model{
                 array(4,4),
             ));
         // widget
-        $sql_list[] = $this->insert_widgets(array( 
+        $sql_list[] = $this->insert_widgets(array(
                 array('section_custom_style', '', 'Custom CSS', '',
                     1, 1, 1, 1, '',
                     NULL),
@@ -1079,7 +1079,7 @@ class Install_model extends CI_Model{
             ));
 
         // privilege
-        $sql_list[] = $this->insert_privileges(array( 
+        $sql_list[] = $this->insert_privileges(array(
                 array('cms_install_module', 'Install Module', 'Install Module is a very critical privilege, it allow authorized user to Install a module to the CMS.<br />By Installing module, the database structure can be changed. There might be some additional navigation and privileges added.<br /><br />You\'d be better to give this authorization only authenticated and authorized user. (I suggest to make only admin have such a privilege)'.PHP_EOL.'&nbsp;', 4),
                 array('cms_manage_access', 'Manage Access', 'Manage access'.PHP_EOL.'&nbsp;', 4),
             ));
@@ -1092,7 +1092,7 @@ class Install_model extends CI_Model{
             $site_name      = 'No-CMS';
             $site_slogan    = 'A Free CodeIgniter Based CMS Framework';
         }
-        $config_data = array( 
+        $config_data = array(
                 array('site_name', $site_name, 'Site title'),
                 array('site_slogan', $site_slogan, 'Site slogan'),
                 array('site_logo', '{{ base_url }}assets/nocms/images/No-CMS-logo.png', 'Site logo'),
@@ -1142,10 +1142,10 @@ class Install_model extends CI_Model{
                 }
             }
         }
-        $sql_list[] = $this->insert_configs($config_data);      
+        $sql_list[] = $this->insert_configs($config_data);
 
-        // language        
-        $this->insert_languages(array( 
+        // language
+        $this->insert_languages(array(
                 array('Afrikaans','afrikaans'),
                 array('Arabic','arabic'),
                 array('Bengali','bengali'),
@@ -1266,7 +1266,7 @@ class Install_model extends CI_Model{
             @file_put_contents(FCPATH.'/hostname.php', $content);
             // create cms_extended_login_helper.php
             if(!file_exists(APPPATH.'helpers/cms_extended_login_helper.php')){
-                @copy(FCPATH.'modules/installer/views/cms_extended_login_helper.php', 
+                @copy(FCPATH.'modules/installer/views/cms_extended_login_helper.php',
                     APPPATH.'helpers/cms_extended_login_helper.php');
             }
         }
@@ -1362,7 +1362,7 @@ class Install_model extends CI_Model{
         $encryption_key = md5(time() . rand());
         $this->change_config($file_name, "encryption_key", $encryption_key, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "sess_cookie_name", $encryption_key, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        
+
         $table_name = 'ci_sessions';
         if(!trim($this->db_table_prefix) == ''){
             $table_name = $this->db_table_prefix.'_'.$table_name;
@@ -1387,7 +1387,7 @@ class Install_model extends CI_Model{
 
         $this->change_config($file_name, "default_controller", 'main', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "404_override", 'not_found', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        
+
         if($this->is_subsite){
             // extended_route_path
             $include_extended_route = 'include(APPPATH.\'config/site-'.$this->subsite.'/extended_routes.php\');';
@@ -1469,7 +1469,7 @@ class Install_model extends CI_Model{
         if (in_array('curl', get_loaded_extensions())) {
             if(count($this->modules) == 0){
                 $modules = array('blog','contact_us','static_accessories');
-                if(!$this->is_subsite){                    
+                if(!$this->is_subsite){
                     $modules[] = 'teldrassil';
                     $modules[] = 'multisite';
                     $modules[] = 'nordrassil';
@@ -1498,32 +1498,27 @@ class Install_model extends CI_Model{
             if($query->num_rows()>0){
                 $row = $query->row();
                 $bypass = $row->password;
-            }  
-       
+            }
+
             // call the controller
             if($bypass != ''){
                 if($this->is_subsite){
                     // for subsite, we should override table prefix etc
                     define('CMS_OVERRIDDEN_SUBSITE', $this->subsite);
-                }else{
-                    // for non-subsite, at this point the database configuration has been made
-                    // but we still use first-time environment. Thus, we need to change the configuration temporally
-                    copy(APPPATH.'config/first-time/database.php', APPPATH.'config/first-time/database.bak.php');
-                    copy(APPPATH.'config/main/database.php', APPPATH.'config/first-time/database.php');
                 }
                 $executed_controllers = array();
-                foreach($modules as $module){                
+                foreach($modules as $module){
                     if(file_exists(FCPATH.'modules/'.$module.'/description.txt')){
                         $json         = file_get_contents(FCPATH.'modules/'.$module.'/description.txt');
                         $module_info  = @json_decode($json, true);
                         $module_info  = $module_info === NULL? array() : $module_info;
                         if(is_array($module_info) && array_key_exists('activate', $module_info)){
-                            $url = trim($module_info['activate'],'/');                            
+                            $url = trim($module_info['activate'],'/');
                             $response = '';
                             // subsite just run the module, it's faster
                             $url_part = explode('/', $url);
                             $controller_name = ucfirst($url_part[0]);
-                            $new_controller_name = $controller_name.'_'.strtolower($module);
+                            $new_controller_name = $controller_name.'_'.md5($module);
                             $controller_file = FCPATH.'modules/'.$module.'/controllers/'.$controller_name.'.php';
                             $new_controller_file = FCPATH.'modules/'.$module.'/controllers/'.$new_controller_name.'.php';
                             if(!file_exists($new_controller_file) || date('YmdHis',filemtime($new_controller_file)) <= date('YmdHis',filemtime($controller_file))){
@@ -1557,10 +1552,6 @@ class Install_model extends CI_Model{
                 if($this->is_subsite){
                     // put the overridden subsite back to normal
                     define('CMS_RESET_OVERRIDDEN_SUBSITE', TRUE);
-                }else{
-                    // put the first-time environment back to normal
-                    copy(APPPATH.'config/first-time/database.bak.php', APPPATH.'config/first-time/database.php');
-                    unlink(APPPATH.'config/first-time/database.bak.php');
                 }
                 return TRUE;
             }

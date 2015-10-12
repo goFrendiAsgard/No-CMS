@@ -11,13 +11,14 @@ if (!defined('BASEPATH')) {
  */
 class CMS_Model extends CI_Model
 {
-    public $PRIV_EVERYONE = 1;
-    public $PRIV_NOT_AUTHENTICATED = 2;
-    public $PRIV_AUTHENTICATED = 3;
-    public $PRIV_AUTHORIZED = 4;
-    public $PRIV_EXCLUSIVE_AUTHORIZED = 5;
-    public $__controller_module_path = null;
+    // going to be deprecated
+    public $PRIV_EVERYONE = PRIV_EVERYONE;
+    public $PRIV_NOT_AUTHENTICATED = PRIV_NOT_AUTHENTICATED;
+    public $PRIV_AUTHENTICATED = PRIV_AUTHENTICATED;
+    public $PRIV_AUTHORIZED = PRIV_AUTHORIZED;
+    public $PRIV_EXCLUSIVE_AUTHORIZED = PRIV_EXCLUSIVE_AUTHORIZED;
 
+    public $__controller_module_path = null;
     protected static $__cms_model_properties;
 
     public function cms_list_fields($table_name)
@@ -49,7 +50,16 @@ class CMS_Model extends CI_Model
         $this->load->driver('session');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
-        $this->load->database();
+
+        // for the first-time installation, it might not load main configuration even if the main configuration
+        // is already exists. Thus we need to explicitly code it
+        if(CMS_SUBSITE == '' && ENVIRONMENT == 'first-time' && file_exists(APPPATH.'config/main/database.php')){
+            unset($db);
+            include(APPPATH.'config/main/database.php');
+            $this->load->database($db['default']);
+        }else{
+            $this->load->database();
+        }
 
         // accessing file is faster than accessing database
         // but I think accessing variable is faster than both of them
@@ -196,7 +206,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $table_name
      *
@@ -221,7 +231,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $navigation_name
      *
@@ -239,7 +249,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $key
      * @param mixed  $value
@@ -262,7 +272,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $key
      * @desc   unset CI_session["key"]
@@ -308,7 +318,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      * @desc   get default_controller
      */
     public function cms_get_default_controller()
@@ -323,7 +333,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $value
      * @desc   set default_controller to value
@@ -360,7 +370,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $hostname
      * @param int    $port
@@ -411,7 +421,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $user_name
      *
@@ -424,7 +434,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $real_name
      *
@@ -437,7 +447,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param string $email
      *
@@ -450,7 +460,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param int $user_id
      * @desc   set or get CI_Session["cms_user_id"]
@@ -484,7 +494,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @return array
      * @desc   get group list of current user
@@ -499,7 +509,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @return array
      * @desc   get group list of current user
@@ -514,7 +524,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @return bool
      * @desc   TRUE if current user is super admin, FALSE otherwise
@@ -575,7 +585,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   int parent_id
      * @param   int max_menu_depth
@@ -697,7 +707,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @return mixed
      * @desc   return quick links
@@ -803,7 +813,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   slug
      * @param   widget_name
@@ -973,7 +983,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string navigation_name
      *
@@ -1001,7 +1011,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string navigation_name
      *
@@ -1060,7 +1070,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @return mixed
      * @desc    return privileges of current user
@@ -1116,7 +1126,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string navigation_name
      * @param   mixed navigations
@@ -1141,7 +1151,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string privilege_name
      *
@@ -1181,7 +1191,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string identity
      * @param   string password
@@ -1294,7 +1304,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      * @desc    logout
      */
     public function cms_do_logout()
@@ -1310,7 +1320,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string parent
      * @desc    re-arange index of navigation with certain parent_id
@@ -1339,7 +1349,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string parent
      * @desc    re-arange index of widget
@@ -1362,7 +1372,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string parent
      * @desc    re-arange index of quicklink
@@ -1745,7 +1755,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   int navigation id
      * @desc    move quicklink up
@@ -1784,7 +1794,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   int navigation id
      * @desc    move quicklink down
@@ -1823,7 +1833,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string widget_name
      * @desc    move widget up
@@ -1868,7 +1878,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string widget_name
      * @desc    move widget down
@@ -1913,7 +1923,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string navigation_name
      * @desc    move navigation up
@@ -1965,7 +1975,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string navigation_name
      * @desc    move navigation down
@@ -2031,7 +2041,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string user_name
      * @param   string email
@@ -2063,7 +2073,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string content
      * @desc    flash content to be served as metadata on next call of $this->view in controller
@@ -2080,7 +2090,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string user_id
      * @param   string email
@@ -2127,7 +2137,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string module_name
      *
@@ -2147,7 +2157,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @return mixed
      * @desc    get module list
@@ -2190,7 +2200,7 @@ class CMS_Model extends CI_Model
                 $extension = $filename_array[count($filename_array) - 1];
                 unset($filename_array[count($filename_array) - 1]);
                 $filename = implode('.', $filename_array);
-                if ($extension == 'php' && $filename != '_info') {
+                if ($extension == 'php' && $filename != 'Info') {
                     $module_controllers[] = $filename;
                 }
             }
@@ -2288,7 +2298,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string module_name
      *
@@ -2329,7 +2339,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string module_path
      *
@@ -2353,7 +2363,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @return mixed
      * @desc    get theme list
@@ -2422,7 +2432,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string identity
      * @param    bool send_mail
@@ -2487,7 +2497,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string activation_code
      * @param   string new_password
@@ -2538,7 +2548,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string from_address
      * @param   string from_name
@@ -2635,7 +2645,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string activation_code
      *
@@ -2655,7 +2665,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string name
      * @param   string value
@@ -2707,7 +2717,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string name
      * @desc    unset configuration variable
@@ -2721,7 +2731,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string name, bool raw
      *
@@ -2763,7 +2773,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author    goFrendiAsgard
+     * @author    go frendi
      *
      * @param    string language
      *
@@ -2787,7 +2797,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author    goFrendiAsgard
+     * @author    go frendi
      *
      * @return array list of available languages
      * @desc    get available languages
@@ -2847,7 +2857,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @return mixed
      * @desc    get all language dictionary
@@ -2903,7 +2913,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author  goFrendiAsgard
+     * @author  go frendi
      *
      * @param   string key
      *
@@ -2924,7 +2934,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param  string value
      *
@@ -3052,7 +3062,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param  string user_name
      *
@@ -3074,7 +3084,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param  string expression
      *
@@ -3098,7 +3108,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param  string expression
      *
@@ -3121,7 +3131,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param  array arr
      *
@@ -3143,7 +3153,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param  array arr
      *
@@ -3165,7 +3175,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @param  array arr
      *
@@ -3193,7 +3203,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @return array providers
      */
@@ -3209,7 +3219,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @return array status
      * @desc return all status from third-party provider
@@ -3235,7 +3245,7 @@ class CMS_Model extends CI_Model
     }
 
     /**
-     * @author goFrendiAsgard
+     * @author go frendi
      *
      * @return bool success
      * @desc login/register by using third-party provider
@@ -3330,7 +3340,7 @@ class CMS_Model extends CI_Model
         return false;
     }
 
-    final public function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = null, $index = null, $description = null, $bootstrap_glyph = null,
+    public function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = null, $index = null, $description = null, $bootstrap_glyph = null,
     $default_theme = null, $default_layout = null, $notif_url = null, $hidden = 0, $static_content = '')
     {
         //get parent's navigation_id
@@ -3408,7 +3418,7 @@ class CMS_Model extends CI_Model
             $this->db->insert(cms_table_name('main_navigation'), $data);
         }
     }
-    final public function cms_remove_navigation($navigation_name)
+    public function cms_remove_navigation($navigation_name)
     {
         //get navigation_id
         $query = $this->db->select('navigation_id')
@@ -3438,7 +3448,7 @@ class CMS_Model extends CI_Model
             $this->db->delete(cms_table_name('main_navigation'), $where);
         }
     }
-    final public function cms_add_privilege($privilege_name, $title, $authorization_id = 1, $description = null)
+    public function cms_add_privilege($privilege_name, $title, $authorization_id = 1, $description = null)
     {
         $data = array(
             'privilege_name' => $privilege_name,
@@ -3458,7 +3468,7 @@ class CMS_Model extends CI_Model
             $this->db->insert(cms_table_name('main_privilege'), $data);
         }
     }
-    final public function cms_remove_privilege($privilege_name)
+    public function cms_remove_privilege($privilege_name)
     {
         $query = $this->db->select('privilege_id')
             ->from(cms_table_name('main_privilege'))
@@ -3484,7 +3494,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    final public function cms_add_group($group_name, $description)
+    public function cms_add_group($group_name, $description)
     {
         $data = array(
             'group_name' => $group_name,
@@ -3502,7 +3512,7 @@ class CMS_Model extends CI_Model
             $this->db->insert(cms_table_name('main_group'), $data);
         }
     }
-    final public function cms_remove_group($group_name)
+    public function cms_remove_group($group_name)
     {
         $query = $this->db->select('group_id')
             ->from(cms_table_name('main_group'))
@@ -3519,16 +3529,21 @@ class CMS_Model extends CI_Model
             $where = array(
                 'group_id' => $group_id,
             );
+            $this->db->delete(cms_table_name('main_group_privilege'), $where);
+            //delete cms_group_user
+            $where = array(
+                'group_id' => $group_id,
+            );
             $this->db->delete(cms_table_name('main_group_user'), $where);
             //delete cms_privilege
             $where = array(
-                'privilege_id' => $privilege_id,
+                'group_id' => $group_id,
             );
             $this->db->delete(cms_table_name('main_group'), $where);
         }
     }
 
-    final public function cms_add_widget($widget_name, $title = null, $authorization_id = 1, $url = null, $slug = null, $index = null, $description = null)
+    public function cms_add_widget($widget_name, $title = null, $authorization_id = 1, $url = null, $slug = null, $index = null, $description = null)
     {
         //if it is null, index = max index+1
         if (!isset($index)) {
@@ -3574,7 +3589,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    final public function cms_remove_widget($widget_name)
+    public function cms_remove_widget($widget_name)
     {
         $query = $this->db->select('widget_id')
             ->from(cms_table_name('main_widget'))
@@ -3599,7 +3614,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    final public function cms_add_quicklink($navigation_name)
+    public function cms_add_quicklink($navigation_name)
     {
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
@@ -3633,7 +3648,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    final public function cms_remove_quicklink($navigation_name)
+    public function cms_remove_quicklink($navigation_name)
     {
         $query = $this->db->select('navigation_id')
             ->from(cms_table_name('main_navigation'))
@@ -3651,7 +3666,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    final public function cms_reconfig_route()
+    public function cms_reconfig_route()
     {
         $config_path = CMS_SUBSITE == '' ?
             APPPATH.'config/main/' :
@@ -3670,7 +3685,7 @@ class CMS_Model extends CI_Model
         file_put_contents($extended_route_config, $content);
     }
 
-    final public function cms_add_route($key, $value, $description = '')
+    public function cms_add_route($key, $value, $description = '')
     {
         $query = $this->db->select('key')
             ->from(cms_table_name('main_route'))
@@ -3686,16 +3701,15 @@ class CMS_Model extends CI_Model
         $this->cms_reconfig_route();
     }
 
-    final public function cms_remove_route($key)
+    public function cms_remove_route($key)
     {
         $this->db->delete(cms_table_name('main_route'),
             array('key' => $key));
         $this->cms_reconfig_route();
     }
 
-    final public function cms_add_config($config_name, $value, $description = null)
+    public function cms_add_config($config_name, $value, $description = null)
     {
-        //log_message('error', $config_name);
         $query = $this->db->select('config_id')
             ->from(cms_table_name('main_config'))
             ->where('config_name', $config_name)
@@ -3709,12 +3723,12 @@ class CMS_Model extends CI_Model
         }
     }
 
-    final public function cms_remove_config($config_name)
+    public function cms_remove_config($config_name)
     {
         $this->db->delete(cms_table_name('main_config'), array('config_name' => $config_name));
     }
 
-    final public function cms_assign_navigation($navigation_name, $group_name)
+    public function cms_assign_navigation($navigation_name, $group_name)
     {
         $query = $this->db->select('group_id')
             ->from(cms_table_name('main_group'))
@@ -3744,7 +3758,7 @@ class CMS_Model extends CI_Model
             }
         }
     }
-    final public function cms_assign_privilege($privilege_name, $group_name)
+    public function cms_assign_privilege($privilege_name, $group_name)
     {
         $query = $this->db->select('group_id')
             ->from(cms_table_name('main_group'))
@@ -3774,7 +3788,7 @@ class CMS_Model extends CI_Model
             }
         }
     }
-    final public function cms_assign_widget($widget_name, $group_name)
+    public function cms_assign_widget($widget_name, $group_name)
     {
         $query = $this->db->select('group_id')
             ->from(cms_table_name('main_group'))
@@ -3805,7 +3819,7 @@ class CMS_Model extends CI_Model
         }
     }
 
-    final public function cms_execute_sql($SQL, $separator)
+    public function cms_execute_sql($SQL, $separator)
     {
         $queries = explode($separator, $SQL);
         foreach ($queries as $query) {

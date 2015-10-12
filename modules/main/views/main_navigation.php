@@ -103,7 +103,7 @@
                         $(document.body).scrollTop($('a[name="' + hash + '"]').offset().top);
                     }
                 }
-            });
+            });            
         });
     })
 </script>

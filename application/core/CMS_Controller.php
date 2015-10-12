@@ -11,20 +11,19 @@ if (!defined('BASEPATH')) {
  */
 class CMS_Controller extends MX_Controller
 {
-    public $PRIV_EVERYONE = 1;
-    public $PRIV_NOT_AUTHENTICATED = 2;
-    public $PRIV_AUTHENTICATED = 3;
-    public $PRIV_AUTHORIZED = 4;
-    public $PRIV_EXCLUSIVE_AUTHORIZED = 5;
+    // going to be deprecated
+    public $PRIV_EVERYONE = PRIV_EVERYONE;
+    public $PRIV_NOT_AUTHENTICATED = PRIV_NOT_AUTHENTICATED;
+    public $PRIV_AUTHENTICATED = PRIV_AUTHENTICATED;
+    public $PRIV_AUTHORIZED = PRIV_AUTHORIZED;
+    public $PRIV_EXCLUSIVE_AUTHORIZED = PRIV_EXCLUSIVE_AUTHORIZED;
 
     protected $__cms_dynamic_widget = false;
-
     private $__cms_widgets = null;
     private $__cms_navigations = null;
     private $__cms_navigation_path = null;
     private $__cms_navigation_name = null;
     private $__cms_quicklinks = null;
-
     protected $__cms_base_model_name = 'no_cms_autoupdate_model';
 
     protected function _guard_controller()
@@ -43,8 +42,17 @@ class CMS_Controller extends MX_Controller
     {
         parent::__construct();
 
-        /* Standard Libraries */
-        $this->load->database();
+        // for the first-time installation, it might not load main configuration even if the main configuration
+        // is already exists. Thus we need to explicitly code it
+        if(CMS_SUBSITE == '' && ENVIRONMENT == 'first-time' && file_exists(APPPATH.'config/main/database.php')){
+            unset($db);
+            include(APPPATH.'config/main/database.php');
+            $this->load->database($db['default']);
+        }else{
+            $this->load->database();
+        }
+
+        // load helpers and libraries
         $this->load->helper('url');
         $this->load->helper('html');
         $this->load->helper('form');
@@ -90,7 +98,7 @@ class CMS_Controller extends MX_Controller
             // just use for temporary fix
             $_COOKIE['__sso_login'] = false;
         }
-        if (!$this->input->is_ajax_request() && !$this->__cms_dynamic_widget && !$_COOKIE['__sso_login'] && $this->__cms_base_model_name == 'no_cms_autoupdate_model' && CMS_SUBSITE != '' && $this->cms_user_id() <= 0) {
+        if (!$this->input->is_ajax_request() && !$this->__cms_dynamic_widget && !$_COOKIE['__sso_login'] && $this->__cms_base_model_name == 'no_cms_autoupdate_model' && CMS_SUBSITE != '' && USE_SUBDOMAIN && $this->cms_user_id() <= 0) {
             setcookie('__sso_login', true, time() + 600, '/');
             if ($this->input->get('__origin') == null || $this->input->get('__token') == null) {
                 include BASEPATH.'../hostname.php';
@@ -110,11 +118,6 @@ class CMS_Controller extends MX_Controller
         if(!$this->input->is_ajax_request()){
             $this->output->enable_profiler(1);
         }*/
-    }
-
-    protected function cms_load_info_model($module_path)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_load_info_model($module_path);
     }
 
     protected function cms_unique_field_name($field_name)
@@ -1923,11 +1926,12 @@ class CMS_Controller extends MX_Controller
         $this->{$this->__cms_base_model_name}->cms_remove_privilege($privilege_name);
     }
 
-    final protected function cms_add_group($group_name, $description)
+    protected function cms_add_group($group_name, $description)
     {
         $this->{$this->__cms_base_model_name}->cms_add_group($group_name, $description);
     }
-    final protected function cms_remove_group($group_name)
+
+    protected function cms_remove_group($group_name)
     {
         $this->{$this->__cms_base_model_name}->cms_remove_group($group_name);
     }

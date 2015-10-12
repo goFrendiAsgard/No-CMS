@@ -61,9 +61,9 @@ class Nds_model extends CMS_Model{
         return $result;
     }
     public function get_column_by_table($table_id){
-        $query = $this->db->select('column_id, name, caption, table_id, data_type, data_size, role, 
+        $query = $this->db->select('column_id, name, caption, table_id, data_type, data_size, role,
                 lookup_table_id, lookup_column_id, relation_table_id, relation_table_column_id,
-                relation_selection_column_id, relation_priority_column_id, 
+                relation_selection_column_id, relation_priority_column_id,
                 selection_table_id, selection_column_id')
             ->from($this->cms_complete_table_name('column'))
             ->where('table_id', $table_id)
@@ -396,9 +396,9 @@ class Nds_model extends CMS_Model{
                 if($column['role'] == 'primary'){
                     $primary_key_name = $column_name;
                 }
-                $composed_type = '$this->TYPE_VARCHAR_50_NULL';
+                $composed_type = '$this->TYPE_TYPE_VARCHAR_50_NULL';
                 if($column['role'] == 'primary'){
-                    $composed_type = '$this->TYPE_INT_UNSIGNED_AUTO_INCREMENT';
+                    $composed_type = '$this->TYPE_TYPE_INT_UNSIGNED_AUTO_INCREMENT';
                 }else{
                     if($column_type == 'varchar' && $column_value_selection_mode != ''){ // SET and ENUM
                         $constraint = 'array('.$column_value_selection_item.')';
@@ -481,7 +481,7 @@ class Nds_model extends CMS_Model{
                 }
                 $syntax .= '        ));';
                 $php[]   = $syntax;
-            }            
+            }
         }
         $php = array_reverse($php);
         return implode(PHP_EOL.'        ',$php);
@@ -889,7 +889,7 @@ class Nds_model extends CMS_Model{
             $relation_selection_column_name     = $this->_pop($column, "relation_selection_column_name", NULL);
             $selection_table_name               = $this->_pop($column, "selection_table_name", NULL);
             $selection_column_name              = $this->_pop($column, "selection_column_name", NULL);
-            
+
             // get id
             $lookup_table_id                    = $this->_get_table_id($id_dict, $lookup_table_name);
             $lookup_column_id                   = $this->_get_column_id($id_dict, $lookup_table_name, $lookup_column_name);

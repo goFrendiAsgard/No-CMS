@@ -14,7 +14,19 @@ class Default_generator extends CMS_Controller{
     private $save_project_name;
     private $config_table_prefix;
     private $config_module_prefix;
-
+    public $available_data_type = array(
+            'int','varchar','char','real','text','date',
+            'tinyint', 'smallint', 'mediumint', 'integer', 'bigint', 'float', 'double',
+            'decimal', 'numeric', 'datetime', 'timestamp', 'time',
+            'year', 'tinyblob', 'tinytext', 'blob', 'mediumblob', 'mediumtext',
+            'longblob', 'longtext',
+        );
+    public $type_without_length = array('text','date','datetime','timestamp','time','year',
+            'float', 'double', 'decimal', 'tinyblob', 'tinytext', 'blob', 'mediumblob',
+            'mediumtext', 'longblob', 'longtext'
+        );
+    public $auto_increment_data_type = array('int', 'tinyint', 'smallint', 'mediumint', 'integer', 'bigint');
+    public $detault_data_type = 'varchar';
     private $validation_rules_array = array(
             'alpha', 'numeric', 'alpha_numeric', 'alpha_numeric_spaces', 'integer',
             'natural', 'natural_no_zero', 'valid_url', 'valid_email', 'valid_emails',
@@ -617,49 +629,23 @@ class Default_generator extends CMS_Controller{
         $project_path = $this->project_path;
         $tables = $this->tables;
         $project_name = $this->project_name;
+        $project_caption = humanize($this->project_name);
 
         ////////////////////////////////////////////////////////////////
-        // REMOVE NAVIGATIONS
+        // BACKEND NAVIGATIONS, FRONTEND NAVIGATIONS
         ////////////////////////////////////////////////////////////////
-        $remove_back_navigations = '';
-        $remove_front_navigations = '';
-        foreach(array_reverse($tables) as $table){
-            $table_name = $table['name'];
-            $stripped_table_name = $table['stripped_name'];
-            $pattern =   array(
-                    'front_navigation_name',
-                    'back_navigation_name',
-                );
-            $replacement = array(
-                    $this->front_navigation_name($stripped_table_name),
-                    $this->back_navigation_name($stripped_table_name),
-                );
-            // back
-            if(!$table['options']['dont_make_form']){
-                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_back_navigation',NULL,
-                    $pattern, $replacement
-                );
-                $remove_back_navigations .= $str.PHP_EOL;
-            }
-            // front
-            if($table['options']['make_frontpage']){
-                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_front_navigation',NULL,
-                    $pattern, $replacement);
-                $remove_front_navigations .= $str.PHP_EOL;
-            }
-        }
-        $remove_navigations = trim($remove_front_navigations.$remove_back_navigations);
-
-        ////////////////////////////////////////////////////////////////
-        // ADD NAVIGATIONS
-        ////////////////////////////////////////////////////////////////
-        $add_back_navigations = '';
-        $add_front_navigations = '';
+        $default_group_name = $project_caption.' Manager';
+        $backend_navigations = PHP_EOL;
+        $frontend_navigations = PHP_EOL;
+        $group_backend_privileges = array();
+        $group_backend_navigations = array();
         foreach($tables as $table){
             $table_name = $table['name'];
             $stripped_table_name = $table['stripped_name'];
             $table_caption = $table['caption'];
             $pattern =  array(
+                    'stripped_table_name',
+                    'default_group_name',
                     'front_navigation_name',
                     'back_navigation_name',
                     'front_controller_name',
@@ -668,6 +654,8 @@ class Default_generator extends CMS_Controller{
                     'navigation_parent_name',
                 );
             $replacement = array(
+                    $stripped_table_name,
+                    $default_group_name,
                     $this->front_navigation_name($stripped_table_name),
                     $this->back_navigation_name($stripped_table_name),
                     underscore(humanize($this->front_controller_class_name($stripped_table_name))),
@@ -677,42 +665,127 @@ class Default_generator extends CMS_Controller{
                 );
             // back
             if(!$table['options']['dont_make_form']){
-                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_back_navigation',NULL,
+                // backend navigation
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/backend_navigation',NULL,
                     $pattern, $replacement);
-                $add_back_navigations .= $str.PHP_EOL;
+                $backend_navigations .= trim($str, PHP_EOL).PHP_EOL;
+                // backend privilege
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/group_backend_privilege',NULL,
+                    $pattern, $replacement);
+                $group_backend_privileges[] = $str;
+                // group backend navigation
+                $group_backend_navigations[] = '\''. addslashes($stripped_table_name) .'\'';
             }
             // front
             if($table['options']['make_frontpage']){
-                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_front_navigation',NULL,
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_navigation',NULL,
                     $pattern, $replacement);
-                $add_front_navigations .= $str.PHP_EOL;
+                $frontend_navigations .= trim($str, PHP_EOL).PHP_EOL;
             }
         }
-        $add_navigations = trim($add_front_navigations.$add_back_navigations);
+        $group_backend_privileges = 'array('.PHP_EOL.implode('', $group_backend_privileges).'            )';
+        $group_backend_navigations = 'array('.implode(', ', $group_backend_navigations).')';
 
         ////////////////////////////////////////////////////////////////
-        // ADD and REMOVE PRIVILEGES
+        // TABLES
         ////////////////////////////////////////////////////////////////
-        $add_privileges = '';
-        $remove_privileges = '';
-
+        $php = array();
         foreach($tables as $table){
-            $table_name = $table['name'];
-            $stripped_table_name = $table['stripped_name'];
-            if(!$table['options']['dont_make_form']){
-                $pattern = array('stripped_table_name');
-                $replacement = array($stripped_table_name);
-                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/add_privileges',NULL,
-                    $pattern, $replacement);
-                $add_privileges .= $str.PHP_EOL;
-                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/remove_privileges',NULL,
-                    $pattern, $replacement);
-                $remove_privileges .= $str.PHP_EOL;
+            $table_name = $table['stripped_name'];
+            $columns = $table['columns'];
+            $primary_key_name = NULL;
+            $field_list = array();
+            foreach($columns as $column){
+                $column_name_space = '';
+                $column_type_space = '';
+                $column_size_space = '';
+                $column_name = $column['name'];
+                $column_type = $column['data_type'];
+                $column_size = $column['data_size'];
+                while(strlen($column_name) + strlen($column_name_space) < 20){
+                    $column_name_space .= ' ';
+                }
+                while(strlen($column_type) + strlen($column_type_space) < 10){
+                    $column_type_space .= ' ';
+                }
+                while(strlen($column_size) + strlen($column_size_space) < 3){
+                    $column_size_space .= ' ';
+                }
+                $column_value_selection_mode = $column['value_selection_mode'];
+                $column_value_selection_item = $column['value_selection_item'];
+                if($column['role'] == 'primary'){
+                    $primary_key_name = $column_name;
+                }
+                $composed_type = '\'TYPE_VARCHAR_50_NULL\'';
+                if($column['role'] == 'primary'){
+                    $composed_type = '\'TYPE_INT_UNSIGNED_AUTO_INCREMENT\'';
+                }else{
+                    if($column_type == 'varchar' && $column_value_selection_mode != ''){ // SET and ENUM
+                        $constraint = 'array('.$column_value_selection_item.')';
+                        //$constraint = $column_value_selection_item;
+                        $composed_type = 'array("type" => \''.$column_value_selection_mode.'\','.$column_type_space.' "constraint" => '.$constraint.', "null" => TRUE)';
+                    }else if(in_array($column_type, $this->type_without_length)){ // column without length
+                        $composed_type = 'array("type" => \''.$column_type.'\','.$column_type_space.' "null" => TRUE)';
+                    }else{ // normal column
+                        if(!isset($column_size) || $column_size == ''){
+                            $column_size = 11;
+                        }
+                        if(!in_array($column_type, $this->available_data_type)){
+                            $column_type = $this->detault_data_type;
+                            $column_size = 255;
+                        }
+                        $column_type_space = '';
+                        $column_size_space = '';
+                        while(strlen($column_type) + strlen($column_type_space) < 10){
+                            $column_type_space .= ' ';
+                        }
+                        while(strlen($column_size) + strlen($column_size_space) < 3){
+                            $column_size_space .= ' ';
+                        }
+                        $composed_type = 'array("type" => \''.$column_type.'\','.$column_type_space.' "constraint" => '.$column_size.','.$column_size_space.' "null" => TRUE)';
+                    }
+
+                }
+                $field_list[] = "'$column_name'" .$column_name_space. ' => '.$composed_type;
+            }
+            $create_forge  = '// '.$table_name.PHP_EOL;
+            $create_forge .= '        \''.$table_name.'\' => array('.PHP_EOL;
+            $create_forge .= '            \'fields\' => array('.PHP_EOL.'                '.implode(','.PHP_EOL.'                ', $field_list).','.PHP_EOL.'            ),'.PHP_EOL;
+            if(isset($primary_key_name)){
+                $create_forge .= '            \'key\' => \''.$primary_key_name.'\''.PHP_EOL;
+            }
+            $create_forge .= '        ),';
+            //$create_forge .= '        $this->dbforge->create_table($this->cms_complete_table_name(\''.$table_name.'\'));'.PHP_EOL;
+
+            $php[] = $create_forge;
+        }
+        $table_list = implode(PHP_EOL.'        ',$php);
+
+        ////////////////////////////////////////////////////////////////
+        // DATA
+        ////////////////////////////////////////////////////////////////
+        $php = array();
+        foreach($tables as $table){
+            $table_name = $table['stripped_name'];
+            $data       = $table['data'];
+            if(is_array($data) && count($data)>0){
+                $syntax  = '\''.$table_name.'\' => array(' . PHP_EOL;
+                foreach($data as $record){
+                    $field_pairs = array();
+                    if(is_array($record)){
+                        foreach($record as $key=>$value){
+                            $field_pairs[] = "'".addslashes($key)."' => '".addslashes($value)."'";
+                        }
+                    }
+                    $field_pairs = implode(', ', $field_pairs);
+                    $syntax .= '            array('.$field_pairs.'),'.PHP_EOL;
+                }
+                $syntax .= '        ),';
+                $php[]   = $syntax;
             }
         }
-
-        $add_privileges = trim($add_privileges);
-        $remove_privileges = trim($remove_privileges);
+        $php = array_reverse($php);
+        $data_list = implode(PHP_EOL.'        ',$php);
 
         ////////////////////////////////////////////////////////////////
         // CREATE INSTALLER
@@ -725,11 +798,16 @@ class Default_generator extends CMS_Controller{
         }
         $backup_table = implode(','.PHP_EOL.'            ', $backup_table_list);
         $pattern = array(
+            'tables',
+            'data',
+            'default_group_name',
+            'backend_navigations',
+            'frontend_navigations',
+            'group_backend_privileges',
+            'group_backend_navigations',
             'namespace',
             'table_list',
             'navigation_parent_name',
-            'remove_navigations',
-            'add_navigations',
             'main_controller',
             'project_name',
             'save_project_name',
@@ -737,29 +815,30 @@ class Default_generator extends CMS_Controller{
             'drop_table_forge',
             'create_table_forge',
             'insert_table',
-            'add_privileges',
-            'remove_privileges'
         );
         $replacement = array(
+            $table_list,
+            $data_list,
+            $default_group_name,
+            $backend_navigations,
+            $frontend_navigations,
+            $group_backend_privileges,
+            $group_backend_navigations,
             underscore($this->cms_user_name()).'.'.underscore($this->project_name),
             $backup_table,
             'index',
-            $remove_navigations,
-            $add_navigations,
             underscore($this->project_name),
             $this->project_name,
             underscore($this->project_name),
             humanize($this->project_name),
             $this->nds->get_drop_table_forge($tables),
             $this->nds->get_create_table_forge($tables, array(
-                    '_created_at' => '$this->TYPE_DATETIME_NULL',
-                    '_updated_at' => '$this->TYPE_DATETIME_NULL',
-                    '_created_by' => '$this->TYPE_INT_SIGNED_NULL',
-                    '_updated_by' => '$this->TYPE_INT_SIGNED_NULL', 
+                    '_created_at' => 'TYPE_DATETIME_NULL',
+                    '_updated_at' => 'TYPE_DATETIME_NULL',
+                    '_created_by' => 'TYPE_INT_SIGNED_NULL',
+                    '_updated_by' => 'TYPE_INT_SIGNED_NULL',
                 )),
             $this->nds->get_insert_table($tables),
-            $add_privileges,
-            $remove_privileges
         );
 
         $str = $this->nds->read_view('default_generator/info_controller', NULL, $pattern, $replacement);

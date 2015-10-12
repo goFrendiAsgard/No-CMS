@@ -47,13 +47,13 @@ class Multisite extends CMS_Secure_Controller {
             $this->subsite_model->delete($subsite);
             $this->subsite_model->update_configs();
         }
-        redirect( $this->cms_module_path() == 'multisite'? 
+        redirect( $this->cms_module_path() == 'multisite'?
                 site_url($this->cms_module_path()) :
                 site_url($this->cms_module_path().'/multisite'));
     }
 
     public function edit($site_name){
-        $this->cms_guard_page($this->cms_complete_navigation_name('index'), 'modify_subsite');        
+        $this->cms_guard_page($this->cms_complete_navigation_name('index'), 'modify_subsite');
         $this->load->model($this->cms_module_path().'/subsite_model');
         $is_super_admin = $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id());
         // don't edit if not allowed
@@ -105,7 +105,7 @@ class Multisite extends CMS_Secure_Controller {
                     array('value'=>$new_logo_config),
                     array('config_name'=>'site_logo'));
                 // update cms_config
-                __cms_config('site_logo', $new_logo_config, FALSE, 
+                __cms_config('site_logo', $new_logo_config, FALSE,
                     APPPATH.'config/site-'.$site_name.'/cms_config.php', 'cms_config');
             }
             $logo = $file_name;
@@ -193,7 +193,7 @@ class Multisite extends CMS_Secure_Controller {
             'result'=>$result,
             'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_have_privilege('modify_subsite'),
             'is_admin' => $is_admin,
-            'delete_url' => $this->cms_module_path() == 'multisite'? site_url($this->cms_module_path().'/delete') :site_url($this->cms_module_path().'/multisite/delete'), 
+            'delete_url' => $this->cms_module_path() == 'multisite'? site_url($this->cms_module_path().'/delete') :site_url($this->cms_module_path().'/multisite/delete'),
             'edit_url' => $this->cms_module_path() == 'multisite'? site_url($this->cms_module_path().'/edit') :site_url($this->cms_module_path().'/multisite/edit'),
         );
         $config = array('only_content'=>TRUE);
@@ -256,8 +256,8 @@ class Multisite extends CMS_Secure_Controller {
         // generate new secret code
         $secret_code = $this->cms_random_string();
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
-        if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name) && 
-        !$this->cms_is_user_exists($email) && preg_match('/@.+\./', $email) && 
+        if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name) &&
+        !$this->cms_is_user_exists($email) && preg_match('/@.+\./', $email) &&
         $user_name != '' && $email != '') {
             $configs = array();
             if(CMS_SUBSITE == '' && $this->cms_is_module_active('gofrendi.noCMS.multisite') && $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE'){
@@ -298,7 +298,7 @@ class Multisite extends CMS_Secure_Controller {
                 ->from($this->cms_user_table_name())
                 ->where('user_name', $user_name)
                 ->get()->row()->user_id;
-            
+
             $this->load->model('installer/install_model');
 
             // get these from old setting
@@ -367,9 +367,9 @@ class Multisite extends CMS_Secure_Controller {
                 'user_id'=>$current_user_id,
                 'active'=>$activation == 'automatic'
             );
-            $this->db->insert($subsite_table_name, $data);            
+            $this->db->insert($subsite_table_name, $data);
             $this->subsite_model->update_configs();
-            
+
             // get the new subsite
             $t_user = $this->cms_user_table_name();
             $t_subsite = $subsite_table_name;
@@ -388,7 +388,6 @@ class Multisite extends CMS_Secure_Controller {
                 $site_url_part = explode('/', $site_url);
                 if(count($site_url_part)>3){
                     $directory_part = array_slice($site_url_part, 3);
-                    log_message('error', print_r(array($directory_part,$site_url_part), TRUE));
                     $directory = '/'.implode('/', $directory_part);
                 }else{
                     $directory = '';
@@ -422,7 +421,7 @@ class Multisite extends CMS_Secure_Controller {
 
             $this->view('multisite/register', $data, 'main_register');
         }
-        
+
     }
 
     public function check_registration()
