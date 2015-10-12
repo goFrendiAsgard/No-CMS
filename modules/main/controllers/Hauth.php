@@ -8,13 +8,13 @@ class Hauth extends CMS_Controller {
         parent::__construct();
         if(in_array  ('curl', get_loaded_extensions())){
             try{
-                $this->load->library('HybridAuthLib');
+                $this->load->library('Hybridauthlib');
             }catch(Exception $e){
                 redirect('');
-            }           
+            }
         }else{
             redirect('');
-        }       
+        }
     }
 
     public function index(){
@@ -32,7 +32,7 @@ class Hauth extends CMS_Controller {
         }
         $this->view('main/hauth/home', $data, 'main_third_party_auth');
     }
-    
+
     public function open_id(){
         $this->cms_guard_page('main_third_party_auth');
         $this->view('main/hauth/open_id', NULL, 'main_third_party_auth');
@@ -41,12 +41,12 @@ class Hauth extends CMS_Controller {
     public function login($provider)
     {
         log_message('debug', "controllers.HAuth.login($provider) called");
-        
-        $params = array();      
+
+        $params = array();
         if($provider == 'OpenID'){
             $open_id_identifier = $this->input->post('open_id_identifier');
             if(!$open_id_identifier){
-                redirect('main/hauth/open_id');         
+                redirect('main/hauth/open_id');
             }else{
                 $params['openid_identifier'] = $open_id_identifier;
             }
@@ -83,7 +83,7 @@ class Hauth extends CMS_Controller {
                     //$this->hybridauthlib->logoutAllProviders();
                     log_message('debug', 'controller.HAuth.login: user authenticated.');
                     redirect('', 'refresh');
-                    
+
                 }
                 else // Cannot authenticate user
                     {
@@ -135,15 +135,15 @@ class Hauth extends CMS_Controller {
     public function email($provider){
         if($this->input->post('email') == NULL || $this->input->post('email') == ''){
             $data = array('provider'=>$provider);
-            $this->view('main/hauth/email', $data, 'main_third_party_auth');    
+            $this->view('main/hauth/email', $data, 'main_third_party_auth');
         }else{
             $email = $this->input->post('email');
             $this->cms_third_party_login($provider, $email);
             //$this->hybridauthlib->logoutAllProviders();
             log_message('debug', 'controller.HAuth.login: user authenticated.');
-            redirect('', 'refresh');            
+            redirect('', 'refresh');
         }
-        
+
     }
 
     // Little json api and variable output testing function. Make it easy with JS to verify a session.  ;)

@@ -130,6 +130,7 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         return array('output'=>$output, 'config'=>$config);
     }
 
+
     public function delete_selection(){
         $crud = $this->make_crud();
         if(!$crud->unset_delete){
