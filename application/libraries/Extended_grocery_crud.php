@@ -759,21 +759,20 @@ class Extended_grocery_crud extends Grocery_CRUD{
         return $input;
     }
 
+    // OVERRIDE: add hidden field
     protected function get_readonly_input($field_info, $value)
-    {
-        $read_only_value = "<i>[Not Set]</i>";
-        if ($value === 0 || $value === '0'){
-            $read_only_value = '0';
-        } elseif (!empty($value) && !is_array($value)) {
-            $read_only_value = $value;
-        } elseif (is_array($value)) {
-            $all_values = array_values($value);
-            $read_only_value = implode(", ",$all_values);
-        }
+	{
+		$read_only_value = "&nbsp;";
 
-        return '<div id="field-'.$field_info->name.'" class="readonly_label">'.
-            $read_only_value.'</div>';
-    }
+	    if (!empty($value) && !is_array($value)) {
+	    	$read_only_value = $value;
+    	} elseif (is_array($value)) {
+    		$all_values = array_values($value);
+    		$read_only_value = implode(", ",$all_values);
+    	}
+        return '<div id="field-'.$field_info->name.'" class="readonly_label">'.$read_only_value.
+            "<input id='field-{$field_info->name}' class='form-control' name='{$field_info->name}' type='hidden' value='$read_only_value' /></div>";
+	}
 
     protected function get_set_input($field_info,$value)
     {

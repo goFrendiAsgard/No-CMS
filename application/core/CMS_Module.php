@@ -201,6 +201,7 @@ class CMS_Module extends CMS_Controller
         // try to activate
         if ($result['success']) {
             $this->db->trans_start();
+            $this->__remove_all();
             $this->__build_all();
             if ($this->do_activate() !== false) {
                 $this->register_module();

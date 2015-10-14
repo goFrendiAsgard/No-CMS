@@ -113,9 +113,9 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
         $this->db->select($select, false);
         $results = $this->db->get($this->table_name)->result();
 
-        
+
         //log_message('error', $this->db->last_query());
-        
+
         // add information from additional_fields
         for($i=0; $i<count($results); $i++){
             foreach($additional_fields as $alias=>$real_field){
@@ -433,10 +433,14 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
     function get_edit_values($primary_key_value)
     {
         $result = parent::get_edit_values($primary_key_value);
+        if($result === NULL){
+            $result = new stdClass();
+        }
         // some driver like postgresql doesn't return string
         foreach($result as $key => $value) {
             $result->$key = (string)$value;
         }
+
         return $result;
     }
 

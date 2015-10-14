@@ -14,7 +14,7 @@ class Setting extends CMS_Controller{
         $third_party_variables = array(
             'auth_enable_facebook', 'auth_facebook_app_id', 'auth_facebook_app_secret', 'auth_enable_twitter',
             'auth_twitter_app_key', 'auth_twitter_app_secret', 'auth_enable_google', 'auth_google_app_id',
-            'auth_google_app_secret', 'auth_enable_yahoo', 'auth_yahoo_app_id', 'auth_yahoo_app_secret', 
+            'auth_google_app_secret', 'auth_enable_yahoo', 'auth_yahoo_app_id', 'auth_yahoo_app_secret',
             'auth_enable_linkedin', 'auth_linkedin_app_key', 'auth_linkedin_app_secret', 'auth_enable_myspace',
             'auth_myspace_app_key', 'auth_myspace_app_secret', 'auth_enable_foursquare', 'auth_foursquare_app_id',
             'auth_foursquare_app_secret', 'auth_enable_windows_live', 'auth_windows_live_app_id',
@@ -25,7 +25,7 @@ class Setting extends CMS_Controller{
         }else{
             $hybridauth_config_file = APPPATH.'/config/site-'.CMS_SUBSITE.'/hybridauthlib.php';
         }
-        
+
         // save the uploaded files
         if(isset($_FILES['site_logo'])){
             try{
@@ -34,7 +34,7 @@ class Setting extends CMS_Controller{
                     $file_name = FCPATH.'assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name'];
                     move_uploaded_file($site_logo['tmp_name'], $file_name);
                     $this->cms_resize_image($file_name, 800, 125);
-                    $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);                    
+                    $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
                 }
             }catch(Exception $e){
                 // do nothing
@@ -158,7 +158,7 @@ class Setting extends CMS_Controller{
             }
             $layout_list[] = $file;
         }
-        
+
         // get third_party_configurations
         include($hybridauth_config_file);
         $third_party_config = array();
@@ -166,6 +166,15 @@ class Setting extends CMS_Controller{
             eval('$third_party_config["'.$var.'"] = $'.$var.';');
         }
 
+        // update route
+        if($this->cms_is_module_active('gofrendi.noCMS.multisite')){
+            $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
+            if(strtoupper($this->cms_get_config('cms_add_subsite_on_register')) == 'TRUE'){
+                $this->cms_add_route('main/register', $module_path.'/multisite/register');
+            }else{
+                $this->cms_remove_route('main/register');
+            }
+        }
 
         $default_controller = $this->cms_get_default_controller();
 

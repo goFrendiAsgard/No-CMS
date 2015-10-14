@@ -239,7 +239,7 @@
             var data = new Object();
             <?php echo PHP_EOL;
             foreach($detail_column_names as $name){
-                echo '          data.'.$name.' = \'\';'.PHP_EOL;
+                echo '            data.'.$name.' = \'\';'.PHP_EOL;
             }
             ?>
             // insert data to the <?php echo $var_data.PHP_EOL; ?>
@@ -384,9 +384,9 @@
             changeMonth: true,
             changeYear: true
         });
-        
+
         $('#<?php echo $table_id; ?> .datetime-input-clear').button();
-        
+
         $('#<?php echo $table_id; ?> .datetime-input-clear').click(function(){
             $(this).parent().find('.datetime-input').val("");
             return false;

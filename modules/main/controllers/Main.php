@@ -837,6 +837,10 @@ class Main extends CMS_Controller
         $crud->set_table(cms_table_name('main_navigation'));
         $crud->set_subject('Navigation (Page)');
 
+        $crud->columns('navigation_name');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+
         if ($state == 'update' || $state == 'edit' || $state == 'update_validation') {
             $primary_key = $state_info->primary_key;
             if (in_array($primary_key, $undeleted_id)) {
@@ -851,9 +855,6 @@ class Main extends CMS_Controller
         $crud->unique_fields('navigation_name', 'title', 'url');
         $crud->unset_read();
 
-        $crud->columns('navigation_name');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
 
         // get themes to give options for default_theme field
         $themes = $this->cms_get_theme_list();

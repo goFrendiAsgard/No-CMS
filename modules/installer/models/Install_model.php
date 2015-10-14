@@ -1135,7 +1135,6 @@ class Install_model extends CI_Model{
             );
         for($i=0; $i<count($config_data); $i++){
             foreach($this->configs as $key=>$val){
-                log_message('error', $key.' '.$val);
                 if($key == $config_data[$i][0]){
                     $config_data[$i][1] = $val;
                     break;
@@ -1260,7 +1259,11 @@ class Install_model extends CI_Model{
     public function build_configuration($config = array()){
         if(!$this->is_subsite){
             // create hostname.php
-            $hostname  = $_SERVER['HTTP_HOST'];
+            if($_SERVER['SERVER_PORT'] != 80){
+                $hostname = $_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'];
+            }else{
+                $hostname  = $_SERVER['HTTP_HOST'];
+            }
             $content   = '<?php'.PHP_EOL;
             $content  .= '$hostname = "'.$hostname.'";'.PHP_EOL;
             @file_put_contents(FCPATH.'/hostname.php', $content);

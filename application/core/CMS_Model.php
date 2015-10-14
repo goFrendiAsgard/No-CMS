@@ -3668,9 +3668,13 @@ class CMS_Model extends CI_Model
 
     public function cms_reconfig_route()
     {
-        $config_path = CMS_SUBSITE == '' ?
-            APPPATH.'config/main/' :
-            APPPATH.'config/site-'.CMS_SUBSITE.'/';
+        if(CMS_SUBSITE != ''){
+            $config_path = APPPATH.'config/site-'.CMS_SUBSITE.'/';
+        }else if(defined('CMS_OVERRIDDEN_SUBSITE') && CMS_OVERRIDDEN_SUBSITE != ''){
+            $config_path = APPPATH.'config/site-'.CMS_OVERRIDDEN_SUBSITE.'/';
+        }else{
+            $config_path = APPPATH.'config/main/';
+        }
         $extended_route_config = $config_path.'extended_routes.php';
 
         $query = $this->db->select('key, value')
