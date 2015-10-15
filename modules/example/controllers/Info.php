@@ -175,46 +175,47 @@ class Info extends CMS_Module {
     protected $TABLES = array(
         // job
         'job' => array(
+            'key'    => 'job_id',
             'fields' => array(
                 'job_id'               => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'name'                 => array("type" => 'varchar',    "constraint" => 20,  "null" => TRUE),
             ),
-            'key' => 'job_id'
         ),
         // hobby
         'hobby' => array(
+            'key'    => 'hobby_id',
             'fields' => array(
                 'hobby_id'             => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'name'                 => array("type" => 'varchar',    "constraint" => 20,  "null" => TRUE),
             ),
-            'key' => 'hobby_id'
         ),
         // country
         'country' => array(
+            'key'    => 'country_id',
             'fields' => array(
                 'country_id'           => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'name'                 => array("type" => 'varchar',    "constraint" => 20,  "null" => TRUE),
             ),
-            'key' => 'country_id'
         ),
         // commodity
         'commodity' => array(
+            'key'    => 'commodity_id',
             'fields' => array(
                 'commodity_id'         => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'name'                 => array("type" => 'varchar',    "constraint" => 20,  "null" => TRUE),
             ),
-            'key' => 'commodity_id'
         ),
         // tourism
         'tourism' => array(
+            'key'    => 'tourism_id',
             'fields' => array(
                 'tourism_id'           => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'name'                 => array("type" => 'varchar',    "constraint" => 20,  "null" => TRUE),
             ),
-            'key' => 'tourism_id'
         ),
         // city
         'city' => array(
+            'key'    => 'city_id',
             'fields' => array(
                 'city_id'              => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'country_id'           => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
@@ -223,10 +224,10 @@ class Info extends CMS_Module {
                 'commodity'            => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
                 'citizen'              => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
             ),
-            'key' => 'city_id'
         ),
         // citizen
         'citizen' => array(
+            'key'    => 'citizen_id',
             'fields' => array(
                 'citizen_id'           => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'city_id'              => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
@@ -235,41 +236,45 @@ class Info extends CMS_Module {
                 'job_id'               => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'hobby'                => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
             ),
-            'key' => 'citizen_id'
         ),
         // city_commodity
         'city_commodity' => array(
+            'key'    => 'id',
             'fields' => array(
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'city_id'              => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'commodity_id'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'priority'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
             ),
-            'key' => 'id'
         ),
         // city_tourism
         'city_tourism' => array(
+            'key'    => 'id',
             'fields' => array(
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'city_id'              => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'tourism_id'           => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
             ),
-            'key' => 'id'
         ),
         // citizen_hobby
         'citizen_hobby' => array(
+            'key'    => 'id',
             'fields' => array(
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'citizen_id'           => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'hobby_id'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
             ),
-            'key' => 'id'
         ),
     );
     protected $DATA = array(
         'tourism' => array(
             array('tourism_id' => '1', 'name' => 'Amusement Park'),
             array('tourism_id' => '2', 'name' => 'Beach'),
+        ),
+        'commodity' => array(
+            array('commodity_id' => '1', 'name' => 'vegetables'),
+            array('commodity_id' => '2', 'name' => 'fruits'),
+            array('commodity_id' => '3', 'name' => 'diary'),
         ),
         'country' => array(
             array('country_id' => '1', 'name' => 'USA'),

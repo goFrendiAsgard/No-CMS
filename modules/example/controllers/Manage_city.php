@@ -103,10 +103,7 @@ class Manage_city extends CMS_CRUD_Controller {
         //      $crud->field_type( $field_name , $field_type, $value  );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        $crud->field_type('_created_at', 'hidden');
-        $crud->field_type('_created_by', 'hidden');
-        $crud->field_type('_updated_by', 'hidden');
-        $crud->field_type('_updated_at', 'hidden');
+
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -324,68 +321,58 @@ class Manage_city extends CMS_CRUD_Controller {
 
     // returned on insert and edit
     public function _callback_field_citizen($value, $primary_key){
-        $module_path = $this->cms_module_path();
-        $this->config->load('grocery_crud');
-        $date_format = $this->config->item('grocery_crud_date_format');
-
-        if(!isset($primary_key)) $primary_key = -1;
-        $query = $this->db->select('citizen_id, name, birthdate, job_id')
-            ->from($this->cms_complete_table_name('citizen'))
-            ->where('city_id', $primary_key)
-            ->get();
-        $result = $query->result_array();
-        // add "hobby" to $result
-        for($i=0; $i<count($result); $i++){
-            $query_detail = $this->db->select('hobby_id')
-               ->from($this->cms_complete_table_name('citizen_hobby'))
-               ->where(array('citizen_id'=>$result[$i]['citizen_id']))->get();
-            $value = array();
-            foreach($query_detail->result() as $row){
-                $value[] = $row->hobby_id;
-            }
-            $result[$i]['hobby'] = $value;
-        }
-
-        // get options
-        $options = array();
-        $options['job_id'] = array();
-        $query = $this->db->select('job_id,name')
-           ->from($this->cms_complete_table_name('job'))
-           ->get();
-        foreach($query->result() as $row){
-            $options['job_id'][] = array('value' => $row->job_id, 'caption' => $row->name);
-        }
-        $options['hobby'] = array();
-        $query = $this->db->select('hobby_id,name')
-           ->from($this->cms_complete_table_name('hobby'))->get();
-        foreach($query->result() as $row){
-            $options['hobby'][] = array('value' => $row->hobby_id, 'caption' => strip_tags($row->name));
-        }
-        $data = array(
-            'result' => $result,
-            'options' => $options,
-            'date_format' => $date_format,
+        // Options for detail table's column with SET type
+        $set_column_option_list = array();
+        // Options for detail table's column with ENUM type
+        $enum_column_option_list = array();
+        // Detail table's one-to-many columns configurations
+        $lookup_config_list = array(
+            'job_id' => array(
+                'selection_table'         => 'job',
+                'selection_pk_column'     => 'job_id',
+                'selection_lookup_column' => 'name',
+            ),
         );
+        // Detail table's many-to-many columns configurations
+        $many_to_many_config_list = array(
+            'hobby' => array(
+                'selection_table'           => 'hobby',
+                'selection_pk_column'       => 'hobby_id',
+                'selection_lookup_column'   => 'name',
+                'relation_table'            => 'citizen_hobby',
+                'relation_column'           => 'citizen_id',
+                'relation_selection_column' => 'hobby_id',
+            ),
+        );
+        // Prepare the data by using defined configurations and options
+        $data = $this->_one_to_many_callback_field_data(
+                'citizen', // DETAIL TABLE NAME
+                'citizen_id', // DETAIL PK NAME
+                'city_id', // DETAIL FK NAME
+                $primary_key, // CURRENT TABLE PK VALUE
+                $lookup_config_list, // LOOKUP CONFIGS
+                $many_to_many_config_list, // MANY TO MANY CONFIGS
+                $set_column_option_list, // SET OPTIONS
+                $enum_column_option_list // ENUM OPTIONS
+            );
+        // Parse the data to the view
         return $this->load->view($this->cms_module_path().'/field_city_citizen',$data, TRUE);
     }
 
     // returned on view
     public function _callback_column_citizen($value, $row){
-        $module_path = $this->cms_module_path();
-        $query = $this->db->select('citizen_id, name, birthdate, job_id')
-            ->from($this->cms_complete_table_name('citizen'))
-            ->where('city_id', $row->city_id)
-            ->get();
-        $num_row = $query->num_rows();
-        // show how many records
-        if($num_row>1){
-            return $num_row .' Citizens';
-        }else if($num_row>0){
-            return $num_row .' Citizen';
-        }else{
-            return 'No Citizen';
-        }
+        return $this->humanized_record_count(
+                'citizen', // DETAIL TABLE NAME
+                'city_id', // DETAIL FK NAME
+                $row->city_id, // CURRENT TABLE PK VALUE
+                array( // CAPTIONS
+                    'single_caption'    => 'Citizen',
+                    'multiple_caption'  => 'Citizens',
+                    'zero_caption'      => 'No Citizen',
+                )
+            );
     }
+
 
 
     public function _before_insert($post_array){
@@ -395,19 +382,19 @@ class Manage_city extends CMS_CRUD_Controller {
     }
 
     public function _after_insert($post_array, $primary_key){
-        $success = parent::_after_insert_or_update($post_array, $primary_key);
+        $success = parent::_after_insert($post_array, $primary_key);
         // HINT : Put your code here
         return $success;
     }
 
     public function _before_update($post_array, $primary_key){
-        $post_array = parent::_before_insert_or_update($post_array, $primary_key);
+        $post_array = parent::_before_update($post_array, $primary_key);
         // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_update($post_array, $primary_key){
-        $success = parent::_after_insert_or_update($post_array, $primary_key);
+        $success = parent::_after_update($post_array, $primary_key);
         // HINT : Put your code here
         return $success;
     }

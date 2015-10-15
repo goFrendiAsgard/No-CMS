@@ -90,10 +90,7 @@ class Manage_job extends CMS_CRUD_Controller {
         //      $crud->field_type( $field_name , $field_type, $value  );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        $crud->field_type('_created_at', 'hidden');
-        $crud->field_type('_created_by', 'hidden');
-        $crud->field_type('_updated_by', 'hidden');
-        $crud->field_type('_updated_at', 'hidden');
+
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,19 +161,19 @@ class Manage_job extends CMS_CRUD_Controller {
     }
 
     public function _after_insert($post_array, $primary_key){
-        $success = parent::_after_insert_or_update($post_array, $primary_key);
+        $success = parent::_after_insert($post_array, $primary_key);
         // HINT : Put your code here
         return $success;
     }
 
     public function _before_update($post_array, $primary_key){
-        $post_array = parent::_before_insert_or_update($post_array, $primary_key);
+        $post_array = parent::_before_update($post_array, $primary_key);
         // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_update($post_array, $primary_key){
-        $success = parent::_after_insert_or_update($post_array, $primary_key);
+        $success = parent::_after_update($post_array, $primary_key);
         // HINT : Put your code here
         return $success;
     }

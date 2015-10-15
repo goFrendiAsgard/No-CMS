@@ -316,12 +316,16 @@ class Multisite extends CMS_Secure_Controller {
             $default_layout = $this->input->post('default_layout');
             $theme = $this->input->post('theme');
 
-            // get configs
-            $configs = $template != NULL? $template->configuration: $this->cms_get_config('cms_subsite_configs');
-            $configs = @json_decode($configs, TRUE);
-            if(!$configs){
-                $configs = array();
+            // get template configs
+            $template_configs = $template != NULL? $template->configuration: $this->cms_get_config('cms_subsite_configs');
+            $template_configs = @json_decode($configs, TRUE);
+            if(!$template_configs){
+                $template_configs = array();
             }
+            foreach($template_configs as $key=>$val){
+                $configs[$key] = $val;
+            }
+            // add site theme and layout
             if($theme != ''){
                 $configs['site_theme'] = $theme;
             }
@@ -351,6 +355,7 @@ class Multisite extends CMS_Secure_Controller {
                 $config = array(
                         'subsite_home_content'=> $template != NULL? $template->homepage: $this->cms_get_config('cms_subsite_home_content', TRUE),
                         'subsite_homepage_layout' => $homepage_layout,
+                        'subsite_user_id' => $current_user_id,
                     );
                 $this->install_model->build_configuration($config);
                 $this->install_model->build_database($config);

@@ -26,7 +26,6 @@ class Info extends CMS_Module {
     //this should be what happen when user uninstall this module
     public function do_deactivate(){
         if(!$this->check_subdomain()){
-            $this->backup_database(array('project','table','column','table_option','column_option'));
             $this->remove_all();
         }
     }
@@ -240,7 +239,7 @@ class Info extends CMS_Module {
             array('table_id' => 3, 'project_id' => 1, 'name' => 'twn_city', 'caption' => 'City', 'priority' => 5, 'data'=>''),
             array('table_id' => 4, 'project_id' => 1, 'name' => 'twn_city_commodity', 'caption' => 'City Commodity', 'priority' => 7, 'data'=>''),
             array('table_id' => 5, 'project_id' => 1, 'name' => 'twn_city_tourism', 'caption' => 'City Tourism', 'priority' => 8, 'data'=>''),
-            array('table_id' => 6, 'project_id' => 1, 'name' => 'twn_commodity', 'caption' => 'Commodity', 'priority' => 3, 'data'=>''),
+            array('table_id' => 6, 'project_id' => 1, 'name' => 'twn_commodity', 'caption' => 'Commodity', 'priority' => 3, 'data'=>'[{"commodity_id" : 1, "name" : "vegetables"}, {"commodity_id" : 2, "name" : "fruits"}, {"commodity_id" : 3, "name" : "diary"}]'),
             array('table_id' => 7, 'project_id' => 1, 'name' => 'twn_country', 'caption' => 'Country', 'priority' => 2, 'data'=>'[{"country_id" : 1, "name" : "USA"}, {"country_id" : 2, "name" : "Indonesia"}]'),
             array('table_id' => 8, 'project_id' => 1, 'name' => 'twn_hobby', 'caption' => 'Hobby', 'priority' => 1, 'data'=>'[{"hobby_id" : 1, "name" : "Reading"}, {"hobby_id" : 2, "name" : "Gardenning"}]'),
             array('table_id' => 9, 'project_id' => 1, 'name' => 'twn_job', 'caption' => 'Job', 'priority' => 0, 'data'=>'[{"job_id" : 1, "name" : "Teacher"}, {"job_id" : 2, "name" : "Programmer"}]'),

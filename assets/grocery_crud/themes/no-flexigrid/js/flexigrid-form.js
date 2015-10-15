@@ -1,6 +1,6 @@
 // addition by gofrendi
 function __add_form_control_class(){
-    $('.flexigrid input[type!="button"][type!="checkbox"][type!="submit"], .flexigrid select, .flexigrid textarea').each(function(){
+    $('.flexigrid input[type!="button"][type!="checkbox"][type!="submit"], .flexigrid select[class!="multiselect"], .flexigrid textarea').each(function(){
         if(!$(this).hasClass('form-control')){
             $(this).addClass('form-control');
         }
@@ -22,6 +22,7 @@ function __mutate_add_icon(){
         }
     });
 }
+
 $(document).ready(function(){
     __add_form_control_class();
 
@@ -40,6 +41,10 @@ $(document).ready(function(){
 $(document).ajaxComplete(function(){
     __add_form_control_class();
 });
+$(window).load(function(){
+    $('.connected-list').css('height', '75px');
+    console.log($('.connected-list'));
+})
 
 function js_datetime_to_php(js_datetime){
     if(typeof(js_datetime)=='undefined' || js_datetime == '' || js_datetime == null){

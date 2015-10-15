@@ -329,11 +329,6 @@ class Default_generator extends CMS_Controller{
             $set_relation_array = array();
             $set_relation_n_n_array = array();
             $hide_field_array = array();
-            foreach(array('_created_at', '_created_by', '_updated_by', '_updated_at') as $column_name){
-                $hide_field_array[] = $this->nds->read_view('nordrassil/default_generator/controller_partial/hide_field',NULL,
-                        'field_name',$column_name
-                    );
-            }
             $enum_set_array = array();
             $detail_callback_call_array = array();
             $detail_callback_declaration_array = array();

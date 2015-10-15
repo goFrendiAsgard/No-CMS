@@ -392,7 +392,7 @@
             return false;
         });
         // chzn-select
-        $("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true});
+        $("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true, width:'100px'});
         // numeric
         $('#<?php echo $table_id; ?> .numeric').numeric();
         $('#<?php echo $table_id; ?> .numeric').keydown(function(e){

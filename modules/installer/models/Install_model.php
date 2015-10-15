@@ -938,6 +938,11 @@ class Install_model extends CI_Model{
         // user
         if(!$this->is_subsite){
             $sql_list[] = $this->insert_user();
+            $sql_list[] = $this->insert_group_users(array(array(1,1)));
+        }else{
+            if(is_array($config) && array_key_exists('subsite_user_id', $config)){
+                $this->insert_group_users(array(array(1, $config['subsite_user_id'])));
+            }
         }
 
         // navigation
@@ -964,7 +969,7 @@ class Install_model extends CI_Model{
                 array('main_logout', NULL, 'Logout', 'Logout', NULL, 'Logout for deauthentication', 'main/logout',
                     3, 5, 1, 0, NULL, 0),
                 array('main_management', NULL, 'CMS Management', 'CMS Management', NULL, 'The main management of the CMS. Including User, Group, Privilege and Navigation Management', 'main/management',
-                    4, 9, 1, 0, NULL, 0),
+                    4, 9, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_register', NULL, 'Register', 'Register', NULL, 'New User Registration', 'main/register',
                     2, 7, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_change_profile', NULL, 'Change Profile', 'Change Profile', NULL, 'Change Current Profile', 'main/change_profile',

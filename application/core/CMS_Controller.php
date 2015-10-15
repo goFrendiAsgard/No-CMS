@@ -554,16 +554,7 @@ class CMS_Controller extends MX_Controller
         </script>';
 
         $html .= '<div class="row">';
-        $module_path = $this->cms_module_path();
-        $image_directories = array();
-        if ($module_path != '') {
-            $image_directories[] = "modules/$module_path/assets/navigation_icon";
-        }
-        $image_directories[] = 'assets/nocms/navigation_icon';
-        foreach ($this->cms_get_module_list() as $module_list) {
-            $other_module_path = $module_list['module_path'];
-            $image_directories[] = "modules/$other_module_path/assets/navigation_icon";
-        }
+
         $submenu_count = count($submenus);
         foreach ($submenus as $submenu) {
             $navigation_id = $submenu['navigation_id'];
@@ -577,31 +568,34 @@ class CMS_Controller extends MX_Controller
                 continue;
             }
 
-            // check image in current module
-
-            $image_file_names = array();
-            $image_file_names[] = $navigation_name.'.png';
-            if ($module_path !== '' && $module_path !== 'main') {
-                $module_prefix = cms_module_prefix($this->cms_module_path());
-                if (substr($navigation_name, 0, strlen($module_prefix)) == $module_prefix) {
-                    $image_file_names[] = substr($navigation_name, strlen($module_prefix) + 1).'.png';
-                }
-            }
-            $image_file_path = '';
-            foreach ($image_directories as $image_directory) {
-                foreach ($image_file_names as $image_file_name) {
-                    $image_file_path = $image_directory.'/'.$image_file_name;
-                    if (!file_exists(FCPATH.$image_file_path)) {
-                        $image_file_path = '';
-                    }
-                    if ($image_file_path !== '') {
-                        break;
+            $stripped_url = substr($url, strlen(base_url()));
+            $url_part = explode('/', $stripped_url);
+            $icon_found = FALSE;
+            $navigation_icon = '';
+            if(count($url_part)>0 && $url_part[0] != 'main'){
+                $module_prefix = $url_part[0];
+                $module_dir = FCPATH.'modules/'.$module_prefix.'/';
+                if(file_exists($module_dir) && is_dir($module_dir)){
+                    $navigation_icon_path = $module_dir.'assets/navigation_icon/';
+                    $module_config = $module_dir.'config/module_config.php';
+                    if(file_exists($module_config)){
+                        include($module_config);
+                        $module_prefix = $config['module_prefix'];
+                        if(substr($navigation_name, 0, strlen($module_prefix)+1) == $module_prefix.'_'){
+                            $navigation_icon = $navigation_icon_path.substr($navigation_name, strlen($module_prefix)+1).'.png';
+                        }
                     }
                 }
-                if ($image_file_path !== '') {
-                    break;
-                }
+            }else{
+                $navigation_icon_path = FCPATH.'modules/main/assets/navigation_icon/';
+                $navigation_icon = $navigation_icon_path.$navigation_name.'.png';
             }
+            
+            // default icon
+            if(!file_exists($navigation_icon)){
+                $navigation_icon = FCPATH.'assets/nocms/images/icons/package.png';
+            }
+            $navigation_icon = substr($navigation_icon, strlen(FCPATH));
 
             $badge = '';
             if ($notif_url != '') {
@@ -626,10 +620,6 @@ class CMS_Controller extends MX_Controller
                 ';
             }
 
-            // default icon
-            if ($image_file_path == '') {
-                $image_file_path = 'assets/nocms/images/icons/package.png';
-            }
             $html .= '<a href="'.$url.'" style="text-decoration:none;">';
             if ($submenu_count <= 2) {
                 $html .= '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">';
@@ -640,9 +630,7 @@ class CMS_Controller extends MX_Controller
             }
             $html .= '<div class="thumbnail thumbnail_submenu">';
 
-            if ($image_file_path != '') {
-                $html .= '<img style="margin-top:10px; max-height:60px;" src="'.base_url($image_file_path).'" />';
-            }
+            $html .= '<img style="margin-top:10px; max-height:60px;" src="'.base_url($navigation_icon).'" />';
 
             $html .= '<div class="caption">';
             $html .= '<h4>'.$title.$badge.'</h4>';

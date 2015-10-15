@@ -75,7 +75,7 @@
         $("#md_table_citizen").show();
 
         var component = '<tr id="md_field_citizen_tr_'+RECORD_INDEX_citizen+'" class="md_field_citizen_tr">';
-        
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "name"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,11 +191,11 @@
         $('#md_field_citizen_add').click(function(){
             // new data
             var data = new Object();
-            
-          data.name = '';
-          data.birthdate = '';
-          data.job_id = '';
-          data.hobby = '';
+
+            data.name = '';
+            data.birthdate = '';
+            data.job_id = '';
+            data.hobby = '';
             // insert data to the DATA_citizen
             DATA_citizen.insert.push({
                 'record_index' : RECORD_INDEX_citizen,
@@ -338,15 +338,15 @@
             changeMonth: true,
             changeYear: true
         });
-        
+
         $('#md_table_citizen .datetime-input-clear').button();
-        
+
         $('#md_table_citizen .datetime-input-clear').click(function(){
             $(this).parent().find('.datetime-input').val("");
             return false;
         });
         // chzn-select
-        $("#md_table_citizen .chzn-select").chosen({allow_single_deselect: true});
+        $("#md_table_citizen .chzn-select").chosen({allow_single_deselect: true, width:'100px'});
         // numeric
         $('#md_table_citizen .numeric').numeric();
         $('#md_table_citizen .numeric').keydown(function(e){

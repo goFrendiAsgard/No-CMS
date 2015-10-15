@@ -27,11 +27,11 @@ class Add_subsite extends CMS_Secure_Controller {
         $this->install_model->set_subsite();
 
         $this->install_model->hide_index        = TRUE;
-        $this->install_model->gzip_compression  = FALSE;      
+        $this->install_model->gzip_compression  = FALSE;
     }
 
     public function index(){
-        $this->load->model($this->cms_module_path().'/subsite_model');        
+        $this->load->model($this->cms_module_path().'/subsite_model');
         $data = array(
                 'theme_list'    => $this->subsite_model->public_theme_list(),
                 'layout_list'   => $this->subsite_model->layout_list(),
@@ -93,7 +93,7 @@ class Add_subsite extends CMS_Secure_Controller {
             $file_name = $_FILES['logo']['name'];
             $file_name = $this->randomize_string($file_name).$file_name;
             move_uploaded_file($tmp_name, $upload_path.$file_name);
-            
+
             $subsite = $this->install_model->subsite;
             $logo_file_name = FCPATH.'assets/nocms/images/custom_logo/'.$subsite.$_FILES['logo']['name'];
             $this->load->library('image_moo');
@@ -102,12 +102,13 @@ class Add_subsite extends CMS_Secure_Controller {
         }
 
         $module_installed = FALSE;
-        if($success){            
+        if($success){
             $this->install_model->configs = $configs;
             $this->install_model->modules = $modules;
             $config = array(
                     'subsite_home_content'=> $template != NULL? $template->homepage: $this->cms_get_config('cms_subsite_home_content', TRUE),
                     'subsite_homepage_layout' => $homepage_layout,
+                    'subsite_user_id' => $this->cms_user_id(),
                 );
             $this->install_model->build_configuration($config);
             $this->install_model->build_database($config);

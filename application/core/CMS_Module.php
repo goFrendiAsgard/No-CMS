@@ -88,6 +88,7 @@ class CMS_Module extends CMS_Controller
                 $this->OLD_VERSION = $module_info['old_version'];
                 $this->VERSION = $module_info['current_version'];
                 $this->DESCRIPTION = $module_info['description'];
+                $this->DEPENDENCIES = $module_info['dependencies'];
             }
         }
         // load dbforge to be used later
@@ -269,6 +270,13 @@ class CMS_Module extends CMS_Controller
         // try to deactivate
         if ($result['success']) {
             $this->db->trans_start();
+            // backup database
+            $table_names = array();
+            foreach ($this->TABLES as $table_name => $data) {
+                $table_names[] = $this->cms_complete_table_name($table_name);
+            }
+            $this->backup_database($table_names);
+            // remove all
             $this->__remove_all();
             if ($this->do_deactivate() !== false) {
                 $this->unregister_module();
@@ -387,7 +395,6 @@ class CMS_Module extends CMS_Controller
 
         // REMOVE TABLES
         foreach ($this->TABLES as $table_name => $data) {
-            $this->backup_database($this->cms_complete_table_name($table_name));
             $this->dbforge->drop_table($this->cms_complete_table_name($table_name), true);
         }
     }
@@ -727,6 +734,9 @@ class CMS_Module extends CMS_Controller
 
     final protected function backup_database($table_names, $limit = 3000)
     {
+        if(!is_array($table_names) || (is_array($table_names) && count($table_names) == 0)){
+            return NULL;
+        }
         if ($this->db->platform() == 'mysql' || $this->db->platform() == 'mysqli') {
             $module_path = $this->cms_module_path();
             $this->load->dbutil();

@@ -161,19 +161,19 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
     }
 
     public function _after_insert($post_array, $primary_key){
-        $success = parent::_after_insert_or_update($post_array, $primary_key);
+        $success = parent::_after_insert($post_array, $primary_key);
         // HINT : Put your code here
         return $success;
     }
 
     public function _before_update($post_array, $primary_key){
-        $post_array = parent::_before_insert_or_update($post_array, $primary_key);
+        $post_array = parent::_before_update($post_array, $primary_key);
         // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_update($post_array, $primary_key){
-        $success = parent::_after_insert_or_update($post_array, $primary_key);
+        $success = parent::_after_update($post_array, $primary_key);
         // HINT : Put your code here
         return $success;
     }
