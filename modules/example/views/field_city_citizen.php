@@ -75,7 +75,7 @@
         $("#md_table_citizen").show();
 
         var component = '<tr id="md_field_citizen_tr_'+RECORD_INDEX_citizen+'" class="md_field_citizen_tr">';
-
+        
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         //    FIELD "name"
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@
         // Add component to table
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         $('#md_table_citizen tbody').append(component);
-        mutate_input_citizen();
+        __mutate_input('md_table_citizen');
 
     } // end of ADD ROW FUNCTION
 
@@ -178,7 +178,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        synchronize_citizen();
+        __synchronize('md_real_field_citizen_col', DATA_citizen);
         for(var i=0; i<DATA_citizen.update.length; i++){
             add_table_row_citizen(DATA_citizen.update[i].data);
             RECORD_INDEX_citizen++;
@@ -191,7 +191,7 @@
         $('#md_field_citizen_add').click(function(){
             // new data
             var data = new Object();
-
+            
             data.name = '';
             data.birthdate = '';
             data.job_id = '';
@@ -209,7 +209,7 @@
             RECORD_INDEX_citizen++;
 
             // synchronize to the md_real_field_citizen_col
-            synchronize_citizen();
+            __synchronize('md_real_field_citizen_col', DATA_citizen);
         });
 
 
@@ -246,7 +246,7 @@
                     }
                 }
             }
-            synchronize_citizen();
+            __synchronize('md_real_field_citizen_col', DATA_citizen);
         });
 
 
@@ -286,7 +286,7 @@
                     }
                 }
             }
-            synchronize_citizen();
+            __synchronize('md_real_field_citizen_col', DATA_citizen);
         });
 
 
@@ -301,81 +301,20 @@
             if(response.success == true){
                 DATA_citizen = {update:new Array(), insert:new Array(), delete:new Array()};
                 $('#md_table_citizen tr').not(':first').remove();
-                synchronize_citizen();
+                __synchronize('md_real_field_citizen_col', DATA_citizen);
+            }
+        }else{
+            // avoid detail inserted twice on update
+            update_url = "{{ module_site_url }}manage_city/index/update";
+            if(settings.url.substr(0, update_url.length) == update_url){
+                response = $.parseJSON(xhr.responseText);
+                if(response.success == true){
+                    $('#form-button-save').attr('disabled', 'disabled');
+                    $('#save-and-go-back-button').attr('disabled', 'disabled');
+                    $('#cancel-button').attr('disabled', 'disabled');
+                }
             }
         }
     });
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // synchronize data to md_real_field_citizen_col.
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    function synchronize_citizen(){
-        $('#md_real_field_citizen_col').val(JSON.stringify(DATA_citizen));
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // function to mutate input
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    function mutate_input_citizen(){
-        // datepicker-input
-        $('#md_table_citizen .datepicker-input').datepicker({
-                dateFormat: js_date_format,
-                showButtonPanel: true,
-                changeMonth: true,
-                changeYear: true,
-                yearRange: "c-100:c+100",
-        });
-        // date-picker-input-clear
-        $('#md_table_citizen .datepicker-input-clear').click(function(){
-            $(this).parent().find('.datepicker-input').val('');
-            return false;
-        });
-        // datetime-input
-        $('#md_table_citizen .datetime-input').datetimepicker({
-            timeFormat: 'HH:mm:ss',
-            dateFormat: js_date_format,
-            showButtonPanel: true,
-            changeMonth: true,
-            changeYear: true
-        });
-
-        $('#md_table_citizen .datetime-input-clear').button();
-
-        $('#md_table_citizen .datetime-input-clear').click(function(){
-            $(this).parent().find('.datetime-input').val("");
-            return false;
-        });
-        // chzn-select
-        $("#md_table_citizen .chzn-select").chosen({allow_single_deselect: true, width:'100px'});
-        // numeric
-        $('#md_table_citizen .numeric').numeric();
-        $('#md_table_citizen .numeric').keydown(function(e){
-            if(e.keyCode == 38)
-            {
-                if(IsNumeric($(this).val()))
-                {
-                    var new_number = parseInt($(this).val()) + 1;
-                    $(this).val(new_number);
-                }else if($(this).val().length == 0)
-                {
-                    var new_number = 1;
-                    $(this).val(new_number);
-                }
-            }
-            else if(e.keyCode == 40)
-            {
-                if(IsNumeric($(this).val()))
-                {
-                    var new_number = parseInt($(this).val()) - 1;
-                    $(this).val(new_number);
-                }else if($(this).val().length == 0)
-                {
-                    var new_number = -1;
-                    $(this).val(new_number);
-                }
-            }
-            $(this).trigger('change');
-        });
-
-    }
 </script>

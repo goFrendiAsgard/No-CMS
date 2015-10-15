@@ -108,6 +108,10 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         return $this->CRUD;
     }
 
+    public function _ommit_nbsp($matches){
+        return $matches[1].str_replace('&nbsp;', ' ', $matches[2]).$matches[3];
+    }
+
     protected function render_crud($crud = NULL){
         if($crud == NULL){
             $crud = $this->CRUD;
@@ -127,10 +131,155 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         }
         $config['js'] = $asset->compile_js();
 
+        $output->output = preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', array($this,'_ommit_nbsp'), $output->output);
+
         return array('output'=>$output, 'config'=>$config);
     }
 
-    public function _one_to_many_callback_field_data($table_name, $pk_column, $fk_column, $parent_pk_value,
+    protected function _save_one_to_many($field_name, $detail_table_name, $pk_column, $fk_column, $parent_pk_value,
+    $data, $real_column_list=array(), $set_column_list=array(), $many_to_many_config_list=array()){
+
+        $insert_records = $data['insert'];
+        $update_records = $data['update'];
+        $delete_records = $data['delete'];
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  DELETED DATA
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        foreach($delete_records as $delete_record){
+            $detail_primary_key = $delete_record['primary_key'];
+            // delete many to many
+            foreach($many_to_many_config_list as $field_name=>$config){
+                $table_name = $this->cms_complete_table_name($config['relation_table']);
+                $relation_column_name = $config['relation_column'];
+                $where = array(
+                    $relation_column_name => $detail_primary_key
+                );
+                $this->db->delete($table_name, $where);
+            }
+            $this->db->delete($this->cms_complete_table_name($detail_table_name),
+                 array($pk_column=>$detail_primary_key));
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  UPDATED DATA
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        foreach($update_records as $update_record){
+            $detail_primary_key = $update_record['primary_key'];
+            $data = array();
+            foreach($update_record['data'] as $key=>$value){
+                if(in_array($key, $set_column_list)){
+                    $data[$key] = implode(',', $value);
+                }else if(in_array($key, $real_column_list)){
+                    $data[$key] = $value;
+                }
+            }
+            $data[$fk_column] = $parent_pk_value;
+            $this->db->update($this->cms_complete_table_name($detail_table_name),
+                 $data, array($pk_column=>$detail_primary_key));
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Adjust Many-to-Many Fields of Updated Data
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            foreach($many_to_many_config_list as $field_name=>$config){
+                $key = $field_name;
+                $table_name = $this->cms_complete_table_name($config['relation_table']);
+                $relation_column_name = $config['relation_column'];
+                $relation_selection_column_name = $config['relation_selection_column'];
+                $new_values = $update_record['data'][$key];
+                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
+                    ->from($table_name)
+                    ->where($relation_column_name, $detail_primary_key)
+                    ->get();
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // delete everything which is not in new_values
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                $old_values = array();
+                foreach($query->result_array() as $row){
+                    $old_values = array();
+                    if(!in_array($row[$relation_selection_column_name], $new_values)){
+                        $where = array(
+                            $relation_column_name => $detail_primary_key,
+                            $relation_selection_column_name => $row[$relation_selection_column_name]
+                        );
+                        $this->db->delete($table_name, $where);
+                    }else{
+                        $old_values[] = $row[$relation_selection_column_name];
+                    }
+                }
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // add everything which is not in old_values but in new_values
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                foreach($new_values as $new_value){
+                    if(!in_array($new_value, $old_values)){
+                        $data = array(
+                            $relation_column_name => $detail_primary_key,
+                            $relation_selection_column_name => $new_value
+                        );
+                        $this->db->insert($table_name, $data);
+                    }
+                }
+            }
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //  INSERTED DATA
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        foreach($insert_records as $insert_record){
+            $data = array();
+            foreach($insert_record['data'] as $key=>$value){
+                if(in_array($key, $set_column_list)){
+                    $data[$key] = implode(',', $value);
+                }else if(in_array($key, $real_column_list)){
+                    $data[$key] = $value;
+                }
+            }
+            $data[$fk_column] = $parent_pk_value;
+            $this->db->insert($this->cms_complete_table_name($detail_table_name), $data);
+            $detail_primary_key = $this->db->insert_id();
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Adjust Many-to-Many Fields of Inserted Data
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            foreach($many_to_many_config_list as $field_name=>$config){
+                $key = $field_name;
+                $table_name = $this->cms_complete_table_name($config['relation_table']);
+                $relation_column_name = $config['relation_column'];
+                $relation_selection_column_name = $config['relation_selection_column'];
+                $new_values = $insert_record['data'][$key];
+                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
+                    ->from($table_name)
+                    ->where($relation_column_name, $detail_primary_key)
+                    ->get();
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // delete everything which is not in new_values
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                $old_values = array();
+                foreach($query->result_array() as $row){
+                    $old_values = array();
+                    if(!in_array($row[$relation_selection_column_name], $new_values)){
+                        $where = array(
+                            $relation_column_name => $detail_primary_key,
+                            $relation_selection_column_name => $row[$relation_selection_column_name]
+                        );
+                        $this->db->delete($table_name, $where);
+                    }else{
+                        $old_values[] = $row[$relation_selection_column_name];
+                    }
+                }
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // add everything which is not in old_values but in new_values
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                foreach($new_values as $new_value){
+                    if(!in_array($new_value, $old_values)){
+                        $data = array(
+                            $relation_column_name => $detail_primary_key,
+                            $relation_selection_column_name => $new_value
+                        );
+                        $this->db->insert($table_name, $data);
+                    }
+                }
+            }
+        }
+    }
+
+    protected function _one_to_many_callback_field_data($table_name, $pk_column, $fk_column, $parent_pk_value,
     $lookup_config_list = array(), $many_to_many_config_list = array(), $set_column_option_list = array(), $enum_column_option_list = array()){
         $module_path = $this->cms_module_path();
         $this->config->load('grocery_crud');
@@ -238,7 +387,7 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         return $data;
     }
 
-    protected function humanized_record_count($table_name, $fk_column, $parent_pk_value, $config){
+    protected function _humanized_record_count($table_name, $fk_column, $parent_pk_value, $config){
         // get captions
         $single_caption = array_key_exists('single_caption', $config)? $config['single_caption']: ucwords(str_replace('_', ' ', $table_name));
         $multiple_caption = array_key_exists('multiple_caption', $config)? $config['multiple_caption'] : $single_caption.'s';

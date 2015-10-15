@@ -1,14 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-// For every content of option tag, this will replace '&nbsp;' with ' '
-function __ommit_nbsp($matches){
-    return $matches[1].str_replace('&nbsp;', ' ', $matches[2]).$matches[3];
-}
-echo preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', '__ommit_nbsp', $output);
+echo $output;
 ?>
 <script type="text/javascript">
     $(document).ajaxComplete(function () {
-
         //ADD COMPONENTS
         if($('.pDiv2 .delete_all_button').length == 0 && $('#flex1 tbody td .delete-row').length != 0) { //check if element already exists (for ajax refresh purposes)
             $('.pDiv2').prepend('<div class="pGroup"><a class="delete_all_button btn btn-default" href="#"><i class="glyphicon glyphicon-remove"></i> {{ language:Delete Selected }}</a></div>');
@@ -19,13 +13,13 @@ echo preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', '__ommit_nbs
                 $(this).prepend('<td><input type="checkbox" value="' + $(this).attr('rowId') + '" /></td>');
             });
         }
-
     });
 
     // CHECK ALL
     $('.checkall').live('click', function(){
         $(this).parents('table:eq(0)').find(':checkbox').attr('checked', this.checked);
     });
+
     // DELETE ALL
     $('.delete_all_button').live('click', function(event){
         event.preventDefault();
@@ -46,12 +40,11 @@ echo preg_replace_callback('/(<option[^<>]*>)(.*?)(<\/option>)/si', '__ommit_nbs
         });
     });
 
-
     $(document).ajaxComplete(function(){
         // TODO: Put your custom code here
     });
 
     $(document).ready(function(){
         // TODO: Put your custom code here
-    })
+    });
 </script>

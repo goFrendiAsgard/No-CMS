@@ -123,7 +123,7 @@
 
     // returned on view
     public function _callback_column_{{ field_name }}($value, $row){
-        return $this->humanized_record_count(
+        return $this->_humanized_record_count(
                 '<?=$detail_table_name?>', // DETAIL TABLE NAME
                 '<?=$detail_foreign_key_name?>', // DETAIL FK NAME
                 $row-><?=$master_primary_key_name?>, // CURRENT TABLE PK VALUE

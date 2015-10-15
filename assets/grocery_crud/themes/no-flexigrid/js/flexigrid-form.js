@@ -23,28 +23,71 @@ function __mutate_add_icon(){
     });
 }
 
-$(document).ready(function(){
-    __add_form_control_class();
+function __synchronize(real_input_id, data){
+    $('#' + real_input_id).val(JSON.stringify(data));
+}
 
-    // make multi select shown as it should be
-    $('.ui-helper-clearfix, .ui-helper-clearfix .selected, .ui-helper-clearfix .available').css('width','auto');
-    $('.ui-helper-clearfix .selected ul, .ui-helper-clearfix .available ul').css('height','110px');
-    // add & delete on detail table
-    __mutate_add_icon();
-    $('.fbutton .add').live('click', function(){
-        __mutate_delete_icon();
+function __mutate_input(table_id){
+    // datepicker-input
+    $('#' + table_id + ' .datepicker-input').datepicker({
+            dateFormat: js_date_format,
+            showButtonPanel: true,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "c-100:c+100",
     });
-    $('.flexigrid tbody').bind("DOMSubtreeModified",function(){
-        __mutate_delete_icon();
+    // date-picker-input-clear
+    $('#' + table_id + ' .datepicker-input-clear').click(function(){
+        $(this).parent().find('.datepicker-input').val('');
+        return false;
     });
-});
-$(document).ajaxComplete(function(){
-    __add_form_control_class();
-});
-$(window).load(function(){
-    $('.connected-list').css('height', '75px');
-    console.log($('.connected-list'));
-})
+    // datetime-input
+    $('#' + table_id + ' .datetime-input').datetimepicker({
+        timeFormat: 'HH:mm:ss',
+        dateFormat: js_date_format,
+        showButtonPanel: true,
+        changeMonth: true,
+        changeYear: true
+    });
+
+    $('#' + table_id + ' .datetime-input-clear').button();
+
+    $('#' + table_id + ' .datetime-input-clear').click(function(){
+        $(this).parent().find('.datetime-input').val("");
+        return false;
+    });
+    // chzn-select
+    $('#' + table_id + ' .chzn-select').chosen({allow_single_deselect: true, width:'150px', search_contains: true});
+    // numeric
+    $('#' + table_id + ' .numeric').numeric();
+    $('#' + table_id + ' .numeric').keydown(function(e){
+        if(e.keyCode == 38)
+        {
+            if(is_numeric($(this).val()))
+            {
+                var new_number = parseInt($(this).val()) + 1;
+                $(this).val(new_number);
+            }else if($(this).val().length == 0)
+            {
+                var new_number = 1;
+                $(this).val(new_number);
+            }
+        }
+        else if(e.keyCode == 40)
+        {
+            if(is_numeric($(this).val()))
+            {
+                var new_number = parseInt($(this).val()) - 1;
+                $(this).val(new_number);
+            }else if($(this).val().length == 0)
+            {
+                var new_number = -1;
+                $(this).val(new_number);
+            }
+        }
+        $(this).trigger('change');
+    });
+}
 
 function js_datetime_to_php(js_datetime){
     if(typeof(js_datetime)=='undefined' || js_datetime == '' || js_datetime == null){
@@ -117,6 +160,33 @@ function php_date_to_js(php_date){
     }
 }
 
-function IsNumeric(input){
+function is_numeric(input){
     return (input - 0) == input && input.length > 0;
 }
+
+// TODO: gonna be deprecated
+function IsNumeric(input){
+    return is_numeric(input);
+}
+
+$(document).ready(function(){
+    __add_form_control_class();
+
+    // make multi select shown as it should be
+    $('.ui-helper-clearfix, .ui-helper-clearfix .selected, .ui-helper-clearfix .available').css('width','auto');
+    $('.ui-helper-clearfix .selected ul, .ui-helper-clearfix .available ul').css('height','110px');
+    // add & delete on detail table
+    __mutate_add_icon();
+    $('.fbutton .add').live('click', function(){
+        __mutate_delete_icon();
+    });
+    $('.flexigrid tbody').bind("DOMSubtreeModified",function(){
+        __mutate_delete_icon();
+    });
+});
+$(document).ajaxComplete(function(){
+    __add_form_control_class();
+});
+$(window).load(function(){
+    $('.connected-list').css('height', '75px');
+});

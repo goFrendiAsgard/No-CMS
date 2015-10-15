@@ -204,7 +204,7 @@
         // Add component to table
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         $('#<?php echo $table_id; ?> tbody').append(component);
-        <?php echo $fn_mutate_input; ?>();
+        __mutate_input('<?=$table_id?>');
 
     } // end of ADD ROW FUNCTION
 
@@ -224,7 +224,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        <?php echo $fn_synchronize; ?>();
+        __synchronize('<?=$real_input_id?>', <?=$var_data?>);
         for(var i=0; i<<?php echo $var_data; ?>.update.length; i++){
             <?php echo $fn_add_table_row; ?>(<?php echo $var_data; ?>.update[i].data);
             <?php echo $var_record_index; ?>++;
@@ -255,7 +255,7 @@
             <?php echo $var_record_index; ?>++;
 
             // synchronize to the <?php echo $real_input_id.PHP_EOL; ?>
-            <?php echo $fn_synchronize; ?>();
+            __synchronize('<?=$real_input_id?>', <?=$var_data?>);
         });
 
 
@@ -292,7 +292,7 @@
                     }
                 }
             }
-            <?php echo $fn_synchronize; ?>();
+            __synchronize('<?=$real_input_id?>', <?=$var_data?>);
         });
 
 
@@ -332,7 +332,7 @@
                     }
                 }
             }
-            <?php echo $fn_synchronize; ?>();
+            __synchronize('<?=$real_input_id?>', <?=$var_data?>);
         });
 
 
@@ -342,86 +342,25 @@
     // reset field on save
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     $(document).ajaxSuccess(function(event, xhr, settings) {
-        if (settings.url == "{{ module_site_url }}manage_<?php echo underscore($stripped_master_table_name) ?>/index/insert") {
+        if (settings.url == "{{ module_site_url }}manage_<?=underscore($stripped_master_table_name)?>/index/insert") {
             response = $.parseJSON(xhr.responseText);
             if(response.success == true){
                 <?php echo $var_data ?> = {update:new Array(), insert:new Array(), delete:new Array()};
                 $('#md_table_<?php echo $master_column_name; ?> tr').not(':first').remove();
-                <?php echo $fn_synchronize; ?>();
+                __synchronize('<?=$real_input_id?>', <?=$var_data?>);
+            }
+        }else{
+            // avoid detail inserted twice on update
+            update_url = "{{ module_site_url }}manage_<?=underscore($stripped_master_table_name)?>/index/update";
+            if(settings.url.substr(0, update_url.length) == update_url){
+                response = $.parseJSON(xhr.responseText);
+                if(response.success == true){
+                    $('#form-button-save').attr('disabled', 'disabled');
+                    $('#save-and-go-back-button').attr('disabled', 'disabled');
+                    $('#cancel-button').attr('disabled', 'disabled');
+                }
             }
         }
     });
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // synchronize data to <?php echo $real_input_id; ?>.
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    function <?php echo $fn_synchronize; ?>(){
-        $('#<?php echo $real_input_id; ?>').val(JSON.stringify(<?php echo $var_data; ?>));
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // function to mutate input
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    function <?php echo $fn_mutate_input; ?>(){
-        // datepicker-input
-        $('#<?php echo $table_id; ?> .datepicker-input').datepicker({
-                dateFormat: js_date_format,
-                showButtonPanel: true,
-                changeMonth: true,
-                changeYear: true,
-                yearRange: "c-100:c+100",
-        });
-        // date-picker-input-clear
-        $('#<?php echo $table_id; ?> .datepicker-input-clear').click(function(){
-            $(this).parent().find('.datepicker-input').val('');
-            return false;
-        });
-        // datetime-input
-        $('#<?php echo $table_id; ?> .datetime-input').datetimepicker({
-            timeFormat: 'HH:mm:ss',
-            dateFormat: js_date_format,
-            showButtonPanel: true,
-            changeMonth: true,
-            changeYear: true
-        });
-
-        $('#<?php echo $table_id; ?> .datetime-input-clear').button();
-
-        $('#<?php echo $table_id; ?> .datetime-input-clear').click(function(){
-            $(this).parent().find('.datetime-input').val("");
-            return false;
-        });
-        // chzn-select
-        $("#<?php echo $table_id; ?> .chzn-select").chosen({allow_single_deselect: true, width:'100px'});
-        // numeric
-        $('#<?php echo $table_id; ?> .numeric').numeric();
-        $('#<?php echo $table_id; ?> .numeric').keydown(function(e){
-            if(e.keyCode == 38)
-            {
-                if(IsNumeric($(this).val()))
-                {
-                    var new_number = parseInt($(this).val()) + 1;
-                    $(this).val(new_number);
-                }else if($(this).val().length == 0)
-                {
-                    var new_number = 1;
-                    $(this).val(new_number);
-                }
-            }
-            else if(e.keyCode == 40)
-            {
-                if(IsNumeric($(this).val()))
-                {
-                    var new_number = parseInt($(this).val()) - 1;
-                    $(this).val(new_number);
-                }else if($(this).val().length == 0)
-                {
-                    var new_number = -1;
-                    $(this).val(new_number);
-                }
-            }
-            $(this).trigger('change');
-        });
-
-    }
 </script>

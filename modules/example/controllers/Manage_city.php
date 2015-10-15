@@ -152,159 +152,25 @@ class Manage_city extends CMS_CRUD_Controller {
     }
 
     public function _after_insert_or_update($post_array, $primary_key){
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //
         // SAVE CHANGES OF citizen
-        //  * The citizen data in in json format.
-        //  * It can be accessed via $_POST['md_real_field_citizen_col']
-        //
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $data = json_decode($this->input->post('md_real_field_citizen_col'), TRUE);
-        $insert_records = $data['insert'];
-        $update_records = $data['update'];
-        $delete_records = $data['delete'];
-        $real_column_names = array('citizen_id', 'name', 'birthdate', 'job_id');
-        $set_column_names = array();
-        $many_to_many_column_names = array('hobby');
-        $many_to_many_relation_tables = array('citizen_hobby');
-        $many_to_many_relation_table_columns = array('citizen_id');
-        $many_to_many_relation_selection_columns = array('hobby_id');
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  DELETED DATA
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        foreach($delete_records as $delete_record){
-            $detail_primary_key = $delete_record['primary_key'];
-            // delete many to many
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $where = array(
-                    $relation_column_name => $detail_primary_key
-                );
-                $this->db->delete($table_name, $where);
-            }
-            $this->db->delete($this->cms_complete_table_name('citizen'),
-                 array('citizen_id'=>$detail_primary_key));
-        }
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  UPDATED DATA
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        foreach($update_records as $update_record){
-            $detail_primary_key = $update_record['primary_key'];
-            $data = array();
-            foreach($update_record['data'] as $key=>$value){
-                if(in_array($key, $set_column_names)){
-                    $data[$key] = implode(',', $value);
-                }else if(in_array($key, $real_column_names)){
-                    $data[$key] = $value;
-                }
-            }
-            $data['city_id'] = $primary_key;
-            $this->db->update($this->cms_complete_table_name('citizen'),
-                 $data, array('citizen_id'=>$detail_primary_key));
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // Adjust Many-to-Many Fields of Updated Data
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $key =     $many_to_many_column_names[$i];
-                $new_values = $update_record['data'][$key];
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
-                    ->from($table_name)
-                    ->where($relation_column_name, $detail_primary_key)
-                    ->get();
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // delete everything which is not in new_values
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                $old_values = array();
-                foreach($query->result_array() as $row){
-                    $old_values = array();
-                    if(!in_array($row[$relation_selection_column_name], $new_values)){
-                        $where = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $row[$relation_selection_column_name]
-                        );
-                        $this->db->delete($table_name, $where);
-                    }else{
-                        $old_values[] = $row[$relation_selection_column_name];
-                    }
-                }
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // add everything which is not in old_values but in new_values
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                foreach($new_values as $new_value){
-                    if(!in_array($new_value, $old_values)){
-                        $data = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $new_value
-                        );
-                        $this->db->insert($table_name, $data);
-                    }
-                }
-            }
-        }
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //  INSERTED DATA
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        foreach($insert_records as $insert_record){
-            $data = array();
-            foreach($insert_record['data'] as $key=>$value){
-                if(in_array($key, $set_column_names)){
-                    $data[$key] = implode(',', $value);
-                }else if(in_array($key, $real_column_names)){
-                    $data[$key] = $value;
-                }
-            }
-            $data['city_id'] = $primary_key;
-            $this->db->insert($this->cms_complete_table_name('citizen'), $data);
-            $detail_primary_key = $this->db->insert_id();
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // Adjust Many-to-Many Fields of Inserted Data
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $key =     $many_to_many_column_names[$i];
-                $new_values = $insert_record['data'][$key];
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
-                    ->from($table_name)
-                    ->where($relation_column_name, $detail_primary_key)
-                    ->get();
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // delete everything which is not in new_values
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                $old_values = array();
-                foreach($query->result_array() as $row){
-                    $old_values = array();
-                    if(!in_array($row[$relation_selection_column_name], $new_values)){
-                        $where = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $row[$relation_selection_column_name]
-                        );
-                        $this->db->delete($table_name, $where);
-                    }else{
-                        $old_values[] = $row[$relation_selection_column_name];
-                    }
-                }
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // add everything which is not in old_values but in new_values
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                foreach($new_values as $new_value){
-                    if(!in_array($new_value, $old_values)){
-                        $data = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $new_value
-                        );
-                        $this->db->insert($table_name, $data);
-                    }
-                }
-            }
-        }
+        $this->_save_one_to_many(
+            'citizen', // FIELD NAME
+            'citizen', // DETAIL TABLE NAME
+            'citizen_id', // DETAIL PK NAME
+            'city_id', // DETAIL FK NAME
+            $primary_key, // PARENT PRIMARY KEY VALUE
+            $data, // DATA
+            $real_column_list=array('citizen_id', 'name', 'birthdate', 'job_id'), // REAL DETAIL COLUMN NAMES
+            $set_column_list=array(), // SET DETAIL COLUMN NAMES
+            $many_to_many_config_list=array(
+                'hobby' => array(
+                    'relation_table' => 'citizen_hobby',
+                    'relation_column' => 'citizen_id',
+                    'relation_selection_column' => 'hobby_id',
+                ),
+            )
+        );
 
 
         $success = parent::_after_insert_or_update($post_array, $primary_key);
@@ -361,7 +227,7 @@ class Manage_city extends CMS_CRUD_Controller {
 
     // returned on view
     public function _callback_column_citizen($value, $row){
-        return $this->humanized_record_count(
+        return $this->_humanized_record_count(
                 'citizen', // DETAIL TABLE NAME
                 'city_id', // DETAIL FK NAME
                 $row->city_id, // CURRENT TABLE PK VALUE
