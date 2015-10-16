@@ -14,7 +14,7 @@
 </style>
 <div class="form form-inline">
     <div class="form-group">
-        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />    
+        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />
     </div>&nbsp;
     <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />&nbsp;
     <?php
@@ -44,7 +44,7 @@
             }
         });
         $(identifier).each(function(){
-            var margin_bottom = 0;               
+            var margin_bottom = 0;
             if($(this).height()<max_height){
                 margin_bottom = max_height - $(this).height();
             }
@@ -65,7 +65,7 @@
             async = true;
         }
         $('#content_bottom').html('Load more sites &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
-        
+
         var keyword = $('#input_search').val();
         // don't overflow network with request
         if(RUNNING_REQUEST){
@@ -82,13 +82,13 @@
             },
             'success'  : function(response){
                 // change loading status
-                if(response == ''){
+                if(response.trim() == ''){
                     LOADING = true;
                 }
                 // show contents
                 $('#record_content').append(response);
                 _adjust_thumbnail();
-                if(response == ''){
+                if(response.trim() == ''){
                     STOP_REQUEST = true;
                 }
                 // show bottom contents
@@ -143,7 +143,7 @@
         // resize
         $(window).resize(function(){
             _adjust_thumbnail();
-        });        
+        });
 
     });
     $('.record_container').load(function(){

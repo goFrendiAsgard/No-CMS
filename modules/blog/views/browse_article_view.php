@@ -92,7 +92,7 @@
     <div class="form-group">
         <label class="sr-only" for="input_search">Keyword</label>
         <input type="text" name="search" value="<?php echo isset($keyword)? $keyword: ''; ?>" id="input_search" class="input-medium search-query form-control" placeholder="Keyword" />
-    </div>    
+    </div>
     <div class="form-group">
         <button name="submit" value="Search" id="btn_search" class="btn btn-primary">
             <i class="glyphicon glyphicon-search"></i> Search
@@ -138,7 +138,7 @@
 
             if(count($article['photos'])>0){
                 // photos
-                echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';            
+                echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';
                 foreach($article['photos'] as $photo){
                     echo '<a class="photo_'.$article['id'].'" photo_id="'.$photo['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
                     echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
@@ -146,7 +146,7 @@
                     echo '</a>';
                 }
                 echo '<div id="big_photo_'.$article['id'].'" class="row"></div>';
-                echo '</div>';            
+                echo '</div>';
                 echo '<script type="text/javascript">
                     $(".photo_'.$article['id'].'").click(function(event){
                         LOADING = true;
@@ -161,7 +161,7 @@
                         $("html, body").animate({
                             scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
                         }, 1000, "swing", function(){LOADING = false});
-                        $(".photo_'.$article['id'].'").css("opacity", 1);            
+                        $(".photo_'.$article['id'].'").css("opacity", 1);
                         $(this).css("opacity", 0.3);
                         event.preventDefault();
                     });
@@ -172,7 +172,7 @@
                     });
                 </script>';
             }
-            
+
 
             // content
             echo '<div>';
@@ -186,7 +186,7 @@
                     $module_url = 'blog';
                 }else{
                     $module_url = $module_path.'/blog';
-                }                
+                }
                 echo '<div style="margin-bottom:20px;">';
                 echo '<b>Categories</b> :&nbsp;';
                 foreach($article['categories'] as $category){
@@ -216,7 +216,7 @@
                         echo anchor($url,
                                     '<div class="row well">'.
                                     '<div class="col-md-4" style="min-height:200px; background-repeat: no-repeat;
-                                        background-attachment: cover; background-position: center; 
+                                        background-attachment: cover; background-position: center;
                                         background-color:black;
                                         background-image:url(\''.$photo.'\')"></div>'.
                                     '<div class="col-md-8" style="vertical-align:top;">'.
@@ -267,7 +267,7 @@
                 echo '</div>';
             }
             echo br();
-            // comment form            
+            // comment form
             if($article['allow_comment']){
                 echo '<div id="comment-box">';
                 echo '<a name="comment-form" style="margin-top: 50px;">&nbsp;</a>';
@@ -292,7 +292,7 @@
                     echo '<div class="form-group">';
                     echo form_label('Name', ' for="" class="control-label col-sm-2');
                     echo '<div class="col-sm-8">';
-                    echo form_input($secret_code.'xname', $name, 
+                    echo form_input($secret_code.'xname', $name,
                         'id="'.$secret_code.'xname" placeholder="Your name" class="form-control"');
                     echo '</div>';
                     echo '</div>';
@@ -300,7 +300,7 @@
                     echo '<div class="form-group">';
                     echo form_label('Email', ' for="" class="control-label col-sm-2');
                     echo '<div class="col-sm-8">';
-                    echo form_input($secret_code.'xemail', $email, 
+                    echo form_input($secret_code.'xemail', $email,
                         'id="'.$secret_code.'xemail" placeholder="Your email address" class="form-control"');
                     echo '</div>';
                     echo '</div>';
@@ -308,7 +308,7 @@
                 echo '<div class="form-group">';
                 echo form_label('Website', ' for="" class="control-label col-sm-2');
                 echo '<div class="col-sm-8">';
-                echo form_input($secret_code.'xwebsite', $website, 
+                echo form_input($secret_code.'xwebsite', $website,
                     'id="'.$secret_code.'xwebsite" placeholder="Your website" class="form-control"');
                 echo '</div>';
                 echo '</div>';
@@ -316,7 +316,7 @@
                 echo '<div class="form-group">';
                 echo form_label('Comment', ' for="" class="control-label col-sm-2');
                 echo '<div class="col-sm-8">';
-                echo form_textarea($secret_code.'xcontent', $content, 
+                echo form_textarea($secret_code.'xcontent', $content,
                     'id="'.$secret_code.'xcontent" placeholder="Your Comment" class="form-control text-area-comment"');
                 echo '</div>';
                 echo '</div>';
@@ -356,13 +356,13 @@
         if(SCROLL_WORK){
             if(screen.width >= 1024){
                 $('#btn_load_more').hide();
-                $('#record_content_bottom').show();            
+                $('#record_content_bottom').show();
             }else{
                 $('#btn_load_more').show();
                 $('#record_content_bottom').hide();
             }
         }else{
-            $('#btn_load_more').hide();    
+            $('#btn_load_more').hide();
         }
     }
 
@@ -390,7 +390,7 @@
                 'page' : PAGE,
             },
             'success'  : function(response){
-                if(response == ''){
+                if(response.trim() == ''){
                     SCROLL_WORK = false;
                 }
                 // show contents
@@ -487,7 +487,7 @@
         $('#input_category').change(function(){
             reset_content();
         });
-        
+
         // reply_comment_link
         $('.reply_comment_link').click(function(event){
             var comment_id = $(this).attr('comment_id');
@@ -503,7 +503,7 @@
             // that's enough, no redirect please
             event.preventDefault();
         });
-        
+
         // reply_cancel_link
         $('.reply_cancel_link').click(function(event){
             var comment_id = $(this).attr('comment_id');
