@@ -13,7 +13,7 @@
 </style>
 <div class="form form-inline">
     <div class="form-group">
-        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />&nbsp;    
+        <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />&nbsp;
     </div>
     <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />&nbsp;
     <?php
@@ -37,12 +37,12 @@
     var RUNNING_REQUEST        = false;
     var STOP_REQUEST           = false;
     var REQUEST;
-    
+
 
     function adjust_load_more_button(){
         if(screen.width >= 1024){
             $('#btn_load_more').hide();
-            $('#record_content_bottom').show();            
+            $('#record_content_bottom').show();
         }else{
             $('#btn_load_more').show();
             $('#record_content_bottom').hide();
@@ -72,7 +72,7 @@
                 // show contents
                 $('#record_content').append(response);
                 // stop request if response is empty
-                if(response == ''){
+                if(response.trim() == ''){
                     STOP_REQUEST = true;
                 }
 

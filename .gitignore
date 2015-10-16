@@ -70,4 +70,5 @@ modules/conference
 modules/oepet
 modules/breast_cancer
 modules/simple_erp
+modules/simple_erp_backup
 modules/mlm
