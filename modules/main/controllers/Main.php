@@ -852,6 +852,7 @@ class Main extends CMS_Controller
         } else {
             $crud->required_fields('navigation_name', 'title');
         }
+
         $crud->unique_fields('navigation_name', 'title', 'url');
         $crud->unset_read();
 
