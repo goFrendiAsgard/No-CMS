@@ -13,17 +13,10 @@
  * (1) http://ckeditor.com/builder
  *     Visit online builder to build CKEditor from scratch.
  *
-<<<<<<< HEAD
- * (2) http://ckeditor.com/builder/2fb50acb964d60aac15e49aea2835b02
- *     Visit online builder to build CKEditor, starting with the same setup as before.
- *
- * (3) http://ckeditor.com/builder/download/2fb50acb964d60aac15e49aea2835b02
-=======
  * (2) http://ckeditor.com/builder/185a89602dc697b068dfdab6396d2b3a
  *     Visit online builder to build CKEditor, starting with the same setup as before.
  *
  * (3) http://ckeditor.com/builder/download/185a89602dc697b068dfdab6396d2b3a
->>>>>>> development
  *     Straight download link to the latest version of CKEditor (Optimized) with the same setup as before.
  *
  * NOTE:
@@ -58,19 +51,12 @@ var CKBUILDER_CONFIG = {
 	],
 	plugins : {
 		'a11yhelp' : 1,
-<<<<<<< HEAD
-		'about' : 1,
-=======
->>>>>>> development
 		'basicstyles' : 1,
 		'bidi' : 1,
 		'blockquote' : 1,
 		'bootstrapVisibility' : 1,
 		'clipboard' : 1,
-<<<<<<< HEAD
-=======
 		'codemirror' : 1,
->>>>>>> development
 		'colorbutton' : 1,
 		'colordialog' : 1,
 		'contextmenu' : 1,
@@ -86,10 +72,6 @@ var CKBUILDER_CONFIG = {
 		'floatingspace' : 1,
 		'font' : 1,
 		'format' : 1,
-<<<<<<< HEAD
-		'forms' : 1,
-=======
->>>>>>> development
 		'horizontalrule' : 1,
 		'htmlwriter' : 1,
 		'iframe' : 1,
@@ -107,16 +89,8 @@ var CKBUILDER_CONFIG = {
 		'pagebreak' : 1,
 		'pastefromword' : 1,
 		'pastetext' : 1,
-<<<<<<< HEAD
-		'preview' : 1,
-		'print' : 1,
 		'removeformat' : 1,
 		'resize' : 1,
-		'save' : 1,
-=======
-		'removeformat' : 1,
-		'resize' : 1,
->>>>>>> development
 		'scayt' : 1,
 		'selectall' : 1,
 		'showblocks' : 1,
@@ -128,15 +102,8 @@ var CKBUILDER_CONFIG = {
 		'tab' : 1,
 		'table' : 1,
 		'tabletools' : 1,
-<<<<<<< HEAD
-		'templates' : 1,
 		'toolbar' : 1,
 		'undo' : 1,
-		'videodetector' : 1,
-=======
-		'toolbar' : 1,
-		'undo' : 1,
->>>>>>> development
 		'widgetbootstrap' : 1,
 		'wsc' : 1,
 		'wysiwygarea' : 1
