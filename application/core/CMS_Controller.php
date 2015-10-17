@@ -125,6 +125,11 @@ class CMS_Controller extends MX_Controller
         return $this->{$this->__cms_base_model_name}->cms_unique_field_name($field_name);
     }
 
+    protected function cms_unique_join_name($field_name)
+    {
+        return $this->{$this->__cms_base_model_name}->cms_unique_join_name($field_name);
+    }
+
     protected function cms_random_string($length = 10)
     {
         return $this->{$this->__cms_base_model_name}->cms_random_string($length);
@@ -590,7 +595,7 @@ class CMS_Controller extends MX_Controller
                 $navigation_icon_path = FCPATH.'modules/main/assets/navigation_icon/';
                 $navigation_icon = $navigation_icon_path.$navigation_name.'.png';
             }
-            
+
             // default icon
             if(!file_exists($navigation_icon)){
                 $navigation_icon = FCPATH.'assets/nocms/images/icons/package.png';

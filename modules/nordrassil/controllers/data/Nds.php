@@ -99,7 +99,7 @@ class Nds extends CMS_Controller {
         $crud->display_as('name','Name');
         $crud->display_as('description','Description');
         $crud->display_as('option_type','Option Type');
-        
+
         $crud->unset_texteditor('description');
         $crud->field_type('option_type', 'enum', array('project','table','column'));
 
@@ -107,7 +107,7 @@ class Nds extends CMS_Controller {
             $crud->where($this->cms_complete_table_name('template_option').'.template_id', $template_id);
             $crud->field_type('template_id', 'hidden', $template_id);
         }else{
-            $crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');    
+            $crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
         }
 
         $crud->callback_column($this->unique_field_name('template_id'),array($this,'_callback_column_template_option_template_id'));
@@ -175,7 +175,7 @@ class Nds extends CMS_Controller {
 
         $crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
         $crud->set_relation_n_n('options',$this->cms_complete_table_name('project_option'),
-            $this->cms_complete_table_name('template_option'),'project_id','option_id','name', 
+            $this->cms_complete_table_name('template_option'),'project_id','option_id','name',
             null, array('option_type'=>'project'));
 
 
@@ -317,7 +317,7 @@ class Nds extends CMS_Controller {
                                         }
                                     }
                                     // unset empty and irelevant keys
-                                    if($column_key == 'lookup_stripped_table_name' || $column_key == 'selection_stripped_table_name' || 
+                                    if($column_key == 'lookup_stripped_table_name' || $column_key == 'selection_stripped_table_name' ||
                                     $column_key == 'relation_stripped_table_name' || $column_val === '' || (is_array($column_val) && count($column_val)==0)){
                                         unset($project['tables'][$i]['columns'][$j][$column_key]);
                                     }
@@ -386,9 +386,9 @@ class Nds extends CMS_Controller {
         $crud->display_as('options','Options');
         $crud->display_as('columns','Columns');
         $crud->display_as('data', 'Data (JSON Format)');
-        
+
         $crud->set_relation_n_n('options',$this->cms_complete_table_name('table_option'),
-            $this->cms_complete_table_name('template_option'),'table_id','option_id','name', 
+            $this->cms_complete_table_name('template_option'),'table_id','option_id','name',
             null, array('option_type'=>'table'));
 
         if(isset($project_id) && intval($project_id)>0){
@@ -484,7 +484,7 @@ class Nds extends CMS_Controller {
 
     public function _callback_column_table_name($value, $row){
         $html = '<b>' . $value . '</b>' . br() . '(' . $row->caption . ')<a id="rec-'.$row->table_id.'" name="rec-'.$row->table_id.'">&nbsp;</a>';
-        
+
         // TODO: code this
         if(isset($_SESSION['__mark_move_table_id'][$row->project_id]) && $_SESSION['__mark_move_table_id'][$row->project_id] != NULL){
             $mark_move_table_id = $_SESSION['__mark_move_table_id'][$row->project_id];
@@ -580,7 +580,7 @@ class Nds extends CMS_Controller {
         $crud->field_type('value_selection_mode', 'enum', array('set','enum'));
 
         $crud->set_relation_n_n('options',$this->cms_complete_table_name('column_option'),
-          $this->cms_complete_table_name('template_option'),'column_id','option_id','name', 
+          $this->cms_complete_table_name('template_option'),'column_id','option_id','name',
             null, array('option_type'=>'column'));
 
         $crud->set_relation('lookup_table_id',$this->cms_complete_table_name('table'),'name');
@@ -596,7 +596,7 @@ class Nds extends CMS_Controller {
         if(isset($table_id) && intval($table_id)>0){
             $crud->field_type('table_id', 'hidden', $table_id);
         }else{
-            $crud->set_relation('table_id',$this->cms_complete_table_name('table'),'name');    
+            $crud->set_relation('table_id',$this->cms_complete_table_name('table'),'name');
         }
 
         $crud->callback_before_insert(array($this, '_callback_column_before_insert'));
@@ -712,7 +712,7 @@ class Nds extends CMS_Controller {
                     $relation_table_name.'.'.$relation_table_column_name.' = '.$table_name.'.'.$table_primary_key;
             }
         }
-        $html = '<b>' . $value . '</b> (' . $row->caption . ')'. br() . 
+        $html = '<b>' . $value . '</b> (' . $row->caption . ')'. br() .
             $description . '<a id="rec-'.$row->column_id.'" name="rec-'.$row->column_id.'">&nbsp;</a>';
 
         // TODO: code this
@@ -999,6 +999,8 @@ class Nds extends CMS_Controller {
                                 $row->relation_table_name.'.'.$row->relation_selection_column_name.' = '.$row->selection_table_name.'.'.$row->selection_table_primary_key.br().
                                 $row->relation_table_name.'.'.$row->relation_table_column_name.' = '.$row->table_name.'.'.$row->table_primary_key;
                         }
+                        // explode
+
                         $caption .= '<b>'.$row->name.'</b>'. ' ('.$row->caption.')<br />'.
                             $role_description;
                         $caption .= $options == ''? '' : ' | '.$options;
@@ -1018,7 +1020,3 @@ class Nds extends CMS_Controller {
         }
         $html = '<ul style="padding-left:15px; padding-top:5px; font-size:12px;">' . implode('',$arr) . '</ul>';
         return $html;
-    }
-
-
-}

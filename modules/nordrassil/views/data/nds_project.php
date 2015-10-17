@@ -34,10 +34,10 @@
 	$(document).ready(function(){
 		var changing_field = 'template_id';
 		var affected_field = 'options';
-		var get_restricted_path = '<?php echo site_url('{{ module_path }}'); ?>'+'/data/ajax/get_restricted_project_option/';
-		adjust(changing_field, affected_field, get_restricted_path);
+		var get_ajax_path = '<?php echo site_url('{{ module_path }}'); ?>'+'/data/ajax/get_project_option/';
+		adjust(changing_field, affected_field, get_ajax_path);
 		$("select#field-"+changing_field).change(function(){
-			adjust(changing_field, affected_field, get_restricted_path);
+			adjust(changing_field, affected_field, get_ajax_path);
 		});
 
         // auto fill
@@ -56,6 +56,16 @@
 
 	$(document).ajaxComplete(function(){
 		$('.blank').attr('target','_blank');
+
+		<?php if(isset($_GET['row'])){  $id = $_GET['row'];?>
+
+		var position = $('tr[rowid="<?=$id?>"]').offset();
+		if(position != undefined){
+			var top = position.top - 50;
+			$(window).scrollTop( top );
+		}
+
+		<?php } ?>
 	});
 
 

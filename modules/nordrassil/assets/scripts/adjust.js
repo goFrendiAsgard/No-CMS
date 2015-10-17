@@ -1,7 +1,6 @@
-var RESTRICTED_INDEX = {};
-function adjust(changing_field, affected_field, ajax_get_restricted_path){
+function adjust(changing_field, affected_field, ajax_get_path){
 	// define ajax path
-	var ajax_path = ajax_get_restricted_path;
+	var ajax_path = ajax_get_path;
 	if(ajax_path[ajax_path.length-1] != '/'){
 		ajax_path += '/';
 	}
@@ -13,21 +12,26 @@ function adjust(changing_field, affected_field, ajax_get_restricted_path){
 		'url' : ajax_path+changing_id,
 		'dataType' : 'json',
 		'success' : function(response){
-			RESTRICTED_INDEX[affected_field] = response;
-			function onchange(){
-				restricted_index = RESTRICTED_INDEX[affected_field];
-				$('#field_'+affected_field+'_chosen ul.chosen-results li').removeClass('hidden');
-				for(var i=0; i<restricted_index.length; i++){
-					var current_option = $('select#field-'+affected_field).children('option[value="'+restricted_index[i]+'"]');
-					var index = $('select#field-'+affected_field+' option').index(current_option);
-					var $option = $('#field_'+affected_field+'_chosen ul.chosen-results li[data-option-array-index="'+index+'"]');
-					$option.addClass('hidden');
-					$option.removeClass('result-selected');
-					$('select#field-'+affected_field+' option[value="'+restricted_index[i]+'"]').removeAttr('selected');
+			var old_value = $('select#field-'+affected_field).val();
+			var old_value_exists = false;
+			$('select#field-'+affected_field).find('option').remove();
+			$('select#field-'+affected_field).append('<option value=""></option>');
+			for(i=0; i<response.length; i++){
+				// old value exists?
+				var selected = '';
+				if(old_value == response[i].value){
+					old_value_exists = true;
+					selected = ' selected';
 				}
+				// look for old value
+				$('select#field-'+affected_field).append('<option'+selected+' value="' + response[i].value + '">' + response[i].caption + '</option>');
 			}
-			$('#field_'+affected_field+'_chosen').click(onchange);
-			$('#field_'+affected_field+'_chosen').keyup(onchange);
+			if(old_value_exists){
+				$('select#field-'+affected_field).val(old_value);
+			}else{
+				$('select#field-'+affected_field).val('');
+			}
+			$('select#field-'+affected_field).trigger("chosen:updated");
 		}
 	});
 }

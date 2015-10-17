@@ -306,6 +306,11 @@ class CMS_Model extends CI_Model
         return 's'.substr(md5($field_name), 0, 8); //This s is because is better for a string to begin with a letter and not with a number
     }
 
+    public function cms_unique_join_name($field_name)
+    {
+        return 'j'.substr(md5($field_name), 0, 8); //This j is because is better for a string to begin with a letter and not with a number
+    }
+
     public function cms_random_string($length = 10)
     {
         $str = '';
