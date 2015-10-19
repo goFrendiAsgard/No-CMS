@@ -166,6 +166,8 @@ class Extended_grocery_crud extends Grocery_CRUD{
 
         // added by go frendi
         $data->unsearchable_field   = $this->unsearchable_field;
+        $data->unset_default_search = $this->unset_default_search;
+        $data->search_form_components = $this->search_form_components;
         // end of addtion
 
 		$data->success_message		= $this->get_success_message_at_list($state_info);

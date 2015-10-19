@@ -462,7 +462,7 @@ class CMS_Module extends CMS_Controller
 
         // ASSIGN NAVIGATIONS
         foreach ($this->GROUP_NAVIGATIONS as $group_name => $navigation_names) {
-            foreach($navigations_names as $navigation_name){
+            foreach($navigation_names as $navigation_name){
                 $this->cms_assign_navigation($this->cms_complete_navigation_name($navigation_name), $group_name);
             }
         }

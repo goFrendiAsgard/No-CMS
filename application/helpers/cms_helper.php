@@ -199,15 +199,10 @@ function cms_encode($data, $chipper = NULL){
     foreach($encoded_array as $char){
         $encoded_str .= urlencode(chr($char));
     }
-    //$encoded_str = urlencode(base64_encode($encoded_str));
-    //$encoded_str = implode('-', $encoded_array);
     return $encoded_str;
 }
 function cms_decode($data, $chipper = NULL){
     $chipper = $chipper === NULL? cms_config('__cms_chipper') : $chipper;
-    //$data_array = explode('-', $data);
-
-    //$data = base64_decode(urldecode($data));
     $data = urldecode($data);
     $data_array = array();
     for($i=0; $i<strlen($data); $i++){

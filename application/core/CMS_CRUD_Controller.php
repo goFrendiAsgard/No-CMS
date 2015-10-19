@@ -37,7 +37,7 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         // check state & get PK_VALUE
         $this->STATE = $this->CRUD->getState();
         $this->STATE_INFO = $this->CRUD->getStateInfo();
-        $this->PK_VALUE = isset($this->STATE_INFO->PK_VALUE)? $this->STATE_INFO->PK_VALUE : NULL;
+        $this->PK_VALUE = isset($this->STATE_INFO->primary_key)? $this->STATE_INFO->primary_key : NULL;
 
         // unset jquery (we use No-CMS's default jquery)
         $this->CRUD->unset_jquery();

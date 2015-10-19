@@ -46,11 +46,11 @@ if($success_message !== null){?>
 	<div id='main-table-box' class="main-table-box row">
 
     <?php echo form_open( $ajax_list_url, 'method="post" id="filtering_form" class="filtering_form" autocomplete = "off" data-ajax-list-info-url="'.$ajax_list_info_url.'"'); ?>
-    
+
     <div class="quickSearchBox form-inline row" id='quickSearchBox'>
 
         <?php if(isset($search_form_components)) echo $search_form_components; ?>
-        
+
         <?php if(isset($unset_default_search) && $unset_default_search) echo '<div style="display:none">'; ?>
         <div class="form-group">
             <input type="text" class="qsbsearch_fieldox search_text form-control" name="search_text" id="search_text" placeholder="<?php echo $this->l('list_search');?>">
@@ -63,7 +63,7 @@ if($success_message !== null){?>
                             if(in_array($column->field_name, $unsearchable_field)){
                                 continue;
                             }
-                        } 
+                        }
                 ?>
                 <option value="<?php echo $column->field_name?>">{{ language:<?php echo $column->display_as?> }}&nbsp;&nbsp;</option>
                 <?php }?>
@@ -76,11 +76,11 @@ if($success_message !== null){?>
             <input type="button" value="<?php echo $this->l('list_clear_filtering');?>" id='search_clear' class="search_clear btn btn-primary">
         </div>
         <?php if(isset($unset_default_search) && $unset_default_search) echo '</div>'; ?>
-        
+
     </div>
 
 	<?php if(!$unset_add || !$unset_export || !$unset_print){?>
-	<div class="tDiv row">		    
+	<div class="tDiv row">
 		<div class="tDiv3  ">
             <?php if(!$unset_add){?>
             <a href='<?php echo $add_url?>' title='<?php echo $this->l('list_add'); ?> {{ language:<?php echo $subject?> }}' class='add-anchor add_button btn btn-default'>
@@ -147,11 +147,11 @@ if($success_message !== null){?>
             <div class="pGroup">
                 <span><label><?php echo $this->l('list_page'); ?></label>&nbsp;</span>
             </div>
-            <div class="pGroup">         
+            <div class="pGroup">
                 <input name='page' type="text" value="1" size="4" id='crud_page' class="crud_page">&nbsp;
             </div>
             <div class="pGroup">
-                <span>                    
+                <span>
                     <label><?php echo $this->l('list_paging_of'); ?></label>&nbsp;
                     <label id='last-page-number' class="last-page-number"><?php echo ceil($total_results / $default_per_page)?></label>
                 </span>
@@ -190,7 +190,7 @@ if($success_message !== null){?>
         <div style="clear: both;">
         </div>
     </div>
-	
+
 	<?php echo form_close(); ?>
 
 	</div>
