@@ -11,12 +11,14 @@ if (!defined('BASEPATH')) {
  */
 class CMS_CRUD_Controller extends CMS_Secure_Controller
 {
-    protected $TABLE_NAME;
-    protected $PRIMARY_KEY;
-    protected $CRUD;
-    protected $STATE;
-    protected $STATE_INFO;
-    protected $PK_VALUE;
+    protected $TABLE_NAME = '';
+    protected $COLUMN_NAMES = array();
+    protected $DISPLAY_AS = array();
+    protected $PRIMARY_KEY = '';
+    protected $CRUD = NULL;
+    protected $STATE = NULL;
+    protected $STATE_INFO = NULL;
+    protected $PK_VALUE = NULL;
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
     protected $UNSET_ADD = FALSE;
@@ -91,6 +93,24 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         // primary key
         $this->CRUD->set_primary_key($this->PRIMARY_KEY);
 
+        // assign columns
+        $this->CRUD->columns = $this->COLUMN_NAMES;
+        // assign add fields
+        $add_fields = $this->COLUMN_NAMES;
+        $add_fields[] = '_created_at';
+        $add_fields[] = '_created_by';
+        $this->CRUD->add_fields = $add_fields;
+        // assign edit fields
+        $edit_fields = $this->COLUMN_NAMES;
+        $edit_fields[] = '_updated_at';
+        $edit_fields[] = '_updated_by';
+        $this->CRUD->edit_fields = $edit_fields;
+
+        // display as
+        foreach($this->DISPLAY_AS as $field=>$caption){
+            $this->CRUD->display_as($field, $caption);
+        }
+
         // callbacks
         $this->CRUD->callback_before_insert(array($this,'_before_insert'));
         $this->CRUD->callback_before_update(array($this,'_before_update'));
@@ -106,6 +126,51 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         $this->CRUD->field_type('_updated_at', 'hidden');
 
         return $this->CRUD;
+    }
+
+    protected function build_default_callback(){
+        if($this->CRUD === NULL){
+            $this->make_crud();
+        }
+
+        // get column_list
+        $column_list = $this->CRUD->columns;
+        // add from add_fields and edit_fields
+        foreach($this->CRUD->add_fields as $column){
+            if(!in_array($column, $column_list)){
+                $column_list[] = $column;
+            }
+        }
+        foreach($this->CRUD->edit_fields as $column){
+            if(!in_array($column, $column_list)){
+                $column_list[] = $column;
+            }
+        }
+
+        // automatic add callback if method exists
+        foreach($column_list as $column_name){
+            // callback column
+            if(method_exists($this, '_callback_column_'.$column_name)){
+                $this->CRUD->callback_column($column_name, array($this, '_callback_column_'.$column_name));
+                $this->CRUD->callback_column($this->cms_complete_table_name($this->CRUD->basic_db_table).'.'.$column_name,
+                    array($this, '_callback_column_'.$column_name));
+            }
+            // callback field
+            if(method_exists($this, '_callback_field_'.$column_name)){
+                $this->CRUD->callback_field($column_name, array($this, '_callback_field_'.$column_name));
+                $this->CRUD->callback_field($this->cms_complete_table_name($this->CRUD->basic_db_table).'.'.$column_name,
+                    array($this, '_callback_field_'.$column_name));
+            }
+            if(method_exists($this, $column_name.'_validation')){
+                // get field caption
+                $caption = array_key_exists($column_name, $this->CRUD->display_as)? $this->CRUD->display_as[$column_name]:
+                    ucwords(str_replace('_', ' ', $column_name));
+                // add callback
+                $this->CRUD->set_rules($column_name, $caption, 'callback_'.$column_name.'_validation');
+                $this->CRUD->set_rules($this->cms_complete_table_name($this->CRUD->basic_db_table).'.'.$column_name,
+                    $caption, 'callback_'.$column_name.'_validation');
+            }
+        }
     }
 
     public function _ommit_nbsp($matches){
@@ -139,9 +204,12 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
     protected function _save_one_to_many($field_name, $detail_table_name, $pk_column, $fk_column, $parent_pk_value,
     $data, $real_column_list=array(), $set_column_list=array(), $many_to_many_config_list=array()){
 
-        $insert_records = $data['insert'];
-        $update_records = $data['update'];
-        $delete_records = $data['delete'];
+        $insert_records = is_array($data) && array_key_exists('insert', $data) && is_array($data['insert'])?
+            $data['insert'] : array();
+        $update_records = is_array($data) && array_key_exists('update', $data) && is_array($data['update'])?
+            $data['update'] : array();
+        $delete_records = is_array($data) && array_key_exists('delete', $data) && is_array($data['delete'])?
+            $data['delete'] : array();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  DELETED DATA
@@ -416,7 +484,7 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
             $id_list = json_decode($this->input->post('data'));
             foreach($id_list as $id){
                 if($this->_before_delete($id)){
-                    $this->db->delete($this->cms_complete_table_name('job'),
+                    $this->db->delete($crud->basic_db_table,
                         array($this->PRIMARY_KEY=>$id));
                     $this->_after_delete($id);
                 }

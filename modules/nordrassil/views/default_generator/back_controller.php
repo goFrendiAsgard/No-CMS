@@ -9,6 +9,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = '{{ table_name }}';
+    protected $COLUMN_NAMES = array({{ field_list }});
     protected $PRIMARY_KEY = '{{ primary_key }}';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -33,14 +34,30 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
 
         // set subject
         $crud->set_subject('{{ table_caption }}');
-        // displayed columns on list
-        $crud->columns({{ field_list }});
-        // displayed columns on edit operation
-        $crud->edit_fields({{ edit_field_list }});
-        // displayed columns on add operation
-        $crud->add_fields({{ add_field_list }});
+
+        // displayed columns on list, edit, and add, uncomment to use
+        //$crud->columns({{ field_list }});
+        //$crud->edit_fields({{ edit_field_list }});
+        //$crud->add_fields({{ add_field_list }});
+
         // caption of each columns
 {{ display_as }}
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // This function will automatically detect every methods in this controller and link it to corresponding column
+        // if the name is match by convention. In other word, you don't need to manually define callback.
+        // Here is the convention (replace COLUMN_NAME with your column's name)
+        //
+        // * callback column (called when viewing the data as list):
+        //      public function _callback_column_COLUMN_NAME($value, $row){}
+        //
+        // * callback field (called when show add and edit form):
+        //      public function _callback_field_COLUMN_NAME($value, $primary_key){}
+        //
+        // * validation rule callback (field validation when adding/editing data)
+        //      public function COLUMN_NAME_validation($value){}
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $this->build_default_callback();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -103,13 +120,25 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         //     ));
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Create custom search form (if needed)
+        // usage:
+        //     $crud->unset_default_search();
+        //     // Your custom form
+        //     $html =  '<div class="row container col-md-12" style="margin-bottom:10px;">';
+        //     $html .= '</div>';
+        //     $html .= '<input name="keyword" placeholder="Keyword" value="'.$keyword.'" /> &nbsp;';
+        //     $html .= '<input type="button" value="Search" class="crud_search btn btn-primary form-control" id="crud_search" />';
+        //     $crud->set_search_form_components($html);
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put callback here
         // (documentation: httm://www.grocerycrud.com/documentation/options_functions)
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-{{ detail_callback_call }}
+
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put custom error message here
@@ -153,7 +182,6 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
 
 {{ detail_callback_declaration }}
 
-
     public function _before_insert($post_array){
         $post_array = parent::_before_insert($post_array);
         // HINT : Put your code here
@@ -189,6 +217,5 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // HINT : Put your code here
         return $success;
     }
-
 
 }

@@ -9,6 +9,7 @@ class Manage_city extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'city';
+    protected $COLUMN_NAMES = array('country_id', 'name', 'tourism', 'commodity', 'citizen');
     protected $PRIMARY_KEY = 'city_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -33,18 +34,34 @@ class Manage_city extends CMS_CRUD_Controller {
 
         // set subject
         $crud->set_subject('City');
-        // displayed columns on list
-        $crud->columns('country_id', 'name', 'tourism', 'commodity', 'citizen');
-        // displayed columns on edit operation
-        $crud->edit_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_updated_by', '_updated_at');
-        // displayed columns on add operation
-        $crud->add_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_created_by', '_created_at');
+
+        // displayed columns on list, edit, and add, uncomment to use
+        //$crud->columns('country_id', 'name', 'tourism', 'commodity', 'citizen');
+        //$crud->edit_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_updated_by', '_updated_at');
+        //$crud->add_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_created_by', '_created_at');
+
         // caption of each columns
         $crud->display_as('country_id','Country');
         $crud->display_as('name','Name');
         $crud->display_as('tourism','Tourism');
         $crud->display_as('commodity','Commodity');
         $crud->display_as('citizen','Citizen');
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // This function will automatically detect every methods in this controller and link it to corresponding column
+        // if the name is match by convention. In other word, you don't need to manually define callback.
+        // Here is the convention (replace COLUMN_NAME with your column's name)
+        //
+        // * callback column (called when viewing the data as list):
+        //      public function _callback_column_COLUMN_NAME($value, $row){}
+        //
+        // * callback field (called when show add and edit form):
+        //      public function _callback_field_COLUMN_NAME($value, $primary_key){}
+        //
+        // * validation rule callback (field validation when adding/editing data)
+        //      public function COLUMN_NAME_validation($value){}
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $this->build_default_callback();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -116,14 +133,25 @@ class Manage_city extends CMS_CRUD_Controller {
         //     ));
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // HINT: Create custom search form (if needed)
+        // usage:
+        //     $crud->unset_default_search();
+        //     // Your custom form
+        //     $html =  '<div class="row container col-md-12" style="margin-bottom:10px;">';
+        //     $html .= '</div>';
+        //     $html .= '<input name="keyword" placeholder="Keyword" value="'.$keyword.'" /> &nbsp;';
+        //     $html .= '<input type="button" value="Search" class="crud_search btn btn-primary form-control" id="crud_search" />';
+        //     $crud->set_search_form_components($html);
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put callback here
         // (documentation: httm://www.grocerycrud.com/documentation/options_functions)
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->callback_column('citizen',array($this, '_callback_column_citizen'));
-        $crud->callback_field('citizen',array($this, '_callback_field_citizen'));
+
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put custom error message here
@@ -240,7 +268,6 @@ class Manage_city extends CMS_CRUD_Controller {
     }
 
 
-
     public function _before_insert($post_array){
         $post_array = parent::_before_insert($post_array);
         // HINT : Put your code here
@@ -276,6 +303,5 @@ class Manage_city extends CMS_CRUD_Controller {
         // HINT : Put your code here
         return $success;
     }
-
 
 }

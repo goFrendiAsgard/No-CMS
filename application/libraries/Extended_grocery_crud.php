@@ -36,6 +36,13 @@ class Extended_grocery_crud extends Grocery_CRUD{
     protected $field_two_third_width = array();
     protected $field_quarter_width = array();
 
+    /* Make these accessible */
+    public $basic_db_table;
+    public $columns;
+    public $add_fields;
+    public $edit_fields;
+    public $display_as;
+
     /* The unsetters */
     public $unset_texteditor     = array();
     public $unset_add            = false;
