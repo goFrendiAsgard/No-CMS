@@ -152,14 +152,16 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
             // callback column
             if(method_exists($this, '_callback_column_'.$column_name)){
                 $this->CRUD->callback_column($column_name, array($this, '_callback_column_'.$column_name));
-                $this->CRUD->callback_column($this->cms_complete_table_name($this->CRUD->basic_db_table).'.'.$column_name,
+                $this->CRUD->callback_column($this->CRUD->basic_db_table.'.'.$column_name,
                     array($this, '_callback_column_'.$column_name));
+                $this->CRUD->callback_column($this->cms_unique_field_name($column_name), array($this, '_callback_column_'.$column_name));
             }
             // callback field
             if(method_exists($this, '_callback_field_'.$column_name)){
                 $this->CRUD->callback_field($column_name, array($this, '_callback_field_'.$column_name));
-                $this->CRUD->callback_field($this->cms_complete_table_name($this->CRUD->basic_db_table).'.'.$column_name,
+                $this->CRUD->callback_field($this->CRUD->basic_db_table.'.'.$column_name,
                     array($this, '_callback_field_'.$column_name));
+                $this->CRUD->callback_field($this->cms_unique_field_name($column_name), array($this, '_callback_field_'.$column_name));
             }
             if(method_exists($this, $column_name.'_validation')){
                 // get field caption
@@ -167,8 +169,9 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
                     ucwords(str_replace('_', ' ', $column_name));
                 // add callback
                 $this->CRUD->set_rules($column_name, $caption, 'callback_'.$column_name.'_validation');
-                $this->CRUD->set_rules($this->cms_complete_table_name($this->CRUD->basic_db_table).'.'.$column_name,
+                $this->CRUD->set_rules($this->CRUD->basic_db_table.'.'.$column_name,
                     $caption, 'callback_'.$column_name.'_validation');
+                $this->CRUD->set_rules($this->cms_unique_field_name($column_name), $caption, 'callback_'.$column_name.'_validation');
             }
         }
     }

@@ -57,7 +57,7 @@ function __mutate_input(table_id){
         return false;
     });
     // chzn-select
-    $('#' + table_id + ' .chzn-select').chosen({allow_single_deselect: true, width:'150px', search_contains: true});
+    $('#' + table_id + ' .chzn-select').chosen({allow_single_deselect: true, width:'180px', search_contains: true});
     // numeric
     $('#' + table_id + ' .numeric').numeric();
     $('#' + table_id + ' .numeric').keydown(function(e){
