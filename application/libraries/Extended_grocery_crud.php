@@ -28,6 +28,9 @@ class Extended_grocery_crud extends Grocery_CRUD{
 	protected $callback_delete_ext=array();
 	protected $callback_post_render=array();
 
+    protected $callback_show_edit = NULL;
+    protected $callback_show_delete = NULL;
+
     protected $outside_tab       = 0;
     protected $tabs              = NULL;
     protected $tab_glyphicons    = array();
@@ -154,7 +157,18 @@ class Extended_grocery_crud extends Grocery_CRUD{
         return $value;
     }
 
-    // OVERRIDE: unsearchable field
+    public function callback_show_edit($callback = null)
+	{
+		$this->callback_show_edit = $callback;
+		return $this;
+	}
+    public function callback_show_delete($callback = null)
+	{
+		$this->callback_show_delete = $callback;
+		return $this;
+	}
+
+    // OVERRIDE: unsearchable field, allow edit & allow delete
     protected function showList($ajax = false, $state_info = null)
 	{
 		$data = $this->get_common_data();
@@ -216,6 +230,20 @@ class Extended_grocery_crud extends Grocery_CRUD{
 			$data->list[$num_row]->edit_url = $data->edit_url.'/'.$row->{$data->primary_key};
 			$data->list[$num_row]->delete_url = $data->delete_url.'/'.$row->{$data->primary_key};
 			$data->list[$num_row]->read_url = $data->read_url.'/'.$row->{$data->primary_key};
+            // added by gofrendi
+
+            // callback allow edit
+            if($this->callback_show_edit != NULL){
+                $data->list[$num_row]->__show_edit = call_user_func($this->callback_show_edit, $row->{$data->primary_key});
+            }else{
+                $data->list[$num_row]->__show_edit = TRUE;
+            }
+            // callback allow delete
+            if($this->callback_show_delete != NULL){
+                $data->list[$num_row]->__show_delete = call_user_func($this->callback_show_delete, $row->{$data->primary_key});
+            }else{
+                $data->list[$num_row]->__show_delete = TRUE;
+            }
 		}
 
 		if(!$ajax)

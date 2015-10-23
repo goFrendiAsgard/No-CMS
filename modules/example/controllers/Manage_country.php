@@ -166,56 +166,55 @@ class Manage_country extends CMS_CRUD_Controller {
             $this->cms_complete_navigation_name('manage_country'), $config);
     }
 
+
+
     public function _after_insert_or_update($post_array, $primary_key){
 
-
-        $success = parent::_after_insert_or_update($post_array, $primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
     public function _before_insert_or_update($post_array, $primary_key=NULL){
-        $post_array = parent::_before_insert_or_update($post_array, $primary_key);
-        // HINT : Put your code here
         return $post_array;
     }
 
+    public function _show_edit($primary_key){
+        return TRUE;
+    }
 
+    public function _show_delete($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_edit($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_delete($primary_key){
+        return TRUE;
+    }
 
     public function _before_insert($post_array){
-        $post_array = parent::_before_insert($post_array);
-        // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_insert($post_array, $primary_key){
-        $success = parent::_after_insert($post_array, $primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
     public function _before_update($post_array, $primary_key){
-        $post_array = parent::_before_update($post_array, $primary_key);
-        // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_update($post_array, $primary_key){
-        $success = parent::_after_update($post_array, $primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
     public function _before_delete($primary_key){
-        $success = parent::_before_delete($primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
     public function _after_delete($primary_key){
-        $success = parent::_after_delete($primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
 }

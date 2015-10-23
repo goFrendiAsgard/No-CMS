@@ -77,12 +77,12 @@
                               <span class='read-icon'><i class="glyphicon glyphicon-list"></i>&nbsp;<?php echo $this->l('list_view')?></span>
                         </a>
                     <?php }?>
-                    <?php if(!$unset_edit){?>&nbsp;
+                    <?php if(!$unset_edit &&  (!property_exists($row, '__show_edit') || (property_exists($row, '__show_edit') && $row->__show_edit)) ){?>&nbsp;
                         <a href='<?php echo $row->edit_url?>' title='<?php echo $this->l('list_edit')?> <?php echo $subject?>' class="edit_button btn btn-default">
                               <span class='edit-icon'><i class="glyphicon glyphicon-pencil"></i>&nbsp;<?php echo $this->l('list_edit')?></span>
                         </a>
                     <?php }?>
-                    <?php if(!$unset_delete){?>&nbsp;
+                    <?php if(!$unset_delete && (!property_exists($row, '__show_delete') || (property_exists($row, '__show_delete') && $row->__show_delete)) ){?>&nbsp;
                         <a href='<?php echo $row->delete_url?>' title='<?php echo $this->l('list_delete')?> <?php echo $subject?>' class="delete-row btn btn-default" >
                                 <span class='delete-icon'><i class="glyphicon glyphicon-remove"></i>&nbsp;<?php echo $this->l('list_delete')?></span>
                         </a>

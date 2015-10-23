@@ -112,12 +112,15 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         }
 
         // callbacks
-        $this->CRUD->callback_before_insert(array($this,'_before_insert'));
-        $this->CRUD->callback_before_update(array($this,'_before_update'));
-        $this->CRUD->callback_before_delete(array($this,'_before_delete'));
-        $this->CRUD->callback_after_insert(array($this,'_after_insert'));
-        $this->CRUD->callback_after_update(array($this,'_after_update'));
-        $this->CRUD->callback_after_delete(array($this,'_after_delete'));
+        $this->CRUD->callback_before_insert(array($this,'_internal_before_insert'));
+        $this->CRUD->callback_before_update(array($this,'_internal_before_update'));
+        $this->CRUD->callback_before_delete(array($this,'_internal_before_delete'));
+        $this->CRUD->callback_after_insert(array($this,'_internal_after_insert'));
+        $this->CRUD->callback_after_update(array($this,'_internal_after_update'));
+        $this->CRUD->callback_after_delete(array($this,'_internal_after_delete'));
+
+        $this->CRUD->callback_show_edit(array($this, '_internal_allow_and_show_edit'));
+        $this->CRUD->callback_show_delete(array($this, '_internal_allow_and_show_delete'));
 
         // hidden fields
         $this->CRUD->field_type('_created_at', 'hidden');
@@ -481,65 +484,131 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         }
     }
 
+    public final function _internal_allow_and_show_edit($primary_key){
+        return $this->_allow_edit($primary_key) && $this->_show_edit($primary_key);
+    }
+
+    public final function _internal_allow_and_show_delete($primary_key){
+        return $this->_allow_delete($primary_key) && $this->_show_delete($primary_key);
+    }
+
+    public final function _internal_before_insert($post_array){
+        $post_array = $this->_before_insert_or_update($post_array);
+        $post_array = $this->_before_insert($post_array);
+        if(is_array($post_array)){
+            if(array_key_exists('_created_at', $post_array)){
+                $post_array['_created_at'] = date('Y-m-d H:i:s');
+            }
+            if(array_key_exists('_created_by', $post_array)){
+                $post_array['_created_by'] = $this->cms_user_id();
+            }
+        }
+        return $post_array;
+    }
+
+    public final function _internal_after_insert($post_array, $primary_key){
+        $success = $this->_after_insert_or_update($post_array, $primary_key);
+        $success = $success && $this->_after_insert($post_array, $primary_key);
+        return $success;
+    }
+
+    public final function _internal_before_update($post_array, $primary_key){
+        // First check if update allowed
+        if(!$this->_allow_edit($primary_key)){
+            return FALSE;
+        }
+        // call before insert or update
+        $post_array = $this->_before_insert_or_update($post_array, $primary_key);
+        $post_array = $this->_before_update($post_array, $primary_key);
+        // add additional post data
+        if(is_array($post_array)){
+            if(array_key_exists('_updated_at', $post_array)){
+                $post_array['_updated_at'] = date('Y-m-d H:i:s');
+            }
+            if(array_key_exists('_updated_by', $post_array)){
+                $post_array['_updated_by'] = $this->cms_user_id();
+            }
+        }
+        return $post_array;
+    }
+
+    public final function _internal_after_update($post_array, $primary_key){
+        $success = $this->_after_insert_or_update($post_array, $primary_key);
+        $success = $success && $this->_after_update($post_array, $primary_key);
+        return $success;
+    }
+
+    public final function _internal_before_delete($primary_key){
+        // First check if delete allowed
+        if(!$this->_allow_delete($primary_key)){
+            return FALSE;
+        }
+        return $this->_before_delete($primary_key);
+    }
+
+    public final function _internal_after_delete($primary_key){
+        return $this->_after_delete($primary_key);
+    }
+
     public function delete_selection(){
         $crud = $this->make_crud();
         if(!$crud->unset_delete){
             $id_list = json_decode($this->input->post('data'));
             foreach($id_list as $id){
-                if($this->_before_delete($id)){
+                if($this->_internal_before_delete($id)){
                     $this->db->delete($crud->basic_db_table,
                         array($this->PRIMARY_KEY=>$id));
-                    $this->_after_delete($id);
+                    $this->_internal_after_delete($id);
                 }
             }
         }
     }
 
+    public function _show_edit($primary_key){
+        return TRUE;
+    }
+
+    public function _show_delete($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_edit($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_delete($primary_key){
+        return TRUE;
+    }
+
     public function _before_insert($post_array){
-        $post_array = $this->_before_insert_or_update($post_array);
-        if(array_key_exists('_created_at', $post_array)){
-            $post_array['_created_at'] = date('Y-m-d H:i:s');
-        }
-        if(array_key_exists('_created_by', $post_array)){
-            $post_array['_created_by'] = $this->cms_user_id();
-        }
         return $post_array;
     }
 
-    public function _after_insert($post_array, $PK_VALUE){
-        $success = $this->_after_insert_or_update($post_array, $PK_VALUE);
-        return $success;
+    public function _after_insert($post_array, $primary_key){
+        return TRUE;
     }
 
-    public function _before_update($post_array, $PK_VALUE){
-        $post_array = $this->_before_insert_or_update($post_array, $PK_VALUE);
-        if(array_key_exists('_updated_at', $post_array)){
-            $post_array['_updated_at'] = date('Y-m-d H:i:s');
-        }
-        if(array_key_exists('_updated_by', $post_array)){
-            $post_array['_updated_by'] = $this->cms_user_id();
-        }
+    public function _before_update($post_array, $primary_key){
         return $post_array;
     }
 
-    public function _after_update($post_array, $PK_VALUE){
-        $success = $this->_after_insert_or_update($post_array, $PK_VALUE);
-        return $success;
-    }
-
-    public function _before_delete($PK_VALUE){
+    public function _after_update($post_array, $primary_key){
         return TRUE;
     }
 
-    public function _after_delete($PK_VALUE){
+    public function _before_delete($primary_key){
         return TRUE;
     }
 
-    public function _after_insert_or_update($post_array, $PK_VALUE){
+    public function _after_delete($primary_key){
         return TRUE;
     }
 
-    public function _before_insert_or_update($post_array, $PK_VALUE=NULL){
+    public function _after_insert_or_update($post_array, $primary_key){
+        return TRUE;
+    }
+
+    public function _before_insert_or_update($post_array, $primary_key=NULL){
         return $post_array;
     }
 

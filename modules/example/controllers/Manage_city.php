@@ -179,39 +179,6 @@ class Manage_city extends CMS_CRUD_Controller {
             $this->cms_complete_navigation_name('manage_city'), $config);
     }
 
-    public function _after_insert_or_update($post_array, $primary_key){
-        // SAVE CHANGES OF citizen
-        $data = json_decode($this->input->post('md_real_field_citizen_col'), TRUE);
-        $this->_save_one_to_many(
-            'citizen', // FIELD NAME
-            'citizen', // DETAIL TABLE NAME
-            'citizen_id', // DETAIL PK NAME
-            'city_id', // DETAIL FK NAME
-            $primary_key, // PARENT PRIMARY KEY VALUE
-            $data, // DATA
-            $real_column_list=array('citizen_id', 'name', 'birthdate', 'job_id'), // REAL DETAIL COLUMN NAMES
-            $set_column_list=array(), // SET DETAIL COLUMN NAMES
-            $many_to_many_config_list=array(
-                'hobby' => array(
-                    'relation_table' => 'citizen_hobby',
-                    'relation_column' => 'citizen_id',
-                    'relation_selection_column' => 'hobby_id',
-                ),
-            )
-        );
-
-
-        $success = parent::_after_insert_or_update($post_array, $primary_key);
-        // HINT : Put your code here
-        return $success;
-    }
-
-    public function _before_insert_or_update($post_array, $primary_key=NULL){
-        $post_array = parent::_before_insert_or_update($post_array, $primary_key);
-        // HINT : Put your code here
-        return $post_array;
-    }
-
 
     // returned on insert and edit
     public function _callback_field_citizen($value, $primary_key){
@@ -268,40 +235,72 @@ class Manage_city extends CMS_CRUD_Controller {
     }
 
 
+    public function _after_insert_or_update($post_array, $primary_key){
+        // SAVE CHANGES OF citizen
+        $data = json_decode($this->input->post('md_real_field_citizen_col'), TRUE);
+        $this->_save_one_to_many(
+            'citizen', // FIELD NAME
+            'citizen', // DETAIL TABLE NAME
+            'citizen_id', // DETAIL PK NAME
+            'city_id', // DETAIL FK NAME
+            $primary_key, // PARENT PRIMARY KEY VALUE
+            $data, // DATA
+            $real_column_list=array('citizen_id', 'name', 'birthdate', 'job_id'), // REAL DETAIL COLUMN NAMES
+            $set_column_list=array(), // SET DETAIL COLUMN NAMES
+            $many_to_many_config_list=array(
+                'hobby' => array(
+                    'relation_table' => 'citizen_hobby',
+                    'relation_column' => 'citizen_id',
+                    'relation_selection_column' => 'hobby_id',
+                ),
+            )
+        );
+
+        return TRUE;
+    }
+
+    public function _before_insert_or_update($post_array, $primary_key=NULL){
+        return $post_array;
+    }
+
+    public function _show_edit($primary_key){
+        return TRUE;
+    }
+
+    public function _show_delete($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_edit($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_delete($primary_key){
+        return TRUE;
+    }
+
     public function _before_insert($post_array){
-        $post_array = parent::_before_insert($post_array);
-        // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_insert($post_array, $primary_key){
-        $success = parent::_after_insert($post_array, $primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
     public function _before_update($post_array, $primary_key){
-        $post_array = parent::_before_update($post_array, $primary_key);
-        // HINT : Put your code here
         return $post_array;
     }
 
     public function _after_update($post_array, $primary_key){
-        $success = parent::_after_update($post_array, $primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
     public function _before_delete($primary_key){
-        $success = parent::_before_delete($primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
     public function _after_delete($primary_key){
-        $success = parent::_after_delete($primary_key);
-        // HINT : Put your code here
-        return $success;
+        return TRUE;
     }
 
 }

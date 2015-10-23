@@ -87,6 +87,7 @@ function __mutate_input(table_id){
         }
         $(this).trigger('change');
     });
+    __add_form_control_class();
 }
 
 function js_datetime_to_php(js_datetime){
