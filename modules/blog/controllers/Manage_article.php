@@ -72,7 +72,7 @@ class Manage_article extends CMS_Secure_Controller {
         $allow_continue = TRUE;
         if(!in_array($this->cms_user_id(), $super_admin_user_id) && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list) && isset($primary_key) && $primary_key !== NULL){
             $query = $this->db->select('author_user_id')
-                ->from($this->cms_complete_table_name('article'))
+                ->from($this->t('article'))
                 ->where(array('article_id'=> $primary_key, 'author_user_id'=> $this->cms_user_id()))
                 ->get();
             if($query->num_rows() == 0){
@@ -108,7 +108,7 @@ class Manage_article extends CMS_Secure_Controller {
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('article'));
+        $crud->set_table($this->t('article'));
 
         // only super admin or blog editor able to edit other's article
         if(!in_array($this->cms_user_id(), $super_admin_user_id) && !in_array(1, $group_id_list) && !in_array('Blog Editor', $group_name_list)){
@@ -153,7 +153,7 @@ class Manage_article extends CMS_Secure_Controller {
             $crud->set_relation('author_user_id', $this->cms_user_table_name(), 'user_name');
         }
         if(in_array($this->cms_user_id(), $super_admin_user_id) || in_array(1, $group_id_list) || in_array('Blog Editor', $group_name_list) || in_array('Blog Author', $group_name_list)){
-            $crud->set_relation('status', $this->cms_complete_table_name('publication_status'), 'status');
+            $crud->set_relation('status', $this->t('publication_status'), 'status');
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,8 +164,8 @@ class Manage_article extends CMS_Secure_Controller {
         //          $primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud->set_relation_n_n('categories',
-            $this->cms_complete_table_name('category_article'),
-            $this->cms_complete_table_name('category'),
+            $this->t('category_article'),
+            $this->t('category'),
             'article_id', 'category_id',
             'category_name', NULL);
 
@@ -248,7 +248,7 @@ class Manage_article extends CMS_Secure_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/manage_article_view', $output,
-            $this->cms_complete_navigation_name('manage_article'), $config);
+            $this->n('manage_article'), $config);
 
     }
 
@@ -306,10 +306,10 @@ class Manage_article extends CMS_Secure_Controller {
 
     public function before_delete($primary_key){
         // delete corresponding photo
-        $this->db->delete($this->cms_complete_table_name('photo'),
+        $this->db->delete($this->t('photo'),
               array('photo_id'=>$primary_key));
         // delete corresponding comment
-        $this->db->delete($this->cms_complete_table_name('comment'),
+        $this->db->delete($this->t('comment'),
               array('comment_id'=>$primary_key));
         return TRUE;
     }
@@ -342,7 +342,7 @@ class Manage_article extends CMS_Secure_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         foreach($delete_records as $delete_record){
             $detail_primary_key = $delete_record['primary_key'];
-            $this->db->delete($this->cms_complete_table_name('photo'),
+            $this->db->delete($this->t('photo'),
                  array('photo_id'=>$detail_primary_key));
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -362,7 +362,7 @@ class Manage_article extends CMS_Secure_Controller {
                 'index' => $insert_record['data']['index'],
             );
             $data['article_id'] = $primary_key;
-            $this->db->insert($this->cms_complete_table_name('photo'), $data);
+            $this->db->insert($this->t('photo'), $data);
 
             $thumbnail_name = 'thumb_'.$file_name;
             $this->image_moo->load($upload_path.$file_name)->resize(800,75)->save($upload_path.$thumbnail_name,true);
@@ -381,7 +381,7 @@ class Manage_article extends CMS_Secure_Controller {
                 }
             }
             $data['article_id'] = $primary_key;
-            $this->db->update($this->cms_complete_table_name('photo'),
+            $this->db->update($this->t('photo'),
                  $data, array('photo_id'=>$detail_primary_key));            
         }
 
@@ -402,7 +402,7 @@ class Manage_article extends CMS_Secure_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         foreach($delete_records as $delete_record){
             $detail_primary_key = $delete_record['primary_key'];
-            $this->db->delete($this->cms_complete_table_name('comment'),
+            $this->db->delete($this->t('comment'),
                  array('comment_id'=>$detail_primary_key));
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -419,7 +419,7 @@ class Manage_article extends CMS_Secure_Controller {
                 }
             }
             $data['article_id'] = $primary_key;
-            $this->db->update($this->cms_complete_table_name('comment'),
+            $this->db->update($this->t('comment'),
                  $data, array('comment_id'=>$detail_primary_key));            
         }
         return TRUE;
@@ -434,7 +434,7 @@ class Manage_article extends CMS_Secure_Controller {
 
         if(!isset($primary_key)) $primary_key = -1;
         $query = $this->db->select('photo_id, url, caption, index')
-            ->from($this->cms_complete_table_name('photo'))
+            ->from($this->t('photo'))
             ->where('article_id', $primary_key)
             ->order_by('index')
             ->get();
@@ -461,7 +461,7 @@ class Manage_article extends CMS_Secure_Controller {
     public function callback_column_photos($value, $row){
         $module_path = $this->cms_module_path();
         $query = $this->db->select('photo_id, url')
-            ->from($this->cms_complete_table_name('photo'))
+            ->from($this->t('photo'))
             ->where('article_id', $row->article_id)
             ->get();
         $num_row = $query->num_rows();
@@ -483,7 +483,7 @@ class Manage_article extends CMS_Secure_Controller {
 
         if(!isset($primary_key)) $primary_key = -1;
         $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content, approved')
-            ->from($this->cms_complete_table_name('comment'))
+            ->from($this->t('comment'))
             ->where('article_id', $primary_key)
             ->order_by('comment_id', 'desc')
             ->order_by('approved')
@@ -493,7 +493,7 @@ class Manage_article extends CMS_Secure_Controller {
         // change the comment status into read
         $data = array('read'=>1);
         $where = array('article_id'=> $primary_key);
-        $this->db->update($this->cms_complete_table_name('comment'), $data, $where);
+        $this->db->update($this->t('comment'), $data, $where);
 
         $search = array('<', '>');
         $replace = array('&lt;', '&gt;');
@@ -528,12 +528,12 @@ class Manage_article extends CMS_Secure_Controller {
     public function callback_column_comments($value, $row){
         $module_path = $this->cms_module_path();
         $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content')
-            ->from($this->cms_complete_table_name('comment'))
+            ->from($this->t('comment'))
             ->where('article_id', $row->article_id)
             ->get();
         $num_row = $query->num_rows();
         $query = $this->db->select('comment_id')
-            ->from($this->cms_complete_table_name('comment'))
+            ->from($this->t('comment'))
             ->where(array('article_id'=> $row->article_id, 'read'=>0))
             ->get();
         $unread_num_row = $query->num_rows();

@@ -21,8 +21,8 @@ class Blocker_model extends CMS_Model{
     
     public function get_black_referer(){
         $query = $this->db->select('content')
-            ->from($this->cms_complete_table_name('leech').' as leech')
-            ->join($this->cms_complete_table_name('label').' as label', 'leech.id_label = label.id')
+            ->from($this->t('leech').' as leech')
+            ->join($this->t('label').' as label', 'leech.id_label = label.id')
             ->where('label.status','black list')
             ->get();
         $content = array();
@@ -44,8 +44,8 @@ class Blocker_model extends CMS_Model{
     
     public function get_black_useragent(){
         $query = $this->db->select('content')
-            ->from($this->cms_complete_table_name('useragent').' as useragent')
-            ->join($this->cms_complete_table_name('label').' as label', 'useragent.id_label = label.id')
+            ->from($this->t('useragent').' as useragent')
+            ->join($this->t('label').' as label', 'useragent.id_label = label.id')
             ->where('label.status','black list')
             ->get();
         $content = array();
@@ -63,8 +63,8 @@ class Blocker_model extends CMS_Model{
     
     public function get_black_ip(){
         $query = $this->db->select('content')
-            ->from($this->cms_complete_table_name('ip').' as ip')
-            ->join($this->cms_complete_table_name('label').' as label', 'ip.id_label = label.id')
+            ->from($this->t('ip').' as ip')
+            ->join($this->t('label').' as label', 'ip.id_label = label.id')
             ->where('label.status','black list')
             ->get();
         $content = array();
@@ -85,8 +85,8 @@ class Blocker_model extends CMS_Model{
     
     public function get_white_ip(){
         $query = $this->db->select('content')
-            ->from($this->cms_complete_table_name('ip').' as ip')
-            ->join($this->cms_complete_table_name('label').' as label', 'ip.id_label = label.id')
+            ->from($this->t('ip').' as ip')
+            ->join($this->t('label').' as label', 'ip.id_label = label.id')
             ->where('label.status','white list')
             ->get();
         $content = array();

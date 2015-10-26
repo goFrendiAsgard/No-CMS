@@ -36,7 +36,7 @@ class Article_model extends  CMS_Model{
         if(!self::$__article_properties['is_article_cached']){
             self::$__article_properties['articles'] = array();
             $query = $this->db->select('article_id, article_title, article_url, status, date, publish_date, featured, visited')
-                ->from($this->cms_complete_table_name('article'))
+                ->from($this->t('article'))
                 ->get();
             self::$__article_properties['articles'] = array();
             foreach($query->result() as $row){
@@ -58,7 +58,7 @@ class Article_model extends  CMS_Model{
         if(!self::$__article_properties['is_category_cached']){
             self::$__article_properties['categories'] = array();
             $query = $this->db->select('category_id, category_name')
-                ->from($this->cms_complete_table_name('category'))
+                ->from($this->t('category'))
                 ->get();
             self::$__article_properties['categories'] = array();
             foreach($query->result() as $row){
@@ -76,7 +76,7 @@ class Article_model extends  CMS_Model{
         if(!self::$__article_properties['is_category_article_cached']){
             self::$__article_properties['category_articles'] = array();
             $query = $this->db->select('category_id, article_id')
-                ->from($this->cms_complete_table_name('category_article'))
+                ->from($this->t('category_article'))
                 ->get();
             self::$__article_properties['category_articles'] = array();
             foreach($query->result() as $row){
@@ -111,11 +111,11 @@ class Article_model extends  CMS_Model{
 		      article.article_url, article.date, article.author_user_id,
 		      article.content, article.allow_comment,
     		      (
-        		      SELECT COUNT(comment_id) FROM '.$this->cms_complete_table_name('comment').'
+        		      SELECT COUNT(comment_id) FROM '.$this->t('comment').'
                       WHERE article_id = article.article_id
                   ) as comment_count
 		      ')
-			->from($this->cms_complete_table_name('article').' as article')
+			->from($this->t('article').' as article')
 			->like('article.article_title', $keyword)
 			->or_like('article.article_url', $keyword)
 			->or_like('article.date', $keyword)
@@ -168,8 +168,8 @@ class Article_model extends  CMS_Model{
             SELECT
                 article_id, article_title, article_url, content, date, keyword, description, allow_comment,
                 real_name AS author, author_user_id, visited, status, publish_date
-            FROM ".$this->cms_complete_table_name('article')."
-            LEFT JOIN ".$this->cms_user_table_name()." ON (".$this->cms_user_table_name().".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
+            FROM ".$this->t('article')."
+            LEFT JOIN ".$this->cms_user_table_name()." ON (".$this->cms_user_table_name().".user_id = ".$this->t('article').".author_user_id)
             WHERE $where_article_url";
 
         $query = $this->db->query($SQL);
@@ -206,8 +206,8 @@ class Article_model extends  CMS_Model{
         $data = array();
 
         $where_category = isset($category) && ($category!="")? "article_id IN
-            (SELECT article_id FROM ".$this->cms_complete_table_name('category_article').", ".$this->cms_complete_table_name('category')."
-            WHERE ".$this->cms_complete_table_name('category').".category_id = ".$this->cms_complete_table_name('category_article').".category_id
+            (SELECT article_id FROM ".$this->t('category_article').", ".$this->t('category')."
+            WHERE ".$this->t('category').".category_id = ".$this->t('category_article').".category_id
             AND category_name ='".addslashes($category)."'
             )" : "(1=1)";
 
@@ -231,7 +231,7 @@ class Article_model extends  CMS_Model{
             }
             $relevance = '( 0';
             foreach($words as $word){
-                $relevance .= '+ (SELECT '.$key.' FROM '.$this->cms_complete_table_name('article')." WHERE article_title LIKE '%".addslashes($word)."%' OR content LIKE '%".addslashes($word)."%')";
+                $relevance .= '+ (SELECT '.$key.' FROM '.$this->t('article')." WHERE article_title LIKE '%".addslashes($word)."%' OR content LIKE '%".addslashes($word)."%')";
             }
             $relevance .= ')';
             // where search
@@ -251,13 +251,13 @@ class Article_model extends  CMS_Model{
                 article_id, article_title, article_url, content, date, allow_comment, author_user_id,
                 real_name AS author, publish_date, status, visited,
                 (
-                  SELECT COUNT(comment_id) FROM ".$this->cms_complete_table_name('comment')."
-                  WHERE article_id = ".$this->cms_complete_table_name('article').".article_id
+                  SELECT COUNT(comment_id) FROM ".$this->t('comment')."
+                  WHERE article_id = ".$this->t('article').".article_id
                 ) as comment_count,
                 ".$relevance." AS relevance
-            FROM ".$this->cms_complete_table_name('article')."
+            FROM ".$this->t('article')."
             LEFT JOIN ".$this->cms_user_table_name().
-                " ON (".$this->cms_user_table_name().".user_id = ".$this->cms_complete_table_name('article').".author_user_id)
+                " ON (".$this->cms_user_table_name().".user_id = ".$this->t('article').".author_user_id)
             WHERE
                 $where_category AND
                 $where_search AND
@@ -291,7 +291,7 @@ class Article_model extends  CMS_Model{
 
     public function add_comment($article_id, $name, $email, $website, $content, $parent_comment_id=NULL){
         $query = $this->db->select('allow_comment')
-            ->from($this->cms_complete_table_name('article'))
+            ->from($this->t('article'))
             ->where('article_id', $article_id)
             ->order_by('date')
             ->get();
@@ -308,12 +308,12 @@ class Article_model extends  CMS_Model{
                     'date' => date('Y-m-d H:i:s'),
                     'read' => 0,
                     'parent_comment_id'=>$parent_comment_id,
-                    'approved' => $this->cms_get_config($this->cms_complete_navigation_name('moderation')) == TRUE? 1 : 0,
+                    'approved' => $this->cms_get_config($this->n('moderation')) == TRUE? 1 : 0,
             );
             if(isset($cms_user_id) && ($cms_user_id>0)){
                 $data['author_user_id'] = $cms_user_id;
             }
-            $this->db->insert($this->cms_complete_table_name('comment'), $data);
+            $this->db->insert($this->t('comment'), $data);
         }
     }
 
@@ -323,7 +323,7 @@ class Article_model extends  CMS_Model{
             return self::$__article_properties['photos'][$article_id];
         }
         $query = $this->db->select('photo_id, caption, url')
-            ->from($this->cms_complete_table_name('photo'))
+            ->from($this->t('photo'))
             ->where('article_id', $article_id)
             ->order_by('index')
             ->get();
@@ -372,8 +372,8 @@ class Article_model extends  CMS_Model{
             $where_category = implode(' OR ', $where_category);
         }
         $sql = 'SELECT a.article_id, a.article_title, a.article_url, a.status, a.date, a.publish_date
-            FROM '.$this->cms_complete_table_name('article').' as a, '.
-            $this->cms_complete_table_name('category_article').' as ca '.
+            FROM '.$this->t('article').' as a, '.
+            $this->t('category_article').' as ca '.
             'WHERE ca.article_id = a.article_id AND ca.article_id <> '.$article_id.' AND '.$where_category.' LIMIT 4';
         $query = $this->db->query($sql);
         $data = array();
@@ -434,7 +434,7 @@ class Article_model extends  CMS_Model{
 
     public function get_comments($article_id, $nested=TRUE){
         $this->db->select('comment_id, date, author_user_id, name, email, website, content')
-            ->from($this->cms_complete_table_name('comment'))
+            ->from($this->t('comment'))
             ->where('article_id', $article_id)
             ->where('approved', 1)
             ->order_by('date');
@@ -458,7 +458,7 @@ class Article_model extends  CMS_Model{
 
     public function get_child_comment($comment_id, $level){
         $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content')
-            ->from($this->cms_complete_table_name('comment'))
+            ->from($this->t('comment'))
             ->order_by('date')
             ->where('parent_comment_id', $comment_id)
             ->get();
@@ -478,9 +478,9 @@ class Article_model extends  CMS_Model{
 
     public function new_comment_num(){
         $notif = 0;
-        if($this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article'))){
+        if($this->cms_allow_navigate($this->n('manage_article'))){
             $query = $this->db->select('comment_id')
-                ->from($this->cms_complete_table_name('comment'))
+                ->from($this->t('comment'))
                 ->where('read',0)
                 ->get();
             $num_rows = $query->num_rows();

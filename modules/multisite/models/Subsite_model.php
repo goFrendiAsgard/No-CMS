@@ -51,7 +51,7 @@ class Subsite_model extends  CMS_Model{
             $logo = $this->cms_parse_keyword($logo);
         }else{
             $query = $this->db->select('logo')
-                ->from($this->cms_complete_table_name('subsite'))
+                ->from($this->t('subsite'))
                 ->where('name',$subsite_name)
                 ->get();
             $row = $query->row();
@@ -66,7 +66,7 @@ class Subsite_model extends  CMS_Model{
     }
 
     public function delete($subsite){
-        $this->db->delete($this->cms_complete_table_name('subsite'), array('name'=>$subsite));
+        $this->db->delete($this->t('subsite'), array('name'=>$subsite));
     }
 
     public function get_data($keyword, $page=0){
@@ -79,7 +79,7 @@ class Subsite_model extends  CMS_Model{
             $where .= ' AND active = 1';
         }
         $query = $this->db->select('subsite.id, subsite.name, subsite.use_subdomain, subsite.logo, subsite.description, subsite.modules, subsite.themes, subsite.user_id, subsite.active')
-            ->from($this->cms_complete_table_name('subsite').' as subsite')
+            ->from($this->t('subsite').' as subsite')
             ->where($where)
             ->order_by('subsite.id','desc')
             ->limit($limit, $page*$limit)
@@ -98,7 +98,7 @@ class Subsite_model extends  CMS_Model{
 
     public function get_one_data($subsite_name){
         $query = $this->db->select('subsite.id, subsite.name, subsite.aliases, subsite.use_subdomain, subsite.logo, subsite.description, subsite.modules, subsite.themes, subsite.user_id, subsite.active')
-            ->from($this->cms_complete_table_name('subsite').' as subsite')
+            ->from($this->t('subsite').' as subsite')
             ->where('name',$subsite_name)
             ->get();
         if($query->num_rows()>0){
@@ -179,7 +179,7 @@ class Subsite_model extends  CMS_Model{
 
     public function update_configs(){
         $query = $this->db->select('name, aliases, use_subdomain, modules, themes')
-            ->from($this->cms_complete_table_name('subsite'))
+            ->from($this->t('subsite'))
             ->where('active', 1)
             ->get();
         $name_list = array();
@@ -301,7 +301,7 @@ class Subsite_model extends  CMS_Model{
 
     public function template_list(){
         $query = $this->db->select('name, icon, description')
-            ->from($this->cms_complete_table_name('template'))
+            ->from($this->t('template'))
             ->get();
         $template = array();
         foreach($query->result() as $row){
@@ -316,7 +316,7 @@ class Subsite_model extends  CMS_Model{
 
     public function get_single_template($name){
         $query = $this->db->select('name, icon, description, homepage, configuration, modules')
-            ->from($this->cms_complete_table_name('template'))
+            ->from($this->t('template'))
             ->where('name', $name)
             ->get();
         if($query->num_rows()>0){

@@ -23,7 +23,7 @@ class Manage_category extends CMS_Secure_Controller {
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('category'));
+        $crud->set_table($this->t('category'));
 
         // set subject
         $crud->set_subject('Category');
@@ -60,8 +60,8 @@ class Manage_category extends CMS_Secure_Controller {
 		// 			$primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$crud->set_relation_n_n('articles',
-		    $this->cms_complete_table_name('category_article'),
-		    $this->cms_complete_table_name('article'),
+		    $this->t('category_article'),
+		    $this->t('article'),
 			'category_id', 'article_id',
 			'article_title', NULL);
 
@@ -107,7 +107,7 @@ class Manage_category extends CMS_Secure_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/manage_category_view', $output,
-            $this->cms_complete_navigation_name('manage_category'), $config);
+            $this->n('manage_category'), $config);
 
     }
 

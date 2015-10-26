@@ -28,7 +28,7 @@ class Manage_slide extends CMS_Secure_Controller {
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('slide'));
+        $crud->set_table($this->t('slide'));
 
         // set subject
         $crud->set_subject('Slide');
@@ -92,7 +92,7 @@ class Manage_slide extends CMS_Secure_Controller {
         $output->slide_height = $this->cms_get_config('static_accessories_slide_height');
         $output->state = $crud->getState();
         $this->view($this->cms_module_path().'/manage_slide_view', $output,
-            $this->cms_complete_navigation_name('manage_slide'));
+            $this->n('manage_slide'));
 
     }
 

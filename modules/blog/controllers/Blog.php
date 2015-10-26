@@ -8,10 +8,10 @@ class Blog extends CMS_Secure_Controller {
 
     protected function do_override_url_map($URL_MAP){
         $module_path = $this->cms_module_path();
-        $URL_MAP[$module_path] = $this->cms_complete_navigation_name('index');
-        $URL_MAP[$module_path.'/blog'] = $this->cms_complete_navigation_name('index');
-        $URL_MAP[$module_path.'/get_data'] = $this->cms_complete_navigation_name('index');
-        $URL_MAP[$module_path.'/blog/get_data'] = $this->cms_complete_navigation_name('index');
+        $URL_MAP[$module_path] = $this->n('index');
+        $URL_MAP[$module_path.'/blog'] = $this->n('index');
+        $URL_MAP[$module_path.'/get_data'] = $this->n('index');
+        $URL_MAP[$module_path.'/blog/get_data'] = $this->n('index');
         return $URL_MAP;
     }
 
@@ -103,8 +103,8 @@ class Blog extends CMS_Secure_Controller {
         }
 
         $data = array(
-            'submenu_screen' => $this->cms_submenu_screen($this->cms_complete_navigation_name('index')),
-            'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article')),
+            'submenu_screen' => $this->cms_submenu_screen($this->n('index')),
+            'allow_navigate_backend' => $this->cms_allow_navigate($this->n('manage_article')),
             'backend_url' => site_url($this->cms_module_path().'/manage_article/index'),
             'first_data'=> $first_data,
             'categories'=>$this->article_model->get_available_category(),
@@ -150,14 +150,14 @@ class Blog extends CMS_Secure_Controller {
                 if($visited === NULL || $visited == ''){
                     $visited = 0;
                 }
-                $this->db->update($this->cms_complete_table_name('article'),
+                $this->db->update($this->t('article'),
                     array('visited'=>$visited+1),
                     array('article_id'=>$article['id']));
             }
         }
 
         $this->view($this->cms_module_path().'/browse_article_view',$data,
-            $this->cms_complete_navigation_name('index'), $config);
+            $this->n('index'), $config);
     }
 
     public function get_data($keyword = '', $page = 0, $category = '', $archive = ''){
@@ -178,7 +178,7 @@ class Blog extends CMS_Secure_Controller {
         $result = $this->article_model->get_articles($page, $limit, $category, $archive, $keyword);
         $data = array(
             'articles'=>$result,
-            'allow_navigate_backend' => $this->cms_allow_navigate($this->cms_complete_navigation_name('manage_article')),
+            'allow_navigate_backend' => $this->cms_allow_navigate($this->n('manage_article')),
             'backend_url' => site_url($this->cms_module_path().'/manage_article/index'),
             'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
             'module_path' => $this->cms_module_path(),
@@ -188,7 +188,7 @@ class Blog extends CMS_Secure_Controller {
         );
         $config = array('only_content'=>TRUE);
         $this->view($this->cms_module_path().'/browse_article_partial_view',$data,
-           $this->cms_complete_navigation_name('index'), $config);
+           $this->n('index'), $config);
     }
 
     public function quick_write(){
@@ -214,7 +214,7 @@ class Blog extends CMS_Secure_Controller {
         };
         $author_user_id = $this->cms_user_id();
         // insert article
-        $this->db->insert($this->cms_complete_table_name('article'), array(
+        $this->db->insert($this->t('article'), array(
                 'article_title' => $title,
                 'content' => $content,
                 'status' => $status,

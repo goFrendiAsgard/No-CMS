@@ -403,7 +403,7 @@ div.pGroup {
 	position:relative;
 	overflow:visible;
 }
-.flexigrid div.pDiv input {
+.flexigrid div.pDiv input, .flexigrid div.pDiv a {
 	vertical-align:text-top;
 	position:relative;
 	top:-5px;

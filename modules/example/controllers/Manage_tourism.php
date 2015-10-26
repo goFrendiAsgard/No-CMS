@@ -163,7 +163,7 @@ class Manage_tourism extends CMS_CRUD_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/Manage_tourism_view', $output,
-            $this->cms_complete_navigation_name('manage_tourism'), $config);
+            $this->n('manage_tourism'), $config);
     }
 
 

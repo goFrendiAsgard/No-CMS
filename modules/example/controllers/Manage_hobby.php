@@ -163,7 +163,7 @@ class Manage_hobby extends CMS_CRUD_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/Manage_hobby_view', $output,
-            $this->cms_complete_navigation_name('manage_hobby'), $config);
+            $this->n('manage_hobby'), $config);
     }
 
 

@@ -60,7 +60,7 @@ class Manage_label extends CMS_Secure_Controller {
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('label'));
+        $crud->set_table($this->t('label'));
 
         // set subject
         $crud->set_subject('Label');
@@ -161,7 +161,7 @@ class Manage_label extends CMS_Secure_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
         $this->view($this->cms_module_path().'/manage_label_view', $output,
-            $this->cms_complete_navigation_name('manage_label'));
+            $this->n('manage_label'));
 
     }
 
@@ -185,13 +185,13 @@ class Manage_label extends CMS_Secure_Controller {
 
     public function before_delete($primary_key){
         // delete corresponding ip
-        $this->db->delete($this->cms_complete_table_name('ip'),
+        $this->db->delete($this->t('ip'),
               array('id'=>$primary_key));
         // delete corresponding leech
-        $this->db->delete($this->cms_complete_table_name('leech'),
+        $this->db->delete($this->t('leech'),
               array('id'=>$primary_key));
         // delete corresponding useragent
-        $this->db->delete($this->cms_complete_table_name('useragent'),
+        $this->db->delete($this->t('useragent'),
               array('id'=>$primary_key));
         return TRUE;
     }
@@ -226,7 +226,7 @@ class Manage_label extends CMS_Secure_Controller {
             $detail_primary_key = $delete_record['primary_key'];
             // delete many to many
             for($i=0; $i<count($many_to_many_column_names); $i++){
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $where = array(
@@ -234,7 +234,7 @@ class Manage_label extends CMS_Secure_Controller {
                 );
                 $this->db->delete($table_name, $where);
             }
-            $this->db->delete($this->cms_complete_table_name('ip'),
+            $this->db->delete($this->t('ip'),
                  array('id'=>$detail_primary_key));
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ class Manage_label extends CMS_Secure_Controller {
                 }
             }
             $data['id_label'] = $primary_key;
-            $this->db->update($this->cms_complete_table_name('ip'),
+            $this->db->update($this->t('ip'),
                  $data, array('id'=>$detail_primary_key));
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Updated Data
@@ -259,7 +259,7 @@ class Manage_label extends CMS_Secure_Controller {
             for($i=0; $i<count($many_to_many_column_names); $i++){
                 $key =     $many_to_many_column_names[$i];
                 $new_values = $update_record['data'][$key];
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
@@ -309,7 +309,7 @@ class Manage_label extends CMS_Secure_Controller {
                 }
             }
             $data['id_label'] = $primary_key;
-            $this->db->insert($this->cms_complete_table_name('ip'), $data);
+            $this->db->insert($this->t('ip'), $data);
             $detail_primary_key = $this->db->insert_id();
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Inserted Data
@@ -317,7 +317,7 @@ class Manage_label extends CMS_Secure_Controller {
             for($i=0; $i<count($many_to_many_column_names); $i++){
                 $key =     $many_to_many_column_names[$i];
                 $new_values = $insert_record['data'][$key];
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
@@ -380,7 +380,7 @@ class Manage_label extends CMS_Secure_Controller {
             $detail_primary_key = $delete_record['primary_key'];
             // delete many to many
             for($i=0; $i<count($many_to_many_column_names); $i++){
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $where = array(
@@ -388,7 +388,7 @@ class Manage_label extends CMS_Secure_Controller {
                 );
                 $this->db->delete($table_name, $where);
             }
-            $this->db->delete($this->cms_complete_table_name('leech'),
+            $this->db->delete($this->t('leech'),
                  array('id'=>$detail_primary_key));
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -405,7 +405,7 @@ class Manage_label extends CMS_Secure_Controller {
                 }
             }
             $data['id_label'] = $primary_key;
-            $this->db->update($this->cms_complete_table_name('leech'),
+            $this->db->update($this->t('leech'),
                  $data, array('id'=>$detail_primary_key));
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Updated Data
@@ -413,7 +413,7 @@ class Manage_label extends CMS_Secure_Controller {
             for($i=0; $i<count($many_to_many_column_names); $i++){
                 $key =     $many_to_many_column_names[$i];
                 $new_values = $update_record['data'][$key];
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
@@ -463,7 +463,7 @@ class Manage_label extends CMS_Secure_Controller {
                 }
             }
             $data['id_label'] = $primary_key;
-            $this->db->insert($this->cms_complete_table_name('leech'), $data);
+            $this->db->insert($this->t('leech'), $data);
             $detail_primary_key = $this->db->insert_id();
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Inserted Data
@@ -471,7 +471,7 @@ class Manage_label extends CMS_Secure_Controller {
             for($i=0; $i<count($many_to_many_column_names); $i++){
                 $key =     $many_to_many_column_names[$i];
                 $new_values = $insert_record['data'][$key];
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
@@ -534,7 +534,7 @@ class Manage_label extends CMS_Secure_Controller {
             $detail_primary_key = $delete_record['primary_key'];
             // delete many to many
             for($i=0; $i<count($many_to_many_column_names); $i++){
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $where = array(
@@ -542,7 +542,7 @@ class Manage_label extends CMS_Secure_Controller {
                 );
                 $this->db->delete($table_name, $where);
             }
-            $this->db->delete($this->cms_complete_table_name('useragent'),
+            $this->db->delete($this->t('useragent'),
                  array('id'=>$detail_primary_key));
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -559,7 +559,7 @@ class Manage_label extends CMS_Secure_Controller {
                 }
             }
             $data['id_label'] = $primary_key;
-            $this->db->update($this->cms_complete_table_name('useragent'),
+            $this->db->update($this->t('useragent'),
                  $data, array('id'=>$detail_primary_key));
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Updated Data
@@ -567,7 +567,7 @@ class Manage_label extends CMS_Secure_Controller {
             for($i=0; $i<count($many_to_many_column_names); $i++){
                 $key =     $many_to_many_column_names[$i];
                 $new_values = $update_record['data'][$key];
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
@@ -617,7 +617,7 @@ class Manage_label extends CMS_Secure_Controller {
                 }
             }
             $data['id_label'] = $primary_key;
-            $this->db->insert($this->cms_complete_table_name('useragent'), $data);
+            $this->db->insert($this->t('useragent'), $data);
             $detail_primary_key = $this->db->insert_id();
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Inserted Data
@@ -625,7 +625,7 @@ class Manage_label extends CMS_Secure_Controller {
             for($i=0; $i<count($many_to_many_column_names); $i++){
                 $key =     $many_to_many_column_names[$i];
                 $new_values = $insert_record['data'][$key];
-                $table_name = $this->cms_complete_table_name($many_to_many_relation_tables[$i]);
+                $table_name = $this->t($many_to_many_relation_tables[$i]);
                 $relation_column_name = $many_to_many_relation_table_columns[$i];
                 $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
                 $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
@@ -675,7 +675,7 @@ class Manage_label extends CMS_Secure_Controller {
 
         if(!isset($primary_key)) $primary_key = -1;
         $query = $this->db->select('id, content')
-            ->from($this->cms_complete_table_name('ip'))
+            ->from($this->t('ip'))
             ->where('id_label', $primary_key)
             ->get();
         $result = $query->result_array();
@@ -694,7 +694,7 @@ class Manage_label extends CMS_Secure_Controller {
     public function callback_column_ip($value, $row){
         $module_path = $this->cms_module_path();
         $query = $this->db->select('id, content')
-            ->from($this->cms_complete_table_name('ip'))
+            ->from($this->t('ip'))
             ->where('id_label', $row->id)
             ->get();
         $num_row = $query->num_rows();
@@ -716,7 +716,7 @@ class Manage_label extends CMS_Secure_Controller {
 
         if(!isset($primary_key)) $primary_key = -1;
         $query = $this->db->select('id, content')
-            ->from($this->cms_complete_table_name('leech'))
+            ->from($this->t('leech'))
             ->where('id_label', $primary_key)
             ->get();
         $result = $query->result_array();
@@ -735,7 +735,7 @@ class Manage_label extends CMS_Secure_Controller {
     public function callback_column_referer($value, $row){
         $module_path = $this->cms_module_path();
         $query = $this->db->select('id, content')
-            ->from($this->cms_complete_table_name('leech'))
+            ->from($this->t('leech'))
             ->where('id_label', $row->id)
             ->get();
         $num_row = $query->num_rows();
@@ -757,7 +757,7 @@ class Manage_label extends CMS_Secure_Controller {
 
         if(!isset($primary_key)) $primary_key = -1;
         $query = $this->db->select('id, content')
-            ->from($this->cms_complete_table_name('useragent'))
+            ->from($this->t('useragent'))
             ->where('id_label', $primary_key)
             ->get();
         $result = $query->result_array();
@@ -776,7 +776,7 @@ class Manage_label extends CMS_Secure_Controller {
     public function callback_column_user_agents($value, $row){
         $module_path = $this->cms_module_path();
         $query = $this->db->select('id, content')
-            ->from($this->cms_complete_table_name('useragent'))
+            ->from($this->t('useragent'))
             ->where('id_label', $row->id)
             ->get();
         $num_row = $query->num_rows();

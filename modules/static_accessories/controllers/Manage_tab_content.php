@@ -24,7 +24,7 @@ class Manage_tab_content extends CMS_Secure_Controller {
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('tab_content'));
+        $crud->set_table($this->t('tab_content'));
 
         // set subject
         $crud->set_subject('Tab Content');
@@ -84,7 +84,7 @@ class Manage_tab_content extends CMS_Secure_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
         $this->view($this->cms_module_path().'/manage_tab_content_view', $output,
-            $this->cms_complete_navigation_name('manage_tab_content'));
+            $this->n('manage_tab_content'));
 
     }
 

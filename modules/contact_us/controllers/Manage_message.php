@@ -60,7 +60,7 @@ class Manage_message extends CMS_Secure_Controller {
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('message'));
+        $crud->set_table($this->t('message'));
 
         // set subject
         $crud->set_subject('Message');
@@ -157,7 +157,7 @@ class Manage_message extends CMS_Secure_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
         $this->view($this->cms_module_path().'/manage_message_view', $output,
-            $this->cms_complete_navigation_name('manage_message'));
+            $this->n('manage_message'));
 
     }
 

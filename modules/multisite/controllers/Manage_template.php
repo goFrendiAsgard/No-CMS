@@ -23,7 +23,7 @@ class Manage_template extends CMS_Secure_Controller {
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('template'));
+        $crud->set_table($this->t('template'));
 
         // set subject
         $crud->set_subject('template');
@@ -111,7 +111,7 @@ class Manage_template extends CMS_Secure_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/manage_template_view', $output,
-            $this->cms_complete_navigation_name('manage_template'), $config);
+            $this->n('manage_template'), $config);
 
     }
 

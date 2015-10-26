@@ -3,7 +3,7 @@
 class Tab_model extends CMS_Model{
     public function get(){
         $query = $this->db->select('caption, content')
-            ->from($this->cms_complete_table_name('tab_content'))
+            ->from($this->t('tab_content'))
             ->get();
         return $query->result_array();
     }

@@ -15,32 +15,32 @@ class Nds_model extends CMS_Model{
     public $detault_data_type = 'varchar';
 
     public function get_all_project(){
-        $query = $this->db->select('project_id, '.$this->cms_complete_table_name('project.name').
-              ', '.$this->cms_complete_table_name('template').'.generator_path')
-            ->from($this->cms_complete_table_name('project'))
-            ->join($this->cms_complete_table_name('template'),
-                 $this->cms_complete_table_name('project').'.template_id = '.$this->cms_complete_table_name('template').'.template_id')
+        $query = $this->db->select('project_id, '.$this->t('project.name').
+              ', '.$this->t('template').'.generator_path')
+            ->from($this->t('project'))
+            ->join($this->t('template'),
+                 $this->t('project').'.template_id = '.$this->t('template').'.template_id')
             ->get();
         return $query->result();
     }
     public function get_template_option_by_template($template_id){
         $query = $this->db->select('option_id, name')
-            ->from($this->cms_complete_table_name('template_option'))
+            ->from($this->t('template_option'))
             ->where('template_id', $template_id)
             ->get();
         return $query->result();
     }
     public function get_table_by_project($project_id){
         $query = $this->db->select('table_id, name, caption, data')
-            ->from($this->cms_complete_table_name('table'))
+            ->from($this->t('table'))
             ->where('project_id', $project_id)
             ->order_by('priority')
             ->get();
         $result = $query->result();
         $new_result = array();
         // use variable to accomodate table's name
-        $t_table_option = $this->cms_complete_table_name('table_option');
-        $t_template_option = $this->cms_complete_table_name('template_option');
+        $t_table_option = $this->t('table_option');
+        $t_template_option = $this->t('template_option');
         foreach($result as $row){
             // get the options
             $query = $this->db->select('name')
@@ -65,15 +65,15 @@ class Nds_model extends CMS_Model{
                 lookup_table_id, lookup_column_id, relation_table_id, relation_table_column_id,
                 relation_selection_column_id, relation_priority_column_id,
                 selection_table_id, selection_column_id')
-            ->from($this->cms_complete_table_name('column'))
+            ->from($this->t('column'))
             ->where('table_id', $table_id)
             ->order_by('priority')
             ->get();
         $result = $query->result();
         $new_result = array();
         // use variable to accomodate table's name
-        $t_column_option = $this->cms_complete_table_name('column_option');
-        $t_template_option = $this->cms_complete_table_name('template_option');
+        $t_column_option = $this->t('column_option');
+        $t_template_option = $this->t('template_option');
         foreach($result as $row){
             // get the options
             $query = $this->db->select('name')
@@ -123,7 +123,7 @@ class Nds_model extends CMS_Model{
         $db_table_prefix = '';
         $data = FALSE;
         $query = $this->db->select('project_id, template_id, name, db_server, db_port, db_schema, db_user, db_password, db_table_prefix')
-            ->from($this->cms_complete_table_name('project'))
+            ->from($this->t('project'))
             ->where('project_id', $project_id)
             ->get();
         if($query->num_rows()>0){
@@ -136,7 +136,7 @@ class Nds_model extends CMS_Model{
 
             // get template name
             $query = $this->db->select('name')
-                ->from($this->cms_complete_table_name('template'))
+                ->from($this->t('template'))
                 ->where('template_id', $template_id)
                 ->get();
             $template_name = $query->row()->name;
@@ -144,7 +144,7 @@ class Nds_model extends CMS_Model{
 
             // get project, table and column option's header
             $query = $this->db->select('option_id, name, option_type')
-                ->from($this->cms_complete_table_name('template_option'))
+                ->from($this->t('template_option'))
                 ->where('template_id', $template_id)
                 ->get();
             $project_option_headers = array();
@@ -165,7 +165,7 @@ class Nds_model extends CMS_Model{
             $project_options = array();
             foreach($project_option_headers as $name=>$option_id){
                 $query = $this->db->select('project_id, option_id')
-                    ->from($this->cms_complete_table_name('project_option'))
+                    ->from($this->t('project_option'))
                     ->where(array('project_id'=>$project_id, 'option_id'=>$option_id))
                     ->get();
                 $project_options[$name] = $query->num_rows()>0;
@@ -175,7 +175,7 @@ class Nds_model extends CMS_Model{
             // add tables
             $tables = array();
             $query = $this->db->select('table_id, name, caption, data')
-                ->from($this->cms_complete_table_name('table'))
+                ->from($this->t('table'))
                 ->where('project_id', $project_id)
                 ->order_by('priority')
                 ->get();
@@ -198,7 +198,7 @@ class Nds_model extends CMS_Model{
                 $table_options = array();
                 foreach($table_option_headers as $name=>$option_id){
                     $query = $this->db->select('table_id, option_id')
-                        ->from($this->cms_complete_table_name('table_option'))
+                        ->from($this->t('table_option'))
                         ->where(array('table_id'=>$table_id, 'option_id'=>$option_id))
                         ->get();
                     $table_options[$name] = $query->num_rows()>0;
@@ -210,7 +210,7 @@ class Nds_model extends CMS_Model{
                 $query = $this->db->select('column_id, caption, name, data_type, data_size, role, lookup_table_id, lookup_column_id,
                     relation_table_id, relation_table_column_id, relation_selection_column_id, relation_priority_column_id,
                     selection_table_id, selection_column_id, value_selection_mode, value_selection_item')
-                    ->from($this->cms_complete_table_name('column'))
+                    ->from($this->t('column'))
                     ->where('table_id', $table_id)
                     ->order_by('priority')
                     ->get();
@@ -255,7 +255,7 @@ class Nds_model extends CMS_Model{
                     $column_options = array();
                     foreach($column_option_headers as $name=>$option_id){
                         $query = $this->db->select('column_id, option_id')
-                            ->from($this->cms_complete_table_name('column_option'))
+                            ->from($this->t('column_option'))
                             ->where(array('column_id'=>$column_id, 'option_id'=>$option_id))
                             ->get();
                         $column_options[$name] = $query->num_rows()>0;
@@ -279,7 +279,7 @@ class Nds_model extends CMS_Model{
         if($project_id == NULL){
             return '';
         }
-        $query = $this->db->select('name')->from($this->cms_complete_table_name('project'))->where('project_id',$project_id)->get();
+        $query = $this->db->select('name')->from($this->t('project'))->where('project_id',$project_id)->get();
         if($query->num_rows()>0){
             $row = $query->row();
             return addslashes($row->name);
@@ -292,7 +292,7 @@ class Nds_model extends CMS_Model{
         if($table_id == NULL){
             return '';
         }
-        $query = $this->db->select('name')->from($this->cms_complete_table_name('table'))->where('table_id',$table_id)->get();
+        $query = $this->db->select('name')->from($this->t('table'))->where('table_id',$table_id)->get();
         if($query->num_rows()>0){
             $row = $query->row();
             return addslashes($row->name);
@@ -305,7 +305,7 @@ class Nds_model extends CMS_Model{
         if($column_id == NULL){
             return '';
         }
-        $query = $this->db->select('name')->from($this->cms_complete_table_name('column'))->where('column_id',$column_id)->get();
+        $query = $this->db->select('name')->from($this->t('column'))->where('column_id',$column_id)->get();
         if($query->num_rows()>0){
             $row = $query->row();
             return addslashes($row->name);
@@ -319,7 +319,7 @@ class Nds_model extends CMS_Model{
             return '';
         }
         $query = $this->db->select('name')
-            ->from($this->cms_complete_table_name('column'))
+            ->from($this->t('column'))
             ->where(array('table_id'=>$table_id, 'role'=>'primary'))
             ->get();
         if($query->num_rows()>0){
@@ -336,8 +336,8 @@ class Nds_model extends CMS_Model{
             'name'=>$template_name,
             'generator_path'=>$generator_path,
         );
-        $this->db->insert($this->cms_complete_table_name('template'), $data);
-        $query = $this->db->select('template_id')->from($this->cms_complete_table_name('template'))->where('name', $template_name)->get();
+        $this->db->insert($this->t('template'), $data);
+        $query = $this->db->select('template_id')->from($this->t('template'))->where('name', $template_name)->get();
         if($query->num_rows()<=0) return FALSE;
         $row = $query->row();
         $template_id = $row->template_id;
@@ -364,7 +364,7 @@ class Nds_model extends CMS_Model{
             }
             $data['option_type'] = $option_type;
             $data['template_id'] = $template_id;
-            $this->db->insert($this->cms_complete_table_name('template_option'),$data);
+            $this->db->insert($this->t('template_option'),$data);
         }
     }
 
@@ -441,7 +441,7 @@ class Nds_model extends CMS_Model{
             if(isset($primary_key_name)){
                 $create_forge .= '        $this->dbforge->add_key(\''.$primary_key_name.'\', TRUE);'.PHP_EOL;
             }
-            $create_forge .= '        $this->dbforge->create_table($this->cms_complete_table_name(\''.$table_name.'\'));'.PHP_EOL;
+            $create_forge .= '        $this->dbforge->create_table($this->t(\''.$table_name.'\'));'.PHP_EOL;
 
             $php[] = $create_forge;
         }
@@ -456,7 +456,7 @@ class Nds_model extends CMS_Model{
             while(strlen($table_name) + strlen($space) < 20){
                 $space .= ' ';
             }
-            $php[] = '$this->dbforge->drop_table($this->cms_complete_table_name(\''.$table_name.'\'),'.$space.' TRUE);';
+            $php[] = '$this->dbforge->drop_table($this->t(\''.$table_name.'\'),'.$space.' TRUE);';
         }
         $php = array_reverse($php);
         return implode(PHP_EOL.'        ',$php);
@@ -468,7 +468,7 @@ class Nds_model extends CMS_Model{
             $table_name = $table['stripped_name'];
             $data       = $table['data'];
             if(is_array($data) && count($data)>0){
-                $syntax  = '$this->db->insert_batch($this->cms_complete_table_name(\''.$table_name.'\'), array(' . PHP_EOL;
+                $syntax  = '$this->db->insert_batch($this->t(\''.$table_name.'\'), array(' . PHP_EOL;
                 foreach($data as $record){
                     $field_pairs = array();
                     if(is_array($record)){
@@ -546,7 +546,7 @@ class Nds_model extends CMS_Model{
 
     public function get_insert_table_syntax($project_id, $tables){
 
-        $query = $this->db->select()->from($this->cms_complete_table_name('project'))->where('project_id', $project_id)->get();
+        $query = $this->db->select()->from($this->t('project'))->where('project_id', $project_id)->get();
         if($query->num_rows()>0){
             $row = $query->row();
             $db_server = $row->db_server;
@@ -628,38 +628,38 @@ class Nds_model extends CMS_Model{
     }
 
     public function before_delete_template($id){
-        $query = $this->db->select('project_id')->from($this->cms_complete_table_name('project'))->where('template_id',$id)->get();
+        $query = $this->db->select('project_id')->from($this->t('project'))->where('template_id',$id)->get();
         foreach($query->result() as $row){
             $this->before_delete_project($row->project_id);
-            $this->db->delete($this->cms_complete_table_name('project'),array('project_id'=>$row->project_id));
+            $this->db->delete($this->t('project'),array('project_id'=>$row->project_id));
         }
-        $query = $this->db->select('option_id')->from($this->cms_complete_table_name('template_option'))->where('template_id',$id)->get();
+        $query = $this->db->select('option_id')->from($this->t('template_option'))->where('template_id',$id)->get();
         foreach($query->result() as $row){
             $this->before_delete_template_option($row->option_id);
-            $this->db->delete($this->cms_complete_table_name('template_option'),array('option_id'=>$row->option_id));
+            $this->db->delete($this->t('template_option'),array('option_id'=>$row->option_id));
         }
     }
 
     public function before_delete_template_option($id){
-        $this->db->delete($this->cms_complete_table_name('project_option'),array('option_id'=>$id));
-        $this->db->delete($this->cms_complete_table_name('table_option'),array('option_id'=>$id));
-        $this->db->delete($this->cms_complete_table_name('column_option'),array('option_id'=>$id));
+        $this->db->delete($this->t('project_option'),array('option_id'=>$id));
+        $this->db->delete($this->t('table_option'),array('option_id'=>$id));
+        $this->db->delete($this->t('column_option'),array('option_id'=>$id));
     }
 
     public function before_delete_project($id){
-        $query = $this->db->select('table_id')->from($this->cms_complete_table_name('table'))->where('project_id',$id)->get();
+        $query = $this->db->select('table_id')->from($this->t('table'))->where('project_id',$id)->get();
         foreach($query->result() as $row){
             $this->before_delete_table($row->table_id, FALSE);
-            $this->db->delete($this->cms_complete_table_name('table'),array('table_id'=>$row->table_id));
+            $this->db->delete($this->t('table'),array('table_id'=>$row->table_id));
         }
-        $this->db->delete($this->cms_complete_table_name('project_option'),array('project_id'=>$id));
+        $this->db->delete($this->t('project_option'),array('project_id'=>$id));
     }
 
     public function before_delete_table($id, $sorting = TRUE){
         if($sorting){
             // get current project_id & priority
             $query = $this->db->select('project_id, priority')
-                ->from($this->cms_complete_table_name('table'))
+                ->from($this->t('table'))
                 ->where('table_id', $id)
                 ->get();
             $row = $query->row();
@@ -667,7 +667,7 @@ class Nds_model extends CMS_Model{
             $priority   = $row->priority;
             // adjust priority
             $query = $this->db->select('table_id, priority')
-                ->from($this->cms_complete_table_name('table'))
+                ->from($this->t('table'))
                 ->where('project_id', $project_id)
                 ->where('priority >', $priority)
                 ->get();
@@ -676,24 +676,24 @@ class Nds_model extends CMS_Model{
                 $priority = $row->priority;
                 $data = array('priority' => $priority-1);
                 $where = array('table_id'=>$table_id);
-                $this->db->update($this->cms_complete_table_name('table'), $data, $where);
+                $this->db->update($this->t('table'), $data, $where);
             }
         }
         // delete all related column
-        $query = $this->db->select('column_id')->from($this->cms_complete_table_name('column'))->where('table_id',$id)->get();
+        $query = $this->db->select('column_id')->from($this->t('column'))->where('table_id',$id)->get();
         foreach($query->result() as $row){
             $this->before_delete_column($row->column_id, FALSE);
-            $this->db->delete($this->cms_complete_table_name('column'),array('column_id'=>$row->column_id));
+            $this->db->delete($this->t('column'),array('column_id'=>$row->column_id));
         }
         // delete all related table option
-        $this->db->delete($this->cms_complete_table_name('table_option'),array('table_id'=>$id));
+        $this->db->delete($this->t('table_option'),array('table_id'=>$id));
     }
 
     public function before_delete_column($id, $sorting = TRUE){
         if($sorting){
             // get current project_id & priority
             $query = $this->db->select('table_id, priority')
-                ->from($this->cms_complete_table_name('column'))
+                ->from($this->t('column'))
                 ->where('column_id', $id)
                 ->get();
             $row = $query->row();
@@ -701,7 +701,7 @@ class Nds_model extends CMS_Model{
             $priority   = $row->priority;
             // adjust priority
             $query = $this->db->select('column_id, priority')
-                ->from($this->cms_complete_table_name('column'))
+                ->from($this->t('column'))
                 ->where('table_id', $table_id);
             if($priority != NULL){
                 $query = $query->where('priority >', $priority);
@@ -712,11 +712,11 @@ class Nds_model extends CMS_Model{
                 $priority = $row->priority;
                 $data = array('priority' => $priority-1);
                 $where = array('column_id'=>$column_id);
-                $this->db->update($this->cms_complete_table_name('column'), $data, $where);
+                $this->db->update($this->t('column'), $data, $where);
             }
         }
         // delete column option
-        $this->db->delete($this->cms_complete_table_name('column_option'),array('column_id'=>$id));
+        $this->db->delete($this->t('column_option'),array('column_id'=>$id));
     }
 
     private function _pop($array, $key, $default=''){
@@ -730,7 +730,7 @@ class Nds_model extends CMS_Model{
     public function import_project($seed){
         // get max project id (in case of name is empty)
         $query = $this->db->select_max('project_id')
-            ->from($this->cms_complete_table_name('project'))
+            ->from($this->t('project'))
             ->get();
         $row = $query->row();
         $max_id = $row->project_id;
@@ -749,7 +749,7 @@ class Nds_model extends CMS_Model{
 
         // get template id
         $query = $this->db->select('template_id')
-            ->from($this->cms_complete_table_name('template'))
+            ->from($this->t('template'))
             ->where('name', $template_name)->get();
         if($query->num_rows()>0){
             $row = $query->row();
@@ -769,19 +769,19 @@ class Nds_model extends CMS_Model{
                 'db_password'       => $db_password,
                 'db_table_prefix'   => $db_table_prefix,
             );
-        $this->db->insert($this->cms_complete_table_name('project'), $data);
+        $this->db->insert($this->t('project'), $data);
         $project_id = $this->db->insert_id();
 
         // insert project options
         foreach($project_options as $option=>$val){
             if(!$val) continue;
             $query = $this->db->select('option_id')
-                ->from($this->cms_complete_table_name('template_option'))
+                ->from($this->t('template_option'))
                 ->where('name', $option)
                 ->get();
             $row = $query->row();
             $option_id = $row->option_id;
-            $this->db->insert($this->cms_complete_table_name('project_option'),array(
+            $this->db->insert($this->t('project_option'),array(
                     'project_id'    => $project_id,
                     'option_id'     => $option_id,
                 ));
@@ -800,7 +800,7 @@ class Nds_model extends CMS_Model{
             $table_data     = $this->_pop($table, 'data', array());
 
             // insert table and get table_id
-            $this->db->insert($this->cms_complete_table_name('table'), array(
+            $this->db->insert($this->t('table'), array(
                     'name'          => $name,
                     'caption'       => $caption,
                     'project_id'    => $project_id,
@@ -816,12 +816,12 @@ class Nds_model extends CMS_Model{
             foreach($table_options as $option=>$val){
                 if(!$val) continue;
                 $query = $this->db->select('option_id')
-                    ->from($this->cms_complete_table_name('template_option'))
+                    ->from($this->t('template_option'))
                     ->where('name', $option)
                     ->get();
                 $row = $query->row();
                 $option_id = $row->option_id;
-                $this->db->insert($this->cms_complete_table_name('table_option'),array(
+                $this->db->insert($this->t('table_option'),array(
                         'table_id'  => $table_id,
                         'option_id' => $option_id,
                     ));
@@ -839,7 +839,7 @@ class Nds_model extends CMS_Model{
                 $value_selection_mode   = $this->_pop($column, 'value_selection_mode');
                 $value_selection_item   = $this->_pop($column, 'value_selection_item');
                 $column_options         = $this->_pop($column, 'options', array());
-                $this->db->insert($this->cms_complete_table_name('column'), array(
+                $this->db->insert($this->t('column'), array(
                         'name'                  => $name,
                         'caption'               => $caption,
                         'data_type'             => $data_type,
@@ -864,12 +864,12 @@ class Nds_model extends CMS_Model{
                 foreach($column_options as $option=>$val){
                     if(!$val) continue;
                     $query = $this->db->select('option_id')
-                        ->from($this->cms_complete_table_name('template_option'))
+                        ->from($this->t('template_option'))
                         ->where('name', $option)
                         ->get();
                     $row = $query->row();
                     $option_id = $row->option_id;
-                    $this->db->insert($this->cms_complete_table_name('column_option'),array(
+                    $this->db->insert($this->t('column_option'),array(
                             'column_id' => $column_id,
                             'option_id' => $option_id,
                         ));
@@ -902,7 +902,7 @@ class Nds_model extends CMS_Model{
             $column_id                          = $column['column_id'];
 
             // update column
-            $this->db->update($this->cms_complete_table_name('column'), array(
+            $this->db->update($this->t('column'), array(
                     'lookup_table_id'               => $lookup_table_id,
                     'lookup_column_id'              => $lookup_column_id,
                     'relation_table_id'             => $relation_table_id,

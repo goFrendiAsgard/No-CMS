@@ -13,7 +13,7 @@ class Multisite extends CMS_Secure_Controller {
 
     protected function do_override_url_map($URL_MAP){
         $module_path = $this->cms_module_path();
-        $navigation_name = $this->cms_complete_navigation_name('index');
+        $navigation_name = $this->n('index');
         $URL_MAP[$module_path.'/multisite'] = $navigation_name;
         $URL_MAP[$module_path] = $navigation_name;
         $URL_MAP[$module_path.'/multisite/get_data'] = $navigation_name;
@@ -31,13 +31,13 @@ class Multisite extends CMS_Secure_Controller {
 
     public function index(){
         $data = array(
-            'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_allow_navigate($this->cms_complete_navigation_name('add_subsite')),
+            'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_allow_navigate($this->n('add_subsite')),
             'backend_url' => site_url($this->cms_module_path().'/add_subsite/index'),
             'module_path' => $this->cms_module_path(),
             'first_data'  => Modules::run($this->cms_module_path().'/multisite/get_data', 0, '')
         );
         $this->view($this->cms_module_path().'/multisite_index',$data,
-            $this->cms_complete_navigation_name('index'));
+            $this->n('index'));
     }
 
     public function delete($subsite){
@@ -53,14 +53,14 @@ class Multisite extends CMS_Secure_Controller {
     }
 
     public function edit($site_name){
-        $this->cms_guard_page($this->cms_complete_navigation_name('index'), 'modify_subsite');
+        $this->cms_guard_page($this->n('index'), 'modify_subsite');
         $this->load->model($this->cms_module_path().'/subsite_model');
         $is_super_admin = $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id());
         // don't edit if not allowed
         if(!$is_super_admin){
             $not_allowed = TRUE;
             $query = $this->db->select('user_id')
-                ->from($this->cms_complete_table_name('subsite'))
+                ->from($this->t('subsite'))
                 ->where('name', $site_name)
                 ->get();
             if($query->num_rows()>0){
@@ -131,7 +131,7 @@ class Multisite extends CMS_Secure_Controller {
                 $data['aliases'] = $aliases;
                 $data['active'] = $active;
             }
-            $this->db->update($this->cms_complete_table_name('subsite'), $data, array('name'=>$site_name));
+            $this->db->update($this->t('subsite'), $data, array('name'=>$site_name));
             $this->subsite_model->update_configs();
             $save = true;
         }
@@ -157,7 +157,7 @@ class Multisite extends CMS_Secure_Controller {
         // show
         $config = array('privileges'=>array('modify_subsite'));
         $this->view($this->cms_module_path().'/multisite_edit', $data,
-            $this->cms_complete_navigation_name('index'), $config);
+            $this->n('index'), $config);
     }
 
     public function get_data($page=0, $keyword=''){
@@ -198,13 +198,13 @@ class Multisite extends CMS_Secure_Controller {
         );
         $config = array('only_content'=>TRUE);
         $this->view($this->cms_module_path().'/browse_subsite_partial_view',$data,
-           $this->cms_complete_navigation_name('browse_subsite'), $config);
+           $this->n('browse_subsite'), $config);
     }
 
     public function ajax_user_multisite(){
         $user_id = $this->cms_user_id();
         $query = $this->db->select('name')
-            ->from($this->cms_complete_table_name('subsite'))
+            ->from($this->t('subsite'))
             ->where('user_id', $user_id)
             ->get();
         $subsite_list = array();
@@ -236,7 +236,7 @@ class Multisite extends CMS_Secure_Controller {
         $activation = $this->cms_get_config('cms_signup_activation');
 
         $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
-        $subsite_table_name = $this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite');
+        $subsite_table_name = $this->t('subsite', 'gofrendi.noCMS.multisite');
         $this->load->model($module_path.'/subsite_model');
 
         //get user input
@@ -469,7 +469,7 @@ class Multisite extends CMS_Secure_Controller {
                     // is there any subsite with similar name
                     // $module_path = $this->cms_module_path('gofrendi.noCMS.multisite');
                     // $this->cms_override_module_path($module_path);
-                    $t_subsite = $this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite');
+                    $t_subsite = $this->t('subsite', 'gofrendi.noCMS.multisite');
                     $query = $this->db->select('name')
                         ->from($t_subsite)
                         ->where('name', $subsite)

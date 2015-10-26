@@ -37,7 +37,7 @@ class Add_subsite extends CMS_Secure_Controller {
                 'layout_list'   => $this->subsite_model->layout_list(),
                 'template_list' => $this->subsite_model->template_list(),
             );
-        $this->view($this->cms_module_path().'/add_subsite_index', $data, $this->cms_complete_navigation_name('add_subsite'));
+        $this->view($this->cms_module_path().'/add_subsite_index', $data, $this->n('add_subsite'));
     }
 
     public function check(){
@@ -126,7 +126,7 @@ class Add_subsite extends CMS_Secure_Controller {
             'user_id'=>$this->cms_user_id(),
             'active'=>1,
         );
-        $this->db->insert($this->cms_complete_table_name('subsite'), $data);
+        $this->db->insert($this->t('subsite'), $data);
         $this->load->model($this->cms_module_path().'/subsite_model');
         $this->subsite_model->update_configs();
 
@@ -135,7 +135,7 @@ class Add_subsite extends CMS_Secure_Controller {
         $data['admin_user_name'] = $this->install_model->admin_user_name;
         $data['admin_password'] = $this->install_model->admin_password;
         $data['subsite'] = $this->install_model->subsite;
-        $this->view($this->cms_module_path().'/add_subsite_install', $data, $this->cms_complete_navigation_name('add_subsite'));
+        $this->view($this->cms_module_path().'/add_subsite_install', $data, $this->n('add_subsite'));
 
     }
 

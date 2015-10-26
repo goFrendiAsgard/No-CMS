@@ -93,7 +93,7 @@ class Manage_city extends CMS_CRUD_Controller {
         // eg:
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $crud->set_relation('country_id', $this->cms_complete_table_name('country'), 'name');
+        $crud->set_relation('country_id', $this->t('country'), 'name');
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here
@@ -103,13 +103,13 @@ class Manage_city extends CMS_CRUD_Controller {
         //          $primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $crud->set_relation_n_n('tourism',
-            $this->cms_complete_table_name('city_tourism'),
-            $this->cms_complete_table_name('tourism'),
+            $this->t('city_tourism'),
+            $this->t('tourism'),
             'city_id', 'tourism_id',
             'name', NULL);
         $crud->set_relation_n_n('commodity',
-            $this->cms_complete_table_name('city_commodity'),
-            $this->cms_complete_table_name('commodity'),
+            $this->t('city_commodity'),
+            $this->t('commodity'),
             'city_id', 'commodity_id',
             'name', 'priority');
 
@@ -176,7 +176,7 @@ class Manage_city extends CMS_CRUD_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/Manage_city_view', $output,
-            $this->cms_complete_navigation_name('manage_city'), $config);
+            $this->n('manage_city'), $config);
     }
 
 

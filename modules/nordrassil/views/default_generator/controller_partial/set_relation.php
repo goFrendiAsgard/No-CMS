@@ -1,1 +1,1 @@
-        $crud->set_relation('{{ field_name }}', $this->cms_complete_table_name('{{ lookup_table_name }}'), '{{ lookup_field_name }}');
+        $crud->set_relation('{{ field_name }}', $this->t('{{ lookup_table_name }}'), '{{ lookup_field_name }}');

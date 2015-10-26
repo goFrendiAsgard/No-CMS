@@ -47,28 +47,28 @@ class Synchronize_model extends CMS_Model{
         $save_project_id = addslashes($project_id);
         /*
         // delete related column_option
-        $where = "column_id IN (SELECT column_id FROM ".$this->cms_complete_table_name('column').
-          ", ".$this->cms_complete_table_name('table')." WHERE
-          ".$this->cms_complete_table_name('column.table_id')." = ".$this->cms_complete_table_name('table').".table_id AND project_id='$save_project_id')";
-        $this->db->delete($this->cms_complete_table_name('column_option'),$where);
+        $where = "column_id IN (SELECT column_id FROM ".$this->t('column').
+          ", ".$this->t('table')." WHERE
+          ".$this->t('column.table_id')." = ".$this->t('table').".table_id AND project_id='$save_project_id')";
+        $this->db->delete($this->t('column_option'),$where);
 
         // delete related column
-        $where = "table_id IN (SELECT table_id FROM ".$this->cms_complete_table_name('table')." WHERE project_id='$save_project_id')";
-        $this->db->delete($this->cms_complete_table_name('column'),$where);
+        $where = "table_id IN (SELECT table_id FROM ".$this->t('table')." WHERE project_id='$save_project_id')";
+        $this->db->delete($this->t('column'),$where);
 
         // delete related table_option
-        $where = "table_id IN (SELECT table_id FROM ".$this->cms_complete_table_name('table')." WHERE project_id='$save_project_id')";
-        $this->db->delete($this->cms_complete_table_name('table_option'),$where);
+        $where = "table_id IN (SELECT table_id FROM ".$this->t('table')." WHERE project_id='$save_project_id')";
+        $this->db->delete($this->t('table_option'),$where);
 
         // delete from table
         $where = array('project_id'=>$project_id);
-        $this->db->delete($this->cms_complete_table_name('table'),$where);
+        $this->db->delete($this->t('table'),$where);
         */
 
 
         // select the current nordrassil_project
         $query = $this->db->select('db_server, db_user, db_password, db_schema, db_port, db_table_prefix')
-            ->from($this->cms_complete_table_name('project'))
+            ->from($this->t('project'))
             ->where(array('project_id'=>$project_id))
             ->get();
         if($query->num_rows()>0){
@@ -88,7 +88,7 @@ class Synchronize_model extends CMS_Model{
 
             // get tables
             $t_query = $this->db->select('table_id, name')
-                ->from($this->cms_complete_table_name('table'))
+                ->from($this->t('table'))
                 ->where('project_id', $project_id)
                 ->get();
             $table_result = array();
@@ -109,7 +109,7 @@ class Synchronize_model extends CMS_Model{
             foreach($table_result as $current_table){
                 // get columns of current_table
                 $current_column_query = $this->db->select('column_id, name, role, caption')
-                    ->from($this->cms_complete_table_name('column'))
+                    ->from($this->t('column'))
                     ->where('table_id', $current_table->table_id)
                     ->get();
                 foreach($current_column_query->result() as $current_column){
@@ -130,7 +130,7 @@ class Synchronize_model extends CMS_Model{
                             $other_lookup_column = NULL;
                             $primary_column      = NULL;
                             $other_column_query = $this->db->select('column_id, name, role')
-                                ->from($this->cms_complete_table_name('column'))
+                                ->from($this->t('column'))
                                 ->where('table_id', $other_table->table_id)
                                 ->get();
                             foreach($other_column_query->result() as $other_column){
@@ -149,7 +149,7 @@ class Synchronize_model extends CMS_Model{
                                 $other_lookup_column = $primary_column;
                             }
                             // build relationship
-                            $this->db->update($this->cms_complete_table_name('column'),
+                            $this->db->update($this->t('column'),
                                 array(
                                         'role' => 'lookup',
                                         'lookup_table_id' => $other_table->table_id,
@@ -177,7 +177,7 @@ class Synchronize_model extends CMS_Model{
 
         // get table initial priority (for ordering)
         $query = $this->db->select_max('priority')
-                ->from($this->cms_complete_table_name('table'))
+                ->from($this->t('table'))
                 ->where('project_id',$project_id)
                 ->get();
         $row = $query->row();
@@ -235,7 +235,7 @@ class Synchronize_model extends CMS_Model{
                     'data'       => @json_encode($table_data),
                 );
             $query = $this->db->select('table_id')
-                ->from($this->cms_complete_table_name('table'))
+                ->from($this->t('table'))
                 ->where(array('project_id'=>$project_id, 'name'=>$table_name))
                 ->get();
             if($query->num_rows()>0){
@@ -244,11 +244,11 @@ class Synchronize_model extends CMS_Model{
                 // don't change caption and priority
                 unset($data['caption']);
                 unset($data['priority']);
-                $this->db->update($this->cms_complete_table_name('table'),
+                $this->db->update($this->t('table'),
                     $data,
                     array('table_id' => $table_id));
             }else{
-                $this->db->insert($this->cms_complete_table_name('table'), $data);
+                $this->db->insert($this->t('table'), $data);
                 $priority++;
                 $table_id = $this->db->insert_id();
             }
@@ -274,7 +274,7 @@ class Synchronize_model extends CMS_Model{
 
         // get field initial priority (for ordering)
         $query = $this->db->select_max('priority')
-                ->from($this->cms_complete_table_name('column'))
+                ->from($this->t('column'))
                 ->where('table_id',$table_id)
                 ->get();
         $row = $query->row();
@@ -338,7 +338,7 @@ class Synchronize_model extends CMS_Model{
                     'priority' => $priority,
                 );
             $query = $this->db->select('column_id')
-                ->from($this->cms_complete_table_name('column'))
+                ->from($this->t('column'))
                 ->where(array('table_id'=>$table_id, 'name'=>$row['COLUMN_NAME']))
                 ->get();
             if($query->num_rows()>0){
@@ -348,9 +348,9 @@ class Synchronize_model extends CMS_Model{
                 $where = array('column_id' => $column_id);
                 unset($data['priority']);
                 unset($data['role']);
-                $this->db->update($this->cms_complete_table_name('column'), $data, $where);
+                $this->db->update($this->t('column'), $data, $where);
             }else{
-                $this->db->insert($this->cms_complete_table_name('column'), $data);
+                $this->db->insert($this->t('column'), $data);
                 $priority++;
                 $column_id = $this->db->insert_id();
             }
@@ -358,9 +358,9 @@ class Synchronize_model extends CMS_Model{
             if(!$is_nullable && $role != 'primary'){
                 // get required option id if needed
                 if(!$no_required_option && $required_option_id === NULL){
-                    $t_template_option = $this->cms_complete_table_name('template_option');
-                    $t_project = $this->cms_complete_table_name('project');
-                    $t_table = $this->cms_complete_table_name('table');
+                    $t_template_option = $this->t('template_option');
+                    $t_project = $this->t('project');
+                    $t_table = $this->t('table');
                     $query = $this->db->select('option_id')
                         ->from($t_template_option)
                         ->join($t_project, "$t_project.template_id = $t_template_option.template_id")
@@ -377,7 +377,7 @@ class Synchronize_model extends CMS_Model{
                 }
                 // insert if not available
                 if($required_option_id !== NULL){
-                    $t_column_option = $this->cms_complete_table_name('column_option');
+                    $t_column_option = $this->t('column_option');
                     $query = $this->db->select('*')
                         ->from($t_column_option)
                         ->where(array('column_id'=>$column_id, 'option_id'=>$required_option_id))
@@ -393,7 +393,7 @@ class Synchronize_model extends CMS_Model{
 
         // add primary key if not exists
         $query = $this->db->select('column_id, name, role')
-            ->from($this->cms_complete_table_name('column'))
+            ->from($this->t('column'))
             ->where('table_id', $table_id)
             ->get();
         $primary_key_exists = FALSE;
@@ -409,11 +409,11 @@ class Synchronize_model extends CMS_Model{
         }
         if(!$primary_key_exists){
             if($id_exists){
-                $this->db->update($this->cms_complete_table_name('column'),
+                $this->db->update($this->t('column'),
                     array('role' => 'primary', 'data_type' => 'int', 'data_size' => 10),
                     array('table_id' => $table_id, 'name' => 'id'));
             }else{
-                $this->db->insert($this->cms_complete_table_name('column'),
+                $this->db->insert($this->t('column'),
                     array('name' => 'id', 'role' => 'primary', 'table_id' => $table_id, 'data_type' => 'int', 'data_size' => 10));
             }
         }

@@ -8,14 +8,14 @@
 class Nds extends CMS_Controller {
 
     public function template(){
-        $this->cms_guard_page($this->cms_complete_navigation_name('template'));
+        $this->cms_guard_page($this->n('template'));
         $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_subject('Generator Template');
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('template'));
+        $crud->set_table($this->t('template'));
 
         // displayed columns on list
         $crud->columns('name','generator_path','options');
@@ -47,7 +47,7 @@ class Nds extends CMS_Controller {
         // render
         $output = $crud->render();
         $output->module_path = $this->cms_module_path();
-        $this->view($this->cms_module_path()."/data/nds_template", $output, $this->cms_complete_navigation_name('template'));
+        $this->view($this->cms_module_path()."/data/nds_template", $output, $this->n('template'));
     }
 
     public function _callback_template_before_delete($primary_key){
@@ -78,12 +78,12 @@ class Nds extends CMS_Controller {
     }
 
     public function template_option($template_id=NULL){
-        $this->cms_guard_page($this->cms_complete_navigation_name('template'));
+        $this->cms_guard_page($this->n('template'));
         $crud = $this->new_crud();
         $crud->unset_jquery();
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('template_option'));
+        $crud->set_table($this->t('template_option'));
 
         // displayed columns on list
         $crud->columns('template_id','name','description','option_type');
@@ -104,10 +104,10 @@ class Nds extends CMS_Controller {
         $crud->field_type('option_type', 'enum', array('project','table','column'));
 
         if(isset($template_id) && intval($template_id)>0){
-            $crud->where($this->cms_complete_table_name('template_option').'.template_id', $template_id);
+            $crud->where($this->t('template_option').'.template_id', $template_id);
             $crud->field_type('template_id', 'hidden', $template_id);
         }else{
-            $crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
+            $crud->set_relation('template_id',$this->t('template'),'name');
         }
 
         $crud->callback_column($this->unique_field_name('template_id'),array($this,'_callback_column_template_option_template_id'));
@@ -122,7 +122,7 @@ class Nds extends CMS_Controller {
         if(isset($template_id)){
             $output->template_id = $template_id;
         }
-        $this->view($this->cms_module_path()."/data/nds_template_option", $output, $this->cms_complete_navigation_name('template'));
+        $this->view($this->cms_module_path()."/data/nds_template_option", $output, $this->n('template'));
     }
 
     public function _callback_template_option_before_delete($primary_key){
@@ -138,14 +138,14 @@ class Nds extends CMS_Controller {
     }
 
     public function project(){
-        $this->cms_guard_page($this->cms_complete_navigation_name('project'));
+        $this->cms_guard_page($this->n('project'));
         $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_subject('Project');
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('project'));
+        $crud->set_table($this->t('project'));
 
         // displayed columns on list
         $crud->columns('name','options','tables');
@@ -173,16 +173,16 @@ class Nds extends CMS_Controller {
 
         $crud->field_type('db_password','password');
 
-        $crud->set_relation('template_id',$this->cms_complete_table_name('template'),'name');
-        $crud->set_relation_n_n('options',$this->cms_complete_table_name('project_option'),
-            $this->cms_complete_table_name('template_option'),'project_id','option_id','name',
+        $crud->set_relation('template_id',$this->t('template'),'name');
+        $crud->set_relation_n_n('options',$this->t('project_option'),
+            $this->t('template_option'),'project_id','option_id','name',
             null, array('option_type'=>'project'));
 
 
         $crud->callback_after_insert(array($this, '_callback_project_after_insert'));
         $crud->callback_before_delete(array($this, '_callback_project_before_delete'));
 
-        $crud->callback_column($this->cms_complete_table_name('project').'.name',array($this,'_callback_column_project_name'));
+        $crud->callback_column($this->t('project').'.name',array($this,'_callback_column_project_name'));
         $crud->callback_column('tables',array($this,'_callback_column_project_tables'));
         $crud->callback_edit_field('tables',array($this,'_callback_edit_field_project_tables'));
 
@@ -196,14 +196,14 @@ class Nds extends CMS_Controller {
         $output = $crud->render();
         $output->module_path = $this->cms_module_path();
         $output->state = $crud->getState();
-        $this->view($this->cms_module_path()."/data/nds_project", $output, $this->cms_complete_navigation_name('project'));
+        $this->view($this->cms_module_path()."/data/nds_project", $output, $this->n('project'));
     }
 
     public function _callback_project_after_insert($post_array, $primary_key){
         set_time_limit(60);
         $this->load->model($this->cms_module_path().'/data/synchronize_model');
         if(!isset($primary_key) || $primary_key == NULL){
-            $query = $this->db->select('project_id')->from($this->cms_complete_table_name('project'))
+            $query = $this->db->select('project_id')->from($this->t('project'))
                 ->where(array('name'=>$post_array['name']))
                 ->get();
             if($query->num_rows()>0){
@@ -223,7 +223,7 @@ class Nds extends CMS_Controller {
 
     public function _callback_column_project_name($value, $row){
         $query = $this->db->select('name')
-            ->from($this->cms_complete_table_name('template'))
+            ->from($this->t('template'))
             ->where('template_id', $row->template_id)
             ->get();
         $template_row = $query->row();
@@ -264,7 +264,7 @@ class Nds extends CMS_Controller {
     public function get_seed($project_id){
         $this->load->helper('inflector');
         $this->load->model($this->cms_module_path().'/data/nds_model');
-        $row = $this->db->select('name')->from($this->cms_complete_table_name('project'))
+        $row = $this->db->select('name')->from($this->t('project'))
             ->where('project_id', $project_id)->get()->row();
         $project_name = $row->name;
         header('Content-Type: application/octet-stream');
@@ -347,17 +347,17 @@ class Nds extends CMS_Controller {
     }
 
     public function table($project_id = NULL){
-        $this->cms_guard_page($this->cms_complete_navigation_name('project'));
+        $this->cms_guard_page($this->n('project'));
         $crud = $this->new_crud();
         $crud->unset_jquery();
 
         $crud->set_subject('Table');
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('table'));
+        $crud->set_table($this->t('table'));
 
         if(isset($project_id) && intval($project_id)>0){
-            $crud->where($this->cms_complete_table_name('table').'.project_id', $project_id);
+            $crud->where($this->t('table').'.project_id', $project_id);
             // displayed columns on list
             $crud->columns('name', 'options', 'columns');
         }else{
@@ -387,14 +387,14 @@ class Nds extends CMS_Controller {
         $crud->display_as('columns','Columns');
         $crud->display_as('data', 'Data (JSON Format)');
 
-        $crud->set_relation_n_n('options',$this->cms_complete_table_name('table_option'),
-            $this->cms_complete_table_name('template_option'),'table_id','option_id','name',
+        $crud->set_relation_n_n('options',$this->t('table_option'),
+            $this->t('template_option'),'table_id','option_id','name',
             null, array('option_type'=>'table'));
 
         if(isset($project_id) && intval($project_id)>0){
             $crud->field_type('project_id', 'hidden', $project_id);
         }else{
-            $crud->set_relation('project_id',$this->cms_complete_table_name('project'),'name');
+            $crud->set_relation('project_id',$this->t('project'),'name');
         }
 
         $crud->callback_before_insert(array($this, '_callback_table_before_insert'));
@@ -419,12 +419,12 @@ class Nds extends CMS_Controller {
             $this->load->model($this->cms_module_path().'/data/nds_model');
             $output->project_name = $this->nds_model->get_project_name($project_id);
         }
-        $this->view($this->cms_module_path()."/data/nds_table", $output, $this->cms_complete_navigation_name('project'));
+        $this->view($this->cms_module_path()."/data/nds_table", $output, $this->n('project'));
     }
 
     public function _reorder_table($project_id){
         $result = $this->db->select('*')
-            ->from($this->cms_complete_table_name('table'))
+            ->from($this->t('table'))
             ->where('project_id', $project_id)
             ->order_by('priority')
             ->get()
@@ -432,7 +432,7 @@ class Nds extends CMS_Controller {
         $priority = 0;
         foreach($result as $row){
             if($row->priority != $priority){
-                $this->db->update($this->cms_complete_table_name('table'),
+                $this->db->update($this->t('table'),
                     array('priority' => $priority),
                     array('table_id' => $row->table_id));
             }
@@ -459,7 +459,7 @@ class Nds extends CMS_Controller {
         $project_id = $post_array['project_id'];
         $priority = $post_array['priority'];
         $table_id = $primary_key;
-        $t_table = $this->cms_complete_table_name('table');
+        $t_table = $this->t('table');
         $sql = "
             UPDATE $t_table SET priority = priority+1
             WHERE project_id = $project_id AND
@@ -524,7 +524,7 @@ class Nds extends CMS_Controller {
     }
 
     public function column($table_id=NULL){
-        $this->cms_guard_page($this->cms_complete_navigation_name('project'));
+        $this->cms_guard_page($this->n('project'));
         $this->load->model($this->cms_module_path().'/data/nds_model');
         $crud = $this->new_crud();
         $crud->unset_jquery();
@@ -532,9 +532,9 @@ class Nds extends CMS_Controller {
         $crud->set_subject('Column');
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('column'));
+        $crud->set_table($this->t('column'));
         if(isset($table_id) && intval($table_id)>0){
-            $crud->where($this->cms_complete_table_name('column').'.table_id', $table_id);
+            $crud->where($this->t('column').'.table_id', $table_id);
             // displayed columns on list
             $crud->columns('name','options');
         }else{
@@ -579,24 +579,24 @@ class Nds extends CMS_Controller {
         $crud->field_type('role', 'enum', array('primary','lookup','detail many to many','detail one to many'));
         $crud->field_type('value_selection_mode', 'enum', array('set','enum'));
 
-        $crud->set_relation_n_n('options',$this->cms_complete_table_name('column_option'),
-          $this->cms_complete_table_name('template_option'),'column_id','option_id','name',
+        $crud->set_relation_n_n('options',$this->t('column_option'),
+          $this->t('template_option'),'column_id','option_id','name',
             null, array('option_type'=>'column'));
 
-        $crud->set_relation('lookup_table_id',$this->cms_complete_table_name('table'),'name');
-        $crud->set_relation('relation_table_id',$this->cms_complete_table_name('table'),'name');
-        $crud->set_relation('selection_table_id',$this->cms_complete_table_name('table'),'name');
+        $crud->set_relation('lookup_table_id',$this->t('table'),'name');
+        $crud->set_relation('relation_table_id',$this->t('table'),'name');
+        $crud->set_relation('selection_table_id',$this->t('table'),'name');
 
-        $crud->set_relation('lookup_column_id',$this->cms_complete_table_name('column'),'name');
-        $crud->set_relation('relation_table_column_id',$this->cms_complete_table_name('column'),'name');
-        $crud->set_relation('relation_selection_column_id',$this->cms_complete_table_name('column'),'name');
-        $crud->set_relation('relation_priority_column_id',$this->cms_complete_table_name('column'),'name');
-        $crud->set_relation('selection_column_id',$this->cms_complete_table_name('column'),'name');
+        $crud->set_relation('lookup_column_id',$this->t('column'),'name');
+        $crud->set_relation('relation_table_column_id',$this->t('column'),'name');
+        $crud->set_relation('relation_selection_column_id',$this->t('column'),'name');
+        $crud->set_relation('relation_priority_column_id',$this->t('column'),'name');
+        $crud->set_relation('selection_column_id',$this->t('column'),'name');
 
         if(isset($table_id) && intval($table_id)>0){
             $crud->field_type('table_id', 'hidden', $table_id);
         }else{
-            $crud->set_relation('table_id',$this->cms_complete_table_name('table'),'name');
+            $crud->set_relation('table_id',$this->t('table'),'name');
         }
 
         $crud->callback_before_insert(array($this, '_callback_column_before_insert'));
@@ -604,7 +604,7 @@ class Nds extends CMS_Controller {
         $crud->callback_after_update(array($this, '_callback_column_after_update'));
         $crud->callback_before_delete(array($this,'_callback_column_before_delete'));
 
-        $crud->callback_column($this->cms_complete_table_name('column').'.name',array($this,'_callback_column_column_name'));
+        $crud->callback_column($this->t('column').'.name',array($this,'_callback_column_column_name'));
         $crud->callback_column($this->unique_field_name('table_id'),array($this,'_callback_column_column_table_id'));
 
         // adjust grocery-crud language
@@ -615,7 +615,7 @@ class Nds extends CMS_Controller {
         $output->module_path = $this->cms_module_path();
         if(isset($table_id) && is_numeric($table_id)){
             $this->load->model($this->cms_module_path().'/data/nds_model');
-            $query = $this->db->select('project_id')->from($this->cms_complete_table_name('table'))->where('table_id',$table_id)->get();
+            $query = $this->db->select('project_id')->from($this->t('table'))->where('table_id',$table_id)->get();
             $row = $query->row();
             $project_id = $row->project_id;
             $output->project_id = $project_id;
@@ -623,12 +623,12 @@ class Nds extends CMS_Controller {
             $output->table_id = $table_id;
             $output->table_name = $this->nds_model->get_table_name($table_id);
         }
-        $this->view($this->cms_module_path()."/data/nds_column", $output, $this->cms_complete_navigation_name('project'));
+        $this->view($this->cms_module_path()."/data/nds_column", $output, $this->n('project'));
     }
 
     public function _reorder_column($table_id){
         $result = $this->db->select('*')
-            ->from($this->cms_complete_table_name('column'))
+            ->from($this->t('column'))
             ->where('table_id', $table_id)
             ->order_by('priority')
             ->get()
@@ -636,7 +636,7 @@ class Nds extends CMS_Controller {
         $priority = 0;
         foreach($result as $row){
             if($row->priority != $priority){
-                $this->db->update($this->cms_complete_table_name('column'),
+                $this->db->update($this->t('column'),
                     array('priority' => $priority),
                     array('column_id' => $row->column_id));
             }
@@ -663,7 +663,7 @@ class Nds extends CMS_Controller {
         $table_id = $post_array['table_id'];
         $priority = $post_array['priority'];
         $column_id = $primary_key;
-        $t_column = $this->cms_complete_table_name('column');
+        $t_column = $this->t('column');
         $sql = "
             UPDATE $t_column SET priority = priority+1
             WHERE table_id = $table_id AND
@@ -781,44 +781,44 @@ class Nds extends CMS_Controller {
 
     private function do_move_table_before($project_id, $src_table_id, $dst_table_id){
         $priority = $this->db->select('priority')
-            ->from($this->cms_complete_table_name('table'))
+            ->from($this->t('table'))
             ->where('table_id', $dst_table_id)
             ->get()->row()->priority;
         // move other tables down
         $query = $this->db->select('table_id, priority')
-            ->from($this->cms_complete_table_name('table'))
+            ->from($this->t('table'))
             ->where('project_id', $project_id)
             ->where('priority >=', $priority)
             ->get();
         foreach($query->result() as $row){
-            $this->db->update($this->cms_complete_table_name('table'),
+            $this->db->update($this->t('table'),
                 array('priority' => $row->priority+1),
                 array('table_id' => $row->table_id));
         }
         // put this table in the right
-        $this->db->update($this->cms_complete_table_name('table'),
+        $this->db->update($this->t('table'),
             array('priority' => $priority),
             array('table_id' => $src_table_id));
     }
 
     private function do_move_table_after($project_id, $src_table_id, $dst_table_id){
         $priority = $this->db->select('priority')
-            ->from($this->cms_complete_table_name('table'))
+            ->from($this->t('table'))
             ->where('table_id', $dst_table_id)
             ->get()->row()->priority;
         // move other tables down
         $query = $this->db->select('table_id, priority')
-            ->from($this->cms_complete_table_name('table'))
+            ->from($this->t('table'))
             ->where('project_id', $project_id)
             ->where('priority >', $priority)
             ->get();
         foreach($query->result() as $row){
-            $this->db->update($this->cms_complete_table_name('table'),
+            $this->db->update($this->t('table'),
                 array('priority' => $row->priority+1),
                 array('table_id' => $row->table_id));
         }
         // put this table in the right
-        $this->db->update($this->cms_complete_table_name('table'),
+        $this->db->update($this->t('table'),
             array('priority' => $priority+1),
             array('table_id' => $src_table_id));
     }
@@ -865,44 +865,44 @@ class Nds extends CMS_Controller {
 
     private function do_move_column_before($table_id, $src_column_id, $dst_column_id){
         $priority = $this->db->select('priority')
-            ->from($this->cms_complete_table_name('column'))
+            ->from($this->t('column'))
             ->where('column_id', $dst_column_id)
             ->get()->row()->priority;
         // move other tables down
         $query = $this->db->select('column_id, priority')
-            ->from($this->cms_complete_table_name('column'))
+            ->from($this->t('column'))
             ->where('table_id', $table_id)
             ->where('priority >=', $priority)
             ->get();
         foreach($query->result() as $row){
-            $this->db->update($this->cms_complete_table_name('column'),
+            $this->db->update($this->t('column'),
                 array('priority' => $row->priority+1),
                 array('column_id' => $row->column_id));
         }
         // put this table in the right
-        $this->db->update($this->cms_complete_table_name('column'),
+        $this->db->update($this->t('column'),
             array('priority' => $priority),
             array('column_id' => $src_column_id));
     }
 
     private function do_move_column_after($table_id, $src_column_id, $dst_column_id){
         $priority = $this->db->select('priority')
-            ->from($this->cms_complete_table_name('column'))
+            ->from($this->t('column'))
             ->where('column_id', $dst_column_id)
             ->get()->row()->priority;
         // move other tables down
         $query = $this->db->select('column_id, priority')
-            ->from($this->cms_complete_table_name('column'))
+            ->from($this->t('column'))
             ->where('table_id', $table_id)
             ->where('priority >', $priority)
             ->get();
         foreach($query->result() as $row){
-            $this->db->update($this->cms_complete_table_name('column'),
+            $this->db->update($this->t('column'),
                 array('priority' => $row->priority+1),
                 array('column_id' => $row->column_id));
         }
         // put this table in the right
-        $this->db->update($this->cms_complete_table_name('column'),
+        $this->db->update($this->t('column'),
             array('priority' => $priority+1),
             array('column_id' => $src_column_id));
     }

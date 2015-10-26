@@ -30,7 +30,7 @@
 			$lookup_column_name = $column['lookup_column_name'];
 			$lookup_table_primary_key = $column['lookup_table_primary_key'];
 			$select_array[] = $stripped_lookup_table_name.'.'.$lookup_column_name.' as '.$stripped_lookup_table_name.'_'.$lookup_column_name;
-			$join_array[] = '$this->cms_complete_table_name(\''.$stripped_lookup_table_name.'\').\' as '.$stripped_lookup_table_name.'\', \''.$stripped_table_name.'.'.$column_name.'='.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_table_primary_key.'\', \'left\'';
+			$join_array[] = '$this->t(\''.$stripped_lookup_table_name.'\').\' as '.$stripped_lookup_table_name.'\', \''.$stripped_table_name.'.'.$column_name.'='.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_table_primary_key.'\', \'left\'';
 			$like_array[] = '\''.strip_table_prefix($lookup_table_name, $table_prefix).'.'.$lookup_column_name.'\', $keyword';
 		}
 	}
@@ -48,7 +48,7 @@ class {{ model_name }} extends  CMS_Model{
     public function get_data($keyword, $page=0){
         $limit = 10;
         $query = $this->db->select('<?php echo $select; ?>')
-            ->from($this->cms_complete_table_name('<?php echo $stripped_table_name; ?>').' as <?php echo $stripped_table_name; ?>')
+            ->from($this->t('<?php echo $stripped_table_name; ?>').' as <?php echo $stripped_table_name; ?>')
 <?php
 	foreach($join_array as $join){
 		echo '            ->join('.$join.')'.PHP_EOL;

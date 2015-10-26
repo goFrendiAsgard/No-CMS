@@ -63,7 +63,7 @@ class Info extends CMS_Module {
     // DEACTIVATION
     public function do_deactivate(){
         $this->backup_database(array(
-            $this->cms_complete_table_name('subsite')
+            $this->t('subsite')
         ));
         $this->remove_all();
     }
@@ -79,7 +79,7 @@ class Info extends CMS_Module {
         if($major <= 0 && $minor <= 0 && $build <= 1){
             // Add your migration logic here.
             // table : subsite
-            $table_name = $this->cms_complete_table_name('subsite');
+            $table_name = $this->t('subsite');
             $field_list = $this->db->list_fields($table_name);
             $missing_fields = array(
                 'user_id'=>array("type"=>'int', "constraint"=>10, "null"=>TRUE),
@@ -97,7 +97,7 @@ class Info extends CMS_Module {
             $fields = array(
                 'name' => array("type"=>'varchar', "constraint"=>100, "null"=>TRUE),
             );
-            $this->dbforge->modify_column($this->cms_complete_table_name('subsite'), $fields);
+            $this->dbforge->modify_column($this->t('subsite'), $fields);
         }
         if($major <= 0 && $minor <= 0 && $build <= 3){
             $fields = array(
@@ -111,11 +111,11 @@ class Info extends CMS_Module {
             );
             $this->dbforge->add_field($fields);
             $this->dbforge->add_key('id', TRUE);
-            $this->dbforge->create_table($this->cms_complete_table_name('template'));
+            $this->dbforge->create_table($this->t('template'));
 
             if(CMS_SUBSITE == ''){
-                $this->cms_add_navigation($this->cms_complete_navigation_name('template'), 'Manage Template',
-                    $module_path.'/manage_template', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+                $this->cms_add_navigation($this->n('template'), 'Manage Template',
+                    $module_path.'/manage_template', PRIV_AUTHORIZED, $this->n('index'),
                     NULL, NULL, NULL, NULL, 'default-one-column'
                 );
             }
@@ -134,19 +134,19 @@ class Info extends CMS_Module {
 
         if(CMS_SUBSITE == ''){
             // remove navigations
-            $this->cms_remove_navigation($this->cms_complete_navigation_name('add_subsite'));
-            $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_template'));
+            $this->cms_remove_navigation($this->n('add_subsite'));
+            $this->cms_remove_navigation($this->n('manage_template'));
             // remove privileges
             $this->cms_remove_privilege('modify_subsite');
         }
 
 
         // remove parent of all navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->n('index'));
 
         // drop tables
-        $this->dbforge->drop_table($this->cms_complete_table_name('subsite'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('template'), TRUE);
+        $this->dbforge->drop_table($this->t('subsite'), TRUE);
+        $this->dbforge->drop_table($this->t('template'), TRUE);
 
         // remove route
         $this->cms_remove_route('main/register');
@@ -157,7 +157,7 @@ class Info extends CMS_Module {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Multisite',
+        $this->cms_add_navigation($this->n('index'), 'Multisite',
             ($module_path == 'multisite'? $module_path : $module_path.'/multisite'), PRIV_EVERYONE, NULL,
             NULL, 'Browse subsites', 'glyphicon-dashboard');
 
@@ -166,13 +166,13 @@ class Info extends CMS_Module {
             // add privileges
             $this->cms_add_privilege('modify_subsite', 'Modify subsite');
             // add navigations
-            $this->cms_add_navigation($this->cms_complete_navigation_name('add_subsite'), 'Add Subsite',
-                $module_path.'/add_subsite', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            $this->cms_add_navigation($this->n('add_subsite'), 'Add Subsite',
+                $module_path.'/add_subsite', PRIV_AUTHORIZED, $this->n('index'),
                 NULL, 'Browse subsites', 'glyphicon-plus', NULL, 'default-one-column'
             );
 
-            $this->cms_add_navigation($this->cms_complete_navigation_name('manage_template'), 'Manage Template',
-                $module_path.'/manage_template', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            $this->cms_add_navigation($this->n('manage_template'), 'Manage Template',
+                $module_path.'/manage_template', PRIV_AUTHORIZED, $this->n('index'),
                 NULL, NULL, NULL, NULL, 'default-one-column'
             );
         }
@@ -193,7 +193,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('subsite'));
+        $this->dbforge->create_table($this->t('subsite'));
 
         $fields = array(
             'id'=> $this->TYPE_INT_UNSIGNED_AUTO_INCREMENT,
@@ -206,7 +206,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('template'));
+        $this->dbforge->create_table($this->t('template'));
 
         $this->insert_templates();
 
@@ -219,11 +219,11 @@ class Info extends CMS_Module {
     public function insert_templates(){
         foreach($this->templates as $template){
             $query = $this->db->select('name')
-                ->from($this->cms_complete_table_name('template'))
+                ->from($this->t('template'))
                 ->where('name', $template['name'])
                 ->get();
             if($query->num_rows() == 0){
-                $this->db->insert($this->cms_complete_table_name('template'),$template);
+                $this->db->insert($this->t('template'),$template);
             }
         }
     }

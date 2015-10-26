@@ -148,6 +148,20 @@ class CMS_Controller extends MX_Controller
         return $this->{$this->__cms_base_model_name}->n($navigation_name);
     }
 
+    protected function is_record_exists($table_name, $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
+    {
+        return $this->{$this->__cms_base_model_name}->is_record_exists($table_name, $where, $values, $mode, $like, $side);
+    }
+
+    protected function get_record($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
+    {
+        return $this->{$this->__cms_base_model_name}->get_record($table_name, $where, $values, $mode, $like, $side);
+    }
+
+    protected function get_record_list($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both'){
+        return $this->{$this->__cms_base_model_name}->get_record_list($table_name, $where, $values, $mode, $like, $side);
+    }
+
     /**
      * @author goFrendiAsgard
      * @desc   get default_controller

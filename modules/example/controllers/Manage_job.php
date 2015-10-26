@@ -163,7 +163,7 @@ class Manage_job extends CMS_CRUD_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/Manage_job_view', $output,
-            $this->cms_complete_navigation_name('manage_job'), $config);
+            $this->n('manage_job'), $config);
     }
 
 

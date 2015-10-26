@@ -28,22 +28,22 @@ class Info extends CMS_Module {
         $module_path = $this->cms_module_path();
 
         // remove widgets
-        $this->cms_remove_widget($this->cms_complete_navigation_name('slideshow'));
-        $this->cms_remove_widget($this->cms_complete_navigation_name('tab'));
-        $this->cms_remove_widget($this->cms_complete_navigation_name('visitor_count'));
+        $this->cms_remove_widget($this->n('slideshow'));
+        $this->cms_remove_widget($this->n('tab'));
+        $this->cms_remove_widget($this->n('visitor_count'));
 
         // remove navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_visitor_counter'));
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_tab_content'));
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_slide'));
+        $this->cms_remove_navigation($this->n('manage_visitor_counter'));
+        $this->cms_remove_navigation($this->n('manage_tab_content'));
+        $this->cms_remove_navigation($this->n('manage_slide'));
 
         // remove parent of all navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->n('index'));
 
         // drop tables
-        $this->dbforge->drop_table($this->cms_complete_table_name('visitor_counter'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('tab_content'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('slide'), TRUE);
+        $this->dbforge->drop_table($this->t('visitor_counter'), TRUE);
+        $this->dbforge->drop_table($this->t('tab_content'), TRUE);
+        $this->dbforge->drop_table($this->t('slide'), TRUE);
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -53,25 +53,25 @@ class Info extends CMS_Module {
         $this->cms_set_config('static_accessories_slide_height', '400');
 
         // parent of all navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Accessories Widgets',
+        $this->cms_add_navigation($this->n('index'), 'Accessories Widgets',
             $module_path.'/static_accessories', PRIV_AUTHORIZED, 'main_management');
 
         // add navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_slide'), 'Slideshow',
-            $module_path.'/manage_slide', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->cms_add_navigation($this->n('manage_slide'), 'Slideshow',
+            $module_path.'/manage_slide', PRIV_AUTHORIZED, $this->n('index')
         );
-        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_tab_content'), 'Tabbed Content',
-            $module_path.'/manage_tab_content', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->cms_add_navigation($this->n('manage_tab_content'), 'Tabbed Content',
+            $module_path.'/manage_tab_content', PRIV_AUTHORIZED, $this->n('index')
         );
-        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_visitor_counter'), 'Visitor',
-            $module_path.'/manage_visitor_counter', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->cms_add_navigation($this->n('manage_visitor_counter'), 'Visitor',
+            $module_path.'/manage_visitor_counter', PRIV_AUTHORIZED, $this->n('index')
         );
 
-        $this->cms_add_widget($this->cms_complete_navigation_name('slideshow'), 'Slide Show',
+        $this->cms_add_widget($this->n('slideshow'), 'Slide Show',
             PRIV_EVERYONE, $module_path.'/static_accessories_widget/slide');
-        $this->cms_add_widget($this->cms_complete_navigation_name('tab'), 'Tabbed Content',
+        $this->cms_add_widget($this->n('tab'), 'Tabbed Content',
             PRIV_EVERYONE, $module_path.'/static_accessories_widget/tab');
-        $this->cms_add_widget($this->cms_complete_navigation_name('visitor_count'), 'Visitor Count',
+        $this->cms_add_widget($this->n('visitor_count'), 'Visitor Count',
             PRIV_EVERYONE, $module_path.'/static_accessories_widget/visitor_counter');
 
 
@@ -84,7 +84,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('slide_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('slide'));
+        $this->dbforge->create_table($this->t('slide'));
 
         // tab_content
         $fields = array(
@@ -94,7 +94,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('tab_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('tab_content'));
+        $this->dbforge->create_table($this->t('tab_content'));
 
         // visitor_counter
         $fields = array(
@@ -105,7 +105,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('counter_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('visitor_counter'));
+        $this->dbforge->create_table($this->t('visitor_counter'));
 
         // make copy of 01.jpg and insert it as new slide
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
@@ -123,7 +123,7 @@ class Info extends CMS_Module {
         $file_name .= '01.jpg';
         copy($image_path.$original_file_name, $image_path.$file_name);
         $data = array('image_url'=>$file_name,'content'=>'<h1>The first slide image</h1><p>Some awesome descriptions</p>');
-        $this->db->insert($this->cms_complete_table_name('slide'),$data);
+        $this->db->insert($this->t('slide'),$data);
 
         // make copy of 02.jpg and insert it as new slide
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/images/slides/';
@@ -141,7 +141,7 @@ class Info extends CMS_Module {
         $file_name .= '02.jpg';
         copy($image_path.$original_file_name, $image_path.$file_name);
         $data = array('image_url'=>$file_name,'content'=>'<h1>The second slide image</h1><p>Another awesome description</p>');
-        $this->db->insert($this->cms_complete_table_name('slide'),$data);
+        $this->db->insert($this->t('slide'),$data);
     }
 
 }

@@ -25,7 +25,7 @@ class Info extends CMS_Module {
     public function do_upgrade($old_version){
         $module_path = $this->cms_module_path();
         // table : blog article
-        $table_name = $this->cms_complete_table_name('article');
+        $table_name = $this->t('article');
         $field_list = $this->db->list_fields($table_name);
         $missing_fields = array(
             'keyword' => $this->TYPE_VARCHAR_100_NULL,
@@ -47,7 +47,7 @@ class Info extends CMS_Module {
         $this->dbforge->add_column($table_name, $fields);
 
         // table : blog comment
-        $table_name = $this->cms_complete_table_name('comment');
+        $table_name = $this->t('comment');
         $field_list = $this->db->list_fields($table_name);
         $missing_fields = array(
             'parent_comment_id' => $this->TYPE_INT_UNSIGNED_NULL,
@@ -69,12 +69,12 @@ class Info extends CMS_Module {
 
         // navigation: blog_index
         $table_name = cms_table_name('main_navigation');
-        $navigation_name = $this->cms_complete_navigation_name('index');
+        $navigation_name = $this->n('index');
         $this->db->update($table_name,
             array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'),
             array('navigation_name' => $navigation_name));
         // navigation: blog_article
-        $navigation_name = $this->cms_complete_navigation_name('manage_article');
+        $navigation_name = $this->n('manage_article');
         $this->db->update($table_name,
             array('notif_url' => $this->cms_module_path($this->NAME).'/notif/new_comment'),
             array('navigation_name' => $navigation_name));
@@ -82,10 +82,10 @@ class Info extends CMS_Module {
         // add widget archive
         $query = $this->db->select('widget_name')
             ->from(cms_table_name('main_widget'))
-            ->where('widget_name', $this->cms_complete_navigation_name('archive'))
+            ->where('widget_name', $this->n('archive'))
             ->get();
         if($query->num_rows()>0){
-            $this->cms_add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
+            $this->cms_add_widget($this->n('archive'), 'Archive',
                 PRIV_EVERYONE, $this->cms_module_path().'/blog_widget/archive', 'sidebar');
         }
 
@@ -95,7 +95,7 @@ class Info extends CMS_Module {
             ->where('widget_name', 'blog_content')
             ->get();
         if($query->num_rows() == 0){
-            $this->cms_add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
+            $this->cms_add_widget($this->n('content'), 'Blog Content',
                 PRIV_EVERYONE, $this->cms_module_path());
         }
 
@@ -104,18 +104,18 @@ class Info extends CMS_Module {
         $minor = $version_part[1];
         $build = $version_part[2];
         if($major == 0 && $minor == 0 && $build <= 4){
-            $this->db->update($this->cms_complete_table_name('article'),array('status'=>'published'),array('status'=>'draft'));
+            $this->db->update($this->t('article'),array('status'=>'published'),array('status'=>'draft'));
             $this->cms_add_group('Blog Editor', 'Can Add, Edit, Delete & Publish other\'s articles');
             $this->cms_add_group('Blog Author', 'Can Add, Edit, Delete & Publish his/her own articles');
             $this->cms_add_group('Blog Contributor', 'Can Add, Edit, and Delete his/her own articles');
-            $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Editor');
-            $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Author');
-            $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Contributor');
-            $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_category'),'Blog Editor');
+            $this->cms_assign_navigation($this->n('manage_article'),'Blog Editor');
+            $this->cms_assign_navigation($this->n('manage_article'),'Blog Author');
+            $this->cms_assign_navigation($this->n('manage_article'),'Blog Contributor');
+            $this->cms_assign_navigation($this->n('manage_category'),'Blog Editor');
         }
         if($major == 0 && $minor == 0 && $build <= 5){
             $fields = array('publish_date' => $this->TYPE_DATETIME_NULL);
-            $table_name = $this->cms_complete_table_name('article');
+            $table_name = $this->t('article');
             $this->dbforge->modify_column($table_name, $fields);
         }
         if($major == 0 && $minor == 0 && $build <=6){
@@ -124,12 +124,12 @@ class Info extends CMS_Module {
                 'article_title' => $this->TYPE_TEXT,
                 'article_url' => $this->TYPE_TEXT,
             );
-            $table_name = $this->cms_complete_table_name('article');
+            $table_name = $this->t('article');
             $this->dbforge->modify_column($table_name, $fields);
             $fields = array(
                 'url' => $this->TYPE_TEXT,
             );
-            $table_name = $this->cms_complete_table_name('photo');
+            $table_name = $this->t('photo');
             $this->dbforge->modify_column($table_name, $fields);
         }
         if($major == 0 && $minor == 0 && $build <=7){
@@ -137,22 +137,22 @@ class Info extends CMS_Module {
                 'visited' => $this->TYPE_INT_UNSIGNED_NULL,
                 'featured' => $this->TYPE_INT_UNSIGNED_NULL,
             );
-            $table_name = $this->cms_complete_table_name('article');
+            $table_name = $this->t('article');
             $this->dbforge->add_column($table_name, $fields);
             // add popular and featured articles widgets
-            $this->cms_add_widget($this->cms_complete_navigation_name('popular_article'), 'Popular Articles',
+            $this->cms_add_widget($this->n('popular_article'), 'Popular Articles',
                 PRIV_EVERYONE, $module_path.'/blog_widget/popular','sidebar');
-            $this->cms_add_widget($this->cms_complete_navigation_name('featured_article'), 'Featured Articles',
+            $this->cms_add_widget($this->n('featured_article'), 'Featured Articles',
                 PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
         }
         if($major == 0 && $minor == 0 && $build <= 8){
-            $this->cms_add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
-                $module_path.'/setting', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+            $this->cms_add_navigation($this->n('setting'), 'Setting',
+                $module_path.'/setting', PRIV_AUTHORIZED, $this->n('index'),
                 NULL, 'Blog Setting', NULL, NULL, 'default-one-column'
             );
 
             // add configuration
-            $this->cms_add_config($this->cms_complete_navigation_name('moderation'), 'FALSE', 'Is comment in blog need moderation?');
+            $this->cms_add_config($this->n('moderation'), 'FALSE', 'Is comment in blog need moderation?');
 
             // publication status
             $fields = array(
@@ -160,9 +160,9 @@ class Info extends CMS_Module {
                 );
             $this->dbforge->add_field($fields);
             $this->dbforge->add_key('status', TRUE);
-            $this->dbforge->create_table($this->cms_complete_table_name('publication_status'));
+            $this->dbforge->create_table($this->t('publication_status'));
 
-            $table_name = $this->cms_complete_table_name('publication_status');
+            $table_name = $this->t('publication_status');
             $data = array('status'=>'draft');
             $this->db->insert($table_name, $data);
             $data = array('status'=>'published');
@@ -174,32 +174,32 @@ class Info extends CMS_Module {
             $fields = array(
                 'approved' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null' => FALSE, 'default' => 0,),
             );
-            $table_name = $this->cms_complete_table_name('comment');
+            $table_name = $this->t('comment');
             $this->dbforge->add_column($table_name, $fields);
 
-            $this->db->update($this->cms_complete_table_name('comment'), array('approved' => 1));
+            $this->db->update($this->t('comment'), array('approved' => 1));
 
             // photo
             $fields = array(
                 'index'     => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'null' => FALSE, 'default' => 0,),
                 'caption'   => $this->TYPE_TEXT,
             );
-            $table_name = $this->cms_complete_table_name('photo');
+            $table_name = $this->t('photo');
             $this->dbforge->add_column($table_name, $fields);
 
             $query = $this->db->select('article_id')
-                ->from($this->cms_complete_table_name('article'))
+                ->from($this->t('article'))
                 ->get();
             foreach($query->result() as $row){
                 $article_id = $row->article_id;
                 $query_photo = $this->db->select('photo_id')
-                    ->from($this->cms_complete_table_name('photo'))
+                    ->from($this->t('photo'))
                     ->where('article_id', $article_id)
                     ->get();
                 $index = 1;
                 foreach($query_photo->result() as $row_photo){
                     $photo_id = $row_photo->photo_id;
-                    $this->db->update($this->cms_complete_table_name('photo'),
+                    $this->db->update($this->t('photo'),
                             array('index' => $index),
                             array('photo_id' => $photo_id)
                         );
@@ -236,31 +236,31 @@ class Info extends CMS_Module {
         $module_path = $this->cms_module_path();
 
         // remove widgets
-        $this->cms_remove_widget($this->cms_complete_navigation_name('newest_article'));
-        $this->cms_remove_widget($this->cms_complete_navigation_name('popular_article'));
-        $this->cms_remove_widget($this->cms_complete_navigation_name('featured_article'));
-        $this->cms_remove_widget($this->cms_complete_navigation_name('article_category'));
-        $this->cms_remove_widget($this->cms_complete_navigation_name('content'));
-        $this->cms_remove_widget($this->cms_complete_navigation_name('archive'));
+        $this->cms_remove_widget($this->n('newest_article'));
+        $this->cms_remove_widget($this->n('popular_article'));
+        $this->cms_remove_widget($this->n('featured_article'));
+        $this->cms_remove_widget($this->n('article_category'));
+        $this->cms_remove_widget($this->n('content'));
+        $this->cms_remove_widget($this->n('archive'));
 
         // remove quicklinks
-        $this->cms_remove_quicklink($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_quicklink($this->n('index'));
 
         // remove navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_category'));
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_article'));
+        $this->cms_remove_navigation($this->n('manage_category'));
+        $this->cms_remove_navigation($this->n('manage_article'));
 
 
         // remove parent of all navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->n('index'));
 
         // import uninstall.sql
-        $this->dbforge->drop_table($this->cms_complete_table_name('photo'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('comment'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('category_article'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('category'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('article'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('publication_status'), TRUE);
+        $this->dbforge->drop_table($this->t('photo'), TRUE);
+        $this->dbforge->drop_table($this->t('comment'), TRUE);
+        $this->dbforge->drop_table($this->t('category_article'), TRUE);
+        $this->dbforge->drop_table($this->t('category'), TRUE);
+        $this->dbforge->drop_table($this->t('article'), TRUE);
+        $this->dbforge->drop_table($this->t('publication_status'), TRUE);
 
     }
 
@@ -274,52 +274,52 @@ class Info extends CMS_Module {
         }else{
             $parent_url = $module_path.'/blog';
         }
-        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Blog',
+        $this->cms_add_navigation($this->n('index'), 'Blog',
             $parent_url, PRIV_EVERYONE, NULL, NULL, 'Blog', 'glyphicon-pencil', NULL, NULL,
             $this->cms_module_path().'/notif/new_comment'
         );
 
         // add navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_article'), 'Manage Article',
-            $module_path.'/manage_article', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+        $this->cms_add_navigation($this->n('manage_article'), 'Manage Article',
+            $module_path.'/manage_article', PRIV_AUTHORIZED, $this->n('index'),
             NULL, 'Add, edit, and delete blog articles', NULL, NULL, 'default-one-column',
             $this->cms_module_path().'/notif/new_comment'
         );
-        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_category'), 'Manage Category',
-            $module_path.'/manage_category', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+        $this->cms_add_navigation($this->n('manage_category'), 'Manage Category',
+            $module_path.'/manage_category', PRIV_AUTHORIZED, $this->n('index'),
             NULL, 'Add, edit, and delete categories. Each article can has one or more categories', NULL, NULL, 'default-one-column'
         );
-        $this->cms_add_navigation($this->cms_complete_navigation_name('setting'), 'Setting',
-            $module_path.'/setting', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index'),
+        $this->cms_add_navigation($this->n('setting'), 'Setting',
+            $module_path.'/setting', PRIV_AUTHORIZED, $this->n('index'),
             NULL, 'Blog Setting', NULL, NULL, 'default-one-column'
         );
 
-        $this->cms_add_quicklink($this->cms_complete_navigation_name('index'));
+        $this->cms_add_quicklink($this->n('index'));
 
-        $this->cms_add_widget($this->cms_complete_navigation_name('newest_article'), 'Newest Articles',
+        $this->cms_add_widget($this->n('newest_article'), 'Newest Articles',
             PRIV_EVERYONE, $module_path.'/blog_widget/newest','sidebar');
-        $this->cms_add_widget($this->cms_complete_navigation_name('popular_article'), 'Popular Articles',
+        $this->cms_add_widget($this->n('popular_article'), 'Popular Articles',
             PRIV_EVERYONE, $module_path.'/blog_widget/popular','sidebar');
-        $this->cms_add_widget($this->cms_complete_navigation_name('featured_article'), 'Featured Articles',
+        $this->cms_add_widget($this->n('featured_article'), 'Featured Articles',
             PRIV_EVERYONE, $module_path.'/blog_widget/featured','sidebar');
-        $this->cms_add_widget($this->cms_complete_navigation_name('article_category'), 'Article Categories',
+        $this->cms_add_widget($this->n('article_category'), 'Article Categories',
             PRIV_EVERYONE, $module_path.'/blog_widget/category','sidebar');
-        $this->cms_add_widget($this->cms_complete_navigation_name('content'), 'Blog Content',
+        $this->cms_add_widget($this->n('content'), 'Blog Content',
             PRIV_EVERYONE, $module_path);
-        $this->cms_add_widget($this->cms_complete_navigation_name('archive'), 'Archive',
+        $this->cms_add_widget($this->n('archive'), 'Archive',
             PRIV_EVERYONE, $module_path.'/blog_widget/archive', 'sidebar');
 
         // create groups and assign
         $this->cms_add_group('Blog Editor', 'Can Add, Edit, Delete & Publish other\'s articles');
         $this->cms_add_group('Blog Author', 'Can Add, Edit, Delete & Publish his/her own articles');
         $this->cms_add_group('Blog Contributor', 'Can Add, Edit, and Delete his/her own articles');
-        $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Editor');
-        $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Author');
-        $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_article'),'Blog Contributor');
-        $this->cms_assign_navigation($this->cms_complete_navigation_name('manage_category'),'Blog Editor');
+        $this->cms_assign_navigation($this->n('manage_article'),'Blog Editor');
+        $this->cms_assign_navigation($this->n('manage_article'),'Blog Author');
+        $this->cms_assign_navigation($this->n('manage_article'),'Blog Contributor');
+        $this->cms_assign_navigation($this->n('manage_category'),'Blog Editor');
 
         // add configuration
-        $this->cms_add_config($this->cms_complete_navigation_name('moderation'), 'FALSE', 'Is comment in blog need moderation?');
+        $this->cms_add_config($this->n('moderation'), 'FALSE', 'Is comment in blog need moderation?');
 
         // add routes
         if($module_path == 'blog'){
@@ -344,7 +344,7 @@ class Info extends CMS_Module {
             );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('status', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('publication_status'));
+        $this->dbforge->create_table($this->t('publication_status'));
 
         // article
         $fields = array(
@@ -364,7 +364,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('article_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('article'));
+        $this->dbforge->create_table($this->t('article'));
 
         // category
         $fields = array(
@@ -374,7 +374,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('category_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('category'));
+        $this->dbforge->create_table($this->t('category'));
 
         // category_article
         $fields = array(
@@ -384,7 +384,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('category_article_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('category_article'));
+        $this->dbforge->create_table($this->t('category_article'));
 
         // comment
         $fields = array(
@@ -402,7 +402,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('comment_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('comment'));
+        $this->dbforge->create_table($this->t('comment'));
 
         // photo
         $fields = array(
@@ -414,10 +414,10 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('photo_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('photo'));
+        $this->dbforge->create_table($this->t('photo'));
 
         // publication status
-        $table_name = $this->cms_complete_table_name('publication_status');
+        $table_name = $this->t('publication_status');
         $data = array('status'=>'draft');
         $this->db->insert($table_name, $data);
         $data = array('status'=>'published');
@@ -427,7 +427,7 @@ class Info extends CMS_Module {
 
 
         // category
-        $table_name = $this->cms_complete_table_name('category');
+        $table_name = $this->t('category');
         $data = array('category_name' => 'News');
         $this->db->insert($table_name, $data);
         $data = array('category_name' => 'Fun');
@@ -436,7 +436,7 @@ class Info extends CMS_Module {
 
         if(CMS_SUBSITE == '' && !defined('CMS_OVERRIDDEN_SUBSITE')){
             // article
-            $table_name = $this->cms_complete_table_name('article');
+            $table_name = $this->t('article');
             $data = array('article_title' => 'Scandal, A Pop Rock Girl Band From Osaka',
                 'article_url' => 'scandal',
                 'keyword' => 'scandal, pop rock, girl, band, osaka',
@@ -450,12 +450,12 @@ class Info extends CMS_Module {
             $this->db->insert($table_name, $data);
 
             // category_article
-            $table_name = $this->cms_complete_table_name('category_article');
+            $table_name = $this->t('category_article');
             $data = array('category_id'=>2, 'article_id'=>1);
             $this->db->insert($table_name, $data);
 
             // photos
-            $table_name = $this->cms_complete_table_name('photo');
+            $table_name = $this->t('photo');
             for($i=1; $i<9; $i++){
                 $file_name = $this->duplicate_file('0'.$i.'.jpg');
                 $data = array(
@@ -471,7 +471,7 @@ class Info extends CMS_Module {
             }
 
             // comment
-            $table_name = $this->cms_complete_table_name('comment');
+            $table_name = $this->t('comment');
             $data = array('article_id'=>1, 'author_user_id'=>1, 'read'=>0, 'date'=>'2013-03-25 09:53:16', 'content'=>'Great comment for great article', 'approved'=>1);
             $this->db->insert($table_name, $data);
         }

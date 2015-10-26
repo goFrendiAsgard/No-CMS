@@ -7,14 +7,14 @@ class Visitor_counter_model extends CMS_Model{
             $this->session->set_userdata('counted', TRUE);
             $this->load->library('user_agent');
             $this->load->helper('date');
-            $this->db->insert($this->cms_complete_table_name('visitor_counter'), array(
+            $this->db->insert($this->t('visitor_counter'), array(
                     'ip'=>$this->input->ip_address(),
                     'time'=>date('Y-m-d H:i:s'),
                     'agent'=>$this->agent->agent_string()
                 ));
         }
         $query = $this->db->select('counter_id')
-            ->from($this->cms_complete_table_name('visitor_counter'))
+            ->from($this->t('visitor_counter'))
             ->get();
         return $query->num_rows();
     }

@@ -6,7 +6,7 @@ class Ajax extends CMS_Controller{
             $template_id = 0;
         }
         $query = $this->db->select('option_id, name')
-            ->from($this->cms_complete_table_name('template_option'))
+            ->from($this->t('template_option'))
             ->where('option_type','project')
             ->where('template_id',$template_id)
             ->get();
@@ -25,9 +25,9 @@ class Ajax extends CMS_Controller{
             $project_id = 0;
         }
         $SQL = "SELECT option_id, name
-            FROM ".$this->cms_complete_table_name('template_option')."
+            FROM ".$this->t('template_option')."
             WHERE option_type = 'table' AND
-            template_id IN (SELECT template_id FROM ".$this->cms_complete_table_name('project')." WHERE project_id=$project_id)";
+            template_id IN (SELECT template_id FROM ".$this->t('project')." WHERE project_id=$project_id)";
         $query = $this->db->query($SQL);
         $result = array();
         foreach($query->result() as $row){
@@ -44,13 +44,13 @@ class Ajax extends CMS_Controller{
             $table_id = 0;
         }
         $SQL = "SELECT option_id, name
-            FROM ".$this->cms_complete_table_name('template_option')."
+            FROM ".$this->t('template_option')."
             WHERE option_type ='column' AND
             template_id IN (
                 SELECT template_id
-                FROM ".$this->cms_complete_table_name('project').", ".$this->cms_complete_table_name('table')."
-                WHERE ".$this->cms_complete_table_name('project').".project_id =
-                    ".$this->cms_complete_table_name('table').".project_id AND ".$this->cms_complete_table_name('table').".table_id=$table_id)";
+                FROM ".$this->t('project').", ".$this->t('table')."
+                WHERE ".$this->t('project').".project_id =
+                    ".$this->t('table').".project_id AND ".$this->t('table').".table_id=$table_id)";
         $query = $this->db->query($SQL);
         $result = array();
         foreach($query->result() as $row){
@@ -67,10 +67,10 @@ class Ajax extends CMS_Controller{
             $table_id = 0;
         }
         $SQL = "SELECT table_id, name
-            FROM ".$this->cms_complete_table_name('table')."
+            FROM ".$this->t('table')."
             WHERE project_id IN (
                 SELECT project_id
-                FROM ".$this->cms_complete_table_name('table')."
+                FROM ".$this->t('table')."
                 WHERE table_id=$table_id)";
         $query = $this->db->query($SQL);
         $result = array();
@@ -88,7 +88,7 @@ class Ajax extends CMS_Controller{
             $table_id = 0;
         }
         $SQL = "SELECT column_id, name
-            FROM ".$this->cms_complete_table_name('column')."
+            FROM ".$this->t('column')."
             WHERE
                 (table_id = '$table_id') AND
                 (role <> 'detail many to many') AND

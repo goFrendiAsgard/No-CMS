@@ -1,10 +1,10 @@
         // {{ back_navigation_name }}
         $this->cms_add_navigation(
-                $this->cms_complete_navigation_name('{{ back_navigation_name }}'),  //  Navigation name
+                $this->n('{{ back_navigation_name }}'),  //  Navigation name
                 'Manage {{ table_caption }}',  // Title
                 $module_path.'/{{ back_controller_name }}',  // URL Path 
                 PRIV_AUTHORIZED,   // Authorization
-                $this->cms_complete_navigation_name('{{ navigation_parent_name }}'),  // Parent Navigation Name
+                $this->n('{{ navigation_parent_name }}'),  // Parent Navigation Name
                 NULL,                   // Index
                 NULL,                   // Description
                 NULL,                   // Bootstrap Glyph Class

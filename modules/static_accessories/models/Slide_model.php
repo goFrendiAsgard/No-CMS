@@ -3,7 +3,7 @@
 class Slide_model extends CMS_Model{
     public function get(){
         $query = $this->db->select('image_url, content')
-            ->from($this->cms_complete_table_name('slide'))
+            ->from($this->t('slide'))
             ->get();
         return $query->result_array();
     }

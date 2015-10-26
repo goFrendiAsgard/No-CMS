@@ -8,7 +8,7 @@ class Contact_us extends CMS_Secure_Controller {
 
     protected function do_override_url_map($URL_MAP){
         $module_path = $this->cms_module_path();
-        $navigation_name = $this->cms_complete_navigation_name('index');
+        $navigation_name = $this->n('index');
         $URL_MAP[$module_path.'/'.$module_path] = $navigation_name;
         $URL_MAP[$module_path] = $navigation_name;
         return $URL_MAP;
@@ -67,7 +67,7 @@ class Contact_us extends CMS_Secure_Controller {
                     $data['name'] = $name;
                     $data['email'] = $email;
                     $data['content'] = html_entity_decode($content);
-                    $this->db->insert($this->cms_complete_table_name('message'), $data);
+                    $this->db->insert($this->t('message'), $data);
                     $name = '';
                     $email = '';
                     $content = '';
@@ -91,6 +91,6 @@ class Contact_us extends CMS_Secure_Controller {
         $data['email'] = $email;
         $data['content'] = $content;
         $this->view($this->cms_module_path().'/contact_us_index', $data,
-            $this->cms_complete_navigation_name('index'));
+            $this->n('index'));
     }
 }

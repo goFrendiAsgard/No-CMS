@@ -180,7 +180,7 @@ class CMS_Model extends CI_Model
     /*
     * @ usage $this->t('purchase')
     */
-    protected function t($table_name, $alias = null)
+    public function t($table_name, $alias = null)
     {
         $return = $this->cms_complete_table_name($table_name);
         if ($alias !== null) {
@@ -190,9 +190,95 @@ class CMS_Model extends CI_Model
         return $return;
     }
 
-    protected function n($navigation_name)
+    public function n($navigation_name)
     {
         return $this->cms_complete_navigation_name($navigation_name);
+    }
+
+    protected function _cms_build_where($where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both'){
+        if($where === NULL){
+            return NULL;
+        }
+        $mode = strtolower($mode);
+
+        // if where and values are not array, change them into array
+        if(!is_array($where)){
+            $where = array($where => NULL);
+        }
+        if(!is_array($values)){
+            $values = array($values);
+        }
+        // find out if where is associative array
+        $is_associative_array = FALSE;
+        $i = 0;
+        foreach($where as $key=>$value){
+            if($key != $i.''){
+                $is_associative_array = TRUE;
+                break;
+            }
+            $i++;
+        }
+        // turn into associative array
+        if(!$is_associative_array){
+            $new_where = array();
+            foreach($where as $key){
+                $new_where[$key] = NULL;
+            }
+            $where = $new_where;
+        }
+        // adjust where values
+        if(count($values) != 0){
+            $i = 0;
+            foreach($where as $key=>$original_value){
+                if($original_value === NULL){
+                    $where[$key] = $values[$i];
+                }
+                $i++;
+                // reset values if necessary
+                if($i == count($values)){
+                    $i = 0;
+                }
+            }
+        }
+        // actual code
+        foreach($where as $field => $value){
+            if($mode == 'and'){
+                if($like){
+                    $this->db->like($field, $value, $side);
+                }else{
+                    $this->db->where($field, $value);
+                }
+            }else{
+                if($like){
+                    $this->db->or_like($field, $value, $side);
+                }else{
+                    $this->db->or_where($field, $value);
+                }
+            }
+        }
+    }
+
+    public function is_record_exists($table_name, $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
+    {
+        $this->_cms_build_where($where, $values, $mode, $like, $side);
+        $query = $this->db->get($table_name);
+        // return TRUE if record exist
+        return $query->num_rows() > 0;
+    }
+
+    public function get_record($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
+    {
+        $this->_cms_build_where($where, $values, $mode, $like, $side);
+        $query = $this->db->get($table_name);
+        // get row
+        return $query->row();
+    }
+
+    public function get_record_list($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both'){
+        $this->_cms_build_where($where, $values, $mode, $like, $side);
+        $query = $this->db->get($table_name);
+        // return the result
+        return $query->result();
     }
 
     public function __destruct()
@@ -3857,4 +3943,5 @@ class CMS_Model extends CI_Model
     {
         return $this->session->userdata('__cms_editing_mode') === true;
     }
+
 }

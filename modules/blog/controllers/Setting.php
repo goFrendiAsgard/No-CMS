@@ -3,7 +3,7 @@
 class Setting extends CMS_Secure_Controller {
 
     public function index(){
-        $config_key   = array($this->cms_complete_navigation_name('moderation'));
+        $config_key   = array($this->n('moderation'));
         $config_list  = array();
         $changed      = FALSE;
         // save
@@ -20,8 +20,8 @@ class Setting extends CMS_Secure_Controller {
         // data
         $data['config_list']   = $config_list;
         $data['changed']       = $changed;
-        $data['config_prefix'] = $this->cms_complete_navigation_name('');
-        $this->view('setting_index', $data, $this->cms_complete_navigation_name('setting'));
+        $data['config_prefix'] = $this->n('');
+        $this->view('setting_index', $data, $this->n('setting'));
     }
 
 }

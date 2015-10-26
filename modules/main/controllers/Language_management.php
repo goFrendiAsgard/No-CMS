@@ -172,7 +172,7 @@ class Language_management extends CMS_Secure_Controller {
         $config['js'] = $asset->compile_js();
         // show the view
         $this->view($this->cms_module_path().'/language/manage_main_language_view', $output,
-            $this->cms_complete_navigation_name('main_language_management'), $config);
+            $this->n('main_language_management'), $config);
 
     }
 

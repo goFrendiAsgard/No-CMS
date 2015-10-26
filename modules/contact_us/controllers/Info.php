@@ -18,7 +18,7 @@ class Info extends CMS_Module {
     // DEACTIVATION
     protected function do_deactivate(){
         $this->backup_database(array(
-            $this->cms_complete_table_name('message')
+            $this->t('message')
         ));
         $this->remove_all();
     }
@@ -60,17 +60,17 @@ class Info extends CMS_Module {
     private function remove_all(){
         $module_path = $this->cms_module_path();
 
-        $this->cms_remove_quicklink($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_quicklink($this->n('index'));
 
         // remove navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('manage_message'));
+        $this->cms_remove_navigation($this->n('manage_message'));
 
 
         // remove parent of all navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->n('index'));
 
         // drop tables
-        $this->dbforge->drop_table($this->cms_complete_table_name('message'), TRUE);
+        $this->dbforge->drop_table($this->t('message'), TRUE);
     }
 
     // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -78,15 +78,15 @@ class Info extends CMS_Module {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Contact Us',
+        $this->cms_add_navigation($this->n('index'), 'Contact Us',
             $module_path.'/contact_us', PRIV_EVERYONE, NULL, NULL, 'Contact Us Menu', 'glyphicon-envelope');
 
         // add navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('manage_message'), 'Manage Message',
-            $module_path.'/manage_message', PRIV_AUTHORIZED, $this->cms_complete_navigation_name('index')
+        $this->cms_add_navigation($this->n('manage_message'), 'Manage Message',
+            $module_path.'/manage_message', PRIV_AUTHORIZED, $this->n('index')
         );
 
-        $this->cms_add_quicklink($this->cms_complete_navigation_name('index'));
+        $this->cms_add_quicklink($this->n('index'));
 
 
         // create tables
@@ -99,7 +99,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('message'));
+        $this->dbforge->create_table($this->t('message'));
 
 
     }

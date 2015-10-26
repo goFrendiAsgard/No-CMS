@@ -27,7 +27,7 @@ class Manage_visitor_counter extends CMS_Secure_Controller {
         $crud->set_language($this->cms_language());
 
         // table name
-        $crud->set_table($this->cms_complete_table_name('visitor_counter'));
+        $crud->set_table($this->t('visitor_counter'));
 
         // set subject
         $crud->set_subject('Visitor Counter');
@@ -88,7 +88,7 @@ class Manage_visitor_counter extends CMS_Secure_Controller {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
         $this->view($this->cms_module_path().'/manage_visitor_counter_view', $output,
-            $this->cms_complete_navigation_name('manage_visitor_counter'));
+            $this->n('manage_visitor_counter'));
 
     }
 

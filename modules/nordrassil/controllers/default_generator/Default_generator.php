@@ -788,7 +788,7 @@ class Default_generator extends CMS_Controller{
         foreach($tables as $table){
             $table_name = $table['name'];
             $stripped_table_name = $table['stripped_name'];
-            $backup_table_list[] = '$this->cms_complete_table_name(\''.$stripped_table_name.'\')';
+            $backup_table_list[] = '$this->t(\''.$stripped_table_name.'\')';
         }
         $backup_table = implode(','.PHP_EOL.'            ', $backup_table_list);
         $pattern = array(

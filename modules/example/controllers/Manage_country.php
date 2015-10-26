@@ -163,7 +163,7 @@ class Manage_country extends CMS_CRUD_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/Manage_country_view', $output,
-            $this->cms_complete_navigation_name('manage_country'), $config);
+            $this->n('manage_country'), $config);
     }
 
 

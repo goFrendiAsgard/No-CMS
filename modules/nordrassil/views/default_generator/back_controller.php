@@ -163,7 +163,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
 
         // show the view
         $this->view($this->cms_module_path().'/{{ view_import_name }}', $output,
-            $this->cms_complete_navigation_name('{{ navigation_name }}'), $config);
+            $this->n('{{ navigation_name }}'), $config);
     }
 
 {{ detail_callback_declaration }}

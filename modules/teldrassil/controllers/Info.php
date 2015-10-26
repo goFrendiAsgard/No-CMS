@@ -33,7 +33,7 @@ class Info extends CMS_Module {
 
 
         // remove parent of all navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->n('index'));
 
         // drop tables
 
@@ -44,7 +44,7 @@ class Info extends CMS_Module {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), 'Theme Generator',
+        $this->cms_add_navigation($this->n('index'), 'Theme Generator',
             $module_path == 'teldrassil'? $module_path: $module_path.'/teldrassil', PRIV_AUTHORIZED,
                 "main_management", NULL, 'Theme Generator', NULL, NULL, 'default-one-column');
 

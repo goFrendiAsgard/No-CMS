@@ -39,7 +39,7 @@ class Info extends CMS_Module {
         $module_path  = $this->cms_module_path();
         // TODO: Add your migration logic here.
         if($major <= 0 && $minor <= 0 && $build <= 2){
-            $this->dbforge->add_column($this->cms_complete_table_name('table'),array(
+            $this->dbforge->add_column($this->t('table'),array(
                 'data' => array("type"=>'text',"null"=>TRUE)
             ));
         }
@@ -49,21 +49,21 @@ class Info extends CMS_Module {
         $module_path = $this->cms_module_path();
 
         // remove navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('project'));
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('template'));
+        $this->cms_remove_navigation($this->n('project'));
+        $this->cms_remove_navigation($this->n('template'));
 
         // remove parent of all navigations
-        $this->cms_remove_navigation($this->cms_complete_navigation_name('index'));
+        $this->cms_remove_navigation($this->n('index'));
 
          // drop tables
-        $this->dbforge->drop_table($this->cms_complete_table_name('column_option'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('column'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('table_option'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('table'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('project_option'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('project'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('template_option'), TRUE);
-        $this->dbforge->drop_table($this->cms_complete_table_name('template'), TRUE);
+        $this->dbforge->drop_table($this->t('column_option'), TRUE);
+        $this->dbforge->drop_table($this->t('column'), TRUE);
+        $this->dbforge->drop_table($this->t('table_option'), TRUE);
+        $this->dbforge->drop_table($this->t('table'), TRUE);
+        $this->dbforge->drop_table($this->t('project_option'), TRUE);
+        $this->dbforge->drop_table($this->t('project'), TRUE);
+        $this->dbforge->drop_table($this->t('template_option'), TRUE);
+        $this->dbforge->drop_table($this->t('template'), TRUE);
 
     }
 
@@ -71,16 +71,16 @@ class Info extends CMS_Module {
         $module_path = $this->cms_module_path();
 
         // parent of all navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('index'), "Module Generator",
+        $this->cms_add_navigation($this->n('index'), "Module Generator",
             $module_path."/nordrassil/index", 4, "main_management", NULL, "Nordrassil Module Generator");
 
         // add navigations
-        $this->cms_add_navigation($this->cms_complete_navigation_name('template'), "Generator Template",
+        $this->cms_add_navigation($this->n('template'), "Generator Template",
             $module_path."/data/nds/template", 4, "nordrassil_index",
             NULL, 'Add, edit, and delete generator template',
             NULL, NULL, 'default-one-column'
         );
-        $this->cms_add_navigation($this->cms_complete_navigation_name('project'), "Project",
+        $this->cms_add_navigation($this->n('project'), "Project",
             $module_path."/data/nds/project", 4, "nordrassil_index",
             NULL, 'Add, edit, and delete project skeleton',
             NULL, NULL, 'default-one-column'
@@ -96,7 +96,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('template_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('template'));
+        $this->dbforge->create_table($this->t('template'));
 
         // template_option
         $fields = array(
@@ -108,7 +108,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('option_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('template_option'));
+        $this->dbforge->create_table($this->t('template_option'));
 
         // project
         $fields = array(
@@ -124,7 +124,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('project_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('project'));
+        $this->dbforge->create_table($this->t('project'));
 
         // project_option
         $fields = array(
@@ -134,7 +134,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('project_option'));
+        $this->dbforge->create_table($this->t('project_option'));
 
         // table
         $fields = array(
@@ -147,7 +147,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('table_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('table'));
+        $this->dbforge->create_table($this->t('table'));
 
         // table_option
         $fields = array(
@@ -157,7 +157,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('table_option'));
+        $this->dbforge->create_table($this->t('table_option'));
 
         // column
         $fields = array(
@@ -182,7 +182,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('column_id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('column'));
+        $this->dbforge->create_table($this->t('column'));
 
         // column_option
         $fields = array(
@@ -192,7 +192,7 @@ class Info extends CMS_Module {
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', TRUE);
-        $this->dbforge->create_table($this->cms_complete_table_name('column_option'));
+        $this->dbforge->create_table($this->t('column_option'));
 
         // install template
         $this->load->model($module_path.'/data/nds_model');
@@ -228,12 +228,12 @@ class Info extends CMS_Module {
 
 
         // insert project
-        $this->db->insert($this->cms_complete_table_name('project'),
+        $this->db->insert($this->t('project'),
             array(
                 'project_id'=>1, 'template_id'=>1, 'name'=>'example', 'db_server'=>'localhost',
                 'db_port'=>'3306', 'db_schema'=>'town', 'db_user'=>'root', 'db_password'=>'toor', 'db_table_prefix'=>'twn'));
         // insert table
-        $this->db->insert_batch($this->cms_complete_table_name('table'), array(
+        $this->db->insert_batch($this->t('table'), array(
             array('table_id' => 1, 'project_id' => 1, 'name' => 'twn_citizen', 'caption' => 'Citizen', 'priority' => 6, 'data'=>''),
             array('table_id' => 2, 'project_id' => 1, 'name' => 'twn_citizen_hobby', 'caption' => 'Citizen Hobby', 'priority' => 9, 'data'=>''),
             array('table_id' => 3, 'project_id' => 1, 'name' => 'twn_city', 'caption' => 'City', 'priority' => 5, 'data'=>''),
@@ -246,7 +246,7 @@ class Info extends CMS_Module {
             array('table_id' => 10, 'project_id' => 1, 'name' => 'twn_tourism', 'caption' => 'Tourism', 'priority' => 4, 'data'=>'[{"tourism_id" : 1, "name" : "Amusement Park"}, {"tourism_id" : 2, "name" : "Beach"}]'),
         ));
         // insert table_option
-        $this->db->insert_batch($this->cms_complete_table_name('table_option'), array(
+        $this->db->insert_batch($this->t('table_option'), array(
             array('id' => 1, 'option_id' => 1, 'table_id' => 2),
             array('id' => 2, 'option_id' => 1, 'table_id' => 4),
             array('id' => 3, 'option_id' => 1, 'table_id' => 5),
@@ -254,7 +254,7 @@ class Info extends CMS_Module {
             array('id' => 5, 'option_id' => 3, 'table_id' => 3),
         ));
         // insert column
-        $this->db->insert_batch($this->cms_complete_table_name('column'), array(
+        $this->db->insert_batch($this->t('column'), array(
             array('column_id' => 1, 'table_id' => 1, 'name' => 'citizen_id', 'caption' => 'Citizen Id', 'data_type' => 'int', 'data_size' => 10, 'role' => 'primary', 'lookup_table_id' => NULL, 'lookup_column_id' => NULL, 'relation_table_id' => NULL, 'relation_table_column_id' => NULL, 'relation_selection_column_id' => NULL, 'relation_priority_column_id' => NULL, 'selection_table_id' => NULL, 'selection_column_id' => NULL, 'priority' => 0, 'value_selection_mode' => NULL, 'value_selection_item' => NULL),
             array('column_id' => 2, 'table_id' => 1, 'name' => 'city_id', 'caption' => 'City', 'data_type' => 'int', 'data_size' => 10, 'role' => 'lookup', 'lookup_table_id' => 3, 'lookup_column_id' => 11, 'relation_table_id' => NULL, 'relation_table_column_id' => NULL, 'relation_selection_column_id' => NULL, 'relation_priority_column_id' => NULL, 'selection_table_id' => NULL, 'selection_column_id' => NULL, 'priority' => 1, 'value_selection_mode' => NULL, 'value_selection_item' => NULL),
             array('column_id' => 3, 'table_id' => 1, 'name' => 'name', 'caption' => 'Name', 'data_type' => 'varchar', 'data_size' => 50, 'role' => '', 'lookup_table_id' => 0, 'lookup_column_id' => NULL, 'relation_table_id' => NULL, 'relation_table_column_id' => NULL, 'relation_selection_column_id' => NULL, 'relation_priority_column_id' => NULL, 'selection_table_id' => NULL, 'selection_column_id' => NULL, 'priority' => 2, 'value_selection_mode' => NULL, 'value_selection_item' => NULL),
@@ -289,7 +289,7 @@ class Info extends CMS_Module {
             array('column_id' => 32, 'table_id' => 3, 'name' => 'citizen', 'caption' => 'Citizen', 'data_type' => '', 'data_size' => NULL, 'role' => 'detail one to many', 'lookup_table_id' => 0, 'lookup_column_id' => NULL, 'relation_table_id' => 1, 'relation_table_column_id' => 2, 'relation_selection_column_id' => NULL, 'relation_priority_column_id' => NULL, 'selection_table_id' => NULL, 'selection_column_id' => NULL, 'priority' => 5, 'value_selection_mode' => NULL, 'value_selection_item' => NULL),
         ));
         // insert column_option
-        $this->db->insert_batch($this->cms_complete_table_name('column_option'), array(
+        $this->db->insert_batch($this->t('column_option'), array(
             array('id' => 1, 'column_id' => 3, 'option_id' => 5),
             array('id' => 2, 'column_id' => 3, 'option_id' => 6),
             array('id' => 3, 'column_id' => 11, 'option_id' => 5),
