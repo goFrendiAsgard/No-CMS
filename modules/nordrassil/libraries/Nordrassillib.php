@@ -67,6 +67,7 @@ class Nordrassillib{
 		return file_get_contents($file_name);
 	}
 	public function write_file($file_name, $content){
+		@chmod(dirname($file_name), 0777);
 	    if(file_exists($file_name)){
 	        @chmod($file_name, 0777);
             if(file_get_contents($file_name) != $content){
@@ -74,7 +75,6 @@ class Nordrassillib{
                 copy($file_name, $backup_file_name);
             }
 	    }
-        @chmod(dirname($file_name), 0777);
 		file_put_contents($file_name, $content);
 		@chmod($file_name, 0777);
 	}
@@ -86,8 +86,8 @@ class Nordrassillib{
 	public function make_directory($directory_name){
 		if(!is_dir($directory_name)){
 			mkdir($directory_name,0777,TRUE);
-			@chmod($directory_name,0777);
 		}
+		@chmod($directory_name,0777);
 	}
 	public function read_view($view_name, $data=NULL, $pattern=NULL, $replacement=NULL){
 		$string = $this->ci->load->view($view_name,$data,True);

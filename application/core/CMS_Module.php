@@ -615,8 +615,8 @@ class CMS_Module extends CMS_Controller
         foreach ($this->BACKEND_NAVIGATIONS as $navigation) {
             foreach ($verb_list as $verb) {
                 $PRIVILEGES[] = array(
-                'privilege_name' => $verb.'_'.$this->__get_from_array($navigation, 'navigation_name', ''),
-                'description' => $verb.' '.$this->__get_from_array($navigation, 'navigation_name', ''),
+                'privilege_name' => $verb.'_'.$this->__get_from_array($navigation, 'entity_name', ''),
+                'description' => $verb.' '.$this->__get_from_array($navigation, 'entity_name', ''),
             );
             }
         }
