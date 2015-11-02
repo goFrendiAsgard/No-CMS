@@ -261,9 +261,8 @@ class CMS_Model extends CI_Model
     public function is_record_exists($table_name, $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
     {
         $this->_cms_build_where($where, $values, $mode, $like, $side);
-        $query = $this->db->get($table_name);
         // return TRUE if record exist
-        return $query->num_rows() > 0;
+        return $this->db->count_all_results($table_name) > 0;
     }
 
     public function get_record($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')

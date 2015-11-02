@@ -115,7 +115,7 @@ class CMS_Controller extends MX_Controller
         }
 
         /*
-        if(!$this->input->is_ajax_request()){
+        if(!$this->input->is_ajax_request() && ERROR_REPORTING == 'development'){
             $this->output->enable_profiler(1);
         }*/
     }
