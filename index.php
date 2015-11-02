@@ -292,9 +292,6 @@ define('PRIV_AUTHENTICATED',        3);
 define('PRIV_AUTHORIZED',           4);
 define('PRIV_EXCLUSIVE_AUTHORIZED', 5);
 
-// allow short tag
-ini_set('short_open_tag', 'On');
-
 // is subsite is invalid then redirect to the main website.
 if( INVALID_SUBSITE || (CMS_SUBSITE != '' && !is_dir('./'.$application_folder.'/config/site-'.CMS_SUBSITE)) ){
     $address = full_url($_SERVER);
