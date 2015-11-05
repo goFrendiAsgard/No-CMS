@@ -26,7 +26,7 @@
         ?>
         <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
-          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <script src="{{ BASE_URL }}assets/no_cms/js/html5.js"></script><script src="{{ BASE_URL }}assets/no_cms/js/respond.min.js"></script>
         <![endif]-->
         <script type="text/javascript">{{ widget_name:section_custom_script }}</script>
         {{ widget_name:section_top_fix }}

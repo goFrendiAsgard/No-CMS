@@ -26,7 +26,7 @@
         ?>
         <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
-          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+            <script src="{{ BASE_URL }}assets/no_cms/js/html5.js"></script><script src="{{ BASE_URL }}assets/no_cms/js/respond.min.js"></script>
         <![endif]-->
         <script type="text/javascript">{{ widget_name:section_custom_script }}</script>
         {{ widget_name:section_top_fix }}
@@ -35,7 +35,7 @@
                 <div id="__section-banner">
                     {{ widget_name:section_banner }}
                 </div>
-                <div>     
+                <div>
                     <div id="__section-left-and-content" class="col-md-9">
                         <div>{{ navigation_path }}</div><hr />
                         <div>
@@ -52,10 +52,10 @@
         </div><!--/.fluid-container-->
         <footer>{{ widget_name:section_bottom }}</footer>
         <script type="text/javascript">
-            $(document).ready(function(){            
+            $(document).ready(function(){
                 // if section-left is empty, remove it
                 if($.trim($('#__section-left').html()) == ''){
-                    $('#__section-left').remove();        
+                    $('#__section-left').remove();
                 }else{
                     $('#__section-content').removeClass('col-md-12');
                     $('#__section-content').addClass('col-md-9');
@@ -71,7 +71,7 @@
                 // if section-banner is empty, remove it
                 if($.trim($('__section-banner').html()) == ''){
                     $('__section-banner').remove();
-                }            
+                }
             });
         </script>
     </body>
