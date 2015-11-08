@@ -50,9 +50,11 @@
 
 var REQUEST = new Object();
 function chosen_ajaxify(id, ajax_url){
+    var div_id = id;
+    div_id = div_id.split("-").join("_");
     // if single
-    if($('div#' + id + '_chosen').hasClass('chosen-container-single')){
-        $('div#' + id + '_chosen' + ' .chosen-search input').bindWithDelay('keyup', function(event){
+    if($('div#' + div_id + '_chosen').hasClass('chosen-container-single')){
+        $('div#' + div_id + '_chosen' + ' .chosen-search input').bindWithDelay('keyup', function(event){
             // ignore arrow key
             if(event.keyCode >= 37 && event.keyCode <= 40){
                 return null;
@@ -66,10 +68,10 @@ function chosen_ajaxify(id, ajax_url){
                 REQUEST[id].abort();
             }
             // get keyword and build regex pattern (use to emphasis search result)
-            var keyword = $('div#' + id + '_chosen' + ' .chosen-search input').val();
+            var keyword = $('div#' + div_id + '_chosen' + ' .chosen-search input').val();
             var keyword_pattern = new RegExp(keyword, 'gi');
             // remove all options of chosen
-            $('div#' + id + '_chosen ul.chosen-results').empty();
+            $('div#' + div_id + '_chosen ul.chosen-results').empty();
             // remove all options of original select
             $("#"+id).empty();
             REQUEST[id] = $.ajax({
@@ -84,17 +86,17 @@ function chosen_ajaxify(id, ajax_url){
                     });
                 },
                 complete: function(){
-                    keyword = $('div#' + id + '_chosen' + ' .chosen-search input').val();
+                    keyword = $('div#' + div_id + '_chosen' + ' .chosen-search input').val();
                     // update chosen
                     $("#"+id).trigger("chosen:updated");
                     // some trivial UI adjustment
-                    $('div#' + id + '_chosen').removeClass('chosen-container-single-nosearch');
+                    $('div#' + div_id + '_chosen').removeClass('chosen-container-single-nosearch');
 
-                    $('div#' + id + '_chosen' + ' .chosen-search input').val(keyword);
-                    $('div#' + id + '_chosen' + ' .chosen-search input').removeAttr('readonly');
-                    $('div#' + id + '_chosen' + ' .chosen-search input').focus();
+                    $('div#' + div_id + '_chosen' + ' .chosen-search input').val(keyword);
+                    $('div#' + div_id + '_chosen' + ' .chosen-search input').removeAttr('readonly');
+                    $('div#' + div_id + '_chosen' + ' .chosen-search input').focus();
                     // emphasis keywords
-                    $('div#' + id + '_chosen' + ' .active-result').each(function(){
+                    $('div#' + div_id + '_chosen' + ' .active-result').each(function(){
                         var html = $(this).html();
                         $(this).html(html.replace(keyword_pattern, function(matched){
                             return '<em>' + matched + '</em>';
@@ -103,8 +105,8 @@ function chosen_ajaxify(id, ajax_url){
                 }
             }, 500);
         });
-    } else if($('div#' + id + '_chosen').hasClass('chosen-container-multi')){ // if multi
-        $('div#' + id + '_chosen' + ' input').bindWithDelay('keyup', function(event){
+    } else if($('div#' + div_id + '_chosen').hasClass('chosen-container-multi')){ // if multi
+        $('div#' + div_id + '_chosen' + ' input').bindWithDelay('keyup', function(event){
             // ignore arrow key
             if(event.keyCode >= 37 && event.keyCode <= 40){
                 return null;
@@ -116,21 +118,21 @@ function chosen_ajaxify(id, ajax_url){
             if(REQUEST[id] != null){
                 REQUEST[id].abort();
             }
-            var old_input_width = $('div#' + id + '_chosen' + ' input').css('width');
+            var old_input_width = $('div#' + div_id + '_chosen' + ' input').css('width');
             // get keyword and build regex pattern (use to emphasis search result)
             var keyword = $(this).val();
             var keyword_pattern = new RegExp(keyword, 'gi');
             // old values and captions
             var old_values = new Array();
             var old_captions = new Array();
-            $('div#' + id + '_chosen'+ ' li.search-choice').each(function(){
+            $('div#' + div_id + '_chosen'+ ' li.search-choice').each(function(){
                 old_value = $(this).children('a.search-choice-close').attr('data-option-array-index');
                 old_caption = $(this).children('span').html();
                 old_values.push(old_value);
                 old_captions.push(old_caption);
             });
             // remove all options of chosen
-            $('div#' + id + '_chosen ul.chosen-results').empty();
+            $('div#' + div_id + '_chosen ul.chosen-results').empty();
             $("#"+id).empty();
             REQUEST[id] = $.ajax({
                 url: ajax_url + keyword,
@@ -158,15 +160,15 @@ function chosen_ajaxify(id, ajax_url){
                     });
                 },
                 complete: function(response){
-                    keyword = $('div#' + id + '_chosen' + ' input').val();
+                    keyword = $('div#' + div_id + '_chosen' + ' input').val();
                     $("#"+id).trigger("chosen:updated");
-                    $('div#' + id + '_chosen').removeClass('chosen-container-single-nosearch');
-                    $('div#' + id + '_chosen' + ' input').val(keyword);
-                    $('div#' + id + '_chosen' + ' input').removeAttr('readonly');
-                    $('div#' + id + '_chosen' + ' input').css('width', old_input_width);
-                    $('div#' + id + '_chosen' + ' input').focus();
+                    $('div#' + div_id + '_chosen').removeClass('chosen-container-single-nosearch');
+                    $('div#' + div_id + '_chosen' + ' input').val(keyword);
+                    $('div#' + div_id + '_chosen' + ' input').removeAttr('readonly');
+                    $('div#' + div_id + '_chosen' + ' input').css('width', old_input_width);
+                    $('div#' + div_id + '_chosen' + ' input').focus();
                     // put that underscores
-                    $('div#' + id + '_chosen' + ' .active-result').each(function(){
+                    $('div#' + div_id + '_chosen' + ' .active-result').each(function(){
                         var html = $(this).html();
                         $(this).html(html.replace(keyword_pattern, function(matched){
                             return '<em>' + matched + '</em>';

@@ -528,6 +528,114 @@ class Main extends CMS_Controller
         }
     }
 
+    public function _callback_field_groups($value, $primary_key){
+        if($value === NULL){
+            $value = array();
+        }
+        $query = $this->db->select('group_id, group_name')
+            ->from(cms_table_name('main_group'))
+            ->limit(20)
+            ->get();
+        $html = '<select id="field-groups" name="groups[]" multiple="multiple" size="8" class="form-control" data-placeholder="Select Groups">';
+        // add old values
+        foreach($value as $key=>$val){
+            $html .= '<option selected value = "'.$key.'" >'.$val.'</option>';
+        }
+        // add other values
+        foreach($query->result() as $row){
+            if(!array_key_exists($row->group_id, $value)){
+                $html .= '<option value = "'.$row->group_id.'" >'.$row->group_name.'</option>';
+            }
+        }
+        $html .= '</select>';
+        $html .= '<script>';
+        $html .= '$("#field-groups").chosen({allow_single_deselect:true, width:"100%", search_contains: true});';
+        $html .= 'chosen_ajaxify("field-groups", "{{ SITE_URL }}main/ajax/groups/");';
+        $html .= '</script>';
+        return $html;
+    }
+
+    public function _callback_field_users($value, $primary_key){
+        if($value === NULL){
+            $value = array();
+        }
+        $query = $this->db->select('user_id, user_name')
+            ->from(cms_table_name('main_user'))
+            ->limit(20)
+            ->get();
+        $html = '<select id="field-users" name="users[]" multiple="multiple" size="8" class="form-control" data-placeholder="Select users">';
+        // add old values
+        foreach($value as $key=>$val){
+            $html .= '<option selected value = "'.$key.'" >'.$val.'</option>';
+        }
+        // add other values
+        foreach($query->result() as $row){
+            if(!array_key_exists($row->user_id, $value)){
+                $html .= '<option value = "'.$row->user_id.'" >'.$row->user_name.'</option>';
+            }
+        }
+        $html .= '</select>';
+        $html .= '<script>';
+        $html .= '$("#field-users").chosen({allow_single_deselect:true, width:"100%", search_contains: true});';
+        $html .= 'chosen_ajaxify("field-users", "{{ SITE_URL }}main/ajax/users/");';
+        $html .= '</script>';
+        return $html;
+    }
+
+    public function _callback_field_privileges($value, $primary_key){
+        if($value === NULL){
+            $value = array();
+        }
+        $query = $this->db->select('privilege_id, privilege_name')
+            ->from(cms_table_name('main_privilege'))
+            ->limit(20)
+            ->get();
+        $html = '<select id="field-privileges" name="privileges[]" multiple="multiple" size="8" class="form-control" data-placeholder="Select privileges">';
+        // add old values
+        foreach($value as $key=>$val){
+            $html .= '<option selected value = "'.$key.'" >'.$val.'</option>';
+        }
+        // add other values
+        foreach($query->result() as $row){
+            if(!array_key_exists($row->privilege_id, $value)){
+                $html .= '<option value = "'.$row->privilege_id.'" >'.$row->privilege_name.'</option>';
+            }
+        }
+        $html .= '</select>';
+        $html .= '<script>';
+        $html .= '$("#field-privileges").chosen({allow_single_deselect:true, width:"100%", search_contains: true});';
+        $html .= 'chosen_ajaxify("field-privileges", "{{ SITE_URL }}main/ajax/privileges/");';
+        $html .= '</script>';
+        return $html;
+    }
+
+    public function _callback_field_navigations($value, $primary_key){
+        if($value === NULL){
+            $value = array();
+        }
+        $query = $this->db->select('navigation_id, navigation_name')
+            ->from(cms_table_name('main_navigation'))
+            ->limit(20)
+            ->get();
+        $html = '<select id="field-navigations" name="navigations[]" multiple="multiple" size="8" class="form-control" data-placeholder="Select navigations">';
+        // add old values
+        foreach($value as $key=>$val){
+            $html .= '<option selected value = "'.$key.'" >'.$val.'</option>';
+        }
+        // add other values
+        foreach($query->result() as $row){
+            if(!array_key_exists($row->navigation_id, $value)){
+                $html .= '<option value = "'.$row->navigation_id.'" >'.$row->navigation_name.'</option>';
+            }
+        }
+        $html .= '</select>';
+        $html .= '<script>';
+        $html .= '$("#field-navigations").chosen({allow_single_deselect:true, width:"100%", search_contains: true});';
+        $html .= 'chosen_ajaxify("field-navigations", "{{ SITE_URL }}main/ajax/navigations/");';
+        $html .= '</script>';
+        return $html;
+    }
+
     // AUTHORIZATION ===========================================================
     public function authorization()
     {
@@ -643,6 +751,7 @@ class Main extends CMS_Controller
             $this,
             '_after_update_user',
         ));
+        $crud->callback_field('groups', array($this, '_callback_field_groups'));
 
         if ($crud->getState() == 'edit') {
             $state_info = $crud->getStateInfo();
@@ -663,18 +772,24 @@ class Main extends CMS_Controller
         $output = $crud->render();
         $output->undeleted_id = array(1, $this->cms_user_id());
 
+
         // prepare css & js, add them to config
         $config = array();
         $asset = new Cms_asset();
         foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
+        $asset->add_css(base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'));
         $config['css'] = $asset->compile_css();
 
         foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
+        $asset->add_js(base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'));
+        $asset->add_js(base_url('assets/grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js'));
+        $asset->add_js(base_url('assets/nocms/js/gofrendi.chosen.ajaxify.js'));
         $config['js'] = $asset->compile_js();
+
         // show the view
         $this->view('main/main_user', $output, 'main_user_management', $config);
     }
@@ -774,6 +889,10 @@ class Main extends CMS_Controller
 
         $crud->set_language($this->cms_language());
 
+        $crud->callback_field('users', array($this, '_callback_field_users'));
+        $crud->callback_field('navigations', array($this, '_callback_field_navigations'));
+        $crud->callback_field('privileges', array($this, '_callback_field_privileges'));
+
         $output = $crud->render();
         $output->undeleted_id = array(1);
         $query = $this->db->select('group_id')->distinct()
@@ -789,11 +908,15 @@ class Main extends CMS_Controller
         foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
+        $asset->add_css(base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'));
         $config['css'] = $asset->compile_css();
 
         foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
+        $asset->add_js(base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'));
+        $asset->add_js(base_url('assets/grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js'));
+        $asset->add_js(base_url('assets/nocms/js/gofrendi.chosen.ajaxify.js'));
         $config['js'] = $asset->compile_js();
         // show the view
         $this->view('main/main_group', $output, 'main_group_management', $config);
@@ -934,6 +1057,8 @@ class Main extends CMS_Controller
             '_before_delete_navigation',
         ));
 
+        $crud->callback_field('groups', array($this, '_callback_field_groups'));
+
         $crud->set_language($this->cms_language());
 
         $output = $crud->render();
@@ -961,11 +1086,15 @@ class Main extends CMS_Controller
         foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
+        $asset->add_css(base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'));
         $config['css'] = $asset->compile_css();
 
         foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
+        $asset->add_js(base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'));
+        $asset->add_js(base_url('assets/grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js'));
+        $asset->add_js(base_url('assets/nocms/js/gofrendi.chosen.ajaxify.js'));
         $config['js'] = $asset->compile_js();
         // show the view
         $this->view('main/main_navigation', $output, 'main_navigation_management', $config);
@@ -1348,6 +1477,8 @@ class Main extends CMS_Controller
 
         $crud->set_language($this->cms_language());
 
+        $crud->callback_field('groups', array($this, '_callback_field_groups'));
+
         $output = $crud->render();
 
         // prepare css & js, add them to config
@@ -1356,11 +1487,15 @@ class Main extends CMS_Controller
         foreach ($output->css_files as $file) {
             $asset->add_css($file);
         }
+        $asset->add_css(base_url('assets/grocery_crud/css/jquery_plugins/chosen/chosen.css'));
         $config['css'] = $asset->compile_css();
 
         foreach ($output->js_files as $file) {
             $asset->add_js($file);
         }
+        $asset->add_js(base_url('assets/grocery_crud/js/jquery_plugins/jquery.chosen.min.js'));
+        $asset->add_js(base_url('assets/grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js'));
+        $asset->add_js(base_url('assets/nocms/js/gofrendi.chosen.ajaxify.js'));
         $config['js'] = $asset->compile_js();
         // show the view
         $this->view('main/main_privilege', $output, 'main_privilege_management', $config);

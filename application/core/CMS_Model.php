@@ -2670,6 +2670,7 @@ class CMS_Model extends CI_Model
         $config['bcc_batch_mode'] = (boolean) $this->cms_get_config('cms_email_bcc_batch_mode');
         $config['bcc_batch_size'] = (integer) $this->cms_get_config('cms_email_bcc_batch_size');
 
+
         $ssl = $this->email->smtp_crypto === 'ssl' ? 'ssl://' : '';
         // if protocol is (not smtp) or (is smtp and able to connect)
         if ($config['protocol'] != 'smtp' || ($config['protocol'] == 'smtp' && $this->cms_is_connect($ssl.$config['smtp_host'], $config['smtp_port']))) {
