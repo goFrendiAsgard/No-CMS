@@ -2838,8 +2838,11 @@ class CMS_Model extends CI_Model
                     ->from(cms_table_name('main_config'))
                     ->get();
                 foreach ($query->result() as $row) {
+                    // get value and config_name
                     $value = $row->value;
+                    $value = $value === null? '' : $value;
                     $config_name = $row->config_name;
+                    // save to cache
                     self::$__cms_model_properties['config'][$config_name] = $value;
                     cms_config($config_name, $value);
                     if ($config_name == $name) {

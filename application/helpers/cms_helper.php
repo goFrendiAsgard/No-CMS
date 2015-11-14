@@ -15,10 +15,16 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
         $replacement = '';
         $str = file_get_contents($file_name);
         $str = preg_replace($pattern, $replacement, $str);
-        @chmod($file_name,0777);
-        if(strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
-            @file_put_contents($file_name, $str);
-            @chmod($file_name,0555);
+        $mode_changed = @chmod($file_name,0777);
+        if($mode_changed && strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
+            // strip php tag
+            $executable_str = trim(trim(trim($str), '<?php'),'?>');
+            $valid_executable = @eval($executable_str . PHP_EOL . 'return TRUE;');
+            // Only write str if it is valid PHP
+            if($valid_executable){
+                @file_put_contents($file_name, $str);
+                @chmod($file_name,0555);
+            }
         }
         return FALSE;
     }else{
@@ -55,10 +61,16 @@ function __cms_config($key, $value = NULL, $delete = FALSE, $file_name, $config_
             else{
                 $str = preg_replace($pattern, $replacement, $str);
             }
-            @chmod($file_name,0777);
-            if(strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
-                @file_put_contents($file_name, $str, LOCK_EX);
-                @chmod($file_name,0555);
+            $mode_changed = @chmod($file_name,0777);
+            if($mode_changed && strpos($str, '<?php') !== FALSE && strpos($str, '$config') !== FALSE){
+                // strip php tag
+                $executable_str = trim(trim(trim($str), '<?php'),'?>');
+                $valid_executable = @eval($executable_str . PHP_EOL . 'return TRUE;');
+                // Only write str if it is valid php
+                if($valid_executable){
+                    @file_put_contents($file_name, $str, LOCK_EX);
+                    @chmod($file_name,0555);
+                }
             }
             return $value;
         }

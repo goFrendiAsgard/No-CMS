@@ -24,7 +24,7 @@
         <?php
             $this->tabs = isset($this->tabs)? $this->tabs : NULL;
             $this->tab_glyphicons = isset($this->tab_glyphicons)? $this->tab_glyphicons : NULL;
-            $this->outside_tab = isset($this->outside_tab)? $this->outside_tab : 0;                
+            $this->outside_tab = isset($this->outside_tab)? $this->outside_tab : 0;
             $counter = 0;
             $tab_index=-1;
             $tab_item_counter = 0;
@@ -49,7 +49,7 @@
                                 if(array_key_exists($key, $this->tab_glyphicons)){
                                     $caption = '<i class ="glyphicon ' . $this->tab_glyphicons[$key] . '"></i>&nbsp;' . $key;
                                 }
-                                echo '<li class="'.$active.'"><a href="#'.str_replace(' ','',$key).'" role="tab" data-toggle="tab">'.$caption.'</a></li>';
+                                echo '<li class="'.$active.'"><a href="#'.str_replace(' ','',$key).'" role="tab" data-toggle="tab">{{ language:'.$caption.' }}</a></li>';
                                 $active = '';
                             }
                             echo '</ul>';
@@ -60,11 +60,11 @@
                         }else if($tab_item_counter == ($this->tabs[$tab_key[$tab_index]]) && $tab_index<count($tab_key)-1){
                             $tab_index ++;
                             $tab_item_counter = 0;
-                            
+
                             echo '</div>';
-                            echo '<div class="tab-pane col-md-12" id="'.str_replace(' ','',$tab_key[$tab_index]).'">';                                
-                        }                            
-                    }                        
+                            echo '<div class="tab-pane col-md-12" id="'.str_replace(' ','',$tab_key[$tab_index]).'">';
+                        }
+                    }
                 }
                 $even_odd = $counter % 2 == 0 ? 'odd' : 'even';
                 $counter++;

@@ -80,6 +80,14 @@ class Extended_grocery_crud extends Grocery_CRUD{
         $this->form_validation = $this->_ci->form_validation;
     }
 
+    public function cms_lang($keyword){
+        if(isset($this->_ci->no_cms_autoupdate_model)){
+            return $this->_ci->no_cms_autoupdate_model->cms_lang($keyword);
+        }else{
+            return $keyword;
+        }
+    }
+
     public function set_tabs($data){
         $this->tabs = $data;
     }
