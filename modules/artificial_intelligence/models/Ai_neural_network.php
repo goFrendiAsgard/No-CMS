@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__).'/ai_core.php');
+require_once(dirname(__FILE__).'/Ai_core.php');
 
 /**
  * Description of nn
@@ -7,7 +7,7 @@ require_once(dirname(__FILE__).'/ai_core.php');
  * @author gofrendi
  */
 class Ai_neural_network extends AI_Core {
-    
+
     protected $nn_weights;          // float[]  , the weight between neurons (usually called as synapse or omega)
     protected $nn_neuronCount;      // int[]    , the count of neuron in each layer
     protected $nn_learningRate;     // float    , the learning rate of neural network
@@ -17,11 +17,11 @@ class Ai_neural_network extends AI_Core {
     protected $nn_MSE;              // float[]  , the MSE of each iteration
     protected $nn_time;             // float    , the time
     protected $nn_dataset;          // float[][], the dataset for training
-    
+
     public function __construct(){
         parent::__construct();
     }
-    
+
     protected function begin(){
         $property = $this->core_getProperty();
         $this->nn_weights       = $property["nn_weights"];
@@ -34,7 +34,7 @@ class Ai_neural_network extends AI_Core {
         $this->nn_time          = $property["nn_time"];
         $this->nn_dataset       = $property["nn_dataset"];
     }
-    
+
     protected function end(){
         $this->core_saveProperty(
                 array(
@@ -47,7 +47,7 @@ class Ai_neural_network extends AI_Core {
                     "nn_MSE",
                     "nn_time",
                     "nn_dataset",
-                ), 
+                ),
                 array(
                     $this->nn_weights,
                     $this->nn_neuronCount,
@@ -61,7 +61,7 @@ class Ai_neural_network extends AI_Core {
                 )
               );
     }
-    
+
     private function weightIndex($fromLayer, $fromNeuron, $toNeuron){
         //$this->begin();
         $index = NULL;
@@ -80,13 +80,13 @@ class Ai_neural_network extends AI_Core {
             $startIndex += 2 * $this->nn_neuronCount[0]; //+1 for bias
             for($i=0; $i<$fromLayer; $i++){
                 $startIndex += (($this->nn_neuronCount[$i]+1) * $this->nn_neuronCount[$i+1]); //+1 for bias
-            } 
-            $index = $startIndex + ($fromNeuron * $this->nn_neuronCount[$fromLayer+1]) +  $toNeuron; 
+            }
+            $index = $startIndex + ($fromNeuron * $this->nn_neuronCount[$fromLayer+1]) +  $toNeuron;
         }
         $index = (int) $index;
         return $index;
     }
-    
+
     //if fromLayer = (-1) : from input to input layer
     protected function weight($fromLayer, $fromNeuron, $toNeuron, $value = NULL){
         $index = $this->weightIndex($fromLayer, $fromNeuron, $toNeuron);
@@ -99,7 +99,7 @@ class Ai_neural_network extends AI_Core {
             return $this->nn_weights[$index];
         }
     }
-    
+
     protected function bias($fromLayer, $toNeuron, $value = NULL){
         if($fromLayer == -1){
             $fromNeuron = $this->nn_neuronCount[0]; //from input
@@ -108,19 +108,19 @@ class Ai_neural_network extends AI_Core {
         }
         return $this->weight($fromLayer, $fromNeuron, $toNeuron, $value);
     }
-    
-    
+
+
     public function set($dataset = array(array(array(0,0),array(0))),$neuronCount = array(2,3,3,2), $learningRate = 0.00001, $maxMSE = 0.1, $maxLoop = 10){
         $this->nn_dataset = $dataset;
         $this->nn_neuronCount = $neuronCount;
         $this->nn_learningRate = $learningRate;
         $this->nn_maxMSE = $maxMSE;
         $this->nn_maxLoop = $maxLoop;
-        $this->nn_weights = array(); 
+        $this->nn_weights = array();
         $this->nn_loop = 0;
         $this->nn_MSE = array();
         $this->nn_time = 0;
-        
+
         //from layer -1
         for($i=0; $i<$neuronCount[0]; $i++){ //from input to input neuron
             $this->weight(-1, $i, $i, (mt_rand(0, 100)/50)-1 );
@@ -131,7 +131,7 @@ class Ai_neural_network extends AI_Core {
         //from layer 0 until from layer n-1
         for($i=0; $i<count($neuronCount)-1; $i++){ //fromLayer
             for($j=0; $j<$neuronCount[$i]; $j++){ //fromNeuron
-                for($k=0; $k<$neuronCount[$i+1]; $k++){ //toNeuron                
+                for($k=0; $k<$neuronCount[$i+1]; $k++){ //toNeuron
                     $this->weight($i, $j, $k, (mt_rand(0, 100)/50)-1 );
                 }
             }
@@ -141,27 +141,27 @@ class Ai_neural_network extends AI_Core {
         }
         $this->end();
     }
-    
+
     //OVERRIDE THIS !!!
     protected function activationFunction($input){
         return 1/(1+pow(M_E,-$input)); //M_E is e (2.7.....)
     }
-    
+
     //OVERRIDE THIS !!!
-    protected function activationFunctionDerivative($input){ 
+    protected function activationFunctionDerivative($input){
         return $this->activationFunction($input)*(1-$this->activationFunction($input));
-    } 
-    
+    }
+
     protected function forward($input=NULL, &$allNeuronOutput=NULL, &$allNeuronInput=NULL){
-        
+
         $allNeuronInput = array(); //input of every neuron
         $allNeuronOutput = array(); //output of every neuron activationFunction(input)
-        
+
         $lastIn = array();
         $lastOut = array();
-        
-        
-        for($layer=0; $layer<count($this->nn_neuronCount); $layer++){                
+
+
+        for($layer=0; $layer<count($this->nn_neuronCount); $layer++){
             if($layer==0){
                 $lastOut = array();
                 for($i=0; $i<$this->nn_neuronCount[0]; $i++){ //toNeuron
@@ -175,7 +175,7 @@ class Ai_neural_network extends AI_Core {
                 $nextOut = array();
                 for($i=0; $i<$this->nn_neuronCount[$layer]; $i++){ //toNeuron
                     $value = 0;
-                    for($j=0; $j<$this->nn_neuronCount[$layer-1]; $j++){ //fromNeuron 
+                    for($j=0; $j<$this->nn_neuronCount[$layer-1]; $j++){ //fromNeuron
                         $value += $this->weight($layer-1, $j, $i) * $lastOut[$j];
                     }
                     $value += $this->bias($layer-1, $i) * -1;
@@ -187,23 +187,23 @@ class Ai_neural_network extends AI_Core {
             }
             $allNeuronInput[$layer] = $lastIn;
             $allNeuronOutput[$layer] = $lastOut;
-        } 
-        
+        }
+
         if(count($allNeuronOutput)>0){
             $output= $allNeuronOutput[count($allNeuronOutput)-1];
             return $output;
         }
-        
+
     }
-    
-    
-    
-    protected function backward($input, $desiredOutput, $output, $allNeuronOutput, $allNeuronInput){       
-        
+
+
+
+    protected function backward($input, $desiredOutput, $output, $allNeuronOutput, $allNeuronInput){
+
         $errors = array();
-        
+
         for($layer=count($this->nn_neuronCount)-1; $layer>=0; $layer--){
-            
+
             for($neuron=0; $neuron<$this->nn_neuronCount[$layer]; $neuron++){
                 //delta = target_output - real_output
                 if($layer==count($this->nn_neuronCount)-1){
@@ -219,28 +219,28 @@ class Ai_neural_network extends AI_Core {
                 $error = $this->activationFunctionDerivative($allNeuronInput[$layer][$neuron]) * ($delta);
                 $errors[$layer][$neuron] = $error;
             }
-            
+
             for($neuron=0; $neuron<$this->nn_neuronCount[$layer]; $neuron++){ //alpha
-                
+
                 $layerFrom = $layer-1;
                 if($layerFrom>0){
-                    $maxNeuronFrom = $this->nn_neuronCount[$layerFrom]; 
+                    $maxNeuronFrom = $this->nn_neuronCount[$layerFrom];
                 }else{
                     $maxNeuronFrom = $this->nn_neuronCount[0];
                 }
                 //adjust weights
                 if($layerFrom>=0){
-                    for($neuronFrom = 0; $neuronFrom<$maxNeuronFrom; $neuronFrom++){ 
+                    for($neuronFrom = 0; $neuronFrom<$maxNeuronFrom; $neuronFrom++){
                         $value = $this->weight($layerFrom, $neuronFrom, $neuron)+
                                 $this->nn_learningRate*$errors[$layer][$neuron]*$allNeuronOutput[$layerFrom][$neuronFrom];
-                        
+
                         $this->weight($layerFrom, $neuronFrom, $neuron, $value);
                     }
                 }else{
                     $value = $this->weight($layerFrom, $neuron, $neuron)+
                             $this->nn_learningRate*$errors[$layer][$neuron]*$input[$neuron];
                     $this->weight($layerFrom, $neuron, $neuron, $value);
-                    
+
                 }
                 //adjust biases
                 if($layerFrom>=0){
@@ -251,34 +251,34 @@ class Ai_neural_network extends AI_Core {
                             $this->nn_learningRate*$errors[$layer][$neuron]*-1;
                 }
                 $this->bias($layerFrom, $neuron, $value);
-                
+
             }
-            
+
         }
-        
+
     }
-    
+
     public function train($dataSet, $use_GA=TRUE){
-        
+
         set_time_limit(0);                   // ignore php timeout
         ignore_user_abort(true);             // keep on going even if user pulls the plug*
         while (ob_get_level())
             ob_end_clean();                  // remove output buffers
         ob_implicit_flush(true);             // output stuff directly
-        
+
         $this->begin();
         if(!isset($dataSet)){
             $dataSet = $this->nn_dataset;
         }
-        
+
         for($loop=0; $loop<$this->nn_maxLoop; $loop++){
-            
-            
-            $this->begin();  
-            
+
+
+            $this->begin();
+
             $startTime = microtime(true);
-            
-        
+
+
             $output = array(); //output of the last neuron
             $desiredOutput = array(); //desired output, target
             $allOutput = array(); //output of every neuron
@@ -291,7 +291,7 @@ class Ai_neural_network extends AI_Core {
             for($data=0; $data<$dataSetCount; $data++){
                 $datasetInput = $dataSet[$data][0];
                 $desiredOutput = $dataSet[$data][1];
-                $output = $this->forward($datasetInput, $allOutput, $allInput); 
+                $output = $this->forward($datasetInput, $allOutput, $allInput);
                 $this->backward($datasetInput, $desiredOutput, $output, $allOutput, $allInput);
                 for($i=0; $i<$outputCount; $i++){
                     $delta = $output[$i] - $desiredOutput[$i];
@@ -300,30 +300,30 @@ class Ai_neural_network extends AI_Core {
             }
             $MSE /= ($dataSetCount * $outputCount);
             $this->nn_MSE[] = (float)$MSE;
-            
+
             $this->nn_loop++;
-            
+
             $endTime = microtime(true);
             $this->nn_time += $endTime - $startTime;
-            
+
             $this->end();
-            
+
             //exit if there is stop signal
             if($this->cms_ci_session("Neural_Network_Stop_".$this->core_identifier())){
                 $this->cms_ci_session("Neural_Network_Stop_".$this->core_identifier(), FALSE);
                 break;
             }
-            
+
             //exit if MSE lower than maxMSE
             if($this->nn_MSE[$this->nn_loop-1] <= $this->nn_maxMSE){
-                break;                
-            } 
-            
+                break;
+            }
+
         }
-        
+
         $this->commit();
     }
-    
+
     public function out($input, $customWeights = NULL){
         $this->begin();
         if(isset($customWeights)){
@@ -338,15 +338,15 @@ class Ai_neural_network extends AI_Core {
         }
         return $result;
     }
-    
+
     public function currentState(){
-        
-        
+
+
         $this->begin();
-        
+
         $property = $this->core_getProperty();
         if(!isset($property)) return NULL;
-        
+
         $weights = array();
         for($i=0; $i<$this->nn_neuronCount[0]; $i++){
             $weights[] = array(
@@ -380,9 +380,9 @@ class Ai_neural_network extends AI_Core {
                     );
             }
         }
-        
+
         $property["nn_weights"] = $weights;
-        
+
         $dataset = array();
         for($i=0; $i<count($this->nn_dataset); $i++){
             $dataset[$i] = array(
@@ -392,14 +392,14 @@ class Ai_neural_network extends AI_Core {
             );
         }
         $property["nn_dataset"] = $dataset;
-        
+
         return $property;
     }
-    
+
     public function stop(){
-        $this->cms_ci_session("Neural_Network_Stop_".$this->core_identifier(), TRUE);        
+        $this->cms_ci_session("Neural_Network_Stop_".$this->core_identifier(), TRUE);
     }
-    
+
     public function getWeight($fromLayer, $fromNeuron, $toNeuron){
         $this->begin();
         return $this->weight($fromLayer, $fromNeuron, $toNeuron);
@@ -408,5 +408,5 @@ class Ai_neural_network extends AI_Core {
         $this->begin();
         return $this->bias($fromLayer, $toNeuron);
     }
-    
+
 }

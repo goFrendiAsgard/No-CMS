@@ -204,7 +204,7 @@
         // Add component to table
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         $('#<?php echo $table_id; ?> tbody').append(component);
-        __mutate_input('<?=$table_id?>');
+        __mutate_input('<?php echo $table_id; ?>');
 
     } // end of ADD ROW FUNCTION
 
@@ -224,7 +224,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // INITIALIZATION
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        __synchronize('<?=$real_input_id?>', <?=$var_data?>);
+        __synchronize('<?php echo $real_input_id; ?>', <?php echo $var_data; ?>);
         for(var i=0; i<<?php echo $var_data; ?>.update.length; i++){
             <?php echo $fn_add_table_row; ?>(<?php echo $var_data; ?>.update[i].data);
             <?php echo $var_record_index; ?>++;
@@ -255,7 +255,7 @@
             <?php echo $var_record_index; ?>++;
 
             // synchronize to the <?php echo $real_input_id.PHP_EOL; ?>
-            __synchronize('<?=$real_input_id?>', <?=$var_data?>);
+            __synchronize('<?php echo $real_input_id; ?>', <?php echo $var_data; ?>);
         });
 
 
@@ -292,7 +292,7 @@
                     }
                 }
             }
-            __synchronize('<?=$real_input_id?>', <?=$var_data?>);
+            __synchronize('<?php echo $real_input_id; ?>', <?php echo $var_data; ?>);
         });
 
 
@@ -332,7 +332,7 @@
                     }
                 }
             }
-            __synchronize('<?=$real_input_id?>', <?=$var_data?>);
+            __synchronize('<?php echo $real_input_id; ?>', <?php echo $var_data; ?>);
         });
 
 
@@ -342,16 +342,16 @@
     // reset field on save
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     $(document).ajaxSuccess(function(event, xhr, settings) {
-        if (settings.url == "{{ module_site_url }}manage_<?=underscore($stripped_master_table_name)?>/index/insert") {
+        if (settings.url == "{{ module_site_url }}manage_<?php echo underscore($stripped_master_table_name); ?>/index/insert") {
             response = $.parseJSON(xhr.responseText);
             if(response.success == true){
                 <?php echo $var_data ?> = {update:new Array(), insert:new Array(), delete:new Array()};
                 $('#md_table_<?php echo $master_column_name; ?> tr').not(':first').remove();
-                __synchronize('<?=$real_input_id?>', <?=$var_data?>);
+                __synchronize('<?php echo $real_input_id; ?>', <?php echo $var_data; ?>);
             }
         }else{
             // avoid detail inserted twice on update
-            update_url = "{{ module_site_url }}manage_<?=underscore($stripped_master_table_name)?>/index/update";
+            update_url = "{{ module_site_url }}manage_<?php echo underscore($stripped_master_table_name); ?>/index/update";
             if(settings.url.substr(0, update_url.length) == update_url){
                 response = $.parseJSON(xhr.responseText);
                 if(response.success == true){

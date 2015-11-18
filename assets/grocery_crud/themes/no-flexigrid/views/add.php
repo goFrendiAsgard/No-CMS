@@ -17,7 +17,7 @@
             <div class='clear'></div>
         </div>
     </div>
-<div id="main-table-loading"><img id="img-loader" src="<?=base_url('assets/nocms/images/ajax-loader.gif')?>" /></div>
+<div id="main-table-loading"><img id="img-loader" src="<?php echo base_url('assets/nocms/images/ajax-loader.gif'); ?>" /></div>
 <div id='main-table-box' style="display:none">
     <?php echo form_open( $insert_url, 'method="post" id="crudForm" autocomplete="off" enctype="multipart/form-data"'); ?>
     <div class='form-div form-horizontal row'>
@@ -108,11 +108,11 @@
                     $width_accumulator += $width_addition;
                 }
         ?>
-                    <div class='form-field-box form-group col-md-<?=$box_width?> <?php echo $even_odd?>' id="<?php echo $field->field_name; ?>_field_box">
-                        <label for="field-<?=$field->field_name?>" class='form-display-as-box col-md-<?=$label_width?>' id="<?php echo $field->field_name; ?>_display_as_box">
+                    <div class='form-field-box form-group col-md-<?php echo $box_width; ?> <?php echo $even_odd; ?>' id="<?php echo $field->field_name; ?>_field_box">
+                        <label for="field-<?php echo $field->field_name; ?>" class='form-display-as-box col-md-<?php echo $label_width; ?>' id="<?php echo $field->field_name; ?>_display_as_box">
                             {{ language:<?php echo $input_fields[$field->field_name]->display_as; ?> }}<?php echo ($input_fields[$field->field_name]->required)? "<span class='required'>*</span> " : ""; ?>
                         </label>
-                        <div class='form-input-box col-md-<?=$input_width?>' id="<?php echo $field->field_name; ?>_input_box">
+                        <div class='form-input-box col-md-<?php echo $input_width; ?>' id="<?php echo $field->field_name; ?>_input_box">
                             <?php echo $input_fields[$field->field_name]->input?>
                         </div>
                     </div>

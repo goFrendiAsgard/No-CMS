@@ -243,3 +243,24 @@ function get_decoded_cookie($key, $chipper){
     }
     return NULL;
 }
+
+function call_cms_function(){
+    // get number of arguments
+    $numargs = func_num_args();
+    // The first argument is method, the rest are args
+    $arg_list = func_get_args();
+    $method = $arg_list[0];
+    $args = array();
+    for($i=1; $i<$numargs; $i++){
+        $args[] = $arg_list[$i];
+    }
+    // get ci instance
+    $ci = &get_instance();
+    if(property_exists($ci, 'no_cms_autoupdate_model')){
+        return call_user_func_array(array($ci->no_cms_autoupdate_model, $method), $args);
+    }else if(property_exists($ci, 'no_cms_model')){
+        return call_user_func_array(array($ci->no_cms_model, $method), $args);
+    }else{
+        return NULL;
+    }
+}

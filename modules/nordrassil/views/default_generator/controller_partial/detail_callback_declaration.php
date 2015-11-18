@@ -99,18 +99,18 @@
     // returned on insert and edit
     public function _callback_field_{{ field_name }}($value, $primary_key){
         // Options for detail table's column with SET type
-        $set_column_option_list = array(<?=$set_script?>);
+        $set_column_option_list = array(<?php echo $set_script; ?>);
         // Options for detail table's column with ENUM type
-        $enum_column_option_list = array(<?=$enum_script?>);
+        $enum_column_option_list = array(<?php echo $enum_script; ?>);
         // Detail table's one-to-many columns configurations
-        $lookup_config_list = array(<?=$lookup_script?>);
+        $lookup_config_list = array(<?php echo $lookup_script; ?>);
         // Detail table's many-to-many columns configurations
-        $many_to_many_config_list = array(<?=$many_to_many_script?>);
+        $many_to_many_config_list = array(<?php echo $many_to_many_script; ?>);
         // Prepare the data by using defined configurations and options
         $data = $this->_one_to_many_callback_field_data(
-                '<?=$detail_table_name?>', // DETAIL TABLE NAME
-                '<?=$detail_primary_key?>', // DETAIL PK NAME
-                '<?=$detail_foreign_key_name?>', // DETAIL FK NAME
+                '<?php echo $detail_table_name; ?>', // DETAIL TABLE NAME
+                '<?php echo $detail_primary_key; ?>', // DETAIL PK NAME
+                '<?php echo $detail_foreign_key_name; ?>', // DETAIL FK NAME
                 $primary_key, // CURRENT TABLE PK VALUE
                 $lookup_config_list, // LOOKUP CONFIGS
                 $many_to_many_config_list, // MANY TO MANY CONFIGS
@@ -124,13 +124,13 @@
     // returned on view
     public function _callback_column_{{ field_name }}($value, $row){
         return $this->_humanized_record_count(
-                '<?=$detail_table_name?>', // DETAIL TABLE NAME
-                '<?=$detail_foreign_key_name?>', // DETAIL FK NAME
-                $row-><?=$master_primary_key_name?>, // CURRENT TABLE PK VALUE
+                '<?php echo $detail_table_name; ?>', // DETAIL TABLE NAME
+                '<?php echo $detail_foreign_key_name; ?>', // DETAIL FK NAME
+                $row-><?php echo $master_primary_key_name; ?>, // CURRENT TABLE PK VALUE
                 array( // CAPTIONS
-                    'single_caption'    => '<?=$detail_table['caption']?>',
-                    'multiple_caption'  => '<?=$detail_table['caption']?>s',
-                    'zero_caption'      => 'No <?=$detail_table['caption']?>',
+                    'single_caption'    => '<?php echo $detail_table['caption']; ?>',
+                    'multiple_caption'  => '<?php echo $detail_table['caption']; ?>s',
+                    'zero_caption'      => 'No <?php echo $detail_table['caption']; ?>',
                 )
             );
     }

@@ -195,6 +195,53 @@ class CMS_Model extends CI_Model
         return $this->cms_complete_navigation_name($navigation_name);
     }
 
+    public function cms_labeled_multi_select($name, $label, $value=array(), $options = array(), $help_block='', $input_class='form-control', $label_width=4){
+        // build input
+        $html = '<select multiple="multiple" id="'.$name.'" name="'.$name.'" class="'.$input_class.'">';
+        foreach($options as $option_val => $option_caption){
+            $selected = in_array($option_val, $value)?' selected':'';
+            $html .= '<option value="'.$option_val.'"'.$selected.'>'.$option_caption.'</option>';
+        }
+        $html .= '</select>';
+        return $this->cms_labeled_input($name, $label, $help_block, $html, $label_width);
+    }
+
+    public function cms_labeled_select($name, $label, $value=NULL, $options = array(), $help_block='', $input_class='form-control', $label_width=4){
+        // build input
+        $html = '<select id="'.$name.'" name="'.$name.'" class="'.$input_class.'">';
+        foreach($options as $option_val => $option_caption){
+            $selected = $option_val == $value?' selected':'';
+            $html .= '<option value="'.$option_val.'"'.$selected.'>'.$option_caption.'</option>';
+        }
+        $html .= '</select>';
+        return $this->cms_labeled_input($name, $label, $help_block, $html, $label_width);
+    }
+
+    public function cms_labeled_text_area($name, $label, $value=NULL, $help_block='', $input_class='form-control', $label_width=4){
+        // build input
+        $html = '<textarea id="'.$name.'" name="'.$name.'" class="'.$input_class.'">'.$value.'</textarea>';
+        return $this->cms_labeled_input($name, $label, $help_block, $html, $label_width);
+    }
+
+    public function cms_labeled_text_input($name, $label, $value=NULL, $help_block='', $input_class='form-control', $label_width=4){
+        // build input
+        $html = '<input type="text" id="'.$name.'" name="'.$name.'" value="'.$value.'" class="'.$input_class.'" />';
+        return $this->cms_labeled_input($name, $label, $help_block, $html, $label_width);
+    }
+
+    public function cms_labeled_input($name, $label, $help_block='', $html=NULL, $label_width=4){
+        // determine input width
+        $input_width = 12 - $label_width;
+        // return the html
+        return '<div id="div-'.$name.'" class="form-group">
+            <label class="control-label col-md-'.$label_width.'" for="'.$name.'">'.$this->cms_lang($label).'</label>
+            <div class="controls col-md-'.$input_width.'">
+                '.$html.'
+                <p class="help-block">'.$help_block.'</p>
+            </div>
+        </div>';
+    }
+
     protected function _cms_build_where($where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both'){
         if($where === NULL){
             return NULL;
@@ -258,14 +305,14 @@ class CMS_Model extends CI_Model
         }
     }
 
-    public function is_record_exists($table_name, $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
+    public function cms_record_exists($table_name, $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
     {
         $this->_cms_build_where($where, $values, $mode, $like, $side);
         // return TRUE if record exist
         return $this->db->count_all_results($table_name) > 0;
     }
 
-    public function get_record($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
+    public function cms_get_record($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
     {
         $this->_cms_build_where($where, $values, $mode, $like, $side);
         $query = $this->db->get($table_name);
@@ -273,7 +320,7 @@ class CMS_Model extends CI_Model
         return $query->row();
     }
 
-    public function get_record_list($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both'){
+    public function cms_get_record_list($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both'){
         $this->_cms_build_where($where, $values, $mode, $like, $side);
         $query = $this->db->get($table_name);
         // return the result

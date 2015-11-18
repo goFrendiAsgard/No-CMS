@@ -1,6 +1,6 @@
 <style type="text/css">
     <?php foreach($undeleted_id as $id){ ?>
-    tr[rowid="<?=$id?>"] a.delete-row{
+    tr[rowid="<?php echo $id; ?>"] a.delete-row{
         display:none;
     }
     <?php } ?>

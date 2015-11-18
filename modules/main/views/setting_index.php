@@ -201,7 +201,7 @@
                                 <textarea class="text-area-section form-control" id="cms_subsite_modules" name="cms_subsite_modules" class="form-control"><?php echo $config_list['cms_subsite_modules'] ?></textarea>
                                 <p class="help-block">Default modules for new subsite (Comma Separated)</p>
                             </div>
-                        </div>                        
+                        </div>
                 <?php } ?>
                 <hr /><h4>Email Setting</h4>
                 <div class="form-group">
@@ -432,14 +432,14 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_facebook_app_id">App Id</label>
                     <div class="controls col-md-8">
-                        <input id="auth_facebook_app_id" name="auth_facebook_app_id" class="form-control" value="<?=$third_party_config['auth_facebook_app_id']?>" />
+                        <input id="auth_facebook_app_id" name="auth_facebook_app_id" class="form-control" value="<?php echo $third_party_config['auth_facebook_app_id']; ?>" />
                         <p class="help-block">App Id</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_facebook_app_secret">App Secret</label>
                     <div class="controls col-md-8">
-                        <input id="auth_facebook_app_secret" name="auth_facebook_app_secret" class="form-control" value="<?=$third_party_config['auth_facebook_app_secret']?>" />
+                        <input id="auth_facebook_app_secret" name="auth_facebook_app_secret" class="form-control" value="<?php echo $third_party_config['auth_facebook_app_secret']; ?>" />
                         <p class="help-block">APP Secret</p>
                     </div>
                 </div>
@@ -463,14 +463,14 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_twitter_app_key">App Key</label>
                     <div class="controls col-md-8">
-                        <input id="auth_twitter_app_key" name="auth_twitter_app_key" class="form-control" value="<?=$third_party_config['auth_twitter_app_key']?>" />
+                        <input id="auth_twitter_app_key" name="auth_twitter_app_key" class="form-control" value="<?php echo $third_party_config['auth_twitter_app_key']; ?>" />
                         <p class="help-block">App Key</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_twitter_app_secret">App Secret</label>
                     <div class="controls col-md-8">
-                        <input id="auth_twitter_app_secret" name="auth_twitter_app_secret" class="form-control" value="<?=$third_party_config['auth_twitter_app_secret']?>" />
+                        <input id="auth_twitter_app_secret" name="auth_twitter_app_secret" class="form-control" value="<?php echo $third_party_config['auth_twitter_app_secret']; ?>" />
                         <p class="help-block">APP Secret</p>
                     </div>
                 </div>
@@ -495,14 +495,14 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_google_app_id">App Id</label>
                     <div class="controls col-md-8">
-                        <input id="auth_google_app_id" name="auth_google_app_id" class="form-control" value="<?=$third_party_config['auth_google_app_id']?>" />
+                        <input id="auth_google_app_id" name="auth_google_app_id" class="form-control" value="<?php echo $third_party_config['auth_google_app_id']; ?>" />
                         <p class="help-block">App Id</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_google_app_secret">App Secret</label>
                     <div class="controls col-md-8">
-                        <input id="auth_google_app_secret" name="auth_google_app_secret" class="form-control" value="<?=$third_party_config['auth_google_app_secret']?>" />
+                        <input id="auth_google_app_secret" name="auth_google_app_secret" class="form-control" value="<?php echo $third_party_config['auth_google_app_secret']; ?>" />
                         <p class="help-block">APP Secret</p>
                     </div>
                 </div>
@@ -526,14 +526,14 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_yahoo_app_id">App Id</label>
                     <div class="controls col-md-8">
-                        <input id="auth_yahoo_app_id" name="auth_yahoo_app_id" class="form-control" value="<?=$third_party_config['auth_yahoo_app_id']?>" />
+                        <input id="auth_yahoo_app_id" name="auth_yahoo_app_id" class="form-control" value="<?php echo $third_party_config['auth_yahoo_app_id']; ?>" />
                         <p class="help-block">App Id</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_yahoo_app_secret">App Secret</label>
                     <div class="controls col-md-8">
-                        <input id="auth_yahoo_app_secret" name="auth_yahoo_app_secret" class="form-control" value="<?=$third_party_config['auth_yahoo_app_secret']?>" />
+                        <input id="auth_yahoo_app_secret" name="auth_yahoo_app_secret" class="form-control" value="<?php echo $third_party_config['auth_yahoo_app_secret']; ?>" />
                         <p class="help-block">APP Secret</p>
                     </div>
                 </div>
@@ -558,14 +558,14 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_linkedin_app_key">App Key</label>
                     <div class="controls col-md-8">
-                        <input id="auth_linkedin_app_key" name="auth_linkedin_app_key" class="form-control" value="<?=$third_party_config['auth_linkedin_app_key']?>" />
+                        <input id="auth_linkedin_app_key" name="auth_linkedin_app_key" class="form-control" value="<?php echo $third_party_config['auth_linkedin_app_key']; ?>" />
                         <p class="help-block">App Key</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_linkedin_app_secret">App Secret</label>
                     <div class="controls col-md-8">
-                        <input id="auth_linkedin_app_secret" name="auth_linkedin_app_secret" class="form-control" value="<?=$third_party_config['auth_linkedin_app_secret']?>" />
+                        <input id="auth_linkedin_app_secret" name="auth_linkedin_app_secret" class="form-control" value="<?php echo $third_party_config['auth_linkedin_app_secret']; ?>" />
                         <p class="help-block">APP Secret</p>
                     </div>
                 </div>
@@ -590,14 +590,14 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_myspace_app_key">App Key</label>
                     <div class="controls col-md-8">
-                        <input id="auth_myspace_app_key" name="auth_myspace_app_key" class="form-control" value="<?=$third_party_config['auth_myspace_app_key']?>" />
+                        <input id="auth_myspace_app_key" name="auth_myspace_app_key" class="form-control" value="<?php echo $third_party_config['auth_myspace_app_key']; ?>" />
                         <p class="help-block">App Key</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_myspace_app_secret">App Secret</label>
                     <div class="controls col-md-8">
-                        <input id="auth_myspace_app_secret" name="auth_myspace_app_secret" class="form-control" value="<?=$third_party_config['auth_myspace_app_secret']?>" />
+                        <input id="auth_myspace_app_secret" name="auth_myspace_app_secret" class="form-control" value="<?php echo $third_party_config['auth_myspace_app_secret']; ?>" />
                         <p class="help-block">APP Secret</p>
                     </div>
                 </div>
@@ -622,14 +622,14 @@
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_windows_live_app_id">App Id</label>
                     <div class="controls col-md-8">
-                        <input id="auth_windows_live_app_id" name="auth_windows_live_app_id" class="form-control" value="<?=$third_party_config['auth_windows_live_app_id']?>" />
+                        <input id="auth_windows_live_app_id" name="auth_windows_live_app_id" class="form-control" value="<?php echo $third_party_config['auth_windows_live_app_id']; ?>" />
                         <p class="help-block">App Id</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_windows_live_app_secret">App Secret</label>
                     <div class="controls col-md-8">
-                        <input id="auth_windows_live_app_secret" name="auth_windows_live_app_secret" class="form-control" value="<?=$third_party_config['auth_windows_live_app_secret']?>" />
+                        <input id="auth_windows_live_app_secret" name="auth_windows_live_app_secret" class="form-control" value="<?php echo $third_party_config['auth_windows_live_app_secret']; ?>" />
                         <p class="help-block">APP Secret</p>
                     </div>
                 </div>
@@ -734,7 +734,7 @@
         // when calling chosen, the select should be visible, that's why I need to do this:
         //$('#tab3').removeClass('active');
         //$('#tab1').addClass('active');
-        // make text area autosize 
+        // make text area autosize
         $(".chosen-select").chosen({width: "250px"});
         $('#tab1 .text-area-section').autosize();
 

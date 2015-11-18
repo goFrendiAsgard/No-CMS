@@ -3,7 +3,7 @@
 <head>
     <title>Teldrassil</title>
     <style type="text/css">        
-        <?=$css?>
+        <?php echo $css; ?>
         body{
             margin-top:60px;
         }
@@ -86,7 +86,7 @@
 <div class="page-header">
     <h1>Thumbnails</h1>
 </div>
-<img src="<?=$module_base_url?>assets/images/200x200.png" class="img-thumbnail" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera" style="width: 200px; height: 200px;">
+<img src="<?php echo $module_base_url; ?>assets/images/200x200.png" class="img-thumbnail" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera" style="width: 200px; height: 200px;">
 
 <div class="page-header">
     <h1>Navbars</h1>

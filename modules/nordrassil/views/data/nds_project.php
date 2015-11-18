@@ -59,7 +59,7 @@
 
 		<?php if(isset($_GET['row'])){  $id = $_GET['row'];?>
 
-		var position = $('tr[rowid="<?=$id?>"]').offset();
+		var position = $('tr[rowid="<?php echo $id; ?>"]').offset();
 		if(position != undefined){
 			var top = position.top - 50;
 			$(window).scrollTop( top );

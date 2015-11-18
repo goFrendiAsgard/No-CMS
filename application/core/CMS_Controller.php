@@ -11,12 +11,12 @@ if (!defined('BASEPATH')) {
  */
 class CMS_Controller extends MX_Controller
 {
-    // going to be deprecated
-    public $PRIV_EVERYONE = PRIV_EVERYONE;
-    public $PRIV_NOT_AUTHENTICATED = PRIV_NOT_AUTHENTICATED;
-    public $PRIV_AUTHENTICATED = PRIV_AUTHENTICATED;
-    public $PRIV_AUTHORIZED = PRIV_AUTHORIZED;
-    public $PRIV_EXCLUSIVE_AUTHORIZED = PRIV_EXCLUSIVE_AUTHORIZED;
+    // going to be deprecated, there is already constant for this
+    protected $PRIV_EVERYONE = PRIV_EVERYONE;
+    protected $PRIV_NOT_AUTHENTICATED = PRIV_NOT_AUTHENTICATED;
+    protected $PRIV_AUTHENTICATED = PRIV_AUTHENTICATED;
+    protected $PRIV_AUTHORIZED = PRIV_AUTHORIZED;
+    protected $PRIV_EXCLUSIVE_AUTHORIZED = PRIV_EXCLUSIVE_AUTHORIZED;
 
     protected $__cms_dynamic_widget = false;
     private $__cms_widgets = null;
@@ -24,6 +24,7 @@ class CMS_Controller extends MX_Controller
     private $__cms_navigation_path = null;
     private $__cms_navigation_name = null;
     private $__cms_quicklinks = null;
+
     protected $__cms_base_model_name = 'no_cms_autoupdate_model';
 
     protected function _guard_controller()
@@ -72,10 +73,10 @@ class CMS_Controller extends MX_Controller
         if (CMS_SUBSITE != '' && $module_path != 'main' && $module_path != '') {
             $subsite_auth_file = FCPATH.'modules/'.$module_path.'/subsite_auth.php';
             if (file_exists($subsite_auth_file)) {
-                unset($public);
+                unset($protected);
                 unset($subsite_allowed);
                 include $subsite_auth_file;
-                if (isset($public) && is_bool($public) && !$public) {
+                if (isset($protected) && is_bool($protected) && !$protected) {
                     if (!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
                         die('Module is not accessible for '.CMS_SUBSITE.' subsite');
                     }
@@ -120,78 +121,12 @@ class CMS_Controller extends MX_Controller
         }*/
     }
 
-    protected function cms_unique_field_name($field_name)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_unique_field_name($field_name);
-    }
-
-    protected function cms_unique_join_name($field_name)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_unique_join_name($field_name);
-    }
-
-    protected function cms_random_string($length = 10)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_random_string($length);
-    }
-
-    /*
-    * @ usage $this->t('purchase')
-    */
-    protected function t($table_name, $alias = null)
-    {
-        return $this->{$this->__cms_base_model_name}->t($table_name, $alias);
-    }
-
-    protected function n($navigation_name)
-    {
-        return $this->{$this->__cms_base_model_name}->n($navigation_name);
-    }
-
-    protected function is_record_exists($table_name, $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
-    {
-        return $this->{$this->__cms_base_model_name}->is_record_exists($table_name, $where, $values, $mode, $like, $side);
-    }
-
-    protected function get_record($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both')
-    {
-        return $this->{$this->__cms_base_model_name}->get_record($table_name, $where, $values, $mode, $like, $side);
-    }
-
-    protected function get_record_list($table_name,  $where = NULL, $values = array(), $mode = 'and', $like = FALSE, $side = 'both'){
-        return $this->{$this->__cms_base_model_name}->get_record_list($table_name, $where, $values, $mode, $like, $side);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     * @desc   get default_controller
-     */
-    protected function cms_get_default_controller()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_get_default_controller();
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $value
-     * @desc   set default_controller to value
-     */
-    protected function cms_set_default_controller($value)
-    {
-        $this->{$this->__cms_base_model_name}->cms_set_default_controller($value);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $hostname
-     * @param int    $port
-     * @desc   is it able to go to some site?
-     */
-    protected function cms_is_connect($hostname = null, $port = 80)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_is_connect($hostname, $port);
+    public function __call($method, $args){
+        if(method_exists($this->{$this->__cms_base_model_name}, $method)){
+            return call_user_func_array(array($this->{$this->__cms_base_model_name}, $method), $args);
+        }else{
+            return NULL;
+        }
     }
 
     /**
@@ -209,308 +144,6 @@ class CMS_Controller extends MX_Controller
         return $crud;
     }
 
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $table_name
-     *
-     * @return string
-     * @desc   return complete table name
-     */
-    protected function cms_complete_table_name($table_name, $module_name = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_complete_table_name($table_name, $module_name);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $navigation_name
-     *
-     * @return string
-     * @desc   return complete navigation name
-     */
-    protected function cms_complete_navigation_name($navigation_name, $module_name = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_complete_navigation_name($navigation_name, $module_name);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $key
-     * @param mixed  $value
-     *
-     * @return mixed
-     * @desc   if value specified, this will set CI_Session["key"], else it will return CI_session["key"]
-     */
-    protected function cms_ci_session($key, $value = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_ci_session($key, $value);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $key
-     * @desc   unset CI_session["key"]
-     */
-    protected function cms_unset_ci_session($key)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_unset_ci_session($key);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $user_name
-     *
-     * @return mixed
-     * @desc   set or get CI_Session["cms_user_name"]
-     */
-    protected function cms_user_name($user_name = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_user_name($user_name);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $real_name
-     *
-     * @return mixed
-     * @desc   set or get CI_Session["cms_user_real_name"]
-     */
-    protected function cms_user_real_name($real_name = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_user_real_name($real_name);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param string $email
-     *
-     * @return mixed
-     * @desc   set or get CI_Session["cms_user_email"]
-     */
-    protected function cms_user_email($email = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_user_email($email);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param int $user_id
-     * @desc   set or get CI_Session["cms_user_id"]
-     */
-    protected function cms_user_id($user_id = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_user_id($user_id);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @return array
-     */
-    protected function cms_user_group()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_user_group();
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @return array
-     */
-    protected function cms_user_group_id()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_user_group_id();
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @return bool
-     * @desc   TRUE if current user is super admin, FALSE otherwise
-     */
-    protected function cms_user_is_super_admin()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_user_is_super_admin();
-    }
-
-    protected function cms_do_move_widget_after($src_widget_id, $dst_widget_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_widget_after($src_widget_id, $dst_widget_id);
-    }
-
-    protected function cms_do_move_widget_before($src_widget_id, $dst_widget_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_widget_before($src_widget_id, $dst_widget_id);
-    }
-
-    protected function cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_quicklink_after($src_quicklink_id, $dst_quicklink_id);
-    }
-
-    protected function cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_quicklink_before($src_quicklink_id, $dst_quicklink_id);
-    }
-
-    protected function cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_navigation_before($src_navigation_id, $dst_navigation_id);
-    }
-
-    protected function cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_navigation_after($src_navigation_id, $dst_navigation_id);
-    }
-
-    protected function cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_navigation_into($src_navigation_id, $dst_navigation_id);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string navigation_name
-     * @desc    move navigation up
-     */
-    protected function cms_do_move_up_navigation($navigation_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_up_navigation($navigation_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string navigation_name
-     * @desc    move navigation down
-     */
-    protected function cms_do_move_down_navigation($navigation_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_down_navigation($navigation_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string widget_name
-     * @desc    move widget up
-     */
-    protected function cms_do_move_up_widget($widget_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_up_widget($widget_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string widget_name
-     * @desc    move widget down
-     */
-    protected function cms_do_move_down_widget($widget_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_down_widget($widget_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   int quicklink id
-     * @desc    move quicklink up
-     */
-    protected function cms_do_move_up_quicklink($quicklink_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_up_quicklink($quicklink_id);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   int quicklink id
-     * @desc    move quicklink down
-     */
-    protected function cms_do_move_down_quicklink($quicklink_id)
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_move_down_quicklink($quicklink_id);
-    }
-
-    protected function cms_user_table_name()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_user_table_name();
-    }
-
-    protected function cms_chipper()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_chipper();
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   int parent_id
-     * @param   int max_menu_depth
-     * @desc    return navigation child if parent_id specified, else it will return root navigation
-     *           the max depth of menu is depended on max_menud_depth
-     */
-    protected function cms_navigations($parent_id = null, $max_menu_depth = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_navigations($parent_id, $max_menu_depth);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @return mixed
-     * @desc   return quick links
-     */
-    protected function cms_quicklinks()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_quicklinks();
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   slug
-     * @param   widget_name
-     *
-     * @return mixed
-     * @desc    return widgets
-     */
-    protected function cms_widgets($slug = null, $widget_name = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_widgets($slug, $widget_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string navigation_name
-     *
-     * @return string
-     * @desc    return url of navigation
-     */
-    protected function cms_navigation_url($navigation_name)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_navigation_url($navigation_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string navigation_name
-     *
-     * @return string
-     * @desc    return submenu screen
-     */
     /**
      * @author  goFrendiAsgard
      *
@@ -667,141 +300,6 @@ class CMS_Controller extends MX_Controller
     /**
      * @author  goFrendiAsgard
      *
-     * @param   string navigation_name
-     *
-     * @return mixed
-     * @desc    return navigation path, used for layout
-     **/
-    protected function cms_get_navigation_path($navigation_name = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_get_navigation_path($navigation_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @return mixed
-     * @desc    return privileges of current user
-     */
-    protected function cms_privileges()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_privileges();
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string navigation_name
-     *
-     * @return bool
-     * @desc    check if user authorized to navigate into a page specified in parameter
-     */
-    protected function cms_allow_navigate($navigation_name)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_allow_navigate($navigation_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string privilege_name
-     *
-     * @return bool
-     * @desc    check if user have privilege specified in parameter
-     */
-    protected function cms_have_privilege($privilege_name)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_have_privilege($privilege_name);
-    }
-
-    protected function cms_route_key_exists($route_key)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_route_key_exists($route_key);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string identity
-     * @param   string password
-     *
-     * @return bool
-     * @desc    login with identity and password. Identity can be user_name or e-mail
-     */
-    protected function cms_do_login($identity, $password)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_do_login($identity, $password);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     * @desc    logout
-     */
-    protected function cms_do_logout()
-    {
-        $this->{$this->__cms_base_model_name}->cms_do_logout();
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string user_name
-     * @param   string email
-     * @param   string real_name
-     * @param   string password
-     * @desc    register new user
-     */
-    protected function cms_do_register($user_name, $email, $real_name, $password)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_do_register($user_name, $email, $real_name, $password);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string user_name
-     * @param   string email
-     * @param   string real_name
-     * @param   string password
-     * @desc    change current profile (user_name, email, real_name and password)
-     */
-    protected function cms_do_change_profile($email, $real_name, $password = null, $user_id = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_do_change_profile($email, $real_name, $password, $user_id);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string module_name
-     *
-     * @return bool
-     * @desc    checked if module installed
-     */
-    protected function cms_is_module_active($module_name)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_is_module_active($module_name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @return mixed
-     * @desc    get module list
-     */
-    protected function cms_get_module_list($keyword = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_get_module_list($keyword);
-    }
-
-    protected function cms_module_version($module_name = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_module_version();
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
      * @param   string module_name
      *
      * @return string
@@ -825,197 +323,6 @@ class CMS_Controller extends MX_Controller
         } else {
             return $this->{$this->__cms_base_model_name}->cms_module_path($module_name);
         }
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string module_path
-     *
-     * @return string
-     * @desc    get module_name (name space) of specified module_path (folder name)
-     */
-    protected function cms_module_name($path = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_module_name($path);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @return mixed
-     * @desc    get layout list
-     */
-    protected function cms_get_theme_list($keyword = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_get_theme_list($keyword);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string identity
-     * @param	bool send_mail
-     * @param   string reason (FORGOT, SIGNUP)
-     *
-     * @return bool
-     * @desc    generate activation code, and send email to applicant
-     */
-    protected function cms_generate_activation_code($identity, $send_mail = false, $reason = 'FORGOT')
-    {
-        return $this->{$this->__cms_base_model_name}->cms_generate_activation_code($identity, $send_mail, $reason);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string activation_code
-     * @param   string new_password
-     *
-     * @return bool success
-     * @desc    activate user
-     */
-    protected function cms_activate_account($activation_code, $new_password = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_activate_account($activation_code, $new_password);
-    }
-
-    protected function _cms_set_user_subsite_activation($user_id, $active)
-    {
-        return $this->{$this->__cms_base_model_name}->_cms_set_user_subsite_activation($user_id, $active);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string from_address
-     * @param   string from_name
-     * @param   string to_address
-     * @param   string subject
-     * @param   string message
-     * @desc    send email
-     */
-    protected function cms_send_email($from_address, $from_name, $to_address, $subject, $message)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_send_email($from_address, $from_name, $to_address, $subject, $message);
-    }
-
-    protected function cms_resize_image($file_name, $nWidth, $nHeight)
-    {
-        $this->{$this->__cms_base_model_name}->cms_resize_image($file_name, $nWidth, $nHeight);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string activation_code
-     *
-     * @return bool
-     * @desc    validate activation_code
-     */
-    protected function cms_valid_activation_code($activation_code)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_valid_activation_code($activation_code);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string name
-     * @param   string value
-     * @param   string description
-     * @desc    set config variable
-     */
-    protected function cms_set_config($name, $value, $description = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_set_config($name, $value, $description);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string name
-     * @desc    unset configuration variable
-     */
-    protected function cms_unset_config($name)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_unset_config($name);
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string name, bool raw
-     *
-     * @return string
-     * @desc    get configuration variable
-     */
-    protected function cms_get_config($name, $raw = false)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_get_config($name, $raw);
-    }
-
-    /**
-     * @author	goFrendiAsgard
-     *
-     * @param	string language
-     *
-     * @return string language
-     * @desc	set language for this session only
-     */
-    protected function cms_language($language = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_language($language);
-    }
-
-    /**
-     * @author	goFrendiAsgard
-     *
-     * @return array list of available languages
-     * @desc	get available languages
-     */
-    protected function cms_language_list()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_language_list();
-    }
-
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string key
-     *
-     * @return string
-     * @desc    get translation of key in site_language
-     */
-    protected function cms_lang($key, $module = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_lang($key, $module);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param  string value
-     *
-     * @return string
-     * @desc   parse keyword like @site_url and @base_url
-     */
-    protected function cms_parse_keyword($value)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_parse_keyword($value);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @param  string user_name
-     *
-     * @return bool
-     * @desc   check if user already exists
-     */
-    protected function cms_is_user_exists($identity, $exception_user_id = 0)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_is_user_exists($identity, $exception_user_id);
     }
 
     /**
@@ -1124,17 +431,6 @@ class CMS_Controller extends MX_Controller
         }
     }
 
-    /**
-     * @author  goFrendiAsgard
-     *
-     * @param   string content
-     * @desc    flash content to be served as metadata on next call of $this->view in controller
-     */
-    protected function cms_flash_metadata($content)
-    {
-        $this->{$this->__cms_base_model_name}->cms_flash_metadata($content);
-    }
-
     private function cms_ck_adjust_script()
     {
         $base_url = base_url();
@@ -1222,7 +518,7 @@ class CMS_Controller extends MX_Controller
      * @return string or null
      * @desc    replace $this->load->view. This method will also load header, menu etc except there is _only_content parameter via GET or POST
      */
-    public function view($view_url, $data = null, $navigation_name = null, $config = null, $return_as_string = false)
+    protected function view($view_url, $data = null, $navigation_name = null, $config = null, $return_as_string = false)
     {
         $this->load->library('template');
         $result = null;
@@ -1809,10 +1105,10 @@ class CMS_Controller extends MX_Controller
         if (CMS_SUBSITE != '') {
             $subsite_auth_file = FCPATH.'themes/'.$theme.'/subsite_auth.php';
             if (file_exists($subsite_auth_file)) {
-                unset($public);
+                unset($protected);
                 unset($subsite_allowed);
                 include $subsite_auth_file;
-                if (isset($public) && is_bool($public) && !$public) {
+                if (isset($protected) && is_bool($protected) && !$protected) {
                     if (isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)) {
                         return false;
                     }
@@ -1876,146 +1172,6 @@ class CMS_Controller extends MX_Controller
             'cms_content' => $html,
         );
         $this->load->view('CMS_View', $data);
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @return array providers
-     */
-    protected function cms_third_party_providers()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_third_party_providers();
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @return array status
-     * @desc return all status from third-party provider
-     */
-    protected function cms_third_party_status()
-    {
-        return $this->{$this->__cms_base_model_name}->cms_third_party_status();
-    }
-
-    /**
-     * @author goFrendiAsgard
-     *
-     * @return bool success
-     * @desc login/register by using third-party provider
-     */
-    protected function cms_third_party_login($provider, $email = null)
-    {
-        return $this->{$this->__cms_base_model_name}->cms_third_party_login($provider, $email);
-    }
-
-    final protected function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1,
-        $parent_name = null, $index = null, $description = null, $bootstrap_glyph = null,
-        $default_theme = null, $default_layout = null, $notif_url = null, $hidden = 0, $static_content = '')
-    {
-        $this->{$this->__cms_base_model_name}->cms_add_navigation($navigation_name, $title, $url, $authorization_id,
-            $parent_name, $index, $description, $bootstrap_glyph,
-            $default_theme, $default_layout, $notif_url, $hidden, $static_content);
-    }
-
-    final protected function cms_remove_navigation($navigation_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_remove_navigation($navigation_name);
-    }
-
-    final protected function cms_add_privilege($privilege_name, $title, $authorization_id = 1, $description = null)
-    {
-        $this->{$this->__cms_base_model_name}->cms_add_privilege($privilege_name, $title, $authorization_id, $description);
-    }
-    final protected function cms_remove_privilege($privilege_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_remove_privilege($privilege_name);
-    }
-
-    protected function cms_add_group($group_name, $description)
-    {
-        $this->{$this->__cms_base_model_name}->cms_add_group($group_name, $description);
-    }
-
-    protected function cms_remove_group($group_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_remove_group($group_name);
-    }
-
-    protected function cms_add_widget($widget_name, $title = null, $authorization_id = 1, $url = null, $slug = null,
-        $index = null, $description = null)
-    {
-        $this->{$this->__cms_base_model_name}->cms_add_widget($widget_name, $title, $authorization_id, $url, $slug, $index,
-            $description);
-    }
-
-    protected function cms_remove_widget($widget_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_remove_widget($widget_name);
-    }
-
-    protected function cms_add_quicklink($navigation_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_add_quicklink($navigation_name);
-    }
-
-    protected function cms_remove_quicklink($navigation_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_remove_quicklink($navigation_name);
-    }
-
-    final public function cms_reconfig_route()
-    {
-        $this->{$this->__cms_base_model_name}->cms_reconfig_route();
-    }
-
-    final public function cms_add_route($key, $value, $description = '')
-    {
-        $this->{$this->__cms_base_model_name}->cms_add_route($key, $value, $description);
-    }
-
-    final public function cms_remove_route($key)
-    {
-        $this->{$this->__cms_base_model_name}->cms_remove_route($key);
-    }
-
-    final public function cms_add_config($config_name, $value, $description = null)
-    {
-        $this->{$this->__cms_base_model_name}->cms_add_config($config_name, $value, $description);
-    }
-
-    final public function cms_remove_config($config_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_remove_config($config_name);
-    }
-
-    protected function cms_assign_navigation($navigation_name, $group_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_assign_navigation($navigation_name, $group_name);
-    }
-    protected function cms_assign_privilege($privilege_name, $group_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_assign_privilege($privilege_name, $group_name);
-    }
-    protected function cms_assign_widget($widget_name, $group_name)
-    {
-        $this->{$this->__cms_base_model_name}->cms_assign_widget($widget_name, $group_name);
-    }
-
-    protected function cms_execute_sql($SQL, $separator)
-    {
-        $this->{$this->__cms_base_model_name}->cms_execute_sql($SQL, $separator);
-    }
-
-    protected function cms_set_editing_mode()
-    {
-        $this->{$this->__cms_base_model_name}->cms_set_editing_mode();
-    }
-
-    protected function cms_unset_editing_mode()
-    {
-        $this->{$this->__cms_base_model_name}->cms_unset_editing_mode();
     }
 
     protected function cms_editing_mode()

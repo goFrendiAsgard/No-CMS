@@ -157,17 +157,17 @@
     var REQUEST_EXISTS = false;
     var REQUEST = "";
     function check_user_exists(){
-        var user_name =  $('input[name="<?=$secret_code?>user_name"]').val();
-        var email = $('input[name="<?=$secret_code?>email"]').val();
-        var password = $('input[name="<?=$secret_code?>password"]').val();        
-        var confirm_password = $('input[name="<?=$secret_code?>confirm_password"]').val();
+        var user_name =  $('input[name="<?php echo $secret_code; ?>user_name"]').val();
+        var email = $('input[name="<?php echo $secret_code; ?>email"]').val();
+        var password = $('input[name="<?php echo $secret_code; ?>password"]').val();        
+        var confirm_password = $('input[name="<?php echo $secret_code; ?>confirm_password"]').val();
         $("#img_ajax_loader").show();
         if(REQUEST_EXISTS){
             REQUEST.abort();
         }
         REQUEST_EXISTS = true;
         REQUEST = $.ajax({
-            "url" : "<?=site_url('{{ module_path }}/multisite/check_registration')?>",
+            "url" : "<?php echo site_url('{{ module_path }}/multisite/check_registration'); ?>",
             "type" : "POST",
             "data" : {"user_name":user_name, "email":email},
             "dataType" : "json",
@@ -238,8 +238,8 @@
             check_user_exists();
         });
 
-        $('#<?=$secret_code?>user_name').keyup(function(){
-            var value = $('#<?=$secret_code?>user_name').val();
+        $('#<?php echo $secret_code; ?>user_name').keyup(function(){
+            var value = $('#<?php echo $secret_code; ?>user_name').val();
             $('#site_title').val(capitaliseFirstLetter(value));
             $('#site_slogan').val('Website ' + capitaliseFirstLetter(value));
         });

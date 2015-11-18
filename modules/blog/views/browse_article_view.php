@@ -103,7 +103,7 @@
 <?php if($allow_navigate_backend){?>
 <div class="col-xs-12" style="margin-bottom:20px;">
     <h4>{{ language: Quick Write }}</h4>
-    <form method="post" action="<?=$backend_url?>/add/">
+    <form method="post" action="<?php echo $backend_url; ?>/add/">
         <input id="new_article_title" name="title" class="col-xs-12 form-control" placeholder="{{ language:Title }}" style="margin-bottom:10px;" />
         <textarea id="new_article_content" name="content" class="col-xs-12 form-control" placeholder="{{ language:Content }}" style="resize:none;"></textarea>
         <div class="form-inline pull-right" style="margin-top:20px;">
@@ -385,7 +385,7 @@
             'async': async,
             'data' : {
                 'category' : category,
-                'archive' : '<?=isset($_GET["archive"])? $_GET["archive"] : ""?>',
+                'archive' : '<?php echo isset($_GET["archive"])? $_GET["archive"] : ""; ?>',
                 'keyword' : keyword,
                 'page' : PAGE,
             },

@@ -9,9 +9,9 @@
 <form enctype="multipart/form-data" class="form form-horizontal" method="post">
 
     <div class="form-group">
-        <label class="control-label col-md-4" for="<?=$config_prefix?>moderation">Comment Moderation</label>
+        <label class="control-label col-md-4" for="<?php echo $config_prefix; ?>moderation">Comment Moderation</label>
         <div class="controls col-md-8">
-            <select id="<?=$config_prefix?>moderation" name="<?=$config_prefix?>moderation" class="form-control">
+            <select id="<?php echo $config_prefix; ?>moderation" name="<?php echo $config_prefix; ?>moderation" class="form-control">
                 <?php
                     $option_list = array(
                         'TRUE'=>'Yes, all comment should be moderated', 

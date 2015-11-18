@@ -15,7 +15,7 @@
     <div class="row">
         <?php if($generated){?>
         <div class="col-md-12 alert alert-info">
-            Your theme has been generated. Click <a class="btn btn-default" href="{{ SITE_URL }}main/change_theme/<?=$theme_name?>">here</a> to use the theme.
+            Your theme has been generated. Click <a class="btn btn-default" href="{{ SITE_URL }}main/change_theme/<?php echo $theme_name; ?>">here</a> to use the theme.
         </div>
         <?php } ?>
         <div class="col-md-6">
@@ -33,7 +33,7 @@
 
             <div class="form-group initially-hidden">
                 <label>Theme Name</label>
-                <input class="form-control" type="text" name="theme_name" value='<?=$theme_name?>' />
+                <input class="form-control" type="text" name="theme_name" value='<?php echo $theme_name; ?>' />
             </div>
 
             <div class="form-group initially-hidden">
@@ -55,7 +55,7 @@
         </div>
         <div class="col-md-6">
             <div class="form-group initially-hidden">
-                <input id="background_image" name="background_image" type="checkbox" <?=$background_image?'checked':''?> />&nbsp;<label>Use Background Image</label>
+                <input id="background_image" name="background_image" type="checkbox" <?php echo $background_image?'checked':''; ?> />&nbsp;<label>Use Background Image</label>
             </div>
             <table class="table initially-hidden">
                 <thead>

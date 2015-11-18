@@ -27,8 +27,8 @@ for($i=0; $i<count($slide_list); $i++){
 <style type="text/css">
     <?php if($slide_height+0 == $slide_height){?>
     div.carousel-inner div.item{
-        height: <?=$slide_height?>px;
-        max-height:<?=$slide_height?>px;
+        height: <?php echo $slide_height; ?>px;
+        max-height:<?php echo $slide_height; ?>px;
     }
     <?php } ?>
     div.carousel-inner{

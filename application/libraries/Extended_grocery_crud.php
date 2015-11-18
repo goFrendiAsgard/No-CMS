@@ -81,8 +81,10 @@ class Extended_grocery_crud extends Grocery_CRUD{
     }
 
     public function cms_lang($keyword){
-        if(isset($this->_ci->no_cms_autoupdate_model)){
+        if(property_exists($this->_ci, 'no_cms_autoupdate_model')){
             return $this->_ci->no_cms_autoupdate_model->cms_lang($keyword);
+        }else if(property_exists($this->_ci, 'no_cms_model')){
+            return $this->_ci->no_cms_model->cms_lang($keyword);
         }else{
             return $keyword;
         }

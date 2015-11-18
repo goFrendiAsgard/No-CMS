@@ -5,7 +5,7 @@
     $(document).ready(function(){
         function __reload_online_user(){
             $.ajax({
-                'url' : '<?=site_url('main/widget_online_user_ajax')?>',
+                'url' : '<?php echo site_url('main/widget_online_user_ajax'); ?>',
                 'success' : function(response){
                     $('#__online_user').html(response);
                 }

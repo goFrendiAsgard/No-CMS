@@ -8,7 +8,7 @@
     <h3>Configuration</h3>
     <form method="post" class="form">
         <label>Slideshow Height (left blank to make it dynamic) </label>
-        <input name="slideshow-height" value="<?=$slide_height?>" />
+        <input name="slideshow-height" value="<?php echo $slide_height; ?>" />
         <label>px</label>
         <button name="apply" class="btn btn-primary">Save Configuration</button>
     </form>

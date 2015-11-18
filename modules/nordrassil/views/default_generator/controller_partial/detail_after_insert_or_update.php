@@ -37,13 +37,13 @@
         // SAVE CHANGES OF <?php echo $detail_table_name.PHP_EOL; ?>
         $data = json_decode($this->input->post('<?php echo $real_input_id; ?>'), TRUE);
         $this->_save_one_to_many(
-            '<?=$master_column_name?>', // FIELD NAME
-            '<?=$detail_table_name?>', // DETAIL TABLE NAME
-            '<?=$detail_primary_key_name?>', // DETAIL PK NAME
-            '<?=$detail_foreign_key_name?>', // DETAIL FK NAME
+            '<?php echo $master_column_name; ?>', // FIELD NAME
+            '<?php echo $detail_table_name; ?>', // DETAIL TABLE NAME
+            '<?php echo $detail_primary_key_name; ?>', // DETAIL PK NAME
+            '<?php echo $detail_foreign_key_name; ?>', // DETAIL FK NAME
             $primary_key, // PARENT PRIMARY KEY VALUE
             $data, // DATA
-            $real_column_list=array(<?=implode(', ', $quoted_real_column_names)?>), // REAL DETAIL COLUMN NAMES
-            $set_column_list=array(<?=implode(', ', $quoted_set_column_names)?>), // SET DETAIL COLUMN NAMES
-            $many_to_many_config_list=array(<?=$many_to_many_script?>)
+            $real_column_list=array(<?php echo implode(', ', $quoted_real_column_names); ?>), // REAL DETAIL COLUMN NAMES
+            $set_column_list=array(<?php echo implode(', ', $quoted_set_column_names); ?>), // SET DETAIL COLUMN NAMES
+            $many_to_many_config_list=array(<?php echo $many_to_many_script; ?>)
         );
