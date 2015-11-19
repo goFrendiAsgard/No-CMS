@@ -177,9 +177,13 @@ class Main extends CMS_Controller
     }
 
     //this is used for the real static page which doesn't has any URL in navigation management
-    public function static_page($navigation_name)
+    public function static_page($navigation_name=NULL)
     {
-        $this->view('CMS_View', null, $navigation_name);
+        if($navigation_name !== NULL){
+            $this->view('CMS_View', null, $navigation_name);
+        }else{
+           $this->view('not_found_index', NULL, 'main_404');
+        }
     }
 
     public function login()
