@@ -109,9 +109,22 @@ class Cms_asset
         // trim every line
         $content = explode(PHP_EOL, $content);
         $new_content = '';
+        $in_pre = FALSE;
         foreach($content as $line){
-            $new_content .= trim($line);
-            if($mode == 'js' || stripos($line, '//') !== FALSE){
+            if($mode == 'html'){
+                if(stripos($line, '<pre') !== FALSE){
+                    $in_pre = TRUE;
+                }else if(stripos($line, '</pre>') !== FALSE){
+                    $in_pre = FALSE;
+                }
+            }
+            // don't trim if it is in pre in html mode
+            if($mode == 'html' && $in_pre){
+                $new_content .= $line;
+            }else{
+                $new_content .= trim($line);
+            }
+            if($mode == 'js' || $mode == 'html' || stripos($line, '//') !== FALSE){
                 $new_content .= PHP_EOL;
             }
         }

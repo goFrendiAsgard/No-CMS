@@ -544,7 +544,7 @@ class CMS_Controller extends MX_Controller
             $return_as_string = $navigation_name;
             $navigation_name = null;
             $config = null;
-        } elseif (is_bool($config)) {
+        } else if (is_bool($config)) {
             $return_as_string = $config;
             $config = null;
         }
@@ -885,7 +885,7 @@ class CMS_Controller extends MX_Controller
         $result = $this->__cms_parse_widget_theme_path($result, $theme, $layout, $navigation_name);
         $this->load->library('cms_asset');
         $asset = new Cms_asset();
-        $result = $asset->minify($result, 'js');
+        $result = $asset->minify($result, 'html');
 
         if ($return_as_string) {
             return $result;
