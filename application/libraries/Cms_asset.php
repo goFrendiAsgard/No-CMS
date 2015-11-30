@@ -110,16 +110,21 @@ class Cms_asset
         $content = explode(PHP_EOL, $content);
         $new_content = '';
         $in_pre = FALSE;
+        $in_text_area = FALSE;
         foreach($content as $line){
             if($mode == 'html'){
                 if(stripos($line, '<pre') !== FALSE){
                     $in_pre = TRUE;
                 }else if(stripos($line, '</pre>') !== FALSE){
                     $in_pre = FALSE;
+                }else if(stripos($line, '<textarea') !== FALSE){
+                    $in_text_area = TRUE;
+                }else if(stripos($line, '</textarea>') !== FALSE){
+                    $in_text_area = FALSE;
                 }
             }
             // don't trim if it is in pre in html mode
-            if($mode == 'html' && $in_pre){
+            if($mode == 'html' && ($in_pre || $in_text_area)){
                 $new_content .= $line;
             }else{
                 $new_content .= trim($line);

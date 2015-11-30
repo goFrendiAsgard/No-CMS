@@ -244,7 +244,7 @@ function get_decoded_cookie($key, $chipper){
     return NULL;
 }
 
-function call_cms_function(){
+function cms_function(){
     // get number of arguments
     $numargs = func_num_args();
     // The first argument is method, the rest are args

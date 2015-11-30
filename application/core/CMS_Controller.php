@@ -109,8 +109,9 @@ class CMS_Controller extends MX_Controller
                 $protocol = substr($sp, 0, strpos($sp, '/')).(($ssl) ? 's' : '');
                 $port = $_SERVER['SERVER_PORT'];
                 $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':'.$port;
-                $host = isset($hostname) ? $hostname : $_SERVER['SERVER_NAME'].$port;
-                $redirection = $protocol.'://'.$host.'/index.php/main/check_login?__origin='.urlencode($url).'&__server_name='.$_SERVER['SERVER_NAME'];
+                $host = isset($hostname) ? $hostname.$_SERVER['PHP_SELF'].$port : $_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'].$port;
+                $server_name = $_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'].$port;
+                $redirection = $protocol.'://'.$host.'/main/check_login?__origin='.urlencode($url).'&__server_name='.$server_name;
                 redirect($redirection);
             }
         }

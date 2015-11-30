@@ -195,9 +195,14 @@ class CMS_Model extends CI_Model
         return $this->cms_complete_navigation_name($navigation_name);
     }
 
-    public function cms_labeled_multi_select($name, $label, $value=array(), $options = array(), $help_block='', $input_class='form-control', $label_width=4){
+    public function cms_labeled_multi_select($name, $label, $value=array(), $options = array(), $help_block='', $attributes = array(), $label_width=4){
+        // fill attributes
+        if(!array_key_exists('id', $attributes)){
+            $attributes['id'] = $name;
+        }
         // build input
-        $html = '<select multiple="multiple" id="'.$name.'" name="'.$name.'" class="'.$input_class.'">';
+        $html = '<select multiple="multiple" id="'.$name.'" name="'.$name.'"'.
+            $this->__cms_unpack_attributes($attributes).'>';
         foreach($options as $option_val => $option_caption){
             $selected = in_array($option_val, $value)?' selected':'';
             $html .= '<option value="'.$option_val.'"'.$selected.'>'.$option_caption.'</option>';
@@ -206,9 +211,13 @@ class CMS_Model extends CI_Model
         return $this->cms_labeled_input($name, $label, $help_block, $html, $label_width);
     }
 
-    public function cms_labeled_select($name, $label, $value=NULL, $options = array(), $help_block='', $input_class='form-control', $label_width=4){
+    public function cms_labeled_select($name, $label, $value=NULL, $options = array(), $help_block='', $attributes = array(), $label_width=4){
+        // fill attributes
+        if(!array_key_exists('id', $attributes)){
+            $attributes['id'] = $name;
+        }
         // build input
-        $html = '<select id="'.$name.'" name="'.$name.'" class="'.$input_class.'">';
+        $html = '<select name="'.$name.'"'. $this->__cms_unpack_attributes($attributes).'>';
         foreach($options as $option_val => $option_caption){
             $selected = $option_val == $value?' selected':'';
             $html .= '<option value="'.$option_val.'"'.$selected.'>'.$option_caption.'</option>';
@@ -217,16 +226,35 @@ class CMS_Model extends CI_Model
         return $this->cms_labeled_input($name, $label, $help_block, $html, $label_width);
     }
 
-    public function cms_labeled_text_area($name, $label, $value=NULL, $help_block='', $input_class='form-control', $label_width=4){
-        // build input
-        $html = '<textarea id="'.$name.'" name="'.$name.'" class="'.$input_class.'">'.$value.'</textarea>';
+    public function cms_labeled_text_area($name, $label, $value=NULL, $help_block='', $attributes = array(), $label_width=4){
+        // fill attributes
+        if(!array_key_exists('id', $attributes)){
+            $attributes['id'] = $name;
+        }
+        // build html
+        $html = '<textarea name="'.$name.'" class="'.$input_class.'"'.
+            $this->__cms_unpack_attributes($attributes).'>'.
+            $value.'</textarea>';
         return $this->cms_labeled_input($name, $label, $help_block, $html, $label_width);
     }
 
-    public function cms_labeled_text_input($name, $label, $value=NULL, $help_block='', $input_class='form-control', $label_width=4){
-        // build input
-        $html = '<input type="text" id="'.$name.'" name="'.$name.'" value="'.$value.'" class="'.$input_class.'" />';
+    public function cms_labeled_text_input($name, $label, $value=NULL, $help_block='', $attributes = array(), $label_width=4){
+        // fill attributes
+        if(!array_key_exists('id', $attributes)){
+            $attributes['id'] = $name;
+        }
+        // build html
+        $html = '<input type="text" name="'.$name.'" value="'.$value.'"'.
+            $this->__cms_unpack_attributes($attributes).' />';
         return $this->cms_labeled_input($name, $label, $help_block, $html, $label_width);
+    }
+
+    private function __cms_unpack_attributes($attributes){
+        $result = '';
+        foreach($attributes as $key=>$val){
+            $result .= ' '.$key.'="'.$val.'"';
+        }
+        return $result;
     }
 
     public function cms_labeled_input($name, $label, $help_block='', $html=NULL, $label_width=4){

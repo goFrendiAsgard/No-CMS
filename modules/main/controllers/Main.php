@@ -1990,10 +1990,7 @@ class Main extends CMS_Controller
             $ssl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? true : false;
             $sp = strtolower($_SERVER['SERVER_PROTOCOL']);
             $protocol = substr($sp, 0, strpos($sp, '/')).(($ssl) ? 's' : '');
-            $port = $_SERVER['SERVER_PORT'];
-            $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':'.$port;
-            $host = isset($hostname) ? $hostname : $_SERVER['SERVER_NAME'].$port;
-            $redirection = $protocol.'://'.$server_name.'/index.php/main/landing?__origin='.urlencode($original_url).'&__token='.$unique_id;
+            $redirection = $protocol.'://'.$server_name.'/main/landing?__origin='.urlencode($original_url).'&__token='.$unique_id;
             redirect($redirection);
         }
     }

@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_model extends CI_Model{
-    private $VERSION        = '0.8.1';
+    private $VERSION        = '1.0.0';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -1037,7 +1037,7 @@ class Install_model extends CI_Model{
                     1, 1, 5, 1, '{{ widget_slug:sidebar }}<hr />{{ widget_slug:advertisement }}',
                     NULL),
                 array('section_bottom', 'Bottom Section', '', '',
-                    1, 1, 6, 1, '{{ site_footer }}',
+                    1, 1, 6, 1, '<div class="container well">' . PHP_EOL . '    <div class="col-md-4">' . PHP_EOL .'        <h3>{{ site_name }}</h3>' . PHP_EOL .'        <p>{{ site_slogan }}</p>' . PHP_EOL .'    </div>' . PHP_EOL .'    <div class="col-md-8">' . PHP_EOL .'        <h3>About Us</h3>' . PHP_EOL .'        <p>{{ site_about_us }}</p>' . PHP_EOL .'    </div>' . PHP_EOL .'    <div class="col-md-12">{{ site_footer }}</div>' . PHP_EOL . '</div>',
                     NULL),
                 array('left_navigation', 'Left Navigation', '', 'main/widget_left_nav',
                     1, 1, 7, 0, NULL,
@@ -1106,6 +1106,11 @@ class Install_model extends CI_Model{
                 array('site_theme', 'neutral', 'Site theme'),
                 array('site_layout', 'default', 'Site layout'),
                 array('site_language', 'english', 'Site language'),
+                array('site_about_us', '<p>We are {{ site_name }}</p>', 'About Us'),
+                array('site_background_image', '', 'Background Image'),
+                array('site_background_color', '', 'Background Color'),
+                array('site_background_opacity', '0', 'Background Opacity'),
+                array('site_text_color', '', 'Text Color'),
                 array('max_menu_depth', '5', 'Depth of menu recursive'),
                 array('cms_email_reply_address', 'no-reply@No-CMS.com', 'Email address'),
                 array('cms_email_reply_name', 'admin of No-CMS', 'Email name'),

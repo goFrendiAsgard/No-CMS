@@ -55,51 +55,65 @@ class CMS_AutoUpdate_Model extends CMS_Model
     private function __update()
     {
         $old_version = cms_config('__cms_version');
-        $current_version = '0.8.1';
+        // TODO: change this
+        $current_version = '1.0.0';
 
         if ($old_version == $current_version) {
             return 0;
         }
-        // get major, minor and rev version
+        // get current major, minor and rev version
+        $current_version_component = explode('-', $current_version);
+        $current_version_component = $current_version_component[0];
+        $current_version_component = explode('.', $current_version_component);
+        $current_major_version = $current_version_component[0];
+        $current_minor_version = $current_version_component[1];
+        $current_rev_version = $current_version_component[2];
+
+        // get old major, minor and rev version
         $old_version_component = explode('-', $old_version);
         $old_version_component = $old_version_component[0];
         $old_version_component = explode('.', $old_version_component);
-        $major_version = $old_version_component[0];
-        $minor_version = $old_version_component[1];
-        $rev_version = $old_version_component[2];
+        $old_major_version = $old_version_component[0];
+        $old_minor_version = $old_version_component[1];
+        $old_rev_version = $old_version_component[2];
 
         $this->load->dbforge();
 
-        // 0.7.6
-        if ($major_version <= '0' && $minor_version <= '7' && $rev_version < '6') {
-            $this->__update_to_0_7_6();
-        }
-
-        // 0.7.7
-        if ($major_version <= '0' && $minor_version <= '7' && $rev_version < '7') {
-            $this->__update_to_0_7_7();
-        }
-
-        // 0.7.8
-        if ($major_version <= '0' && $minor_version <= '7' && $rev_version <= '8') {
-            $this->__update_to_0_7_8();
-        }
-
-        // 0.8.1
-        if ($major_version <= '0' && $minor_version <= '8' && $rev_version <= '1') {
-            // make extended route inclussion absolute
-            $pattern = 'include(\'extended_routes.php\');';
-            if (CMS_SUBSITE == '') {
-                $path = APPPATH.'/config/main/routes.php';
-                $replace = 'include(APPPATH.\'config/main/extended_routes.php\');';
-            } else {
-                $path = APPPATH.'/config/site-'.CMS_SUBSITE.'/routes.php';
-                $replace = 'include(APPPATH.\'config/site-'.CMS_SUBSITE.'/extended_routes.php\');';
+        if($old_major_version <= $current_major_version){
+            for($i = $old_major_version; $i <= $current_major_version; $i++){
+                // determine max minor version
+                $max_minor_version = 9;
+                $min_minor_version = 0;
+                if($i == $current_major_version){
+                    $max_minor_version = $current_minor_version;
+                }
+                if($i == $old_major_version){
+                    $min_minor_version = $old_minor_version;
+                }
+                // do until max minor version
+                for($j=$min_minor_version; $j <= $max_minor_version; $j++){
+                    // determine max minor version
+                    $max_rev_version = 9;
+                    $min_rev_version = 0;
+                    if($i == $current_major_version && $j == $max_minor_version){
+                        $max_rev_version = $current_rev_version;
+                    }
+                    if($i == $old_major_version && $j == $old_minor_version){
+                        $min_rev_version = $old_rev_version + 1;
+                    }
+                    if($min_rev_version > 9){
+                        break;
+                    }
+                    // do until max rev version
+                    for($k=$min_rev_version; $k<=$max_rev_version; $k++){
+                        $method = '__update_to_'.$i.'_'.$j.'_'.$k;
+                        if(method_exists($this, $method)){
+                            call_user_func_array(array($this, $method), array());
+                        }
+                    }
+                }
             }
-            file_put_contents($path, str_replace($pattern, $replace, file_get_contents($path)));
         }
-
-        // TODO : Write your upgrade script here
 
         // write new version
         if ($old_version !== null && $old_version != '' && $old_version !== $current_version) {
@@ -388,4 +402,28 @@ class CMS_AutoUpdate_Model extends CMS_Model
             );
         $this->dbforge->modify_column(cms_table_name('main_config'), $fields);
     }
+
+    private function __update_to_0_8_1(){
+        // make extended route inclussion absolute
+        $pattern = 'include(\'extended_routes.php\');';
+        if (CMS_SUBSITE == '') {
+            $path = APPPATH.'/config/main/routes.php';
+            $replace = 'include(APPPATH.\'config/main/extended_routes.php\');';
+        } else {
+            $path = APPPATH.'/config/site-'.CMS_SUBSITE.'/routes.php';
+            $replace = 'include(APPPATH.\'config/site-'.CMS_SUBSITE.'/extended_routes.php\');';
+        }
+        file_put_contents($path, str_replace($pattern, $replace, file_get_contents($path)));
+    }
+
+    private function __update_to_1_0_0(){
+        $this->cms_add_config('site_about_us', '<p>We are {{ site_name }}</p>', 'About Us');
+        $this->cms_add_config('site_background_image', '', 'Background Image');
+        $this->cms_add_config('site_background_color', '', 'Background Color');
+        $this->cms_add_config('site_background_opacity', '0', 'Background Opacity');
+        $this->cms_add_config('site_text_color', '', 'Text Color');
+    }
+
+    // TODO : Write your upgrade function here (__update_to_x_y_x)
+    // TODO : DEBUG
 }

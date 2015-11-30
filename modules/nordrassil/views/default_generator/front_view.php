@@ -36,10 +36,10 @@
     <div class="form-group">
         <input type="text" name="search" value="" id="input_search" class="input-medium search-query form-control" placeholder="keyword" />&nbsp;
     </div>
-    <input type="submit" name="submit" value="Search" id="btn_search" class="btn btn-primary" />&nbsp;
+    <button name="submit" id="btn_search" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i> Search</button>&nbsp;
     &lt;?php
         if($allow_navigate_backend && $have_add_privilege){
-            echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record">Add</a>'.PHP_EOL;
+            echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record"><i class="glyphicon glyphicon-plus"></i> Add</a>'.PHP_EOL;
         }
     ?&gt;
 </div>

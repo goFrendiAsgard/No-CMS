@@ -4,7 +4,7 @@
         if(key_exists($key, $list) && key_exists('static_content', $list[$key])){
             echo $list[$key]['static_content'];
         }
-    };
+    }
     // option for tags
     $option_tag = '';
     $selected = 'selected';
@@ -56,16 +56,15 @@
 <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab1" data-toggle="tab"><i class="glyphicon glyphicon-cog"></i> Configurations</a></li>
-        <li><a href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Images</a></li>
-        <li><a href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Sections</a></li>
+        <li><a href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Site Images</a></li>
+        <li><a href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Page Partials</a></li>
         <li><a href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
     </ul>
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
         <div class="tab-content">
 
             <div class="tab-pane active" id="tab1">
-                <h3>Site Configurations</h3>
-                <hr /><h4>General</h4>
+                <h3>General</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="site_layout">Default Layout</label>
                     <div class="controls col-md-8">
@@ -148,7 +147,7 @@
                     </div>
                 </div>
                 <?php if(CMS_SUBSITE == '' && $multisite_active){ ?>
-                        <hr /><h4>Multisite and Registration</h4>
+                        <hr /><h3>Multisite and Registration</h3>
                         <div class="form-group">
                             <label class="control-label col-md-4" for="cms_add_subsite_on_register">Automatically add subsite on register</label>
                             <div class="controls col-md-8">
@@ -203,7 +202,7 @@
                             </div>
                         </div>
                 <?php } ?>
-                <hr /><h4>Email Setting</h4>
+                <hr /><h3>Email Setting</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="cms_email_protocol">Email Protocol</label>
                     <div class="controls col-md-8">
@@ -333,7 +332,7 @@
             </div>
 
             <div class="tab-pane" id="tab3">
-                <h3>Sections</h3>
+                <h3>Style and Script</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_top_fix">Custom Style</label>
                     <div class="controls col-md-8">
@@ -348,6 +347,7 @@
                         <p class="help-block">Custom Javascript</p>
                     </div>
                 </div>
+                <h3>Page Partials</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_top_fix">Top Section</label>
                     <div class="controls col-md-8">
@@ -411,9 +411,7 @@
             </div>
 
             <div class="tab-pane" id="tab4">
-                <h3>Third Party Authentication</h3>
-
-                <hr /><h4>Facebook</h4>
+                <h3>Facebook</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_facebook">Enable Facebook</label>
                     <div class="controls col-md-8">
@@ -444,7 +442,7 @@
                     </div>
                 </div>
 
-                <hr /><h4>Twitter</h4>
+                <hr /><h3>Twitter</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_twitter">Enable Twitter</label>
                     <div class="controls col-md-8">
@@ -476,7 +474,7 @@
                 </div>
 
 
-                <hr /><h4>Google</h4>
+                <hr /><h3>Google</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_google">Enable Google</label>
                     <div class="controls col-md-8">
@@ -507,7 +505,7 @@
                     </div>
                 </div>
 
-                <hr /><h4>Yahoo</h4>
+                <hr /><h3>Yahoo</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_yahoo">Enable Yahoo</label>
                     <div class="controls col-md-8">
@@ -539,7 +537,7 @@
                 </div>
 
 
-                <hr /><h4>Linkedin</h4>
+                <hr /><h3>Linkedin</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_linkedin">Enable Linkedin</label>
                     <div class="controls col-md-8">
@@ -571,7 +569,7 @@
                 </div>
 
 
-                <hr /><h4>Myspace</h4>
+                <hr /><h3>Myspace</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_myspace">Enable Myspace</label>
                     <div class="controls col-md-8">
@@ -603,7 +601,7 @@
                 </div>
 
 
-                <hr /><h4>Windows Live</h4>
+                <hr /><h3>Windows Live</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_windows_live">Enable Windows Live</label>
                     <div class="controls col-md-8">
@@ -635,7 +633,7 @@
                 </div>
 
 
-                <hr /><h4>Open Id</h4>
+                <hr /><h3>Open Id</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_open_id">Enable Open Id</label>
                     <div class="controls col-md-8">
@@ -652,7 +650,7 @@
                     </div>
                 </div>
 
-                <hr /><h4>AOL</h4>
+                <hr /><h3>AOL</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_aol">Enable AOL</label>
                     <div class="controls col-md-8">

@@ -29,7 +29,7 @@
 <div id="record_content_bottom" class="alert alert-success">End of Page</div>
 <script type="text/javascript">
     var PAGE                   = 1;
-    var URL                    = '<?php echo site_url($module_path."/browse_city/get_data"); ?>';
+    var URL                    = '<?php echo site_url($module_path."/browse_portfolio/get_data"); ?>';
     var ALLOW_NAVIGATE_BACKEND = <?php echo $allow_navigate_backend ? "true" : "false"; ?>;
     var HAVE_ADD_PRIVILEGE     = <?php echo $have_add_privilege ? "true" : "false"; ?>;
     var BACKEND_URL            = '<?php echo $backend_url; ?>';
@@ -53,7 +53,7 @@
         if(typeof(async) == 'undefined'){
             async = true;
         }
-        $('#record_content_bottom').html('Load more City &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
+        $('#record_content_bottom').html('Load more Portfolio &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
         var keyword = $('#input_search').val();
         // Don't send another request before the first one completed
         if(RUNNING_REQUEST){
@@ -77,7 +77,7 @@
                 }
 
                 // show bottom contents
-                var bottom_content = 'No more City to show.';
+                var bottom_content = 'No more Portfolio to show.';
                 if(ALLOW_NAVIGATE_BACKEND && HAVE_ADD_PRIVILEGE){
                     bottom_content += '&nbsp; <a href="<?php echo $backend_url; ?>/add/" class="add_record">Add new</a>';
                 }
