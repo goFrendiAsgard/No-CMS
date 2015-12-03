@@ -53,6 +53,18 @@ class Setting extends CMS_Controller{
                 // do nothing
             }
         }
+        if(isset($_FILES['site_background_image'])){
+            try{
+                $site_background_image = $_FILES['site_background_image'];
+                if(isset($site_background_image['tmp_name']) && $site_background_image['tmp_name'] != '' && getimagesize($site_background_image['tmp_name']) !== FALSE){
+                    $file_name = FCPATH.'assets/nocms/images/custom_background/'.CMS_SUBSITE.$site_background_image['name'];
+                    move_uploaded_file($site_background_image['tmp_name'], $file_name);
+                    $this->cms_set_config('site_background_image', '{{ base_url }}assets/nocms/images/custom_background/'.CMS_SUBSITE.$site_background_image['name']);
+                }
+            }catch(Exception $e){
+                // do nothing
+            }
+        }
         if(count($_POST)>0){
             // save the section widgets
             $this->update_static_content('section_custom_style', $this->input->post('section_custom_style'));
@@ -66,6 +78,9 @@ class Setting extends CMS_Controller{
             // save configurations
             $configuration_list = array(
                 'site_name', 'site_layout', 'site_slogan', 'site_footer', 'site_language',
+                'site_background_color', 'site_background_position', 'site_background_size',
+                'site_background_repeat', 'site_background_origin', 'site_background_clip',
+                'site_background_attachment', 'site_background_blur', 'site_text_color',
                 'cms_signup_activation', 'cms_email_protocol',
                 'cms_email_reply_address', 'cms_email_reply_name', 'cms_email_forgot_subject',
                 'cms_email_forgot_message', 'cms_email_signup_subject', 'cms_email_signup_message',

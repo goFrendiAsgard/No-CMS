@@ -56,7 +56,7 @@ class CMS_AutoUpdate_Model extends CMS_Model
     {
         $old_version = cms_config('__cms_version');
         // TODO: change this
-        $current_version = '1.0.0';
+        $current_version = '1.0.1';
 
         if ($old_version == $current_version) {
             return 0;
@@ -417,13 +417,20 @@ class CMS_AutoUpdate_Model extends CMS_Model
     }
 
     private function __update_to_1_0_0(){
-        $this->cms_add_config('site_about_us', '<p>We are {{ site_name }}</p>', 'About Us');
         $this->cms_add_config('site_background_image', '', 'Background Image');
         $this->cms_add_config('site_background_color', '', 'Background Color');
-        $this->cms_add_config('site_background_opacity', '0', 'Background Opacity');
         $this->cms_add_config('site_text_color', '', 'Text Color');
     }
 
+    private function __update_to_1_0_1(){
+        $this->cms_add_config('site_background_position', '', 'Background Position');
+        $this->cms_add_config('site_background_size', '', 'Background Size');
+        $this->cms_add_config('site_background_repeat', '', 'Background Repeat');
+        $this->cms_add_config('site_background_origin', '', 'Background Origin');
+        $this->cms_add_config('site_background_clip', '', 'Background Clip');
+        $this->cms_add_config('site_background_attachment', '', 'Background Attachment');
+        $this->cms_add_config('site_background_blur', '', 'Background Blur');
+    }
+
     // TODO : Write your upgrade function here (__update_to_x_y_x)
-    // TODO : DEBUG
 }

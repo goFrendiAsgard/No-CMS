@@ -711,7 +711,8 @@ class CMS_Controller extends MX_Controller
         if (isset($custom_author) && $custom_author != null && $custom_author != '') {
             $author = $custom_author;
         } else {
-            $author = $this->{$this->__cms_base_model_name}->cms_get_super_admin()->real_name;
+            $super_admin = $this->{$this->__cms_base_model_name}->cms_get_super_admin();
+            $author = $super_admin['real_name'];
         }
 
         // GET THE LAYOUT
@@ -787,12 +788,47 @@ class CMS_Controller extends MX_Controller
 
             $asset = new Cms_asset();
             $asset->add_js($this->JQUERY_PATH);
-
             // ckeditor adjustment thing
             $asset->add_internal_js($this->cms_ck_adjust_script());
-
             // add javascript base_url for ckeditor
             $asset->add_internal_js('var __cms_base_url = "'.base_url().'";');
+
+            // inject css for background
+            $injected_css = 'body{';
+            $css_configuration = array(
+                'site_background_image' =>  'background-image',
+                'site_background_color' =>  'background-color',
+                'site_text_color' =>  'color',
+                'site_background_position' =>  'background-position',
+                'site_background_size' =>  'background-size',
+                'site_background_repeat' =>  'background-repeat',
+                'site_background_origin' =>  'background-origin',
+                'site_background_clip' =>  'background-clip',
+                'site_background_attachment' =>  'background-attachment',
+            );
+            foreach($css_configuration as $config => $css_key){
+                if(trim($this->cms_get_config($config)) != ''){
+                    // get value from config
+                    $value = $this->cms_get_config($config);
+                    // if key is site_background_image, add "url" part
+                    if($config == 'site_background_image'){
+                        $value = 'url(\''.addslashes($value).'\')';
+                    }
+                    $injected_css .= $css_key . ':' . $value . '!important;';
+                }
+            }
+            // site background blur
+            if(trim($this->cms_get_config('site_background_blur')) != ''){
+                $value = $this->cms_get_config('site_background_blur');
+                /*
+                $injected_css .= '-webkit-filter: blur(' . $value . 'px)!important;
+                      -moz-filter: blur(' . $value . 'px)!important;
+                      -o-filter: blur(' . $value . 'px)!important;
+                      -ms-filter: blur(' . $value . 'px)!important;
+                      filter: blur(' . $value . 'px);!important';*/
+            }
+            $injected_css .= '}';
+            $asset->add_internal_css($injected_css);
 
             // check login status
             //$login_code = '<script type="text/javascript">';

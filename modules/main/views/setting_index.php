@@ -33,12 +33,11 @@
 
     $asset = new Cms_asset();
     $asset->add_cms_css('grocery_crud/css/jquery_plugins/chosen/chosen.css');
-    //$asset->add_cms_css('grocery_crud/themes/flexigrid/css/flexigrid.css');
     echo $asset->compile_css();
 ?>
 <style type="text/css">
     .text-area-section{
-        resize: none;
+        reblur: none;
         word-wrap: no-wrap;
         white-space: pre-wrap;
         overflow-x: auto;
@@ -47,7 +46,7 @@
         min-height: 75px!important;
         margin-top: 10px!important;
         font-family: Courier;
-        font-size: small;
+        font-blur: small;
     }
 </style>
 <?php if($changed){?>
@@ -56,22 +55,17 @@
 <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab1" data-toggle="tab"><i class="glyphicon glyphicon-cog"></i> Configurations</a></li>
-        <li><a href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Site Images</a></li>
-        <li><a href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Page Partials</a></li>
-        <li><a href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
+        <li><a href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-eye-open"></i> Appearance</a></li>
+        <li><a href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-envelope"></i> Site Email</a></li>
+        <li><a href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Site Images</a></li>
+        <li><a href="#tab5" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Page Partials</a></li>
+        <li><a href="#tab6" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
     </ul>
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
         <div class="tab-content">
 
             <div class="tab-pane active" id="tab1">
                 <h3>General</h3>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="site_layout">Default Layout</label>
-                    <div class="controls col-md-8">
-                        <select id="site_language" name="site_layout" class="form-control"><?php echo $option_layout; ?></select>
-                        <p class="help-block">Default layout used</p>
-                    </div>
-                </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="site_language">Default Language</label>
                     <div class="controls col-md-8">
@@ -202,7 +196,87 @@
                             </div>
                         </div>
                 <?php } ?>
-                <hr /><h3>Email Setting</h3>
+            </div>
+
+            <div class="tab-pane" id="tab2">
+                <h3>Appearance</h3>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="site_layout">Default Layout</label>
+                    <div class="controls col-md-8">
+                        <select id="site_language" name="site_layout" class="form-control"><?php echo $option_layout; ?></select>
+                        <p class="help-block">Default layout used</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_background_color">Background Color</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_background_color" name="site_background_color" value="<?php echo $config_list['site_background_color'] ?>" class="form-control">
+                          <p class="help-block">Background color (hexadecimal, e.g: "#ffffff", "#ff0000")</p>
+                      </div>
+                </div>
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_text_color">Text Color</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_text_color" name="site_text_color" value="<?php echo $config_list['site_text_color'] ?>" class="form-control">
+                          <p class="help-block">Text color (hexadecimal, e.g: "#ffffff", "#ff0000")</p>
+                      </div>
+                </div>
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_background_position">Background Position</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_background_position" name="site_background_position" value="<?php echo $config_list['site_background_position'] ?>" class="form-control">
+                          <p class="help-block">Background position (e.g: "10px 20px", "20% 20%", "bottom right", "center")</p>
+                      </div>
+                </div>
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_background_size">Background Size</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_background_size" name="site_background_size" value="<?php echo $config_list['site_background_size'] ?>" class="form-control">
+                          <p class="help-block">Background size (e.g: "cover", "contain", "auto", "50%")</p>
+                      </div>
+                </div>
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_background_repeat">Background Repeat</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_background_repeat" name="site_background_repeat" value="<?php echo $config_list['site_background_repeat'] ?>" class="form-control">
+                          <p class="help-block">Background repeat (e.g: "repeat", "repeat-x", "repeat-y", "no-repeat")</p>
+                      </div>
+                </div>
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_background_origin">Background Origin</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_background_origin" name="site_background_origin" value="<?php echo $config_list['site_background_origin'] ?>" class="form-control">
+                          <p class="help-block">Background origin (e.g: "padding-box", "border-box", "content-box")</p>
+                      </div>
+                </div>
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_background_clip">Background Clip</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_background_clip" name="site_background_clip" value="<?php echo $config_list['site_background_clip'] ?>" class="form-control">
+                          <p class="help-block">Background clip (e.g: "padding-box", "border-box", "content-box")</p>
+                      </div>
+                </div>
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_background_attachment">Background Attachment</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_background_attachment" name="site_background_attachment" value="<?php echo $config_list['site_background_attachment'] ?>" class="form-control">
+                          <p class="help-block">Background attachment (e.g: "scroll", "fixed", "local")</p>
+                      </div>
+                </div>
+                <!--
+                <div class="form-group">
+                      <label class="control-label col-md-4" for="site_background_blur">Background Blur</label>
+                      <div class="controls col-md-8">
+                          <input type="text" id="site_background_blur" name="site_background_blur" value="<?php echo $config_list['site_background_blur'] ?>" class="form-control">
+                          <p class="help-block">Background blur (e.g: "5")</p>
+                      </div>
+                </div>
+                -->
+            </div>
+
+            <div class="tab-pane" id="tab3">
+                <h3>Email Setting</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="cms_email_protocol">Email Protocol</label>
                     <div class="controls col-md-8">
@@ -311,7 +385,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="tab2">
+            <div class="tab-pane" id="tab4">
                 <h3>Images</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="site_logo">Site Logo</label>
@@ -329,9 +403,20 @@
                         <p class="help-block">Image used as favicon</p>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="site_background_image">Site Background Image</label>
+                    <div class="controls col-md-8">
+                        <?php if(trim($config_list['site_background_image']) != ''){?>
+                        <img style="max-width:100%" src="<?php echo $config_list['site_background_image'] ?>">
+                        <?php } ?>
+                        <br>
+                        <input type="file" id="site_background_image" name="site_background_image" class="form-control">
+                        <p class="help-block">Image used as background image</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="tab-pane" id="tab3">
+            <div class="tab-pane" id="tab5">
                 <h3>Style and Script</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_top_fix">Custom Style</label>
@@ -352,7 +437,7 @@
                     <label class="control-label col-md-4" for="section_top_fix">Top Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
                         <textarea id="section_top_fix" name="section_top_fix" class="text-area-section form-control"><?php echo show_static_content($section_widget_list, 'section_top_fix'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of top section</p>
@@ -362,7 +447,7 @@
                     <label class="control-label col-md-4" for="section_top_fix">Navigation Bar's Right Partial</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
                         <textarea id="navigation_right_partial" name="navigation_right_partial" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'navigation_right_partial'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of navigation bar's right partial (don't put too much thing here)</p>
@@ -372,7 +457,7 @@
                     <label class="control-label col-md-4" for="section_banner">Banner Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
                         <textarea id="section_banner" name="section_banner" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_banner'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of banner section</p>
@@ -382,7 +467,7 @@
                     <label class="control-label col-md-4" for="section_left">Left Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
                         <textarea id="section_left" name="section_left" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_left'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of left Section</p>
@@ -392,7 +477,7 @@
                     <label class="control-label col-md-4" for="section_right">Right Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
                         <textarea id="section_right" name="section_right" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_right'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of right section</p>
@@ -402,7 +487,7 @@
                     <label class="control-label col-md-4" for="section_bottom">Bottom Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select form-control"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
                         </div>
                         <textarea id="section_bottom" name="section_bottom" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_bottom'); ?></textarea>
                         <p class="help-block">HTML &amp; tags of bottom section</p>
@@ -410,7 +495,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="tab4">
+            <div class="tab-pane" id="tab6">
                 <h3>Facebook</h3>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="auth_enable_facebook">Enable Facebook</label>
@@ -674,9 +759,9 @@
     </form>
 </div>
 <?php
-    $asset->add_cms_js("nocms/js/jquery.autosize.js");
+    $asset->add_cms_js("nocms/js/jquery.autoclip.js");
     $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
-    $asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
+    //$asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
     echo $asset->compile_js();
 ?>
 <script type="text/javascript">
@@ -732,9 +817,9 @@
         // when calling chosen, the select should be visible, that's why I need to do this:
         //$('#tab3').removeClass('active');
         //$('#tab1').addClass('active');
-        // make text area autosize
-        $(".chosen-select").chosen({width: "250px"});
-        $('#tab1 .text-area-section').autosize();
+        // make text area autoclip
+        $("#tab1 .chosen-select").chosen({width: "300px"});
+        $('#tab1 .text-area-section').autoclip();
 
         // add widget or whatever to the section at current caret
         $('.btn-tag-add').click(function(){
@@ -749,8 +834,9 @@
         _adjust_input_visibility();
         $('#cms_signup_activation, #cms_email_protocol').change(_adjust_input_visibility);
     });
-    // textarea autosize later
-    $("a[href='#tab3']").on('shown.bs.tab', function(e) {
-        $('#tab3 .text-area-section').autosize();
+    // textarea autoclip later
+    $("a[href='#tab5']").on('shown.bs.tab', function(e) {
+        $("#tab5 .chosen-select").chosen({width: "300px"});
+        $('#tab5 .text-area-section').autoclip();
     });
 </script>

@@ -104,11 +104,11 @@ class CMS_Model extends CI_Model
         }
 
         if (self::$__cms_model_properties['super_admin'] === null) {
-            $query = $this->db->select('user_name, real_name')
+            $query = $this->db->select('user_name, real_name, email')
                     ->from($this->cms_user_table_name())
                     ->where('user_id', 1)
                     ->get();
-            $super_admin = $query->row();
+            $super_admin = $query->row_array();
             self::$__cms_model_properties['super_admin'] = $super_admin;
         }
 
@@ -3118,7 +3118,7 @@ class CMS_Model extends CI_Model
             $pattern = array();
             $replacement = array();
 
-            // user_name
+            // user_id
             $pattern[] = "/\{\{ user_id \}\}/si";
             $replacement[] = $this->cms_user_id();
 
@@ -3133,6 +3133,20 @@ class CMS_Model extends CI_Model
             // user_email
             $pattern[] = "/\{\{ user_email \}\}/si";
             $replacement[] = $this->cms_user_email();
+
+            $super_admin = $this->cms_get_super_admin();
+
+            // admin name
+            $pattern[] = "/\{\{ admin_user_name \}\}/si";
+            $replacement[] = $super_admin['user_name'];
+
+            // admin real name
+            $pattern[] = "/\{\{ admin_real_name \}\}/si";
+            $replacement[] = $super_admin['real_name'];
+
+            // admin email
+            $pattern[] = "/\{\{ admin_email \}\}/si";
+            $replacement[] = $super_admin['email'];
 
             // site_url
             $site_url = site_url();
