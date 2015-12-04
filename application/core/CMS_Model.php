@@ -96,10 +96,26 @@ class CMS_Model extends CI_Model
                 'is_group_id_cached' => false,
                 'is_super_admin_cached' => false,
                 'is_route_cached' => false,
+                'user_language' => null,
+                'user_theme' => null,
             );
         foreach ($default_properties as $key => $val) {
             if (!array_key_exists($key, self::$__cms_model_properties)) {
                 self::$__cms_model_properties[$key] = $val;
+            }
+        }
+
+        if($this->cms_user_id() != '' && $this->cms_user_id() > 0){
+            if (self::$__cms_model_properties['user_language'] === null || self::$__cms_model_properties['user_theme'] === null) {
+                $query = $this->db->select('language, theme')
+                    ->from($this->cms_user_table_name())
+                    ->where('user_id', $this->cms_user_id())
+                    ->get();
+                if($query->num_rows() > 0){
+                    $row = $query->row();
+                    self::$__cms_model_properties['user_language'] = $row->language;
+                    self::$__cms_model_properties['user_theme'] = $row->theme;
+                }
             }
         }
 
@@ -193,6 +209,38 @@ class CMS_Model extends CI_Model
     public function n($navigation_name)
     {
         return $this->cms_complete_navigation_name($navigation_name);
+    }
+
+    public function  cms_get_user_theme(){
+        return self::$__cms_model_properties['user_theme'];
+    }
+
+    public function cms_get_user_language(){
+        return self::$__cms_model_properties['user_language'];
+    }
+
+    // This is used to define new hook. So whenever you want to make a new hook,
+    // call this function.
+    // This function will evaluate hooks.php
+    public function cms_call_hook($hook_name, $parameters=array()){
+        $return = array();
+        $module_list = $this->cms_get_module_list();
+        foreach($module_list as $module){
+            $active = $module['active'];
+            if($active){
+                $module_path = $module['module_path'];
+                $module_name = $module['module_name'];
+                $function_prefix = 'hook_'.str_ireplace(array('.', '-', ' '), '_', $module_name);
+                if(file_exists(FCPATH.'modules/'.$module_path.'/hooks.php')){
+                    require_once(FCPATH.'modules/'.$module_path.'/hooks.php');
+                    $function_name = $function_prefix.'_'.$hook_name;
+                    if(function_exists($function_name)){
+                        $return[] = call_user_func_array($function_name, $parameters);
+                    }
+                }
+            }
+        }
+        return $return;
     }
 
     public function cms_labeled_multi_select($name, $label, $value=array(), $options = array(), $help_block='', $attributes = array(), $label_width=4){
@@ -2360,13 +2408,15 @@ class CMS_Model extends CI_Model
 
             $files = directory_map(FCPATH.'modules/'.$directory.'/controllers', 1);
             $module_controllers = array();
-            foreach ($files as $file) {
-                $filename_array = explode('.', $file);
-                $extension = $filename_array[count($filename_array) - 1];
-                unset($filename_array[count($filename_array) - 1]);
-                $filename = implode('.', $filename_array);
-                if ($extension == 'php' && $filename != 'Info') {
-                    $module_controllers[] = $filename;
+            if($files){
+                foreach ($files as $file) {
+                    $filename_array = explode('.', $file);
+                    $extension = $filename_array[count($filename_array) - 1];
+                    unset($filename_array[count($filename_array) - 1]);
+                    $filename = implode('.', $filename_array);
+                    if ($extension == 'php' && $filename != 'Info') {
+                        $module_controllers[] = $filename;
+                    }
                 }
             }
             $module_name = $this->cms_module_name($directory);
@@ -2954,11 +3004,13 @@ class CMS_Model extends CI_Model
         if (isset($language)) {
             $this->cms_ci_session('cms_lang', $language);
         } else {
-            $language = '';
-            $language = $this->cms_ci_session('cms_lang');
-            if (!$language) {
-                $language = $this->cms_get_config('site_language', true);
-                $this->cms_ci_session('cms_lang', $language);
+            $language = $this->cms_get_user_language();
+            if($language == '' || $language == NULL){
+                $language = $this->cms_ci_session('cms_lang');
+                if (!$language) {
+                    $language = $this->cms_get_config('site_language', true);
+                    $this->cms_ci_session('cms_lang', $language);
+                }
             }
 
             return $language;

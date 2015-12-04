@@ -407,9 +407,11 @@
                     <label class="control-label col-md-4" for="site_background_image">Site Background Image</label>
                     <div class="controls col-md-8">
                         <?php if(trim($config_list['site_background_image']) != ''){?>
-                        <img style="max-width:100%" src="<?php echo $config_list['site_background_image'] ?>">
+                        <img id="img_background_image" style="max-width:100%" src="<?php echo $config_list['site_background_image'] ?>">
                         <?php } ?>
-                        <br>
+                        <div style="padding-top:10px; padding-bottom:10px;">
+                            <input name="remove_background_image" value="0" type="checkbox" /> Don't use background image
+                        </div>
                         <input type="file" id="site_background_image" name="site_background_image" class="form-control">
                         <p class="help-block">Image used as background image</p>
                     </div>

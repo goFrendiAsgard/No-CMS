@@ -452,8 +452,10 @@ class Main extends CMS_Controller
     public function change_profile()
     {
         $this->cms_guard_page('main_change_profile');
-        $SQL = 'SELECT user_name, email, real_name FROM '.$this->cms_user_table_name().' WHERE user_id = '.$this->cms_user_id();
-        $query = $this->db->query($SQL);
+        $query = $this->db->select('user_name, email, real_name, theme, language, sex, birthdate, profile_picture, self_description')
+            ->from($this->cms_user_table_name())
+            ->where('user_id', $this->cms_user_id())
+            ->get();
         $row = $query->row();
         $user_name = $row->user_name;
 
@@ -463,15 +465,23 @@ class Main extends CMS_Controller
         $change_password = $this->input->post('change_password');
         $password = $this->input->post('password');
         $confirm_password = $this->input->post('confirm_password');
+        $theme = $this->input->post('theme');
+        $language = $this->input->post('language');
+        $sex = $this->input->post('sex');
+        $birthdate = $this->input->post('birthdate');
+        $self_description = $this->input->post('self_description');
         if (!$change_password) {
             $password = null;
         }
-        if (!$email) {
-            $email = $row->email;
-        }
-        if (!$real_name) {
-            $real_name = $row->real_name;
-        }
+        // get from old values
+        $email = $email !== NULL? $email : $row->email;
+        $real_name = $real_name !== NULL? $real_name : $row->real_name;
+        $theme = $theme !== NULL? $theme : $row->theme;
+        $language = $language !== NULL? $language : $row->language;
+        $sex = $sex !== NULL? $sex : $row->sex;
+        $birthdate = $birthdate !== NULL? $birthdate : $row->birthdate;
+        $self_description = $self_description !== NULL? $self_description : $row->self_description;
+        $profile_picture = $row->profile_picture;
 
         //set validation rule
         $this->form_validation->set_rules('email', 'E mail', 'required|valid_email');
@@ -480,17 +490,59 @@ class Main extends CMS_Controller
         $this->form_validation->set_rules('confirm_password', 'Password Confirmation');
 
         if ($this->form_validation->run()) {
-            $this->cms_do_change_profile($email, $real_name, $password, $this->cms_user_id());
-            redirect('', 'refresh');
-        } else {
+            if(isset($_FILES['profile_picture'])){
+                try{
+                    // profile picture
+                    $pp = $_FILES['profile_picture'];
+                    if(isset($pp['tmp_name']) && $pp['tmp_name'] != '' && getimagesize($pp['tmp_name']) !== FALSE){
+                        $pp_file_name = $this->cms_user_id().'_'.$pp['name'];
+                        $file_name = FCPATH.'assets/nocms/images/profile_picture/'.$pp_file_name;
+                        move_uploaded_file($pp['tmp_name'], $file_name);
+                        $this->cms_resize_image($file_name, 256, 256);
+                        // profile picture is pp_file_name
+                        $profile_picture = $pp_file_name;
+                    }
+                }catch(Exception $e){
+                    // do nothing
+                }
+            }
+            // update secondary data
             $data = array(
-                'user_name' => $user_name,
-                'email' => $email,
-                'real_name' => $real_name,
-                'change_profile_caption' => $this->cms_lang('Change Profile'),
+                'theme' => $theme,
+                'language' => $language,
+                'sex' => $sex,
+                'birthdate' => $birthdate,
+                'self_description' => $self_description,
+                'profile_picture' => $profile_picture,
             );
-            $this->view('main/main_change_profile', $data, 'main_change_profile');
+            $this->db->update($this->cms_user_table_name(),
+                $data,
+                array('user_id' => $this->cms_user_id())
+            );
+            // update email, real name, etc
+            $this->cms_do_change_profile($email, $real_name, $password, $this->cms_user_id());
         }
+        // select the old data again
+        $query = $this->db->select('user_name, email, real_name, theme, language, sex, birthdate, profile_picture, self_description')
+            ->from($this->cms_user_table_name())
+            ->where('user_id', $this->cms_user_id())
+            ->get();
+        $row = $query->row();
+        $data = array(
+            'user_name' => $row->user_name,
+            'email' => $row->email,
+            'real_name' => $row->real_name,
+            'birthdate' => $row->birthdate,
+            'theme' => $row->theme,
+            'language' => $row->language,
+            'sex' => $row->sex,
+            'self_description' => $row->self_description,
+            'profile_picture' => $row->profile_picture,
+            'change_profile_caption' => $this->cms_lang('Change Profile'),
+            'theme_list' => $this->cms_get_theme_list(),
+            'language_list' => $this->cms_language_list(),
+        );
+        $this->view('main/main_change_profile', $data, 'main_change_profile');
     }
 
     public function logout()

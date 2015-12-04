@@ -69,6 +69,9 @@ class CMS_Controller extends MX_Controller
         $this->load->model($this->__cms_base_model_name);
         $this->{$this->__cms_base_model_name}->__controller_module_path = $module_path;
 
+        // hook cms_construct
+        $this->cms_call_hook('cms_construct');
+
         // unpublished modules should never be accessed.
         if (CMS_SUBSITE != '' && $module_path != 'main' && $module_path != '') {
             $subsite_auth_file = FCPATH.'modules/'.$module_path.'/subsite_auth.php';
@@ -670,7 +673,10 @@ class CMS_Controller extends MX_Controller
                 $theme = $default_theme;
             }
         } else {
-            $theme = $this->cms_get_config('site_theme');
+            $theme = $this->cms_get_user_theme();
+            if($theme == NULL || $theme == ''){
+                $theme = $this->cms_get_config('site_theme');
+            }
         }
 
         // ASSIGN TITLE

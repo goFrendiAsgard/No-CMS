@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_model extends CI_Model{
-    private $VERSION        = '1.0.1';
+    private $VERSION        = '1.0.2';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -333,6 +333,23 @@ class Install_model extends CI_Model{
             $success = FALSE;
             $error_list[] = APPPATH."config/tmp is not writable";
         }
+        // custome logo, favicon, background, and profile picture
+        if (!is_writable(FCPATH.'assets/nocms/images/custom_background')) {
+            $success = FALSE;
+            $error_list[] = FCPATH."assets/nocms/images/custom_background is not writable";
+        }
+        if (!is_writable(FCPATH.'assets/nocms/images/custom_logo')) {
+            $success = FALSE;
+            $error_list[] = FCPATH."assets/nocms/images/custom_logo is not writable";
+        }
+        if (!is_writable(FCPATH.'assets/nocms/images/custom_favicon')) {
+            $success = FALSE;
+            $error_list[] = FCPATH."assets/nocms/images/custom_favicon is not writable";
+        }
+        if (!is_writable(FCPATH.'assets/nocms/images/profile_picture')) {
+            $success = FALSE;
+            $error_list[] = FCPATH."assets/nocms/images/profile_picture is not writable";
+        }
         // third party authentication activated
         if ($this->auth_enable_facebook || $this->auth_enable_twitter || $this->auth_enable_google || $this->auth_enable_yahoo || $this->auth_enable_linkedin || $this->auth_enable_myspace || $this->auth_enable_foursquare || $this->auth_enable_windows_live || $this->auth_enable_open_id || $this->auth_enable_aol ) {
             // curl
@@ -561,7 +578,7 @@ class Install_model extends CI_Model{
             );
         $type_varchar_large = array(
                 'type' => 'VARCHAR',
-                'constraint' => '100',
+                'constraint' => '255',
                 'null' => TRUE,
             );
         $type_password = array(
@@ -695,6 +712,10 @@ class Install_model extends CI_Model{
                     'auth_Live'         => $type_varchar_large,
                     'language'          => $type_varchar_small,
                     'theme'             => $type_varchar_small,
+                    'birthdate'         => $type_date,
+                    'sex'               => $type_varchar_small,
+                    'profile_picture'   => $type_varchar_large,
+                    'self_description'  => $type_text,
                     'last_active'       => $type_varchar_small,
                     'login'             => $type_boolean_false,
                     'subsite'           => $type_varchar_large,

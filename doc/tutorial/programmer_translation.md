@@ -42,6 +42,6 @@ There are several way to make additional language translation.
 
 ```
 
-* The first one is by create a translation file in `/modules/module_name/assets/languages/`. 
+* The second one is by create a translation file in `/modules/module_name/assets/languages/`. 
 
 * Last, and probably the most convenient for non-programmer, is by accessing `CMS Management | Language Management`

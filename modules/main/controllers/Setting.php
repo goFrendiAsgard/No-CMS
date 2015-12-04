@@ -53,7 +53,10 @@ class Setting extends CMS_Controller{
                 // do nothing
             }
         }
-        if(isset($_FILES['site_background_image'])){
+
+        if($this->input->post('remove_background_image') == 1){
+            $this->cms_set_config('site_background_image', '');
+        }else if(isset($_FILES['site_background_image'])){
             try{
                 $site_background_image = $_FILES['site_background_image'];
                 if(isset($site_background_image['tmp_name']) && $site_background_image['tmp_name'] != '' && getimagesize($site_background_image['tmp_name']) !== FALSE){
@@ -65,6 +68,7 @@ class Setting extends CMS_Controller{
                 // do nothing
             }
         }
+
         if(count($_POST)>0){
             // save the section widgets
             $this->update_static_content('section_custom_style', $this->input->post('section_custom_style'));
