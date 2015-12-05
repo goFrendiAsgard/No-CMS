@@ -54,7 +54,7 @@ foreach($result as $record){
         echo '    $contents .= \'<tr>\';'.PHP_EOL;
         echo '    $contents .= \'<th>'.$captions[$i].'</th>\';'.PHP_EOL;
         echo '    $contents .= \'<td>\' . $record->'.$fields[$i].' . \'</td>\';'.PHP_EOL;
-        echo '    $contents .= \'<tr>\';'.PHP_EOL;
+        echo '    $contents .= \'</tr>\';'.PHP_EOL;
     }
 ?>
 

@@ -348,12 +348,41 @@ class CMS_Controller extends MX_Controller
         } else {
             $url_pattern = "CONCAT(url, '%')";
         }
-        $SQL = 'SELECT navigation_name
-        	FROM '.cms_table_name('main_navigation')."
-        	WHERE '".addslashes($url_string)."' LIKE ".$url_pattern."
+
+        // not only original url_string, but also every matched url from routes
+        $url_string_list = array($url_string);
+        if(CMS_SUBSITE == ''){
+            include(APPPATH.'config/main/routes.php');
+        }else{
+            include(APPPATH.'config/site-'.CMS_SUBSITE.'/routes.php');
+        }
+        foreach($route as $key=>$val){
+            // skip reserved routes
+            if($key == 'default_controller' || $key == '404_override' || $key == 'translate_uri_dashes'){
+                continue;
+            }
+            // translate route into regex pattern
+            $key = str_replace(':any', '[^/]+', $key);
+            $key = str_replace(':num', '[0-9]+', $key);
+            $key = '$' . $key .'$';
+            // if match, try to translate
+            if(preg_match($key, $url_string)){
+                $url_string_list[] = preg_replace($key, $val, $url_string);
+            }
+        }
+        // build where syntax
+        $where = array();
+        foreach($url_string_list as $url_string){
+            $where[] = "'".addslashes($url_string)."' LIKE ".$url_pattern."
         		OR '/".addslashes($url_string)."/' LIKE ".$url_pattern."
         		OR '/".addslashes($url_string)."' LIKE ".$url_pattern."
-        		OR '".addslashes($url_string)."/' LIKE ".$url_pattern.'
+        		OR '".addslashes($url_string)."/' LIKE ".$url_pattern;
+        }
+        $where = implode(' OR ', $where);
+
+        $SQL = 'SELECT navigation_name
+        	FROM '.cms_table_name('main_navigation')."
+        	WHERE ".$where.'
         	ORDER BY LENGTH(url) DESC';
         $query = $this->db->query($SQL);
 
