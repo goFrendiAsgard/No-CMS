@@ -70,7 +70,7 @@ class CMS_Controller extends MX_Controller
         $this->{$this->__cms_base_model_name}->__controller_module_path = $module_path;
 
         // hook cms_construct
-        $this->cms_call_hook('cms_construct');
+        $this->cms_call_hook('cms_controller_construct');
 
         // unpublished modules should never be accessed.
         if (CMS_SUBSITE != '' && $module_path != 'main' && $module_path != '') {
