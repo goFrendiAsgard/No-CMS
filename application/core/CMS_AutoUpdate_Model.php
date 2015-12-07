@@ -433,13 +433,15 @@ class CMS_AutoUpdate_Model extends CMS_Model
     }
 
     private function __update_to_1_0_2(){
-        $fields = array(
-            'birthdate'         => array("type"=>'date', "null"=>TRUE),
-            'sex'               => array('type' => 'VARCHAR', 'constraint' => '50', 'null' => TRUE),
-            'profile_picture'   => array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
-            'self_description'  => array('type' => 'TEXT', 'null' => TRUE),
-        );
-        $this->dbforge->add_column(cms_table_name('main_user'), $fields);
+        if(CMS_SUBSITE == ''){
+            $fields = array(
+                'birthdate'         => array("type"=>'date', "null"=>TRUE),
+                'sex'               => array('type' => 'VARCHAR', 'constraint' => '50', 'null' => TRUE),
+                'profile_picture'   => array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
+                'self_description'  => array('type' => 'TEXT', 'null' => TRUE),
+            );
+            $this->dbforge->add_column($this->cms_user_table_name(), $fields);
+        }
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)
