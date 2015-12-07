@@ -292,7 +292,8 @@ class Multisite extends CMS_Secure_Controller {
                 }
 
             }
-            $this->cms_do_register($user_name, $email, $real_name, $password, $configs);
+            $new_user_id = $this->cms_do_register($user_name, $email, $real_name, $password, $configs);
+            $this->cms_call_hook('cms_after_register', array($new_user_id, $this->input->post()));
             // create subsite
             $current_user_id = $this->db->select('user_id')
                 ->from($this->cms_user_table_name())
@@ -411,6 +412,8 @@ class Multisite extends CMS_Secure_Controller {
             }
             redirect('','refresh');
         } else {
+            $additional_input = $this->cms_call_hook('cms_registration_additional_input');
+            $additional_input = implode(' ', $additional_input);
             $data = array(
                 'user_name' => $user_name,
                 'email' => $email,
@@ -422,6 +425,7 @@ class Multisite extends CMS_Secure_Controller {
                 'theme_list'    => $this->subsite_model->public_theme_list(),
                 'layout_list'   => $this->subsite_model->layout_list(),
                 'template_list' => $this->subsite_model->template_list(),
+                'additional_input' => $additional_input,
             );
 
             $this->view('multisite/register', $data, 'main_register');

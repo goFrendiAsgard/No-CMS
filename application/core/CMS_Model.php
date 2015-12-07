@@ -1456,34 +1456,53 @@ class CMS_Model extends CI_Model
         }
 
         if (!$login_succeed) {
-            $this->load->helper('cms_extended_login');
-            if (function_exists('extended_login')) {
-                $extended_login_result = extended_login($identity, $password);
-                if ($extended_login_result !== false) {
+            $extended_login_result_list = $this->cms_call_hook('cms_login', array($identity, $password));
+            foreach($extended_login_result_list as $extended_login_result) {
+                if ($extended_login_result !== false && $extended_login_result !== NULL) {
                     $query = $this->db->select('user_id, user_name')
                         ->from($this->cms_user_table_name())
                         ->where('user_name', $identity)
                         ->get();
+                    // login succeed from hook
+                    $local_login_succeed = FALSE;
                     // if already exists in database
                     if ($query->num_rows() > 0) {
                         $row = $query->row();
                         $user_id = $row->user_id;
                         $user_name = $row->user_name;
-                        $login_succeed = true;
+                        $local_login_succeed = true;
                     } else {
                         $data = array();
                         $data['user_name'] = $identity;
                         $data['password'] = null;
-                        $login_succeed = $this->db->insert($this->cms_user_table_name(), $data);
-                        if ($login_succeed) {
+                        $local_login_succeed = $this->db->insert($this->cms_user_table_name(), $data);
+                        if ($local_login_succeed) {
                             $user_id = $this->db->insert_id();
                             $user_name = $identity;
                         }
                     }
-                    if ($login_succeed && is_array($extended_login_result)) {
-                        if (count($extended_login_result) > 1) {
-                            $user_real_name = $extended_login_result[0];
-                            $user_email = $extended_login_result[1];
+                    if($local_login_succeed){
+                        $login_succeed = TRUE;
+                    }
+                    // if return value of hook is array
+                    if ($local_login_succeed && is_array($extended_login_result)) {
+                        // get field value from hook
+                        $user_data = array();
+                        $key_list = array('email', 'real_name', 'birthdate',
+                            'sex', 'self_description', 'profile_picture');
+                        foreach($user_data_key as $key_list){
+                            if(array_key_exists($user_data_key, $extended_login_result)){
+                                $user_data[$user_data_key] = $extended_login_result[$user_data_key];
+                            }
+                        }
+                        // update
+                        $this->db->update($this->cms_user_table_name(), $user_data,
+                            array('user_id' => $user_id));
+                        if(array_key_exists('real_name', $user_data)){
+                            $user_real_name = $user_data['real_name'];
+                        }
+                        if(array_key_exists('email', $user_data)){
+                            $user_email = $user_data['email'];
                         }
                     }
                 }
@@ -2277,12 +2296,14 @@ class CMS_Model extends CI_Model
             'subsite' => CMS_SUBSITE == '' ? null : CMS_SUBSITE,
         );
         $this->db->insert($this->cms_user_table_name(), $data);
+        $user_id = $this->db->insert_id();
         // send activation code if needed
         if ($activation == 'by_mail') {
             $this->cms_generate_activation_code($user_name, true, 'SIGNUP');
         } elseif ($activation == 'automatic') {
             $this->cms_do_login($user_name, $password);
         }
+        return $user_id;
     }
 
     /**

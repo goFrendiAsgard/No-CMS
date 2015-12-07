@@ -14,12 +14,12 @@ foreach($result as $record){
     $contents .= '<tr>';
     $contents .= '<th>Country</th>';
     $contents .= '<td>' . $record->country_name . '</td>';
-    $contents .= '<tr>';
+    $contents .= '</tr>';
     //NAME
     $contents .= '<tr>';
     $contents .= '<th>Name</th>';
     $contents .= '<td>' . $record->name . '</td>';
-    $contents .= '<tr>';
+    $contents .= '</tr>';
 
     $contents .= '</tbody>';
     $contents .= '</table>';

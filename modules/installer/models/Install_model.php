@@ -1303,11 +1303,6 @@ class Install_model extends CI_Model{
             $content   = '<?php'.PHP_EOL;
             $content  .= '$hostname = "'.$hostname.'";'.PHP_EOL;
             @file_put_contents(FCPATH.'/hostname.php', $content);
-            // create cms_extended_login_helper.php
-            if(!file_exists(APPPATH.'helpers/cms_extended_login_helper.php')){
-                @copy(FCPATH.'modules/installer/views/cms_extended_login_helper.php',
-                    APPPATH.'helpers/cms_extended_login_helper.php');
-            }
         }
         // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite
         if($this->is_subsite){
@@ -1328,16 +1323,12 @@ class Install_model extends CI_Model{
             // make subsite config directory
             mkdir(APPPATH.'config/site-'.$this->subsite);
         }else{
-            copy(APPPATH.'config/first-time/cms_extended_login_helper.php', APPPATH.'helpers/cms_extended_login_helper.php');
             mkdir(APPPATH.'config/main');
         }
         $file_list = scandir(APPPATH.'config/first-time', 1);
         foreach($file_list as $file){
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
                 if($file == 'database.php' && $this->is_subsite){
-                    continue;
-                }
-                if($file=='cms_extended_login_helper.php' && $this->is_subsite){
                     continue;
                 }
                 copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));

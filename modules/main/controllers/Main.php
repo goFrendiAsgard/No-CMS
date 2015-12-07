@@ -227,8 +227,12 @@ class Main extends CMS_Controller
                             $old_url_part = $new_old_url_part;
                         }
                     }
+                    // hook
+                    $this->cms_call_hook('cms_after_login', array($this->cms_user_id(), $this->input->post()));
                     redirect($old_url, 'refresh');
                 } else {
+                    // hook
+                    $this->cms_call_hook('cms_after_login', array($this->cms_user_id(), $this->input->post()));
                     redirect('', 'refresh');
                 }
             } else {
@@ -355,9 +359,13 @@ class Main extends CMS_Controller
         if ($this->form_validation->run() && !$this->cms_is_user_exists($user_name) &&
         !$this->cms_is_user_exists($email) && preg_match('/@.+\./', $email) &&
         $user_name != '' && $email != '') {
-            $this->cms_do_register($user_name, $email, $real_name, $password);
+            $new_user_id = $this->cms_do_register($user_name, $email, $real_name, $password);
+            // hook
+            $this->cms_call_hook('cms_after_register', array($new_user_id, $this->input->post()));
             redirect('', 'refresh');
         } else {
+            $additional_input = $this->cms_call_hook('cms_registration_additional_input');
+            $additional_input = implode(' ', $additional_input);
             $data = array(
                 'user_name' => $user_name,
                 'email' => $email,
@@ -366,6 +374,7 @@ class Main extends CMS_Controller
                 'secret_code' => $secret_code,
                 'multisite_active' => $this->cms_is_module_active('gofrendi.noCMS.multisite'),
                 'add_subsite_on_register' => $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE',
+                'additional_input' => $additional_input,
             );
             $this->view('main/main_register', $data, 'main_register');
         }

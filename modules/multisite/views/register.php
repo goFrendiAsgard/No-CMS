@@ -19,7 +19,7 @@
     echo '<div class="form-group">';
     echo form_label('{{ language:User Name }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'user_name', $user_name, 
+    echo form_input($secret_code.'user_name', $user_name,
         'id="'.$secret_code.'user_name" placeholder="User Name" class="form-control"');
     echo '</div>';
     echo '</div>';
@@ -27,15 +27,15 @@
     echo '<div class="form-group">';
     echo form_label('{{ language:Email }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'email', $email, 
-        'id="'.$secret_code.'email" placeholder="Email" class="form-control"');   
+    echo form_input($secret_code.'email', $email,
+        'id="'.$secret_code.'email" placeholder="Email" class="form-control"');
     echo '</div>';
     echo '</div>';
 
     echo '<div class="form-group">';
     echo form_label('{{ language:Real Name }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'real_name', $real_name, 
+    echo form_input($secret_code.'real_name', $real_name,
         'id="'.$secret_code.'real_name" placeholder="Real Name" class="form-control"');
     echo '</div>';
     echo '</div>';
@@ -43,7 +43,7 @@
     echo '<div class="form-group">';
     echo form_label('{{ language:Password }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_password($secret_code.'password', '', 
+    echo form_password($secret_code.'password', '',
         'id="'.$secret_code.'password" placeholder="Password" class="form-control"');
     echo '</div>';
     echo '</div>';
@@ -51,7 +51,7 @@
     echo '<div class="form-group">';
     echo form_label('{{ language:Confirm Password }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_password($secret_code.'confirm_password', '', 
+    echo form_password($secret_code.'confirm_password', '',
         'id="'.$secret_code.'confirm_password" placeholder="Password (again)" class="form-control"');
     echo '</div>';
     echo '</div>';
@@ -59,7 +59,7 @@
     echo '<div class="form-group">';
     echo form_label('{{ language:Site Title }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_input('site_title', '', 
+    echo form_input('site_title', '',
         'id="site_title" placeholder="Site Title" class="form-control"');
     echo '</div>';
     echo '</div>';
@@ -67,7 +67,7 @@
     echo '<div class="form-group">';
     echo form_label('{{ language:Site Slogan }}', ' for="" class="control-label col-sm-4');
     echo '<div class="col-sm-8">';
-    echo form_input('site_slogan', '', 
+    echo form_input('site_slogan', '',
         'id="site_slogan" placeholder="Site Slogan" class="form-control"');
     echo '</div>';
     echo '</div>';
@@ -146,11 +146,15 @@
     echo'</div>';
     echo'</div>';
 
+    // from hook
+    echo $additional_input;
+
     echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
     echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
     echo '<div id="message" class="alert alert-danger"></div>';
     echo form_submit('register', $register_caption, 'id="btn-register" class="btn btn-primary" style="display:none;"');
     echo '</div></div>';
+
     echo form_close();
 ?>
 <script type="text/javascript">
@@ -159,7 +163,7 @@
     function check_user_exists(){
         var user_name =  $('input[name="<?php echo $secret_code; ?>user_name"]').val();
         var email = $('input[name="<?php echo $secret_code; ?>email"]').val();
-        var password = $('input[name="<?php echo $secret_code; ?>password"]').val();        
+        var password = $('input[name="<?php echo $secret_code; ?>password"]').val();
         var confirm_password = $('input[name="<?php echo $secret_code; ?>confirm_password"]').val();
         $("#img_ajax_loader").show();
         if(REQUEST_EXISTS){
@@ -201,7 +205,7 @@
             },
             error: function(xhr, textStatus, errorThrown){
                 if(textStatus != 'abort'){
-                    setTimeout(check_user_exists, 10000);    
+                    setTimeout(check_user_exists, 10000);
                 }
             }
         });
