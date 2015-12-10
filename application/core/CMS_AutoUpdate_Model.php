@@ -6,6 +6,8 @@ if (!defined('BASEPATH')) {
 
 class CMS_AutoUpdate_Model extends CMS_Model
 {
+    // TODO: change this
+    private $CURRENT_VERSION = '1.0.3';
     private static $module_updated = false;
 
     public function __construct()
@@ -55,8 +57,7 @@ class CMS_AutoUpdate_Model extends CMS_Model
     private function __update()
     {
         $old_version = cms_config('__cms_version');
-        // TODO: change this
-        $current_version = '1.0.2';
+        $current_version = $this->CURRENT_VERSION;
 
         if ($old_version == $current_version) {
             return 0;
@@ -442,6 +443,10 @@ class CMS_AutoUpdate_Model extends CMS_Model
             );
             $this->dbforge->add_column($this->cms_user_table_name(), $fields);
         }
+    }
+
+    private function __update_to_1_0_3(){
+        $this->cms_add_config('site_show_benchmark', 'FALSE', 'Show Benchmark');
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)

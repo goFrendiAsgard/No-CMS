@@ -746,7 +746,7 @@ class CMS_Model extends CI_Model
     {
         if ($this->cms_user_id() == 1) {
             return true;
-        } elseif (CMS_SUBSITE != '') {
+        } else if (CMS_SUBSITE != '') {
             // get cms table prefix
             include APPPATH.'config/main/cms_config.php';
             $cms_table_prefix = $config['__cms_table_prefix'];
@@ -2700,6 +2700,7 @@ class CMS_Model extends CI_Model
             $data = array(
                 'activation_code' => cms_md5($activation_code, $this->cms_chipper()),
             );
+            // log_message('error', 'Activation code generated : '.$activation_code);
             $where = array(
                 'user_id' => $user_id,
             );
@@ -2821,6 +2822,7 @@ class CMS_Model extends CI_Model
         // if protocol is (not smtp) or (is smtp and able to connect)
         if ($config['protocol'] != 'smtp' || ($config['protocol'] == 'smtp' && $this->cms_is_connect($ssl.$config['smtp_host'], $config['smtp_port']))) {
             $message = $this->cms_parse_keyword($message);
+            $subject = $this->cms_parse_keyword($subject);
 
             $this->email->initialize($config);
             $this->email->from($from_address, $from_name);

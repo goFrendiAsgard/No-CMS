@@ -24,12 +24,12 @@ class Subsite_model extends  CMS_Model{
             $config = array();
             include $cms_config_file;
             if(array_key_exists('__cms_table_prefix', $config)){
-                $table_prefix = $config['__cms_table_prefix'];    
+                $table_prefix = $config['__cms_table_prefix'];
             }else if(array_key_exists('cms_table_prefix', $config)){
                 $table_prefix = $config['cms_table_prefix'];
             }else{
                 $table_prefix = 'site_'.$subsite_name;
-            }           
+            }
             $config_table_name = $table_prefix.'_main_config';
         }else{
             $config_table_name = cms_table_name('site_'.$subsite_name.'_main_config');
@@ -125,7 +125,7 @@ class Subsite_model extends  CMS_Model{
                 continue;
             }
 
-            if (!file_exists(FCPATH . 'modules/' . $directory . '/controllers/install.php')){
+            if (!file_exists(FCPATH . 'modules/' . $directory . '/controllers/Info.php')){
                 continue;
             }
 

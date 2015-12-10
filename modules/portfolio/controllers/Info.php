@@ -16,7 +16,7 @@ class Info extends CMS_Module {
                 'url'               => 'portfolio',
                 'authorization_id'  => PRIV_EVERYONE,
                 'default_layout'    => NULL,
-                'title'             => 'Portfolio',
+                'title'             => 'Manage Portfolio',
                 'parent_name'       => 'index',
                 'index'             => NULL,
                 'description'       => NULL,

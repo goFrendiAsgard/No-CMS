@@ -271,38 +271,54 @@ class Main extends CMS_Controller
     public function forgot($activation_code = null)
     {
         $this->cms_guard_page('main_forgot');
-        if (isset($activation_code)) {
-            //get user input
-            $password = $this->input->post('password');
-            //set validation rule
-            $this->form_validation->set_rules('password', 'Password', 'required|matches[confirm_password]');
-            $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required');
+        // if email not set correctly (still use default parameters)
+        // this should not work
+        $email_protocol = $this->cms_get_config('cms_email_protocol', TRUE);
+        $smtp_user_name = $this->cms_get_config('cms_email_smtp_user', TRUE);
+        $smtp_pass = $this->cms_get_config('cms_email_smtp_pass', TRUE);
+        if( $email_protocol == 'smtp' && $smtp_user_name == 'your_gmail_address@gmail.com' && $smtp_pass == ''){
+            $this->view('main/main_forgot_email_not_set', NULL, 'main_forgot');
+        }else{
 
-            if ($this->form_validation->run()) {
-                if ($this->cms_valid_activation_code($activation_code)) {
-                    $this->cms_activate_account($activation_code, $password);
-                    redirect('', 'refresh');
+            if (isset($activation_code)) {
+                //get user input
+                $password = $this->input->post('password');
+                //set validation rule
+                $this->form_validation->set_rules('password', 'Password', 'required|matches[confirm_password]');
+                $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'required');
+
+                if ($this->form_validation->run()) {
+                    if ($this->cms_valid_activation_code($activation_code)) {
+                        $this->cms_activate_account($activation_code, $password);
+                        redirect('', 'refresh');
+                    } else {
+                        $main_forgot_url = $this->cms_navigation_url('main_forgot');
+                        redirect($main_forgot_url, 'refresh');
+                    }
                 } else {
-                    $main_forgot_url = $this->cms_navigation_url('main_forgot');
-                    redirect($main_forgot_url, 'refresh');
+                    $data = array(
+                        'activation_code' => $activation_code,
+                        'change_caption' => $this->cms_lang('Change'),
+                    );
+                    $this->view('main/main_forgot_change_password', $data, 'main_forgot');
                 }
             } else {
-                $data = array(
-                    'activation_code' => $activation_code,
-                    'change_caption' => $this->cms_lang('Change'),
-                );
-                $this->view('main/main_forgot_change_password', $data, 'main_forgot');
-            }
-        } else {
-            //get user input
-            $identity = $this->input->post('identity');
+                //get user input
+                $identity = $this->input->post('identity');
 
-            //set validation rule
-            $this->form_validation->set_rules('identity', 'Identity', 'required');
+                //set validation rule
+                $this->form_validation->set_rules('identity', 'Identity', 'required');
 
-            if ($this->form_validation->run()) {
-                if ($this->cms_generate_activation_code($identity, true, 'FORGOT')) {
-                    redirect('', 'refresh');
+                if ($this->form_validation->run()) {
+                    if ($this->cms_generate_activation_code($identity, true, 'FORGOT')) {
+                        redirect('', 'refresh');
+                    } else {
+                        $data = array(
+                            'identity' => $identity,
+                            'send_activation_code_caption' => $this->cms_lang('Send activation code to my email'),
+                        );
+                        $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
+                    }
                 } else {
                     $data = array(
                         'identity' => $identity,
@@ -310,13 +326,8 @@ class Main extends CMS_Controller
                     );
                     $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
                 }
-            } else {
-                $data = array(
-                    'identity' => $identity,
-                    'send_activation_code_caption' => $this->cms_lang('Send activation code to my email'),
-                );
-                $this->view('main/main_forgot_fill_identity', $data, 'main_forgot');
             }
+
         }
     }
 
@@ -743,6 +754,7 @@ class Main extends CMS_Controller
             $crud->where('subsite is NULL');
         } else {
             $crud->where('subsite', CMS_SUBSITE);
+            $crud->or_where('subsite is NULL');
 
             // get super admin of this subsite
             $main_config_file = APPPATH.'config/main/cms_config.php';
@@ -764,16 +776,6 @@ class Main extends CMS_Controller
                 $multisite_table_prefix = $multisite_table_prefix == '' ? '' : $multisite_table_prefix.'_';
                 // get subsite table
                 $subsite_table = $main_table_prefix.$multisite_table_prefix.'subsite';
-
-                $query = $this->db->select('user_id')
-                    ->from($subsite_table)
-                    ->where('name', CMS_SUBSITE)
-                    ->get();
-                if ($query->num_rows() > 0) {
-                    $row = $query->row();
-                    $admin_user_id = $row->user_id;
-                    $crud->or_where('user_id', $admin_user_id);
-                }
             }
         }
         $crud->set_subject('User');
@@ -782,23 +784,17 @@ class Main extends CMS_Controller
         $crud->unique_fields('user_name', 'email');
         $crud->unset_read();
 
-        if (CMS_SUBSITE == '') {
-            $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
-            $crud->edit_fields('user_name', 'email', 'real_name', 'active', 'groups');
-            $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
-            $crud->field_type('active', 'true_false');
-        } else {
-            $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
-            $crud->edit_fields('user_name', 'groups');
-            $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
-            $crud->field_type('active', 'true_false');
-            $crud->unset_delete();
-        }
+        $crud->columns('user_name', 'email', 'real_name', 'active', 'groups');
+        $crud->edit_fields('user_name', 'email', 'real_name', 'active', 'groups', 'raw_password');
+        $crud->add_fields('user_name', 'email', 'password', 'real_name', 'active', 'groups', 'subsite');
+        $crud->field_type('active', 'true_false');
 
         $crud->display_as('user_name', 'User Name')
             ->display_as('email', 'Email')
             ->display_as('real_name', 'Real Name')
             ->display_as('active', 'Active')
+            ->display_as('password', 'Password')
+            ->display_as('raw_password', 'New Password')
             ->display_as('groups', 'Groups');
 
         $crud->field_type('subsite', 'hidden');
@@ -821,17 +817,42 @@ class Main extends CMS_Controller
         if ($crud->getState() == 'edit') {
             $state_info = $crud->getStateInfo();
             $primary_key = $state_info->primary_key;
-            if ($primary_key == $this->cms_user_id() || $primary_key == 1) {
+
+            // get old data
+            $query = $this->db->select('user_id, user_name, subsite')
+                ->from($this->cms_user_table_name())
+                ->where('user_id', $primary_key)
+                ->get();
+            $user_row = $query->row();
+
+            // if the user is not belonged to this site, then the site admin
+            // is only able to modify group
+            if($user_row->subsite != CMS_SUBSITE){
+                $crud->edit_fields('user_name', 'active', 'groups');
+
+                $crud->callback_edit_field('user_name', array(
+                    $this,
+                    '_read_only_user_user_name',
+                ));
+            }
+
+            // if the user is not belonged to this site, or is current user, or is super admin,
+            // then can't be deactivated
+            if ($primary_key == $this->cms_user_id() || $primary_key == 1 || $user_row->subsite != CMS_SUBSITE) {
                 $crud->callback_edit_field('active', array(
                     $this,
                     '_read_only_user_active',
                 ));
             }
-            $crud->callback_edit_field('user_name', array(
-                $this,
-                '_read_only_user_user_name',
-            ));
+
         }
+
+        // raw password callback
+        $crud->callback_edit_field('raw_password', array(
+            $this,
+            '_user_raw_password',
+        ));
+
         $crud->set_lang_string('delete_error_message', 'You cannot delete super admin user or your own account');
         $crud->set_language($this->cms_language());
         $output = $crud->render();
@@ -857,6 +878,13 @@ class Main extends CMS_Controller
 
         // show the view
         $this->view('main/main_user', $output, 'main_user_management', $config);
+    }
+
+    public function _user_raw_password($value, $row)
+    {
+        $input = '<input name="new_password" value="" type="input" class="form-control" placeholder="New password or leave blank" />';
+
+        return $input;
     }
 
     public function _read_only_user_active($value, $row)
@@ -899,20 +927,29 @@ class Main extends CMS_Controller
 
     public function _after_update_user($post_array, $primary_key)
     {
-        // get user activation status
-        $user_id = $primary_key;
-        $result = $this->db->select('active')
-            ->from($this->cms_user_table_name())
-            ->where('user_id', $user_id)
-            ->get();
-        $row = $result->row();
-        $active = $row->active;
         if (CMS_SUBSITE == '') {
-            // change profile
-            $this->cms_do_change_profile($post_array['email'], $post_array['real_name'], null, $primary_key);
+            // get user activation status
+            $user_id = $primary_key;
+            $result = $this->db->select('active')
+                ->from($this->cms_user_table_name())
+                ->where('user_id', $user_id)
+                ->get();
+            $row = $result->row();
+            $active = $row->active;
             // update subsite
             $this->_cms_set_user_subsite_activation($user_id, $active);
         }
+
+        // is new password set?
+        $new_password = $this->input->post('new_password');
+        if($new_password == '' || $new_password == FALSE){
+            $new_password = NULL;
+        }
+
+        // change profile
+        $this->cms_do_change_profile($post_array['email'],
+            $post_array['real_name'], $new_password, $primary_key);
+
 
         return true;
     }

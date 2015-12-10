@@ -34,9 +34,15 @@ class CMS_Controller extends MX_Controller
         // however if description.txt doesn't exists, than it has nothing todo with the module
         if ($module_path != 'main' && $module_path != '' && file_exists(FCPATH.'modules/'.$module_path.'/description.txt')) {
             if ($this->cms_module_name($module_path) == '') {
-                die('<pre>ERROR : Module '.$module_path.' is not installed</pre>');
+                $this->show_404();
+                //die('<pre>ERROR : Module '.$module_path.' is not installed</pre>');
             }
         }
+    }
+
+    private function show_404(){
+        $this->output->set_status_header('404');
+        die($this->view('not_found_index', NULL, 'main_404', NULL, TRUE));
     }
 
     public function __construct()
@@ -81,7 +87,8 @@ class CMS_Controller extends MX_Controller
                 include $subsite_auth_file;
                 if (isset($protected) && is_bool($protected) && !$protected) {
                     if (!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
-                        die('Module is not accessible for '.CMS_SUBSITE.' subsite');
+                        $this->show_404();
+                        // die('Module is not accessible for '.CMS_SUBSITE.' subsite');
                     }
                 }
             }
@@ -119,10 +126,10 @@ class CMS_Controller extends MX_Controller
             }
         }
 
-        /*
-        if(!$this->input->is_ajax_request() && ERROR_REPORTING == 'development'){
+
+        if(!$this->input->is_ajax_request() && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
             $this->output->enable_profiler(1);
-        }*/
+        }
     }
 
     public function __call($method, $args){
@@ -851,16 +858,6 @@ class CMS_Controller extends MX_Controller
                     }
                     $injected_css .= $css_key . ':' . $value . '!important;';
                 }
-            }
-            // site background blur
-            if(trim($this->cms_get_config('site_background_blur')) != ''){
-                $value = $this->cms_get_config('site_background_blur');
-                /*
-                $injected_css .= '-webkit-filter: blur(' . $value . 'px)!important;
-                      -moz-filter: blur(' . $value . 'px)!important;
-                      -o-filter: blur(' . $value . 'px)!important;
-                      -ms-filter: blur(' . $value . 'px)!important;
-                      filter: blur(' . $value . 'px);!important';*/
             }
             $injected_css .= '}';
             $asset->add_internal_css($injected_css);

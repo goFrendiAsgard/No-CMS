@@ -3,7 +3,7 @@ if(!isset($_SESSION)){
     session_start();
 }
 class Install_model extends CI_Model{
-    private $VERSION        = '1.0.2';
+    private $VERSION        = '1.0.3';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -1136,6 +1136,7 @@ class Install_model extends CI_Model{
                 array('site_background_clip', '', 'Background Clip'),
                 array('site_background_attachment', '', 'Background Attachment'),
                 array('site_background_blur', '', 'Background Blur'),
+                array('site_show_benchmark', 'FALSE', 'Show Benchmark'),
                 array('site_text_color', '', 'Text Color'),
                 array('max_menu_depth', '5', 'Depth of menu recursive'),
                 array('cms_email_reply_address', '{{ admin_email }}', 'Email address'),

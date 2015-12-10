@@ -109,10 +109,12 @@ class Cms_asset
         // trim every line
         $content = explode(PHP_EOL, $content);
         $new_content = '';
+        // variables for html
         $in_pre = FALSE;
         $in_text_area = FALSE;
         foreach($content as $line){
             if($mode == 'html'){
+                // check pre and textarea status
                 if(stripos($line, '<pre') !== FALSE){
                     $in_pre = TRUE;
                 }else if(stripos($line, '</pre>') !== FALSE){

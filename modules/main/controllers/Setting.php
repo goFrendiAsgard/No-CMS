@@ -4,7 +4,23 @@ class Setting extends CMS_Controller{
     protected $theme = 'neutral';
 
     private function update_static_content($widget_name, $content){
-        $this->db->update(cms_table_name('main_widget'), array('static_content'=>$content), array('widget_name'=>$widget_name));
+        $no_change = FALSE;
+        // see if there are changes
+        $widgets = $this->cms_widgets(NULL, $widget_name);
+        foreach($widgets as $slug => $widget_list){
+            foreach($widget_list as $widget){
+                if($widget['widget_name'] == $widget_name){
+                    break;
+                    if($widget['content'] == $content){
+                        $no_change = TRUE;
+                    }
+                }
+            }
+        }
+        // don't change if there is no changes
+        if($no_change){
+            $this->db->update(cms_table_name('main_widget'), array('static_content'=>$content), array('widget_name'=>$widget_name));
+        }
     }
 
     public function index(){
@@ -85,7 +101,7 @@ class Setting extends CMS_Controller{
                 'site_background_color', 'site_background_position', 'site_background_size',
                 'site_background_repeat', 'site_background_origin', 'site_background_clip',
                 'site_background_attachment', 'site_background_blur', 'site_text_color',
-                'cms_signup_activation', 'cms_email_protocol',
+                'site_show_benchmark', 'cms_signup_activation', 'cms_email_protocol',
                 'cms_email_reply_address', 'cms_email_reply_name', 'cms_email_forgot_subject',
                 'cms_email_forgot_message', 'cms_email_signup_subject', 'cms_email_signup_message',
                 'cms_email_useragent', 'cms_email_mailpath', 'cms_email_smtp_host', 'cms_email_smtp_user',
@@ -107,6 +123,10 @@ class Setting extends CMS_Controller{
                         continue;
                     }
                     $value = cms_encode($value);
+                }
+                // Don't update configuration if there is no change
+                if($this->cms_get_config($configuration, TRUE) == $value){
+                    continue;
                 }
                 $this->cms_set_config($configuration, $value);
             }

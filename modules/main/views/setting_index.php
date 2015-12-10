@@ -56,8 +56,8 @@
     <ul class="nav nav-tabs">
         <li class="active"><a href="#tab1" data-toggle="tab"><i class="glyphicon glyphicon-cog"></i> Configurations</a></li>
         <li><a href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-eye-open"></i> Appearance</a></li>
-        <li><a href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-envelope"></i> Site Email</a></li>
-        <li><a href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Site Images</a></li>
+        <li><a href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-envelope"></i> Email Setting</a></li>
+        <li><a href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Images</a></li>
         <li><a href="#tab5" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Page Partials</a></li>
         <li><a href="#tab6" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
     </ul>
@@ -140,6 +140,24 @@
                         <p class="help-block">Google Analytics Property Id (e.g: UA-30285787-1)</p>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label class="control-label col-md-4" for="site_show_benchmark">Show Benchmark</label>
+                    <div class="controls col-md-8">
+                        <select id="site_show_benchmark" name="site_show_benchmark" class="form-control">
+                        <?php
+                            $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
+                            foreach($option_list as $key=>$value){
+                                $selected = $config_list['site_show_benchmark'] == $key ? 'selected' : '';
+                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                            }
+                        ?>
+                        </select>
+                        <p class="help-block">Show technical benchmark, such as POST data, database queries executed, etc. Only use it for technical purpose</p>
+                    </div>
+                </div>
+
+
                 <?php if(CMS_SUBSITE == '' && $multisite_active){ ?>
                         <hr /><h3>Multisite and Registration</h3>
                         <div class="form-group">
@@ -761,7 +779,7 @@
     </form>
 </div>
 <?php
-    $asset->add_cms_js("nocms/js/jquery.autoclip.js");
+    $asset->add_cms_js("nocms/js/jquery.autosize.js");
     $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
     //$asset->add_cms_js("grocery_crud/js/jquery_plugins/config/jquery.chosen.config.js");
     echo $asset->compile_js();
@@ -819,9 +837,9 @@
         // when calling chosen, the select should be visible, that's why I need to do this:
         //$('#tab3').removeClass('active');
         //$('#tab1').addClass('active');
-        // make text area autoclip
+        // make text area autosize
         $("#tab1 .chosen-select").chosen({width: "300px"});
-        $('#tab1 .text-area-section').autoclip();
+        $('#tab1 .text-area-section').autosize();
 
         // add widget or whatever to the section at current caret
         $('.btn-tag-add').click(function(){
@@ -836,9 +854,9 @@
         _adjust_input_visibility();
         $('#cms_signup_activation, #cms_email_protocol').change(_adjust_input_visibility);
     });
-    // textarea autoclip later
+    // textarea autosize later
     $("a[href='#tab5']").on('shown.bs.tab', function(e) {
         $("#tab5 .chosen-select").chosen({width: "300px"});
-        $('#tab5 .text-area-section').autoclip();
+        $('#tab5 .text-area-section').autosize();
     });
 </script>

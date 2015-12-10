@@ -53,22 +53,12 @@ modules/*/controllers/Info_*.php
 # my private modules
 modules/gis
 modules/typing_defense
-modules/ssc
-modules/gis_assignment
-modules/library_app
-modules/pmb_online
-modules/town_project
 modules/loanword_searchengine
 modules/stiki_ibk
-modules/pendaftaran_wisuda
 modules/library_app
 modules/shop
-modules/pbfrontend
 modules/artificial_intelligence/assets/data/1_*
-modules/conference
-modules/oepet
-modules/breast_cancer
 modules/simple_erp
-modules/simple_erp_old
-modules/mlm
 modules/ishare
+modules/lifeline
+modules/sepatu
