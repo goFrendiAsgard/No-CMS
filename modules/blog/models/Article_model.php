@@ -308,7 +308,7 @@ class Article_model extends  CMS_Model{
                     'date' => date('Y-m-d H:i:s'),
                     'read' => 0,
                     'parent_comment_id'=>$parent_comment_id,
-                    'approved' => $this->cms_get_config($this->n('moderation')) == TRUE? 1 : 0,
+                    'approved' => $this->cms_get_config($this->n('moderation')) == 'TRUE'? 0 : 1,
             );
             if(isset($cms_user_id) && ($cms_user_id>0)){
                 $data['author_user_id'] = $cms_user_id;
@@ -371,7 +371,7 @@ class Article_model extends  CMS_Model{
             }
             $where_category = implode(' OR ', $where_category);
         }
-        $sql = 'SELECT a.article_id, a.article_title, a.article_url, a.status, a.date, a.publish_date
+        $sql = 'SELECT DISTINCT a.article_id, a.article_title, a.article_url, a.status, a.date, a.publish_date
             FROM '.$this->t('article').' as a, '.
             $this->t('category_article').' as ca '.
             'WHERE ca.article_id = a.article_id AND ca.article_id <> '.$article_id.' AND '.$where_category.' LIMIT 4';
@@ -410,14 +410,9 @@ class Article_model extends  CMS_Model{
         $website = $row->website === NULL ? '' : $row->website;
         $this->load->helper('url');
 
+        // get profile picture
+        $pp = $this->cms_get_profile_picture($user_id);
 
-        if(!$this->cms_is_connect('www.gravatar.com')){
-            $real_base_url = base_url();
-            if(USE_SUBDOMAIN && CMS_SUBSITE != '' && !USE_ALIAS){
-                $real_base_url = $base_url;
-                $real_base_url = str_ireplace('://'.CMS_SUBSITE.'.',  '://', $real_base_url);
-            }
-        }
         $result = array(
                 "comment_id" => $row->comment_id,
                 "date" => date('Y-m-d'),
@@ -425,30 +420,30 @@ class Article_model extends  CMS_Model{
                 "name" => $name,
                 "website" => prep_url($website),
                 "email" => $email,
-                "gravatar_url" => $this->cms_is_connect('www.gravatar.com')?
-                    'http://www.gravatar.com/avatar/'.md5($email).'?s=32&r=pg&d=identicon':
-                    $real_base_url.'modules/'.$this->cms_module_path().'/assets/images/user.png',
+                "gravatar_url" => $pp,
         );
         return $result;
     }
 
     public function get_comments($article_id, $nested=TRUE){
-        $this->db->select('comment_id, date, author_user_id, name, email, website, content')
+        $this->db->select('comment_id, date, author_user_id, name, email, website, content, parent_comment_id')
             ->from($this->t('comment'))
             ->where('article_id', $article_id)
             ->where('approved', 1)
             ->order_by('date');
-        if($nested){
-            $this->db->where('parent_comment_id', NULL);
-        }
         $query = $this->db->get();
+        // comment's record set
+        $recordset = $query->result();
 
         $data = array();
-        foreach($query->result() as $row){
+        foreach($recordset as $row){
+            if($nested && $row->parent_comment_id != NULL){
+                continue;
+            }
             $result = $this->preprocess_comment($row);
             $result['level'] = 0;
             $data[] = $result;
-            $children = $this->get_child_comment($row->comment_id, 0);
+            $children = $this->get_child_comment($row->comment_id, 0, $recordset);
             foreach($children as $child){
                 $data[] = $child;
             }
@@ -456,19 +451,16 @@ class Article_model extends  CMS_Model{
         return $data;
     }
 
-    public function get_child_comment($comment_id, $level){
-        $query = $this->db->select('comment_id, date, author_user_id, name, email, website, content')
-            ->from($this->t('comment'))
-            ->order_by('date')
-            ->where('parent_comment_id', $comment_id)
-            ->get();
-
+    public function get_child_comment($comment_id, $level, $recordset){
         $data = array();
-        foreach($query->result() as $row){
+        foreach($recordset as $row){
+            if($row->parent_comment_id != $comment_id){
+                continue;
+            }
             $result = $this->preprocess_comment($row);
             $result['level'] = $level+1;
             $data[] = $result;
-            $children = $this->get_child_comment($row->comment_id, $level+1);
+            $children = $this->get_child_comment($row->comment_id, $level+1, $recordset);
             foreach($children as $child){
                 $data[] = $child;
             }

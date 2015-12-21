@@ -4,8 +4,14 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
     public $ESCAPE_CHAR = '"';
     public $CAPABLE_CONCAT = TRUE;
 
+    protected static $__FIELD_TYPES;
+
     public function __construct(){
         parent::__construct();
+        // set field_types
+        if (self::$__FIELD_TYPES == null) {
+            self::$__FIELD_TYPES = array();
+        }
         // this is a simple hack to get ESCAPE_CHAR
         $test = $this->protect_identifiers('t');
         $first_char = substr($test,0,1);
@@ -363,6 +369,11 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
 
     function get_field_types($table_name)
     {
+        // take from cache if it is exists
+        if(array_key_exists($table_name, self::$__FIELD_TYPES)){
+            return self::$__FIELD_TYPES[$table_name];
+        }
+
         $results = $this->db->field_data($table_name);
         // some driver doesn't provide primary_key information
         foreach($results as $num => $row)
@@ -372,6 +383,8 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
                 $results[$num]->primary_key = 0;
             }
         }
+        // save to cache
+        self::$__FIELD_TYPES[$table_name] = $results;
         return $results;
     }
 

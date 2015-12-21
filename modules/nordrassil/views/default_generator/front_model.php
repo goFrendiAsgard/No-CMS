@@ -55,9 +55,9 @@ class {{ model_name }} extends  CMS_Model{
 	}
 	for($i=0; $i<count($like_array); $i++){
 		if($i==0){
-			echo '           ->like('.$like_array[$i].')'.PHP_EOL;
+			echo '            ->like('.$like_array[$i].')'.PHP_EOL;
 		}else{
-			echo '           ->or_like('.$like_array[$i].')'.PHP_EOL;
+			echo '            ->or_like('.$like_array[$i].')'.PHP_EOL;
 		}
 
 	}

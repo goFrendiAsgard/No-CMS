@@ -208,14 +208,14 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
     }
 
     protected function _save_one_to_many($field_name, $detail_table_name, $pk_column, $fk_column, $parent_pk_value,
-    $data, $real_column_list=array(), $set_column_list=array(), $many_to_many_config_list=array()){
+    $DATA, $real_column_list=array(), $set_column_list=array(), $many_to_many_config_list=array()){
 
-        $insert_records = is_array($data) && array_key_exists('insert', $data) && is_array($data['insert'])?
-            $data['insert'] : array();
-        $update_records = is_array($data) && array_key_exists('update', $data) && is_array($data['update'])?
-            $data['update'] : array();
-        $delete_records = is_array($data) && array_key_exists('delete', $data) && is_array($data['delete'])?
-            $data['delete'] : array();
+        $insert_records = is_array($DATA) && array_key_exists('insert', $DATA) && is_array($DATA['insert'])?
+            $DATA['insert'] : array();
+        $update_records = is_array($DATA) && array_key_exists('update', $DATA) && is_array($DATA['update'])?
+            $DATA['update'] : array();
+        $delete_records = is_array($DATA) && array_key_exists('delete', $DATA) && is_array($DATA['delete'])?
+            $DATA['delete'] : array();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  DELETED DATA
@@ -296,7 +296,10 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //  INSERTED DATA
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        foreach($insert_records as $insert_record){
+        //foreach($insert_records as $insert_record){
+        for($i=0; $i<count($insert_records); $i++){
+            $insert_record = $insert_records[$i];
+
             $data = array();
             foreach($insert_record['data'] as $key=>$value){
                 if(in_array($key, $set_column_list)){
@@ -308,6 +311,8 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
             $data[$fk_column] = $parent_pk_value;
             $this->db->insert($this->cms_complete_table_name($detail_table_name), $data);
             $detail_primary_key = $this->db->insert_id();
+
+            $DATA['insert'][$i]['primary_key'] = $detail_primary_key;
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Adjust Many-to-Many Fields of Inserted Data
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -351,6 +356,7 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
                 }
             }
         }
+        return $DATA;
     }
 
     protected function _one_to_many_callback_field_data($table_name, $pk_column, $fk_column, $parent_pk_value,

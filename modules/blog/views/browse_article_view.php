@@ -23,7 +23,6 @@
     div#article-comment{
         margin-top : 30px;
         padding-top : 20px;
-        border-top : 1px solid gray;
     }
     div.comment-item{
         padding-top : 10px;
@@ -180,6 +179,17 @@
             echo '<div style="clear:both;"></div>';
             echo '</div>';
 
+            // edit and delete button
+            if($allow_navigate_backend){
+                echo '<div class="edit_delete_record_container">';
+                if($is_super_admin || $article['author_user_id'] == $user_id){
+                    echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn btn-default edit_record" primary_key = "'.$article['id'].'">Edit</a>';
+                    echo '&nbsp;';
+                    echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn btn-danger delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+                }
+                echo '</div>';
+            }
+
             // categories
             if(count($article['categories'])>0){
                 if($module_path == 'blog'){
@@ -199,6 +209,7 @@
                 }
                 // also get related article
                 if(count($article['related_article'])>0){
+                    echo '<div class="col-md-12 panel" style="margin-top:20px; margin-bottom:20px; padding-top:10px; padding-bottom:10px;">';
                     echo '<h4>{{ language:Related Article }}</h4>';
                     foreach($article['related_article'] as $related_article){
                         // get image
@@ -214,34 +225,27 @@
                             $url = site_url($module_path.'/blog/index/'.$related_article['article_url']);
                         }
                         echo anchor($url,
-                                    '<div class="row well">'.
-                                    '<div class="col-md-4" style="min-height:200px; background-repeat: no-repeat;
+                                    '<div class="row col-md-6" style="margin-top:10px; margin-bottom:10px;">'.
+                                    '<div class="col-md-4" style="min-height:100px; background-repeat: no-repeat;
                                         background-attachment: cover; background-position: center;
-                                        background-color:black;
+                                        background-size:cover; background-color:black;
                                         background-image:url(\''.$photo.'\')"></div>'.
                                     '<div class="col-md-8" style="vertical-align:top;">'.
+                                        '<h5>'.$related_article['title'].'</h5>'.
                                         $related_article['date'].
-                                        '<h4>'.$related_article['title'].'</h4>'.
                                     '</div>'.
                                     '</div>');
                     }
-                }
-                echo '</div>';
-            }
-            // edit and delete button
-            if($allow_navigate_backend){
-                echo '<div class="edit_delete_record_container">';
-                if($is_super_admin || $article['author_user_id'] == $user_id){
-                    echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn btn-default edit_record" primary_key = "'.$article['id'].'">Edit</a>';
-                    echo '&nbsp;';
-                    echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn btn-danger delete_record" primary_key = "'.$article['id'].'">Delete</a>';
+                    echo '</div>';
                 }
                 echo '</div>';
             }
 
+
             // comment
             echo '<a name="comment-form"></a>';
-            echo '<div id="article-comment">';
+            echo '<div id="article-comment" class="col-md-12 panel">';
+            echo '<h4>Comment</h4>';
             $odd_row = TRUE;
             foreach($article['comments'] as $comment){
                 echo '<div class="comment-item well" style="margin-left:'.($comment['level']*20).'px;">';
@@ -271,7 +275,6 @@
             if($article['allow_comment']){
                 echo '<div id="comment-box">';
                 echo '<a name="comment-form" style="margin-top: 50px;">&nbsp;</a>';
-                echo '<h4>Comment</h4>';
                 // show error message if any
                 if($success !== NULL){
                     if(!$success){

@@ -82,6 +82,8 @@ class CMS_Model extends CI_Model
                 'group_id' => array(),
                 'properties' => array(),
                 'route' => array(),
+                'user_language' => null,
+                'user_theme' => null,
                 'is_super_admin' => false,
                 'is_config_cached' => false,
                 'is_module_name_cached' => false,
@@ -96,8 +98,9 @@ class CMS_Model extends CI_Model
                 'is_group_id_cached' => false,
                 'is_super_admin_cached' => false,
                 'is_route_cached' => false,
-                'user_language' => null,
-                'user_theme' => null,
+                'is_user_language_cached' => false,
+                'is_user_theme_cached' => false,
+                'profile_pictures' => array(),
             );
         foreach ($default_properties as $key => $val) {
             if (!array_key_exists($key, self::$__cms_model_properties)) {
@@ -106,7 +109,7 @@ class CMS_Model extends CI_Model
         }
 
         if($this->cms_user_id() != '' && $this->cms_user_id() > 0){
-            if (self::$__cms_model_properties['user_language'] === null || self::$__cms_model_properties['user_theme'] === null) {
+            if (self::$__cms_model_properties['is_user_language_cached'] === false || self::$__cms_model_properties['is_user_theme_cached'] === false) {
                 $query = $this->db->select('language, theme')
                     ->from($this->cms_user_table_name())
                     ->where('user_id', $this->cms_user_id())
@@ -116,6 +119,8 @@ class CMS_Model extends CI_Model
                     self::$__cms_model_properties['user_language'] = $row->language;
                     self::$__cms_model_properties['user_theme'] = $row->theme;
                 }
+                self::$__cms_model_properties['is_user_language_cached'] = true;
+                self::$__cms_model_properties['is_user_theme_cached'] = true;
             }
         }
 
@@ -146,7 +151,7 @@ class CMS_Model extends CI_Model
                         continue;
                     } elseif (substr($file, 0, 7) == '_secret' || substr($file, 0, 6) == '_token') {
                         $file = APPPATH.'config/tmp/'.$file;
-                        if (filemtime($file) < strtotime('-1 hour')) {
+                        if (file_exists($file) && filemtime($file) < strtotime('-1 hour')) {
                             unlink($file);
                         }
                     }
@@ -631,6 +636,39 @@ class CMS_Model extends CI_Model
         $this->cms_ci_session('cms_last_contact_'.$hostname, microtime(true));
 
         return $is_conn;
+    }
+
+    public function cms_get_profile_picture($user_id){
+        if (array_key_exists($user_id, self::$__cms_model_properties['profile_pictures'])) {
+            return self::$__cms_model_properties['profile_pictures'][$user_id];
+        }
+        // get user
+        $user_record = $this->cms_get_record(cms_table_name('main_user'), 'user_id', $user_id);
+        $real_base_url = base_url();
+        if(USE_SUBDOMAIN && CMS_SUBSITE != '' && !USE_ALIAS){
+            $real_base_url = $base_url;
+            $real_base_url = str_ireplace('://'.CMS_SUBSITE.'.',  '://', $real_base_url);
+        }
+        // determine pp
+        $pp = '';
+        if($user_record === null){
+            $pp = $real_base_url.'assets/nocms/images/default-profile-picture.png';
+        }else{
+            $pp = $user_record->profile_picture;
+            if($pp == NULL && $this->cms_is_connect('www.gravatar.com')){
+                // take from gravatar
+                $pp = 'http://www.gravatar.com/avatar/'.md5($user_record->email).'?s=32&r=pg&d=identicon';
+            }else if($pp == NULL){
+                // take from default profile picture
+                $pp = $real_base_url.'assets/nocms/images/default-profile-picture.png';
+            }else{
+                // take from table
+                $pp = $real_base_url.'assets/nocms/images/profile_picture/'.$user_record->profile_picture;
+            }
+        }
+        // cache profile picture
+        self::$__cms_model_properties['profile_pictures'][$user_id] = $pp;
+        return $pp;
     }
 
     /**
