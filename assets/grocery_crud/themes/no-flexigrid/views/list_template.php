@@ -48,7 +48,7 @@ if($success_message !== null){?>
     <?php echo form_open( $ajax_list_url, 'method="post" id="filtering_form" class="filtering_form" autocomplete = "off" data-ajax-list-info-url="'.$ajax_list_info_url.'"'); ?>
 
     <div class="quickSearchBox form-inline row" id='quickSearchBox'>
-
+        
         <?php if(isset($search_form_components)) echo $search_form_components; ?>
 
         <?php if(isset($unset_default_search) && $unset_default_search) echo '<div style="display:none">'; ?>

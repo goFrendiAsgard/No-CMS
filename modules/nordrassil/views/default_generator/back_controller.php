@@ -39,6 +39,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         //$crud->columns({{ field_list }});
         //$crud->edit_fields({{ edit_field_list }});
         //$crud->add_fields({{ add_field_list }});
+        //$crud->set_read_fields({{ field_list }});
 
         // caption of each columns
 {{ display_as }}

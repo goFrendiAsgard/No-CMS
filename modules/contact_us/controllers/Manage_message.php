@@ -42,8 +42,8 @@ class Manage_message extends CMS_Secure_Controller {
             case 'export': break;
             case 'print': break;
         }
-        
-        // unset things 
+
+        // unset things
         $crud->unset_jquery();
         // $crud->unset_read();
         $crud->unset_add();
@@ -71,8 +71,10 @@ class Manage_message extends CMS_Secure_Controller {
         $crud->edit_fields('name','email','content');
         // displayed columns on add operation
         $crud->add_fields('name','email','content');
-        
-        
+        // displayed columns on read operation
+        $crud->set_read_fields('name','email','content');
+
+
 
         // caption of each columns
         $crud->display_as('name','Name');
@@ -93,7 +95,7 @@ class Manage_message extends CMS_Secure_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -142,6 +144,12 @@ class Manage_message extends CMS_Secure_Controller {
         $crud->callback_after_update(array($this,'after_update'));
         $crud->callback_after_delete(array($this,'after_delete'));
 
+        if($primary_key !== NULL){
+            $this->db->update($this->t('message'),
+                array('read' => 1),
+                array('id' => $primary_key)
+            );
+        }
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

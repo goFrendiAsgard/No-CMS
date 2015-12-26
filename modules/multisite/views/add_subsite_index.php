@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <head>
     <style type="text/css">
         body {
@@ -38,129 +38,147 @@
     </style>
 </head>
 <body>
-            <form class="form-horizontal" action="<?php echo site_url('multisite/add_subsite/install'); ?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab1" data-toggle="tab"><i class="glyphicon glyphicon-cog"></i> Site Configurations</a></li>
+            <li><a href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-eye-open"></i> Appearance</a></li>
+        </ul>
 
-                <h3>Site Setting</h3>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="subsite">Subsite</label>
-                    <div class="controls col-md-8">
-                        <input type="text" id="subsite" name="subsite" value="" class="input form-control" placeholder="Subsite">
+        <form class="form-horizontal" action="<?php echo site_url('multisite/add_subsite/install'); ?>" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="tab1">
+                    <h3>Site Configurations</h3>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="subsite">Subsite</label>
+                        <div class="controls col-md-8">
+                            <input type="text" id="subsite" name="subsite" value="" class="input form-control" placeholder="Subsite">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="aliases">Aliases</label>
-                    <div class="controls col-md-8">
-                        <input type="text" id="aliases" name="aliases" value="" class="input form-control" placeholder="Aliases, comma separated (e.g: somedomain.com, other.com)">
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="aliases">Aliases</label>
+                        <div class="controls col-md-8">
+                            <input type="text" id="aliases" name="aliases" value="" class="input form-control" placeholder="Aliases, comma separated (e.g: somedomain.com, other.com)">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="logo">Logo</label>
-                    <div class="controls col-md-8">
-                        <input type="file" id="logo" name="logo" value="" class="input form-control" placeholder="logo">
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="logo">Logo</label>
+                        <div class="controls col-md-8">
+                            <input type="file" id="logo" name="logo" value="" class="input form-control" placeholder="logo">
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="description">Description</label>
-                    <div class="controls col-md-8">
-                        <textarea id="description" name="description" class="input form-control" placeholder="description"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="theme">Theme</label>
-                    <div class="controls col-md-8">
-                        <select id="theme" name="theme" class="input form-control" placeholder="Theme">
-                            <?php
-                                foreach($theme_list as $theme){
-                                    echo '<option value="'.$theme.'">'.$theme.'</option>';
-                                }                                
-                            ?>
-                        </select>
-                        <p class="help-block">Theme used for the new site</p>
-                        <div>                            
-                            <?php
-                                foreach($theme_list as $theme){
-                                    echo '<img style="width:100%; display:none;" class="img-theme" id="img-theme-'.str_replace(' ','_',$theme).'" real-src="{{ base_url }}themes/'.$theme.'/preview.png" />';
-                                }
-                            ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="description">Description</label>
+                        <div class="controls col-md-8">
+                            <textarea id="description" name="description" class="input form-control" placeholder="description"></textarea>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="homepage_layout">Homepage Layout</label>
-                    <div class="controls col-md-8">
-                        <select id="homepage_layout" name="homepage_layout" class="input form-control" placeholder="Homepage Layout">
-                            <?php
-                                foreach($layout_list as $homepage_layout){
-                                    $selected = $homepage_layout == 'slide'? 'selected' : '';
-                                    echo '<option value="'.$homepage_layout.'" '.$selected.'>'.$homepage_layout.'</option>';
-                                }
-                            ?>
-                        </select>
+
+                <div class="tab-pane" id="tab2">
+                    <h3>Appearance</h3>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="homepage_layout">Homepage Layout</label>
+                        <div class="controls col-md-8">
+                            <select id="homepage_layout" name="homepage_layout" class="input form-control" placeholder="Homepage Layout">
+                                <?php
+                                    foreach ($layout_list as $homepage_layout) {
+                                        $selected = $homepage_layout == 'slide' ? 'selected' : '';
+                                        echo '<option value="'.$homepage_layout.'" '.$selected.'>'.$homepage_layout.'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="default_layout">Default Layout</label>
-                    <div class="controls col-md-8">
-                        <select id="default_layout" name="default_layout" class="input form-control" placeholder="Default Layout">
-                            <?php
-                                foreach($layout_list as $default_layout){
-                                    $selected = $default_layout == 'default'? 'selected' : '';
-                                    echo '<option value="'.$default_layout.'" '.$selected.'>'.$default_layout.'</option>';
-                                }
-                            ?>
-                        </select>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="default_layout">Default Layout</label>
+                        <div class="controls col-md-8">
+                            <select id="default_layout" name="default_layout" class="input form-control" placeholder="Default Layout">
+                                <?php
+                                    foreach ($layout_list as $default_layout) {
+                                        $selected = $default_layout == 'default' ? 'selected' : '';
+                                        echo '<option value="'.$default_layout.'" '.$selected.'>'.$default_layout.'</option>';
+                                    }
+                                ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="template">Template</label>
-                    <div class="controls col-md-8">
-                        <select id="template" name="template" class="input form-control" placeholder="template">
-                            <?php
-                                foreach($template_list as $template){
-                                    echo '<option value="'.$template['name'].'">'.$template['name'].'</option>';
-                                }
-                            ?>
-                        </select>
-                        <p class="help-block">Template used for the new site</p>
-                        <div>                            
-                            <?php
-                                foreach($template_list as $template){
-                                    $template_name = str_replace(' ','_',$template['name']);
-                                    echo '<img style="width:100%; display:none;" class="img-template" id="img-template-'.$template_name.'" real-src="{{ module_base_url }}assets/uploads/'.$template['icon'].'" />';
-                                    echo '<p style="display:none;" class="desc-template" id="desc-template-'.$template_name.'">'.$template['description'].'</p>';
-                                }
-                            ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="theme">Theme</label>
+                        <div class="controls col-md-8">
+                            <select id="theme" name="theme" class="input form-control" placeholder="Theme">
+                                <?php
+                                    foreach ($theme_list as $theme) {
+                                        echo '<option value="'.$theme.'">'.$theme.'</option>';
+                                    }
+                                ?>
+                            </select>
+                            <p class="help-block">Theme used for the new site</p>
+                            <div>
+                                <?php
+                                    foreach ($theme_list as $theme) {
+                                        echo '<img style="width:100%; display:none;" class="img-theme" id="img-theme-'.str_replace(' ', '_', $theme).'" real-src="{{ base_url }}themes/'.$theme.'/preview.png" />';
+                                    }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="template">Template</label>
+                        <div class="controls col-md-8">
+                            <select id="template" name="template" class="input form-control" placeholder="template">
+                                <?php
+                                    foreach ($template_list as $template) {
+                                        echo '<option value="'.$template['name'].'">'.$template['name'].'</option>';
+                                    }
+                                ?>
+                            </select>
+                            <p class="help-block">Template used for the new site</p>
+                            <div>
+                                <?php
+                                    foreach ($template_list as $template) {
+                                        $template_name = str_replace(' ', '_', $template['name']);
+                                        echo '<img style="width:100%; display:none;" class="img-template" id="img-template-'.$template_name.'" real-src="{{ module_base_url }}assets/uploads/'.$template['icon'].'" />';
+                                        echo '<p style="display:none;" class="desc-template" id="desc-template-'.$template_name.'">'.$template['description'].'</p>';
+                                    }
+                                ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4" for="use_subdomain">Use Subdomain</label>
-                    <div class="controls col-md-8">
-                        <input type="checkbox" id="use_subdomain" name="use_subdomain" class="input" value="true">
-                        <p class="help-block">
-                            Use subdomain (e.g: subdomain.maindomain.com). This require some DNS setting. Leave it unchecked if you aren't sure.
-                        </p>
-                        <p>
-                            <button id="btn-install" class="btn btn-primary btn-lg" name="Install" disabled="disabled" value="INSTALL NOW">INSTALL NOW</button>
-                        </p>
-                    </div>
-                </div>
-                <div id="div-error-warning-message">
-                    <div id="div-error-message" class="alert alert-danger">
-                        <strong>ERRORS:</strong>
-                        <ul id="ul-error-message"></ul>
-                    </div>
-                    <div id="div-warning-message" class="alert alert-warning">
-                        <strong>WARNINGS:</strong>
-                        <ul id="ul-warning-message"></ul>
-                    </div>
-                    <div id="div-success-message" class="alert alert-success">
-                        <strong>GREAT !!!</strong>, you can now install <span id="span-subsite"></span> without worrying anything.
-                    </div>
 
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-4" for="use_subdomain">Use Subdomain</label>
+                <div class="controls col-md-8">
+                    <input type="checkbox" id="use_subdomain" name="use_subdomain" class="input" value="true">
+                    <p class="help-block">
+                        Use subdomain (e.g: subdomain.maindomain.com). This require some DNS setting. Leave it unchecked if you aren't sure.
+                    </p>
+                    <p>
+                        <button id="btn-install" class="btn btn-primary btn-lg" name="Install" disabled="disabled" value="INSTALL NOW">INSTALL NOW</button>
+                    </p>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <div id="div-error-warning-message">
+                <div id="div-error-message" class="alert alert-danger">
+                    <strong>ERRORS:</strong>
+                    <ul id="ul-error-message"></ul>
+                </div>
+                <div id="div-warning-message" class="alert alert-warning">
+                    <strong>WARNINGS:</strong>
+                    <ul id="ul-warning-message"></ul>
+                </div>
+                <div id="div-success-message" class="alert alert-success">
+                    <strong>GREAT !!!</strong>, you can now install <span id="span-subsite"></span> without worrying anything.
+                </div>
+
+            </div>
+
+        </form>
     </div>
     <script type="text/javascript">
         var REQUEST;
@@ -168,7 +186,7 @@
         var SUCCESS = false;
 
         $(document).ready(function(){
-            // check things            
+            // check things
             check();
             adjust_theme();
             adjust_template();
@@ -238,7 +256,7 @@
                 dataType: "json",
                 async : true,
                 data : {
-                    subsite                 : $("#subsite").val(),
+                    subsite : $("#subsite").val(),
                 },
                 success : function(response){
                     SUCCESS = response.success;

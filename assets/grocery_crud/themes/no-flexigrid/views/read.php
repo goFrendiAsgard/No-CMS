@@ -7,11 +7,11 @@
 	$this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery.noty.js');
 	$this->set_js_lib($this->default_javascript_path.'/jquery_plugins/config/jquery.noty.config.js');
 ?>
-<div class="flexigrid crud-form" style='width: 100%;' data-unique-hash="<?php echo $unique_hash; ?>">
+<div class="flexigrid crud-form" data-unique-hash="<?php echo $unique_hash; ?>">
 	<div class="mDiv">
 		<div class="ftitle">
 			<div class='ftitle-left'>
-				<?php echo $this->l('list_record'); ?> <?php echo $subject?>
+				<h3><?php echo $this->l('list_record'); ?> <?php echo $subject?></h3>
 			</div>
 			<div class='clear'></div>
 		</div>
@@ -27,10 +27,12 @@
 				$counter++;
 		?>
 			<div class='form-field-box <?php echo $even_odd?>' id="<?php echo $field->field_name; ?>_field_box">
-				<div class='form-display-as-box' id="<?php echo $field->field_name; ?>_display_as_box">
-					<?php echo $input_fields[$field->field_name]->display_as?><?php echo ($input_fields[$field->field_name]->required)? "<span class='required'>*</span> " : ""?> :
+				<div class='form-display-as-box col-md-4' id="<?php echo $field->field_name; ?>_display_as_box">
+					<label>
+                        <?php echo $input_fields[$field->field_name]->display_as?><?php echo ($input_fields[$field->field_name]->required)? "<span class='required'>*</span> " : ""?> :
+                    </label>
 				</div>
-				<div class='form-input-box' id="<?php echo $field->field_name; ?>_input_box">
+				<div class='form-input-box col-md-8' id="<?php echo $field->field_name; ?>_input_box">
 					<?php echo $input_fields[$field->field_name]->input?>
 				</div>
 				<div class='clear'></div>

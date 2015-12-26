@@ -229,6 +229,7 @@ class CMS_Model extends CI_Model
     // This function will evaluate hooks.php
     public function cms_call_hook($hook_name, $parameters=array()){
         $return = array();
+        $hook_level = array('_9', '_8', '_7', '_6', '_5', '_4', '_3', '_2', '_1', '_0', '');
         $module_list = $this->cms_get_module_list();
         foreach($module_list as $module){
             $active = $module['active'];
@@ -238,9 +239,11 @@ class CMS_Model extends CI_Model
                 $function_prefix = 'hook_'.str_ireplace(array('.', '-', ' '), '_', $module_name);
                 if(file_exists(FCPATH.'modules/'.$module_path.'/hooks.php')){
                     require_once(FCPATH.'modules/'.$module_path.'/hooks.php');
-                    $function_name = $function_prefix.'_'.$hook_name;
-                    if(function_exists($function_name)){
-                        $return[] = call_user_func_array($function_name, $parameters);
+                    foreach($hook_level as $level){
+                        $function_name = $function_prefix . '_' . $hook_name . $level;
+                        if(function_exists($function_name)){
+                            $return[] = call_user_func_array($function_name, $parameters);
+                        }
                     }
                 }
             }

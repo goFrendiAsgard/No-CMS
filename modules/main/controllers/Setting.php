@@ -18,7 +18,7 @@ class Setting extends CMS_Controller{
             }
         }
         // don't change if there is no changes
-        if($no_change){
+        if(!$no_change){
             $this->db->update(cms_table_name('main_widget'), array('static_content'=>$content), array('widget_name'=>$widget_name));
         }
     }

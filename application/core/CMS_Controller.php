@@ -286,7 +286,9 @@ class CMS_Controller extends MX_Controller
             $html .= '<a href="'.$url.'" style="text-decoration:none;">';
             if ($submenu_count <= 2) {
                 $html .= '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">';
-            } elseif ($submenu_count % 3 == 0) {
+            } else if ($submenu_count % 4 == 0) {
+                $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
+            } else if ($submenu_count % 3 == 0) {
                 $html .= '<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">';
             } else {
                 $html .= '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';

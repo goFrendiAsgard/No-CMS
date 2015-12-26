@@ -374,7 +374,7 @@ class Article_model extends  CMS_Model{
         $sql = 'SELECT DISTINCT a.article_id, a.article_title, a.article_url, a.status, a.date, a.publish_date
             FROM '.$this->t('article').' as a, '.
             $this->t('category_article').' as ca '.
-            'WHERE ca.article_id = a.article_id AND ca.article_id <> '.$article_id.' AND '.$where_category.' LIMIT 4';
+            'WHERE ca.article_id = a.article_id AND ca.article_id <> '.$article_id.' AND ('.$where_category.') LIMIT 4';
         $query = $this->db->query($sql);
         $data = array();
         foreach($query->result() as $row){

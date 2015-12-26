@@ -34,7 +34,7 @@ class Manage_article extends CMS_Secure_Controller {
         if(CMS_SUBSITE != ''){
             // GET MAIN TABLE PREFIX
             $main_config_file = APPPATH.'config/main/cms_config.php';
-            if(file_exists($main_config_file)){ 
+            if(file_exists($main_config_file)){
                 include($main_config_file);
                 $main_table_prefix   = $config['__cms_table_prefix'];
                 $main_table_prefix   = $main_table_prefix == ''? '' : $main_table_prefix.'_';
@@ -216,7 +216,7 @@ class Manage_article extends CMS_Secure_Controller {
         $crud->callback_after_insert(array($this,'after_insert'));
         $crud->callback_after_update(array($this,'after_update'));
         $crud->callback_after_delete(array($this,'after_delete'));
-        
+
         $crud->callback_column('photos',array($this, 'callback_column_photos'));
         $crud->callback_field('photos',array($this, 'callback_field_photos'));
         $crud->callback_column('comments',array($this, 'callback_column_comments'));
@@ -277,7 +277,7 @@ class Manage_article extends CMS_Secure_Controller {
     }
 
     public function before_insert($post_array){
-        $post_array = $this->before_insert_or_update($post_array);        
+        $post_array = $this->before_insert_or_update($post_array);
 
         // default allow comment value
         if(!isset($post_array['allow_comment']) || !in_array($post_array['allow_comment'],array(0,1))){
@@ -359,6 +359,7 @@ class Manage_article extends CMS_Secure_Controller {
             move_uploaded_file($tmp_name, $upload_path.$file_name);
             $data = array(
                 'url' => $file_name,
+                'caption' => $insert_record['data']['caption'],
                 'index' => $insert_record['data']['index'],
             );
             $data['article_id'] = $primary_key;
@@ -382,7 +383,7 @@ class Manage_article extends CMS_Secure_Controller {
             }
             $data['article_id'] = $primary_key;
             $this->db->update($this->t('photo'),
-                 $data, array('photo_id'=>$detail_primary_key));            
+                 $data, array('photo_id'=>$detail_primary_key));
         }
 
 
@@ -420,7 +421,7 @@ class Manage_article extends CMS_Secure_Controller {
             }
             $data['article_id'] = $primary_key;
             $this->db->update($this->t('comment'),
-                 $data, array('comment_id'=>$detail_primary_key));            
+                 $data, array('comment_id'=>$detail_primary_key));
         }
         return TRUE;
     }
