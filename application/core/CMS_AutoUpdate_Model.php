@@ -7,7 +7,7 @@ if (!defined('BASEPATH')) {
 class CMS_AutoUpdate_Model extends CMS_Model
 {
     // TODO: change this
-    private $CURRENT_VERSION = '1.0.3';
+    private $CURRENT_VERSION = '1.0.4';
     private static $module_updated = false;
 
     public function __construct()
@@ -264,7 +264,7 @@ class CMS_AutoUpdate_Model extends CMS_Model
         // modify table : cms_main_user
         if (CMS_SUBSITE == '') {
             $fields = array('subsite' => array('type' => 'VARCHAR', 'constraint' => 100, 'null' => true));
-            $this->dbforge->add_column(cms_table_name('main_user'), $fields);
+            $this->dbforge->add_column($this->cms_user_table_name(), $fields);
         }
 
         // add navigation
@@ -447,6 +447,14 @@ class CMS_AutoUpdate_Model extends CMS_Model
 
     private function __update_to_1_0_3(){
         $this->cms_add_config('site_show_benchmark', 'FALSE', 'Show Benchmark');
+    }
+
+    private function __update_to_1_0_4(){
+        // Last time, I forgot to add authorization_id for all generated privileges, so here is
+        $this->db->update(cms_table_name('main_privilege'),
+            array('authorization_id' => 4),
+            array('privilege_id >=' => 0)
+        );
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)

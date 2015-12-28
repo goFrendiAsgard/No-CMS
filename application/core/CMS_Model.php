@@ -495,7 +495,9 @@ class CMS_Model extends CI_Model
      */
     public function cms_unset_ci_session($key)
     {
+        $this->session->set_userdata($key, NULL);
         $this->session->unset_userdata($key);
+        self::$__cms_model_properties['session'][$key] = NULL;
         unset(self::$__cms_model_properties['session'][$key]);
     }
 
@@ -646,7 +648,7 @@ class CMS_Model extends CI_Model
             return self::$__cms_model_properties['profile_pictures'][$user_id];
         }
         // get user
-        $user_record = $this->cms_get_record(cms_table_name('main_user'), 'user_id', $user_id);
+        $user_record = $this->cms_get_record($this->cms_user_table_name(), 'user_id', $user_id);
         $real_base_url = base_url();
         if(USE_SUBDOMAIN && CMS_SUBSITE != '' && !USE_ALIAS){
             $real_base_url = $base_url;
@@ -833,7 +835,6 @@ class CMS_Model extends CI_Model
                 }
             }
         }
-
         // normal flow
         return in_array(1, $this->cms_user_group_id());
     }

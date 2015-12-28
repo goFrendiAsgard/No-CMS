@@ -3,7 +3,7 @@
 class Ajax extends CMS_Controller{
     public function users($keyword = ''){
         $query = $this->db->select('user_id, user_name')
-            ->from(cms_table_name('main_user'))
+            ->from($this->cms_user_table_name())
             ->like('user_name', $keyword)
             ->limit(20)
             ->get();

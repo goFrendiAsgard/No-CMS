@@ -636,7 +636,7 @@ class Main extends CMS_Controller
             $value = array();
         }
         $query = $this->db->select('user_id, user_name')
-            ->from(cms_table_name('main_user'))
+            ->from($this->cms_user_table_name())
             ->limit(20)
             ->get();
         $html = '<select id="field-users" name="users[]" multiple="multiple" size="8" class="form-control" data-placeholder="Select users">';

@@ -451,7 +451,9 @@ class CMS_Module extends CMS_Controller
         foreach ($this->__get_all_privileges() as $privilege) {
             $privilege_name = $this->__get_from_array($privilege, 'privilege_name', '');
             $description = $this->__get_from_array($privilege, 'description', '');
-            $this->cms_add_privilege($this->cms_complete_navigation_name($privilege_name), $description);
+            $title = $this->__get_from_array($privilege, 'title', '');
+            $authorization_id = $this->__get_from_array($privilege, 'authorization_id', '4');
+            $this->cms_add_privilege($this->cms_complete_navigation_name($privilege_name), $title, $authorization_id, $description);
         }
 
         // ADD GROUPS
@@ -609,16 +611,21 @@ class CMS_Module extends CMS_Controller
         $PRIVILEGES = array();
         // ADD PRIVILEGES
         foreach ($this->PRIVILEGES as $privilege) {
+            if(!in_array('authorization_id', $privilege)){
+                $privilege['authorization_id'] = 4;
+            }
             $PRIVILEGES[] = $privilege;
         }
         // ADD BACKEND PRIVILEGES
         $verb_list = array('read','add','edit','delete','list','back_to_list','print','export');
         foreach ($this->BACKEND_NAVIGATIONS as $navigation) {
             foreach ($verb_list as $verb) {
+                $authorization_id = is_int($navigation['authorization_id'])? $navigation['authorization_id'] : 4;
                 $PRIVILEGES[] = array(
-                'privilege_name' => $verb.'_'.$this->__get_from_array($navigation, 'entity_name', ''),
-                'description' => $verb.' '.$this->__get_from_array($navigation, 'entity_name', ''),
-            );
+                    'privilege_name' => $verb.'_'.$this->__get_from_array($navigation, 'entity_name', ''),
+                    'description' => $verb.' '.$this->__get_from_array($navigation, 'entity_name', ''),
+                    'authorization_id' => $authorization_id,
+                );
             }
         }
 
