@@ -13,11 +13,15 @@ class Notif extends CMS_Secure_Controller {
     }
 
     public function new_message(){
-        $record_list = $this->cms_get_record_list($this->t('message'), 'read', 0);
-        $notif = count($record_list);
-        $result = array('success'=>TRUE,'notif'=>'');
-        if($notif>0){
-            $result['notif'] = $notif;
+        if($this->cms_allow_navigate($this->n('manage_message'))){
+            $record_list = $this->cms_get_record_list($this->t('message'), 'read', 0);
+            $notif = count($record_list);
+            $result = array('success'=>TRUE,'notif'=>'');
+            if($notif>0){
+                $result['notif'] = $notif;
+            }
+        }else{
+            $result = array('success'=>TRUE, 'notif'=>'');
         }
         echo json_encode($result);
     }

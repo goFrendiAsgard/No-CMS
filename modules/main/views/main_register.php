@@ -10,7 +10,7 @@
 <script type="text/javascript">
 	var REQUEST_EXISTS = false;
 	var REQUEST = "";
-    function check_user_exists(){
+    function check_register(){
         var user_name =  $('input[name="<?php echo $secret_code; ?>user_name"]').val();
         var email = $('input[name="<?php echo $secret_code; ?>email"]').val();
         var password = $('input[name="<?php echo $secret_code; ?>password"]').val();
@@ -20,10 +20,17 @@
         	REQUEST.abort();
         }
         REQUEST_EXISTS = true;
+        // build request data
+        var request_data = {"user_name":user_name, "email":email};
+        $('.ajax-check-form input, .ajax-check-form select, .ajax-check-form textarea').each(function(){
+            if(($(this).attr('type') == 'checkbox' && $(this).attr('checked')) || $(this).attr('type') != 'checkbox'){
+                request_data[$(this).attr('name')] = $(this).val();
+            }
+        });
         REQUEST = $.ajax({
             "url" : "check_registration",
             "type" : "POST",
-            "data" : {"user_name":user_name, "email":email},
+            "data" : request_data,
             "dataType" : "json",
             "success" : function(data){
             	if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
@@ -55,7 +62,7 @@
             },
             error: function(xhr, textStatus, errorThrown){
                 if(textStatus != 'abort'){
-                    setTimeout(check_user_exists, 10000);
+                    setTimeout(check_register, 10000);
                 }
             }
         });
@@ -68,10 +75,13 @@
 
     $(document).ready(function(){
 
-        check_user_exists();
+        check_register();
 
-        $('#form-register input').keyup(function(){
-            check_user_exists();
+        $('input, select, textarea').keyup(function(){
+            check_register();
+        });
+        $('input, select, textarea').change(function(){
+        	check_register();
         });
 
         $('#<?php echo $secret_code; ?>user_name').keyup(function(){
@@ -83,7 +93,7 @@
 </script>
 <h3>{{ language:Register }}</h3>
 <?php
-    echo form_open_multipart('main/register', 'id="form-register" class="form form-horizontal"');
+    echo form_open_multipart('main/register', 'id="form-register" class="ajax-check-form form form-horizontal"');
     echo form_input(array('name'=>'user_name', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'real_name', 'value'=>'', 'class'=>'register_input'));

@@ -547,7 +547,7 @@ class CMS_Module extends CMS_Controller
                 foreach($data as $record){
                     // is the record already exists?
                     $found = FALSE;
-                    if(array_key_exists($key, $data)){
+                    if(array_key_exists($key, $record)){
                         $query = $this->db->select($key)
                             ->from($this->cms_complete_table_name($table_name))
                             ->where($key, $record[$key])

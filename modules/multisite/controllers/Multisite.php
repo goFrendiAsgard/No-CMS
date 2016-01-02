@@ -486,6 +486,21 @@ class Multisite extends CMS_Secure_Controller {
                 }
             }
 
+            if(!$error){
+                $return_set = $this->cms_call_hook('cms_validate_register', array($this->input->post()));
+                foreach($return_set as $return){
+                    if(is_array($return)){
+                        if(array_key_exists('error', $return)){
+                            $error = $return['error'];
+                            if(array_key_exists('message', $return)){
+                                $message = $return['message'];
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
             $data = array(
                 "exists" => $user_name_exists || $email_exists,
                 "error" => $error,

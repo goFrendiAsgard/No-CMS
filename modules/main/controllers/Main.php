@@ -404,15 +404,28 @@ class Main extends CMS_Controller
             if ($user_name == '') {
                 $message = $this->cms_lang('Username is empty');
                 $error = true;
-            } elseif ($user_name_exists) {
+            } else if ($user_name_exists) {
                 $message = $this->cms_lang('Username already exists');
                 $error = true;
-            } elseif (!$valid_email) {
+            } else if (!$valid_email) {
                 $message = $this->cms_lang('Invalid email address');
                 $error = true;
-            } elseif ($email_exists) {
+            } else if ($email_exists) {
                 $message = $this->cms_lang('Email already used');
                 $error = true;
+            } else{
+                $return_set = $this->cms_call_hook('cms_validate_register', array($this->input->post()));
+                foreach($return_set as $return){
+                    if(is_array($return)){
+                        if(array_key_exists('error', $return)){
+                            $error = $return['error'];
+                            if(array_key_exists('message', $return)){
+                                $message = $return['message'];
+                            }
+                            break;
+                        }
+                    }
+                }
             }
 
             $data = array(
@@ -456,9 +469,22 @@ class Main extends CMS_Controller
             if (!$valid_email) {
                 $message = $this->cms_lang('Invalid email address');
                 $error = true;
-            } elseif ($email_exists) {
+            } else if ($email_exists) {
                 $message = $this->cms_lang('Email already used');
                 $error = true;
+            } else{
+                $return_set = $this->cms_call_hook('cms_validate_change_profile', array($this->cms_user_id(), $this->input->post()));
+                foreach($return_set as $return){
+                    if(is_array($return)){
+                        if(array_key_exists('error', $return)){
+                            $error = $return['error'];
+                            if(array_key_exists('message', $return)){
+                                $message = $return['message'];
+                            }
+                            break;
+                        }
+                    }
+                }
             }
             $data = array(
                 'exists' => $email_exists,
@@ -541,6 +567,7 @@ class Main extends CMS_Controller
             );
             // update email, real name, etc
             $this->cms_do_change_profile($email, $real_name, $password, $this->cms_user_id());
+            $this->cms_call_hook('cms_after_change_profile', array($this->cms_user_id(), $this->input->post()));
         }
         // select the old data again
         $query = $this->db->select('user_name, email, real_name, theme, language, sex, birthdate, profile_picture, self_description')
@@ -548,6 +575,8 @@ class Main extends CMS_Controller
             ->where('user_id', $this->cms_user_id())
             ->get();
         $row = $query->row();
+        $additional_input = $this->cms_call_hook('cms_change_profile_additional_input', array($this->cms_user_id()));
+        $additional_input = implode(' ', $additional_input);
         $data = array(
             'user_name' => $row->user_name,
             'email' => $row->email,
@@ -561,6 +590,7 @@ class Main extends CMS_Controller
             'change_profile_caption' => $this->cms_lang('Change Profile'),
             'theme_list' => $this->cms_get_theme_list(),
             'language_list' => $this->cms_language_list(),
+            'additional_input' => $additional_input,
         );
         $this->view('main/main_change_profile', $data, 'main_change_profile');
     }

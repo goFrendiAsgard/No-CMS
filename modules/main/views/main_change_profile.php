@@ -21,7 +21,7 @@ echo $asset->compile_js();
 <script type="text/javascript">
 	var REQUEST_EXISTS = false;
 	var REQUEST = "";
-    function check_user_exists(){
+    function check_change_profile(){
         var email =  $('input[name="email"]').val();
         var password = $('input[name="password"]').val();
         var confirm_password = $('input[name="confirm_password"]').val();
@@ -31,10 +31,17 @@ echo $asset->compile_js();
         	REQUEST.abort();
         }
         REQUEST_EXISTS = true;
+        // build request data
+        var request_data = {"email":email};
+        $('.ajax-check-form input, .ajax-check-form select, .ajax-check-form textarea').each(function(){
+            if(($(this).attr('type') == 'checkbox' && $(this).attr('checked')) || $(this).attr('type') != 'checkbox'){
+                request_data[$(this).attr('name')] = $(this).val();
+            }
+        });
         REQUEST = $.ajax({
             "url" : "check_change_profile",
             "type" : "POST",
-            "data" : {"email":email},
+            "data" : request_data,
             "dataType" : "json",
             "success" : function(data){
                 if(!data.error && !data.exists &&
@@ -68,7 +75,7 @@ echo $asset->compile_js();
             },
             error: function(xhr, textStatus, errorThrown){
                 if(textStatus != 'abort'){
-                    setTimeout(check_user_exists, 10000);
+                    setTimeout(check_change_profile, 10000);
                 }
             }
         });
@@ -84,12 +91,12 @@ echo $asset->compile_js();
 
     $(document).ready(function(){
         toggle_password_input();
-        check_user_exists();
-        $('input').keyup(function(){
-            check_user_exists();
+        check_change_profile();
+        $('input, select, textarea').keyup(function(){
+            check_change_profile();
         });
-        $('input').change(function(){
-        	check_user_exists();
+        $('input, select, textarea').change(function(){
+        	check_change_profile();
         });
         $('input[name="change_password"]').change(function(){toggle_password_input();});
         // turn select into chosen
@@ -112,7 +119,7 @@ echo $asset->compile_js();
 </script>
 <h3>{{ language:Change Profile }}</h3>
 <?php
-    echo form_open_multipart('main/change_profile', 'class="form form-horizontal"');
+    echo form_open_multipart('main/change_profile', 'class="ajax-check-form form form-horizontal"');
 
     echo '<div class="form-group">';
     echo form_label('{{ language:Profile Picture }}', ' for="" class="control-label col-sm-4');
@@ -210,6 +217,8 @@ echo $asset->compile_js();
         'id="self_description" placeholder="Self Description" class="form-control"');
     echo '</div>';
     echo '</div>';
+
+    echo $additional_input;
 
     echo '<div class="form-group">';
     echo '<div class="col-sm-offset-4 col-sm-8">';

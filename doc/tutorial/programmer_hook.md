@@ -30,7 +30,7 @@ Predefined hook point
 
 * cms_login($identity, $password)
 
-    Return either true or associative array, if login is allowed. Otherwise, return `FALSE`. The associative array should contains one or more of these keys:
+    Return either `TRUE` or associative array, if login is allowed. Otherwise, return `FALSE`. The associative array should contains one or more of these keys:
 
     + `email` : should contains valid email
     + `real_name` : real name
@@ -45,8 +45,30 @@ Predefined hook point
 
 * cms_after_register($user_id, $post)
 
-    Evaluated every time user register
+    Evaluated every time user registers
+
+* cms_after_change_profile($user_id, $post)
+
+    Evaluated every time user changes profile
 
 * cms_registration_additional_input()
 
     Return string contains additional html input.
+
+* cms_change_profile_additional_input()
+
+    Return string contains additional html input.
+
+* cms_validate_change_profile($user_id, $post)
+
+    Return associative array. The associative array should contains these keys:
+
+    + `success` : boolean, whether the validation success or fail
+    + `message` : error message or empty
+
+* cms_validate_register($post)
+
+    Return associative array. The associative array should contains these keys:
+
+    + `success` : boolean, whether the validation success or fail
+    + `message` : error message or empty 

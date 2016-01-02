@@ -229,7 +229,7 @@ class CMS_Model extends CI_Model
     // This function will evaluate hooks.php
     public function cms_call_hook($hook_name, $parameters=array()){
         $return = array();
-        $hook_level = array('_9', '_8', '_7', '_6', '_5', '_4', '_3', '_2', '_1', '_0', '');
+        $hook_level = array('_9', '_8', '_7', '_6', '_5', '', '_4', '_3', '_2', '_1', '_0');
         $module_list = $this->cms_get_module_list();
         foreach($module_list as $module){
             $active = $module['active'];
