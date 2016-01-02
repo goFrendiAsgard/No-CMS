@@ -125,9 +125,9 @@ function chosen_ajaxify(id, ajax_url){
             // old values and captions
             var old_values = new Array();
             var old_captions = new Array();
-            $('div#' + div_id + '_chosen'+ ' li.search-choice').each(function(){
-                old_value = $(this).children('a.search-choice-close').attr('data-option-array-index');
-                old_caption = $(this).children('span').html();
+            $('#'+id+' option:selected').each(function(){
+                old_value = $(this).val();
+                old_caption = $(this).html();
                 old_values.push(old_value);
                 old_captions.push(old_caption);
             });
