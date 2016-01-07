@@ -21,12 +21,14 @@
         }
         REQUEST_EXISTS = true;
         // build request data
-        var request_data = {"user_name":user_name, "email":email};
+        var request_data = {};
         $('.ajax-check-form input, .ajax-check-form select, .ajax-check-form textarea').each(function(){
             if(($(this).attr('type') == 'checkbox' && $(this).attr('checked')) || $(this).attr('type') != 'checkbox'){
                 request_data[$(this).attr('name')] = $(this).val();
             }
         });
+        request_data["user_name"] = user_name;
+        request_data["email"] = email;
         REQUEST = $.ajax({
             "url" : "check_registration",
             "type" : "POST",

@@ -2352,6 +2352,10 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 						$this->_is_literal($matches[4]) OR $matches[4] = $this->protect_identifiers(trim($matches[4]));
 						$matches[4] = ' '.$matches[4];
 					}
+                    // gofrendi temporal fix (has already been fixed in 3.0.1)
+                    if($matches[2] == 'NOT'){
+                        continue;
+                    }
 
 					$conditions[$ci] = $matches[1].$this->protect_identifiers(trim($matches[2]))
 						.' '.trim($matches[3]).$matches[4].$matches[5];
@@ -2360,7 +2364,7 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 				$this->{$qb_key}[$i] = implode('', $conditions);
 			}
 
-			return ($qb_key === 'qb_having' ? "\nHAVING " : "\nWHERE ")
+            return ($qb_key === 'qb_having' ? "\nHAVING " : "\nWHERE ")
 				.implode("\n", $this->$qb_key);
 		}
 
