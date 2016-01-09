@@ -179,3 +179,23 @@ function chosen_ajaxify(id, ajax_url){
         }, 500);
     }
 }
+
+function chosen_depend_on(id, id_depend_on, ajax_url){
+    var OLD_VALUE = $('#'+id_depend_on).val();
+    $('#'+id_depend_on).change(function(event){
+        var val = $(this).val();
+        if(val != OLD_VALUE){
+            $.ajax({
+                'url' : ajax_url + val,
+                'dataType' : 'json',
+                'success' : function(response){
+                    $('#'+id).empty();
+                    $.map(response, function(item){
+                        $('#'+id).append('<option value="' + item.value + '">' + item.caption + '</option>');
+                    });
+                    $('#'+id).trigger("chosen:updated");
+                }
+            });
+        }
+    })
+}
