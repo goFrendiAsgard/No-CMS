@@ -750,6 +750,15 @@ class CMS_Module extends CMS_Controller
             $this->load->dbutil();
             $sql = '';
 
+            $new_table_names = array();
+            $existing_table_names = $this->db->list_tables();
+            foreach($table_names as $table_name){
+                if(in_array($table_name, $existing_table_names)){
+                    $new_table_names[] = $table_name;
+                }
+            }
+            $table_names = $new_table_names;
+
             // create DROP TABLE syntax
             for ($i = count($table_names) - 1; $i >= 0; --$i) {
                 $table_name = $table_names[$i];
