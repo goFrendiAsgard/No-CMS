@@ -1093,8 +1093,8 @@ class Main extends CMS_Controller
         $crud->set_subject('Navigation (Page)');
 
         $crud->columns('navigation_name');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'groups', 'index');
 
         if ($state == 'update' || $state == 'edit' || $state == 'update_validation') {
             $primary_key = $state_info->primary_key;
@@ -1136,7 +1136,8 @@ class Main extends CMS_Controller
             ->display_as('groups', 'Groups')
             ->display_as('only_content', 'Only show content')
             ->display_as('default_theme', 'Default Theme')
-            ->display_as('default_layout', 'Default Layout');
+            ->display_as('default_layout', 'Default Layout')
+            ->display_as('add_to_quicklink', 'Add To Quicklink');
 
         $crud->order_by('index', 'asc');
 
@@ -1189,7 +1190,17 @@ class Main extends CMS_Controller
             '_before_delete_navigation',
         ));
 
+        $crud->callback_after_insert(array(
+            $this,
+            '_after_insert_navigation',
+        ));
+        $crud->callback_after_update(array(
+            $this,
+            '_after_update_navigation',
+        ));
+
         $crud->callback_field('groups', array($this, '_callback_field_groups'));
+        $crud->callback_field('add_to_quicklink', array($this, '_callback_field_add_to_quicklink'));
 
         $crud->set_language($this->cms_language());
 
@@ -1230,6 +1241,25 @@ class Main extends CMS_Controller
         $config['js'] = $asset->compile_js();
         // show the view
         $this->view('main/main_navigation', $output, 'main_navigation_management', $config);
+    }
+
+    public function _after_insert_or_update_navigation($post_array, $primary_key){
+        // add or remove quicklink
+        $add_to_quicklink = $this->input->post('quicklink');
+        $quicklink_exists = $this->cms_record_exists(cms_table_name('main_quicklink'), 'navigation_id', $primary_key);
+        if($add_to_quicklink == 0 && $quicklink_exists){
+            $this->cms_remove_quicklink($post_array['navigation_name']);
+        }else if($add_to_quicklink == 1 && !$quicklink_exists){
+            $this->cms_add_quicklink($post_array['navigation_name']);
+        }
+        return TRUE;
+    }
+
+    public function _after_insert_navigation($post_array, $primary_key){
+        return $this->_after_insert_or_update_navigation($post_array, $primary_key);
+    }
+    public function _after_update_navigation($post_array, $primary_key){
+        return $this->_after_insert_or_update_navigation($post_array, $primary_key);
     }
 
     public function _before_insert_navigation($post_array)
@@ -1364,6 +1394,32 @@ class Main extends CMS_Controller
             $html .= ' | <a href="'.site_url($this->cms_module_path().'/navigation_mark_move/'.$row->navigation_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
         }
 
+        return $html;
+    }
+
+    public function _callback_field_add_to_quicklink($value, $primary_key){
+        $quicklink_exists = $this->cms_record_exists(cms_table_name('main_quicklink'), 'navigation_id', $primary_key);
+        $active_checked = '';
+        $inactive_checked = '';
+        $span_active_checked = '';
+        $span_inactive_checked = '';
+        if($quicklink_exists){
+            $active_checked = 'checked="checked"';
+            $span_active_checked = 'checked';
+        }else{
+            $inactive_checked = 'checked="checked"';
+            $span_inactive_checked = 'checked';
+        }
+        $html = '<div class="pretty-radio-buttons">
+            <label>
+                <input id="field-add_to_quicklink-true" class="radio-uniform form-control" type="radio" name="quicklink" value="1" '.$active_checked.'>
+                active
+            </label>
+            <label>
+                <input id="field-add_to_quicklink-false" class="radio-uniform form-control" type="radio" name="quicklink" value="0" '.$inactive_checked.'>
+                inactive
+            </label>
+        </div>';
         return $html;
     }
 
