@@ -450,7 +450,8 @@ class Extended_grocery_crud extends Grocery_CRUD{
     protected function validation_layout($validation_result)
 	{
 		@ob_end_clean();
-		echo json_encode($validation_result, JSON_UNESCAPED_SLASHES);
+        echo str_replace('\\/', '/', json_encode($validation_result));
+		//echo json_encode($validation_result, JSON_UNESCAPED_SLASHES);
 		$this->set_echo_and_die();
 	}
 
@@ -481,12 +482,20 @@ class Extended_grocery_crud extends Grocery_CRUD{
 			}
 
 			$success_message .= '</p>';
+			/*
 			echo json_encode(array(
 					'success' => true ,
 					'insert_primary_key' => $insert_result,
 					'success_message' => htmlentities($success_message),
 					'success_list_url'	=> $this->getListSuccessUrl($insert_result)
 			), JSON_UNESCAPED_SLASHES);
+                        */
+                        echo str_replace('\\/', '/', json_encode(array(
+					'success' => true ,
+					'insert_primary_key' => $insert_result,
+					'success_message' => htmlentities($success_message),
+					'success_list_url'	=> $this->getListSuccessUrl($insert_result)
+			)));
 		}
 		$this->set_echo_and_die();
 	}
@@ -506,13 +515,20 @@ class Extended_grocery_crud extends Grocery_CRUD{
 				$success_message .= " <a href='".$this->getListUrl()."'>".$this->l('form_go_back_to_list')."</a>";
 			}
 			$success_message .= '</p>';
-
+			/*
 			echo json_encode(array(
 					'success' => true ,
 					'insert_primary_key' => $update_result,
 					'success_message' => htmlentities($success_message),
 					'success_list_url'	=> $this->getListSuccessUrl($state_info->primary_key)
 			), JSON_UNESCAPED_SLASHES);
+			*/
+                        echo str_replace('\\/', '/', json_encode(array(
+					'success' => true ,
+					'insert_primary_key' => $update_result,
+					'success_message' => htmlentities($success_message),
+					'success_list_url'	=> $this->getListSuccessUrl($state_info->primary_key)
+			)));
 		}
 		$this->set_echo_and_die();
 	}

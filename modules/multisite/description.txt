@@ -2,8 +2,9 @@
     "dependencies"    : [],
     "name"            : "gofrendi.noCMS.multisite",
     "description"     : "One Code Base To Rule Them All",
-    "version"         : "0.0.4",
+    "version"         : "0.0.5",
     "activate"        : "info/activate",
     "deactivate"      : "info/deactivate",
-    "upgrade"         : "info/upgrade"
+    "upgrade"         : "info/upgrade",
+    "public"          : false
 }

@@ -80,17 +80,17 @@ class CMS_Controller extends MX_Controller
 
         // unpublished modules should never be accessed.
         if (CMS_SUBSITE != '' && $module_path != 'main' && $module_path != '') {
-            $subsite_auth_file = FCPATH.'modules/'.$module_path.'/subsite_auth.php';
-            if (file_exists($subsite_auth_file)) {
-                unset($protected);
-                unset($subsite_allowed);
-                include $subsite_auth_file;
-                if (isset($protected) && is_bool($protected) && !$protected) {
-                    if (!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
-                        $this->show_404();
-                        // die('Module is not accessible for '.CMS_SUBSITE.' subsite');
-                    }
+            $module_list = $this->cms_get_module_list();
+            // is current module_path exists in module_list?
+            $allowed = FALSE;
+            foreach($module_list as $module){
+                if($module['module_path'] == $module_path && $module['published']){
+                    $allowed = TRUE;
                 }
+            }
+            // if not allowed than show 404
+            if (!$allowed) {
+                $this->show_404();
             }
         }
 

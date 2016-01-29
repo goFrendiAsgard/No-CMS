@@ -10,24 +10,24 @@
     $selected = 'selected';
     foreach($normal_widget_list as $widget){
         $widget_name = $widget['widget_name'];
-        $option_tag .= '<option '.$selected.' value="{{ widget_name:'.$widget_name.' }}">widget : '.$widget_name.'</option>';
+        $option_tag .= '<option '.$selected.' value="{{ widget_name:'.$widget_name.' }}">Widget '.ucwords(str_replace('_', ' ', $widget_name)).'</option>';
         $selected = '';
     }
     foreach($config_list as $config_name=>$value){
-        $option_tag .= '<option value="{{ '.$config_name.' }}">configuration : '.$config_name.'</option>';
+        $option_tag .= '<option value="{{ '.$config_name.' }}">Config '.ucwords(str_replace('_', ' ', $config_name)).'</option>';
         $selected = '';
     }
     // option for languages
     $option_language = '';
     foreach($language_list as $language){
         $selected = $language->code == $current_language ? 'selected' : '';
-        $option_language .= '<option '.$selected.' value="'.$language->code.'">'.$language->name.'</option>';
+        $option_language .= '<option '.$selected.' value="'.$language->code.'">'.ucwords(str_replace('_', ' ', $language->name)).'</option>';
     }
     // option for layouts
-    $option_layout = '<option selected value="'.$config_list['site_layout'].'">'.$config_list['site_layout'].'</option>';
+    $option_layout = '<option selected value="'.$config_list['site_layout'].'">'.ucwords(str_replace('_', ' ', $config_list['site_layout'])).'</option>';
     foreach($layout_list as $layout){
         if($layout != $config_list['site_layout']){
-            $option_layout .= '<option value="'.$layout.'">'.$layout.'</option>';
+            $option_layout .= '<option value="'.$layout.'">'.ucwords(str_replace('_', ' ', $layout)).'</option>';
         }
     }
 
@@ -457,60 +457,60 @@
                     <label class="control-label col-md-4" for="section_top_fix">Top Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
                         </div>
                         <textarea id="section_top_fix" name="section_top_fix" class="text-area-section form-control"><?php echo show_static_content($section_widget_list, 'section_top_fix'); ?></textarea>
-                        <p class="help-block">HTML &amp; tags of top section</p>
+                        <p class="help-block">HTML of top section</p>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="section_top_fix">Navigation Bar's Right Partial</label>
+                    <label class="control-label col-md-4" for="section_top_fix">Navigation Bar's Right Part</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
                         </div>
                         <textarea id="navigation_right_partial" name="navigation_right_partial" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'navigation_right_partial'); ?></textarea>
-                        <p class="help-block">HTML &amp; tags of navigation bar's right partial (don't put too much thing here)</p>
+                        <p class="help-block">HTML of navigation bar's right partial (don't put too much thing here)</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_banner">Banner Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
                         </div>
                         <textarea id="section_banner" name="section_banner" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_banner'); ?></textarea>
-                        <p class="help-block">HTML &amp; tags of banner section</p>
+                        <p class="help-block">HTML of banner section</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_left">Left Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
                         </div>
                         <textarea id="section_left" name="section_left" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_left'); ?></textarea>
-                        <p class="help-block">HTML &amp; tags of left Section</p>
+                        <p class="help-block">HTML of left Section</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-md-4" for="section_right">Right Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
                         </div>
                         <textarea id="section_right" name="section_right" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_right'); ?></textarea>
-                        <p class="help-block">HTML &amp; tags of right section</p>
+                        <p class="help-block">HTML of right section</p>
                     </div>
                 </div>
                 <div class="form-group" style="height:260px;">
                     <label class="control-label col-md-4" for="section_bottom">Bottom Section</label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
-                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add Tag</a>
+                         <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
                         </div>
                         <textarea id="section_bottom" name="section_bottom" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_bottom'); ?></textarea>
-                        <p class="help-block">HTML &amp; tags of bottom section</p>
+                        <p class="help-block">HTML of bottom section</p>
                     </div>
                 </div>
             </div>

@@ -137,6 +137,11 @@ class Multisite extends CMS_Secure_Controller {
         }
         // get data
         $subsite = $this->subsite_model->get_one_data($site_name);
+        // adjusted module_list
+        $adjusted_module_list = array();
+        foreach($module_list as $module){
+            $adjusted_module_list[$module['module_name']] = $module['module_path'];
+        }
         $data = array(
             'edit_url' => $this->cms_module_path() == 'multisite'?
                 site_url($this->cms_module_path().'/edit/'.$site_name) :
@@ -148,7 +153,7 @@ class Multisite extends CMS_Secure_Controller {
             'modules' => $subsite->modules,
             'themes' => $subsite->themes,
             'aliases'=> $subsite->aliases,
-            'module_list' => $this->make_associative_array($module_list),
+            'module_list' => $adjusted_module_list,
             'theme_list' => $this->make_associative_array($theme_list),
             'is_super_admin' => $is_super_admin,
             'save' => $save,

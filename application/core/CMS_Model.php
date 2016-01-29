@@ -230,7 +230,7 @@ class CMS_Model extends CI_Model
     public function cms_call_hook($hook_name, $parameters=array()){
         $return = array();
         $hook_level = array('_9', '_8', '_7', '_6', '_5', '', '_4', '_3', '_2', '_1', '_0');
-        $module_list = $this->cms_get_module_list();        
+        $module_list = $this->cms_get_module_list();
         foreach($hook_level as $level){
             foreach($module_list as $module){
                 $active = $module['active'];
@@ -2443,6 +2443,8 @@ class CMS_Model extends CI_Model
         $this->load->helper('directory');
         $directories = directory_map(FCPATH.'modules', 1);
         sort($directories);
+        // module and existing_module_name
+        $existing_module_name = array();
         $module = array();
         foreach ($directories as $directory) {
             $directory = str_replace(array('/', '\\'), '', $directory);
@@ -2452,21 +2454,6 @@ class CMS_Model extends CI_Model
 
             if (!file_exists(FCPATH.'modules/'.$directory.'/description.txt')) {
                 continue;
-            }
-
-            // unpublished module should not be shown
-            if (CMS_SUBSITE != '') {
-                $subsite_auth_file = FCPATH.'modules/'.$directory.'/subsite_auth.php';
-                if (file_exists($subsite_auth_file)) {
-                    unset($public);
-                    unset($subsite_allowed);
-                    include $subsite_auth_file;
-                    if (isset($public) && is_bool($public) && !$public) {
-                        if (!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
-                            continue;
-                        }
-                    }
-                }
             }
 
             $files = directory_map(FCPATH.'modules/'.$directory.'/controllers', 1);
@@ -2486,7 +2473,19 @@ class CMS_Model extends CI_Model
             $json = file_get_contents(FCPATH.'modules/'.$directory.'/description.txt');
             $module_info = @json_decode($json, true);
             $module_info = $module_info === null ? array() : $module_info;
-            foreach (array('name' => '', 'description' => '', 'dependencies' => array(), 'version' => '0.0.0', 'activate' => 'info/activate', 'deactivate' => 'info/deactivate', 'upgrade' => 'info/upgrade') as $key => $value) {
+            // default values of module info
+            $default_values = array(
+                'name' => '',
+                'description' => '',
+                'dependencies' => array(),
+                'version' => '0.0.0',
+                'activate' => 'info/activate',
+                'deactivate' => 'info/deactivate',
+                'upgrade' => 'info/upgrade',
+                'public' => TRUE
+            );
+            // if no default values exists, provide default values
+            foreach ($default_values as $key => $value) {
                 if (!array_key_exists($key, $module_info)) {
                     $module_info[$key] = $value;
                 }
@@ -2501,12 +2500,32 @@ class CMS_Model extends CI_Model
             $deactivate_link = site_url($directory.'/'.$module_info['deactivate']);
             $upgrade_link = site_url($directory.'/'.$module_info['upgrade']);
             $old_version = $this->cms_module_version($module_name);
+            $public = $module_info['public'];
             // searching
             if ($keyword === null || ($keyword !== null && (
                 stripos($module_name, $keyword) !== false ||
                 stripos($directory, $keyword) !== false ||
                 stripos($description, $keyword) !== false
             ))) {
+                // if module_name in existing_module_name skip it
+                if(in_array($module_name, $existing_module_name)){
+                    continue;
+                }else{
+                    $existing_module_name[] = $module_name;
+                }
+                // see if module is accessible
+                $published = TRUE;
+                if (!$public && CMS_SUBSITE != '') {
+                    $subsite_auth_file = FCPATH.'modules/'.$directory.'/subsite_auth.php';
+                    if (file_exists($subsite_auth_file)) {
+                        unset($subsite_allowed);
+                        include $subsite_auth_file;
+                        if (isset($subsite_allowed) && (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
+                             $published = FALSE;
+                        }
+                    }
+                }
+                // unpublished module should not be shown
                 $module[] = array(
                     'module_name' => $module_name,
                     'module_path' => $directory,
@@ -2520,10 +2539,11 @@ class CMS_Model extends CI_Model
                     'activate_link' => $activate_link,
                     'deactivate_link' => $deactivate_link,
                     'upgrade_link' => $upgrade_link,
+                    'public' => $public,
+                    'published' => $published,
                 );
             }
         }
-
         return $module;
     }
 

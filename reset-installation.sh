@@ -17,5 +17,6 @@ sudo rm -Rf ./application/config/site-*
 sudo rm -Rf ./application/config/main
 sudo rm -f ./site.php
 sudo rm -f ./modules/*/config/module_config_*.php
+sudo rm -f ./modules/*/subsite_auth.php
 sudo rm -f modules/*/controllers/Info_*.php
 sudo chmod 777 . -R

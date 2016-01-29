@@ -120,7 +120,34 @@ class Info extends CMS_Module {
                 );
             }
         }
-
+        if($major <= 0 && $minor <= 0 && $build <= 4){
+            // get subsite's records
+            $record_list = $this->cms_get_record_list($this->t('subsite'));
+            // get cms module list
+            $cms_module_list = $this->cms_get_module_list();
+            foreach($record_list as $record){
+                $id = $record->id;
+                // explode subsite's modules (originally contains module_path and should be replaced with module_name)
+                $modules = explode(',', $record->modules);
+                $new_modules = array();
+                foreach($modules as $module){
+                    $module = trim($module);
+                    foreach($cms_module_list as $cms_module){
+                        if($cms_module['module_path'] == $module){
+                            $new_modules[] = $cms_module['module_name'];
+                            break;
+                        }
+                    }
+                }
+                // the new_modules is contains corresponding module names
+                $modules = implode(',', $new_modules);
+                // update back
+                $this->db->update($this->t('subsite'),
+                    array('modules' => $modules),
+                    array('id' => $id)
+                );
+            }
+        }
         $this->insert_templates();
     }
 

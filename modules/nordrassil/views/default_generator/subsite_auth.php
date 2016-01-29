@@ -1,6 +1,4 @@
 &lt;?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-// Is the module published for every subsite?
-$public                 = FALSE;
-// In case of $public is FALSE, what are subsites allowed to use this module?
+// Overriden by multisite module, don't modify this
 $subsite_allowed        = array();
