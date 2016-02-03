@@ -21,6 +21,9 @@ class CMS_Model extends CI_Model
     public $__controller_module_path = null;
     protected static $__cms_model_properties;
 
+    // don't update last active tolerance if less than 300 seconds
+    private $last_active_tolerance = 300;
+
     public function cms_list_fields($table_name)
     {
         if ($this->db instanceof CI_DB_pdo_sqlite_driver) {
@@ -108,9 +111,35 @@ class CMS_Model extends CI_Model
             }
         }
 
+        // cache super_admin
+        if (self::$__cms_model_properties['super_admin'] === null) {
+            $query = $this->db->select('user_name, real_name, email, language, theme, last_active')
+                    ->from($this->cms_user_table_name())
+                    ->where('user_id', 1)
+                    ->get();
+            $super_admin_array = $query->row_array();
+            self::$__cms_model_properties['super_admin'] = $super_admin_array;
+            // also cache user language and user theme if current user is super_admin.
+            if($this->cms_user_id() == 1){
+                if (self::$__cms_model_properties['is_user_language_cached'] === false || self::$__cms_model_properties['is_user_theme_cached'] === false){
+                    self::$__cms_model_properties['user_language'] = $super_admin_array['language'];
+                    self::$__cms_model_properties['user_theme'] = $super_admin_array['theme'];
+                    self::$__cms_model_properties['is_user_language_cached'] = true;
+                    self::$__cms_model_properties['is_user_theme_cached'] = true;
+
+                    // last active extended
+                    if($super_admin_array['last_active'] >= microtime(true) - $this->last_active_tolerance){
+                        self::$__cms_model_properties['is_user_last_active_extended'] = true;
+                    }
+
+                }
+            }
+        }
+
+        // if user is login, then cache theme and language (if user is also super admin this won't run)
         if($this->cms_user_id() != '' && $this->cms_user_id() > 0){
             if (self::$__cms_model_properties['is_user_language_cached'] === false || self::$__cms_model_properties['is_user_theme_cached'] === false) {
-                $query = $this->db->select('language, theme')
+                $query = $this->db->select('language, theme, last_active')
                     ->from($this->cms_user_table_name())
                     ->where('user_id', $this->cms_user_id())
                     ->get();
@@ -118,19 +147,15 @@ class CMS_Model extends CI_Model
                     $row = $query->row();
                     self::$__cms_model_properties['user_language'] = $row->language;
                     self::$__cms_model_properties['user_theme'] = $row->theme;
+
+                    // last active extended
+                    if($row->last_active >= microtime(true) - $this->last_active_tolerance){
+                        self::$__cms_model_properties['is_user_last_active_extended'] = true;
+                    }
                 }
                 self::$__cms_model_properties['is_user_language_cached'] = true;
                 self::$__cms_model_properties['is_user_theme_cached'] = true;
             }
-        }
-
-        if (self::$__cms_model_properties['super_admin'] === null) {
-            $query = $this->db->select('user_name, real_name, email')
-                    ->from($this->cms_user_table_name())
-                    ->where('user_id', 1)
-                    ->get();
-            $super_admin = $query->row_array();
-            self::$__cms_model_properties['super_admin'] = $super_admin;
         }
 
         // KCFINDER's stuffs =========
@@ -787,8 +812,13 @@ class CMS_Model extends CI_Model
      */
     public function cms_user_is_super_admin()
     {
+        if(self::$__cms_model_properties['is_super_admin_cached']){
+            return self::$__cms_model_properties['is_super_admin'];
+        }
+
+        $is_super_admin = FALSE;
         if ($this->cms_user_id() == 1) {
-            return true;
+            $is_super_admin = TRUE;
         } else if (CMS_SUBSITE != '') {
             // get cms table prefix
             include APPPATH.'config/main/cms_config.php';
@@ -830,13 +860,18 @@ class CMS_Model extends CI_Model
                 if ($query->num_rows() > 0) {
                     $row = $query->row();
                     if ($row->user_id == $this->cms_user_id()) {
-                        return true;
+                        $is_super_admin = TRUE;
                     }
                 }
             }
         }
         // normal flow
-        return in_array(1, $this->cms_user_group_id());
+        $is_super_admin = in_array(1, $this->cms_user_group_id());
+
+        // cache the result
+        self::$__cms_model_properties['is_super_admin'] = $is_super_admin;
+        self::$__cms_model_properties['is_super_admin_cached'] = TRUE;
+        return $is_super_admin;
     }
 
     /**
@@ -1558,6 +1593,7 @@ class CMS_Model extends CI_Model
             $this->cms_user_email($user_email);
 
             $this->__cms_extend_user_last_active($user_id);
+            self::$__cms_model_properties['is_super_admin_cached'] = FALSE;
 
             return true;
         }
@@ -1568,11 +1604,20 @@ class CMS_Model extends CI_Model
     private function __cms_extend_user_last_active($user_id)
     {
         if ($user_id > 0 && !self::$__cms_model_properties['is_user_last_active_extended']) {
-            $this->db->update($this->cms_user_table_name(),
-                array(
-                    'last_active' => microtime(true),
-                    'login' => 1, ),
-                array('user_id' => $user_id));
+            $query = $this->db->select('last_active')
+                ->from($this->cms_user_table_name())
+                ->where('user_id', $user_id)
+                ->get();
+            if($query->num_rows() > 0){
+                $row = $query->row();
+                if($row->last_active < microtime(true) - $this->last_active_tolerance){
+                    $this->db->update($this->cms_user_table_name(),
+                        array(
+                            'last_active' => microtime(true),
+                            'login' => 1, ),
+                        array('user_id' => $user_id));
+                }
+            }
             self::$__cms_model_properties['is_user_last_active_extended'] = true;
         }
     }
@@ -1591,6 +1636,7 @@ class CMS_Model extends CI_Model
         $this->cms_unset_ci_session('cms_user_id');
         $this->cms_unset_ci_session('cms_user_real_name');
         $this->cms_unset_ci_session('cms_user_email');
+        self::$__cms_model_properties['is_super_admin_cached'] = FALSE;
     }
 
     /**
@@ -2975,8 +3021,10 @@ class CMS_Model extends CI_Model
      */
     public function cms_set_config($name, $value, $description = null)
     {
-        $query = $this->db->query('SELECT config_id FROM '.cms_table_name('main_config')." WHERE
-                    config_name = '".addslashes($name)."'");
+        $query = $this->db->select('config_id')
+            ->from(cms_table_name('main_config'))
+            ->where('config_name', $name)
+            ->get();
         if ($query->num_rows() > 0) {
             $data = array(
                 'value' => $value,
@@ -2998,7 +3046,7 @@ class CMS_Model extends CI_Model
             }
             $this->db->insert(cms_table_name('main_config'), $data);
         }
-        cms_config($name, $value);
+        // cms_config($name, $value);
         // add-subsite-on-register setting influence whether main_register route exists or not
         if ($name == 'cms_add_subsite_on_register') {
             if ($this->cms_is_module_active('gofrendi.noCMS.multisite')) {
@@ -3054,7 +3102,7 @@ class CMS_Model extends CI_Model
                     $config_name = $row->config_name;
                     // save to cache
                     self::$__cms_model_properties['config'][$config_name] = $value;
-                    cms_config($config_name, $value);
+                    //cms_config($config_name, $value);
                     if ($config_name == $name) {
                         $found = true;
                     }

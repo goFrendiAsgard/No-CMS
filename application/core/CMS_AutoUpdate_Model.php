@@ -27,29 +27,35 @@ class CMS_AutoUpdate_Model extends CMS_Model
 
     private function __update_module()
     {
-        $bypass = '';
-        $query = $this->db->select('password')
-            ->from($this->cms_user_table_name())
-            ->where('user_id', 1)
-            ->get();
-        if ($query->num_rows() > 0) {
-            $row = $query->row();
-            $bypass = $row->password;
-        }
-        if ($bypass != '') {
-            $module_list = $this->cms_get_module_list();
-            foreach ($module_list as $module) {
-                $module_path = $module['module_path'];
-                $module_name = $module['module_name'];
-                $old_version = $module['old_version'];
-                $current_version = $module['current_version'];
-                $active = $module['active'];
-                $upgrade_link = $module['upgrade_link'];
-                if ($active && $old_version != $current_version) {
-                    $url = str_replace(site_url(), '', $upgrade_link);
-                    $url = trim($url, '/');
-                    $response = Modules::run($url, $bypass);
+        $bypass = NULL;
+        $module_list = $this->cms_get_module_list();
+        foreach ($module_list as $module) {
+            $module_path = $module['module_path'];
+            $module_name = $module['module_name'];
+            $old_version = $module['old_version'];
+            $current_version = $module['current_version'];
+            $active = $module['active'];
+            $upgrade_link = $module['upgrade_link'];
+            if ($active && $old_version != $current_version) {
+                // define bypass if not exists
+                if($bypass === NULL){
+                    $query = $this->db->select('password')
+                        ->from($this->cms_user_table_name())
+                        ->where('user_id', 1)
+                        ->get();
+                    if ($query->num_rows() > 0) {
+                        $row = $query->row();
+                        $bypass = $row->password;
+                    }
                 }
+                if($bypass === NULL){
+                    // don't do anything if bypass can't be defined
+                    break;
+                }
+                // send request
+                $url = str_replace(site_url(), '', $upgrade_link);
+                $url = trim($url, '/');
+                $response = Modules::run($url, $bypass);
             }
         }
     }

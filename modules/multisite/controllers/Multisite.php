@@ -258,6 +258,9 @@ class Multisite extends CMS_Secure_Controller {
         $this->form_validation->set_rules($previous_secret_code.'password', 'Password', 'required|matches['.$previous_secret_code.'confirm_password]');
         $this->form_validation->set_rules($previous_secret_code.'confirm_password', 'Password Confirmation', 'required');
 
+        // use_subdomain
+        $cms_subsite_use_subdomain = $this->cms_get_config('cms_subsite_use_subdomain');
+
         // generate new secret code
         $secret_code = $this->cms_random_string();
         $this->session->set_userdata('__main_registration_secret_code', $secret_code);
@@ -368,13 +371,10 @@ class Multisite extends CMS_Secure_Controller {
                 $module_installed = $this->install_model->install_modules();
             }
 
-            // TODO: Find a way to bash this dirty trick
-            // This one is necessary to re-index modules
-            //$this->cms_adjust_module();
             $data = array(
                 'name'=> $this->install_model->subsite,
                 'description'=>$user_name.' website',
-                'use_subdomain'=>$this->cms_get_config('cms_subsite_use_subdomain')=='TRUE'?1:0,
+                'use_subdomain'=>$cms_subsite_use_subdomain=='TRUE'?1:0,
                 'user_id'=>$current_user_id,
                 'active'=>$activation == 'automatic'
             );

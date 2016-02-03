@@ -2214,7 +2214,7 @@ class Main extends CMS_Controller
         $query = $this->db->select('user_name')
             ->from($this->cms_user_table_name())
             ->where('login', 1)
-            ->where('last_active >=', microtime(true) - 70)
+            ->where('last_active >=', microtime(true) - 600)
             ->get();
         $user_name_list = array();
         foreach ($query->result() as $row) {

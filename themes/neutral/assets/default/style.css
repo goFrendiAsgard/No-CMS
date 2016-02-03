@@ -181,22 +181,22 @@ body{
     margin-left:0px;
 
     /* IE10 */
-    background-image: -ms-linear-gradient(top left, #EEEEEE 0%, white 100%);
+    /*background-image: -ms-linear-gradient(top left, #EEEEEE 0%, white 100%);*/
 
     /* Mozilla Firefox */
-    background-image: -moz-linear-gradient(top left, #EEEEEE 0%, white 100%);
+    /*background-image: -moz-linear-gradient(top left, #EEEEEE 0%, white 100%);*/
 
     /* Opera */
-    background-image: -o-linear-gradient(top left, #EEEEEE 0%, white 100%);
+    /*background-image: -o-linear-gradient(top left, #EEEEEE 0%, white 100%);*/
 
     /* Webkit (Safari/Chrome 10) */
-    background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, #EEEEEE), color-stop(1, white));
+    /*background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0, #EEEEEE), color-stop(1, white));*/
 
     /* Webkit (Chrome 11+) */
-    background-image: -webkit-linear-gradient(top left, #EEEEEE 0%, white 100%);
+    /*background-image: -webkit-linear-gradient(top left, #EEEEEE 0%, white 100%);*/
 
     /* Proposed W3C Markup */
-    background-image: linear-gradient(top left, #EEEEEE 0%, white 100%);
+    /*background-image: linear-gradient(top left, #EEEEEE 0%, white 100%);*/
 }
 
 .navbar-inner{

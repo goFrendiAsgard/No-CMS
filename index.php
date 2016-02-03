@@ -472,6 +472,12 @@ if(CMS_SUBSITE != '' && !USE_SUBDOMAIN && !USE_ALIAS){
     $assign_to_config['index_page'] = $index_page.'site-'.CMS_SUBSITE.'/';
 }
 
+if(CMS_SUBSITE != '' && isset($_GET['__cms_subsite'])){
+    $relative_path = str_replace('/index.php', '/', $_SERVER['SCRIPT_NAME']);
+    $new_request_uri = str_replace($relative_path.'site-'.CMS_SUBSITE, $relative_path, $_SERVER['REQUEST_URI']);
+    $_SERVER['REQUEST_URI'] = $new_request_uri;
+}
+
 /*
  * ---------------------------------------------------------------
  *  END OF OVERRIDE INDEX_PAGE
