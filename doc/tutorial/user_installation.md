@@ -24,5 +24,5 @@ Installation
 
 __PS:__ Git user can do this instead of typical download-and-extract:
 ```
-    git clone git@github.com:goFrendiAsgard/No-CMS.git
+    git clone https://github.com/goFrendiAsgard/No-CMS.git
 ```
