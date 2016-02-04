@@ -73,6 +73,7 @@ class Nordrassillib{
             if(file_get_contents($file_name) != $content){
                 $backup_file_name = $file_name.'.'.date('Y-m-d-H-i-s').'.bak';
                 copy($file_name, $backup_file_name);
+                unlink($file_name);
             }
 	    }
 		file_put_contents($file_name, $content);

@@ -39,6 +39,7 @@ class Manage_city extends CMS_CRUD_Controller {
         //$crud->columns('country_id', 'name', 'tourism', 'commodity', 'citizen');
         //$crud->edit_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_updated_by', '_updated_at');
         //$crud->add_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_created_by', '_created_at');
+        //$crud->set_read_fields('country_id', 'name', 'tourism', 'commodity', 'citizen');
 
         // caption of each columns
         $crud->display_as('country_id','Country');

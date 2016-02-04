@@ -39,6 +39,7 @@ class Manage_country extends CMS_CRUD_Controller {
         //$crud->columns('name');
         //$crud->edit_fields('name', '_updated_by', '_updated_at');
         //$crud->add_fields('name', '_created_by', '_created_at');
+        //$crud->set_read_fields('name');
 
         // caption of each columns
         $crud->display_as('name','Name');

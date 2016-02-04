@@ -12,8 +12,8 @@ class City_model extends  CMS_Model{
         $query = $this->db->select('city.city_id, country.name as country_name, city.name')
             ->from($this->t('city').' as city')
             ->join($this->t('country').' as country', 'city.country_id=country.country_id', 'left')
-           ->like('country.name', $keyword)
-           ->or_like('city.name', $keyword)
+            ->like('country.name', $keyword)
+            ->or_like('city.name', $keyword)
             ->limit($limit, $page*$limit)
             ->get();
         $result = $query->result();

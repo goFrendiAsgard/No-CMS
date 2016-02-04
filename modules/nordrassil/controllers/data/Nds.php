@@ -274,76 +274,8 @@ class Nds extends CMS_Controller {
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
-        // get the project
-        $project = $this->nds_model->get_project($project_id);
 
-        // remove unused key
-        foreach($project as $project_key=>$project_val){
-            // unset empty options
-            if($project_key == 'options'){
-                foreach($project_val as $option=>$option_val){
-                    if($option_val === FALSE){
-                        unset($project['options'][$project_key]);
-                        unset($project_val[$project_key]);
-                    }
-                }
-            }
-            // clean up tables
-            if($project_key == 'tables'){
-                for($i=0; $i<count($project_val); $i++){
-                    $table = $project_val[$i];
-                    foreach($table as $table_key=>$table_val){
-                        // unset empty table options
-                        if($table_key == 'options'){
-                            foreach($table_val as $option=>$option_val){
-                                if($option_val === FALSE){
-                                    unset($project['tables'][$i]['options'][$option]);
-                                    unset($table_val[$option]);
-                                }
-                            }
-                        }
-                        // clean up columns
-                        if($table_key == 'columns'){
-                            for($j=0; $j<count($table_val); $j++){
-                                $column = $table_val[$j];
-                                foreach($column as $column_key=>$column_val){
-                                    // unset empty column options
-                                    if($column_key == 'options'){
-                                        foreach($column_val as $option=>$option_val){
-                                            if($option_val === FALSE){
-                                                unset($project['tables'][$i]['columns'][$j]['options'][$option]);
-                                                unset($column_val[$option]);
-                                            }
-                                        }
-                                    }
-                                    // unset empty and irelevant keys
-                                    if($column_key == 'lookup_stripped_table_name' || $column_key == 'selection_stripped_table_name' ||
-                                    $column_key == 'relation_stripped_table_name' || $column_val === '' || (is_array($column_val) && count($column_val)==0)){
-                                        unset($project['tables'][$i]['columns'][$j][$column_key]);
-                                    }
-                                }
-                            }
-                        }
-                        // unset empty and irelevant keys
-                        if($table_key == 'stripped_name' || $table_val === '' || (is_array($table_val) && count($table_val)==0)){
-                            unset($project['tables'][$i][$table_key]);
-                        }
-                    }
-                }
-            }
-            // unset other empty keys
-            if($project_val === '' || (is_array($project_val) && count($project_val)==0)){
-                unset($project[$project_key]);
-            }
-        }
-
-        // Print it
-        if(defined('JSON_PRETTY_PRINT')){
-            $str = json_encode($project, JSON_PRETTY_PRINT);
-        }else{
-            $str = json_encode($project);
-        }
-        echo $str;
+        echo $this->nds_model->get_seed($project_id);
     }
 
     public function table($project_id = NULL){
