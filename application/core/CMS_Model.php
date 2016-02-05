@@ -676,7 +676,7 @@ class CMS_Model extends CI_Model
         $user_record = $this->cms_get_record($this->cms_user_table_name(), 'user_id', $user_id);
         $real_base_url = base_url();
         if(USE_SUBDOMAIN && CMS_SUBSITE != '' && !USE_ALIAS){
-            $real_base_url = $base_url;
+            $real_base_url = base_url();
             $real_base_url = str_ireplace('://'.CMS_SUBSITE.'.',  '://', $real_base_url);
         }
         // determine pp
