@@ -81,26 +81,26 @@
                     </div>
                 </div>
                 <div class="form-group">
-                      <label class="control-label col-md-4" for="site_slogan">Site Slogan</label>
-                      <div class="controls col-md-8">
-                          <input type="text" id="site_slogan" name="site_slogan" value="<?php echo $config_list['site_slogan'] ?>" class="form-control">
-                          <p class="help-block">Your site slogan (e.g: "There is no place like home", "Song song and song", etc)</p>
-                      </div>
+                    <label class="control-label col-md-4" for="site_slogan">Site Slogan</label>
+                    <div class="controls col-md-8">
+                      <input type="text" id="site_slogan" name="site_slogan" value="<?php echo $config_list['site_slogan'] ?>" class="form-control">
+                      <p class="help-block">Your site slogan (e.g: "There is no place like home", "Song song and song", etc)</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                      <label class="control-label col-md-4" for="site_footer">Site Footer</label>
-                      <div class="controls col-md-8">
-                          <input type="text" id="site_footer" name="site_footer" value="<?php echo $config_list['site_footer'] ?>" class="form-control">
-                          <p class="help-block">Site footer &amp; attribution (e.g: "Powered by No-CMS © 2013", etc)</p>
-                      </div>
+                    <label class="control-label col-md-4" for="site_footer">Site Footer</label>
+                    <div class="controls col-md-8">
+                      <input type="text" id="site_footer" name="site_footer" value="<?php echo $config_list['site_footer'] ?>" class="form-control">
+                      <p class="help-block">Site footer &amp; attribution (e.g: "Powered by No-CMS © 2013", etc)</p>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                      <label class="control-label col-md-4" for="default_controller">Default Controller</label>
-                      <div class="controls col-md-8">
-                          <input type="text" id="default_controller" name="default_controller" value="<?php echo $default_controller ?>" class="form-control">
-                          <p class="help-block">Default Controller, default value: main. Leave it as is, unless you are familiar with CodeIgniter routing and know it well.</p>
-                      </div>
+                    <label class="control-label col-md-4" for="default_controller">Default Controller</label>
+                    <div class="controls col-md-8">
+                      <input type="text" id="default_controller" name="default_controller" value="<?php echo $default_controller ?>" class="form-control">
+                      <p class="help-block">Default Controller, default value: main. Leave it as is, unless you are familiar with CodeIgniter routing and know it well.</p>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -428,7 +428,7 @@
                         <img id="img_background_image" style="max-width:100%" src="<?php echo $config_list['site_background_image'] ?>">
                         <?php } ?>
                         <div style="padding-top:10px; padding-bottom:10px;">
-                            <input name="remove_background_image" value="0" type="checkbox" /> Don't use background image
+                            <input name="remove_background_image" value="1" type="checkbox" /> Don't use background image
                         </div>
                         <input type="file" id="site_background_image" name="site_background_image" class="form-control">
                         <p class="help-block">Image used as background image</p>

@@ -492,9 +492,9 @@ class CMS_Module extends CMS_Controller
             }
         }
 
-        if($mode == 'insert'){
-            // CREATE TABLES
-            foreach ($this->TABLES as $table_name => $data) {
+        // CREATE TABLES
+        foreach ($this->TABLES as $table_name => $data) {
+            if(!$this->db->table_exists($this->cms_complete_table_name($table_name))){
                 $key = $this->__get_from_array($data, 'key', 'id');
                 $fields = $this->__get_from_array($data, 'fields', array());
                 foreach($fields as $field_name=>$type){
@@ -510,6 +510,9 @@ class CMS_Module extends CMS_Controller
                 $this->dbforge->add_key($key, true);
                 $this->dbforge->create_table($this->cms_complete_table_name($table_name));
             }
+        }
+
+        if($mode == 'insert'){
 
             // INSERT DATA
             foreach ($this->DATA as $table_name => $data) {

@@ -866,7 +866,9 @@ class CMS_Model extends CI_Model
             }
         }
         // normal flow
-        $is_super_admin = in_array(1, $this->cms_user_group_id());
+        if(!$is_super_admin){
+            $is_super_admin = in_array(1, $this->cms_user_group_id());
+        }
 
         // cache the result
         self::$__cms_model_properties['is_super_admin'] = $is_super_admin;

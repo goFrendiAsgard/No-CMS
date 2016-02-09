@@ -783,30 +783,7 @@ class Main extends CMS_Controller
         if (CMS_SUBSITE == '') {
             $crud->where('subsite is NULL');
         } else {
-            $crud->where('subsite', CMS_SUBSITE);
-            $crud->or_where('subsite is NULL');
-
-            // get super admin of this subsite
-            $main_config_file = APPPATH.'config/main/cms_config.php';
-            include $main_config_file;
-            $main_table_prefix = $config['__cms_table_prefix'];
-            $main_table_prefix = $main_table_prefix == '' ? '' : $main_table_prefix.'_';
-            // get multisite module path
-            $query = $this->db->select('module_path')
-                ->from($main_table_prefix.'main_module')
-                ->where('module_name', 'gofrendi.noCMS.multisite')
-                ->get();
-            if ($query->num_rows() > 0) {
-                $row = $query->row();
-                $multisite_module_path = $row->module_path;
-                // get module table prefix
-                $multisite_config_file = FCPATH.'modules/'.$multisite_module_path.'/config/module_config.php';
-                include $multisite_config_file;
-                $multisite_table_prefix = $config['module_table_prefix'];
-                $multisite_table_prefix = $multisite_table_prefix == '' ? '' : $multisite_table_prefix.'_';
-                // get subsite table
-                $subsite_table = $main_table_prefix.$multisite_table_prefix.'subsite';
-            }
+            $crud->where('(subsite is NULL OR subsite=\''.addslashes(CMS_SUBSITE).'\')');
         }
         $crud->set_subject('User');
 
@@ -976,9 +953,19 @@ class Main extends CMS_Controller
             $new_password = NULL;
         }
 
+        $user = $this->cms_get_record($this->cms_user_table_name(), 'user_id', $primary_key);
+        $new_email = $user->email;
+        $new_real_name = $user->real_name;
+        if(array_key_exists('email', $post_array)){
+            $new_email = $post_array['email'];
+        }
+        if(array_key_exists('real_name', $post_array)){
+            $new_real_name = $post_array['real_name'];
+        }
+
         // change profile
-        $this->cms_do_change_profile($post_array['email'],
-            $post_array['real_name'], $new_password, $primary_key);
+        $this->cms_do_change_profile($new_email,
+            $new_real_name, $new_password, $primary_key);
 
 
         return true;
