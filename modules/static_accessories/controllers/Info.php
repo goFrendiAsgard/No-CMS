@@ -20,7 +20,21 @@ class Info extends CMS_Module {
     public function do_upgrade($old_version){
         // Add your migration logic here.
         $this->cms_remove_navigation('static_accessories_setting');
-        $this->cms_set_config('static_accessories_slide_height', '400');
+        if($this->cms_get_config('static_accessories_slide_height') === NULL){
+            $this->cms_set_config('static_accessories_slide_height', '400');
+        }
+        if($this->cms_get_config('static_accessories_slide_parralax') === NULL){
+            $this->cms_set_config('static_accessories_slide_parralax', 'TRUE');
+        }
+        if($this->cms_get_config('static_accessories_slide_hide_on_smallscreen') === NULL){
+            $this->cms_set_config('static_accessories_slide_hide_on_smallscreen', 'TRUE');
+        }
+        if($this->cms_get_config('static_accessories_slide_image_size') === NULL){
+            $this->cms_set_config('static_accessories_slide_image_size', 'cover');
+        }
+        if($this->cms_get_config('static_accessories_slide_image_top') === NULL){
+            $this->cms_set_config('static_accessories_slide_image_top', '');
+        }
     }
 
     // REMOVE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
@@ -51,6 +65,10 @@ class Info extends CMS_Module {
         $module_path = $this->cms_module_path();
 
         $this->cms_set_config('static_accessories_slide_height', '400');
+        $this->cms_set_config('static_accessories_slide_parralax', 'TRUE');
+        $this->cms_set_config('static_accessories_slide_hide_on_smallscreen', 'TRUE');
+        $this->cms_set_config('static_accessories_slide_image_size', 'cover');
+        $this->cms_set_config('static_accessories_slide_image_top', '');
 
         // parent of all navigations
         $this->cms_add_navigation($this->n('index'), 'Accessories Widgets',

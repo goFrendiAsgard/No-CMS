@@ -2359,7 +2359,7 @@ class Main extends CMS_Controller
         }
     }
 
-    public function widget_top_nav($caption = 'Complete Menu', $first = true, $no_complete_menu = false, $no_quicklink = false, $inverse = false, $navigations = null, &$notif = array())
+    public function widget_top_nav($caption = 'Complete Menu', $first = true, $no_complete_menu = false, $no_quicklink = false, $navbar_class = 'navbar-default navbar-fixed-top', $navigations = null, &$notif = array())
     {
         $result = '';
         $caption = $this->cms_lang($caption);
@@ -2516,11 +2516,11 @@ class Main extends CMS_Controller
                 }
                 @media (min-width: 979px) {
                     body {
-                        padding-top: 50px;
+                        /*padding-top: 50px;*/
                     }
                 }
             </style>
-            <div class="navbar '.($inverse ? 'navbar-inverse' : 'navbar-default').' navbar-fixed-top" role="navigation">
+            <div class="navbar '.$navbar_class.'" role="navigation">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -2577,8 +2577,11 @@ class Main extends CMS_Controller
                             }
                         }
                     }
-                    var navbar_height = $(".navbar").height();
-                    $("body").css("padding-top", navbar_height);
+                    // if it has navbar-fixed-top
+                    if($("div.navbar").hasClass("navbar-fixed-top")){
+                        var navbar_height = $(".navbar").height();
+                        $("body").css("padding-top", navbar_height);
+                    }
                 }
 
                 // MAIN PROGRAM
@@ -2644,29 +2647,69 @@ class Main extends CMS_Controller
         $this->cms_unset_editing_mode();
     }
 
-    public function widget_top_nav_no_quicklink($caption = 'Complete Menu')
-    {
-        $this->widget_top_nav($caption, true, false, true, false, null);
-    }
-
     public function widget_quicklink()
     {
-        $this->widget_top_nav('', true, true, false, false, null);
+        $this->widget_top_nav('', true, true, true, 'navbar-default', null);
+    }
+
+    public function widget_top_nav_default($caption = 'Complete Menu')
+    {
+        $this->widget_top_nav($caption, true, false, false, 'navbar-default', null);
+    }
+
+    public function widget_quicklink_default()
+    {
+        $this->widget_top_nav('', true, true, false, 'navbar-default', null);
     }
 
     public function widget_top_nav_inverse($caption = 'Complete Menu')
     {
-        $this->widget_top_nav($caption, true, false, true, true, null);
-    }
-
-    public function widget_top_nav_no_quicklink_inverse($caption = 'Complete Menu')
-    {
-        $this->widget_top_nav($caption, true, false, true, true, null);
+        $this->widget_top_nav($caption, true, false, false, 'navbar-inverse', null);
     }
 
     public function widget_quicklink_inverse()
     {
-        $this->widget_top_nav('', true, true, false, true, null);
+        $this->widget_top_nav('', true, true, false, 'navbar-inverse', null);
+    }
+
+    public function widget_top_nav_default_fixed($caption = 'Complete Menu')
+    {
+        $this->widget_top_nav($caption, true, false, false, 'navbar-default navbar-fixed-top', null);
+    }
+
+    public function widget_quicklink_default_fixed()
+    {
+        $this->widget_top_nav('', true, true, false, 'navbar-default navbar-fixed-top', null);
+    }
+
+    public function widget_top_nav_inverse_fixed($caption = 'Complete Menu')
+    {
+        $this->widget_top_nav($caption, true, false, false, 'navbar-inverse navbar-fixed-top', null);
+    }
+
+    public function widget_quicklink_inverse_fixed()
+    {
+        $this->widget_top_nav('', true, true, false, 'navbar-inverse navbar-fixed-top', null);
+    }
+
+    public function widget_top_nav_default_static($caption = 'Complete Menu')
+    {
+        $this->widget_top_nav($caption, true, false, false, 'navbar-default navbar-static-top', null);
+    }
+
+    public function widget_quicklink_default_static()
+    {
+        $this->widget_top_nav('', true, true, false, 'navbar-default navbar-static-top', null);
+    }
+
+    public function widget_top_nav_inverse_static($caption = 'Complete Menu')
+    {
+        $this->widget_top_nav($caption, true, false, false, 'navbar-inverse navbar-static-top', null);
+    }
+
+    public function widget_quicklink_inverse_static()
+    {
+        $this->widget_top_nav('', true, true, false, 'navbar-inverse navbar-static-top', null);
     }
 
     private function build_quicklink($quicklinks = null, $first = true, &$notif = '')

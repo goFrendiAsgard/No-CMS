@@ -7,7 +7,7 @@ if (!defined('BASEPATH')) {
 class CMS_AutoUpdate_Model extends CMS_Model
 {
     // TODO: change this
-    private $CURRENT_VERSION = '1.0.4';
+    private $CURRENT_VERSION = '1.0.5';
     private static $module_updated = false;
 
     public function __construct()
@@ -456,11 +456,27 @@ class CMS_AutoUpdate_Model extends CMS_Model
     }
 
     private function __update_to_1_0_4(){
-        // Last time, I forgot to add authorization_id for all generated privileges, so here is
+        // Last time, I forgot to add authorization_id for all generated privileges, so here it is
         $this->db->update(cms_table_name('main_privilege'),
             array('authorization_id' => 4),
             array('privilege_id >=' => 0)
         );
+    }
+
+    private function __update_to_1_0_5(){
+        // add some missing widgets
+        $this->cms_add_widget('top_navigation_default', 'Top Navigation Default', 1, 'main/widget_top_nav_default');
+        $this->cms_add_widget('quicklink_default', 'Quicklinks Default', 1, 'main/widget_quicklink_default');
+        $this->cms_add_widget('top_navigation_inverse', 'Top Navigation Inverse', 1, 'main/widget_top_nav_inverse');
+        $this->cms_add_widget('quicklink_inverse', 'Quicklinks Inverse', 1, 'main/widget_quicklink_inverse');
+        $this->cms_add_widget('top_navigation_default_fixed', 'Top Navigation Default Fixed', 1, 'main/widget_top_nav_default_fixed');
+        $this->cms_add_widget('quicklink_default_fixed', 'Quicklinks Default Fixed', 1, 'main/widget_quicklink_default_fixed');
+        $this->cms_add_widget('top_navigation_inverse_fixed', 'Top Navigation Inverse Fixed', 1, 'main/widget_top_nav_inverse_fixed');
+        $this->cms_add_widget('quicklink_inverse_fixed', 'Quicklinks Inverse Fixed', 1, 'main/widget_quicklink_inverse_fixed');
+        $this->cms_add_widget('top_navigation_default_static', 'Top Navigation Default Static', 1, 'main/widget_top_nav_default_static');
+        $this->cms_add_widget('quicklink_default_static', 'Quicklinks Default Static', 1, 'main/widget_quicklink_default_static');
+        $this->cms_add_widget('top_navigation_inverse_static', 'Top Navigation Inverse Static', 1, 'main/widget_top_nav_inverse_static');
+        $this->cms_add_widget('quicklink_inverse_static', 'Quicklinks Inverse Static', 1, 'main/widget_quicklink_inverse_static');
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)

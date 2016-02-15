@@ -15,7 +15,7 @@ for($i=0; $i<count($slide_list); $i++){
         $class = '';
     }
     $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';
-    $div_item_list[] = 
+    $div_item_list[] =
             '<div class="item '.$class.'">'.
             '<div class="item-image" real-src="'.base_url('modules/'.$module_path.'/assets/images/slides/'.$slide['image_url']).'" alt=""></div>'.
             '<div class="container"><div class="carousel-caption">'.
@@ -38,20 +38,20 @@ for($i=0; $i<count($slide_list); $i++){
         margin:auto;
         background-color:black;
         height:100%;
-        background-size:cover;
+        background-size: <?php echo trim($slide_image_size)==''? 'cover' : $slide_image_size; ?>;
     }
     #slideshow-widget{
         margin-bottom:20px;
     }
 </style>
-<div class="carousel slide hidden-sm hidden-xs" id="slideshow-widget">
+<div class="carousel slide <?php echo $slide_hide_on_smallscreen=='TRUE'? 'hidden-sm hidden-xs' : ''; ?>" id="slideshow-widget">
     <!-- Indicators -->
     <ol class="carousel-indicators">
         <?php foreach($li_indicator_list as $li_indicator){ echo $li_indicator;} ?>
     </ol>
 
     <!-- Wrapper for slides -->
-    <div class="carousel-inner">        
+    <div class="carousel-inner">
         <?php foreach($div_item_list as $div_item){ echo $div_item;} ?>
     </div>
 
@@ -60,12 +60,37 @@ for($i=0; $i<count($slide_list); $i++){
     <a class="right carousel-control" href="#slideshow-widget" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
 </div>
 <script type ="text/javascript">
+    var SLIDE_PARRALAX = '<?php echo addslashes($slide_parralax); ?>' == 'TRUE';
+    var SLIDE_IMAGE_TOP = '<?php echo addslashes($slide_image_top); ?>';
+    if(SLIDE_IMAGE_TOP == ''){
+        SLIDE_IMAGE_TOP = 0;
+    }else{
+        SLIDE_IMAGE_TOP = parseInt(SLIDE_IMAGE_TOP);
+    }
+
     $(document).ready(function(){
         $('#slideshow-widget').carousel('cycle');
-        __load_slide();        
+        __load_slide();
+
+        if(SLIDE_PARRALAX){
+            __adjust_image_top();
+        }else{
+            $('.carousel-inner .item-image').css('background-position', '0 ' + SLIDE_IMAGE_TOP + 'px');
+        }
     });
 
     $(window).resize(function(){__load_slide();});
+
+    if(SLIDE_PARRALAX){
+        $(window).scroll(function(){
+            __adjust_image_top();
+        });
+    }
+
+    function __adjust_image_top(){
+        var top = $(window).scrollTop() + SLIDE_IMAGE_TOP;
+        $('.carousel-inner .item-image').css('background-position', '0 ' + top + 'px');
+    }
 
     function __load_slide(){
         var body_width = $('body').width();
@@ -83,7 +108,7 @@ for($i=0; $i<count($slide_list); $i++){
                 var selector = id_list[i];
                 if($(selector).length>0){
                     var color = _rgb2hex($(selector).css('color'));
-                    if(typeof(color) != 'undefined'){                    
+                    if(typeof(color) != 'undefined'){
                         var shadow_color = _getContrastYIQ(color);
                         $(selector).css('text-shadow', '1px 1px '+shadow_color+', 1px 1px 20px '+shadow_color+', -1px -1px  20px'+shadow_color);
                     }
@@ -100,7 +125,7 @@ for($i=0; $i<count($slide_list); $i++){
             function hex(x) {
                 return ("0" + parseInt(x).toString(16)).slice(-2);
             }
-            return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]); 
+            return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
         }
     }
     function _getContrastYIQ(hexcolor){
@@ -111,9 +136,4 @@ for($i=0; $i<count($slide_list); $i++){
         return (yiq >= 128) ? '#000000' : '#FFFFFF';
     }
 
-
-    $(window).scroll(function(){
-        var windowTop = $(window).scrollTop();
-        $('.carousel-inner .item-image').css('background-position', '0 ' + windowTop + 'px');
-    });
 </script>

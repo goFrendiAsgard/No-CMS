@@ -35,7 +35,6 @@ class CMS_Controller extends MX_Controller
         if ($module_path != 'main' && $module_path != '' && file_exists(FCPATH.'modules/'.$module_path.'/description.txt')) {
             if ($this->cms_module_name($module_path) == '') {
                 $this->show_404();
-                //die('<pre>ERROR : Module '.$module_path.' is not installed</pre>');
             }
         }
     }
@@ -128,7 +127,9 @@ class CMS_Controller extends MX_Controller
 
 
         if(!$this->input->is_ajax_request() && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
-            $this->output->enable_profiler(1);
+            $this->output->enable_profiler(TRUE);
+        }else{
+            $this->output->enable_profiler(FALSE);
         }
     }
 
@@ -478,35 +479,69 @@ class CMS_Controller extends MX_Controller
         $base_url = base_url();
         $save_base_url = str_replace('/', '\\/', $base_url);
         $ck_editor_adjust_script = '
-            $(document).ready(function(){
-                if (typeof(CKEDITOR) != "undefined"){
-                    function __adjust_ck_editor(){
-                        for (instance in CKEDITOR.instances) {
-                            /* ck_instance */
-                            ck_instance = CKEDITOR.instances[instance];
-                            var name = CKEDITOR.instances[instance].name;
-                            var $ck_textarea = $("#cke_"+name+" textarea");
-                            var $ck_iframe = $("#cke_"+name+" iframe");
-                            var data = ck_instance.getData();
-                            if($ck_textarea.length > 0){
-                                content = data.replace(
-                                    /(src=".*?)('.$save_base_url.')(.*?")/gi,
-                                    "$1{"+"{ base_url }}$3"
-                                );
-                                ck_instance.setData(content);
-                            }else if ($ck_iframe.length > 0){
-                                var re = new RegExp(\'(src=".*?)({\'+\'{ base_url }})(.*?")\',"gi");
-                                content = data.replace(
-                                    re,
-                                    "$1'.$base_url.'$3"
-                                );
-                                ck_instance.setData(content);
-                            }
-                            ck_instance.updateElement();
-                        }
-                    }
 
-                    /* when instance ready & form submit, adjust ck editor */
+            var BOOTSTRAP_INCLUSION = "<link href=\"'.$base_url.'assets/bootstrap/css/bootstrap.min.css\" id=\"ck_adjust_style\" rel=\"stylesheet\" type=\"text/css\" />";
+            BOOTSTRAP_INCLUSION += "<script src=\"'.$this->JQUERY_PATH.'\" type=\"text/javascript\"><\/script>";
+
+            function __adjust_ck_editor(){
+                for (instance in CKEDITOR.instances) {
+                    /* ck_instance */
+                    ck_instance = CKEDITOR.instances[instance];
+                    var name = CKEDITOR.instances[instance].name;
+                    var $ck_textarea = $("#cke_"+name+" textarea");
+                    var $ck_iframe = $("#cke_"+name+" iframe");
+                    var content = ck_instance.getData();
+                    /* view-source mode */
+                    if($ck_textarea.length > 0){
+                        content = content.replace(
+                            BOOTSTRAP_INCLUSION,
+                            ""
+                        );
+                        content = content.replace(
+                            /(src=".*?)('.$save_base_url.')(.*?")/gi,
+                            "$1{"+"{ base_url }}$3"
+                        );
+                        ck_instance.setData(content);
+                    }
+                    /* ck-editor mode */
+                    else if ($ck_iframe.length > 0){
+                        var re = new RegExp(\'(src=".*?)({\'+\'{ base_url }})(.*?")\',"gi");
+                        content = content.replace(
+                            re,
+                            "$1'.$base_url.'$3"
+                        );
+                        if(content.search(BOOTSTRAP_INCLUSION) == -1){
+                            content = BOOTSTRAP_INCLUSION + content;
+                        }
+                        ck_instance.setData(content);
+                    }
+                    ck_instance.updateElement();
+                }
+            }
+
+            function __set_ck_editor_actual_value(){
+                for (instance in CKEDITOR.instances) {
+                    /* ck_instance */
+                    ck_instance = CKEDITOR.instances[instance];
+                    var name = CKEDITOR.instances[instance].name;
+                    var $original_textarea = $("textarea#"+name);
+                    var content = ck_instance.getData();
+                    content = content.replace(
+                        BOOTSTRAP_INCLUSION,
+                        ""
+                    );
+                    content = content.replace(
+                        /(src=".*?)('.$save_base_url.')(.*?")/gi,
+                        "$1{"+"{ base_url }}$3"
+                    );
+                    ck_instance.setData(content);
+                }
+            }
+
+            $(document).ready(function(){
+                if ($("#crudForm").length > 0 && typeof(CKEDITOR) != "undefined"){
+
+                    /* when instance ready or mode changed, adjust ck editor */
                     CKEDITOR.on("instanceReady", function(){
                         __adjust_ck_editor();
                         for (instance in CKEDITOR.instances) {
@@ -518,29 +553,19 @@ class CMS_Controller extends MX_Controller
                         }
                     });
 
-                    /* when form submit, adjust ck editor */
-                    $(document).ajaxSend(function(event, xhr, settings) {
-                        if(settings.url == $("#crudForm").attr("action")){
-                            for (instance in CKEDITOR.instances) {
-                                /* ck_instance */
-                                ck_instance = CKEDITOR.instances[instance];
-                                var name = CKEDITOR.instances[instance].name;
-                                var $original_textarea = $("textarea#"+name);
-                                var data = ck_instance.getData();
-                                content = data.replace(
-                                    /(src=".*?)('.$save_base_url.')(.*?")/gi,
-                                    "$1{"+"{ base_url }}$3"
-                                );
-                                ck_instance.setData(content);
-                            }
-                        }
-                    });
+                    /* ensure that adjust_ck_editor executed */
+                    __adjust_ck_editor();
 
+                    $("#crudForm").submit(function(){
+                        __set_ck_editor_actual_value();
+                    });
                     $(document).ajaxComplete(function(event, xhr, settings){
+                        console.log(settings.url == $("#crudForm").attr("action"));
                         if(settings.url == $("#crudForm").attr("action")){
                             __adjust_ck_editor();
                         }
                     });
+
                 }
             });
         ';
@@ -565,6 +590,13 @@ class CMS_Controller extends MX_Controller
         $this->load->library('template');
         $result = null;
         $view_url = $this->cms_parse_keyword($view_url);
+
+        // Profiler
+        if(!$this->input->is_ajax_request() && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
+            $this->output->enable_profiler(TRUE);
+        }else{
+            $this->output->enable_profiler(FALSE);
+        }
 
         /*
          * PREPARE PARAMETERS *********************************************************************************************

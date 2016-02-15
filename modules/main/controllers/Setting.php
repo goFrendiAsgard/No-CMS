@@ -24,7 +24,6 @@ class Setting extends CMS_Controller{
     }
 
     public function index(){
-        $this->theme = $this->cms_get_config('site_theme');
 
         // third party authentication setting
         $third_party_variables = array(
@@ -228,6 +227,7 @@ class Setting extends CMS_Controller{
         $data['multisite_active'] = $this->cms_is_module_active('gofrendi.noCMS.multisite');
         $data['third_party_config'] = $third_party_config;
         $data['changed'] = count($_POST)>0;
+        $this->cms_invalidate_cache();
         $this->view('setting_index', $data, 'main_setting');
     }
 }

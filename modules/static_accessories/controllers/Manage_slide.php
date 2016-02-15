@@ -10,9 +10,21 @@ class Manage_slide extends CMS_Secure_Controller {
 	protected $URL_MAP = array();
 
 	public function index(){
-        $slideshow_height = $this->input->post('slideshow-height');
-        if($slideshow_height != NULL){
-            $this->cms_set_config('static_accessories_slide_height', $slideshow_height);
+        $CONFIGURATION_LIST = array(
+            'static_accessories_slide_height',
+            'static_accessories_slide_parralax',
+            'static_accessories_slide_hide_on_smallscreen',
+            'static_accessories_slide_image_size',
+            'static_accessories_slide_image_top',
+        );
+        foreach($CONFIGURATION_LIST as $configuration){
+            if($this->input->post($configuration) != NULL){
+                $this->cms_set_config($configuration, $this->input->post($configuration));
+            }
+        }
+        $CONFIG = array();
+        foreach($CONFIGURATION_LIST as $configuration){
+            $CONFIG[$configuration] = $this->cms_get_config($configuration);
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// initialize groceryCRUD
@@ -89,7 +101,7 @@ class Manage_slide extends CMS_Secure_Controller {
         // render
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $output = $crud->render();
-        $output->slide_height = $this->cms_get_config('static_accessories_slide_height');
+        $output->config = $CONFIG;
         $output->state = $crud->getState();
         $this->view($this->cms_module_path().'/manage_slide_view', $output,
             $this->n('manage_slide'));

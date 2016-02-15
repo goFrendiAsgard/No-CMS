@@ -7,15 +7,14 @@
     }
     // option for tags
     $option_tag = '';
-    $selected = 'selected';
+    $option_tag .= '<option value="">Text/HTML Script</option>';
+    $option_tag .= '<option value="<p></p>">HTML Paragraph</option>';
     foreach($normal_widget_list as $widget){
         $widget_name = $widget['widget_name'];
-        $option_tag .= '<option '.$selected.' value="{{ widget_name:'.$widget_name.' }}">Widget '.ucwords(str_replace('_', ' ', $widget_name)).'</option>';
-        $selected = '';
+        $option_tag .= '<option value="{{ widget_name:'.$widget_name.' }}">Widget '.ucwords(str_replace('_', ' ', $widget_name)).'</option>';
     }
     foreach($config_list as $config_name=>$value){
         $option_tag .= '<option value="{{ '.$config_name.' }}">Config '.ucwords(str_replace('_', ' ', $config_name)).'</option>';
-        $selected = '';
     }
     // option for languages
     $option_language = '';
@@ -439,14 +438,20 @@
             <div class="tab-pane" id="tab5">
                 <h3>Style and Script</h3>
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="section_top_fix">Custom Style</label>
+                    <label class="control-label col-md-4" for="section_custom_style">
+                        Custom Style<br />
+                        <img src="<?php echo base_url('modules/main/assets/images/settings/section_custom_style.png'); ?>" />
+                    </label>
                     <div class="controls col-md-8">
                         <textarea id="section_custom_style" name="section_custom_style" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_custom_style'); ?></textarea>
                         <p class="help-block">Custom CSS (You can use this to customize your theme etc)</p>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="section_top_fix">Custom Script</label>
+                    <label class="control-label col-md-4" for="section_custom_script">
+                        Custom Script<br />
+                        <img src="<?php echo base_url('modules/main/assets/images/settings/section_custom_script.png'); ?>" />
+                    </label>
                     <div class="controls col-md-8">
                         <textarea id="section_custom_script" name="section_custom_script" class="text-area-section form-control"><?php show_static_content($section_widget_list, 'section_custom_script'); ?></textarea>
                         <p class="help-block">Custom Javascript</p>
@@ -454,7 +459,10 @@
                 </div>
                 <h3>Page Partials</h3>
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="section_top_fix">Top Section</label>
+                    <label class="control-label col-md-4" for="section_top_fix">
+                        Top Section<br />
+                        <img src="<?php echo base_url('modules/main/assets/images/settings/section_top_fix.png'); ?>" />
+                    </label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
                          <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
@@ -464,7 +472,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="section_top_fix">Navigation Bar's Right Part</label>
+                    <label class="control-label col-md-4" for="navigation_right_partial">
+                        Navigation Bar's Right Part<br />
+                        <img src="<?php echo base_url('modules/main/assets/images/settings/navigation_right_partial.png'); ?>" />
+                    </label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
                          <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
@@ -474,7 +485,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="section_banner">Banner Section</label>
+                    <label class="control-label col-md-4" for="section_banner">
+                        Banner Section<br />
+                        <img src="<?php echo base_url('modules/main/assets/images/settings/section_banner.png'); ?>" />
+                    </label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
                          <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
@@ -484,7 +498,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="section_left">Left Section</label>
+                    <label class="control-label col-md-4" for="section_left">
+                        Left Section<br />
+                        <img src="<?php echo base_url('modules/main/assets/images/settings/section_left.png'); ?>" />
+                    </label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
                          <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
@@ -494,7 +511,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-md-4" for="section_right">Right Section</label>
+                    <label class="control-label col-md-4" for="section_right">
+                        Right Section<br />
+                        <img src="<?php echo base_url('modules/main/assets/images/settings/section_right.png'); ?>" />
+                    </label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
                          <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>
@@ -504,7 +524,10 @@
                     </div>
                 </div>
                 <div class="form-group" style="height:260px;">
-                    <label class="control-label col-md-4" for="section_bottom">Bottom Section</label>
+                    <label class="control-label col-md-4" for="section_bottom">
+                        Bottom Section<br />
+                        <img src="<?php echo base_url('modules/main/assets/images/settings/section_bottom.png'); ?>" />
+                    </label>
                     <div class="controls col-md-8">
                         <div class="div-normal-widget">
                          <select class="chosen-select"><?php echo $option_tag; ?></select> <a class="btn-tag-add btn btn-primary" href="#">Add</a>

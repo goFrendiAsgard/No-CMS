@@ -223,6 +223,14 @@ class CMS_Model extends CI_Model
         $this->__cms_extend_user_last_active($this->cms_user_id());
     }
 
+    public function cms_invalidate_cache(){
+        self::$__cms_model_properties['is_config_cached'] = false;
+        self::$__cms_model_properties['is_widget_cached'] = false;
+        self::$__cms_model_properties['is_user_language_cached'] = false;
+        self::$__cms_model_properties['is_user_theme_cached'] = false;
+        self::$__cms_model_properties['is_language_dictionary_cached'] = false;
+    }
+
     /*
     * @ usage $this->t('purchase')
     */
