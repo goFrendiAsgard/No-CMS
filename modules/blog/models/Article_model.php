@@ -415,7 +415,7 @@ class Article_model extends  CMS_Model{
 
         $result = array(
                 "comment_id" => $row->comment_id,
-                "date" => date('Y-m-d'),
+                "date" => date('Y-m-d', strtotime($row->date)),
                 "content" => str_replace($search, $replace, $row->content),
                 "name" => $name,
                 "website" => prep_url($website),
