@@ -50,6 +50,9 @@ modules/*/controllers/Info_*.php
 
 .tags*
 
+# Some pictures
+modules/static_accessories/assets/images/slides/main*.jpg
+
 # my private modules
 modules/gis
 modules/typing_defense
