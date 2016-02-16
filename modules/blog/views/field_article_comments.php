@@ -113,7 +113,7 @@
                 status      = 'Approved';
             }
         }
-        
+
         component += '<td>';
         component += '<div style="margin-bottom:10px;">';
         component += '<div class="sub-caption">author</div> : '+comment_name+', '+comment_date;
@@ -121,7 +121,7 @@
         component += '<div class="sub-caption">email</div> : '+(comment_email==''?
           'Not available': '<a href="mailto:'+comment_email+'">'+comment_email+'</a>');
         component += '<br />';
-        component += '<div class="sub-caption">website</div> : '+(comment_website?
+        component += '<div class="sub-caption">website</div> : '+(comment_website==''?
           'Not available': '<a href="'+comment_email+'" target="BLANK">'+comment_website+'</a>');
         component += '<br />';
         component += '<div class="sub-caption">approved</div> : <span id="comment_approved_'+RECORD_INDEX_comments+'">'+status;
@@ -131,13 +131,13 @@
         component += '</div>';
         component += '</td>';
 
-        
+
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+
         component += '<td>';
         component += '<a class="btn btn-primary toggle_comment_approve" record_index="'+RECORD_INDEX_comments+'" href="#">' + caption + '</a><br /><br />';
         component += '<input class="md_field_comments_delete btn btn-danger" record_index="'+RECORD_INDEX_comments+'" primary_key="" type="button" value="Delete" /></td>';
@@ -253,7 +253,7 @@
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // reset field on save
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    $(document).ajaxSuccess(function(event, xhr, settings) {        
+    $(document).ajaxSuccess(function(event, xhr, settings) {
         if (settings.url == "{{ module_site_url }}manage_article/index/insert") {
             response = $.parseJSON(xhr.responseText);
             if(response.success == true){

@@ -560,7 +560,6 @@ class CMS_Controller extends MX_Controller
                         __set_ck_editor_actual_value();
                     });
                     $(document).ajaxComplete(function(event, xhr, settings){
-                        console.log(settings.url == $("#crudForm").attr("action"));
                         if(settings.url == $("#crudForm").attr("action")){
                             __adjust_ck_editor();
                         }
