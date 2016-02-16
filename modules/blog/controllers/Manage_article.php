@@ -512,7 +512,7 @@ class Manage_article extends CMS_Secure_Controller {
                 $result[$i]['email'] = $row_user->email;
             }
             $result[$i]['content'] = str_replace($search, $replace, $result[$i]['content']);
-            $result[$i]['website'] = prep_url($result[$i]['website']);
+            $result[$i]['website'] = trim($result[$i]['website']) == ''? '' : prep_url($result[$i]['website']);
         }
 
         // get options

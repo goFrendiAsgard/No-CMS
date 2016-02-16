@@ -122,7 +122,7 @@
           'Not available': '<a href="mailto:'+comment_email+'">'+comment_email+'</a>');
         component += '<br />';
         component += '<div class="sub-caption">website</div> : '+(comment_website==''?
-          'Not available': '<a href="'+comment_email+'" target="BLANK">'+comment_website+'</a>');
+          'Not available': '<a href="'+comment_website+'" target="BLANK">'+comment_website+'</a>');
         component += '<br />';
         component += '<div class="sub-caption">approved</div> : <span id="comment_approved_'+RECORD_INDEX_comments+'">'+status;
         component += '</div>';
