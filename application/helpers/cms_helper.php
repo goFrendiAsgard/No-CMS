@@ -244,6 +244,7 @@ function get_decoded_cookie($key, $chipper){
     return NULL;
 }
 
+// This is going to be used by hook function to call any CMS_Model's function
 function cms_function(){
     // get number of arguments
     $numargs = func_num_args();
@@ -263,4 +264,211 @@ function cms_function(){
     }else{
         return NULL;
     }
+}
+
+function build_md_html_table($md_key, $detail_table_caption, $field_captions = array()){
+    $th = '';
+    foreach($field_captions as $caption){
+        $th .= '<th>'.$caption.'</th>';
+    }
+    $th .= '<th>{{ language:Action }}';
+
+    $html =
+        '<style type="text/css">
+            #md_table_'.$md_key.' .chzn-drop input[type="text"]{
+                max-width:240px;
+            }
+            #md_table_'.$md_key.' th:last-child, #md_table_'.$md_key.' td:last-child{
+                width: 60px;
+            }
+        </style>
+
+        <div id="md_table_'.$md_key.'_container">
+            <div id="no-datamd_table_'.$md_key.'">No data</div>
+            <table id="md_table_'.$md_key.'" class="table table-striped table-bordered" style="display:none">
+                <thead>
+                    <tr>'.$th.'</tr>
+                </thead>
+                <tbody>
+                    <!-- the data presentation be here -->
+                </tbody>
+            </table>
+            <div class="fbutton">
+                <span id="md_field_'.$md_key.'_add" class="add btn btn-default">
+                    <i class="glyphicon glyphicon-plus-sign"></i> Add '.$detail_table_caption.'
+                </span>
+            </div>
+            <br />
+            <!-- This is the real input. If you want to catch the data, please json_decode this input\'s value -->
+            <input id="md_real_field_'.$md_key.'_col" name="md_real_field_'.$md_key.'_col" type="hidden" />
+        </div>';
+    return $html;
+}
+
+function build_md_global_variable_script($md_key, $primary_key_name, $date_format, $result, $options){
+    $js =
+        'var DATE_FORMAT = \''.$date_format.'\';
+        var OPTIONS_'.$md_key.' = '.json_encode($options).';
+        var RECORD_INDEX_'.$md_key.' = 0;
+        var DATA_'.$md_key.' = {update:new Array(), insert:new Array(), delete:new Array()};
+
+        /* Populate DATA */
+        var old_data = '.json_encode($result).';
+        for(var i=0; i<old_data.length; i++){
+            var row          = old_data[i];
+            var record_index = i;
+            var primary_key  = row[\''.$primary_key_name.'\'];
+            var data         = row;
+            delete data[\''.$primary_key_name.'\'];
+            DATA_'.$md_key.'.update.push({
+                \'record_index\' : record_index,
+                \'primary_key\'  : primary_key,
+                \'data\'         : data,
+            });
+        }';
+    return $js;
+}
+
+function build_md_event_script($md_key, $insert_url, $update_url){
+    $js =
+        '$(document).ready(function(){
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // INITIALIZATION
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            __synchronize(\'md_real_field_'.$md_key.'_col\', DATA_'.$md_key.');
+            for(var i=0; i<DATA_'.$md_key.'.update.length; i++){
+                add_table_row_'.$md_key.'(DATA_'.$md_key.'.update[i].data);
+                RECORD_INDEX_'.$md_key.'++;
+            }
+
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // md_field_'.$md_key.'_add.click (Add row)
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            $(\'#md_field_'.$md_key.'_add\').click(function(){
+                // new data
+                var data = default_row_'.$md_key.'();
+
+                // insert data to the DATA_'.$md_key.'
+                DATA_'.$md_key.'.insert.push({
+                    \'record_index\' : RECORD_INDEX_'.$md_key.',
+                    \'primary_key\'  : \'\',
+                    \'data\'         : data,
+                });
+
+                // add table\'s row
+                add_table_row_'.$md_key.'(data);
+                // add  by 1
+                RECORD_INDEX_'.$md_key.'++;
+
+                // synchronize to the md_real_field_'.$md_key.'_col
+                __synchronize(\'md_real_field_'.$md_key.'_col\', DATA_'.$md_key.');
+            });
+
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // md_field_'.$md_key.'_delete.click (Delete row)
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            $(\'.md_field_'.$md_key.'_delete\').live(\'click\', function(){
+                var record_index = $(this).attr(\'record_index\');
+                // remove the component
+                $(\'#md_field_'.$md_key.'_tr_\'+record_index).remove();
+
+                var record_index_found = false;
+                for(var i=0; i<DATA_'.$md_key.'.insert.length; i++){
+                    if(DATA_'.$md_key.'.insert[i].record_index == record_index){
+                        record_index_found = true;
+                        // delete element from insert
+                        DATA_'.$md_key.'.insert.splice(i,1);
+                        break;
+                    }
+                }
+                if(!record_index_found){
+                    for(var i=0; i<DATA_'.$md_key.'.update.length; i++){
+                        if(DATA_'.$md_key.'.update[i].record_index == record_index){
+                            record_index_found = true;
+                            var primary_key = DATA_'.$md_key.'.update[i].primary_key;
+                            // delete element from update
+                            DATA_'.$md_key.'.update.splice(i,1);
+                            // add it to delete
+                            DATA_'.$md_key.'.delete.push({
+                                \'record_index\':record_index,
+                                \'primary_key\':primary_key
+                            });
+                            break;
+                        }
+                    }
+                }
+                __synchronize(\'md_real_field_'.$md_key.'_col\', DATA_'.$md_key.');
+            });
+
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // md_field_'.$md_key.'_col.change (Edit cell)
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            $(\'.md_field_'.$md_key.'_col\').live(\'change\', function(){
+                var value = $(this).val();
+                var column_name = $(this).attr(\'column_name\');
+                var record_index = $(this).attr(\'record_index\');
+                var record_index_found = false;
+                // date picker
+                if($(this).hasClass(\'datepicker-input\')){
+                    value = js_date_to_php(value);
+                }
+                else if($(this).hasClass(\'datetime-input\')){
+                    value = js_datetime_to_php(value);
+                }
+                if(typeof(value)==\'undefined\'){
+                    value = \'\';
+                }
+                for(var i=0; i<DATA_'.$md_key.'.insert.length; i++){
+                    if(DATA_'.$md_key.'.insert[i].record_index == record_index){
+                        record_index_found = true;
+                        // insert value
+                        eval(\'DATA_'.$md_key.'.insert[\'+i+\'].data.\'+column_name+\' = \'+JSON.stringify(value)+\';\');
+                        break;
+                    }
+                }
+                if(!record_index_found){
+                    for(var i=0; i<DATA_'.$md_key.'.update.length; i++){
+                        if(DATA_'.$md_key.'.update[i].record_index == record_index){
+                            record_index_found = true;
+                            // edit value
+                            eval(\'DATA_'.$md_key.'.update[\'+i+\'].data.\'+column_name+\' = \'+JSON.stringify(value)+\';\');
+                            break;
+                        }
+                    }
+                }
+                __synchronize(\'md_real_field_'.$md_key.'_col\', DATA_'.$md_key.');
+            });
+
+
+        });
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // reset field on save
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $(document).ajaxSuccess(function(event, xhr, settings) {
+            if (settings.url == "'.$insert_url.'") {
+                response = $.parseJSON(xhr.responseText);
+                if(response.success == true){
+                    DATA_'.$md_key.' = {update:new Array(), insert:new Array(), delete:new Array()};
+                    $(\'#md_table_'.$md_key.' tr\').not(\':first\').remove();
+                    __synchronize(\'md_real_field_'.$md_key.'_col\', DATA_'.$md_key.');
+                }
+            }else{
+                // avoid detail inserted twice on update
+                update_url = "'.$update_url.'";
+                if(settings.url.substr(0, update_url.length) == update_url){
+                    response = $.parseJSON(xhr.responseText);
+                    if(response.success == true){
+                        $(\'#form-button-save\').attr(\'disabled\', \'disabled\');
+                        $(\'#save-and-go-back-button\').attr(\'disabled\', \'disabled\');
+                        $(\'#cancel-button\').attr(\'disabled\', \'disabled\');
+                    }
+                }
+            }
+        });';
+    return $js;
 }

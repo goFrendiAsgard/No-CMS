@@ -90,6 +90,40 @@ function __mutate_input(table_id){
     __add_form_control_class();
 }
 
+function get_object_property_as_str(object, key){
+    if(typeof(object) != 'undefined' && object.hasOwnProperty(key)){
+        return object[key];
+    }else{
+        return '';
+    }
+}
+
+function build_single_select_option(value, options){
+    var html = '<option value></option>';
+    for(var i=0; i<options.length; i++){
+        var option = options[i];
+        var selected = '';
+        if(option['value'] == value){
+            selected = 'selected="selected"';
+        }
+        html += '<option value="'+option['value']+'" '+selected+'>'+option['caption']+'</option>';
+    }
+    return html;
+}
+
+function build_multiple_select_option(value, options){
+    var html = '<option value></option>';
+    for(var i=0; i<options.length; i++){
+        var option = options[i];
+        var selected = '';
+        if($.inArray(option['value'],value)>-1){
+            selected = 'selected="selected"';
+        }
+        html += '<option value="'+option['value']+'" '+selected+'>'+option['caption']+'</option>';
+    }
+    return html;
+}
+
 function js_datetime_to_php(js_datetime){
     if(typeof(js_datetime)=='undefined' || js_datetime == '' || js_datetime == null){
         return '';
