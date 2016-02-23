@@ -13,74 +13,54 @@
 
     // Function to get default value
     function default_row_citizen(){
-        var data = new Object();
-        // Default values
-        data.name = '';
-        data.birthdate = '';
-        data.job_id = '';
-        data.hobby = '';
-        return data;
+        return {
+                     name : '',
+             birthdate : '',
+             job_id : '',
+             hobby : '',
+        };
     }
 
     // Function to add row
     function add_table_row_citizen(value){
-        // Hide div#no-data
-        $("#no-datamd_table_citizen").hide();
-        $("#md_table_citizen").show();
 
         // Prepare some variables
         var input_prefix = 'md_field_citizen_col';
         var row_index    = RECORD_INDEX_citizen;
-        var html         = '<tr id="md_field_citizen_tr_'+row_index+'" class="md_field_citizen_tr">';
+        var inputs       = new Array();
         
         // FIELD "name"
         var input_id    = input_prefix + 'name' + row_index;
         var field_value = get_object_property_as_str(value, 'name');
-        html += '<td>';
-        html += '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+'" column_name="name" type="text" value="'+field_value+'"/>';
-        html += '</td>';
+        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+'" column_name="name" type="text" value="'+field_value+'"/>';
+        inputs.push(html);
 
         // FIELD "birthdate"
         var input_id    = input_prefix + 'birthdate' + row_index;
         var field_value = get_object_property_as_str(value, 'birthdate');
         field_value     = php_date_to_js(field_value);
-        html += '<td>';
-        html += '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' datepicker-input" column_name="birthdate" type="text" value="'+field_value+'"/>';
+        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' datepicker-input" column_name="birthdate" type="text" value="'+field_value+'"/>';
         html += '<a href="#" class="datepicker-input-clear btn">Clear</a>';
-        html += '</td>';
+        inputs.push(html);
 
         // FIELD "job_id"
         var input_id    = input_prefix + 'job_id' + row_index;
         var field_value = get_object_property_as_str(value, 'job_id');
-        html += '<td>';
-        html += '<select id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' numeric chzn-select" column_name="job_id" >';
+        var html = '<select id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' numeric chzn-select" column_name="job_id" >';
         html += build_single_select_option(field_value, OPTIONS_citizen.job_id);
         html += '</select>';
-        html += '</td>';
+        inputs.push(html);
 
         // FIELD "hobby"
         var input_id    = input_prefix + 'hobby' + row_index;
         var field_value = get_object_property_as_str(value, 'hobby');
-        html += '<td>';
-        html += '<select id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' chzn-select" column_name="hobby"  multiple = "multiple">';
+        var html = '<select id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' chzn-select" column_name="hobby"  multiple = "multiple">';
         html += build_multiple_select_option(field_value, OPTIONS_citizen.hobby);
         html += '</select>';
-        html += '</td>';
+        inputs.push(html);
 
-        // Delete Button
-        html += '<td>';
-        html += '<span class="delete-icon btn btn-default md_field_citizen_delete" record_index="'+row_index+'">';
-        html += '<i class="glyphicon glyphicon-minus-sign"></i>';
-        html += '</span>';
-        html += '</td>';
-
-
-        html += '</tr>';
-
-        // Add html to table
-        $('#md_table_citizen tbody').append(html);
-        __mutate_input('md_table_citizen');
-
+        // Return inputs
+        return inputs;
     }
 
 </script>

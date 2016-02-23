@@ -333,19 +333,40 @@ function build_md_event_script($md_key, $insert_url, $update_url){
     $js =
         '$(document).ready(function(){
 
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            function apply_add_table_row_'.$md_key.'(data){
+                // Hide div#no-data
+                $("#no-datamd_table_'.$md_key.'").hide();
+                $("#md_table_'.$md_key.'").show();
+                // Get input
+                var inputs = add_table_row_'.$md_key.'(data);
+                // Build row
+                var html = \'<tr id="md_field_'.$md_key.'_tr_\'+RECORD_INDEX_'.$md_key.'+\'" class="md_field_'.$md_key.'_tr">\';
+                for(var i=0; i<inputs.length; i++){
+                    // Build columns
+                    var input = inputs[i];
+                    html += \'<td>\' + input + \'</td>\';
+                }
+                // Build delete button
+                html += \'<td>\';
+                html += \'<span class="delete-icon btn btn-default md_field_'.$md_key.'_delete" record_index="\'+RECORD_INDEX_'.$md_key.'+\'">\';
+                html += \'<i class="glyphicon glyphicon-minus-sign"></i>\';
+                html += \'</span>\';
+                html += \'</td>\';
+                // End of row
+                html += \'</tr>\';
+                // Add row to table
+                $(\'#md_table_'.$md_key.' tbody\').append(html);
+                __mutate_input(\'md_table_'.$md_key.'\');
+            }
+
             // INITIALIZATION
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
             __synchronize(\'md_real_field_'.$md_key.'_col\', DATA_'.$md_key.');
             for(var i=0; i<DATA_'.$md_key.'.update.length; i++){
-                add_table_row_'.$md_key.'(DATA_'.$md_key.'.update[i].data);
+                apply_add_table_row_'.$md_key.'(DATA_'.$md_key.'.update[i].data);
                 RECORD_INDEX_'.$md_key.'++;
             }
 
-
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
-            // md_field_'.$md_key.'_add.click (Add row)
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // ADD EVENT
             $(\'#md_field_'.$md_key.'_add\').click(function(){
                 // new data
                 var data = default_row_'.$md_key.'();
@@ -358,7 +379,7 @@ function build_md_event_script($md_key, $insert_url, $update_url){
                 });
 
                 // add table\'s row
-                add_table_row_'.$md_key.'(data);
+                apply_add_table_row_'.$md_key.'(data);
                 // add  by 1
                 RECORD_INDEX_'.$md_key.'++;
 
@@ -367,9 +388,7 @@ function build_md_event_script($md_key, $insert_url, $update_url){
             });
 
 
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
-            // md_field_'.$md_key.'_delete.click (Delete row)
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // DELETE EVENT
             $(\'.md_field_'.$md_key.'_delete\').live(\'click\', function(){
                 var record_index = $(this).attr(\'record_index\');
                 // remove the component
@@ -404,9 +423,7 @@ function build_md_event_script($md_key, $insert_url, $update_url){
             });
 
 
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
-            // md_field_'.$md_key.'_col.change (Edit cell)
-            /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // CHANGE EVENT
             $(\'.md_field_'.$md_key.'_col\').live(\'change\', function(){
                 var value = $(this).val();
                 var column_name = $(this).attr(\'column_name\');
@@ -446,9 +463,7 @@ function build_md_event_script($md_key, $insert_url, $update_url){
 
         });
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // reset field on save
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // RESET DETAIL FIELD ON SAVE
         $(document).ajaxSuccess(function(event, xhr, settings) {
             if (settings.url == "'.$insert_url.'") {
                 response = $.parseJSON(xhr.responseText);

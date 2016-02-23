@@ -61,26 +61,22 @@
 
     // Function to get default value
     function <?php echo $fn_default_row; ?>(){
-        var data = new Object();
+        return {
         <?php
-            echo '// Default values'.PHP_EOL;
             foreach($detail_column_names as $name){
-                echo '        data.'.$name.' = \'\';'.PHP_EOL;
+                echo '             '.$name.' : \'\','.PHP_EOL;
             }
         ?>
-        return data;
+        };
     }
 
     // Function to add row
     function <?php echo $fn_add_table_row; ?>(value){
-        // Hide div#no-data
-        $("#no-data<?php echo $table_id; ?>").hide();
-        $("#<?php echo $table_id; ?>").show();
 
         // Prepare some variables
         var input_prefix = '<?php echo $column_input_class; ?>';
         var row_index    = <?php echo $var_record_index; ?>;
-        var html         = '<tr id="<?php echo $tr_class ?>_'+row_index+'" class="<?php echo $tr_class ?>">';
+        var inputs       = new Array();
         <?php
         $date_exist = FALSE;
         for($i=0; $i<count($detail_column_names); $i++){
@@ -111,7 +107,6 @@
             }else if($data_type == 'datetime'){
                 echo '        field_value     = php_datetime_to_js(field_value);'.PHP_EOL;
             }
-            echo '        html += \'<td>\';'.PHP_EOL;
 
             // create input based on role and type
             if($role=='lookup' || $role=='detail many to many' || $selection_mode=='enum' || $selection_mode=='set'){
@@ -119,7 +114,7 @@
                 $multiple = ($role=='lookup' || $selection_mode=='enum')? '': ' multiple = "multiple"';
                 $var_field_options = $var_options.'.'.$name;
                 // build select
-                echo '        html += \'<select id="\'+input_id+\'" record_index="\'+row_index+\'" class="\'+input_prefix+\''.$additional_class.' chzn-select" column_name="'.$name.'" '.$multiple.'>\';'.PHP_EOL;
+                echo '        var html = \'<select id="\'+input_id+\'" record_index="\'+row_index+\'" class="\'+input_prefix+\''.$additional_class.' chzn-select" column_name="'.$name.'" '.$multiple.'>\';'.PHP_EOL;
                 // build options
                 if($role=='lookup' || $selection_mode=='enum'){
                     echo '        html += build_single_select_option(field_value, '.$var_field_options.');'.PHP_EOL;
@@ -129,29 +124,17 @@
                 // end of select
                 echo '        html += \'</select>\';'.PHP_EOL;
             }else{
-                echo '        html += \'<input id="\'+input_id+\'" record_index="\'+row_index+\'" class="\'+input_prefix+\''.$additional_class.'" column_name="'.$name.'" type="text" value="\'+field_value+\'"/>\';'.PHP_EOL;
+                echo '        var html = \'<input id="\'+input_id+\'" record_index="\'+row_index+\'" class="\'+input_prefix+\''.$additional_class.'" column_name="'.$name.'" type="text" value="\'+field_value+\'"/>\';'.PHP_EOL;
                 if($data_type == 'date'){
                     echo '        html += \'<a href="#" class="datepicker-input-clear btn">Clear</a>\';'.PHP_EOL;
                 }
             }
-            echo'        html += \'</td>\';'.PHP_EOL;
+            echo'        inputs.push(html);'.PHP_EOL;
         }
         ?>
 
-        // Delete Button
-        html += '<td>';
-        html += '<span class="delete-icon btn btn-default <?php echo $delete_button_class; ?>" record_index="'+row_index+'">';
-        html += '<i class="glyphicon glyphicon-minus-sign"></i>';
-        html += '</span>';
-        html += '</td>';
-
-
-        html += '</tr>';
-
-        // Add html to table
-        $('#<?php echo $table_id; ?> tbody').append(html);
-        __mutate_input('<?php echo $table_id; ?>');
-
+        // Return inputs
+        return inputs;
     }
 
 </script>

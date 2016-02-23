@@ -77,7 +77,7 @@ class Nordrassillib{
             }
 	    }
 		file_put_contents($file_name, $content);
-		@chmod($file_name, 0777);
+        @chmod($file_name, 0777);
 	}
 	public function copy_file_and_replace($source_file_name, $destination_file_name, $pattern, $replacement){
 		$string = file_get_contents($source_file_name);
