@@ -45,26 +45,6 @@ class Synchronize_model extends CMS_Model{
     public function synchronize($project_id){
         // make project_id save of SQL injection
         $save_project_id = addslashes($project_id);
-        /*
-        // delete related column_option
-        $where = "column_id IN (SELECT column_id FROM ".$this->t('column').
-          ", ".$this->t('table')." WHERE
-          ".$this->t('column.table_id')." = ".$this->t('table').".table_id AND project_id='$save_project_id')";
-        $this->db->delete($this->t('column_option'),$where);
-
-        // delete related column
-        $where = "table_id IN (SELECT table_id FROM ".$this->t('table')." WHERE project_id='$save_project_id')";
-        $this->db->delete($this->t('column'),$where);
-
-        // delete related table_option
-        $where = "table_id IN (SELECT table_id FROM ".$this->t('table')." WHERE project_id='$save_project_id')";
-        $this->db->delete($this->t('table_option'),$where);
-
-        // delete from table
-        $where = array('project_id'=>$project_id);
-        $this->db->delete($this->t('table'),$where);
-        */
-
 
         // select the current nordrassil_project
         $query = $this->db->select('db_server, db_user, db_password, db_schema, db_port, db_table_prefix')
@@ -82,7 +62,10 @@ class Synchronize_model extends CMS_Model{
             if(!isset($this->db_port) || $this->db_port == ''){
                 $this->db_port = '3306';
             }
-            $this->connection = mysqli_connect($this->db_server, $this->db_user, $this->db_password, 'information_schema', $this->db_port);
+            $this->connection = @mysqli_connect($this->db_server, $this->db_user, $this->db_password, 'information_schema', $this->db_port);
+            if(!$this->connection){
+                return FALSE;
+            }
             mysqli_select_db($this->connection, 'information_schema');
             $this->create_table($project_id);
 

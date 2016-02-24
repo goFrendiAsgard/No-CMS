@@ -84,6 +84,7 @@ class Ajax extends CMS_Controller{
     }
 
     public function get_column($table_id = 0){
+        log_message('error', $table_id);
         if(!is_numeric($table_id)){
             $table_id = 0;
         }
@@ -91,8 +92,12 @@ class Ajax extends CMS_Controller{
             FROM ".$this->t('column')."
             WHERE
                 (table_id = '$table_id') AND
-                (role <> 'detail many to many') AND
-                (role <> 'detail one to many')";
+                (
+                    (
+                        (role <> 'detail many to many') AND
+                        (role <> 'detail one to many')
+                    ) OR role IS NULL
+                )";
         $query = $this->db->query($SQL);
         $result = array();
         foreach($query->result() as $row){
