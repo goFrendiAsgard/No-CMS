@@ -40,6 +40,11 @@
     $fn_default_row = 'default_row_'.$master_column_name;
     $fn_mutate_input = 'mutate_input_'.$master_column_name;
 
+    $default_record = '';
+    foreach($detail_column_names as $name){
+        $default_record .= '            '.$name.' : \'\','.PHP_EOL;
+    }
+
     // the html
     $field_captions = array();
     foreach($detail_column_captions as $caption){
@@ -62,11 +67,7 @@
     // Function to get default value
     function <?php echo $fn_default_row; ?>(){
         return {
-        <?php
-            foreach($detail_column_names as $name){
-                echo '             '.$name.' : \'\','.PHP_EOL;
-            }
-        ?>
+            <?php echo trim($default_record); ?>
         };
     }
 

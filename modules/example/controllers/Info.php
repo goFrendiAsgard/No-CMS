@@ -17,7 +17,7 @@ class Info extends CMS_Module {
                 'authorization_id'  => PRIV_EVERYONE,
                 'default_layout'    => NULL,
                 'title'             => 'Example',
-                'parent_name'       => 'index',
+                'parent_name'       => NULL,
                 'index'             => NULL,
                 'description'       => NULL,
                 'bootstrap_glyph'   => NULL,

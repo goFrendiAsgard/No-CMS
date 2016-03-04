@@ -17,7 +17,7 @@ class Info extends CMS_Module {
                 'authorization_id'  => PRIV_EVERYONE,
                 'default_layout'    => NULL,
                 'title'             => '{{ project_caption }}',
-                'parent_name'       => '{{ navigation_parent_name }}',
+                'parent_name'       => NULL,
                 'index'             => NULL,
                 'description'       => NULL,
                 'bootstrap_glyph'   => NULL,

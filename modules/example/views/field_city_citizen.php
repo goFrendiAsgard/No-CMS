@@ -14,11 +14,10 @@
     // Function to get default value
     function default_row_citizen(){
         return {
-                     name : '',
-             birthdate : '',
-             job_id : '',
-             hobby : '',
-        };
+            name : '',
+            birthdate : '',
+            job_id : '',
+            hobby : '',        };
     }
 
     // Function to add row
