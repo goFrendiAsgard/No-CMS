@@ -133,25 +133,13 @@ class Subsite_model extends  CMS_Model{
     }
 
     public function theme_list($subsite=NULL){
-        $this->load->helper('directory');
-        $directories = directory_map(FCPATH.'themes', 1);
-        sort($directories);
-        $themes      = array();
-        foreach ($directories as $directory) {
-            $directory = str_replace(array('/','\\'),'',$directory);
-            if (!is_dir(FCPATH.'themes/' . $directory)){
+        $cms_theme_list = $this->cms_get_theme_list();
+        $themes         = array();
+        foreach ($cms_theme_list as $theme) {
+            if($theme['public']){
                 continue;
             }
-
-            $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
-            if(file_exists($subsite_auth_file)){
-                unset($public);
-                unset($subsite_allowed);
-                include($subsite_auth_file);
-                if(isset($public) && is_bool($public) && !$public){
-                    $themes[] = $directory;
-                }
-            }
+            $themes[] = $theme;
         }
         return $themes;
     }
@@ -255,33 +243,13 @@ class Subsite_model extends  CMS_Model{
     }
 
     public function public_theme_list(){
-        $this->load->helper('directory');
-        $directories = directory_map(FCPATH.'themes', 1);
-        sort($directories);
-        $themes      = array();
-        $neutral_theme_exists = FALSE;
-        foreach ($directories as $directory) {
-            $directory = str_replace(array('/','\\'),'',$directory);
-            if (!is_dir(FCPATH.'themes/' . $directory)){
+        $cms_theme_list = $this->cms_get_theme_list();
+        $themes         = array();
+        foreach ($cms_theme_list as $theme) {
+            if(!$theme['public']){
                 continue;
             }
-
-            $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
-            if(file_exists($subsite_auth_file)){
-                unset($public);
-                unset($subsite_allowed);
-                include($subsite_auth_file);
-                if(isset($public) && is_bool($public) && $public){
-                    if($directory == 'neutral'){
-                        $neutral_theme_exists = TRUE;
-                        continue;
-                    }
-                    $themes[] = $directory;
-                }
-            }
-        }
-        if($neutral_theme_exists){
-            $themes = array('neutral') + $themes;
+            $themes[] = $theme['path'];
         }
         return $themes;
     }

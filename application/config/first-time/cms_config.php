@@ -3,4 +3,3 @@
 $config['__cms_version']        = '0.0.0';
 $config['__cms_chipper']        = '';
 $config['__cms_table_prefix']   = '';
-$config['max_menu_depth']       = 10;

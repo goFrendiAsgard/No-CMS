@@ -1,1 +1,1 @@
-A friendly foundation
+{"public":true,"description":"A friendly foundation"}

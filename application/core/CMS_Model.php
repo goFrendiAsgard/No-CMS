@@ -2751,13 +2751,34 @@ class CMS_Model extends CI_Model
             $layout_name = $directory;
 
             $description = '';
+            $published = FALSE;
             $description_file = FCPATH.'themes/'.$directory.'/description.txt';
             if (file_exists($description_file)) {
-                $description = file_get_contents($description_file);
+                $config = @json_decode(file_get_contents($description_file), TRUE);
+                if(array_key_exists('public', $config)){
+                    $published = CMS_SUBSITE == '' || $config['public'];
+                    $public = $config['public'];
+                }
+                if(array_key_exists('description', $config)){
+                    $description = $config['description'];
+                }
+                if(!$published){
+                    $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
+                    if (file_exists($subsite_auth_file)) {
+                        unset($subsite_allowed);
+                        include $subsite_auth_file;
+                        if (!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
+                            $published = FALSE;
+                        }
+                    }
+                }
             }
 
             if ($keyword === null  || ($keyword !== null && (stripos($directory, $keyword) !== false || stripos($description, $keyword) !== false))) {
                 $themes[] = array(
+                    'name' => $directory,
+                    'public' => $public,
+                    'published' => $published,
                     'path' => $directory,
                     'description' => $description,
                     'used' => $this->cms_get_config('site_theme') == $layout_name,
@@ -3099,7 +3120,8 @@ class CMS_Model extends CI_Model
      */
     public function cms_get_config($name, $raw = false)
     {
-        $value = cms_config($name);
+        // should be started with underscore
+        $value = $name[0] == '_'? cms_config($name): NULL;
         if ($value === null || !$value) {
             if (!self::$__cms_model_properties['is_config_cached']) {
                 $query = $this->db->select('value, config_name')

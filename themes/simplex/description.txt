@@ -1,1 +1,1 @@
-Mini and minimalist
+{"public":true,"description":"Mini and minimalist"}

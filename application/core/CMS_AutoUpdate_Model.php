@@ -7,7 +7,7 @@ if (!defined('BASEPATH')) {
 class CMS_AutoUpdate_Model extends CMS_Model
 {
     // TODO: change this
-    private $CURRENT_VERSION = '1.0.5';
+    private $CURRENT_VERSION = '1.0.6';
     private static $module_updated = false;
 
     public function __construct()
@@ -477,6 +477,51 @@ class CMS_AutoUpdate_Model extends CMS_Model
         $this->cms_add_widget('quicklink_default_static', 'Quicklinks Default Static', 1, 'main/widget_quicklink_default_static');
         $this->cms_add_widget('top_navigation_inverse_static', 'Top Navigation Inverse Static', 1, 'main/widget_top_nav_inverse_static');
         $this->cms_add_widget('quicklink_inverse_static', 'Quicklinks Inverse Static', 1, 'main/widget_quicklink_inverse_static');
+    }
+
+    private function __update_to_1_0_6(){
+        // clear cms_config file
+        $config_file = CMS_SUBSITE == ''? APPPATH.'config/main/cms_config.php' : APPPATH.'config/site-'.CMS_SUBSITE.'/cms_config.php';
+        $config = array();
+        include($config_file);
+        $content = '<?php  if ( ! defined(\'BASEPATH\')) exit(\'No direct script access allowed\');';
+        foreach($config as $key=>$val){
+            if($key[0] == '_'){
+                $content .= PHP_EOL.'$config[\''.addslashes($key).'\'] = \''.addslashes($val).'\';';
+            }
+        }
+        if(!is_writeable($config_file)){
+            @chmod($config_file,077);
+        }
+        if(is_writable($config_file)){
+            file_put_contents($config_file, $content);
+        }
+
+        // update theme
+        $this->load->helper('directory');
+        $directories = directory_map(FCPATH.'themes', 1);
+        $themes = array();
+        foreach ($directories as $directory) {
+            if(!is_dir($directory)){
+                continue;
+            }
+            // description file
+            $description_file = FCPATH.'themes/'.$directory.'/description.txt';
+            $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
+            $public = TRUE;
+            if(file_exists($subsite_auth_file)){
+                include($subsite_auth_file);
+            }
+            $description = file_get_contents($description_file);
+            $content = json_encode(array('public'=> $public, 'description' => $description));
+            if(!is_writeable($description_file)){
+                @chmod($config_file,077);
+            }
+            if(is_writable($description_file)){
+                file_put_contents($description_file, $content);
+            }
+        }
+
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)

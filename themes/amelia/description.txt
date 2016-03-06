@@ -1,1 +1,1 @@
-Sweet and Cheery
+{"public":true,"description":"Sweet and Cheery"}

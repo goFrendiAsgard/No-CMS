@@ -1,1 +1,1 @@
-Jet black and electric blue
+{"public":true,"description":"Jet black and electric blue"}

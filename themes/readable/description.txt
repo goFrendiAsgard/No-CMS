@@ -1,1 +1,1 @@
-Optimized for legibility
+{"public":true,"description":"Optimized for legibility"}

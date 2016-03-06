@@ -23,6 +23,9 @@
 <?php
     echo '<div class="row">';
     foreach($themes as $theme){
+        if(!$theme['published']){
+            continue;
+        }
         $style = $theme['used']? 'opacity:0.5; border:none;' : '';
         echo '<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">';
         echo '<div class="thumbnail" style="'.$style.'">';
