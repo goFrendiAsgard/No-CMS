@@ -52,6 +52,7 @@ modules/*/controllers/Info_*.php
 
 # Some pictures
 modules/static_accessories/assets/images/slides/main*.jpg
+modules/static_accessories/assets/images/slides/coba*.jpg
 
 # my private modules
 modules/gis
