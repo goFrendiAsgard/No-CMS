@@ -244,6 +244,16 @@ class CMS_Model extends CI_Model
         return $return;
     }
 
+    public function tmain($table_name, $alias = null)
+    {
+        $return = $this->cms_complete_main_site_table_name($table_name);
+        if ($alias !== null) {
+            $return .= ' as '.$alias;
+        }
+
+        return $return;
+    }
+
     public function n($navigation_name)
     {
         return $this->cms_complete_navigation_name($navigation_name);
@@ -465,7 +475,7 @@ class CMS_Model extends CI_Model
     public function cms_complete_table_name($table_name, $module_name = null)
     {
         $module_path = $this->cms_module_path($module_name);
-        if ($module_path == 'main' or $module_path == '') {
+        if ($module_path == 'main' || $module_path == '') {
             return cms_table_name($table_name);
         } else {
             if (file_exists(FCPATH.'modules/'.$module_path.'/cms_helper.php')) {
@@ -477,6 +487,25 @@ class CMS_Model extends CI_Model
 
             return cms_module_table_name($module_path, $table_name);
         }
+    }
+
+    public function cms_complete_main_site_table_name($table_name, $module_name = null)
+    {
+        include APPPATH.'config/main/cms_config.php';
+        $table_prefix = $config['__cms_table_prefix'];
+
+        $module_path = $this->cms_module_path($module_name);
+        if ($module_path != 'main' && $module_path != '') {
+            include FCPATH.'modules/'.$module_path.'/config/module_config.php';
+            if(array_key_exists('module_table_prefix', $config)){
+                $module_table_prefix = $config['module_table_prefix'];
+                if($module_table_prefix != ''){
+                    $table_prefix .= '_'.$module_table_prefix;
+                }
+            }
+        }
+
+        return cms_table_name($table_name, $table_prefix);
     }
 
     /**
@@ -3120,8 +3149,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_get_config($name, $raw = false)
     {
-        // should be started with underscore
-        $value = $name[0] == '_'? cms_config($name): NULL;
+        $value = cms_config($name);
         if ($value === null || !$value) {
             if (!self::$__cms_model_properties['is_config_cached']) {
                 $query = $this->db->select('value, config_name')

@@ -143,7 +143,7 @@ class Info extends CMS_Module {
             'name'          => array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
             'caption'       => array("type"=>'varchar', "constraint"=>50, "null"=>TRUE),
             'priority'      => array("type"=>'int', "constraint"=>10, "null"=>TRUE),
-            'data'          =>array("type"=>'text',"null"=>TRUE),
+            'data'          => array("type"=>'longtext',"null"=>TRUE),
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('table_id', TRUE);

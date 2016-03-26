@@ -180,6 +180,7 @@ function chosen_ajaxify(id, ajax_url){
     }
 }
 
+// TODO: make this a function
 function chosen_depend_on(id, id_depend_on, ajax_url){
     var OLD_VALUE = $('#'+id_depend_on).val();
     $('#'+id_depend_on).change(function(event){
@@ -194,8 +195,25 @@ function chosen_depend_on(id, id_depend_on, ajax_url){
                         $('#'+id).append('<option value="' + item.value + '">' + item.caption + '</option>');
                     });
                     $('#'+id).trigger("chosen:updated");
+                    $('#'+id).trigger("change");
                 }
             });
         }
-    })
+    });
+    // initialized
+    $(document).ready(function(){
+        var val = $('#'+id_depend_on).val();
+        $.ajax({
+            'url' : ajax_url + val,
+            'dataType' : 'json',
+            'success' : function(response){
+                $('#'+id).empty();
+                $.map(response, function(item){
+                    $('#'+id).append('<option value="' + item.value + '">' + item.caption + '</option>');
+                });
+                $('#'+id).trigger("chosen:updated");
+                $('#'+id).trigger("change");
+            }
+        });
+    });
 }

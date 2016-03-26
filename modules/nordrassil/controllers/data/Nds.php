@@ -417,7 +417,6 @@ class Nds extends CMS_Controller {
     public function _callback_column_table_name($value, $row){
         $html = '<b>' . $value . '</b>' . br() . '(' . $row->caption . ')<a id="rec-'.$row->table_id.'" name="rec-'.$row->table_id.'">&nbsp;</a>';
 
-        // TODO: code this
         if(isset($_SESSION['__mark_move_table_id'][$row->project_id]) && $_SESSION['__mark_move_table_id'][$row->project_id] != NULL){
             $mark_move_table_id = $_SESSION['__mark_move_table_id'][$row->project_id];
             if($row->table_id == $mark_move_table_id){
