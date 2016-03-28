@@ -51,199 +51,245 @@ class Synchronize_model extends CMS_Model{
             ->from($this->t('project'))
             ->where(array('project_id'=>$project_id))
             ->get();
-        if($query->num_rows()>0){
-            $row = $query->row();
-            $this->db_server = $row->db_server;
-            $this->db_port = $row->db_port;
-            $this->db_user = $row->db_user;
-            $this->db_password = $row->db_password;
-            $this->db_schema = $row->db_schema;
-            $this->db_table_prefix = $row->db_table_prefix;
-            if(!isset($this->db_port) || $this->db_port == ''){
-                $this->db_port = '3306';
-            }
-            $this->connection = @mysqli_connect($this->db_server, $this->db_user, $this->db_password, 'information_schema', $this->db_port);
-            if(!$this->connection){
-                return FALSE;
-            }
-            mysqli_select_db($this->connection, 'information_schema');
-            $this->create_table($project_id);
+        // No project available, skip it
+        if($query->num_rows() == 0){
+            return FALSE;
+        }
 
-            // get tables
-            $t_query = $this->db->select('table_id, name, caption')
-                ->from($this->t('table'))
-                ->where('project_id', $project_id)
+        $row = $query->row();
+        $this->db_server = $row->db_server;
+        $this->db_port = $row->db_port;
+        $this->db_user = $row->db_user;
+        $this->db_password = $row->db_password;
+        $this->db_schema = $row->db_schema;
+        $this->db_table_prefix = $row->db_table_prefix;
+        if(!isset($this->db_port) || $this->db_port == ''){
+            $this->db_port = '3306';
+        }
+        $this->connection = @mysqli_connect($this->db_server, $this->db_user, $this->db_password, 'information_schema', $this->db_port);
+        if(!$this->connection){
+            return FALSE;
+        }
+        mysqli_select_db($this->connection, 'information_schema');
+        $this->create_table($project_id);
+
+        // get tables
+        $t_query = $this->db->select('table_id, name, caption')
+            ->from($this->t('table'))
+            ->where('project_id', $project_id)
+            ->get();
+        $table_result = array();
+        foreach($t_query->result() as $row){
+            // build stripped_name
+            $stripped_name = $row->name;
+            if(substr($stripped_name, 0, strlen($this->db_table_prefix)) == $this->db_table_prefix){
+                $stripped_name = substr($stripped_name, strlen($this->db_table_prefix));
+                $stripped_name = trim($stripped_name, '_');
+                $stripped_name = trim($stripped_name, '-');
+            }
+            $row->stripped_name = $stripped_name;
+            $table_result[] = $row;
+        }
+        // sort table by name's length, descending
+        for($i=count($table_result)-1; $i>0; $i--){
+            for($j=0; $j<$i; $j++){
+                if(strlen($table_result[$j]->name) > strlen($table_result[$j+1]->name)){
+                    $tmp = $table_result[$j];
+                    $table_result[$j] = $table_result[$j+1];
+                    $table_result[$j+1] = $tmp;
+                }
+            }
+        }
+
+        // loop for each table, add possible self-lookup relationship
+        foreach($table_result as $current_table){
+            $stripped_table_name = $current_table->stripped_name;
+            // loop for each column to determine self-lookup relationship
+            $column_query = $this->db->select('column_id, name, role, caption')
+                ->from($this->t('column'))
+                ->where('table_id', $current_table->table_id)
                 ->get();
-            $table_result = array();
-            foreach($t_query->result() as $row){
-                // build stripped_name
-                $stripped_name = $row->name;
-                if(substr($stripped_name, 0, strlen($this->db_table_prefix)) == $this->db_table_prefix){
-                    $stripped_name = substr($stripped_name, strlen($this->db_table_prefix));
-                    $stripped_name = trim($stripped_name, '_');
-                    $stripped_name = trim($stripped_name, '-');
+            // get self lookup column
+            $lookup_column = NULL;
+            $primary_column = NULL;
+            foreach($column_query->result() as $column){
+                if($column->role == 'primary'){
+                    $primary_column = $column;
                 }
-                $row->stripped_name = $stripped_name;
-                $table_result[] = $row;
-            }
-            // sort table by name's length, descending
-            for($i=count($table_result)-1; $i>0; $i--){
-                for($j=0; $j<$i; $j++){
-                    if(strlen($table_result[$j]->name) > strlen($table_result[$j+1]->name)){
-                        $tmp = $table_result[$j];
-                        $table_result[$j] = $table_result[$j+1];
-                        $table_result[$j+1] = $tmp;
-                    }
+                if($column->role == ''){
+                    $lookup_column = $column;
+                }
+                if($lookup_column != NULL){
+                    break;
                 }
             }
-            // loop for each table, add possible master-detail and self-lookup relationship
-            foreach($table_result as $current_table){
-                $stripped_table_name = $current_table->stripped_name;
-                // get max priority
-                $max_priority = $this->db->select_max('priority')
-                    ->from($this->t('column'))
-                    ->where('table_id', $current_table->table_id)
-                    ->get()->row()->priority;
-                $priority = $max_priority==NULL? 1: $max_priority+1;
-                // loop for other tables, look for master-detail relationship
+            // if lookup column not found, use primary column as lookup column too
+            if($lookup_column == NULL){
+                $lookup_column = $primary_column;
+            }
+            foreach($column_query->result() as $column){
+                if($column->role != ''){continue;}
+                $column_name = $column->name;
+                // is it match?
+                if(strtolower($column_name) == 'id_parent' || strtolower($column_name) == 'parent_id' || strtolower($column_name) == 'id-parent' || strtolower($column_name) == 'parent-id' || strtolower($column_name) == 'idparent' || strtolower($column_name) == 'parentid'){
+                    // update the column
+                    $this->db->update($this->t('column'),
+                        array(
+                                'role' => 'lookup',
+                                'lookup_table_id' => $current_table->table_id,
+                                'lookup_column_id' => $lookup_column->column_id,
+                                'caption' => trim(trim($column->caption, 'Id'), ' '),
+                            ),
+                        array('column_id' => $column->column_id));
+                }
+            }
+        }
+
+        // now loop for every column in all tables to automatically determine lookup relationship
+        foreach($table_result as $current_table){
+            // get columns of current_table
+            $current_column_query = $this->db->select('column_id, name, role, caption')
+                ->from($this->t('column'))
+                ->where('table_id', $current_table->table_id)
+                ->get();
+            foreach($current_column_query->result() as $current_column){
+                if($current_column->role != ''){continue;}
+                // get another tables and compare the field
                 foreach($table_result as $other_table){
-                    // master-detail to current table is not handled
+                    // lookup to current table is not handled
                     if($current_table->table_id == $other_table->table_id){continue;}
-                    $other_stripped_table_name = $other_table->stripped_name;
-                    // loop for each column to determine one to many relationship
-                    if(preg_match('/(.*)'.$stripped_table_name.'(.*)/i', $other_stripped_table_name) == 1){
-                        $other_column_query = $this->db->select('column_id, name, role, caption')
+                    // get stripped table name
+                    $stripped_table_name = $other_table->stripped_name;
+                    // if name matched
+                    if(preg_match('/(.*)id(.*)'.$stripped_table_name.'(.*)/i', $current_column->name) == 1 || preg_match('/(.*)'.$stripped_table_name.'(.*)id(.*)/i', $current_column->name) == 1){
+                        // get lookup column of other table
+                        $other_lookup_column = NULL;
+                        $primary_column      = NULL;
+                        $other_column_query = $this->db->select('column_id, name, role')
                             ->from($this->t('column'))
                             ->where('table_id', $other_table->table_id)
                             ->get();
-                        // get other's lookup column
-                        $other_primary_column = NULL;
-                        $other_lookup_column = NULL;
                         foreach($other_column_query->result() as $other_column){
                             if($other_column->role == 'primary'){
-                                $other_primary_column = $other_column;
+                                $primary_column = $other_column;
                             }
-                            if($other_lookup_column != NULL && $other_column->role == ''){
+                            if($other_column->role == ''){
                                 $other_lookup_column = $other_column;
                             }
-                            if($other_primary_column != NULL && $other_lookup_column != NULL){
+                            if($other_lookup_column != NULL){
                                 break;
                             }
                         }
+                        // if lookup column not found, use primary column as lookup column too
                         if($other_lookup_column == NULL){
-                            $other_lookup_column = $other_primary_column;
+                            $other_lookup_column = $primary_column;
                         }
-                        // insert
+                        // build relationship
+                        $this->db->update($this->t('column'),
+                            array(
+                                    'role' => 'lookup',
+                                    'lookup_table_id' => $other_table->table_id,
+                                    'lookup_column_id' => $other_lookup_column->column_id,
+                                    'caption' => trim(trim($current_column->caption, 'Id'), ' '),
+                                ),
+                            array('column_id' => $current_column->column_id));
+                    }
+                }
+            }
+        }
+
+        // loop for each table, add master-detail relationship
+        foreach($table_result as $current_table){
+            $stripped_table_name = $current_table->stripped_name;
+            // get max priority
+            $max_priority = $this->db->select_max('priority')
+                ->from($this->t('column'))
+                ->where('table_id', $current_table->table_id)
+                ->get()->row()->priority;
+            $priority = $max_priority==NULL? 1: $max_priority+1;
+            // loop for other tables, look for master-detail relationship
+            foreach($table_result as $other_table){
+                // master-detail to current table is not handled
+                if($current_table->table_id == $other_table->table_id){continue;}
+                $other_stripped_table_name = $other_table->stripped_name;
+                // loop for each column to determine one to many relationship
+                $other_column_query = $this->db->select('column_id, name, role, caption, lookup_table_id, lookup_column_id')
+                    ->from($this->t('column'))
+                    ->where('table_id', $other_table->table_id)
+                    ->get();
+                $column_count = $other_column_query->num_rows();
+                // get other's lookup column
+                $other_fk_column_to_this = NULL;
+                $other_fk_column_to_selection = NULL;
+                foreach($other_column_query->result() as $other_column){
+                    // determine foreign key to current table, and determine foreign key to selection table
+                    if($other_column->role == 'lookup'){
+                        if($other_fk_column_to_this == NULL && $other_column->lookup_table_id == $current_table->table_id){
+                            $other_fk_column_to_this = $other_column;
+                        } else if( $other_fk_column_to_selection == NULL && $other_column->lookup_table_id != $current_table->table_id){
+                            $other_fk_column_to_selection = $other_column;
+                        }
+                    }
+                    // if column count > 3 then, this other table is certainly master-detail table, not many-to-many relation table. Otherwise, this probably relation table
+                    if($other_fk_column_to_this != NULL && ($column_count > 3 || $other_fk_column_to_selection != NULL)){
+                        break;
+                    }
+                }
+                if($other_fk_column_to_this != NULL){
+                    // set this variable to true if selection_column_id found
+                    $many_to_many = FALSE;
+                    if($column_count <= 3 && $other_fk_column_to_selection != NULL){
+                        // this is likely many-to-many relation, look for selection table
+                        $selection_column_query = $this->db->select('column_id, name, role')
+                            ->from($this->t('column'))
+                            ->where('table_id', $other_fk_column_to_selection->lookup_table_id)
+                            ->get();
+                        $selection_column_id = NULL;
+                        // get selection column id
+                        foreach($selection_column_query->result() as $selection_column){
+                            if($selection_column->role == ''){
+                                $selection_column_id = $selection_column->column_id;
+                            }
+                            if($selection_column_id != NULL){
+                                $many_to_many = TRUE;
+                                break;
+                            }
+                        }
+                        if($many_to_many){
+                            // insert
+                            $this->db->insert($this->t('column'), array(
+                                'table_id' => $current_table->table_id,
+                                'name' => $other_stripped_table_name,
+                                'caption' => $other_table->caption,
+                                'role' => 'detail many to many',
+                                'relation_table_id' => $other_table->table_id,
+                                'relation_table_column_id' => $other_fk_column_to_this->column_id,
+                                'relation_selection_column_id' => $other_fk_column_to_selection->column_id,
+                                'selection_table_id' => $other_fk_column_to_selection->lookup_table_id,
+                                'selection_column_id' => $selection_column_id,
+                                'priority' => $priority,
+                            ));
+                        }
+                    }
+                    if(!$many_to_many){
+                        // this is master-detail
                         $this->db->insert($this->t('column'), array(
                             'table_id' => $current_table->table_id,
                             'name' => $other_stripped_table_name,
                             'caption' => $other_table->caption,
                             'role' => 'detail one to many',
                             'relation_table_id' => $other_table->table_id,
-                            'relation_table_column_id' => $other_column->column_id,
+                            'relation_table_column_id' => $other_fk_column_to_this->column_id,
                             'priority' => $priority,
                         ));
-                        $priority++;
                     }
-                }
-                // loop for each column to determine self-lookup relationship
-                $column_query = $this->db->select('column_id, name, role, caption')
-                    ->from($this->t('column'))
-                    ->where('table_id', $current_table->table_id)
-                    ->get();
-                // get self lookup column
-                $lookup_column = NULL;
-                $primary_column = NULL;
-                foreach($column_query->result() as $column){
-                    if($column->role == 'primary'){
-                        $primary_column = $column;
-                    }
-                    if($column->role == ''){
-                        $lookup_column = $column;
-                    }
-                    if($lookup_column != NULL){
-                        break;
-                    }
-                }
-                // if lookup column not found, use primary column as lookup column too
-                if($lookup_column == NULL){
-                    $lookup_column = $primary_column;
-                }
-                foreach($column_query->result() as $column){
-                    if($column->role != ''){continue;}
-                    $column_name = $column->name;
-                    // is it match?
-                    if(strtolower($column_name) == 'id_parent' || strtolower($column_name) == 'parent_id' || strtolower($column_name) == 'id-parent' || strtolower($column_name) == 'parent-id' || strtolower($column_name) == 'idparent' || strtolower($column_name) == 'parentid'){
-                        // update the column
-                        $this->db->update($this->t('column'),
-                            array(
-                                    'role' => 'lookup',
-                                    'lookup_table_id' => $current_table->table_id,
-                                    'lookup_column_id' => $lookup_column->column_id,
-                                    'caption' => trim(trim($column->caption, 'Id'), ' '),
-                                ),
-                            array('column_id' => $column->column_id));
-                    }
+                    $priority++;
                 }
             }
-
-            // now loop for every column in all tables to automatically determine lookup relationship
-            foreach($table_result as $current_table){
-                // get columns of current_table
-                $current_column_query = $this->db->select('column_id, name, role, caption')
-                    ->from($this->t('column'))
-                    ->where('table_id', $current_table->table_id)
-                    ->get();
-                foreach($current_column_query->result() as $current_column){
-                    if($current_column->role != ''){continue;}
-                    // get another tables and compare the field
-                    foreach($table_result as $other_table){
-                        // lookup to current table is not handled
-                        if($current_table->table_id == $other_table->table_id){continue;}
-                        // get stripped table name
-                        $stripped_table_name = $other_table->stripped_name;
-                        // if name matched
-                        if(preg_match('/(.*)id(.*)'.$stripped_table_name.'(.*)/i', $current_column->name) == 1 || preg_match('/(.*)'.$stripped_table_name.'(.*)id(.*)/i', $current_column->name) == 1){
-                            // get lookup column of other table
-                            $other_lookup_column = NULL;
-                            $primary_column      = NULL;
-                            $other_column_query = $this->db->select('column_id, name, role')
-                                ->from($this->t('column'))
-                                ->where('table_id', $other_table->table_id)
-                                ->get();
-                            foreach($other_column_query->result() as $other_column){
-                                if($other_column->role == 'primary'){
-                                    $primary_column = $other_column;
-                                }
-                                if($other_column->role == ''){
-                                    $other_lookup_column = $other_column;
-                                }
-                                if($other_lookup_column != NULL){
-                                    break;
-                                }
-                            }
-                            // if lookup column not found, use primary column as lookup column too
-                            if($other_lookup_column == NULL){
-                                $other_lookup_column = $primary_column;
-                            }
-                            // build relationship
-                            $this->db->update($this->t('column'),
-                                array(
-                                        'role' => 'lookup',
-                                        'lookup_table_id' => $other_table->table_id,
-                                        'lookup_column_id' => $other_lookup_column->column_id,
-                                        'caption' => trim(trim($current_column->caption, 'Id'), ' '),
-                                    ),
-                                array('column_id' => $current_column->column_id));
-                        }
-                    }
-                }
-            }
-
-            return TRUE;
-        }else{
-            return FALSE;
         }
+
+        return TRUE;
+
     }
 
     private function create_table($project_id){

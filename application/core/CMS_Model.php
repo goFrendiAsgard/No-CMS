@@ -80,6 +80,7 @@ class CMS_Model extends CI_Model
                 'navigation' => array(),        // cache raw query
                 'quicklink' => array(),         // cache already built quicklink
                 'widget' => array(),            // cache raw query
+                'layout' => array(),            // cache as associative array layout_name => template
                 'super_admin' => null,
                 'group_name' => array(),
                 'group_id' => array(),
@@ -103,6 +104,7 @@ class CMS_Model extends CI_Model
                 'is_route_cached' => false,
                 'is_user_language_cached' => false,
                 'is_user_theme_cached' => false,
+                'is_layout_cached' => false,
                 'profile_pictures' => array(),
             );
         foreach ($default_properties as $key => $val) {
@@ -2777,7 +2779,7 @@ class CMS_Model extends CI_Model
                 }
             }
 
-            $layout_name = $directory;
+            $theme_name = $directory;
 
             $description = '';
             $published = FALSE;
@@ -2810,7 +2812,7 @@ class CMS_Model extends CI_Model
                     'published' => $published,
                     'path' => $directory,
                     'description' => $description,
-                    'used' => $this->cms_get_config('site_theme') == $layout_name,
+                    'used' => $this->cms_get_config('site_theme') == $theme_name,
                 );
             }
         }
@@ -3182,6 +3184,38 @@ class CMS_Model extends CI_Model
         }
 
         return $value;
+    }
+
+    private function __cms_cache_layout(){
+        if (!self::$__cms_model_properties['is_layout_cached']) {
+            $query = $this->db->select('layout_name, template')
+                ->from(cms_table_name('main_layout'))
+                ->get();
+            foreach ($query->result() as $row) {
+                // save to cache
+                self::$__cms_model_properties['layout'][$row->layout_name] = $row->template;
+            }
+            self::$__cms_model_properties['is_layout_cached'] = true;
+        }
+    }
+
+    public function cms_get_layout(){
+        $this->__cms_cache_layout();
+        $result = array();
+        foreach(self::$__cms_model_properties['layout'] as $key=>$val){
+            $result[] = $key;
+        }
+        return $result;
+    }
+
+    public function cms_get_layout_template($layout){
+        $this->__cms_cache_layout();
+        return self::$__cms_model_properties['layout'][$layout];
+    }
+
+    public function cms_layout_exists($layout){
+        $this->__cms_cache_layout();
+        return array_key_exists($layout, self::$__cms_model_properties['layout']);
     }
 
     /**

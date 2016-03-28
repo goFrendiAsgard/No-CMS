@@ -110,7 +110,7 @@ class Teldrassil extends CMS_Secure_Controller {
             $this->load->library('image_moo');
             $this->image_moo->load($background_name)->save($background_name, TRUE);
             $this->image_moo->load($preview_name)->resize(769,395, TRUE)->save($preview_name, TRUE);
-            file_put_contents(FCPATH.'themes/'.$theme_name.'/assets/default/bootstrap.min.css',
+            file_put_contents(FCPATH.'themes/'.$theme_name.'/assets/css/bootstrap.min.css',
                 $this->get_css($font, $colors,'images/background.png'));
             // create subsite_auth
             $subsite_auth = '<?php defined(\'BASEPATH\') OR exit(\'No direct script access allowed\');'.PHP_EOL.
@@ -251,10 +251,5 @@ class Teldrassil extends CMS_Secure_Controller {
                 'module_base_url' => base_url('modules/'.$module_path).'/',
             );
         $this->load->view($this->cms_module_path().'/teldrassil_preview', $data);
-    }
-
-    public function test(){
-        $this->load->helper('image');
-        var_dump(find_dominant_color(FCPATH.'modules/teldrassil/assets/uploads/1538e10560e91a9aabf80e69e28_workshop.jpg'));
     }
 }

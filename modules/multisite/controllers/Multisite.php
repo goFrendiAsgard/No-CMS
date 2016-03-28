@@ -432,7 +432,7 @@ class Multisite extends CMS_Secure_Controller {
                 'multisite_active' => $this->cms_is_module_active('gofrendi.noCMS.multisite'),
                 'add_subsite_on_register' => $this->cms_get_config('cms_add_subsite_on_register') == 'TRUE',
                 'theme_list'    => $this->subsite_model->public_theme_list(),
-                'layout_list'   => $this->subsite_model->layout_list(),
+                'layout_list'   => $this->cms_get_layout(),
                 'template_list' => $this->subsite_model->template_list(),
                 'additional_input' => $additional_input,
             );

@@ -34,7 +34,7 @@ class Add_subsite extends CMS_Secure_Controller {
         $this->load->model($this->cms_module_path().'/subsite_model');
         $data = array(
                 'theme_list'    => $this->subsite_model->public_theme_list(),
-                'layout_list'   => $this->subsite_model->layout_list(),
+                'layout_list'   => $this->cms_get_layout(),
                 'template_list' => $this->subsite_model->template_list(),
             );
         $this->view($this->cms_module_path().'/add_subsite_index', $data, $this->n('add_subsite'));

@@ -254,20 +254,6 @@ class Subsite_model extends  CMS_Model{
         return $themes;
     }
 
-    public function layout_list(){
-        $this->load->helper('directory');
-        $files = directory_map(FCPATH.'themes/neutral/views/layouts', 1);
-        sort($files);
-        $layout = array();
-        foreach($files as $file){
-            if(!is_file(FCPATH.'themes/neutral/views/layouts/'.$file) || substr($file, -4, 4) != '.php'){
-                continue;
-            }
-            $layout[] = substr($file,0,-4);
-        }
-        return $layout;
-    }
-
     public function template_list(){
         $query = $this->db->select('name, icon, description')
             ->from($this->t('template'))

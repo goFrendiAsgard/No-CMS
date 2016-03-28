@@ -60,22 +60,14 @@ class Cms_asset
         );
     }
 
-    public function add_themes_js($path, $theme, $layout = NULL)
+    public function add_themes_js($path, $theme)
     {
-        if (isset($layout)) {
-            $this->add_js(base_url('themes/' . $theme . '/assets/' . $layout . '/' . $path));
-        } else {
-            $this->add_js(base_url('themes/' . $theme . '/assets/' . $path));
-        }
+        $this->add_js(base_url('themes/' . $theme . '/assets/' . $path));
     }
 
-    public function add_themes_css($path, $theme, $layout = NULL)
+    public function add_themes_css($path, $theme)
     {
-        if (isset($layout)) {
-            $this->add_css(base_url('themes/' . $theme . '/assets/' . $layout . '/' . $path));
-        } else {
-            $this->add_css(base_url('themes/' . $theme . '/assets/' . $path));
-        }
+        $this->add_css(base_url('themes/' . $theme . '/assets/' . $path));
     }
 
     public function add_module_js($path, $module)

@@ -586,7 +586,6 @@ class CMS_Controller extends MX_Controller
      */
     protected function view($view_url, $data = null, $navigation_name = null, $config = null, $return_as_string = false)
     {
-        $this->load->library('template');
         $result = null;
         $view_url = $this->cms_parse_keyword($view_url);
 
@@ -640,7 +639,6 @@ class CMS_Controller extends MX_Controller
         $custom_author = isset($config['author']) ? $config['author'] : null;
         $only_content = isset($config['only_content']) ? $config['only_content'] : false;
         $always_allow = isset($config['always_allow']) ? $config['always_allow'] : false;
-        $layout_suffix = isset($config['layout_suffix']) ? $config['layout_suffix'] : '';
         $custom_css = isset($config['css']) ? $config['css'] : '';
         $custom_js = isset($config['js']) ? $config['js'] : '';
 
@@ -793,40 +791,22 @@ class CMS_Controller extends MX_Controller
         // GET THE LAYOUT
         if (isset($custom_layout)) {
             $layout = $custom_layout;
-        } elseif (isset($default_layout) && $default_layout != '') {
+        } else if (isset($default_layout) && $default_layout != '') {
             $layout = $default_layout;
         } else {
-            $this->load->library('user_agent');
-            $layout = $this->agent->is_mobile() ? 'mobile' : $this->cms_get_config('site_layout');
+            $layout = $this->cms_get_config('site_layout');
         }
 
-        // ADJUST THEME AND LAYOUT
-        if (!$this->cms_layout_exists($theme, $layout)) {
-            // ASSIGN LAYOUT
-            if (!file_exists(FCPATH.'themes/'.$theme) || !is_dir(FCPATH.'themes/'.$theme)) {
-                $theme = 'neutral';
-            }
-            if (!file_exists(FCPATH.'themes/'.$theme.'/views/layouts/'.$layout.'.php')) {
-                $layout = 'default';
-                if (!file_exists(FCPATH.'themes/'.$theme.'/views/layouts/default.php')) {
-                    $theme = 'neutral';
-                }
-            }
+        // ADJUST THEME
+        if (!file_exists(FCPATH.'themes/'.$theme) || !is_dir(FCPATH.'themes/'.$theme)) {
+            $theme = 'neutral';
+        }
+        // ADJUST LAYOUT
+        if(!$this->cms_layout_exists($layout)){
+            $layout = 'default';
         }
         // save used_theme
         $this->session->set_userdata('__cms_used_theme', $theme);
-
-        // ADD AUTHENTICATED SUFFIX (in case of user has logged in)
-        $cms_user_id = $this->cms_user_id();
-        if ($layout_suffix == '' && isset($cms_user_id) && $cms_user_id) {
-            $layout_suffix = 'authenticated';
-        }
-
-        if ($this->cms_layout_exists($theme, $layout.'_'.$layout_suffix)) {
-            $layout = $layout.'_'.$layout_suffix;
-        }
-
-        $data['__is_bootstrap_cdn_connected'] = false;
 
         // IT'S SHOW TIME
         if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
@@ -835,31 +815,45 @@ class CMS_Controller extends MX_Controller
         } else {
             // save navigation name
             $this->cms_ci_session('__cms_navigation_name', $navigation_name);
-            // set theme, layout and title
-            $this->template->title($title);
-            $this->template->set_theme($theme);
-            $this->template->set_layout($layout);
+
+            // set layout variables
+            $layout_title = $title;
+            $layout_theme = $theme;
+            $layout_metadata = '';
+            $layout_js = '';
+            $layout_css = '';
+            $layout_body = $this->load->view($view_url, $data, true);
 
             // set keyword metadata
             if ($keyword != '') {
-                $keyword_metadata = '<meta name="keyword" content="'.$keyword.'">';
-                $this->template->append_metadata($keyword_metadata);
+                $layout_metadata .= '<meta name="keyword" content="'.$keyword.'">';
             }
             // set description metadata
             if ($description != '') {
-                $description_metadata = '<meta name="description" content="'.$description.'">';
-                $this->template->append_metadata($description_metadata);
+                $layout_metadata .= '<meta name="description" content="'.$description.'">';
             }
             // set author metadata
             if ($author != '') {
-                $author_metadata = '<meta name="author" content="'.$author.'">';
-                $this->template->append_metadata($author_metadata);
+                $layout_metadata .= '<meta name="author" content="'.$author.'">';
             }
 
-            // add IE compatibility
-            $this->template->append_metadata('<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">');
-            // add width
-            $this->template->append_metadata('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+            // add IE compatibility and width viewport
+            $layout_metadata .= '<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">';
+
+            // add hack if exists
+            if (!isset($_SESSION)) {
+                session_start();
+            }
+            if (isset($_SESSION['__cms_flash_metadata'])) {
+                $layout_metadata .= $_SESSION['__cms_flash_metadata'];
+                unset($_SESSION['__cms_flash_metadata']);
+            }
+
+            // config metadata
+            foreach ($custom_metadata as $metadata) {
+                $layout_metadata .= $metadata;
+            }
 
             $asset = new Cms_asset();
             $asset->add_js($this->JQUERY_PATH);
@@ -921,63 +915,42 @@ class CMS_Controller extends MX_Controller
             if (trim($analytic_property_id) != '') {
                 if ($this->cms_is_connect('google-analytics.com')) {
                     // create analytic code
-                    $analytic_code = '';
-                    $analytic_code .= 'var _gaq = _gaq || []; ';
-                    $analytic_code .= '_gaq.push([\'_setAccount\', \''.$analytic_property_id.'\']); ';
-                    $analytic_code .= '_gaq.push([\'_trackPageview\']); ';
-                    $analytic_code .= '(function() { ';
-                    $analytic_code .= 'var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true; ';
-                    $analytic_code .= 'ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\'; ';
-                    $analytic_code .= 'var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s); ';
-                    $analytic_code .= '})(); ';
+                    $analytic_code = 'var _gaq = _gaq || [];
+                        _gaq.push([\'_setAccount\', \''.$analytic_property_id.'\']);
+                        _gaq.push([\'_trackPageview\']);
+                        (function() {
+                            var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;
+                            ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';
+                            var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);
+                        })(); ';
                     $asset->add_internal_js($analytic_code);
                 }
             }
 
-            // add hack if exists
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-            if (isset($_SESSION['__cms_flash_metadata'])) {
-                $this->template->append_metadata($_SESSION['__cms_flash_metadata']);
-                unset($_SESSION['__cms_flash_metadata']);
-            }
-
-            // config metadata
-            foreach ($custom_metadata as $metadata) {
-                $this->template->append_metadata($metadata);
-            }
-
             // append custom css & js
-            $this->template->append_js($asset->compile_js());
-            $this->template->append_css($asset->compile_css());
-            $this->template->append_js($custom_js);
-            $this->template->append_css($custom_css);
+            $layout_js .= $asset->compile_js() . $custom_js;
+            $layout_css .= $asset->compile_css() . $custom_css;
 
-            $this->load->helper('directory');
-            $partial_path = BASEPATH.'../themes/'.$theme.'/views/partials/'.$layout.'/';
-            if (is_dir($partial_path)) {
-                $partials = directory_map($partial_path, 1);
-                foreach ($partials as $partial) {
-                    // if is directory or is not php, then ignore it
-                    if (is_dir($partial)) {
-                        continue;
-                    }
-                    $partial_extension = pathinfo($partial_path.$partial, PATHINFO_EXTENSION);
-                    if (strtoupper($partial_extension) != 'PHP') {
-                        continue;
-                    }
-
-                    // add partial to template
-                    $partial_name = pathinfo($partial_path.$partial, PATHINFO_FILENAME);
-                    if (isset($custom_partial[$partial_name])) {
-                        $this->template->inject_partial($partial_name, $custom_partial[$partial_name]);
-                    } else {
-                        $this->template->set_partial($partial_name, 'partials/'.$layout.'/'.$partial, $data);
-                    }
-                }
+            // theme js
+            $theme_js_file = FCPATH.'themes/'.$layout_theme.'/views/js.php';
+            if(file_exists($theme_js_file)){
+                ob_start();
+                include($theme_js_file);
+                $layout_js .= ob_get_clean();
             }
-            $result = $this->template->build($view_url, $data, true);
+            // theme css
+            $theme_css_file = FCPATH.'themes/'.$layout_theme.'/views/css.php';
+            if(file_exists($theme_css_file)){
+                ob_start();
+                include($theme_css_file);
+                $layout_css .= ob_get_clean();
+            }
+
+            $layout_string = $this->cms_get_layout_template($layout);
+
+            $search = array('{{ layout:title }}', '{{ layout:metadata }}', '{{ layout:js }}', '{{ layout:css }}', '{{ layout:body }}');
+            $replace = array($layout_title, $layout_metadata, $layout_js, $layout_css, $layout_body);
+            $result = str_ireplace($search, $replace, $layout_string);
         }
 
         // parse keyword
@@ -1200,25 +1173,6 @@ class CMS_Controller extends MX_Controller
         }
 
         return $html;
-    }
-
-    protected function cms_layout_exists($theme, $layout)
-    {
-        if (CMS_SUBSITE != '') {
-            $subsite_auth_file = FCPATH.'themes/'.$theme.'/subsite_auth.php';
-            if (file_exists($subsite_auth_file)) {
-                unset($protected);
-                unset($subsite_allowed);
-                include $subsite_auth_file;
-                if (isset($protected) && is_bool($protected) && !$protected) {
-                    if (isset($subsite_allowed) && is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed)) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return is_file(FCPATH.'themes/'.$theme.'/views/layouts/'.$layout.'.php');
     }
 
     private function __cms_cache($time = 5)

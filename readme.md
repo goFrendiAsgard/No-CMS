@@ -26,7 +26,6 @@ Batteries Included
 No-CMS come with several batteries included:
 
 * HMVC, to make fully modular separation
-* Phil Sturgeon's Template, to make customizable themes
 * groceryCRUD, to build CRUD application in a minute
 * HybridAuth, to provide third party authentication (e.g: facebook, twitter, openID etc)
 * Widget system
@@ -40,7 +39,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v1.0.6, March, 06, 2016
+- v1.0.7, March, 28, 2016
 
 
 Server Requirements

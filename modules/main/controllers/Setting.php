@@ -181,21 +181,7 @@ class Setting extends CMS_Controller{
         }
 
         // layout
-        $layout_list = array();
-        $site_theme = $config_list['site_theme'];
-        $this->load->helper('directory');
-        $files = directory_map('themes/'.$site_theme.'/views/layouts/', 1);
-        sort($files);
-        foreach($files as $file){
-            if(is_dir('themes/'.$site_theme.'/views/layouts/'.$file)){
-                continue;
-            }
-            $file = str_ireplace('.php', '', $file);
-            if($file == $config_list['site_layout']){
-                continue;
-            }
-            $layout_list[] = $file;
-        }
+        $layout_list = $this->cms_get_layout();
 
         // get third_party_configurations
         include($hybridauth_config_file);
