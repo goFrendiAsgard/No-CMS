@@ -26,7 +26,7 @@
                     if($file_name != NULL){
                         echo '<img style="max-width:200px; margin:20px;" src="' .$url_name. '" /><br />';
                     }
-                ?>    
+                ?>
                 <input class="form-control" type="file" name="file_name" /><br />
                 <button class="btn btn-default" name="upload" value="TRUE">Upload</button>
             </div>
@@ -54,9 +54,6 @@
 
         </div>
         <div class="col-md-6">
-            <div class="form-group initially-hidden">
-                <input id="background_image" name="background_image" type="checkbox" <?php echo $background_image?'checked':''; ?> />&nbsp;<label>Use Background Image</label>
-            </div>
             <table class="table initially-hidden">
                 <thead>
                     <tr>
@@ -85,7 +82,7 @@
                 </tbody>
             </table>
         </div>
-    </div>    
+    </div>
     <div class="form-group initially-hidden">
         <h4>Preview</h4>
         <iframe id="preview" style="width:100%; height:800px; border:none;">
@@ -97,14 +94,6 @@
 </form>
 <script type="text/javascript" src="{{ MODULE_BASE_URL }}assets/bootstrap-colorselector/lib/bootstrap-colorselector-0.2.0/js/bootstrap-colorselector.js"></script>
 <script type="text/javascript">
-    function show_color(){
-        /*
-        $('.color-select').each(function(){
-            var value = $(this).val();
-            $(this).parent('td').css('background-color', '#' + value);
-        });
-        */
-    }
 
     function preview(){
         var url = "{{ MODULE_SITE_URL }}teldrassil/preview?font=" + $('#font-select').val();
@@ -120,12 +109,6 @@
         $('select.color-select').colorselector();
     });
 
-    /*
-    $('select.color-select').children().each(function (){
-        $(this).css('background-color', '#' + $(this).val());
-    });*/
-
-    //show_color();
     preview();
 
 

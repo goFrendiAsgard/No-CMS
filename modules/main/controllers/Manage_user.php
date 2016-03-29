@@ -280,7 +280,7 @@ class Manage_user extends CMS_Predefined_Callback_CRUD_Controller {
             $value = array();
         }
         $query = $this->db->select('group_id, group_name')
-            ->from($this->cms_user_table_name())
+            ->from($this->t('main_group'))
             ->limit(20)
             ->get();
         $html = '<select id="field-group_user" name="group_user[]" multiple="multiple" size="8" class="form-control" data-placeholder="Select users">';

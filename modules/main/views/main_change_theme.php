@@ -1,14 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <style>
-    li.change-theme-container>a{
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-    li.change-theme-container img{
-        max-width: 128px;
-        height: auto;
-    }
     #message:empty{
         display:none;
     }
@@ -34,7 +25,7 @@
         }
         $image_path = base_url('themes/'.$theme['path'].'/preview.png');
         if(@file_get_contents($image_path,0,NULL,0,1)){
-            echo '<img style="border:1px solid" src="'.$image_path.'" />';
+            echo '<img class="col-md-12" src="'.$image_path.'" />';
         }else{
             echo '{{ language:No Preview }}';
         }

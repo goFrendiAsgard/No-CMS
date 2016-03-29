@@ -125,12 +125,6 @@ class CMS_Controller extends MX_Controller
             }
         }
 
-
-        if(!$this->input->is_ajax_request() && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
-            $this->output->enable_profiler(TRUE);
-        }else{
-            $this->output->enable_profiler(FALSE);
-        }
     }
 
     public function __call($method, $args){
@@ -589,13 +583,6 @@ class CMS_Controller extends MX_Controller
         $result = null;
         $view_url = $this->cms_parse_keyword($view_url);
 
-        // Profiler
-        if(!$this->input->is_ajax_request() && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
-            $this->output->enable_profiler(TRUE);
-        }else{
-            $this->output->enable_profiler(FALSE);
-        }
-
         /*
          * PREPARE PARAMETERS *********************************************************************************************
          */
@@ -965,7 +952,17 @@ class CMS_Controller extends MX_Controller
         if ($return_as_string) {
             return $result;
         } else {
-            $this->cms_show_html($result);
+
+            // Profiler
+            if(!$this->input->is_ajax_request() && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
+                $this->output->enable_profiler(TRUE);
+            }else{
+                $this->output->enable_profiler(FALSE);
+            }
+
+            echo $result;
+            // load view introduce rendering problem if profiler activated, thus I use echo for now
+            //$this->cms_show_html($result);
         }
     }
 
@@ -1006,6 +1003,8 @@ class CMS_Controller extends MX_Controller
             if (strpos($html, '{{ ') !== false && $recursive_level > 0) {
                 $html = $this->__cms_parse_widget_theme_path($html, $theme, $layout, $navigation_name, $recursive_level);
             }
+
+            $html = $this->{$this->__cms_base_model_name}->cms_unescape_template($html);
         }
 
         return $html;

@@ -3520,6 +3520,8 @@ class CMS_Model extends CI_Model
             ), $value);
         }
 
+        $value = $this->cms_unescape_template($value);
+        
         return $value;
     }
 

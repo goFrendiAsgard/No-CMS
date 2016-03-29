@@ -18,6 +18,7 @@ For mere users and everyone
 * [Installation](tutorial/user_installation.md)
 * [Update & Migration](tutorial/user_update_and_migration.md)
 * [Themes](tutorial/user_themes.md)
+* [Layouts](tutorial/user_layout.md)
 * [Setting](tutorial/user_setting.md)
 * [User & Groups](tutorial/user_user_and_group.md)
 * [Navigation & Pages](tutorial/user_navigation.md)
