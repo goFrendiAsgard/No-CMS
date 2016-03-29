@@ -7,24 +7,34 @@ if (!defined('BASEPATH')) {
 function rrmdir($dir) {
     if (is_dir($dir)) {
         $files = scandir($dir);
-        foreach ($files as $file)
-            if ($file != "." && $file != "..") rrmdir("$dir/$file");
+        foreach ($files as $file){
+            if ($file != "." && $file != ".."){
+                rrmdir("$dir/$file");
+            }
+        }
+        @chmod($dir, 777);
         rmdir($dir);
     }
-    else if (file_exists($dir)) unlink($dir);
+    else if (file_exists($dir)){
+        @chmod($dir, 777);
+        unlink($dir);
+    }
 }
 
 function rcopy($src, $dst) {
-    if (file_exists ( $dst ))
+    if (file_exists ( $dst )){
+        @chmod($dst, 777);
         rrmdir ( $dst );
+    }
     if (is_dir ( $src )) {
         mkdir ( $dst );
         $files = scandir ( $src );
         foreach ( $files as $file )
             if ($file != "." && $file != "..")
                 rcopy ( "$src/$file", "$dst/$file" );
-    } else if (file_exists ( $src ))
+    } else if (file_exists ( $src )){
         copy ( $src, $dst );
+    }
 }
 
 class CMS_AutoUpdate_Model extends CMS_Model
@@ -553,12 +563,17 @@ class CMS_AutoUpdate_Model extends CMS_Model
                 'layout_id' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE),
                 'layout_name' => array('type' => 'VARCHAR', 'constraint' => '50', 'null' => FALSE),
                 'template' => array('type' => 'TEXT'),
+                '_created_at' => array('type' => 'TIMESTAMP', 'null' => true),
+                '_updated_at' => array('type' => 'TIMESTAMP', 'null' => true),
+                '_created_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
+                '_updated_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
         );
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('layout_id', TRUE);
         $this->dbforge->create_table(cms_table_name('main_layout'));
         // add new navigation
-        $this->cms_add_navigation('main_layout_management', 'Layout Management', 'main/layout_management', 4, 'main_management');
+        $this->cms_add_navigation('main_layout_management', 'Layout Management', 'main/layout_management', 4, 'main_management', NULL, NULL, NULL,
+        NULL, 'default-one-column');
         // add new privileges
         $verb_list = array('read', 'add', 'edit', 'delete', 'list', 'back_to_list', 'print', 'export');
         $entity_list = array('config', 'group', 'language', 'layout', 'navigation', 'privilege', 'quicklink', 'route', 'user', 'widget');
@@ -575,15 +590,17 @@ class CMS_AutoUpdate_Model extends CMS_Model
             );
         }
         // add some new fields for new standard
-        $fields = array(
-            '_created_at' => array('type' => 'TIMESTAMP', 'null' => true),
-            '_updated_at' => array('type' => 'TIMESTAMP', 'null' => true),
-            '_created_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
-            '_updated_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
-        );
-        $this->dbforge->add_column($this->cms_user_table_name(), $fields);
+        if(CMS_SUBSITE == ''){
+            $fields = array(
+                '_created_at' => array('type' => 'TIMESTAMP', 'null' => true),
+                '_updated_at' => array('type' => 'TIMESTAMP', 'null' => true),
+                '_created_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
+                '_updated_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
+            );
+            $this->dbforge->add_column($this->cms_user_table_name(), $fields);
+        }
         // add layouts
-        $this->db->insert_batch(array(
+        $this->db->insert_batch($this->t('main_layout'), array(
                 array('layout_name'=> 'default', 'template' => '<!DOCTYPE html>' . PHP_EOL . '<html lang="{{ language:language_alias }}">' . PHP_EOL . '    <head>' . PHP_EOL . '        <meta charset="utf-8">' . PHP_EOL . '        <title>{{ layout:title }}</title>' . PHP_EOL . '        {{ layout:metadata }}' . PHP_EOL . '        <link rel="icon" href="{{ site_favicon }}">' . PHP_EOL . '        <!-- Le styles -->' . PHP_EOL . '        {{ layout:css }}' . PHP_EOL . '        <style type="text/css">{{ widget_name:section_custom_style }}</style>' . PHP_EOL . '        <!-- Le fav and touch icons -->' . PHP_EOL . '        <link rel="shortcut icon" href="{{ site_favicon }}">        ' . PHP_EOL . '    </head>' . PHP_EOL . '    <body>' . PHP_EOL . '        {{ layout:js }}' . PHP_EOL . '        <script type="text/javascript">{{ widget_name:section_custom_script }}</script>' . PHP_EOL . '        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->' . PHP_EOL . '        <!--[if lt IE 9]>' . PHP_EOL . '            <script src="{{ BASE_URL }}assets/no_cms/js/html5.js"></script>' . PHP_EOL . '            <script src="{{ BASE_URL }}assets/no_cms/js/respond.min.js"></script>' . PHP_EOL . '        <![endif]-->' . PHP_EOL . '        ' . PHP_EOL . '        {{ widget_name:section_top_fix }}' . PHP_EOL . '        <div class="container">' . PHP_EOL . '            <div class="row-fluid">' . PHP_EOL . '                <div id="__section-banner">{{ widget_name:section_banner }}</div>' . PHP_EOL . '                <div>' . PHP_EOL . '                    <div id="__section-left-and-content" class="col-md-9">' . PHP_EOL . '                        <div>{{ navigation_path }}</div><hr />' . PHP_EOL . '                        <div>' . PHP_EOL . '                            <div id="__section-left" class="hidden">' . PHP_EOL . '                                {{ widget_name:section_left }}                                    ' . PHP_EOL . '                            </div>' . PHP_EOL . '                            <div id="__section-content" class="col-md-12">' . PHP_EOL . '                                {{ layout:body }}' . PHP_EOL . '                            </div>' . PHP_EOL . '                        </div>' . PHP_EOL . '                    </div><!--/#layout-content-->' . PHP_EOL . '                    <div id="__section-right" class="col-md-3">' . PHP_EOL . '                        {{ widget_name:section_right }}' . PHP_EOL . '                    </div><!--/#layout-widget-->' . PHP_EOL . '                </div>' . PHP_EOL . '            </div><!--/row-->' . PHP_EOL . '          <hr>' . PHP_EOL . '        </div><!--/.fluid-container-->' . PHP_EOL . '        <footer>{{ widget_name:section_bottom }}</footer>' . PHP_EOL . '        <script type="text/javascript">' . PHP_EOL . '            $(document).ready(function(){' . PHP_EOL . '                // if section-left is empty, remove it' . PHP_EOL . '                if($.trim($(\'#__section-left\').html()) == \'\'){' . PHP_EOL . '                    $(\'#__section-left\').remove();' . PHP_EOL . '                }else{' . PHP_EOL . '                    $(\'#__section-content\').removeClass(\'col-md-12\');' . PHP_EOL . '                    $(\'#__section-content\').addClass(\'col-md-9\');' . PHP_EOL . '                    $(\'#__section-left\').removeClass(\'hidden\');' . PHP_EOL . '                    $(\'#__section-left\').addClass(\'col-md-3\');' . PHP_EOL . '                }' . PHP_EOL . '                // if section-right is empty, remove it' . PHP_EOL . '                if($.trim($(\'#__section-right\').html()) == \'\'){' . PHP_EOL . '                    $(\'#__section-right\').remove();' . PHP_EOL . '                    $(\'#__section-left-and-content\').removeClass(\'col-md-9\');' . PHP_EOL . '                    $(\'#__section-left-and-content\').addClass(\'col-md-12\');' . PHP_EOL . '                }' . PHP_EOL . '                // if section-banner is empty, remove it' . PHP_EOL . '                if($.trim($(\'__section-banner\').html()) == \'\'){' . PHP_EOL . '                    $(\'__section-banner\').remove();' . PHP_EOL . '                }' . PHP_EOL . '            });' . PHP_EOL . '        </script>' . PHP_EOL . '    </body>' . PHP_EOL . '</html>' . PHP_EOL . ''),
                 array('layout_name'=> 'default-one-column', 'template' => '<!DOCTYPE html>' . PHP_EOL . '<html lang="{{ language:language_alias }}">' . PHP_EOL . '    <head>' . PHP_EOL . '        <meta charset="utf-8">' . PHP_EOL . '        <title>{{ layout:title }}</title>' . PHP_EOL . '        {{ layout:metadata }}' . PHP_EOL . '        <link rel="icon" href="{{ site_favicon }}">' . PHP_EOL . '        <!-- Le styles -->' . PHP_EOL . '        {{ layout:css }}' . PHP_EOL . '        <style type="text/css">{{ widget_name:section_custom_style }}</style>' . PHP_EOL . '        <!-- Le fav and touch icons -->' . PHP_EOL . '        <link rel="shortcut icon" href="{{ site_favicon }}">        ' . PHP_EOL . '    </head>' . PHP_EOL . '    <body>' . PHP_EOL . '        {{ layout:js }}' . PHP_EOL . '        <script type="text/javascript">{{ widget_name:section_custom_script }}</script>' . PHP_EOL . '        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->' . PHP_EOL . '        <!--[if lt IE 9]>' . PHP_EOL . '            <script src="{{ BASE_URL }}assets/no_cms/js/html5.js"></script>' . PHP_EOL . '            <script src="{{ BASE_URL }}assets/no_cms/js/respond.min.js"></script>' . PHP_EOL . '        <![endif]-->' . PHP_EOL . '        ' . PHP_EOL . '        {{ widget_name:section_top_fix }}' . PHP_EOL . '        <div class="container">' . PHP_EOL . '            <div class="row-fluid">' . PHP_EOL . '                <div id="__section-banner">{{ widget_name:section_banner }}</div>' . PHP_EOL . '                <div>' . PHP_EOL . '                    <div id="__section-left-and-content" class="col-md-12">' . PHP_EOL . '                        <div>{{ navigation_path }}</div><hr />' . PHP_EOL . '                        <div>' . PHP_EOL . '                            <div id="__section-content" class="col-md-12">' . PHP_EOL . '                                {{ layout:body }}' . PHP_EOL . '                            </div>' . PHP_EOL . '                        </div>' . PHP_EOL . '                    </div><!--/#layout-content-->' . PHP_EOL . '                </div>' . PHP_EOL . '            </div><!--/row-->' . PHP_EOL . '          <hr>' . PHP_EOL . '        </div><!--/.fluid-container-->' . PHP_EOL . '        <footer>{{ widget_name:section_bottom }}</footer>' . PHP_EOL . '        <script type="text/javascript">' . PHP_EOL . '            $(document).ready(function(){' . PHP_EOL . '                // if section-banner is empty, remove it' . PHP_EOL . '                if($.trim($(\'__section-banner\').html()) == \'\'){' . PHP_EOL . '                    $(\'__section-banner\').remove();' . PHP_EOL . '                }' . PHP_EOL . '            });' . PHP_EOL . '        </script>' . PHP_EOL . '    </body>' . PHP_EOL . '</html>' . PHP_EOL . ''),
                 array('layout_name'=> 'default-two-column', 'template' => '<!DOCTYPE html>' . PHP_EOL . '<html lang="{{ language:language_alias }}">' . PHP_EOL . '    <head>' . PHP_EOL . '        <meta charset="utf-8">' . PHP_EOL . '        <title>{{ layout:title }}</title>' . PHP_EOL . '        {{ layout:metadata }}' . PHP_EOL . '        <link rel="icon" href="{{ site_favicon }}">' . PHP_EOL . '        <!-- Le styles -->' . PHP_EOL . '        {{ layout:css }}' . PHP_EOL . '        <style type="text/css">{{ widget_name:section_custom_style }}</style>' . PHP_EOL . '        <!-- Le fav and touch icons -->' . PHP_EOL . '        <link rel="shortcut icon" href="{{ site_favicon }}">        ' . PHP_EOL . '    </head>' . PHP_EOL . '    <body>' . PHP_EOL . '        {{ layout:js }}' . PHP_EOL . '        <script type="text/javascript">{{ widget_name:section_custom_script }}</script>' . PHP_EOL . '        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->' . PHP_EOL . '        <!--[if lt IE 9]>' . PHP_EOL . '            <script src="{{ BASE_URL }}assets/no_cms/js/html5.js"></script>' . PHP_EOL . '            <script src="{{ BASE_URL }}assets/no_cms/js/respond.min.js"></script>' . PHP_EOL . '        <![endif]-->' . PHP_EOL . '        ' . PHP_EOL . '        {{ widget_name:section_top_fix }}' . PHP_EOL . '        <div class="container">' . PHP_EOL . '            <div class="row-fluid">' . PHP_EOL . '                <div id="__section-banner">{{ widget_name:section_banner }}</div>' . PHP_EOL . '                <div>' . PHP_EOL . '                    <div id="__section-left-and-content" class="col-md-9">' . PHP_EOL . '                        <div>{{ navigation_path }}</div><hr />' . PHP_EOL . '                        <div>' . PHP_EOL . '                            <div id="__section-content" class="col-md-12">' . PHP_EOL . '                                {{ layout:body }}' . PHP_EOL . '                            </div>' . PHP_EOL . '                        </div>' . PHP_EOL . '                    </div><!--/#layout-content-->' . PHP_EOL . '                    <div id="__section-right" class="col-md-3">' . PHP_EOL . '                        {{ widget_name:section_right }}' . PHP_EOL . '                    </div><!--/#layout-widget-->' . PHP_EOL . '                </div>' . PHP_EOL . '            </div><!--/row-->' . PHP_EOL . '          <hr>' . PHP_EOL . '        </div><!--/.fluid-container-->' . PHP_EOL . '        <footer>{{ widget_name:section_bottom }}</footer>' . PHP_EOL . '        <script type="text/javascript">' . PHP_EOL . '            $(document).ready(function(){' . PHP_EOL . '                // if section-banner is empty, remove it' . PHP_EOL . '                if($.trim($(\'__section-banner\').html()) == \'\'){' . PHP_EOL . '                    $(\'__section-banner\').remove();' . PHP_EOL . '                }' . PHP_EOL . '            });' . PHP_EOL . '        </script>' . PHP_EOL . '    </body>' . PHP_EOL . '</html>' . PHP_EOL . ''),
@@ -595,62 +612,62 @@ class CMS_AutoUpdate_Model extends CMS_Model
                 array('layout_name' => 'minimal', 'template' => '<!DOCTYPE html>' . PHP_EOL . '<html lang="{{ language:language_alias }}">' . PHP_EOL . '    <head>' . PHP_EOL . '        <meta charset="utf-8">' . PHP_EOL . '        <title>{{ layout:title }}</title>' . PHP_EOL . '        {{ layout:metadata }}' . PHP_EOL . '        <link rel="icon" href="{{ site_favicon }}">' . PHP_EOL . '        <!-- Le styles -->' . PHP_EOL . '        {{ layout:css }}' . PHP_EOL . '        <style type="text/css">{{ widget_name:section_custom_style }}</style>' . PHP_EOL . '        <!-- Le fav and touch icons -->' . PHP_EOL . '        <link rel="shortcut icon" href="{{ site_favicon }}">        ' . PHP_EOL . '    </head>' . PHP_EOL . '    <body>' . PHP_EOL . '        {{ layout:js }}' . PHP_EOL . '        <script type="text/javascript">{{ widget_name:section_custom_script }}</script>' . PHP_EOL . '        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->' . PHP_EOL . '        <!--[if lt IE 9]>' . PHP_EOL . '            <script src="{{ BASE_URL }}assets/no_cms/js/html5.js"></script>' . PHP_EOL . '            <script src="{{ BASE_URL }}assets/no_cms/js/respond.min.js"></script>' . PHP_EOL . '        <![endif]-->' . PHP_EOL . '        ' . PHP_EOL . '        {{ widget_name:section_top_fix }}' . PHP_EOL . '        <div class="container">{{ layout:body }}</div>' . PHP_EOL . '    </body>' . PHP_EOL . '</html>' . PHP_EOL . ''),
         ));
         // get all theme
-        $themes = array();
-        foreach($this->cms_get_theme_list() as $theme){
-            $theme = $theme['path'];
-            if($theme == 'neutral'){
-                continue;
-            }
-            // is css.php exists? no? copy from neutral
-            $css_php = FCPATH.'themes/'.$theme.'/views/css.php';
-            if(!file_exists($css_php)){
-                rcopy(FCPATH.'themes/neutral/views/css.php', $css_php);
-            }
-            // is js.php exists? no? copy from neutral
-            $js_php = FCPATH.'themes/'.$theme.'/views/js.php';
-            if(!file_exists($js_php)){
-                rcopy(FCPATH.'themes/neutral/views/js.php', $js_php);
-            }
-            // delete views/layouts and views/partials
-            if(file_exists(FCPATH.'themes/'.$theme.'/views/layouts')){
-                rrmdir(FCPATH.'themes/'.$theme.'/views/layouts');
-            }
-            if(file_exists(FCPATH.'themes/'.$theme.'/views/partials')){
-                rrmdir(FCPATH.'themes/'.$theme.'/views/partials');
-            }
-            // is assets/default exists? yes? move it
-            if(file_exists(FCPATH.'themes/'.$theme.'/assets/default')){
-                // ico folder
-                if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/ico')){
-                    rcopy(FCPATH.'themes/'.$theme.'/assets/default/ico', FCPATH.'themes/'.$theme.'/assets/ico');
+        if(CMS_SUBSITE == ''){
+            foreach($this->cms_get_theme_list() as $theme){
+                $theme = $theme['path'];
+                if($theme == 'neutral'){
+                    continue;
                 }
-                // images folder
-                if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/images')){
-                    rcopy(FCPATH.'themes/'.$theme.'/assets/default/images', FCPATH.'themes/'.$theme.'/assets/images');
+                // is css.php exists? no? copy from neutral
+                $css_php = FCPATH.'themes/'.$theme.'/views/css.php';
+                if(!file_exists($css_php)){
+                    rcopy(FCPATH.'themes/neutral/views/css.php', $css_php);
                 }
-                // css and js
-                if(!file_exists(FCPATH.'themes/'.$theme.'/assets/css')){
-                    mkdir(FCPATH.'themes/'.$theme.'/assets/css');
+                // is js.php exists? no? copy from neutral
+                $js_php = FCPATH.'themes/'.$theme.'/views/js.php';
+                if(!file_exists($js_php)){
+                    rcopy(FCPATH.'themes/neutral/views/js.php', $js_php);
                 }
-                if(!file_exists(FCPATH.'themes/'.$theme.'/assets/js')){
-                    mkdir(FCPATH.'themes/'.$theme.'/assets/js');
+                // delete views/layouts and views/partials
+                if(file_exists(FCPATH.'themes/'.$theme.'/views/layouts')){
+                    rrmdir(FCPATH.'themes/'.$theme.'/views/layouts');
                 }
-                // bootstrap.min.css
-                if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/bootstrap.min.css')){
-                    rcopy(FCPATH.'themes/'.$theme.'/assets/default/bootstrap.min.css', FCPATH.'themes/'.$theme.'/assets/css/bootstrap.min.css');
+                if(file_exists(FCPATH.'themes/'.$theme.'/views/partials')){
+                    rrmdir(FCPATH.'themes/'.$theme.'/views/partials');
                 }
-                // style.css
-                if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/style.css')){
-                    rcopy(FCPATH.'themes/'.$theme.'/assets/default/style.css', FCPATH.'themes/'.$theme.'/assets/css/style.css');
+                // is assets/default exists? yes? move it
+                if(file_exists(FCPATH.'themes/'.$theme.'/assets/default')){
+                    // ico folder
+                    if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/ico')){
+                        rcopy(FCPATH.'themes/'.$theme.'/assets/default/ico', FCPATH.'themes/'.$theme.'/assets/ico');
+                    }
+                    // images folder
+                    if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/images')){
+                        rcopy(FCPATH.'themes/'.$theme.'/assets/default/images', FCPATH.'themes/'.$theme.'/assets/images');
+                    }
+                    // css and js
+                    if(!file_exists(FCPATH.'themes/'.$theme.'/assets/css')){
+                        mkdir(FCPATH.'themes/'.$theme.'/assets/css');
+                    }
+                    if(!file_exists(FCPATH.'themes/'.$theme.'/assets/js')){
+                        mkdir(FCPATH.'themes/'.$theme.'/assets/js');
+                    }
+                    // bootstrap.min.css
+                    if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/bootstrap.min.css')){
+                        rcopy(FCPATH.'themes/'.$theme.'/assets/default/bootstrap.min.css', FCPATH.'themes/'.$theme.'/assets/css/bootstrap.min.css');
+                    }
+                    // style.css
+                    if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/style.css')){
+                        rcopy(FCPATH.'themes/'.$theme.'/assets/default/style.css', FCPATH.'themes/'.$theme.'/assets/css/style.css');
+                    }
+                    // style.css
+                    if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/script.js')){
+                        rcopy(FCPATH.'themes/'.$theme.'/assets/default/script.js', FCPATH.'themes/'.$theme.'/assets/js/script.js');
+                    }
+                    rrmdir(FCPATH.'themes/'.$theme.'/assets/default');
                 }
-                // style.css
-                if(file_exists(FCPATH.'themes/'.$theme.'/assets/default/script.js')){
-                    rcopy(FCPATH.'themes/'.$theme.'/assets/default/script.js', FCPATH.'themes/'.$theme.'/assets/js/script.js');
-                }
-                rrmdir(FCPATH.'themes/'.$theme.'/assets/default');
             }
         }
-
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)
