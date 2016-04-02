@@ -757,6 +757,7 @@ class Main extends CMS_Controller
     {
         $data = array(
             'user_real_name' => $this->cms_user_real_name(),
+            'user_name' => $this->cms_user_name(),
             'logout_lang' => $this->cms_lang('Logout'),
         );
         $this->view('main/main_widget_logout', $data);

@@ -763,7 +763,11 @@ class CMS_Model extends CI_Model
      */
     public function cms_user_real_name($real_name = null)
     {
-        return $this->cms_ci_session('cms_user_real_name', $real_name);
+        $user_real_name = $this->cms_ci_session('cms_user_real_name', $real_name);
+        if($user_real_name == ''){
+            $user_real_name = $this->cms_user_name();
+        }
+        return $user_real_name;
     }
 
     /**
@@ -3521,7 +3525,7 @@ class CMS_Model extends CI_Model
         }
 
         $value = $this->cms_unescape_template($value);
-        
+
         return $value;
     }
 

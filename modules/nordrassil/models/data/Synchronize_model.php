@@ -71,9 +71,62 @@ class Synchronize_model extends CMS_Model{
             return FALSE;
         }
         mysqli_select_db($this->connection, 'information_schema');
+
+        // import table based on information schema
         $this->create_table($project_id);
 
-        // get tables
+        // add foreign key (lookup based on )
+        $result = mysqli_query($this->connection,
+            'SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+            FROM KEY_COLUMN_USAGE
+            WHERE REFERENCED_TABLE_NAME IS NOT NULL AND REFERENCED_COLUMN_NAME IS NOT NULL AND TABLE_SCHEMA = \''.addslashes($this->db_schema).'\';');
+        while($row = mysqli_fetch_array($result)){
+            // get table
+            $table = $this->cms_get_record($this->t('table'), array(
+                'project_id' => $project_id,
+                'name' => $row['TABLE_NAME']
+            ));
+            // get referenced table
+            $referenced_table = $this->cms_get_record($this->t('table'), array(
+                'project_id' => $project_id,
+                'name' => $row['REFERENCED_TABLE_NAME']
+            ));
+            // table and referenced column should not be empty
+            if($table == NULL || $referenced_table == NULL){
+                continue;
+            }
+            // get column
+            $column = $this->cms_get_record($this->t('column'), array(
+                'table_id' => $table->table_id,
+                'name' => $row['COLUMN_NAME']
+            ));
+            // get lookup column
+            $lookup_column = $this->cms_get_record($this->t('column'), array(
+                'table_id' => $referenced_table->table_id,
+                'role !=' => 'primary'
+            ));
+            if($lookup_column == NULL){
+                // if no lookup column found, use referenced column
+                $lookup_column = $this->cms_get_record($this->t('column'), array(
+                    'table_id' => $referenced_table->table_id,
+                    'name' => $row['REFERENCED_COLUMN_NAME']
+                ));
+            }
+            // column and lookup_column should not be empty
+            if($column == NULL || $lookup_column == NULL){
+                continue;
+            }
+            $this->db->update($this->t('column'),
+                array(
+                    'role' => 'lookup',
+                    'lookup_table_id' => $referenced_table->table_id,
+                    'lookup_column_id' => $lookup_column->column_id,
+                ),
+                array('column_id' => $column->column_id)
+            );
+        }
+
+        // get tables for further process
         $t_query = $this->db->select('table_id, name, caption')
             ->from($this->t('table'))
             ->where('project_id', $project_id)
