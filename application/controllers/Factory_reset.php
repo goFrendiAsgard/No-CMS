@@ -9,11 +9,11 @@ class Factory_reset extends CMS_Controller{
         parent::__construct();
         // set input_user_name and input_password
         if(!array_key_exists('factory_user_name', $_SESSION)){
-            $_SESSION['factory_user_name'] = crypt('user_name', rand(0,100));
+            $_SESSION['factory_user_name'] = md5(crypt('user_name', rand(0,100)));
         }
         $this->input_user_name = $_SESSION['factory_user_name'];
         if(!array_key_exists('factory_password', $_SESSION)){
-            $_SESSION['factory_password'] = crypt('password', rand(0,100));
+            $_SESSION['factory_password'] = md5(crypt('password', rand(0,100)));
         }
         $this->input_password = $_SESSION['factory_password'];
     }

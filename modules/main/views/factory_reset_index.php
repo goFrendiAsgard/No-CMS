@@ -35,6 +35,9 @@
     p{
         text-align: justify;;
     }
+    .description{
+        font-size: small;
+    }
     .quote{
         font-style: italic;
     }
@@ -61,9 +64,9 @@
 
 <div class="div-left">
     <h1>Factory Reset</h1>
-    <p class="quote">"Even in the mist of darkness, there is a little spark of hope"</p>
+    <p class="quote">"Even in the midst of darkness, there is a little spark of hope"</p>
 
-    <p>Factory reset only reset some default layouts, widgets, navigations, privileges, and configurations. Factory reset will not delete your static pages, custom widgets, or blog posts. You might need to re-configure some things after factory reset. If you are okay with this, please let us know your super-admin's user name and password, and continue</p>
+    <p class="description">Factory reset only reset some default layouts, widgets, navigations, privileges, and configurations. Factory reset will not delete your static pages, custom widgets, or blog posts. You might need to re-configure some things after factory reset. If you are okay with this, please let us know your super-admin's user name and password, and continue</p>
 
     <?php if($user_name != ''){ ?>
         <p class="error"><b>Login Failed</b> You must login as Super Admin</p>
