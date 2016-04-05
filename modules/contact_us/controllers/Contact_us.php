@@ -67,6 +67,7 @@ class Contact_us extends CMS_Secure_Controller {
                     $data['name'] = $name;
                     $data['email'] = $email;
                     $data['content'] = html_entity_decode($content);
+                    $data['read'] = 0;
                     $this->db->insert($this->t('message'), $data);
                     $name = '';
                     $email = '';

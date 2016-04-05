@@ -1,83 +1,68 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_Label
+ * Description of Manage_label
  *
  * @author No-CMS Module Generator
  */
-class Manage_label extends CMS_Secure_Controller {
+class Manage_label extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
+    protected $TABLE_NAME = 'label';
+    protected $COLUMN_NAMES = array('name', 'status', 'ip', 'leech', 'useragent');
+    protected $PRIMARY_KEY = 'id';
+    protected $UNSET_JQUERY = TRUE;
+    protected $UNSET_READ = TRUE;
+    protected $UNSET_ADD = FALSE;
+    protected $UNSET_EDIT = FALSE;
+    protected $UNSET_DELETE = FALSE;
+    protected $UNSET_LIST = FALSE;
+    protected $UNSET_BACK_TO_LIST = FALSE;
+    protected $UNSET_PRINT = FALSE;
+    protected $UNSET_EXPORT = FALSE;
 
-    public function index(){
+    protected function make_crud(){
+        $crud = parent::make_crud();
+
         ////////////////////////////////////////////////////////////////////////
-        // initialize groceryCRUD
+        // HINT: You can access this variables after calling parent's make_crud method:
+        //      $this->CRUD
+        //      $this->STATE
+        //      $this->STATE_INFO
+        //      $this->PK_VALUE
         ////////////////////////////////////////////////////////////////////////
-        $crud = $this->new_crud();
-        // this is just for code completion
-        if (FALSE) $crud = new Extended_Grocery_CRUD();
-
-        // check state & get primary_key
-        $state = $crud->getState();
-        $state = $crud->getState();
-        $state_info = $crud->getStateInfo();
-        $primary_key = isset($state_info->primary_key)? $state_info->primary_key : NULL;
-        switch($state){
-            case 'unknown': break;
-            case 'list' : break;
-            case 'add' : break;
-            case 'edit' : break;
-            case 'delete' : break;
-            case 'insert' : break;
-            case 'update' : break;
-            case 'ajax_list' : break;
-            case 'ajax_list_info': break;
-            case 'insert_validation': break;
-            case 'update_validation': break;
-            case 'upload_file': break;
-            case 'delete_file': break;
-            case 'ajax_relation': break;
-            case 'ajax_relation_n_n': break;
-            case 'success': break;
-            case 'export': break;
-            case 'print': break;
-        }
-
-        // unset things
-        $crud->unset_jquery();
-        $crud->unset_read();
-        // $crud->unset_add();
-        // $crud->unset_edit();
-        // $crud->unset_list();
-        // $crud->unset_back_to_list();
-        // $crud->unset_print();
-        // $crud->unset_export();
-
-        // set model
-        // $crud->set_model($this->cms_module_path().'/grocerycrud_label_model');
-
-        // adjust groceryCRUD's language to No-CMS's language
-        $crud->set_language($this->cms_language());
-
-        // table name
-        $crud->set_table($this->t('label'));
 
         // set subject
         $crud->set_subject('Label');
 
-        // displayed columns on list
-        $crud->columns('name','status','ip','referer','user_agents');
-        // displayed columns on edit operation
-        $crud->edit_fields('name','status','ip','referer','user_agents');
-        // displayed columns on add operation
-        $crud->add_fields('name','status','ip','referer','user_agents');
+        // displayed columns on list, edit, and add, uncomment to use
+        $crud->columns('name', 'status');
+        //$crud->edit_fields('name', 'status', 'ip', 'leech', 'useragent', '_updated_by', '_updated_at');
+        //$crud->add_fields('name', 'status', 'ip', 'leech', 'useragent', '_created_by', '_created_at');
+        //$crud->set_read_fields('name', 'status', 'ip', 'leech', 'useragent');
 
         // caption of each columns
         $crud->display_as('name','Name');
         $crud->display_as('status','Status');
-        $crud->display_as('ip','IP Addresses');
-        $crud->display_as('referer','Referers');
-        $crud->display_as('user_agents','User Agents');
+        $crud->display_as('ip','IP List');
+        $crud->display_as('leech','Leech List');
+        $crud->display_as('useragent','User Agent List');
+
+        ////////////////////////////////////////////////////////////////////////
+        // This function will automatically detect every methods in this controller and link it to corresponding column
+        // if the name is match by convention. In other word, you don't need to manually define callback.
+        // Here is the convention (replace COLUMN_NAME with your column's name)
+        //
+        // * callback column (called when viewing the data as list):
+        //      public function _callback_column_COLUMN_NAME($value, $row){}
+        //
+        // * callback field (called when show add and edit form):
+        //      public function _callback_field_COLUMN_NAME($value, $primary_key){}
+        //
+        // * validation rule callback (field validation when adding/editing data)
+        //      public function COLUMN_NAME_validation($value){}
+        ////////////////////////////////////////////////////////////////////////
+        $this->build_default_callback();
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -85,7 +70,7 @@ class Manage_label extends CMS_Secure_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        $crud->required_fields('name', 'status');
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -93,7 +78,7 @@ class Manage_label extends CMS_Secure_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        $crud->unique_fields('name');
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -131,22 +116,34 @@ class Manage_label extends CMS_Secure_Controller {
 
 
         ////////////////////////////////////////////////////////////////////////
+        // HINT: Put Tabs (if needed)
+        // usage:
+        //     $crud->set_outside_tab($how_many_field_outside_tab);
+        //     $crud->set_tabs(array(
+        //        'First Tab Caption'  => $how_many_field_on_first_tab,
+        //        'Second Tab Caption' => $how_many_field_on_second_tab,
+        //     ));
+        ////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////
+        // HINT: Create custom search form (if needed)
+        // usage:
+        //     $crud->unset_default_search();
+        //     // Your custom form
+        //     $html =  '<div class="row container col-md-12" style="margin-bottom:10px;">';
+        //     $html .= '</div>';
+        //     $html .= '<input name="keyword" placeholder="Keyword" value="'.$keyword.'" /> &nbsp;';
+        //     $html .= '<input type="button" value="Search" class="crud_search btn btn-primary form-control" id="crud_search" />';
+        //     $crud->set_search_form_components($html);
+        ////////////////////////////////////////////////////////////////////////
+
+
+
+        ////////////////////////////////////////////////////////////////////////
         // HINT: Put callback here
         // (documentation: httm://www.grocerycrud.com/documentation/options_functions)
         ////////////////////////////////////////////////////////////////////////
-        $crud->callback_before_insert(array($this,'before_insert'));
-        $crud->callback_before_update(array($this,'before_update'));
-        $crud->callback_before_delete(array($this,'before_delete'));
-        $crud->callback_after_insert(array($this,'after_insert'));
-        $crud->callback_after_update(array($this,'after_update'));
-        $crud->callback_after_delete(array($this,'after_delete'));
 
-        $crud->callback_column('ip',array($this, 'callback_column_ip'));
-        $crud->callback_field('ip',array($this, 'callback_field_ip'));
-        $crud->callback_column('referer',array($this, 'callback_column_referer'));
-        $crud->callback_field('referer',array($this, 'callback_field_referer'));
-        $crud->callback_column('user_agents',array($this, 'callback_column_user_agents'));
-        $crud->callback_field('user_agents',array($this, 'callback_field_user_agents'));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put custom error message here
@@ -156,638 +153,233 @@ class Manage_label extends CMS_Secure_Controller {
         // $crud->set_lang_string('update_error',         'Cannot edit the record'  );
         // $crud->set_lang_string('insert_error',         'Cannot add the record'   );
 
-        ////////////////////////////////////////////////////////////////////////
+        $this->CRUD = $crud;
+        return $crud;
+    }
+
+    public function index(){
+        // create crud
+        $crud = $this->make_crud();
+
         // render
-        ////////////////////////////////////////////////////////////////////////
-        $output = $crud->render();
-        $this->view($this->cms_module_path().'/manage_label_view', $output,
-            $this->n('manage_label'));
+        $render = $this->render_crud($crud);
+        $output = $render['output'];
+        $config = $render['config'];
 
-    }
-
-    public function before_insert($post_array){
-        return $post_array;
-    }
-
-    public function after_insert($post_array, $primary_key){
-        $success = $this->after_insert_or_update($post_array, $primary_key);
-        return $success;
-    }
-
-    public function before_update($post_array, $primary_key){
-        return $post_array;
-    }
-
-    public function after_update($post_array, $primary_key){
-        $success = $this->after_insert_or_update($post_array, $primary_key);
-        return $success;
-    }
-
-    public function before_delete($primary_key){
-        // delete corresponding ip
-        $this->db->delete($this->t('ip'),
-              array('id'=>$primary_key));
-        // delete corresponding leech
-        $this->db->delete($this->t('leech'),
-              array('id'=>$primary_key));
-        // delete corresponding useragent
-        $this->db->delete($this->t('useragent'),
-              array('id'=>$primary_key));
-        return TRUE;
-    }
-
-    public function after_delete($primary_key){
-        return TRUE;
-    }
-
-    public function after_insert_or_update($post_array, $primary_key){
-
-        ////////////////////////////////////////////////////////////////////////
-        //
-        // SAVE CHANGES OF ip
-        //  * The ip data in in json format.
-        //  * It can be accessed via $_POST['md_real_field_ip_col']
-        //
-        ////////////////////////////////////////////////////////////////////////
-        $data = json_decode($this->input->post('md_real_field_ip_col'), TRUE);
-        $insert_records = $data['insert'];
-        $update_records = $data['update'];
-        $delete_records = $data['delete'];
-        $real_column_names = array('id', 'content');
-        $set_column_names = array();
-        $many_to_many_column_names = array();
-        $many_to_many_relation_tables = array();
-        $many_to_many_relation_table_columns = array();
-        $many_to_many_relation_selection_columns = array();
-        ////////////////////////////////////////////////////////////////////////
-        //  DELETED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($delete_records as $delete_record){
-            $detail_primary_key = $delete_record['primary_key'];
-            // delete many to many
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $where = array(
-                    $relation_column_name => $detail_primary_key
-                );
-                $this->db->delete($table_name, $where);
-            }
-            $this->db->delete($this->t('ip'),
-                 array('id'=>$detail_primary_key));
-        }
-        ////////////////////////////////////////////////////////////////////////
-        //  UPDATED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($update_records as $update_record){
-            $detail_primary_key = $update_record['primary_key'];
-            $data = array();
-            foreach($update_record['data'] as $key=>$value){
-                if(in_array($key, $set_column_names)){
-                    $data[$key] = implode(',', $value);
-                }else if(in_array($key, $real_column_names)){
-                    $data[$key] = $value;
-                }
-            }
-            $data['id_label'] = $primary_key;
-            $this->db->update($this->t('ip'),
-                 $data, array('id'=>$detail_primary_key));
-            /////////////////////////////////////////////////////////////////////////////
-            // Adjust Many-to-Many Fields of Updated Data
-            /////////////////////////////////////////////////////////////////////////////
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $key =     $many_to_many_column_names[$i];
-                $new_values = $update_record['data'][$key];
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
-                    ->from($table_name)
-                    ->where($relation_column_name, $detail_primary_key)
-                    ->get();
-                ////////////////////////////////////////////////////////////////
-                // delete everything which is not in new_values
-                ////////////////////////////////////////////////////////////////
-                $old_values = array();
-                foreach($query->result_array() as $row){
-                    $old_values = array();
-                    if(!in_array($row[$relation_selection_column_name], $new_values)){
-                        $where = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $row[$relation_selection_column_name]
-                        );
-                        $this->db->delete($table_name, $where);
-                    }else{
-                        $old_values[] = $row[$relation_selection_column_name];
-                    }
-                }
-                ////////////////////////////////////////////////////////////////
-                // add everything which is not in old_values but in new_values
-                ////////////////////////////////////////////////////////////////
-                foreach($new_values as $new_value){
-                    if(!in_array($new_value, $old_values)){
-                        $data = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $new_value
-                        );
-                        $this->db->insert($table_name, $data);
-                    }
-                }
-            }
-        }
-        ////////////////////////////////////////////////////////////////////////
-        //  INSERTED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($insert_records as $insert_record){
-            $data = array();
-            foreach($insert_record['data'] as $key=>$value){
-                if(in_array($key, $set_column_names)){
-                    $data[$key] = implode(',', $value);
-                }else if(in_array($key, $real_column_names)){
-                    $data[$key] = $value;
-                }
-            }
-            $data['id_label'] = $primary_key;
-            $this->db->insert($this->t('ip'), $data);
-            $detail_primary_key = $this->db->insert_id();
-            /////////////////////////////////////////////////////////////////////////////
-            // Adjust Many-to-Many Fields of Inserted Data
-            /////////////////////////////////////////////////////////////////////////////
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $key =     $many_to_many_column_names[$i];
-                $new_values = $insert_record['data'][$key];
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
-                    ->from($table_name)
-                    ->where($relation_column_name, $detail_primary_key)
-                    ->get();
-                ////////////////////////////////////////////////////////////////
-                // delete everything which is not in new_values
-                ////////////////////////////////////////////////////////////////
-                $old_values = array();
-                foreach($query->result_array() as $row){
-                    $old_values = array();
-                    if(!in_array($row[$relation_selection_column_name], $new_values)){
-                        $where = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $row[$relation_selection_column_name]
-                        );
-                        $this->db->delete($table_name, $where);
-                    }else{
-                        $old_values[] = $row[$relation_selection_column_name];
-                    }
-                }
-                ////////////////////////////////////////////////////////////////
-                // add everything which is not in old_values but in new_values
-                ////////////////////////////////////////////////////////////////
-                foreach($new_values as $new_value){
-                    if(!in_array($new_value, $old_values)){
-                        $data = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $new_value
-                        );
-                        $this->db->insert($table_name, $data);
-                    }
-                }
-            }
-        }
-
-
-        ////////////////////////////////////////////////////////////////////////
-        //
-        // SAVE CHANGES OF leech
-        //  * The leech data in in json format.
-        //  * It can be accessed via $_POST['md_real_field_referer_col']
-        //
-        ////////////////////////////////////////////////////////////////////////
-        $data = json_decode($this->input->post('md_real_field_referer_col'), TRUE);
-        $insert_records = $data['insert'];
-        $update_records = $data['update'];
-        $delete_records = $data['delete'];
-        $real_column_names = array('id', 'content');
-        $set_column_names = array();
-        $many_to_many_column_names = array();
-        $many_to_many_relation_tables = array();
-        $many_to_many_relation_table_columns = array();
-        $many_to_many_relation_selection_columns = array();
-        ////////////////////////////////////////////////////////////////////////
-        //  DELETED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($delete_records as $delete_record){
-            $detail_primary_key = $delete_record['primary_key'];
-            // delete many to many
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $where = array(
-                    $relation_column_name => $detail_primary_key
-                );
-                $this->db->delete($table_name, $where);
-            }
-            $this->db->delete($this->t('leech'),
-                 array('id'=>$detail_primary_key));
-        }
-        ////////////////////////////////////////////////////////////////////////
-        //  UPDATED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($update_records as $update_record){
-            $detail_primary_key = $update_record['primary_key'];
-            $data = array();
-            foreach($update_record['data'] as $key=>$value){
-                if(in_array($key, $set_column_names)){
-                    $data[$key] = implode(',', $value);
-                }else if(in_array($key, $real_column_names)){
-                    $data[$key] = $value;
-                }
-            }
-            $data['id_label'] = $primary_key;
-            $this->db->update($this->t('leech'),
-                 $data, array('id'=>$detail_primary_key));
-            /////////////////////////////////////////////////////////////////////////////
-            // Adjust Many-to-Many Fields of Updated Data
-            /////////////////////////////////////////////////////////////////////////////
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $key =     $many_to_many_column_names[$i];
-                $new_values = $update_record['data'][$key];
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
-                    ->from($table_name)
-                    ->where($relation_column_name, $detail_primary_key)
-                    ->get();
-                ////////////////////////////////////////////////////////////////
-                // delete everything which is not in new_values
-                ////////////////////////////////////////////////////////////////
-                $old_values = array();
-                foreach($query->result_array() as $row){
-                    $old_values = array();
-                    if(!in_array($row[$relation_selection_column_name], $new_values)){
-                        $where = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $row[$relation_selection_column_name]
-                        );
-                        $this->db->delete($table_name, $where);
-                    }else{
-                        $old_values[] = $row[$relation_selection_column_name];
-                    }
-                }
-                ////////////////////////////////////////////////////////////////
-                // add everything which is not in old_values but in new_values
-                ////////////////////////////////////////////////////////////////
-                foreach($new_values as $new_value){
-                    if(!in_array($new_value, $old_values)){
-                        $data = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $new_value
-                        );
-                        $this->db->insert($table_name, $data);
-                    }
-                }
-            }
-        }
-        ////////////////////////////////////////////////////////////////////////
-        //  INSERTED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($insert_records as $insert_record){
-            $data = array();
-            foreach($insert_record['data'] as $key=>$value){
-                if(in_array($key, $set_column_names)){
-                    $data[$key] = implode(',', $value);
-                }else if(in_array($key, $real_column_names)){
-                    $data[$key] = $value;
-                }
-            }
-            $data['id_label'] = $primary_key;
-            $this->db->insert($this->t('leech'), $data);
-            $detail_primary_key = $this->db->insert_id();
-            /////////////////////////////////////////////////////////////////////////////
-            // Adjust Many-to-Many Fields of Inserted Data
-            /////////////////////////////////////////////////////////////////////////////
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $key =     $many_to_many_column_names[$i];
-                $new_values = $insert_record['data'][$key];
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
-                    ->from($table_name)
-                    ->where($relation_column_name, $detail_primary_key)
-                    ->get();
-                ////////////////////////////////////////////////////////////////
-                // delete everything which is not in new_values
-                ////////////////////////////////////////////////////////////////
-                $old_values = array();
-                foreach($query->result_array() as $row){
-                    $old_values = array();
-                    if(!in_array($row[$relation_selection_column_name], $new_values)){
-                        $where = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $row[$relation_selection_column_name]
-                        );
-                        $this->db->delete($table_name, $where);
-                    }else{
-                        $old_values[] = $row[$relation_selection_column_name];
-                    }
-                }
-                ////////////////////////////////////////////////////////////////
-                // add everything which is not in old_values but in new_values
-                ////////////////////////////////////////////////////////////////
-                foreach($new_values as $new_value){
-                    if(!in_array($new_value, $old_values)){
-                        $data = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $new_value
-                        );
-                        $this->db->insert($table_name, $data);
-                    }
-                }
-            }
-        }
-
-
-        ////////////////////////////////////////////////////////////////////////
-        //
-        // SAVE CHANGES OF useragent
-        //  * The useragent data in in json format.
-        //  * It can be accessed via $_POST['md_real_field_user_agents_col']
-        //
-        ////////////////////////////////////////////////////////////////////////
-        $data = json_decode($this->input->post('md_real_field_user_agents_col'), TRUE);
-        $insert_records = $data['insert'];
-        $update_records = $data['update'];
-        $delete_records = $data['delete'];
-        $real_column_names = array('id', 'content');
-        $set_column_names = array();
-        $many_to_many_column_names = array();
-        $many_to_many_relation_tables = array();
-        $many_to_many_relation_table_columns = array();
-        $many_to_many_relation_selection_columns = array();
-        ////////////////////////////////////////////////////////////////////////
-        //  DELETED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($delete_records as $delete_record){
-            $detail_primary_key = $delete_record['primary_key'];
-            // delete many to many
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $where = array(
-                    $relation_column_name => $detail_primary_key
-                );
-                $this->db->delete($table_name, $where);
-            }
-            $this->db->delete($this->t('useragent'),
-                 array('id'=>$detail_primary_key));
-        }
-        ////////////////////////////////////////////////////////////////////////
-        //  UPDATED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($update_records as $update_record){
-            $detail_primary_key = $update_record['primary_key'];
-            $data = array();
-            foreach($update_record['data'] as $key=>$value){
-                if(in_array($key, $set_column_names)){
-                    $data[$key] = implode(',', $value);
-                }else if(in_array($key, $real_column_names)){
-                    $data[$key] = $value;
-                }
-            }
-            $data['id_label'] = $primary_key;
-            $this->db->update($this->t('useragent'),
-                 $data, array('id'=>$detail_primary_key));
-            /////////////////////////////////////////////////////////////////////////////
-            // Adjust Many-to-Many Fields of Updated Data
-            /////////////////////////////////////////////////////////////////////////////
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $key =     $many_to_many_column_names[$i];
-                $new_values = $update_record['data'][$key];
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
-                    ->from($table_name)
-                    ->where($relation_column_name, $detail_primary_key)
-                    ->get();
-                ////////////////////////////////////////////////////////////////
-                // delete everything which is not in new_values
-                ////////////////////////////////////////////////////////////////
-                $old_values = array();
-                foreach($query->result_array() as $row){
-                    $old_values = array();
-                    if(!in_array($row[$relation_selection_column_name], $new_values)){
-                        $where = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $row[$relation_selection_column_name]
-                        );
-                        $this->db->delete($table_name, $where);
-                    }else{
-                        $old_values[] = $row[$relation_selection_column_name];
-                    }
-                }
-                ////////////////////////////////////////////////////////////////
-                // add everything which is not in old_values but in new_values
-                ////////////////////////////////////////////////////////////////
-                foreach($new_values as $new_value){
-                    if(!in_array($new_value, $old_values)){
-                        $data = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $new_value
-                        );
-                        $this->db->insert($table_name, $data);
-                    }
-                }
-            }
-        }
-        ////////////////////////////////////////////////////////////////////////
-        //  INSERTED DATA
-        ////////////////////////////////////////////////////////////////////////
-        foreach($insert_records as $insert_record){
-            $data = array();
-            foreach($insert_record['data'] as $key=>$value){
-                if(in_array($key, $set_column_names)){
-                    $data[$key] = implode(',', $value);
-                }else if(in_array($key, $real_column_names)){
-                    $data[$key] = $value;
-                }
-            }
-            $data['id_label'] = $primary_key;
-            $this->db->insert($this->t('useragent'), $data);
-            $detail_primary_key = $this->db->insert_id();
-            /////////////////////////////////////////////////////////////////////////////
-            // Adjust Many-to-Many Fields of Inserted Data
-            /////////////////////////////////////////////////////////////////////////////
-            for($i=0; $i<count($many_to_many_column_names); $i++){
-                $key =     $many_to_many_column_names[$i];
-                $new_values = $insert_record['data'][$key];
-                $table_name = $this->t($many_to_many_relation_tables[$i]);
-                $relation_column_name = $many_to_many_relation_table_columns[$i];
-                $relation_selection_column_name = $many_to_many_relation_selection_columns[$i];
-                $query = $this->db->select($relation_column_name.','.$relation_selection_column_name)
-                    ->from($table_name)
-                    ->where($relation_column_name, $detail_primary_key)
-                    ->get();
-                ////////////////////////////////////////////////////////////////
-                // delete everything which is not in new_values
-                ////////////////////////////////////////////////////////////////
-                $old_values = array();
-                foreach($query->result_array() as $row){
-                    $old_values = array();
-                    if(!in_array($row[$relation_selection_column_name], $new_values)){
-                        $where = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $row[$relation_selection_column_name]
-                        );
-                        $this->db->delete($table_name, $where);
-                    }else{
-                        $old_values[] = $row[$relation_selection_column_name];
-                    }
-                }
-                ////////////////////////////////////////////////////////////////
-                // add everything which is not in old_values but in new_values
-                ////////////////////////////////////////////////////////////////
-                foreach($new_values as $new_value){
-                    if(!in_array($new_value, $old_values)){
-                        $data = array(
-                            $relation_column_name => $detail_primary_key,
-                            $relation_selection_column_name => $new_value
-                        );
-                        $this->db->insert($table_name, $data);
-                    }
-                }
-            }
-        }
-
-        return TRUE;
+        // show the view
+        $this->view($this->cms_module_path().'/Manage_label_view', $output,
+            $this->n('manage_label'), $config);
     }
 
 
     // returned on insert and edit
-    public function callback_field_ip($value, $primary_key){
-        $module_path = $this->cms_module_path();
-        $this->config->load('grocery_crud');
-        $date_format = $this->config->item('grocery_crud_date_format');
-
-        if(!isset($primary_key)) $primary_key = -1;
-        $query = $this->db->select('id, content')
-            ->from($this->t('ip'))
-            ->where('id_label', $primary_key)
-            ->get();
-        $result = $query->result_array();
-
-        // get options
-        $options = array();
-        $data = array(
-            'result' => $result,
-            'options' => $options,
-            'date_format' => $date_format,
-        );
+    public function _callback_field_ip($value, $primary_key){
+        // Options for detail table's column with SET type
+        $set_column_option_list = array();
+        // Options for detail table's column with ENUM type
+        $enum_column_option_list = array();
+        // Detail table's one-to-many columns configurations
+        $lookup_config_list = array();
+        // Detail table's many-to-many columns configurations
+        $many_to_many_config_list = array();
+        // Prepare the data by using defined configurations and options
+        $data = $this->_one_to_many_callback_field_data(
+                'ip', // DETAIL TABLE NAME
+                'id', // DETAIL PK NAME
+                'id_label', // DETAIL FK NAME
+                $primary_key, // CURRENT TABLE PK VALUE
+                $lookup_config_list, // LOOKUP CONFIGS
+                $many_to_many_config_list, // MANY TO MANY CONFIGS
+                $set_column_option_list, // SET OPTIONS
+                $enum_column_option_list // ENUM OPTIONS
+            );
+        // Parse the data to the view
         return $this->load->view($this->cms_module_path().'/field_label_ip',$data, TRUE);
     }
 
     // returned on view
-    public function callback_column_ip($value, $row){
-        $module_path = $this->cms_module_path();
-        $query = $this->db->select('id, content')
-            ->from($this->t('ip'))
-            ->where('id_label', $row->id)
-            ->get();
-        $num_row = $query->num_rows();
-        // show how many records
-        if($num_row>1){
-            return $num_row .' IP Lists';
-        }else if($num_row>0){
-            return $num_row .' IP List';
-        }else{
-            return 'No IP List';
-        }
+    public function _callback_column_ip($value, $row){
+        return $this->_humanized_record_count(
+                'ip', // DETAIL TABLE NAME
+                'id_label', // DETAIL FK NAME
+                $row->id, // CURRENT TABLE PK VALUE
+                array( // CAPTIONS
+                    'single_caption'    => 'Ip',
+                    'multiple_caption'  => 'Ips',
+                    'zero_caption'      => 'No Ip',
+                )
+            );
     }
 
+
     // returned on insert and edit
-    public function callback_field_referer($value, $primary_key){
-        $module_path = $this->cms_module_path();
-        $this->config->load('grocery_crud');
-        $date_format = $this->config->item('grocery_crud_date_format');
-
-        if(!isset($primary_key)) $primary_key = -1;
-        $query = $this->db->select('id, content')
-            ->from($this->t('leech'))
-            ->where('id_label', $primary_key)
-            ->get();
-        $result = $query->result_array();
-
-        // get options
-        $options = array();
-        $data = array(
-            'result' => $result,
-            'options' => $options,
-            'date_format' => $date_format,
-        );
-        return $this->load->view($this->cms_module_path().'/field_label_referer',$data, TRUE);
+    public function _callback_field_leech($value, $primary_key){
+        // Options for detail table's column with SET type
+        $set_column_option_list = array();
+        // Options for detail table's column with ENUM type
+        $enum_column_option_list = array();
+        // Detail table's one-to-many columns configurations
+        $lookup_config_list = array();
+        // Detail table's many-to-many columns configurations
+        $many_to_many_config_list = array();
+        // Prepare the data by using defined configurations and options
+        $data = $this->_one_to_many_callback_field_data(
+                'leech', // DETAIL TABLE NAME
+                'id', // DETAIL PK NAME
+                'id_label', // DETAIL FK NAME
+                $primary_key, // CURRENT TABLE PK VALUE
+                $lookup_config_list, // LOOKUP CONFIGS
+                $many_to_many_config_list, // MANY TO MANY CONFIGS
+                $set_column_option_list, // SET OPTIONS
+                $enum_column_option_list // ENUM OPTIONS
+            );
+        // Parse the data to the view
+        return $this->load->view($this->cms_module_path().'/field_label_leech',$data, TRUE);
     }
 
     // returned on view
-    public function callback_column_referer($value, $row){
-        $module_path = $this->cms_module_path();
-        $query = $this->db->select('id, content')
-            ->from($this->t('leech'))
-            ->where('id_label', $row->id)
-            ->get();
-        $num_row = $query->num_rows();
-        // show how many records
-        if($num_row>1){
-            return $num_row .' Referers';
-        }else if($num_row>0){
-            return $num_row .' Referer';
-        }else{
-            return 'No Referer';
-        }
+    public function _callback_column_leech($value, $row){
+        return $this->_humanized_record_count(
+                'leech', // DETAIL TABLE NAME
+                'id_label', // DETAIL FK NAME
+                $row->id, // CURRENT TABLE PK VALUE
+                array( // CAPTIONS
+                    'single_caption'    => 'Leech',
+                    'multiple_caption'  => 'Leechs',
+                    'zero_caption'      => 'No Leech',
+                )
+            );
     }
 
+
     // returned on insert and edit
-    public function callback_field_user_agents($value, $primary_key){
-        $module_path = $this->cms_module_path();
-        $this->config->load('grocery_crud');
-        $date_format = $this->config->item('grocery_crud_date_format');
-
-        if(!isset($primary_key)) $primary_key = -1;
-        $query = $this->db->select('id, content')
-            ->from($this->t('useragent'))
-            ->where('id_label', $primary_key)
-            ->get();
-        $result = $query->result_array();
-
-        // get options
-        $options = array();
-        $data = array(
-            'result' => $result,
-            'options' => $options,
-            'date_format' => $date_format,
-        );
-        return $this->load->view($this->cms_module_path().'/field_label_user_agents',$data, TRUE);
+    public function _callback_field_useragent($value, $primary_key){
+        // Options for detail table's column with SET type
+        $set_column_option_list = array();
+        // Options for detail table's column with ENUM type
+        $enum_column_option_list = array();
+        // Detail table's one-to-many columns configurations
+        $lookup_config_list = array();
+        // Detail table's many-to-many columns configurations
+        $many_to_many_config_list = array();
+        // Prepare the data by using defined configurations and options
+        $data = $this->_one_to_many_callback_field_data(
+                'useragent', // DETAIL TABLE NAME
+                'id', // DETAIL PK NAME
+                'id_label', // DETAIL FK NAME
+                $primary_key, // CURRENT TABLE PK VALUE
+                $lookup_config_list, // LOOKUP CONFIGS
+                $many_to_many_config_list, // MANY TO MANY CONFIGS
+                $set_column_option_list, // SET OPTIONS
+                $enum_column_option_list // ENUM OPTIONS
+            );
+        // Parse the data to the view
+        return $this->load->view($this->cms_module_path().'/field_label_useragent',$data, TRUE);
     }
 
     // returned on view
-    public function callback_column_user_agents($value, $row){
-        $module_path = $this->cms_module_path();
-        $query = $this->db->select('id, content')
-            ->from($this->t('useragent'))
-            ->where('id_label', $row->id)
-            ->get();
-        $num_row = $query->num_rows();
-        // show how many records
-        if($num_row>1){
-            return $num_row .' Useragents';
-        }else if($num_row>0){
-            return $num_row .' Useragent';
-        }else{
-            return 'No Useragent';
-        }
+    public function _callback_column_useragent($value, $row){
+        return $this->_humanized_record_count(
+                'useragent', // DETAIL TABLE NAME
+                'id_label', // DETAIL FK NAME
+                $row->id, // CURRENT TABLE PK VALUE
+                array( // CAPTIONS
+                    'single_caption'    => 'Useragent',
+                    'multiple_caption'  => 'Useragents',
+                    'zero_caption'      => 'No Useragent',
+                )
+            );
+    }
+
+
+    public function _after_insert_or_update($post_array, $primary_key){
+        // SAVE CHANGES OF ip
+        $data = json_decode($this->input->post('md_real_field_ip_col'), TRUE);
+        $this->_save_one_to_many(
+            'ip', // FIELD NAME
+            'ip', // DETAIL TABLE NAME
+            'id', // DETAIL PK NAME
+            'id_label', // DETAIL FK NAME
+            $primary_key, // PARENT PRIMARY KEY VALUE
+            $data, // DATA
+            $real_column_list=array('id', 'content'), // REAL DETAIL COLUMN NAMES
+            $set_column_list=array(), // SET DETAIL COLUMN NAMES
+            $many_to_many_config_list=array()
+        );
+
+        // SAVE CHANGES OF leech
+        $data = json_decode($this->input->post('md_real_field_leech_col'), TRUE);
+        $this->_save_one_to_many(
+            'leech', // FIELD NAME
+            'leech', // DETAIL TABLE NAME
+            'id', // DETAIL PK NAME
+            'id_label', // DETAIL FK NAME
+            $primary_key, // PARENT PRIMARY KEY VALUE
+            $data, // DATA
+            $real_column_list=array('id', 'content'), // REAL DETAIL COLUMN NAMES
+            $set_column_list=array(), // SET DETAIL COLUMN NAMES
+            $many_to_many_config_list=array()
+        );
+
+        // SAVE CHANGES OF useragent
+        $data = json_decode($this->input->post('md_real_field_useragent_col'), TRUE);
+        $this->_save_one_to_many(
+            'useragent', // FIELD NAME
+            'useragent', // DETAIL TABLE NAME
+            'id', // DETAIL PK NAME
+            'id_label', // DETAIL FK NAME
+            $primary_key, // PARENT PRIMARY KEY VALUE
+            $data, // DATA
+            $real_column_list=array('id', 'content'), // REAL DETAIL COLUMN NAMES
+            $set_column_list=array(), // SET DETAIL COLUMN NAMES
+            $many_to_many_config_list=array()
+        );
+
+        return TRUE;
+    }
+
+    public function _before_insert_or_update($post_array, $primary_key=NULL){
+        return $post_array;
+    }
+
+    public function _show_edit($primary_key){
+        return TRUE;
+    }
+
+    public function _show_delete($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_edit($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_delete($primary_key){
+        return TRUE;
+    }
+
+    public function _before_insert($post_array){
+        return $post_array;
+    }
+
+    public function _after_insert($post_array, $primary_key){
+        return TRUE;
+    }
+
+    public function _before_update($post_array, $primary_key){
+        return $post_array;
+    }
+
+    public function _after_update($post_array, $primary_key){
+        return TRUE;
+    }
+
+    public function _before_delete($primary_key){
+        return TRUE;
+    }
+
+    public function _after_delete($primary_key){
+        return TRUE;
     }
 
 }

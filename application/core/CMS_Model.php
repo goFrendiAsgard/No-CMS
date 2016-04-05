@@ -3873,7 +3873,7 @@ class CMS_Model extends CI_Model
             'bootstrap_glyph' => $bootstrap_glyph,
             'default_theme' => $default_theme,
             'default_layout' => $default_layout,
-            'notif_url' => $notif_url,
+            'notif_url' => $this->cms_parse_keyword($notif_url),
             'hidden' => $hidden,
             'static_content' => $static_content,
         );

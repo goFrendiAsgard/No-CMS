@@ -1,85 +1,76 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_Message
+ * Description of Manage_message
  *
  * @author No-CMS Module Generator
  */
-class Manage_message extends CMS_Secure_Controller {
+class Manage_message extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
+    protected $TABLE_NAME = 'message';
+    protected $COLUMN_NAMES = array('name', 'email', 'content', 'read');
+    protected $PRIMARY_KEY = 'id';
+    protected $UNSET_JQUERY = TRUE;
+    protected $UNSET_READ = FALSE;
+    protected $UNSET_ADD = TRUE;
+    protected $UNSET_EDIT = TRUE;
+    protected $UNSET_DELETE = FALSE;
+    protected $UNSET_LIST = FALSE;
+    protected $UNSET_BACK_TO_LIST = FALSE;
+    protected $UNSET_PRINT = FALSE;
+    protected $UNSET_EXPORT = FALSE;
 
-    public function index(){
-        ////////////////////////////////////////////////////////////////////////
-        // initialize groceryCRUD
-        ////////////////////////////////////////////////////////////////////////
-        $crud = $this->new_crud();
-        // this is just for code completion
-        if (FALSE) $crud = new Extended_Grocery_CRUD();
+    protected function make_crud(){
+        $crud = parent::make_crud();
 
-        // check state & get primary_key
-        $state = $crud->getState();
-        $state = $crud->getState();
-        $state_info = $crud->getStateInfo();
-        $primary_key = isset($state_info->primary_key)? $state_info->primary_key : NULL;
-        switch($state){
-            case 'unknown': break;
-            case 'list' : break;
-            case 'add' : break;
-            case 'edit' : break;
-            case 'delete' : break;
-            case 'insert' : break;
-            case 'update' : break;
-            case 'ajax_list' : break;
-            case 'ajax_list_info': break;
-            case 'insert_validation': break;
-            case 'update_validation': break;
-            case 'upload_file': break;
-            case 'delete_file': break;
-            case 'ajax_relation': break;
-            case 'ajax_relation_n_n': break;
-            case 'success': break;
-            case 'export': break;
-            case 'print': break;
+        $crud->order_by('id', 'desc');
+
+        ////////////////////////////////////////////////////////////////////////
+        // HINT: You can access this variables after calling parent's make_crud method:
+        //      $this->CRUD
+        //      $this->STATE
+        //      $this->STATE_INFO
+        //      $this->PK_VALUE
+        ////////////////////////////////////////////////////////////////////////
+
+        if($this->PK_VALUE !== NULL){
+            $this->db->update($this->t('message'),
+                array('read' => 1),
+                array('id' => $this->PK_VALUE)
+            );
         }
-
-        // unset things
-        $crud->unset_jquery();
-        // $crud->unset_read();
-        $crud->unset_add();
-        $crud->unset_edit();
-        // $crud->unset_list();
-        // $crud->unset_back_to_list();
-        // $crud->unset_print();
-        // $crud->unset_export();
-
-        // set model
-        // $crud->set_model($this->cms_module_path().'/grocerycrud_message_model');
-
-        // adjust groceryCRUD's language to No-CMS's language
-        $crud->set_language($this->cms_language());
-
-        // table name
-        $crud->set_table($this->t('message'));
 
         // set subject
         $crud->set_subject('Message');
 
-        // displayed columns on list
-        $crud->columns('name','email','content');
-        // displayed columns on edit operation
-        $crud->edit_fields('name','email','content');
-        // displayed columns on add operation
-        $crud->add_fields('name','email','content');
-        // displayed columns on read operation
-        $crud->set_read_fields('name','email','content');
-
-
+        // displayed columns on list, edit, and add, uncomment to use
+        $crud->columns('name', 'email', 'content');
+        //$crud->edit_fields('name', 'content', 'email', 'read', '_updated_by', '_updated_at');
+        //$crud->add_fields('name', 'content', 'email', 'read', '_created_by', '_created_at');
+        $crud->set_read_fields('name', 'email', 'content');
 
         // caption of each columns
         $crud->display_as('name','Name');
         $crud->display_as('content','Content');
         $crud->display_as('email','Email');
+        $crud->display_as('read','Read');
+
+        ////////////////////////////////////////////////////////////////////////
+        // This function will automatically detect every methods in this controller and link it to corresponding column
+        // if the name is match by convention. In other word, you don't need to manually define callback.
+        // Here is the convention (replace COLUMN_NAME with your column's name)
+        //
+        // * callback column (called when viewing the data as list):
+        //      public function _callback_column_COLUMN_NAME($value, $row){}
+        //
+        // * callback field (called when show add and edit form):
+        //      public function _callback_field_COLUMN_NAME($value, $primary_key){}
+        //
+        // * validation rule callback (field validation when adding/editing data)
+        //      public function COLUMN_NAME_validation($value){}
+        ////////////////////////////////////////////////////////////////////////
+        $this->build_default_callback();
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -87,7 +78,7 @@ class Manage_message extends CMS_Secure_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        $crud->required_fields('name', 'content', 'email');
+        $crud->required_fields('read');
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -103,7 +94,6 @@ class Manage_message extends CMS_Secure_Controller {
         // eg:
         //      $crud->set_rules( $field_name , $caption, $filter );
         ////////////////////////////////////////////////////////////////////////
-        $crud->set_rules('email', 'Email', 'valid_email');
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -129,7 +119,31 @@ class Manage_message extends CMS_Secure_Controller {
         // eg:
         //      $crud->field_type( $field_name , $field_type, $value  );
         ////////////////////////////////////////////////////////////////////////
+        $crud->field_type('read', 'hidden');
 
+
+
+        ////////////////////////////////////////////////////////////////////////
+        // HINT: Put Tabs (if needed)
+        // usage:
+        //     $crud->set_outside_tab($how_many_field_outside_tab);
+        //     $crud->set_tabs(array(
+        //        'First Tab Caption'  => $how_many_field_on_first_tab,
+        //        'Second Tab Caption' => $how_many_field_on_second_tab,
+        //     ));
+        ////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////
+        // HINT: Create custom search form (if needed)
+        // usage:
+        //     $crud->unset_default_search();
+        //     // Your custom form
+        //     $html =  '<div class="row container col-md-12" style="margin-bottom:10px;">';
+        //     $html .= '</div>';
+        //     $html .= '<input name="keyword" placeholder="Keyword" value="'.$keyword.'" /> &nbsp;';
+        //     $html .= '<input type="button" value="Search" class="crud_search btn btn-primary form-control" id="crud_search" />';
+        //     $crud->set_search_form_components($html);
+        ////////////////////////////////////////////////////////////////////////
 
 
 
@@ -137,19 +151,6 @@ class Manage_message extends CMS_Secure_Controller {
         // HINT: Put callback here
         // (documentation: httm://www.grocerycrud.com/documentation/options_functions)
         ////////////////////////////////////////////////////////////////////////
-        $crud->callback_before_insert(array($this,'before_insert'));
-        $crud->callback_before_update(array($this,'before_update'));
-        $crud->callback_before_delete(array($this,'before_delete'));
-        $crud->callback_after_insert(array($this,'after_insert'));
-        $crud->callback_after_update(array($this,'after_update'));
-        $crud->callback_after_delete(array($this,'after_delete'));
-
-        if($primary_key !== NULL){
-            $this->db->update($this->t('message'),
-                array('read' => 1),
-                array('id' => $primary_key)
-            );
-        }
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -160,47 +161,105 @@ class Manage_message extends CMS_Secure_Controller {
         // $crud->set_lang_string('update_error',         'Cannot edit the record'  );
         // $crud->set_lang_string('insert_error',         'Cannot add the record'   );
 
-        ////////////////////////////////////////////////////////////////////////
+        $this->CRUD = $crud;
+        return $crud;
+    }
+
+    public function index(){
+        // create crud
+        $crud = $this->make_crud();
+
         // render
-        ////////////////////////////////////////////////////////////////////////
-        $output = $crud->render();
-        $this->view($this->cms_module_path().'/manage_message_view', $output,
-            $this->n('manage_message'));
+        $render = $this->render_crud($crud);
+        $output = $render['output'];
+        $config = $render['config'];
 
+        // show the view
+        $this->view($this->cms_module_path().'/Manage_message_view', $output,
+            $this->n('manage_message'), $config);
     }
 
-    public function before_insert($post_array){
+    public function _callback_column_name($value, $row){
+        if(strlen($value) > 30){
+            $value = substr($value, 0, 27) . '...';
+        }
+        if($row->read == 0 || $row->read == NULL){
+            return '<b>'.$value.'</b>';
+        }else{
+            return $value;
+        }
+    }
+
+    public function _callback_column_email($value, $row){
+        if(strlen($value) > 30){
+            $value = substr($value, 0, 27) . '...';
+        }
+        if($row->read == 0 || $row->read == NULL){
+            return '<b>'.$value.'</b>';
+        }else{
+            return $value;
+        }
+    }
+
+    public function _callback_column_content($value, $row){
+        if(strlen($value) > 30){
+            $value = substr($value, 0, 27) . '...';
+        }
+        if($row->read == 0 || $row->read == NULL){
+            return '<b>'.$value.'</b>';
+        }else{
+            return $value;
+        }
+    }
+
+
+    public function _after_insert_or_update($post_array, $primary_key){
+
+        return TRUE;
+    }
+
+    public function _before_insert_or_update($post_array, $primary_key=NULL){
         return $post_array;
     }
 
-    public function after_insert($post_array, $primary_key){
-        $success = $this->after_insert_or_update($post_array, $primary_key);
-        return $success;
+    public function _show_edit($primary_key){
+        return TRUE;
     }
 
-    public function before_update($post_array, $primary_key){
+    public function _show_delete($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_edit($primary_key){
+        return TRUE;
+    }
+
+    public function _allow_delete($primary_key){
+        return TRUE;
+    }
+
+    public function _before_insert($post_array){
         return $post_array;
     }
 
-    public function after_update($post_array, $primary_key){
-        $success = $this->after_insert_or_update($post_array, $primary_key);
-        return $success;
-    }
-
-    public function before_delete($primary_key){
-
+    public function _after_insert($post_array, $primary_key){
         return TRUE;
     }
 
-    public function after_delete($primary_key){
+    public function _before_update($post_array, $primary_key){
+        return $post_array;
+    }
+
+    public function _after_update($post_array, $primary_key){
         return TRUE;
     }
 
-    public function after_insert_or_update($post_array, $primary_key){
-
+    public function _before_delete($primary_key){
         return TRUE;
     }
 
-
+    public function _after_delete($primary_key){
+        return TRUE;
+    }
 
 }

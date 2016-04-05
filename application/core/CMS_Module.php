@@ -274,7 +274,7 @@ class CMS_Module extends CMS_Controller
             // backup database
             $table_names = array();
             foreach ($this->TABLES as $table_name => $data) {
-                $table_names[] = $this->cms_complete_table_name($table_name);
+                $table_names[] = $this->t($table_name);
             }
             $this->backup_database($table_names);
             // remove all
@@ -396,7 +396,7 @@ class CMS_Module extends CMS_Controller
 
         // REMOVE TABLES
         foreach ($this->TABLES as $table_name => $data) {
-            $this->dbforge->drop_table($this->cms_complete_table_name($table_name), true);
+            $this->dbforge->drop_table($this->t($table_name), true);
         }
     }
 
@@ -425,6 +425,9 @@ class CMS_Module extends CMS_Controller
             $default_theme = $this->__get_from_array($navigation, 'default_theme', null);
             $default_layout = $this->__get_from_array($navigation, 'default_layout', null);
             $notif_url = $this->__get_from_array($navigation, 'notif_url', null);
+            if($notif_url === NULL){
+                $notif_url = $this->__get_from_array($navigation, 'notification_url', null);
+            }
             $static_content = $this->__get_from_array($navigation, 'static_content', '');
             $hidden = $this->__get_from_array($navigation, 'hidden', 0);
             if($hidden === NULL){
@@ -494,7 +497,9 @@ class CMS_Module extends CMS_Controller
 
         // CREATE TABLES
         foreach ($this->TABLES as $table_name => $data) {
-            if(!$this->db->table_exists($this->cms_complete_table_name($table_name))){
+            $table_exists = $this->db->table_exists($this->t($table_name));
+            // fields
+            if(!$table_exists){
                 $key = $this->__get_from_array($data, 'key', 'id');
                 $fields = $this->__get_from_array($data, 'fields', array());
                 foreach($fields as $field_name=>$type){
@@ -508,7 +513,7 @@ class CMS_Module extends CMS_Controller
                 $fields['_updated_by'] = $this->TYPE_INT_SIGNED_NULL;
                 $this->dbforge->add_field($fields);
                 $this->dbforge->add_key($key, true);
-                $this->dbforge->create_table($this->cms_complete_table_name($table_name));
+                $this->dbforge->create_table($this->t($table_name));
             }
         }
 
@@ -516,7 +521,7 @@ class CMS_Module extends CMS_Controller
 
             // INSERT DATA
             foreach ($this->DATA as $table_name => $data) {
-                $this->db->insert_batch($this->cms_complete_table_name($table_name), $data);
+                $this->db->insert_batch($this->t($table_name), $data);
             }
         }else{
             // TABLES
@@ -527,7 +532,12 @@ class CMS_Module extends CMS_Controller
                         $fields[$field_name] = $this->{$type};
                     }
                 }
-                $field_list = $this->db->list_fields($this->cms_complete_table_name($table_name));
+                $fields['_created_at'] = $this->TYPE_DATETIME_NULL;
+                $fields['_updated_at'] = $this->TYPE_DATETIME_NULL;
+                $fields['_created_by'] = $this->TYPE_INT_SIGNED_NULL;
+                $fields['_updated_by'] = $this->TYPE_INT_SIGNED_NULL;
+
+                $field_list = $this->db->list_fields($this->t($table_name));
                 // missing fields and modified field
                 $modified_fields = array();
                 $missing_fields = array();
@@ -539,20 +549,20 @@ class CMS_Module extends CMS_Controller
                     }
                 }
                 // add missing fields
-                $this->dbforge->add_column($this->cms_complete_table_name($table_name), $missing_fields);
+                $this->dbforge->add_column($this->t($table_name), $missing_fields);
                 // modify fields
-                $this->dbforge->modify_column($this->cms_complete_table_name($table_name), $modified_fields);
+                $this->dbforge->modify_column($this->t($table_name), $modified_fields);
             }
             // INSERT OR UPDATE DATA
             foreach ($this->DATA as $table_name => $data) {
                 $table = $this->__get_from_array($this->TABLES, $table_name, array());
-                $key = $this->__get_From_array($table, 'key', 'id');
+                $key = $this->__get_from_array($table, 'key', 'id');
                 foreach($data as $record){
                     // is the record already exists?
                     $found = FALSE;
                     if(array_key_exists($key, $record)){
                         $query = $this->db->select($key)
-                            ->from($this->cms_complete_table_name($table_name))
+                            ->from($this->t($table_name))
                             ->where($key, $record[$key])
                             ->get();
                         if($query->num_rows() > 0){
@@ -561,10 +571,10 @@ class CMS_Module extends CMS_Controller
                     }
                     // if record already exists, update. Else, insert
                     if($found){
-                        $this->db->update($this->cms_complete_table_name($table_name), $record,
+                        $this->db->update($this->t($table_name), $record,
                             array($key=>$record[$key]));
                     }else{
-                        $this->db->insert($this->cms_complete_table_name($table_name), $record);
+                        $this->db->insert($this->t($table_name), $record);
                     }
                 }
             }
