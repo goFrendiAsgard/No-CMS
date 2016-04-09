@@ -888,7 +888,6 @@
     });
     // textarea autosize later
     $("a[href='#tab3']").on('shown.bs.tab', function(e) {
-        console.log($("#tab3 .text-area-html"));
         $("#tab3 .text-area-html").ace({
             theme: "eclipse",
             lang: "html",
@@ -898,7 +897,6 @@
         $("#tab3 .text-area-section").each(function(){
             var decorator = $(this).data("ace");
             var aceInstance = decorator.editor.ace;
-            console.log(aceInstance);
             aceInstance.setFontSize("16px");
         });
     });
@@ -926,7 +924,6 @@
         $("#tab5 .text-area-section").each(function(){
             var decorator = $(this).data("ace");
             var aceInstance = decorator.editor.ace;
-            console.log(aceInstance);
             aceInstance.setFontSize("16px");
         });
     });

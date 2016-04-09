@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 echo $output;
 ?>
-<a class="btn btn-primary" href="{{ site_url }}{{ module_path }}/browse_city/index">{{ language:Show Front Page }}</a><script type="text/javascript">
+<script type="text/javascript">
     $(document).ajaxComplete(function () {
         //ADD COMPONENTS
         if($('.pDiv2 .delete_all_button').length == 0 && $('#flex1 tbody td .delete-row').length != 0) { //check if element already exists (for ajax refresh purposes)
@@ -31,7 +31,7 @@ echo $output;
             }
         });
         //send data to delete
-        $.post('{{ MODULE_SITE_URL }}Manage_city/delete_selection', { data: JSON.stringify(list) }, function(data) {
+        $.post('{{ MODULE_SITE_URL }}Manage_visitor_counter/delete_selection', { data: JSON.stringify(list) }, function(data) {
             for(i=0; i<list.length; i++){
                 //remove selection rows
                 $('#flex1 tr[rowId="' + list[i] + '"]').remove();

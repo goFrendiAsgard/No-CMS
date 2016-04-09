@@ -60,7 +60,7 @@ for($i=0; $i<count($slide_list); $i++){
     <a class="right carousel-control" href="#slideshow-widget" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
 </div>
 <script type ="text/javascript">
-    var SLIDE_PARRALAX = '<?php echo addslashes($slide_parralax); ?>' == 'TRUE';
+    var SLIDE_PARALLAX = '<?php echo addslashes($slide_parallax); ?>' == 'TRUE';
     var SLIDE_IMAGE_TOP = '<?php echo addslashes($slide_image_top); ?>';
     if(SLIDE_IMAGE_TOP == ''){
         SLIDE_IMAGE_TOP = 0;
@@ -72,7 +72,7 @@ for($i=0; $i<count($slide_list); $i++){
         $('#slideshow-widget').carousel('cycle');
         __load_slide();
 
-        if(SLIDE_PARRALAX){
+        if(SLIDE_PARALLAX){
             __adjust_image_top();
         }else{
             $('.carousel-inner .item-image').css('background-position', '0 ' + SLIDE_IMAGE_TOP + 'px');
@@ -81,7 +81,7 @@ for($i=0; $i<count($slide_list); $i++){
 
     $(window).resize(function(){__load_slide();});
 
-    if(SLIDE_PARRALAX){
+    if(SLIDE_PARALLAX){
         $(window).scroll(function(){
             __adjust_image_top();
         });

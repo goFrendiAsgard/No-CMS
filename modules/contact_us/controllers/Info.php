@@ -61,7 +61,7 @@ class Info extends CMS_Module {
     // GROUPS
     //////////////////////////////////////////////////////////////////////////////
     protected $GROUPS = array(
-            array('group_name' => 'New Contact Us Manager', 'description' => 'New Contact Us Manager'),
+            array('group_name' => 'Contact Us Manager', 'description' => 'New Contact Us Manager'),
         );
     protected $GROUP_NAVIGATIONS = array();
     protected $GROUP_BACKEND_NAVIGATIONS = array(
@@ -98,6 +98,7 @@ class Info extends CMS_Module {
     // ACTIVATION
     //////////////////////////////////////////////////////////////////////////////
     public function do_activate(){
+        $this->cms_add_quicklink($this->n('index'));
         // TODO : write your module activation script here
     }
 

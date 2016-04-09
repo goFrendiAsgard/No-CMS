@@ -9,7 +9,7 @@ class Static_accessories_widget extends CMS_Controller {
 
         $CONFIGURATION_LIST = array(
             'slide_height',
-            'slide_parralax',
+            'slide_parallax',
             'slide_hide_on_smallscreen',
             'slide_image_size',
             'slide_image_top',

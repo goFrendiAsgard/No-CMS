@@ -31,7 +31,7 @@ echo $output;
             }
         });
         //send data to delete
-        $.post('{{ MODULE_SITE_URL }}Manage_tourism/delete_selection', { data: JSON.stringify(list) }, function(data) {
+        $.post('{{ MODULE_SITE_URL }}Manage_article/delete_selection', { data: JSON.stringify(list) }, function(data) {
             for(i=0; i<list.length; i++){
                 //remove selection rows
                 $('#flex1 tr[rowId="' + list[i] + '"]').remove();
@@ -40,11 +40,39 @@ echo $output;
         });
     });
 
+    function adjust_publish_date(){
+        if($('#field-status option:selected').val() == 'scheduled'){
+            $('#publish_date_field_box').show();
+        }else{
+            $('#publish_date_field_box').hide();
+        }
+    }
+    $('#field-status').change(function(){
+        adjust_publish_date();
+    });
+
     $(document).ajaxComplete(function(){
         // TODO: Put your custom code here
     });
 
     $(document).ready(function(){
         // TODO: Put your custom code here
+        <?php
+            echo 'var title = \''.str_replace('\'', '\\\'', $title).'\';';
+            echo 'var content = \''.str_replace('\'', '\\\'',
+                str_replace(array("\r","\n"),"", $content)).'\';';
+            echo 'var status = \''.str_replace('\'', '\\\'', $status).'\';';
+        ?>
+        if(title != ''){
+            $('#field-article_title').html(title);
+        }
+        if(content != ''){
+            CKEDITOR.instances['field-content'].setData(content);
+        }
+        if(status != ''){
+            $('#field-status').val(status);
+            $('#field-status').trigger("chosen:updated");
+        }
+        adjust_publish_date();
     });
 </script>

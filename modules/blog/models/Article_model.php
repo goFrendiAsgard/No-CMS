@@ -308,7 +308,7 @@ class Article_model extends  CMS_Model{
                     'date' => date('Y-m-d H:i:s'),
                     'read' => 0,
                     'parent_comment_id'=>$parent_comment_id,
-                    'approved' => $this->cms_get_config($this->n('moderation')) == 'TRUE'? 0 : 1,
+                    'approved' => $this->cms_get_config('blog_moderation') == 'TRUE'? 0 : 1,
             );
             if(isset($cms_user_id) && ($cms_user_id>0)){
                 $data['author_user_id'] = $cms_user_id;
@@ -437,7 +437,7 @@ class Article_model extends  CMS_Model{
 
         $data = array();
         foreach($recordset as $row){
-            if($nested && $row->parent_comment_id != NULL){
+            if($nested && $row->parent_comment_id != ''){
                 continue;
             }
             $result = $this->preprocess_comment($row);

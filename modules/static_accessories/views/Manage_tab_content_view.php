@@ -31,7 +31,7 @@ echo $output;
             }
         });
         //send data to delete
-        $.post('{{ MODULE_SITE_URL }}Manage_job/delete_selection', { data: JSON.stringify(list) }, function(data) {
+        $.post('{{ MODULE_SITE_URL }}Manage_tab_content/delete_selection', { data: JSON.stringify(list) }, function(data) {
             for(i=0; i<list.length; i++){
                 //remove selection rows
                 $('#flex1 tr[rowId="' + list[i] + '"]').remove();

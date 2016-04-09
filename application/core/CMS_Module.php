@@ -409,7 +409,7 @@ class CMS_Module extends CMS_Controller
         foreach ($this->CONFIGS as $config) {
             $config_name = $this->__get_from_array($config, 'config_name', '');
             $value = $this->__get_from_array($config, 'value', '');
-            $this->cms_add_config($this->cms_complete_navigation_name($config_name), $value);
+            $this->cms_add_config($config_name, $value);
         }
 
         // ADD NAVIGATIONS & BACKEND NAVIGATIONS
@@ -424,19 +424,31 @@ class CMS_Module extends CMS_Controller
             $bootstrap_glyph = $this->__get_from_array($navigation, 'bootstrap_glyph', null);
             $default_theme = $this->__get_from_array($navigation, 'default_theme', null);
             $default_layout = $this->__get_from_array($navigation, 'default_layout', null);
-            $notif_url = $this->__get_from_array($navigation, 'notif_url', null);
-            if($notif_url === NULL){
-                $notif_url = $this->__get_from_array($navigation, 'notification_url', null);
-            }
+            $notif_url = $this->__get_from_array($navigation, 'notification_url', null);
             $static_content = $this->__get_from_array($navigation, 'static_content', '');
             $hidden = $this->__get_from_array($navigation, 'hidden', 0);
+            // ADJUSTMENTS
+            // if it is not notification_url, it might be notif_url
+            if($notif_url === NULL){
+                $notif_url = $this->__get_from_array($navigation, 'notif_url', null);
+            }
+            // if hidden is NULL, set it into 0
             if($hidden === NULL){
                 $hidden = 0;
+            }
+            // adjust url and notif url
+            $url = $this->cms_parse_keyword($url);
+            if(strpos($url, $module_path.'/') !== 0 && $url != $module_path){
+                $url = $module_path.'/'.$url;
+            }
+            $notif_url = $this->cms_parse_keyword($notif_url);
+            if(strpos($notif_url, $module_path.'/') !== 0 && $url != $module_path){
+                $notif_url = $module_path.'/'.$notif_url;
             }
             $this->cms_add_navigation(
                     $this->cms_complete_navigation_name($navigation_name),
                     $title,
-                    $module_path.'/'.$url,
+                    $url,
                     $authorization_id,
                     $parent_name,
                     $index,

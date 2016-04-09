@@ -107,10 +107,12 @@
         <textarea id="new_article_content" name="content" class="col-xs-12 form-control" placeholder="{{ language:Content }}" style="resize:none;"></textarea>
         <div class="form-inline pull-right" style="margin-top:20px;">
             <div class="form-group">
-                <select id="new_article_status" name="status" class="form-control">
-                    <option value="published" selected>Published</option>
-                    <option value="draft">Draft</option>
-                </select>
+                <?php if($can_publish){ ?>
+                    <select id="new_article_status" name="status" class="form-control">
+                        <option value="published" selected>Published</option>
+                        <option value="draft">Draft</option>
+                    </select>
+                <?php } ?>
             </div>
             <div class="form-group">&nbsp;
                 <button id="new_article_save" class="btn btn-primary">

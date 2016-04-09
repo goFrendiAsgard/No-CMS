@@ -32,7 +32,7 @@ class Blog extends CMS_Secure_Controller {
 
         $article_url = $article_url == ''? NULL : $article_url;
         $filter_category = $this->input->get('category') == NULL?
-            $filter_category : $this->input->get('category');        
+            $filter_category : $this->input->get('category');
         $filter_archive  = $this->input->get('archive')  == NULL?
             $filter_archive : $this->input->get('archive');
         $filter_keyword  = $this->input->get('keyword')  == NULL?
@@ -94,7 +94,7 @@ class Blog extends CMS_Secure_Controller {
 
         $first_data = NULL;
         if($article_url === NULL){
-            $first_data = Modules::run($module_path.'/blog/get_data', 
+            $first_data = Modules::run($module_path.'/blog/get_data',
                     $filter_keyword,
                     0,
                     $filter_category,
@@ -102,6 +102,7 @@ class Blog extends CMS_Secure_Controller {
                 );
         }
 
+        $user_group = $this->cms_user_group();
         $data = array(
             'submenu_screen' => $this->cms_submenu_screen($this->n('index')),
             'allow_navigate_backend' => $this->cms_allow_navigate($this->n('manage_article')),
@@ -128,6 +129,7 @@ class Blog extends CMS_Secure_Controller {
                 site_url($this->cms_module_path().'/index/'.$article_url.'/#comment-form') :
                 site_url($this->cms_module_path().'/blog/index/'.$article_url.'/#comment-form'),
             'category_route_exists' => $this->cms_route_key_exists('blog/category/(:any)'),
+            'can_publish' => in_array('Blog Editor', $user_group) || in_array('Blog Author', $user_group) || $this->cms_user_is_super_admin(),
         );
 
         $config = array();
@@ -193,9 +195,9 @@ class Blog extends CMS_Secure_Controller {
 
     public function quick_write(){
         if($this->cms_user_id() < 1){return NULL;}
-        $title   = $this->input->post('title'); 
+        $title   = $this->input->post('title');
         $content = $this->input->post('content');
-        $status  = $this->input->post('status');      
+        $status  = $this->input->post('status');
         // all data must valid
         if($title == '' || $content == '' || !in_array($status, array('published', 'draft'))){
             return NULL;

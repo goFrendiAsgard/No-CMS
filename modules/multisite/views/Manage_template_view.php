@@ -1,6 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-echo $output;
+    echo $output;
+    $asset = new Cms_asset();
+    $asset->add_cms_js("grocery_crud/js/jquery_plugins/jquery.chosen.min.js");
+    $asset->add_cms_js("nocms/js/jquery-ace/ace/ace.js");
+    $asset->add_cms_js("nocms/js/jquery-ace/ace/theme-eclipse.js");
+    $asset->add_cms_js("nocms/js/jquery-ace/ace/mode-html.js");
+    $asset->add_cms_js("nocms/js/jquery-ace/ace/mode-javascript.js");
+    $asset->add_cms_js("nocms/js/jquery-ace/jquery-ace.min.js");
+    echo $asset->compile_js();
 ?>
+<script type="text/javascript">
+</script>
 <script type="text/javascript">
     $(document).ajaxComplete(function () {
         //ADD COMPONENTS
@@ -31,7 +41,7 @@ echo $output;
             }
         });
         //send data to delete
-        $.post('{{ MODULE_SITE_URL }}Manage_commodity/delete_selection', { data: JSON.stringify(list) }, function(data) {
+        $.post('{{ MODULE_SITE_URL }}Manage_template/delete_selection', { data: JSON.stringify(list) }, function(data) {
             for(i=0; i<list.length; i++){
                 //remove selection rows
                 $('#flex1 tr[rowId="' + list[i] + '"]').remove();
@@ -46,5 +56,16 @@ echo $output;
 
     $(document).ready(function(){
         // TODO: Put your custom code here
+        $("#field-homepage").ace({
+            theme: "eclipse",
+            lang: "html",
+            width: "100%",
+            height: "200px"
+        });
+        $("#field-homepage").each(function(){
+            var decorator = $(this).data("ace");
+            var aceInstance = decorator.editor.ace;
+            aceInstance.setFontSize("16px");
+        });
     });
 </script>

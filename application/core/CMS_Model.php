@@ -1229,7 +1229,7 @@ class CMS_Model extends CI_Model
             if ($row->is_static == 1) {
                 $content = $row->static_content;
                 if (substr($row->widget_name, 0, 8) != 'section_' && $content != '' && $this->cms_editing_mode() && $this->cms_allow_navigate('main_widget_management')) {
-                    $content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/widget/edit/'.$row->widget_id.'">'.
+                    $content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/manage_widget/index/edit/'.$row->widget_id.'">'.
                         '<i class="glyphicon glyphicon-pencil"></i>'.
                         '</a></div>'.$content;
                 }
@@ -3865,7 +3865,7 @@ class CMS_Model extends CI_Model
         $data = array(
             'navigation_name' => $navigation_name,
             'title' => $title,
-            'url' => $url,
+            'url' => $this->cms_parse_keyword($url),
             'authorization_id' => $authorization_id,
             'index' => $index,
             'description' => $description,

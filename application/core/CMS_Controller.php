@@ -649,6 +649,7 @@ class CMS_Controller extends MX_Controller
         // privilege is absolute
         $this->cms_guard_page(null, $privilege_required);
 
+
         /*
          * CHECK IF THE PAGE IS STATIC  **********************************************************************************
          */
@@ -671,7 +672,7 @@ class CMS_Controller extends MX_Controller
                     $static_content = '';
                 }
                 if ($this->cms_editing_mode() && $this->cms_allow_navigate('main_navigation_management')) {
-                    $static_content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/navigation/edit/'.$row_navigation->navigation_id.'">'.
+                    $static_content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/manage_navigation/index/edit/'.$row_navigation->navigation_id.'">'.
                         '<i class="glyphicon glyphicon-pencil"></i> Edit Page'.
                         '</a></div>'.$static_content;
                 }
@@ -954,7 +955,7 @@ class CMS_Controller extends MX_Controller
         } else {
 
             // Profiler
-            if(!$this->input->is_ajax_request() && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
+            if(!$this->input->is_ajax_request() && ! $this->__cms_dynamic_widget && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
                 $this->output->enable_profiler(TRUE);
             }else{
                 $this->output->enable_profiler(FALSE);
@@ -962,12 +963,15 @@ class CMS_Controller extends MX_Controller
 
             echo $result;
             // load view introduce rendering problem if profiler activated, thus I use echo for now
-            //$this->cms_show_html($result);
+            // $this->cms_show_html($result);
         }
     }
 
     private function __cms_parse_widget_theme_path($html, $theme, $layout, $navigation_name, $recursive_level = 5)
     {
+        // take a note on the current state to ensure no endless-recursion
+        // i.e: when nothing changed, stop this.
+        $original_html = $html;
         if (strpos($html, '{{ ') !== false) {
             $html = $this->{$this->__cms_base_model_name}->cms_escape_template($html);
 
@@ -1000,7 +1004,7 @@ class CMS_Controller extends MX_Controller
 
             --$recursive_level;
             // recursively search widget inside widget
-            if (strpos($html, '{{ ') !== false && $recursive_level > 0) {
+            if (strpos($html, '{{ ') !== false && $recursive_level > 0 && $original_html != $html) {
                 $html = $this->__cms_parse_widget_theme_path($html, $theme, $layout, $navigation_name, $recursive_level);
             }
 

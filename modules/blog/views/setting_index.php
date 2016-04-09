@@ -1,4 +1,4 @@
-<?php 
+<?php
     if (!defined('BASEPATH')) exit('No direct script access allowed');
 
     if($changed){
@@ -9,20 +9,20 @@
 <form enctype="multipart/form-data" class="form form-horizontal" method="post">
 
     <div class="form-group">
-        <label class="control-label col-md-4" for="<?php echo $config_prefix; ?>moderation">Comment Moderation</label>
+        <label class="control-label col-md-4" for="blog_moderation">Comment Moderation</label>
         <div class="controls col-md-8">
-            <select id="<?php echo $config_prefix; ?>moderation" name="<?php echo $config_prefix; ?>moderation" class="form-control">
+            <select id="blog_moderation" name="blog_moderation" class="form-control">
                 <?php
                     $option_list = array(
-                        'TRUE'=>'Yes, all comment should be moderated', 
+                        'TRUE'=>'Yes, all comment should be moderated',
                         'FALSE'=>'No, all comment will be automatically published');
                     foreach($option_list as $key=>$value){
-                        $selected = $config_list[$config_prefix.'moderation'] == $key ? 'selected' : '';
+                        $selected = $config_list['blog_moderation'] == $key ? 'selected' : '';
                         echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
                     }
                 ?>
             </select>
-            <p class="help-block">Comment should be moderated or not</p>            
+            <p class="help-block">Comment should be moderated or not</p>
         </div>
     </div>
 

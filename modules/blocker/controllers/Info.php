@@ -61,15 +61,15 @@ class Info extends CMS_Module {
     // GROUPS
     //////////////////////////////////////////////////////////////////////////////
     protected $GROUPS = array(
-            array('group_name' => 'New Blocker Manager', 'description' => 'New Blocker Manager'),
+            array('group_name' => 'Blocker Manager', 'description' => 'New Blocker Manager'),
         );
     protected $GROUP_NAVIGATIONS = array();
     protected $GROUP_BACKEND_NAVIGATIONS = array(
-            'New Blocker Manager' => array('label')
+            'Blocker Manager' => array('label')
         );
     protected $GROUP_PRIVILEGES = array();
     protected $GROUP_BACKEND_PRIVILEGES = array(
-            'New Blocker Manager' => array(
+            'Blocker Manager' => array(
                 'label' => array('read', 'add', 'edit', 'delete', 'list', 'back_to_list', 'print', 'export'),
             )
         );

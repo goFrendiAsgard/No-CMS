@@ -1,16 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of Manage_country
+ * Description of Manage_subsite
  *
  * @author No-CMS Module Generator
  */
-class Manage_country extends CMS_CRUD_Controller {
+class Manage_subsite extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
-    protected $TABLE_NAME = 'country';
-    protected $COLUMN_NAMES = array('name');
-    protected $PRIMARY_KEY = 'country_id';
+    protected $TABLE_NAME = 'subsite';
+    protected $COLUMN_NAMES = array('name', 'use_subdomain', 'aliases', 'logo', 'description', 'modules', 'themes', 'user_id', 'active');
+    protected $PRIMARY_KEY = 'id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
     protected $UNSET_ADD = FALSE;
@@ -33,16 +33,24 @@ class Manage_country extends CMS_CRUD_Controller {
         ////////////////////////////////////////////////////////////////////////
 
         // set subject
-        $crud->set_subject('Country');
+        $crud->set_subject('Subsite');
 
         // displayed columns on list, edit, and add, uncomment to use
-        //$crud->columns('name');
-        //$crud->edit_fields('name', '_updated_by', '_updated_at');
-        //$crud->add_fields('name', '_created_by', '_created_at');
-        //$crud->set_read_fields('name');
+        //$crud->columns('name', 'use_subdomain', 'aliases', 'logo', 'description', 'modules', 'themes', 'user_id', 'active');
+        //$crud->edit_fields('name', 'use_subdomain', 'aliases', 'logo', 'description', 'modules', 'themes', 'user_id', 'active', '_updated_by', '_updated_at');
+        //$crud->add_fields('name', 'use_subdomain', 'aliases', 'logo', 'description', 'modules', 'themes', 'user_id', 'active', '_created_by', '_created_at');
+        //$crud->set_read_fields('name', 'use_subdomain', 'aliases', 'logo', 'description', 'modules', 'themes', 'user_id', 'active');
 
         // caption of each columns
         $crud->display_as('name','Name');
+        $crud->display_as('use_subdomain','Use Subdomain');
+        $crud->display_as('aliases','Aliases');
+        $crud->display_as('logo','Logo');
+        $crud->display_as('description','Description');
+        $crud->display_as('modules','Modules');
+        $crud->display_as('themes','Themes');
+        $crud->display_as('user_id','User Id');
+        $crud->display_as('active','Active');
 
         ////////////////////////////////////////////////////////////////////////
         // This function will automatically detect every methods in this controller and link it to corresponding column
@@ -66,7 +74,7 @@ class Manage_country extends CMS_CRUD_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        $crud->required_fields('name');
+        
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -74,7 +82,7 @@ class Manage_country extends CMS_CRUD_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        $crud->unique_fields('name');
+        
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -163,8 +171,8 @@ class Manage_country extends CMS_CRUD_Controller {
         $config = $render['config'];
 
         // show the view
-        $this->view($this->cms_module_path().'/Manage_country_view', $output,
-            $this->n('manage_country'), $config);
+        $this->view($this->cms_module_path().'/Manage_subsite_view', $output,
+            $this->n('manage_subsite'), $config);
     }
 
 
