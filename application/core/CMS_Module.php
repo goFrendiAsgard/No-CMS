@@ -264,7 +264,6 @@ class CMS_Module extends CMS_Controller
                 $result['message'][] = 'Dependency error '.br().'Please deactivate these module first:'.ul($this->children);
                 $dependencies_error = true;
                 $result['success'] = false;
-                break;
             }
         }
 

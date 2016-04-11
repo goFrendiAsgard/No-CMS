@@ -62,7 +62,8 @@ class Installer extends MX_Controller{
     }
 
     public function index(){
-        $this->load->view('installer/installer_index');
+        $data = array('php_version' => phpversion());
+        $this->load->view('installer/installer_index', $data);
     }
 
     public function install(){
