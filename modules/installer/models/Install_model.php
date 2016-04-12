@@ -1564,96 +1564,88 @@ class Install_model extends CI_Model{
     }
 
     public function install_modules(){
-        if (in_array('curl', get_loaded_extensions())) {
-            if(count($this->modules) == 0){
-                $modules = array('blog','contact_us','static_accessories');
-                /*
-                if(!$this->is_subsite){
-                    $modules[] = 'teldrassil';
-                    $modules[] = 'multisite';
-                    $modules[] = 'nordrassil';
-                }*/
-            }else{
-                $modules = $this->modules;
-            }
+        if(count($this->modules) == 0){
+            $modules = array('blog','contact_us','static_accessories');
+        }else{
+            $modules = $this->modules;
+        }
 
-            // determine user table name
-            $user_table_name = 'main_user';
+        // determine user table name
+        $user_table_name = 'main_user';
+        if($this->is_subsite){
+            include(APPPATH.'config/main/cms_config.php');
+            $prefix = $config['__cms_table_prefix'];
+        }else{
+            $prefix = $this->db_table_prefix;
+        }
+        if(!trim($prefix) == ''){
+            $user_table_name = $prefix.'_'.$user_table_name;
+        }
+        // get encrypted password as bypass
+        $bypass = '';
+        $query = $this->db->select('password')
+            ->from($user_table_name)
+            ->where('user_id', 1)
+            ->get();
+        if($query->num_rows()>0){
+            $row = $query->row();
+            $bypass = $row->password;
+        }
+
+        // call the controller
+        if($bypass != ''){
             if($this->is_subsite){
-                include(APPPATH.'config/main/cms_config.php');
-                $prefix = $config['__cms_table_prefix'];
-            }else{
-                $prefix = $this->db_table_prefix;
+                // for subsite, we should override table prefix etc
+                define('CMS_OVERRIDDEN_SUBSITE', $this->subsite);
             }
-            if(!trim($prefix) == ''){
-                $user_table_name = $prefix.'_'.$user_table_name;
-            }
-            // get encrypted password as bypass
-            $bypass = '';
-            $query = $this->db->select('password')
-                ->from($user_table_name)
-                ->where('user_id', 1)
-                ->get();
-            if($query->num_rows()>0){
-                $row = $query->row();
-                $bypass = $row->password;
-            }
-
-            // call the controller
-            if($bypass != ''){
-                if($this->is_subsite){
-                    // for subsite, we should override table prefix etc
-                    define('CMS_OVERRIDDEN_SUBSITE', $this->subsite);
-                }
-                $executed_controllers = array();
-                foreach($modules as $module){
-                    if(file_exists(FCPATH.'modules/'.$module.'/description.txt')){
-                        $json         = file_get_contents(FCPATH.'modules/'.$module.'/description.txt');
-                        $module_info  = @json_decode($json, true);
-                        $module_info  = $module_info === NULL? array() : $module_info;
-                        if(is_array($module_info) && array_key_exists('activate', $module_info)){
-                            $url = trim($module_info['activate'],'/');
-                            $response = '';
-                            // subsite just run the module, it's faster
-                            $url_part = explode('/', $url);
-                            $controller_name = ucfirst($url_part[0]);
-                            $new_controller_name = $controller_name.'_'.md5($module);
-                            $controller_file = FCPATH.'modules/'.$module.'/controllers/'.$controller_name.'.php';
-                            $new_controller_file = FCPATH.'modules/'.$module.'/controllers/'.$new_controller_name.'.php';
-                            if(!file_exists($new_controller_file) || date('YmdHis',filemtime($new_controller_file)) <= date('YmdHis',filemtime($controller_file))){
-                                $content = file_get_contents($controller_file);
-                                $content = preg_replace('/class( *)'.$controller_name.'/', 'class '.$new_controller_name, $content);
-                                file_put_contents($new_controller_file, $content);
+            $executed_controllers = array();
+            foreach($modules as $module){
+                if(file_exists(FCPATH.'modules/'.$module.'/description.txt')){
+                    $json         = file_get_contents(FCPATH.'modules/'.$module.'/description.txt');
+                    $module_info  = @json_decode($json, true);
+                    $module_info  = $module_info === NULL? array() : $module_info;
+                    if(is_array($module_info) && array_key_exists('activate', $module_info)){
+                        $url = trim($module_info['activate'],'/');
+                        $response = '';
+                        // subsite just run the module, it's faster
+                        $url_part = explode('/', $url);
+                        $controller_name = ucfirst($url_part[0]);
+                        $new_controller_name = $controller_name.'_'.md5($module);
+                        $controller_file = FCPATH.'modules/'.$module.'/controllers/'.$controller_name.'.php';
+                        $new_controller_file = FCPATH.'modules/'.$module.'/controllers/'.$new_controller_name.'.php';
+                        if(!file_exists($new_controller_file) || date('YmdHis',filemtime($new_controller_file)) <= date('YmdHis',filemtime($controller_file))){
+                            $content = file_get_contents($controller_file);
+                            $content = preg_replace('/class( *)'.$controller_name.'/', 'class '.$new_controller_name, $content);
+                            file_put_contents($new_controller_file, $content);
+                        }
+                        $url_part[0] = strtolower($new_controller_name);
+                        $new_url = implode('/', $url_part);
+                        $response = Modules::run($module.'/'.$new_url, $bypass);
+                        // look if it is succeed or failed
+                        $success = FALSE;
+                        if($response != ''){
+                            $json = @json_decode($response, TRUE);
+                            if(array_key_exists('success', $json) && $json['success']){
+                                $success = TRUE;
                             }
-                            $url_part[0] = strtolower($new_controller_name);
-                            $new_url = implode('/', $url_part);
-                            $response = Modules::run($module.'/'.$new_url, $bypass);
-                            // look if it is succeed or failed
-                            $success = FALSE;
-                            if($response != ''){
-                                $json = @json_decode($response, TRUE);
-                                if(array_key_exists('success', $json) && $json['success']){
-                                    $success = TRUE;
-                                }
-                            }
-                            if(!$success){
-                                log_message('error', 'Invalid response when installing module.'.PHP_EOL.
-                                    '    URL : '.$module.'/'.$url.PHP_EOL.
-                                    '    response : '.print_r($response, TRUE));
-                            }
-                            // keep it clean for non-subsite
-                            if(!$this->is_subsite){
-                                unlink($new_controller_file);
-                            }
+                        }
+                        if(!$success){
+                            log_message('error', 'Invalid response when installing module.'.PHP_EOL.
+                                '    URL : '.$module.'/'.$url.PHP_EOL.
+                                '    response : '.print_r($response, TRUE));
+                        }
+                        // keep it clean for non-subsite
+                        if(!$this->is_subsite){
+                            unlink($new_controller_file);
                         }
                     }
                 }
-                if($this->is_subsite){
-                    // put the overridden subsite back to normal
-                    define('CMS_RESET_OVERRIDDEN_SUBSITE', TRUE);
-                }
-                return TRUE;
             }
+            if($this->is_subsite){
+                // put the overridden subsite back to normal
+                define('CMS_RESET_OVERRIDDEN_SUBSITE', TRUE);
+            }
+            return TRUE;
         }
         return FALSE;
     }

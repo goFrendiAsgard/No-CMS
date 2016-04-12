@@ -427,6 +427,7 @@ class CMS_AutoUpdate_Model extends CMS_Model
     {
         $fields = array(
                 'description' => array(
+                        'type' => 'TEXT',
                         'null' => TRUE,
                     ),
             );
@@ -437,6 +438,7 @@ class CMS_AutoUpdate_Model extends CMS_Model
     {
         $fields = array(
                 'config_name' => array(
+                        'type' => 'varchar',
                         'constraint' => 100,
                     ),
             );
