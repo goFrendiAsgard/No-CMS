@@ -14,7 +14,7 @@ class Info extends CMS_Module {
             array(
                 'navigation_name'   => 'index',
                 'url'               => 'static_accessories',
-                'authorization_id'  => PRIV_EVERYONE,
+                'authorization_id'  => PRIV_AUTHORIZED,
                 'default_layout'    => NULL,
                 'title'             => 'Static Accessories',
                 'parent_name'       => 'main_management',

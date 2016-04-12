@@ -19,7 +19,7 @@ for($i=0; $i<count($result); $i++){
     $contents .= '<p class="description">'.$record->description.'</p>';
     $contents .= '<p>';
     $contents .= '<a href="'.$subsite_url.'" class="btn btn-primary">Go To Site</a>';
-    if($allow_navigate_backend && $record->allow_edit){
+    if($allow_navigate_backend || $record->allow_edit){
         $contents .= '&nbsp;<a href="'.$edit_url.'/'.$record->name.'" class="btn btn-default"><i class="glyphicon glyphicon-pencil"></i></a>';
     }
     if($is_admin){

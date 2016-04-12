@@ -53,11 +53,11 @@ class Multisite extends CMS_Secure_Controller {
     }
 
     public function edit($site_name){
-        $this->cms_guard_page($this->n('index'), 'modify_subsite');
+        $this->cms_guard_page($this->n('index'));
         $this->load->model($this->cms_module_path().'/subsite_model');
         $is_super_admin = $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id());
         // don't edit if not allowed
-        if(!$is_super_admin){
+        if(!$is_super_admin && !$this->cms_have_privilege('modify_subsite')){
             $not_allowed = TRUE;
             $query = $this->db->select('user_id')
                 ->from($this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite'))
@@ -164,7 +164,8 @@ class Multisite extends CMS_Secure_Controller {
             'active' => $subsite->active,
         );
         // show
-        $config = array('privileges'=>array('modify_subsite'));
+        //$config = array('privileges'=>array('modify_subsite'));
+        $config = array();
         $this->view($this->cms_module_path().'/multisite_edit', $data,
             $this->n('index'), $config);
     }

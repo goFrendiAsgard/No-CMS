@@ -40,12 +40,11 @@ Git Commands
         git  reset --hard
 
 
-HOW TO MAKE NO-CMS 
+HOW TO MAKE NO-CMS
 ===================
 
 * Ingredients:
-    - CodeIgniter development branch: https://github.com/EllisLab/CodeIgniter/tree/fb2ac41b6c914fd55b539337e381860bfcc2cf7b
-    - Phil Sturgeon Template: https://github.com/philsturgeon/codeigniter-template
+    - CodeIgniter 3.0.6
     - HMVC: https://bitbucket.org/wiredesignz/codeigniter-modular-extensions-hmvc/src
     - GroceryCRUD: http://www.grocerycrud.com/downloads
     - Phil Sturgeon unzip library: https://github.com/philsturgeon/codeigniter-unzip
@@ -97,7 +96,7 @@ HOW TO MAKE NO-CMS
     - Download jquery min.map (adjust with the one used by groceryCRUD, in current case 1.10.2, from http://jquery.com/download/) and put it on `/assets/grocery_crud/js`
     - Download newest CKEditor, replace groceryCRUD's CKEditor with that one
     - Rename `/assets/kcfinder/config.php` into `/assets/kcfinder/config-ori.php`
-    - Rename `/assets/grocery_crud/texteditor/ckeditor/config.js` into `/assets/grocery_crud/texteditor/ckeditor/config-ori.js` 
+    - Rename `/assets/grocery_crud/texteditor/ckeditor/config.js` into `/assets/grocery_crud/texteditor/ckeditor/config-ori.js`
     - Modify `/assets/kcfinder/core/uploader.php`
 
 ```php

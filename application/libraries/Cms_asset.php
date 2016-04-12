@@ -91,9 +91,9 @@ class Cms_asset
     }
 
     private function parse_path($path){
-        $this->ci->load->model('No_CMS_Model');
+        $this->ci->load->model('no_cms_model');
         $used_theme = $this->ci->session->userdata('__cms_used_theme');
-        $path = $this->ci->No_CMS_Model->cms_parse_keyword($path);
+        $path = $this->ci->no_cms_model->cms_parse_keyword($path);
         return str_ireplace('{{ used_theme }}', $used_theme, $path);
     }
 

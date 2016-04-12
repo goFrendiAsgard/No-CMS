@@ -1,7 +1,4 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-if(!isset($_SESSION)){
-    session_start();
-}
 class Install_model extends CI_Model{
     private $VERSION        = '1.0.7';
     public $is_subsite      = FALSE;
@@ -170,67 +167,42 @@ class Install_model extends CI_Model{
             $this->dbforge = $this->load->dbforge($db, TRUE);
             return $db;
         }
-        error_reporting(0);
-        $db = @$this->load->database($db_config, TRUE);
+        //error_reporting(0);
 
         $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
-        $allow_create = FALSE;
-        $allow_drop = FALSE;
+        $is_pdo = $db_config['dbdriver']=='pdo';
+        $is_pdo_mysql = $is_pdo && (strpos($db_config['dsn'], 'mysql') == 0);
+        $is_mysql = $is_mysql || $is_pdo_mysql;
+
         if($is_mysql){
-            // get the "allow_create" and "allow_drop" privileges
-            @mysql_connect($this->db_host.':'.$this->db_port , $this->db_username, $this->db_password);
-            $result = @mysql_query('SHOW GRANTS FOR CURRENT_USER;');
-            if($result !== NULL && $result !== FALSE){
-                while($row = mysql_fetch_row($result)){
-                    if(strpos($row[0], 'ALL PRIVILEGES')){
-                        $allow_drop = TRUE;
-                        $allow_create = TRUE;
-                        break;
-                    }
-                    if(strpos($row[0], 'CREATE')){
-                        $allow_create = TRUE;
-                    }
-                    if(strpos($row[0], 'DROP')){
-                        $allow_drop = TRUE;
-                    }
-                    if($allow_create && $allow_drop){
-                        break;
-                    }
+            $neutral_db_config = $db_config;
+            $neutral_db_config['database'] = '';
+            $neutral_db_config['dsn'] = str_replace(';dbname='.$this->db_name, '', $neutral_db_config['dsn']);
+            $db = @$this->load->database($neutral_db_config, TRUE);
+
+            if(is_array($db) && $db['conn_id'] != FALSE){
+                @$this->load->dbforge($db);
+
+                // DROP PREVIOUSLY CREATED DATABASE IN CASE OF USER CHANGE THE DATABASE
+                if(isset($_SESSION['created_db']) && $_SESSION['created_db'] != '' && $_SESSION['created_db'] != $this->db_name){
+                    @$this->dbforge->drop_database($_SESSION['created_db'], TRUE);
+                    unset($_SESSION['created_db']);
                 }
-            }
-        }
 
-        if($is_mysql){
-            // try to drop the previously created database
-            if($allow_drop && isset($_SESSION['created_db']) && $_SESSION['created_db'] != '' && $_SESSION['created_db'] != $this->db_name){
-                @mysql_query('DROP DATABASE IF EXISTS '.$_SESSION['created_db']);
-                unset($_SESSION['created_db']);
-            }
-        }
-
-        $success = TRUE;
-        if($db->conn_id === FALSE){
-            $success = FALSE;
-            // if it is MySQL, try to make database
-            if($is_mysql){
-                if($allow_create && (!isset($_SESSION['created_db']) || $_SESSION['created_db'] != $this->db_name ) ){
-                    $result = @mysql_query('CREATE DATABASE ' . $this->db_name . ' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;');
+                // CREATE DATABASE IN CASE OF IT IS NOT EXISTS
+                if(!isset($_SESSION['created_db']) || $_SESSION['created_db'] != $this->db_name ){
+                    $result = @$this->dbforge->create_database($this->db_name, TRUE);
                     // save the created database
                     if($result){
                         $_SESSION['created_db'] = $this->db_name;
                     }
                 }
-                // try to connect again
-                $db_config = $this->build_db_config();
-                $db = $this->load->database($db_config, TRUE);
-                if($db->conn_id !== FALSE){
-                    $success = TRUE;
-                }
             }
         }
 
-        // return value
-        if($success){
+        // try to connect again
+        $db = @$this->load->database($db_config, TRUE);
+        if($db->conn_id !== FALSE){
             $this->db = $db;
             $this->dbutil = $this->load->dbutil($db, TRUE);
             $this->dbforge = $this->load->dbforge($db, TRUE);
@@ -247,7 +219,7 @@ class Install_model extends CI_Model{
         if($this->db_name == ''){
             $db = FALSE;
         }else{
-            $db = $this->load_database();
+            $db = @$this->load_database();
         }
 
         if($this->is_subsite){

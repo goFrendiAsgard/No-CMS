@@ -303,6 +303,13 @@ class Info extends CMS_Module {
     //////////////////////////////////////////////////////////////////////////////
     public function do_deactivate(){
         // TODO : write your module deactivation script here
+        $module_path = $this->cms_module_path();
+        if($module_path == 'blog'){
+            $controller_path = 'blog';
+        }else{
+            $controller_path = $module_path.'/blog';
+        }
+
         $this->cms_remove_quicklink($this->n('index'));
 
         // remove widgets

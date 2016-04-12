@@ -532,6 +532,9 @@ class CMS_Module extends CMS_Controller
 
             // INSERT DATA
             foreach ($this->DATA as $table_name => $data) {
+                if(!is_array($data) || count($data) == 0){
+                    continue;
+                }
                 $this->db->insert_batch($this->t($table_name), $data);
             }
         }else{

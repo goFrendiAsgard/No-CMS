@@ -66,13 +66,15 @@ class CMS_Controller extends MX_Controller
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
         $this->form_validation->CI = &$this;
-        $this->load->driver('session');
+        //$this->load->driver('session');
 
         $this->JQUERY_PATH = base_url('assets/grocery_crud/js/jquery-1.11.1.min.js');
 
         $module_path = $this->cms_module_path();
         $this->load->model($this->__cms_base_model_name);
         $this->{$this->__cms_base_model_name}->__controller_module_path = $module_path;
+
+        $this->session = $this->{$this->__cms_base_model_name}->session;
 
         // hook cms_construct
         $this->cms_call_hook('cms_controller_construct');
