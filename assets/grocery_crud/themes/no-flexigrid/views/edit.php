@@ -1,5 +1,4 @@
 <?php
-
     $this->set_css($this->default_theme_path.'/no-flexigrid/css/flexigrid.css');
     $this->set_js_lib($this->default_theme_path.'/no-flexigrid/js/jquery.form.js');
     $this->set_js_config($this->default_theme_path.'/no-flexigrid/js/flexigrid-edit.js');
@@ -81,17 +80,17 @@
                 }else if(isset($this->field_quarter_width) && in_array($field->field_name, $this->field_quarter_width)){
                     $box_width = 3;
                     $label_width = 12;
-                    $label_width = 12;
+                    $input_width = 12;
                     $width_addition = 0.25;
                 }else if(isset($this->field_one_third_width) && in_array($field->field_name, $this->field_one_third_width)){
                     $box_width = 4;
-                    $label_width = 12;
-                    $label_width = 12;
+                    $label_width = 6;
+                    $input_width = 6;
                     $width_addition = 0.33;
                 }else if(isset($this->field_two_third_width) && in_array($field->field_name, $this->field_two_third_width)){
                     $box_width = 8;
                     $label_width = 3;
-                    $label_width = 9;
+                    $input_width = 9;
                     $width_addition = 0.67;
                 }else{
                     $box_width = 12;

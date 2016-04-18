@@ -1,46 +1,9 @@
-<?php
-
-if (!defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
-
-function rrmdir($dir) {
-    if (is_dir($dir)) {
-        $files = scandir($dir);
-        foreach ($files as $file){
-            if ($file != "." && $file != ".."){
-                rrmdir("$dir/$file");
-            }
-        }
-        @chmod($dir, 777);
-        rmdir($dir);
-    }
-    else if (file_exists($dir)){
-        @chmod($dir, 777);
-        unlink($dir);
-    }
-}
-
-function rcopy($src, $dst) {
-    if (file_exists ( $dst )){
-        @chmod($dst, 777);
-        rrmdir ( $dst );
-    }
-    if (is_dir ( $src )) {
-        mkdir ( $dst );
-        $files = scandir ( $src );
-        foreach ( $files as $file )
-            if ($file != "." && $file != "..")
-                rcopy ( "$src/$file", "$dst/$file" );
-    } else if (file_exists ( $src )){
-        copy ( $src, $dst );
-    }
-}
+<?php if (!defined('BASEPATH')) {exit('No direct script access allowed');}
 
 class CMS_AutoUpdate_Model extends CMS_Model
 {
     // TODO: change this
-    private $CURRENT_VERSION = '1.0.7';
+    private $CURRENT_VERSION = '1.0.8';
     private static $module_updated = false;
 
     public function __construct()
@@ -669,6 +632,14 @@ class CMS_AutoUpdate_Model extends CMS_Model
                 }
             }
         }
+    }
+
+    private function __update_to_1_0_8(){
+        $fields = array(
+            'custom_style' => array('type' => 'TEXT', 'null'=>TRUE),
+            'custom_script' =>  array('type' => 'TEXT', 'null'=>TRUE),
+        );
+        $this->dbforge->add_column(cms_table_name('main_navigation'), $fields);
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)

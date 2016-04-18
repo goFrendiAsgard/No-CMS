@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+    // show navigation path
     if(count($navigation_path)>0){
         echo '<div style="padding-bottom:10px;">';
         echo '<a class="btn btn-primary" href="'.site_url('main/navigation').'">First Level Navigation</a>';
@@ -10,10 +11,16 @@
         }
         echo '</div>';
     }
+    // show grid/form
     echo $output;
 
 ?>
 <script type="text/javascript" src="{{ module_base_url }}assets/scripts/navigation.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/ace.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/theme-eclipse.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/mode-css.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/mode-javascript.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/jquery-ace.min.js"></script>
 <script type="text/javascript">
     $(document).ajaxComplete(function(){
         /// remove sorting
@@ -63,5 +70,27 @@
             $("#field-is_static-true").attr("checked", "checked");
             $('#field-is_static-true').click();
         <?php } ?>
+
+        // custom style
+        $("#field-custom_style").ace({
+            theme: "eclipse",
+            lang: "css",
+            width: "100%",
+            height: "200px"
+        });
+        var decorator = $("#field-custom_style").data("ace");
+        var aceInstance = decorator.editor.ace;
+        aceInstance.setFontSize("16px");
+
+        // custom script
+        $("#field-custom_script").ace({
+            theme: "eclipse",
+            lang: "javascript",
+            width: "100%",
+            height: "200px"
+        });
+        var decorator = $("#field-custom_script").data("ace");
+        var aceInstance = decorator.editor.ace;
+        aceInstance.setFontSize("16px");
     });
 </script>

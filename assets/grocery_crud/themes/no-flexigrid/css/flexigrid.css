@@ -531,7 +531,7 @@ textarea.texteditor, textarea.mini-texteditor
 
 .pretty-radio-buttons
 {
-	margin-top: 6px;
+	/*margin-top: 6px;*/
 }
 
 .pretty-radio-buttons label
@@ -565,6 +565,14 @@ textarea.texteditor, textarea.mini-texteditor
 #filtering_form{
     margin-top: 5px;
     margin-bottom: 5px;
+}
+.pretty-radio-buttons div.radio{
+	padding-top:0px!important;
+	min-height:20px;
+}
+.pretty-radio-buttons label{
+	font-weight:inherit;
+	font-size:small;
 }
 @media (min-width: 768px){
     #filtering_form .form-group{

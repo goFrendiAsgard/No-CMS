@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 echo $output;
+var_dump(array($title, $content, $status));
 ?>
 <script type="text/javascript">
     $(document).ajaxComplete(function () {

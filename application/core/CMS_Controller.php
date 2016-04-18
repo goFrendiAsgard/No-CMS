@@ -1,8 +1,4 @@
-<?php
-
-if (!defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+<?php if (!defined('BASEPATH')) { exit('No direct script access allowed');}
 
 /**
  * CMS_Controller class.
@@ -658,7 +654,7 @@ class CMS_Controller extends MX_Controller
         $data = (array) $data;
         $row_navigation = null;
         if ($navigation_name != null) {
-            $query = $this->db->select('navigation_id, title, page_title, page_keyword, description, default_theme, default_layout, only_content, is_static, static_content')
+            $query = $this->db->select('navigation_id, title, page_title, page_keyword, description, default_theme, default_layout, only_content, is_static, static_content, custom_style, custom_script')
                 ->from(cms_table_name('main_navigation'))
                 ->where(array('navigation_name' => $navigation_name))
                 ->get();
@@ -697,6 +693,8 @@ class CMS_Controller extends MX_Controller
         $page_keyword = null;
         $page_description = null;
         $page_author = null;
+        $page_css = '';
+        $page_js = '';
         if ($navigation_name_provided && $row_navigation != null) {
             $default_theme = $row_navigation->default_theme;
             $default_layout = $row_navigation->default_layout;
@@ -715,6 +713,9 @@ class CMS_Controller extends MX_Controller
             if (!isset($only_content)) {
                 $only_content = ($row_navigation->only_content == 1);
             }
+            // page css and page js
+            $page_css = $row_navigation->custom_style;
+            $page_js = $row_navigation->custom_script;
         }
 
         // ASSIGN THEME
@@ -801,6 +802,12 @@ class CMS_Controller extends MX_Controller
         // IT'S SHOW TIME
         if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
             $result = $this->load->view($view_url, $data, true);
+            if($page_css != NULL){
+                $custom_css .= '<style type="text/css">'.$page_css.'</style>';
+            }
+            if($page_js != NULL){
+                $custom_js .= '<script type="text/javascript">'.$page_js.'</script>';
+            }
             $result = $custom_css.$custom_js.$result;
         } else {
             // save navigation name
@@ -851,6 +858,8 @@ class CMS_Controller extends MX_Controller
             $asset->add_internal_js($this->cms_ck_adjust_script());
             // add javascript base_url for ckeditor
             $asset->add_internal_js('var __cms_base_url = "'.base_url().'";');
+            // add page js
+            $asset->add_internal_js($page_js);
 
             // inject css for background
             $injected_css = 'body{';
@@ -878,9 +887,10 @@ class CMS_Controller extends MX_Controller
             }
             $injected_css .= '}';
             $asset->add_internal_css($injected_css);
+            // add page css
+            $asset->add_internal_css($page_css);
 
             // check login status
-            //$login_code = '<script type="text/javascript">';
             $login_code = '';
             if ($this->cms_user_id() > 0) {
                 $login_code .= 'var __cms_is_login = true;';

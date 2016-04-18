@@ -276,10 +276,14 @@ class Manage_article extends CMS_CRUD_Controller {
         $output->title = $this->input->post('title');
         $output->content = $this->input->post('content');
         $output->status = $this->input->post('status');
+        // if they are null, make them empty string
+        if($output->title === NULL){$output->title = '';}
+        if($output->content === NULL){$output->content = '';}
+        if($output->status === NULL){$output->status = '';}
 
         // author can only make a draft
         $user_group = $this->cms_user_group();
-        if(!in_array('Blog Editor', $user_group) && !in_array('Blog Author', $user_group) && $this->cms_user_is_super_admin()){
+        if(!in_array('Blog Editor', $user_group) && !in_array('Blog Author', $user_group) && !$this->cms_user_is_super_admin()){
             $output->status = 'draft';
         }
 

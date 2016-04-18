@@ -156,6 +156,7 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->unset_texteditor('static_content');
         $crud->unset_texteditor('description');
 
+        $crud->set_field_half_width(array('active', 'is_static'));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)
@@ -311,30 +312,6 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
             $html .= ' | <a href="'.site_url($this->cms_module_path().'/manage_widget/widget_mark_move/'.$row->widget_id).'"><i class="glyphicon glyphicon-share-alt"></i> Move</a>';
         }
 
-        return $html;
-    }
-
-    public function _callback_field_static_content($value, $primary_key){
-        // assets
-        $html = '<script src="'.base_url().'assets/nocms/js/jquery-ace/ace/ace.js"></script>
-            <script src="'.base_url().'assets/nocms/js/jquery-ace/ace/theme-eclipse.js"></script>
-            <script src="'.base_url().'assets/nocms/js/jquery-ace/ace/mode-html.js"></script>
-            <script src="'.base_url().'assets/nocms/js/jquery-ace/jquery-ace.min.js"></script>';
-        // input
-        $html .= '<textarea id="field-static_content" name="static_content">'.$value.'</textarea>';
-        // mutation
-        $html .= '<script type="text/javascript">
-                $("#field-static_content").ace({
-                    theme: "eclipse",
-                    lang: "html",
-                    width: "100%",
-                    height: "200px"
-                });
-                var decorator = $("#field-static_content").data("ace");
-                var aceInstance = decorator.editor.ace;
-                console.log(aceInstance);
-                aceInstance.setFontSize("16px");
-            </script>';
         return $html;
     }
 

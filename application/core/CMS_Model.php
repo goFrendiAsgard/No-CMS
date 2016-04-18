@@ -954,35 +954,35 @@ class CMS_Model extends CI_Model
         // $where_is_root = !isset($parent_id) ? "(parent_id IS NULL)" : "parent_id = '" . addslashes($parent_id) . "'";
         if (!self::$__cms_model_properties['is_navigation_cached']) {
             $query = $this->db->query("SELECT navigation_id, navigation_name, bootstrap_glyph, is_static, title, description, url, notif_url, active, parent_id,
+                    (
+                        (authorization_id = 1) OR
+                        (authorization_id = 2 AND $not_login) OR
+                        (authorization_id = 3 AND $login) OR
                         (
-                            (authorization_id = 1) OR
-                            (authorization_id = 2 AND $not_login) OR
-                            (authorization_id = 3 AND $login) OR
+                            (authorization_id = 4 AND $login) AND
                             (
-                                (authorization_id = 4 AND $login) AND
-                                (
-                                    $super_user OR
-                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation').' AS gn
-                                        WHERE
-                                            gn.navigation_id=n.navigation_id AND
-                                            gn.group_id IN
-                                                (SELECT group_id FROM '.cms_table_name('main_group_user').' WHERE user_id = '.addslashes($user_id).")
-                                    )>0
-                                )
-                            ) OR
-                            (
-                                (authorization_id = 5 AND $login) AND
-                                (
-                                    (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation').' AS gn
-                                        WHERE
-                                            gn.navigation_id=n.navigation_id AND
-                                            gn.group_id IN
-                                                (SELECT group_id FROM '.cms_table_name('main_group_user').' WHERE user_id = '.addslashes($user_id).')
-                                    )>0
-                                )
+                                $super_user OR
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation').' AS gn
+                                    WHERE
+                                        gn.navigation_id=n.navigation_id AND
+                                        gn.group_id IN
+                                            (SELECT group_id FROM '.cms_table_name('main_group_user').' WHERE user_id = '.addslashes($user_id).")
+                                )>0
                             )
-                        ) AS allowed, hidden
-                    FROM '.cms_table_name('main_navigation').' AS n  ORDER BY n.'.$this->db->protect_identifiers('index'));
+                        ) OR
+                        (
+                            (authorization_id = 5 AND $login) AND
+                            (
+                                (SELECT COUNT(*) FROM ".cms_table_name('main_group_navigation').' AS gn
+                                    WHERE
+                                        gn.navigation_id=n.navigation_id AND
+                                        gn.group_id IN
+                                            (SELECT group_id FROM '.cms_table_name('main_group_user').' WHERE user_id = '.addslashes($user_id).')
+                                )>0
+                            )
+                        )
+                    ) AS allowed, hidden
+                FROM '.cms_table_name('main_navigation').' AS n  ORDER BY n.'.$this->db->protect_identifiers('index'));
             self::$__cms_model_properties['is_navigation_cached'] = true;
             self::$__cms_model_properties['navigation'] = $query->result();
         }

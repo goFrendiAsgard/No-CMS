@@ -11,7 +11,7 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'main_navigation';
-    protected $COLUMN_NAMES = array('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'url', 'authorization_id', 'active', 'index', 'is_static', 'static_content', 'only_content', 'default_theme', 'default_layout', 'notif_url', 'children', 'hidden', 'group_navigation');
+    protected $COLUMN_NAMES = array('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'url', 'authorization_id', 'active', 'index', 'is_static', 'static_content', 'custom_style', 'custom_script', 'only_content', 'default_theme', 'default_layout', 'notif_url', 'children', 'hidden', 'group_navigation');
     protected $PRIMARY_KEY = 'navigation_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -66,8 +66,8 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
 
         // displayed columns on list, edit, and add, uncomment to use
         $crud->columns('navigation_name');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'group_navigation', 'index', '_updated_by', '_updated_at');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'group_navigation', 'index', '_created_by', '_created_at');
+        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'custom_style', 'custom_script',  'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'group_navigation', 'index', '_updated_by', '_updated_at');
+        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'custom_style', 'custom_script', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'group_navigation', 'index', '_created_by', '_created_at');
         //$crud->set_read_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'url', 'authorization_id', 'active', 'index', 'is_static', 'static_content', 'only_content', 'default_theme', 'default_layout', 'notif_url', 'children', 'hidden', 'quicklink', 'group_navigation');
 
         // caption of each columns
@@ -91,6 +91,8 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->display_as('children','Children');
         $crud->display_as('hidden','Hidden');
         $crud->display_as('group_navigation','Groups');
+        $crud->display_as('custom_style','Custom Style (CSS)');
+        $crud->display_as('custom_script','Custom Script (Javascript)');
 
         ////////////////////////////////////////////////////////////////////////
         // This function will automatically detect every methods in this controller and link it to corresponding column
@@ -186,6 +188,8 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->field_type('default_layout', 'enum', $this->cms_get_layout());
 
         $crud->unset_texteditor('description');
+        $crud->unset_texteditor('custom_style');
+        $crud->unset_texteditor('custom_script');
         $crud->field_type('only_content', 'true_false');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
@@ -193,6 +197,7 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->field_type('bootstrap_glyph', 'enum', array('glyphicon-adjust', 'glyphicon-align-center', 'glyphicon-align-justify', 'glyphicon-align-left', 'glyphicon-align-right', 'glyphicon-arrow-down', 'glyphicon-arrow-left', 'glyphicon-arrow-right', 'glyphicon-arrow-up', 'glyphicon-asterisk', 'glyphicon-backward', 'glyphicon-ban-circle', 'glyphicon-barcode', 'glyphicon-bell', 'glyphicon-bold', 'glyphicon-book', 'glyphicon-bookmark', 'glyphicon-briefcase', 'glyphicon-bullhorn', 'glyphicon-calendar', 'glyphicon-camera', 'glyphicon-certificate', 'glyphicon-check', 'glyphicon-chevron-down', 'glyphicon-chevron-left', 'glyphicon-chevron-right', 'glyphicon-chevron-up', 'glyphicon-circle-arrow-down', 'glyphicon-circle-arrow-left', 'glyphicon-circle-arrow-right', 'glyphicon-circle-arrow-up', 'glyphicon-cloud', 'glyphicon-cloud-download', 'glyphicon-cloud-upload', 'glyphicon-cog', 'glyphicon-collapse-down', 'glyphicon-collapse-up', 'glyphicon-comment', 'glyphicon-compressed', 'glyphicon-copyright-mark', 'glyphicon-credit-card', 'glyphicon-cutlery', 'glyphicon-dashboard', 'glyphicon-download', 'glyphicon-download-alt', 'glyphicon-earphone', 'glyphicon-edit', 'glyphicon-eject', 'glyphicon-envelope', 'glyphicon-euro', 'glyphicon-exclamation-sign', 'glyphicon-expand', 'glyphicon-export', 'glyphicon-eye-close', 'glyphicon-eye-open', 'glyphicon-facetime-video', 'glyphicon-fast-backward', 'glyphicon-fast-forward', 'glyphicon-file', 'glyphicon-film', 'glyphicon-filter', 'glyphicon-fire', 'glyphicon-flag', 'glyphicon-flash', 'glyphicon-floppy-disk', 'glyphicon-floppy-open', 'glyphicon-floppy-remove', 'glyphicon-floppy-save', 'glyphicon-floppy-saved', 'glyphicon-folder-close', 'glyphicon-folder-open', 'glyphicon-font', 'glyphicon-forward', 'glyphicon-fullscreen', 'glyphicon-gbp', 'glyphicon-gift', 'glyphicon-glass', 'glyphicon-globe', 'glyphicon-hand-down', 'glyphicon-hand-left', 'glyphicon-hand-right', 'glyphicon-hand-up', 'glyphicon-hd-video', 'glyphicon-hdd', 'glyphicon-header', 'glyphicon-headphones', 'glyphicon-heart', 'glyphicon-heart-empty', 'glyphicon-home', 'glyphicon-import', 'glyphicon-inbox', 'glyphicon-indent-left', 'glyphicon-indent-right', 'glyphicon-info-sign', 'glyphicon-italic', 'glyphicon-leaf', 'glyphicon-link', 'glyphicon-list', 'glyphicon-list-alt', 'glyphicon-lock', 'glyphicon-log-in', 'glyphicon-log-out', 'glyphicon-magnet', 'glyphicon-map-marker', 'glyphicon-minus', 'glyphicon-minus-sign', 'glyphicon-move', 'glyphicon-music', 'glyphicon-new-window', 'glyphicon-off', 'glyphicon-ok', 'glyphicon-ok-circle', 'glyphicon-ok-sign', 'glyphicon-open', 'glyphicon-paperclip', 'glyphicon-pause', 'glyphicon-pencil', 'glyphicon-phone', 'glyphicon-phone-alt', 'glyphicon-picture', 'glyphicon-plane', 'glyphicon-play', 'glyphicon-play-circle', 'glyphicon-plus', 'glyphicon-plus-sign', 'glyphicon-print', 'glyphicon-pushpin', 'glyphicon-qrcode', 'glyphicon-question-sign', 'glyphicon-random', 'glyphicon-record', 'glyphicon-refresh', 'glyphicon-registration-mark', 'glyphicon-remove', 'glyphicon-remove-circle', 'glyphicon-remove-sign', 'glyphicon-repeat', 'glyphicon-resize-full', 'glyphicon-resize-horizontal', 'glyphicon-resize-small', 'glyphicon-resize-vertical', 'glyphicon-retweet', 'glyphicon-road', 'glyphicon-save', 'glyphicon-saved', 'glyphicon-screenshot', 'glyphicon-sd-video', 'glyphicon-search', 'glyphicon-send', 'glyphicon-share', 'glyphicon-share-alt', 'glyphicon-shopping-cart', 'glyphicon-signal', 'glyphicon-sort', 'glyphicon-sort-by-alphabet', 'glyphicon-sort-by-alphabet-alt', 'glyphicon-sort-by-attributes', 'glyphicon-sort-by-attributes-alt', 'glyphicon-sort-by-order', 'glyphicon-sort-by-order-alt', 'glyphicon-sound-5-1', 'glyphicon-sound-6-1', 'glyphicon-sound-7-1', 'glyphicon-sound-dolby', 'glyphicon-sound-stereo', 'glyphicon-star', 'glyphicon-star-empty', 'glyphicon-stats', 'glyphicon-step-backward', 'glyphicon-step-forward', 'glyphicon-stop', 'glyphicon-subtitles', 'glyphicon-tag', 'glyphicon-tags', 'glyphicon-tasks', 'glyphicon-text-height', 'glyphicon-text-width', 'glyphicon-th', 'glyphicon-th-large', 'glyphicon-th-list', 'glyphicon-thumbs-down', 'glyphicon-thumbs-up', 'glyphicon-time', 'glyphicon-tint', 'glyphicon-tower', 'glyphicon-transfer', 'glyphicon-trash', 'glyphicon-tree-conifer', 'glyphicon-tree-deciduous', 'glyphicon-unchecked', 'glyphicon-upload', 'glyphicon-usd', 'glyphicon-user', 'glyphicon-volume-down', 'glyphicon-volume-off', 'glyphicon-volume-up', 'glyphicon-warning-sign', 'glyphicon-wrench', 'glyphicon-zoom-in', 'glyphicon-zoom-out'));
         $crud->field_type('index', 'hidden');
 
+        $crud->set_field_one_third_width(array('active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static'));
 
 
         if (!array_key_exists('search_text', $this->input->post()) || $this->input->post('search_text') == '') {
