@@ -10,11 +10,14 @@ class Setting extends CMS_Controller{
         foreach($widgets as $slug => $widget_list){
             foreach($widget_list as $widget){
                 if($widget['widget_name'] == $widget_name){
-                    break;
                     if($widget['content'] == $content){
                         $no_change = TRUE;
                     }
+                    break;
                 }
+            }
+            if($no_change){
+                break;
             }
         }
         // don't change if there is no changes

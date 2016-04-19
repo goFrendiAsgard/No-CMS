@@ -6,13 +6,15 @@
  * @author No-CMS Module Generator
  */
 class Article_model extends  CMS_Model{
-    public $page_break_separator = '';
+    public $page_break_separator = '<!--more-->';
 
     protected static $__article_properties;
 
     public function __construct(){
         parent::__construct();
+        /*
         $this->page_break_separator = "/<div(\s)*style(\s)*=(\s)*\"page-break-after(\s)*:(\s)*always(;)*\"(\s)*>(\s)*<span(\s)*style(\s)*=(\s)*\"display(\s)*:(\s)*none(;)*\">(\s)*&nbsp;(\s)*<\/span>(\s)*<\/div>/i";
+        */
         if(self::$__article_properties == NULL){
             self::$__article_properties = array();
         }
@@ -175,7 +177,8 @@ class Article_model extends  CMS_Model{
         $query = $this->db->query($SQL);
         if($query->num_rows()>0){
             $row = $query->row();
-            $contents = preg_split($this->page_break_separator, $row->content);
+            $contents = explode($this->page_break_separator, $row->content);
+            //$contents = preg_split($this->page_break_separator, $row->content);
             $content = implode('', $contents);
             $result = array(
                     "id" => $row->article_id,
@@ -269,7 +272,8 @@ class Article_model extends  CMS_Model{
 
         $query = $this->db->query($SQL);
         foreach($query->result() as $row){
-            $contents = preg_split($this->page_break_separator, $row->content);
+            //$contents = preg_split($this->page_break_separator, $row->content);
+            $contents = explode($this->page_break_separator, $row->content);
             $content = $contents[0];
 
             $data[] = array(

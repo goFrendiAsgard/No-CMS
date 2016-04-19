@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Demo for CKEditor More plugin</title>
+
+    <!--[if IE]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <script src="../../ckeditor.js"></script> <!-- assumes this file is in ckeditor/plugins/wpmore -->
+    <script>
+      // Customize CKEditor
+      CKEDITOR.config.extraPlugins = 'wpmore'; // Add 'WPMore' plugin - must be in plugins folder
+      CKEDITOR.config.toolbar = [
+        ['Source', 'WPMore'] // Add 'WPMore' button to toolbar
+      ];
+
+      // Use <br> as break and not enclose text in <p> when pressing <Enter> or <Shift+Enter>
+      CKEDITOR.config.enterMode = CKEDITOR.ENTER_BR;
+      CKEDITOR.config.shiftEnterMode = CKEDITOR.ENTER_BR;
+      CKEDITOR.config.fillEmptyBlocks = false;    // Prevent filler nodes in all empty blocks
+
+      // Remove all formatting when pasting text copied from websites or Microsoft Word
+      CKEDITOR.config.forcePasteAsPlainText = true;
+      CKEDITOR.config.pasteFromWordRemoveFontStyles = true;
+      CKEDITOR.config.pasteFromWordRemoveStyles = true;
+
+      // Custom dimensions
+      CKEDITOR.config.height = 300;
+      CKEDITOR.config.width  = 700;
+    </script>
+  </head>
+
+  <body>
+    <div align="center">
+      <b>Demo for CKEditor More plugin</b><br />
+      <i>(For demo to work, CKEditor must be installed first with the More plugin in the plugins folder</i>
+      <br /><br />
+
+      <!--
+        A <textarea> must have the "ckeditor" class and the id or name attribute
+        for it to be replaced by a CKEditor instance
+      -->
+      <textarea id="editor" class="ckeditor"></textarea>
+    </div>
+
+    <script>
+      //<![CDATA[
+      var demoScript = function () {
+          // This call can be placed at any point after the
+          // <textarea>, or inside a <head><script> in a
+          // window.onload event handler.
+
+          // Replace the <textarea id="editor1"> with an CKEditor
+          // instance without using "ckeditor" class,
+          // using default configurations.
+
+          // CKEDITOR.replace('editor1');
+      }();
+      //]]>
+    </script>
+
+  </body>
+</html>

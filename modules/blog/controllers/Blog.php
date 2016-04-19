@@ -226,4 +226,21 @@ class Blog extends CMS_Secure_Controller {
                 'author_user_id' => $author_user_id,
             ));
     }
+
+    public function export(){
+        echo 'test';        
+    }
+
+    public function import(){
+        $module_path = $this->cms_module_path();
+        $data = array('success' => TRUE, 'message'=> '');
+        // get content
+        if(isset($_FILES['file'])){
+            $this->load->model($module_path.'/wp_exim');
+            $content = file_get_contents($_FILES['file']['tmp_name']);
+            $this->wp_exim->import($content);
+        }
+        // show the content
+        $this->view($module_path.'/import', $data, $this->n('import'));
+    }
 }

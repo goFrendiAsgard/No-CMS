@@ -86,7 +86,7 @@ var CKBUILDER_CONFIG = {
 		'magicline' : 1,
 		'maximize' : 1,
 		'newpage' : 1,
-		'pagebreak' : 1,
+		'pagebreak' : 0,
 		'pastefromword' : 1,
 		'pastetext' : 1,
 		'removeformat' : 1,

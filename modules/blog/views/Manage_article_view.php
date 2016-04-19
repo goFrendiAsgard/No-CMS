@@ -1,6 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 echo $output;
-var_dump(array($title, $content, $status));
 ?>
 <script type="text/javascript">
     $(document).ajaxComplete(function () {
@@ -75,5 +74,14 @@ var_dump(array($title, $content, $status));
             $('#field-status').trigger("chosen:updated");
         }
         adjust_publish_date();
+
+        // Add WPMore plugin to CKEDITOR
+        if ($("#crudForm").length > 0 && typeof(CKEDITOR) != "undefined"){
+            // Customize CKEditor
+            CKEDITOR.config.extraPlugins = 'wpmore'; // Add 'WPMore' plugin - must be in plugins folder
+            CKEDITOR.config.toolbar = [
+                ['WPMore'] // Add 'WPMore' button to toolbar
+            ];
+        }
     });
 </script>

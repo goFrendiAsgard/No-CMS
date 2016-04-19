@@ -543,6 +543,9 @@ class CMS_Controller extends MX_Controller
                                 __adjust_ck_editor();
                             });
                         }
+                        /*hide some unused and broken plugin*/
+                        $(".cke_button__pagebreak").hide();
+                        $(".cke_button__widgetbootstrapalert").hide();
                     });
 
                     /* ensure that adjust_ck_editor executed */
