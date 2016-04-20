@@ -2,9 +2,13 @@
 
 class Wp_exim extends CMS_Model{
 
+    public function export(){
+
+    }
+
     public function import($xml_string){
         $success = TRUE;
-        $message = '';
+        $message = 'Import Success';
         // get structure
         $structure      = $this->load_structure_from_xml_string($xml_string);
         $wp_title       = $this->get_from_array($structure, 'title', '');
@@ -105,8 +109,52 @@ class Wp_exim extends CMS_Model{
                     ));
                 }
                 // comments
+                $comment_id_map = array();
                 foreach($comments as $comment){
-                    
+                    $comment_id = $comment['id'];
+                    $author = $comment['author'];
+                    $author_email = $comment['author_email'];
+                    $author_url = $comment['author_url'];
+                    $date = $comment['date'];
+                    $approved = $comment['approved'];
+                    $user_id = $comment['user_id'];
+                    $content = $comment['content'];
+                    $parent = $comment['parent'];
+                    // adjust user id
+                    if($user_id == 0){
+                        $user_id = NULL;
+                    }else{
+                        $user = $this->cms_get_record($this->cms_user_table_name(), 'user_name', $author);
+                        if($user === NULL){
+                            $this->cms_do_register($author, $author_email, $author, '');
+                            $user = $this->cms_get_record($this->cms_user_table_name(), 'user_name', $author);
+                        }
+                        $user_id = $user->user_id;
+                        $author = '';
+                        $author_email = '';
+                    }
+                    // adjust parent
+                    if($parent != 0 && array_key_exists($parent_comment_id, $comment_id_map)){
+                        $parent_comment_id = $comment_id_map[$parent];
+                    }else{
+                        $parent_comment_id = NULL;
+                    }
+                    // insert
+                    $this->db->insert($this->t('comment'), array(
+                        'date' => $date,
+                        'author_user_id' => $user_id,
+                        'name' => $author,
+                        'email' => $author_email,
+                        'website' => $author_url,
+                        'content' => $content,
+                        'approved' => $approved,
+                        'read' => 1,
+                        'parent_comment_id' => $parent_comment_id,
+                        'article_id' => $article->article_id,
+                    ));
+                    $new_comment_id = $this->db->insert_id();
+                    // save id map
+                    $commend_id_map[$comment_id] = $new_comment_id;
                 }
             }else{ // this is static page
                 $navigation_name = url_title($title);

@@ -44,8 +44,8 @@ class Info extends CMS_Module {
                 'url'               => 'blog/import',
                 'authorization_id'  => PRIV_AUTHORIZED,
                 'default_layout'    => NULL,
-                'title'             => 'Import',
-                'parent_name'       => 'index',
+                'title'             => 'Import From Wordpress\'s XML',
+                'parent_name'       => 'setting',
                 'index'             => NULL,
                 'description'       => NULL,
                 'bootstrap_glyph'   => 'glyphicon-import',
@@ -53,13 +53,14 @@ class Info extends CMS_Module {
                 'hidden'            => NULL,
                 'static_content'    => NULL,
             ),
+            /*
             array(
                 'navigation_name'   => 'export',
                 'url'               => 'blog/export',
                 'authorization_id'  => PRIV_AUTHORIZED,
                 'default_layout'    => NULL,
-                'title'             => 'Export',
-                'parent_name'       => 'index',
+                'title'             => 'Export To Wordpress\'s XML',
+                'parent_name'       => 'setting',
                 'index'             => NULL,
                 'description'       => NULL,
                 'bootstrap_glyph'   => 'glyphicon-export',
@@ -67,6 +68,7 @@ class Info extends CMS_Module {
                 'hidden'            => NULL,
                 'static_content'    => NULL,
             )
+            */
         );
 
     protected $BACKEND_NAVIGATIONS = array(
@@ -160,13 +162,10 @@ class Info extends CMS_Module {
                 'author_user_id'   => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'content'          => array("type" => 'text',       "null" => TRUE),
                 'allow_comment'    => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'status'           => array("type" => 'varchar',    "constraint" => 20,  "null" => TRUE,
-                                        "default" => "draft"),
-                'visited'          => array("type" => 'int',        "constraint" => 10,  "null" => TRUE,
-                                        "default" => 0),
-                'featured'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE,
-                                        "default" => 0),
-                'publish_date'     => array("type" => 'datetime',       "null" => TRUE),
+                'status'           => array("type" => 'varchar',    "constraint" => 20,  "null" => TRUE, "default" => "draft"),
+                'visited'          => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, "default" => 0),
+                'featured'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, "default" => 0),
+                'publish_date'     => array("type" => 'datetime',   "null" => TRUE),
                 'photos'           => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
                 'comments'         => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
                 'category_article' => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
@@ -204,10 +203,8 @@ class Info extends CMS_Module {
                 'website'          => array("type" => 'varchar',    "constraint" => 50,  "null" => TRUE),
                 'content'          => array("type" => 'text',       "null" => TRUE),
                 'parent_comment_id'=> array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'read'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE,
-                                        "default" => 0),
-                'approved'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE,
-                                        "default" => 0),
+                'read'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, "default" => 0),
+                'approved'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, "default" => 0),
             ),
         ),
         // photo
