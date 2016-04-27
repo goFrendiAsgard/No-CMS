@@ -110,9 +110,13 @@ class Add_subsite extends CMS_Secure_Controller {
                     'subsite_homepage_layout' => $homepage_layout,
                     'subsite_user_id' => $this->cms_user_id(),
                 );
+            log_message('debug', 'Start installing '.$this->install_model->subsite.' subsite');
             $this->install_model->build_configuration($config);
+            log_message('debug', 'Configuration built for '.$this->install_model->subsite.' subsite');
             $this->install_model->build_database($config);
+            log_message('debug', 'Database built for '.$this->install_model->subsite.' subsite');
             $module_installed = $this->install_model->install_modules();
+            log_message('debug', 'Module installed for '.$this->install_model->subsite.' subsite');
         }
 
         // $this->cms_override_module_path($module_path);

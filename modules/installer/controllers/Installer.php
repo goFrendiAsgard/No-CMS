@@ -72,9 +72,13 @@ class Installer extends MX_Controller{
         $success = $check_installation['success'];
         $module_installed = FALSE;
         if($success){
+            log_message('debug', 'Start installing main website');
             $this->install_model->build_configuration();
+            log_message('debug', 'Configuration built for main website');
             $this->install_model->build_database();
+            log_message('debug', 'Database built for main website');
             $module_installed = $this->install_model->install_modules();
+            log_message('debug', 'Modules Installed for main website');
         }
         $data['module_installed'] = $module_installed;
         $data['success'] = $success;

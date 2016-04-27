@@ -80,8 +80,8 @@ if($major_version >=7){
                                      <select id="db_protocol" name="db_protocol" class="input form-control" placeholder="database driver">
                                          <?php if($major_version < 7){ ?>
                                              <option value="mysql">MySQL/MariaDB (with mysql driver)</option>
-                                             <option <?php echo $mysqli_selected; ?> value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
                                          <?php } ?>
+                                         <option <?php echo $mysqli_selected; ?> value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
                                          <option <?php echo $pdo_selected; ?> value="pdo_mysql">MySQL/MariaDB (with PDO driver)</option>
                                          <option value="pdo_pgsql">PostgreSQL (with PDO driver), Experimental</option>
                                          <option value="pdo_sqlite">SQLite (with PDO driver), Experimental</option>

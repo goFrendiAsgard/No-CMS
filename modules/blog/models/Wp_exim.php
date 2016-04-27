@@ -11,6 +11,9 @@ class Wp_exim extends CMS_Model{
         $message = 'Import Success';
         // get structure
         $structure      = $this->load_structure_from_xml_string($xml_string);
+        if($structure == NULL){
+            return array('success' => FALSE, 'message' => 'invalid XML');
+        }
         $wp_title       = $this->get_from_array($structure, 'title', '');
         $wp_link        = $this->get_from_array($structure, 'link', '');
         $wp_post_list   = $this->get_from_array($structure, 'post_list', array());
@@ -197,12 +200,15 @@ class Wp_exim extends CMS_Model{
     private function load_structure_from_xml_string($contents){
         // taken from: https://gist.github.com/chrismeller/4941933
         date_default_timezone_set('UTC');
-    	error_reporting(-1);
+    	error_reporting(0);
     	ini_set('display_errors', true);
     	$dom = new DOMDocument( '1.0', 'utf-8' );
     	$dom->loadXML( $contents, LIBXML_NOCDATA );
     	$xpath = new DOMXPath( $dom );
     	$channel = $xpath->query( './channel' )->item(0);
+        if($channel == NULL){
+            return NULL;
+        }
     	$title = $xpath->query( './title', $channel )->item(0)->nodeValue;
     	$link = $xpath->query( './link', $channel )->item(0)->nodeValue;
     	$description = $xpath->query( './description', $channel )->item(0)->nodeValue;

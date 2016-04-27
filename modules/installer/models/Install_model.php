@@ -1,5 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 class Install_model extends CI_Model{
+
+    private $__config_file = array();
+
     private $VERSION        = '1.0.8';
     public $is_subsite      = FALSE;
     public $subsite         = '';
@@ -149,7 +152,7 @@ class Install_model extends CI_Model{
             'dbcollat' => 'utf8_general_ci',
             'swap_pre' => '',
             'autoinit' => TRUE,
-            'encrypt' => FALSE,
+            'encrypt'  => FALSE,
             'compress' => FALSE,
             'stricton' => FALSE,
             'failover' => array()
@@ -167,34 +170,52 @@ class Install_model extends CI_Model{
             $this->dbforge = $this->load->dbforge($db, TRUE);
             return $db;
         }
-        //error_reporting(0);
+        error_reporting(0);
 
-        $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
-        $is_pdo = $db_config['dbdriver']=='pdo';
-        $is_pdo_mysql = $is_pdo && (strpos($db_config['dsn'], 'mysql') == 0);
-        $is_mysql = $is_mysql || $is_pdo_mysql;
+        // try to connect, if failed, try to create database
+        $db = @$this->load->database($db_config, TRUE);
+        if($db->conn_id == FALSE){
 
-        if($is_mysql){
-            $neutral_db_config = $db_config;
-            $neutral_db_config['database'] = '';
-            $neutral_db_config['dsn'] = str_replace(';dbname='.$this->db_name, '', $neutral_db_config['dsn']);
-            $db = @$this->load->database($neutral_db_config, TRUE);
+            $is_mysql = $this->db_protocol=='mysql' || $this->db_protocol=='mysqli';
+            $is_pdo = $db_config['dbdriver']=='pdo';
+            $is_pdo_mysql = $is_pdo && (strpos($db_config['dsn'], 'mysql') == 0);
+            $is_mysql = $is_mysql || $is_pdo_mysql;
 
-            if(is_array($db) && $db['conn_id'] != FALSE){
-                @$this->load->dbforge($db);
+            if($is_mysql){
+                $db = @$this->load->database($db_config, TRUE);
 
-                // DROP PREVIOUSLY CREATED DATABASE IN CASE OF USER CHANGE THE DATABASE
-                if(isset($_SESSION['created_db']) && $_SESSION['created_db'] != '' && $_SESSION['created_db'] != $this->db_name){
-                    @$this->dbforge->drop_database($_SESSION['created_db'], TRUE);
-                    unset($_SESSION['created_db']);
-                }
+                if($db->conn_id != FALSE){
+                    // try to connect without specify the database
+                    $neutral_db_config = $db_config;
+                    $neutral_db_config['database'] = '';
+                    $neutral_db_config['dsn'] = str_replace(';dbname='.$this->db_name, '', $neutral_db_config['dsn']);
+                    $db = @$this->load->database($neutral_db_config, TRUE);
+                    @$this->load->dbforge($db);
 
-                // CREATE DATABASE IN CASE OF IT IS NOT EXISTS
-                if(!isset($_SESSION['created_db']) || $_SESSION['created_db'] != $this->db_name ){
-                    $result = @$this->dbforge->create_database($this->db_name, TRUE);
-                    // save the created database
-                    if($result){
-                        $_SESSION['created_db'] = $this->db_name;
+                    // DROP PREVIOUSLY CREATED DATABASE IN CASE OF USER CHANGE THE DATABASE
+                    if(isset($_COOKIE['created_db']) && $_COOKIE['created_db'] != '' && $_COOKIE['created_db'] != $this->db_name){
+                        @$this->dbforge->drop_database($_COOKIE['created_db'], TRUE);
+                        unset($_COOKIE['created_db']);
+                    }
+
+                    // CREATE DATABASE IN CASE OF IT IS NOT EXISTS
+                    if(!isset($_COOKIE['created_db']) || $_COOKIE['created_db'] != $this->db_name ){
+                        // check first before creating
+                        $query = $this->db->query('SHOW DATABASES');
+                        foreach($query->result() as $row){
+                            if($row->Database == $this->db_name){
+                                $found = TRUE;
+                                break;
+                            }
+                        }
+                        // not, exists? create
+                        if(!found){
+                            $result = @$this->dbforge->create_database($this->db_name, TRUE);
+                            // save the created database
+                            if($result){
+                                setcookie('created_db', $this->db_name, time() + (600), "/");
+                            }
+                        }
                     }
                 }
             }
@@ -202,7 +223,7 @@ class Install_model extends CI_Model{
 
         // try to connect again
         $db = @$this->load->database($db_config, TRUE);
-        if($db->conn_id !== FALSE){
+        if($db->conn_id != FALSE){
             $this->db = $db;
             $this->dbutil = $this->load->dbutil($db, TRUE);
             $this->dbforge = $this->load->dbforge($db, TRUE);
@@ -494,100 +515,100 @@ class Install_model extends CI_Model{
 
         // define frequently used types
         $type_primary_key = array(
-                'type' => 'INT',
-                'constraint' => 20,
-                'unsigned' => TRUE,
-                'auto_increment' => TRUE
-            );
+            'type' => 'INT',
+            'constraint' => 20,
+            'unsigned' => TRUE,
+            'auto_increment' => TRUE
+        );
         $type_int = array(
             'type' => 'INT',
             'constraint' => 20,
             'unsigned' => TRUE
         );
         $type_foreign_key = array(
-                'type' => 'INT',
-                'constraint' => 5,
-                'unsigned' => TRUE,
-                'null' => TRUE,
-            );
+            'type' => 'INT',
+            'constraint' => 5,
+            'unsigned' => TRUE,
+            'null' => TRUE,
+        );
         $type_foreign_key_not_null = array(
-                'type' => 'INT',
-                'constraint' => 5,
-                'unsigned' => TRUE,
-                'null' => FALSE,
-            );
+            'type' => 'INT',
+            'constraint' => 5,
+            'unsigned' => TRUE,
+            'null' => FALSE,
+        );
         $type_foreign_key_default_1 = array(
-                'type' => 'INT',
-                'constraint' => 5,
-                'unsigned' => TRUE,
-                'default'=> 1,
-                'null' => FALSE,
-            );
+            'type' => 'INT',
+            'constraint' => 5,
+            'unsigned' => TRUE,
+            'default'=> 1,
+            'null' => FALSE,
+        );
         $type_index = array(
-                'type' => 'INT',
-                'constraint' => 5,
-                'unsigned' => TRUE,
-                'default'=> 0,
-                'null' => FALSE,
-            );
+            'type' => 'INT',
+            'constraint' => 5,
+            'unsigned' => TRUE,
+            'default'=> 0,
+            'null' => FALSE,
+        );
         $type_boolean_true = array(
-                'type' => 'INT',
-                'constraint' => 5,
-                'unsigned' => TRUE,
-                'default'=> 1,
-                'null' => FALSE,
-            );
+            'type' => 'INT',
+            'constraint' => 5,
+            'unsigned' => TRUE,
+            'default'=> 1,
+            'null' => FALSE,
+        );
         $type_boolean_false = array(
-                'type' => 'INT',
-                'constraint' => 5,
-                'unsigned' => TRUE,
-                'default'=> 0,
-                'null' => FALSE,
-            );
+            'type' => 'INT',
+            'constraint' => 5,
+            'unsigned' => TRUE,
+            'default'=> 0,
+            'null' => FALSE,
+        );
         $type_text = array(
-                'type' => 'TEXT',
-                'null' => TRUE,
-            );
+            'type' => 'TEXT',
+            'null' => TRUE,
+        );
         $type_varchar_small = array(
-                'type' => 'VARCHAR',
-                'constraint' => '50',
-                'null' => TRUE,
-            );
+            'type' => 'VARCHAR',
+            'constraint' => '50',
+            'null' => TRUE,
+        );
         $type_varchar_large = array(
-                'type' => 'VARCHAR',
-                'constraint' => '255',
-                'null' => TRUE,
-            );
+            'type' => 'VARCHAR',
+            'constraint' => '255',
+            'null' => TRUE,
+        );
         $type_password = array(
-                'type' => 'VARCHAR',
-                'constraint' => '255',
-                'null' => TRUE,
-            );
+            'type' => 'VARCHAR',
+            'constraint' => '255',
+            'null' => TRUE,
+        );
         $type_varchar_small_strict = array(
-                'type' => 'VARCHAR',
-                'constraint' => '50',
-                'null' => FALSE,
-            );
+            'type' => 'VARCHAR',
+            'constraint' => '50',
+            'null' => FALSE,
+        );
         $type_varchar_large_strict = array(
-                'type' => 'VARCHAR',
-                'constraint' => '100',
-                'null' => FALSE,
-            );
+            'type' => 'VARCHAR',
+            'constraint' => '100',
+            'null' => FALSE,
+        );
         $type_user_agent = array(
-                'type' => 'VARCHAR',
-                'constraint' => '120',
-                'null' => FALSE,
-            );
+            'type' => 'VARCHAR',
+            'constraint' => '120',
+            'null' => FALSE,
+        );
         $type_user_agent = array(
-                'type' => 'VARCHAR',
-                'constraint' => '120',
-                'null' => FALSE,
-            );
+            'type' => 'VARCHAR',
+            'constraint' => '120',
+            'null' => FALSE,
+        );
         $type_ip_address = array(
-                'type' => 'VARCHAR',
-                'constraint' => '16',
-                'null' => FALSE,
-            );
+            'type' => 'VARCHAR',
+            'constraint' => '16',
+            'null' => FALSE,
+        );
         $type_date = array("type"=>'date', "null"=>TRUE);
 
         // MAKE TABLES ====================================================
@@ -1284,8 +1305,11 @@ class Install_model extends CI_Model{
                 }
                 $this->dbforge->drop_table($table_name, TRUE);
             }
+            log_message('debug', 'start create all table');
             $create_table_sql_list = $this->create_all_table();
+            log_message('debug', 'finish create all table, start insert data');
             $insert_sql_list = $this->insert_all_data($config);
+            log_message('debug', 'finish insert all data');
             $sql_list = array_merge($sql_list, $create_table_sql_list);
             $sql_list = array_merge($sql_list, $insert_sql_list);
             $success = !$this->db_no_error;
@@ -1316,12 +1340,33 @@ class Install_model extends CI_Model{
         $pattern = '/( *'.$key_prefix.$key.$key_suffix.' *'.$equal_sign.' *'.$value_prefix.')(.*?)('.$value_suffix.')/si';
         $replacement = '${1}'.$value.'${3}';
 
-        $str = file_get_contents($file_name);
-        $awal = $str;
+        // get file contents (either from cache or directly)
+        if(!array_key_exists($file_name, $this->__config_file)){
+            $this->__config_file[$file_name] = file_get_contents($file_name);
+        }
+        $str = $this->__config_file[$file_name];
         $str = preg_replace($pattern, $replacement, $str);
+        // write it to cache
+        $this->__config_file[$file_name] = $str;
+    }
 
-        @chmod($file_name,0777);
-        @file_put_contents($file_name, $str);
+    protected function append_config($file_name, $key, $value, $key_prefix = PHP_EOL.'$config[',
+    $key_suffix = ']', $value_prefix = "'", $value_suffix = "';",  $equal_sign = '='){
+        if(!array_key_exists($file_name, $this->__config_file)){
+            $this->__config_file[$file_name] = file_get_contents($file_name);
+        }
+        $str = $this->__config_file[$file_name];
+        $str.= $key_prefix.$key.$key_suffix.' '.$equal_sign.' '.$value_prefix.$value.$value_suffix;
+        // write it to cache
+        $this->__config_file[$file_name] = $str;
+    }
+
+    protected function flush_change_config(){
+        foreach($this->__config_file as $file_name => $content){
+            @chmod($file_name, 0777);
+            @file_put_contents($file_name, $content);
+            @chmod($file_name, 0755);
+        }
     }
 
     public function replace_tag($file_name, $tag, $value){
@@ -1351,7 +1396,7 @@ class Install_model extends CI_Model{
             $content  .= '$hostname = "'.$hostname.'";'.PHP_EOL;
             @file_put_contents(FCPATH.'/hostname.php', $content);
         }
-        // copy everything from /application/config/first-time.php into /application/config/ or /application/config/site-subsite
+        // copy everything from /application/config/first-time into /application/config/ or /application/config/site-subsite
         if($this->is_subsite){
             // add site.php entry
             $content = file_get_contents(FCPATH.'/site.php');
@@ -1465,14 +1510,6 @@ class Install_model extends CI_Model{
         $this->change_config($file_name, "default_controller", 'main', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "404_override", 'not_found', $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
-        if($this->is_subsite){
-            // extended_route_path
-            $include_extended_route = 'include(APPPATH.\'config/site-'.$this->subsite.'/extended_routes.php\');';
-        }else{
-            $include_extended_route = 'include(APPPATH.\'config/main/extended_routes.php\');';
-        }
-        file_put_contents($file_name, file_get_contents($file_name).PHP_EOL.PHP_EOL.$include_extended_route);
-
         // hybridauth
         $file_name = APPPATH.'config/'.$this->complete_config_file_name('hybridauthlib.php');
         $key_prefix = '$';
@@ -1522,6 +1559,10 @@ class Install_model extends CI_Model{
         $this->change_config($file_name, "auth_foursquare_app_id", $this->auth_foursquare_app_id, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
         $this->change_config($file_name, "auth_foursquare_app_secret", $this->auth_foursquare_app_secret, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
 
+        // flush all changes
+        $this->flush_change_config();
+
+        // htaccess
         if(!$this->is_subsite){
             // make htaccess
             $rewrite_base = str_replace('index.php', '',$_SERVER['SCRIPT_NAME']);
@@ -1540,6 +1581,14 @@ class Install_model extends CI_Model{
             file_put_contents(FCPATH.'site.php', $site_content);
         }
 
+        // extended_route_path
+        $file_name = APPPATH.'config/'.$this->complete_config_file_name('routes.php');
+        if($this->is_subsite){
+            $include_extended_route = 'include(APPPATH.\'config/site-'.$this->subsite.'/extended_routes.php\');';
+        }else{
+            $include_extended_route = 'include(APPPATH.\'config/main/extended_routes.php\');';
+        }
+        file_put_contents($file_name, file_get_contents($file_name).PHP_EOL.PHP_EOL.$include_extended_route);
     }
 
     public function install_modules(){
@@ -1579,6 +1628,7 @@ class Install_model extends CI_Model{
             }
             $executed_controllers = array();
             foreach($modules as $module){
+                log_message('debug', 'start installing '.$module);
                 if(file_exists(FCPATH.'modules/'.$module.'/description.txt')){
                     $json         = file_get_contents(FCPATH.'modules/'.$module.'/description.txt');
                     $module_info  = @json_decode($json, true);
@@ -1599,7 +1649,9 @@ class Install_model extends CI_Model{
                         }
                         $url_part[0] = strtolower($new_controller_name);
                         $new_url = implode('/', $url_part);
+                        log_message('debug', 'start running controller');
                         $response = Modules::run($module.'/'.$new_url, $bypass);
+                        log_message('debug', 'finish running controller');
                         // look if it is succeed or failed
                         $success = FALSE;
                         if($response != ''){
@@ -1609,7 +1661,7 @@ class Install_model extends CI_Model{
                             }
                         }
                         if(!$success){
-                            log_message('error', 'Invalid response when installing module.'.PHP_EOL.
+                            log_message('debug', 'Invalid response when installing module.'.PHP_EOL.
                                 '    URL : '.$module.'/'.$url.PHP_EOL.
                                 '    response : '.print_r($response, TRUE));
                         }
@@ -1619,6 +1671,7 @@ class Install_model extends CI_Model{
                         }
                     }
                 }
+                log_message('debug', 'finish intalling '.$module);
             }
             if($this->is_subsite){
                 // put the overridden subsite back to normal
