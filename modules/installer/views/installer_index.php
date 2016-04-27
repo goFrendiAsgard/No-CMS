@@ -1,5 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-$major_version = explode('.', $php_version)[0];
+$major_version = explode('.', $php_version);
+$major_version = $major_version[0];
 if($major_version >=7){
     $pdo_selected = "selected";
     $mysqli_selected = "";

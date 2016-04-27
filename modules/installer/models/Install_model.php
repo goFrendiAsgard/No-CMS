@@ -1350,7 +1350,7 @@ class Install_model extends CI_Model{
         $this->__config_file[$file_name] = $str;
     }
 
-    protected function append_config($file_name, $key, $value, $key_prefix = PHP_EOL.'$config[',
+    protected function append_config($file_name, $key, $value, $key_prefix = '$config[',
     $key_suffix = ']', $value_prefix = "'", $value_suffix = "';",  $equal_sign = '='){
         if(!array_key_exists($file_name, $this->__config_file)){
             $this->__config_file[$file_name] = file_get_contents($file_name);
