@@ -62,7 +62,15 @@ class Installer extends MX_Controller{
     }
 
     public function index(){
-        $data = array('php_version' => phpversion());
+        $extensions = get_loaded_extensions();
+        $data = array(
+            'php_version'           => phpversion(),
+            'mysql_installed'       => in_array('mysql', $extensions),
+            'mysqli_installed'      => in_array('mysqli', $extensions),
+            'pdo_mysql_installed'   => in_array('pdo_mysql', $extensions),
+            'pdo_pgsql_installed'   => in_array('pdo_pgsql', $extensions),
+            'pdo_sqlite_installed'  => in_array('pdo_sqlite', $extensions)
+        );
         $this->load->view('installer/installer_index', $data);
     }
 

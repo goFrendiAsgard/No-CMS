@@ -1,14 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
-$major_version = explode('.', $php_version);
-$major_version = $major_version[0];
-if($major_version >=7){
-    $pdo_selected = "selected";
-    $mysqli_selected = "";
-}else{
-    $pdo_selected = "";
-    $mysqli_selected = "selected";
-}
-?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed');?>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -79,13 +69,21 @@ if($major_version >=7){
                                 <label class="control-label col-md-3" for="db_protocol">Protocol</label>
                                 <div class="controls col-md-8">
                                      <select id="db_protocol" name="db_protocol" class="input form-control" placeholder="database driver">
-                                         <?php if($major_version < 7){ ?>
-                                             <option value="mysql">MySQL/MariaDB (with mysql driver)</option>
-                                         <?php } ?>
-                                         <option <?php echo $mysqli_selected; ?> value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
-                                         <option <?php echo $pdo_selected; ?> value="pdo_mysql">MySQL/MariaDB (with PDO driver)</option>
-                                         <option value="pdo_pgsql">PostgreSQL (with PDO driver), Experimental</option>
-                                         <option value="pdo_sqlite">SQLite (with PDO driver), Experimental</option>
+                                        <?php if($mysql_installed){ ?>
+                                            <option value="mysql">MySQL/MariaDB (with mysql driver)</option>
+                                        <?php } ?>
+                                        <?php if($mysqli_installed){ ?>
+                                            <option value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
+                                        <?php } ?>
+                                        <?php if($pdo_mysql_installed){ ?>
+                                            <option value="pdo_mysql">MySQL/MariaDB (with PDO driver)</option>
+                                        <?php } ?>
+                                        <?php if($pdo_pgsql_installed){ ?>
+                                            <option value="pdo_pgsql">PostgreSQL (with PDO driver), Experimental</option>
+                                        <?php } ?>
+                                        <?php if($pdo_sqlite_installed){ ?>
+                                            <option value="pdo_sqlite">SQLite (with PDO driver), Experimental</option>
+                                        <?php } ?>
                                      </select>
                                 </div>
                              </div>
