@@ -399,7 +399,7 @@ class CMS_Module extends CMS_Controller
         }
     }
 
-    final private function __build_all($mode='insert')
+    private function __build_all($mode='insert')
     {
         // GET MODULE PATH
         $module_path = $this->cms_module_path();
@@ -529,11 +529,17 @@ class CMS_Module extends CMS_Controller
         }
 
         if($mode == 'insert'){
-
             // INSERT DATA
             foreach ($this->DATA as $table_name => $data) {
                 if(!is_array($data) || count($data) == 0){
                     continue;
+                }
+                // add PHP_EOL
+                for($i=0; $i<count($data); $i++){
+                    foreach($data[$i] as $data_key=>$data_value){
+                        $data_value = str_replace(array('\n', '\r\n', '\n\r'), PHP_EOL, $data_value);
+                        $data[$i][$data_key] = $data_value;
+                    }
                 }
                 $this->db->insert_batch($this->t($table_name), $data);
             }
@@ -595,16 +601,18 @@ class CMS_Module extends CMS_Controller
         }
     }
 
-    final private function __get_from_array($array, $key, $default)
+    private function __get_from_array($array, $key, $default, $convert_eol = TRUE)
     {
         if (is_array($array) && array_key_exists($key, $array)) {
-            return $array[$key];
+            $value = $array[$key];
+            $value = str_replace(array('\n', '\r\n', '\n\r'), PHP_EOL, $value);
+            return $value;
         } else {
             return $default;
         }
     }
 
-    final private function __get_all_navigations()
+    private function __get_all_navigations()
     {
         // COMBINE NAVIGATIONS AND BACKEND NAVIGATIONS
         $NAVIGATIONS = array();
