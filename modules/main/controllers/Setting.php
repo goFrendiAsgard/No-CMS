@@ -4,6 +4,7 @@ class Setting extends CMS_Controller{
     protected $theme = 'neutral';
 
     private function update_static_content($widget_name, $content){
+        $content = $this->cms_parse_keyword($content);
         $no_change = FALSE;
         // see if there are changes
         $widgets = $this->cms_widgets(NULL, $widget_name);
