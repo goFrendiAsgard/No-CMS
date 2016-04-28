@@ -537,8 +537,10 @@ class CMS_Module extends CMS_Controller
                 // add PHP_EOL
                 for($i=0; $i<count($data); $i++){
                     foreach($data[$i] as $data_key=>$data_value){
-                        $data_value = str_replace(array('\n', '\r\n', '\n\r'), PHP_EOL, $data_value);
-                        $data[$i][$data_key] = $data_value;
+                        if(is_string($data_value)){
+                            $data_value = str_replace(array('\n', '\r\n', '\n\r'), PHP_EOL, $data_value);
+                            $data[$i][$data_key] = $data_value;
+                        }
                     }
                 }
                 $this->db->insert_batch($this->t($table_name), $data);

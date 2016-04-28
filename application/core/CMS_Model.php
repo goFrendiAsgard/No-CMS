@@ -3856,8 +3856,7 @@ class CMS_Model extends CI_Model
             $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
                 ->where('url', $url)->get();
             if ($query->num_rows() > 0) {
-                throw('Navigation with the same url already exists');
-
+                throw(new Exception('Navigation with the same url already exists'));
                 return;
             }
         }
@@ -3867,14 +3866,14 @@ class CMS_Model extends CI_Model
             'title' => $title,
             'url' => $this->cms_parse_keyword($url),
             'authorization_id' => $authorization_id,
-            'index' => $index,
+            'index' => is_int($index)? $index: 0,
             'description' => $description,
             'active' => 1,
             'bootstrap_glyph' => $bootstrap_glyph,
             'default_theme' => $default_theme,
             'default_layout' => $default_layout,
             'notif_url' => $this->cms_parse_keyword($notif_url),
-            'hidden' => $hidden,
+            'hidden' => is_int($hidden)? $hidden : 0,
             'static_content' => $static_content,
         );
         if (isset($parent_id)) {
