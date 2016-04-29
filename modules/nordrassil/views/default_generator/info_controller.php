@@ -82,19 +82,6 @@ class Info extends CMS_Module {
     //////////////////////////////////////////////////////////////////////////////
     // UPGRADE
     //////////////////////////////////////////////////////////////////////////////
-    public function do_upgrade($old_version){
-        $version_part = explode('.', $old_version);
-        $major        = $version_part[0];
-        $minor        = $version_part[1];
-        $build        = $version_part[2];
-        $module_path  = $this->cms_module_path();
-
-        // TODO: Add your migration logic here.
-
-        // e.g:
-        // if($major <= 0 && $minor <= 0 && $build <=0){
-        //      // add some missing fields, navigations or privileges
-        // }
-    }
+    // TODO: write your upgrade function: do_upgrade_to_x_x_x
 
 }

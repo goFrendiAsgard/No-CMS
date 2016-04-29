@@ -336,7 +336,62 @@ class CMS_Module extends CMS_Controller
             $this->db->trans_start();
             $module_path = $this->cms_module_path();
             $this->__build_all('upgrade');
-            // from do_upgrade function
+
+            // get current major, minor and rev version
+            $current_version_component = explode('-', $this->VERSION);
+            $current_version_component = $current_version_component[0];
+            $current_version_component = explode('.', $current_version_component);
+            $current_major_version = $current_version_component[0];
+            $current_minor_version = $current_version_component[1];
+            $current_rev_version = $current_version_component[2];
+            // get old major, minor and rev version
+            $old_version_component = explode('-', $this->OLD_VERSION);
+            $old_version_component = $old_version_component[0];
+            $old_version_component = explode('.', $old_version_component);
+            $old_major_version = $old_version_component[0];
+            $old_minor_version = $old_version_component[1];
+            $old_rev_version = $old_version_component[2];
+            // upgrade by using do_upgrade_to_x_x_x function
+            if($old_major_version != $new_major_version || $old_minor_version != $new_minor_version || $old_rev_version != $new_rev_version){
+                // update
+                if($old_major_version <= $current_major_version){
+                    for($i = $old_major_version; $i <= $current_major_version; $i++){
+                        // determine max minor version
+                        $max_minor_version = 9;
+                        $min_minor_version = 0;
+                        if($i == $current_major_version){
+                            $max_minor_version = $current_minor_version;
+                        }
+                        if($i == $old_major_version){
+                            $min_minor_version = $old_minor_version;
+                        }
+                        // do until max minor version
+                        for($j=$min_minor_version; $j <= $max_minor_version; $j++){
+                            // determine max minor version
+                            $max_rev_version = 9;
+                            $min_rev_version = 0;
+                            if($i == $current_major_version && $j == $max_minor_version){
+                                $max_rev_version = $current_rev_version;
+                            }
+                            if($i == $old_major_version && $j == $old_minor_version){
+                                $min_rev_version = $old_rev_version + 1;
+                            }
+                            if($min_rev_version > 9){
+                                break;
+                            }
+                            // do until max rev version
+                            for($k=$min_rev_version; $k<=$max_rev_version; $k++){
+                                $method = 'do_upgrade_to_'.$i.'_'.$j.'_'.$k;
+                                if(method_exists($this, $method)){
+                                    call_user_func_array(array($this, $method), array());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // upgrade by using do_upgrade function
             if ($this->do_upgrade($this->OLD_VERSION) !== false) {
                 $data = array('version' => $this->VERSION);
                 $where = array('module_name' => $this->NAME);
@@ -607,7 +662,9 @@ class CMS_Module extends CMS_Controller
     {
         if (is_array($array) && array_key_exists($key, $array)) {
             $value = $array[$key];
-            $value = str_replace(array('\n', '\r\n', '\n\r'), PHP_EOL, $value);
+            if(is_string($value)){
+                $value = str_replace(array('\n', '\r\n', '\n\r'), PHP_EOL, $value);
+            }
             return $value;
         } else {
             return $default;
@@ -639,7 +696,6 @@ class CMS_Module extends CMS_Controller
                 $NAVIGATIONS[$i]['parent_name'] = $this->cms_complete_navigation_name($parent_name);
             }
         }
-
         return $NAVIGATIONS;
     }
 

@@ -355,29 +355,15 @@ class Info extends CMS_Module {
     //////////////////////////////////////////////////////////////////////////////
     // UPGRADE
     //////////////////////////////////////////////////////////////////////////////
-    public function do_upgrade($old_version){
-        $version_part = explode('.', $old_version);
-        $major        = $version_part[0];
-        $minor        = $version_part[1];
-        $build        = $version_part[2];
-        $module_path  = $this->cms_module_path();
-
-        // TODO: Add your migration logic here.
-
-        // e.g:
-        // if($major <= 0 && $minor <= 0 && $build <=0){
-        //      // add some missing fields, navigations or privileges
-        // }
-        if($major <= 0 && $minor <= 1 && $build <= 0){
-            $article_list = $this->db->get($this->t('article'));
-            foreach($article_list as $article){
-                $content = $article->content;
-                $this->preg_replace("/<div(\s)*style(\s)*=(\s)*\"page-break-after(\s)*:(\s)*always(;)*\"(\s)*>(\s)*<span(\s)*style(\s)*=(\s)*\"display(\s)*:(\s)*none(;)*\">(\s)*&nbsp;(\s)*<\/span>(\s)*<\/div>/i", '<!--more-->', $content);
-                $this->db->update($this->t('article'),
-                    array('content' => $content),
-                    array('article_id' => $article->article_id)
-                );
-            }
+    public function do_upgrade_to_0_1_0(){
+        $article_list = $this->db->get($this->t('article'));
+        foreach($article_list as $article){
+            $content = $article->content;
+            $this->preg_replace("/<div(\s)*style(\s)*=(\s)*\"page-break-after(\s)*:(\s)*always(;)*\"(\s)*>(\s)*<span(\s)*style(\s)*=(\s)*\"display(\s)*:(\s)*none(;)*\">(\s)*&nbsp;(\s)*<\/span>(\s)*<\/div>/i", '<!--more-->', $content);
+            $this->db->update($this->t('article'),
+                array('content' => $content),
+                array('article_id' => $article->article_id)
+            );
         }
     }
 

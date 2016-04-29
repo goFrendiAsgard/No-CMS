@@ -6,36 +6,42 @@
  */
 class Info extends CMS_Module {
 
+    protected $NAVIGATIONS = array(
+        // Static Accessories New
+        array(
+            'navigation_name'   => 'index',
+            'url'               => 'teldrassil',
+            'authorization_id'  => PRIV_AUTHORIZED,
+            'default_layout'    => 'default-one-column',
+            'title'             => 'Theme Generator',
+            'parent_name'       => 'main_management',
+            'index'             => NULL,
+            'description'       => NULL,
+            'bootstrap_glyph'   => NULL,
+            'notification_url'  => NULL,
+            'hidden'            => NULL,
+            'static_content'    => NULL,
+        ),
+
+    );
+
+    //////////////////////////////////////////////////////////////////////////////
+    // ACTIVATION
+    //////////////////////////////////////////////////////////////////////////////
     public function do_activate(){
-        $this->remove_all();
-        $this->build_all();
+        // TODO : write your module activation script here
     }
 
+    //////////////////////////////////////////////////////////////////////////////
     // DEACTIVATION
+    //////////////////////////////////////////////////////////////////////////////
     public function do_deactivate(){
-        $this->remove_all();
+        // TODO : write your module deactivation script here
     }
 
+    //////////////////////////////////////////////////////////////////////////////
     // UPGRADE
-    public function do_upgrade($old_version){
-        // Add your migration logic here.
-    }
-
-
-    // REMOVE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
-    private function remove_all(){
-        $module_path = $this->cms_module_path();
-        // remove navigation
-        $this->cms_remove_navigation($this->n('index'));
-    }
-
-    // CREATE ALL NAVIGATIONS, WIDGETS, AND PRIVILEGES
-    private function build_all(){
-        $module_path = $this->cms_module_path();
-        // create navigation
-        $this->cms_add_navigation($this->n('index'), 'Theme Generator',
-            $module_path == 'teldrassil'? $module_path: $module_path.'/teldrassil', PRIV_AUTHORIZED,
-                "main_management", NULL, 'Theme Generator', NULL, NULL, 'default-one-column');
-    }
+    //////////////////////////////////////////////////////////////////////////////
+    // TODO: write your upgrade function: do_upgrade_to_x_x_x
 
 }

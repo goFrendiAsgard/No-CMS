@@ -36,7 +36,16 @@
 <br />
 <!-- This is the real input. If you want to catch the data, please json_decode this input's value -->
 <input id="md_real_field_photos_col" name="md_real_field_photos_col" type="hidden" />
-
+<?php
+/*
+    $asset = new Cms_asset();
+    $asset->add_cms_js("nocms/js/jquery-ace/ace/ace.js");
+    $asset->add_cms_js("nocms/js/jquery-ace/ace/theme-eclipse.js");
+    $asset->add_cms_js("nocms/js/jquery-ace/ace/mode-html.js");
+    $asset->add_cms_js("nocms/js/jquery-ace/jquery-ace.min.js");
+    echo $asset->compile_js();
+*/
+?>
 <script type="text/javascript">
 
     /////////////////////////////////////////////////////////////////////////
@@ -137,6 +146,16 @@
         /////////////////////////////////////////////////////////////////////////////
         $('#md_table_photos tbody').append(component);
         mutate_input();
+
+        //$('#md_field_photos_col_caption_'+RECORD_INDEX_photos).ckeditor({toolbar:'mini',width:500});
+        /*
+        $('#md_field_photos_col_caption_'+RECORD_INDEX_photos).ace({
+            theme: "eclipse",
+            lang: "html",
+            width: "500px",
+            height: "100px"
+        });
+        */
 
     } // end of ADD ROW FUNCTION
 
@@ -298,11 +317,11 @@
 
 
     });
-    
+
     /////////////////////////////////////////////////////////////////////////
     // reset field on save
     /////////////////////////////////////////////////////////////////////////
-    $(document).ajaxSuccess(function(event, xhr, settings) {        
+    $(document).ajaxSuccess(function(event, xhr, settings) {
         if (settings.url == "{{ module_site_url }}manage_article/index/insert") {
             response = $.parseJSON(xhr.responseText);
             if(response.success == true){
