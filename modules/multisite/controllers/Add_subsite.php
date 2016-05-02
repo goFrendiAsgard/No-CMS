@@ -82,9 +82,6 @@ class Add_subsite extends CMS_Secure_Controller {
         }
         $modules = $new_modules;
 
-        $this->install_model->configs = $configs;
-        $this->install_model->modules = $modules;
-
         // upload the logo
         $upload_path = FCPATH.'modules/'.$this->cms_module_path().'/assets/uploads/';
         $file_name = NULL;

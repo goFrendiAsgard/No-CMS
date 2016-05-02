@@ -141,7 +141,7 @@
                     echo'<select id="theme" name="theme" class="input form-control" placeholder="Theme">';
                     foreach($theme_list as $theme){
                         $selected = $theme == 'neutral'? 'selected' : '';
-                        echo '<option value="'.$theme.' '.$selected.'">'.$theme.'</option>';
+                        echo '<option value="'.$theme.'" '.$selected.'>'.$theme.'</option>';
                     }
                     echo'</select>';
                     echo'<p class="help-block">Theme used for the new site</p>';

@@ -345,14 +345,13 @@ class Multisite extends CMS_Secure_Controller {
                 }
             }
             $modules = $new_modules;
-
-            $this->install_model->configs = $configs;
-            $this->install_model->modules = $modules;
             // check installation
             $check_installation = $this->install_model->check_installation();
             $success = $check_installation['success'];
             $module_installed = FALSE;
             if($success){
+                $this->install_model->configs = $configs;
+                $this->install_model->modules = $modules;
                 $config = array(
                         'subsite_home_content'=> $template != NULL? $template->homepage: $this->cms_get_config('cms_subsite_home_content', TRUE),
                         'subsite_homepage_layout' => $homepage_layout,
