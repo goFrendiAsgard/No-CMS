@@ -45,7 +45,6 @@ class Multisite extends CMS_Secure_Controller {
         if($is_admin){
             $this->load->model($this->cms_module_path().'/subsite_model');
             $this->subsite_model->delete($subsite);
-            $this->subsite_model->update_configs();
         }
         redirect( $this->cms_module_path() == 'multisite'?
                 site_url($this->cms_module_path()) :
@@ -132,7 +131,6 @@ class Multisite extends CMS_Secure_Controller {
                 $data['active'] = $active;
             }
             $this->db->update($this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite'), $data, array('name'=>$site_name));
-            $this->subsite_model->update_configs();
             $save = true;
         }
         // get data
@@ -374,7 +372,6 @@ class Multisite extends CMS_Secure_Controller {
                 'active'=>$activation == 'automatic'
             );
             $this->db->insert($subsite_table_name, $data);
-            $this->subsite_model->update_configs();
 
             // get the new subsite
             $t_user = $this->cms_user_table_name();

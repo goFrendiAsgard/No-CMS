@@ -524,6 +524,7 @@ switch (ERROR_REPORTING)
 	define('USE_SUBDOMAIN',     $USE_SUBDOMAIN);
 	define('INVALID_SUBSITE',   $INVALID_SUBSITE);
 	define('USE_ALIAS',         $USE_ALIAS);
+	define('T_SUBSITE',			$t_subsite);
 
 	// No-CMS privilege constants
 	define('PRIV_EVERYONE',             1);

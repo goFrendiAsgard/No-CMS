@@ -101,12 +101,43 @@ class CMS_Model extends CI_Model
                 'is_user_language_cached' => false,
                 'is_user_theme_cached' => false,
                 'is_layout_cached' => false,
+                'is_private_themes_cached' => false,
+                'is_private_modules_cached' => false,
                 'profile_pictures' => array(),
+                'private_themes' => array(),
+                'private_modules' => array(),
             );
         foreach ($default_properties as $key => $val) {
             if (!array_key_exists($key, self::$__cms_model_properties)) {
                 self::$__cms_model_properties[$key] = $val;
             }
+        }
+
+        // get themes and modules for this subsite
+        if( (!self::$__cms_model_properties['is_private_modules_cached'] || !self::$__cms_model_properties['is_private_themes_cached']) &&  CMS_SUBSITE != '' && T_SUBSITE != ''){
+            // get subsite complete table name
+            $t_subsite = T_SUBSITE;
+            $query = $this->db->select('modules, themes')
+                ->from($t_subsite)
+                ->where('name', CMS_SUBSITE)
+                ->get();
+            $row = $query->row();
+            // get private modules and themes
+            $modules = explode(',', $row->modules);
+            $themes = explode(',', $row->themes);
+            // get rid of spaces
+            for($i=0; $i<count($modules); $i++){
+                $modules[$i] = trim($modules[$i]);
+            }
+            for($i=0; $i<count($themes); $i++){
+                $themes[$i] = trim($themes[$i]);
+            }
+            self::$__cms_model_properties['private_modules'] = $modules;
+            self::$__cms_model_properties['private_themes'] = $themes;
+
+            // cached
+            self::$__cms_model_properties['is_private_modules_cached'] = TRUE;
+            self::$__cms_model_properties['is_private_themes_cached'] = TRUE;
         }
 
         // cache super_admin
@@ -2569,7 +2600,8 @@ class CMS_Model extends CI_Model
                 'activate' => 'info/activate',
                 'deactivate' => 'info/deactivate',
                 'upgrade' => 'info/upgrade',
-                'public' => TRUE
+                'public' => TRUE,
+                'published' => TRUE,
             );
             // if no default values exists, provide default values
             foreach ($default_values as $key => $value) {
@@ -2607,14 +2639,7 @@ class CMS_Model extends CI_Model
                 // see if module is accessible
                 $published = TRUE;
                 if (!$public && CMS_SUBSITE != '') {
-                    $subsite_auth_file = FCPATH.'modules/'.$directory.'/subsite_auth.php';
-                    if (file_exists($subsite_auth_file)) {
-                        unset($subsite_allowed);
-                        include $subsite_auth_file;
-                        if (isset($subsite_allowed) && (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
-                             $published = FALSE;
-                        }
-                    }
+                    $published = in_array($module_name, self::$__cms_model_properties['private_modules']);
                 }
                 // unpublished module should not be shown
                 $module[] = array(
@@ -2769,20 +2794,6 @@ class CMS_Model extends CI_Model
                 continue;
             }
 
-            if (CMS_SUBSITE != '') {
-                $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
-                if (file_exists($subsite_auth_file)) {
-                    unset($public);
-                    unset($subsite_allowed);
-                    include $subsite_auth_file;
-                    if (isset($public) && is_bool($public) && !$public) {
-                        if (!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
-                            continue;
-                        }
-                    }
-                }
-            }
-
             $theme_name = $directory;
 
             $description = '';
@@ -2795,21 +2806,15 @@ class CMS_Model extends CI_Model
             }
             $config = @json_decode(file_get_contents($description_file), TRUE);
             if(array_key_exists('public', $config)){
-                $published = CMS_SUBSITE == '' || $config['public'];
                 $public = $config['public'];
             }
             if(array_key_exists('description', $config)){
                 $description = $config['description'];
             }
-            if(!$published){
-                $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
-                if (file_exists($subsite_auth_file)) {
-                    unset($subsite_allowed);
-                    include $subsite_auth_file;
-                    if (!isset($subsite_allowed) || (is_array($subsite_allowed) && !in_array(CMS_SUBSITE, $subsite_allowed))) {
-                        $published = FALSE;
-                    }
-                }
+
+            $published = TRUE;
+            if (!$public && CMS_SUBSITE != '') {
+                $published = in_array($theme_name, self::$__cms_model_properties['private_themes']);
             }
 
             if ($keyword === null  || ($keyword !== null && (stripos($directory, $keyword) !== false || stripos($description, $keyword) !== false))) {

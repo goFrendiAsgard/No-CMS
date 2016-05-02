@@ -129,7 +129,6 @@ class Add_subsite extends CMS_Secure_Controller {
         );
         $this->db->insert($this->t('subsite'), $data);
         $this->load->model($this->cms_module_path().'/subsite_model');
-        $this->subsite_model->update_configs();
 
         $data = $check_installation;
         $data['module_installed'] = $module_installed;

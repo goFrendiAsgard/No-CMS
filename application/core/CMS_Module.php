@@ -83,6 +83,7 @@ class CMS_Module extends CMS_Controller
         $module_list = $this->cms_get_module_list();
         foreach ($module_list as $module_info) {
             if ($module_info['module_path'] == $module_path) {
+                var_dump($module_info);
                 $this->NAME = $module_info['module_name'];
                 $this->IS_ACTIVE = $module_info['active'];
                 $this->IS_OLD = $module_info['old'];
@@ -90,23 +91,13 @@ class CMS_Module extends CMS_Controller
                 $this->VERSION = $module_info['current_version'];
                 $this->DESCRIPTION = $module_info['description'];
                 $this->DEPENDENCIES = $module_info['dependencies'];
+                $this->PUBLIC = $module_info['public'];
+                $this->PUBLISHED = $module_info['published'];
+                break;
             }
         }
         // load dbforge to be used later
         $this->load->dbforge();
-        // get subsite authorization
-        $subsite_auth_file = FCPATH.'modules/'.$this->cms_module_path().'/subsite_auth.php';
-        if (file_exists($subsite_auth_file)) {
-            unset($public);
-            unset($subsite_allowed);
-            include $subsite_auth_file;
-            if (isset($public) && is_bool($public)) {
-                $this->PUBLIC = $public;
-            }
-            if (isset($subsite_allowed) && is_array($subsite_allowed)) {
-                $this->SUBSITE_ALLOWED = $subsite_allowed;
-            }
-        }
     }
 
     final public function status($dont_fetch = false)
