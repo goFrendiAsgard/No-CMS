@@ -411,7 +411,7 @@ switch (ERROR_REPORTING)
 				mysqli_close($conn);
 			}else if(strtolower($dbdriver) == 'pdo'){
 				try {
-				    $conn = new PDO($dsn);
+				    $conn = new PDO($dsn, $username, $password);
 				    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 					$stmt = $conn->prepare($sql);
 				    $stmt->execute();
@@ -515,7 +515,6 @@ switch (ERROR_REPORTING)
 				}
 			}
 		}
-
 		// change the environment based on multisite
 		$ENVIRONMENT = $CMS_SUBSITE !='' ? 'site-'.$CMS_SUBSITE : 'main';
 	}
