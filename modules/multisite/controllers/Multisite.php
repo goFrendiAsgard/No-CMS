@@ -182,24 +182,11 @@ class Multisite extends CMS_Secure_Controller {
         $this->load->model($this->cms_module_path().'/subsite_model');
         $result = $this->subsite_model->get_data($keyword, $page);
 
-        // get the original site_url (without site-* or subdomain)
-        $site_url = site_url();
-        if(CMS_SUBSITE != ''){
-            // remove any site-*
-            $site_url = preg_replace('/site-.*/', '', $site_url);
-            // remove any relevant subdomain
-            include(FCPATH.'site.php');
-            $subdomain_prefixes = $available_site;
-            for($i=0; $i<count($subdomain_prefixes); $i++){
-                $subdomain_prefixes[$i] .= '.';
-            }
-            $site_url = str_replace($subdomain_prefixes, '', $site_url);
-        }
-
+        // get site_url and is_admin
         $is_admin = $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id());
 
         $data = array(
-            'site_url' => $site_url,
+            'site_url' => site_url(),
             'result'=>$result,
             'allow_navigate_backend' => CMS_SUBSITE == '' && $this->cms_have_privilege('modify_subsite'),
             'is_admin' => $is_admin,

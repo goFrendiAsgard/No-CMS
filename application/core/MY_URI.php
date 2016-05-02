@@ -10,14 +10,16 @@ class MY_URI extends CI_URI {
 			return '';
 		}
 
-		// additional code by Go Frendi. This is necessary to make request_uri preceed by '/site-*'
-		// loaded correctly
+		// additional code by Go Frendi. This is necessary to make request_uri preceed by '/site-*' loaded correctly
 		$request_uri = $_SERVER['REQUEST_URI'];
 		if(CMS_SUBSITE != ''){
 			$subsite_signature = '/site-'.CMS_SUBSITE;
-			if(strpos($request_uri, $subsite_signature) === 0){
-				$request_uri = substr($request_uri, strlen($subsite_signature));
+			$script_name = $_SERVER['SCRIPT_NAME'];
+			$folder_name = substr($script_name, 0, strlen($script_name)-strlen('/index.php'));
+			if(strpos($request_uri, $subsite_signature) !== FALSE){
+				$request_uri = substr($request_uri, strlen($folder_name . $subsite_signature));
 			}
+			// request_uri should start with '/'
 			if(strlen($request_uri) == 0 || $request_uri[0] != '/'){
 				$request_uri = '/'.$request_uri;
 			}

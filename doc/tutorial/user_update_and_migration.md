@@ -9,7 +9,6 @@ If you don't use git, you can just download the newest version and safely overwr
 
 * `/application/config/` directory
 * `/.htaccess`
-* `/site.php`
 * `/assets/kcfinder/config.php`
 * `/assets/grocery_crud/texteditor/ckeditor/config.js`
 
@@ -47,7 +46,7 @@ Then, follow these steps:
     - Use ucfirst for both class name and file name
     - Rename `CMS_Module_Info_Controller` into `CMS_Module`
     - Rename `CMS_Priv_Strict_Controller` into `CMS_Controller`
-    - Every modules should contains `description.txt` and `controllers/Info.php` you can take `blog` module as your reference. 
+    - Every modules should contains `description.txt` and `controllers/Info.php` you can take `blog` module as your reference.
 * Update `/assets/kcfinder/config.php`, modify the first lines into this (change `{{ FCPATH }}` with your current No-CMS installation directory's absolute path):
 
     ```php
@@ -182,7 +181,7 @@ In case of you test No-CMS in local computer and want to upload it into public s
 * `$hostname` in `hostname.php`
 
 * `$_BASE_URL` and `$_FCPATH` in `assets/kcfinder/config.php`
-    
+
     `$_BASE_URL` should contains No-CMS url with trailing slash. So, if you access your website by using `http://some_domain.com`, the `$_BASE_URL` should contains `http://some_domain.com`
 
     `$_FCPATH` should contains absolute path of your No-CMS installation folder with trailing slash. So your installation folder is `/home/your_user/public_html`, the `$_FCPATH` should contains `/home/your_user/public_html/`. If you are not sure about this, please ask your hosting provider.

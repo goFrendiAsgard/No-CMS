@@ -140,7 +140,7 @@
                     echo'<div class="controls col-md-8">';
                     echo'<select id="theme" name="theme" class="input form-control" placeholder="Theme">';
                     foreach($theme_list as $theme){
-                        $selected = $theme == 'neutral'? 'selected' : ''
+                        $selected = $theme == 'neutral'? 'selected' : '';
                         echo '<option value="'.$theme.' '.$selected.'">'.$theme.'</option>';
                     }
                     echo'</select>';

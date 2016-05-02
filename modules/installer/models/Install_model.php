@@ -244,14 +244,56 @@ class Install_model extends CI_Model{
         }
 
         if($this->is_subsite){
-            include(FCPATH.'site.php');
             if($this->subsite == ''){
                 $success = FALSE;
                 $error_list[] = 'Subsite cannot be empty';
             }
-            if(in_array($this->subsite, $available_site)){
+
+            // get subsite table name and multisite installation status
+            $t_subsite = '';
+            $multisite_installed = FALSE;
+            // find out whether multisite is installed or not. If multisite is installed, set multisite_installed
+        	if(file_exists(APPPATH.'config/main/database.php')){
+        	    // multisite, can use GET or subdomain
+        		$cms_config_file = APPPATH.'config/main/cms_config.php';
+        		if(file_exists(APPPATH.'config/main/database.php') && file_exists($cms_config_file)){
+        			include($cms_config_file);
+        			$cms_table_prefix = trim($config['__cms_table_prefix'])==''? '' : $config['__cms_table_prefix'].'_';
+        			$query = $this->db->select('module_path')
+                        ->from($cms_table_prefix.'main_module')
+                        ->where('module_name', 'gofrendi.noCMS.multisite')
+                        ->get();
+        			// if multisite module is not installed then the subsite is valid, and it is not subdomain
+        			if($query->num_rows() > 0){
+                        $row = $query->row();
+        				// get module path
+        				$multisite_path = $row->module_path;
+        				// get multisite table prefix
+        				$multisite_config_file = 'modules/'.$multisite_path.'/config/module_config.php';
+        				if(file_exists($multisite_config_file)){
+        					include($multisite_config_file);
+        					$multisite_table_prefix = trim($config['__cms_table_prefix'])==''? $cms_table_prefix : $cms_table_prefix.$config['module_table_prefix'].'_';
+        					// renew multisite_installed and t_subsite
+        					$t_subsite = $multisite_table_prefix.'subsite';
+                            $multisite_installed = TRUE;
+                        }
+                    }
+                }
+            }
+
+            if($multisite_installed == FALSE){ // multisite is not installed
                 $success = FALSE;
-                $error_list[] = 'Subsite already exists';
+                $error_list[] = 'Multisite module (gofrendi.noCMS.multisite) should be installed';
+            }else{
+                $query = $this->db->select('name')
+                    ->from($t_subsite)
+                    ->where('name', $this->subsite)
+                    ->get();
+                // subsite already exists
+                if($query->num_rows()>0){
+                    $success = FALSE;
+                    $error_list[] = 'Subsite already exists';
+                }
             }
         }
 
@@ -1134,7 +1176,7 @@ class Install_model extends CI_Model{
                     1, 0, 27, 1, '<!-------Do not change below this line------->'.PHP_EOL.'<div align="center" height="200px">'.PHP_EOL.'    <iframe align="center" src="http://www.calendarlabs.com/calendars/web-content/calendar.php?cid=1001&uid=162232623&c=22&l=en&cbg=C3D9FF&cfg=000000&hfg=000000&hfg1=000000&ct=1&cb=1&cbc=2275FF&cf=verdana&cp=bottom&sw=0&hp=t&ib=0&ibc=&i=" width="170" height="155" marginwidth=0 marginheight=0 frameborder=no scrolling=no allowtransparency=\'true\'>'.PHP_EOL.'    Loading...'.PHP_EOL.'    </iframe>'.PHP_EOL.'    <div align="center" style="width:140px;font-size:10px;color:#666;">'.PHP_EOL.'        Powered by <a  href="http://www.calendarlabs.com/" target="_blank" style="font-size:10px;text-decoration:none;color:#666;">Calendar</a> Labs'.PHP_EOL.'    </div>'.PHP_EOL.'</div>'.PHP_EOL.''.PHP_EOL.'<!-------Do not change above this line------->',
                     'sidebar'),
                 array('google_map', 'Map', 'google map', '',
-                    1, 0, 28, 1, '<!-- Google Maps Element Code -->'.PHP_EOL.'<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:150px;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>',
+                    1, 0, 28, 1, '<!-- Google Maps Element Code -->'.PHP_EOL.'<iframe frameborder=0 marginwidth=0 marginheight=0 border=0 style="border:0;margin:0;width:100%;height:250px;" src="http://www.google.com/uds/modules/elements/mapselement/iframe.html?maptype=roadmap&element=true" scrolling="no" allowtransparency="true"></iframe>',
                     'sidebar'),
                 array('donate_nocms', 'Donate No-CMS', 'No-CMS Donation', NULL,
                     1, 1, 29, 1, '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">'.PHP_EOL.'<input type="hidden" name="cmd" value="_s-xclick">'.PHP_EOL.'<input type="hidden" name="hosted_button_id" value="YDES6RTA9QJQL">'.PHP_EOL.'<input type="image" src="{{ base_url }}assets/nocms/images/donation.png" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" width="165px" height="auto" style="width:165px!important;" />'.PHP_EOL.'<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">'.PHP_EOL.'</form>',
@@ -1398,21 +1440,6 @@ class Install_model extends CI_Model{
         }
         // copy everything from /application/config/first-time into /application/config/ or /application/config/site-subsite
         if($this->is_subsite){
-            // add site.php entry
-            $content = file_get_contents(FCPATH.'/site.php');
-            // available_site
-            $content .= PHP_EOL.PHP_EOL.'// SUBSITE : '.$this->subsite.PHP_EOL;
-            $content .= PHP_EOL.'$available_site[] = \''.$this->subsite.'\';';
-            // aliases
-            $alias_list = explode(',', $this->subsite_aliases);
-            foreach($alias_list as $alias){
-                $alias = trim(addslashes($alias));
-                if($alias == '') continue;
-                $content .= PHP_EOL.'$site_alias[\''.$alias.'\'] = \''.$this->subsite.'\';';
-            }
-            @chmod(FCPATH.'/site.php', 0777);
-            @file_put_contents(FCPATH.'/site.php', $content);
-            // make subsite config directory
             mkdir(APPPATH.'config/site-'.$this->subsite);
         }else{
             mkdir(APPPATH.'config/main');
@@ -1574,11 +1601,6 @@ class Install_model extends CI_Model{
             }
             $htaccess_content = $this->load->view($view_name, $data, TRUE);
             file_put_contents(FCPATH.'.htaccess', $htaccess_content);
-
-            // site content
-            $view_name = 'installer/site';
-            $site_content = $this->load->view($view_name, NULL, TRUE);
-            file_put_contents(FCPATH.'site.php', $site_content);
         }
 
         // extended_route_path

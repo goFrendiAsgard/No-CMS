@@ -33,7 +33,18 @@ class MY_Config extends CI_Config {
 			$this->set_item('base_url', $base_url);
 		}
 
-		log_message('info', 'Config Class Initialized');
+		// Added by Go Frendi
+		if(CMS_SUBSITE != '' && !USE_SUBDOMAIN){
+			$subsite_signature = 'site-'.CMS_SUBSITE;
+			$index_page = $this->config['index_page'];
+			if($index_page != ''){
+				$this->set_item('index_page', $index_page.'/'.$subsite_signature);
+			}else{
+				$this->set_item('index_page', $subsite_signature);
+			}
+		}
+
+		log_message('info', 'MY_Config Class Initialized');
 	}
 
 }

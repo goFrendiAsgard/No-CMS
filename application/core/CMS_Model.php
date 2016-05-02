@@ -1,8 +1,4 @@
-<?php
-
-if (!defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+<?php if (!defined('BASEPATH')) { exit('No direct script access allowed');}
 
 /**
  * Base Model of No-CMS.
@@ -2598,6 +2594,10 @@ class CMS_Model extends CI_Model
                 stripos($directory, $keyword) !== false ||
                 stripos($description, $keyword) !== false
             ))) {
+                // Subsite should not be allowed to install multisite
+                if(CMS_SUBSITE != '' && $module_name == 'gofrendi.noCMS.multisite'){
+                    continue;
+                }
                 // if module_name in existing_module_name skip it
                 if(in_array($module_name, $existing_module_name)){
                     continue;

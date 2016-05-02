@@ -654,9 +654,6 @@ class Main extends CMS_Controller
         if (!file_exists($token_file)) {
             return;
         }
-        if (function_exists('opcache_invalidate')) {
-            opcache_invalidate('./site.php');
-        }
         include $token_file;
         $token = @json_decode($token, true);
 

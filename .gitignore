@@ -36,7 +36,6 @@ application/config/tmp/*.php
 application/logs/log*.php
 assets/grocery_crud/texteditor/ckeditor/config.js
 assets/kcfinder/config.php
-/site.php
 /hostname.php
 _cache_*.js
 _cache_*.css
