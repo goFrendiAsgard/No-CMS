@@ -475,50 +475,50 @@ switch (ERROR_REPORTING)
 				}
 			}
 		}
-	}
 
-	// there is __cms_subsite key in GET, either by using ?__cms_subsite=subsite or /site-subsite
-	if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){
-		$CMS_SUBSITE = $_GET['__cms_subsite'];
-		$INVALID_SUBSITE = TRUE; // set invalid subsite to true unless we find one in subsite table
-		if($multisite_installed){
-			$result_subsite = db_query('SELECT name FROM '.$t_subsite.' WHERE name=\''.addslashes($CMS_SUBSITE).'\'');
-			// via get and doesn't match
-			if(count($result_subsite) > 0){
-				$INVALID_SUBSITE = FALSE;
-			}
-		}
-	}else{ // no __cms_subsite key in GET
-		// stripped host name is equal to actual host name. Seek no more, this is not subsite
-		if($stripped_host_name == $actual_host_name){
-			$USE_SUBDOMAIN = FALSE;
-			$CMS_SUBSITE = '';
-		}else{
-			$INVALID_SUBSITE = TRUE;
+		// there is __cms_subsite key in GET, either by using ?__cms_subsite=subsite or /site-subsite
+		if(isset($_GET['__cms_subsite']) && $_GET['__cms_subsite']!== NULL){
+			$CMS_SUBSITE = $_GET['__cms_subsite'];
+			$INVALID_SUBSITE = TRUE; // set invalid subsite to true unless we find one in subsite table
 			if($multisite_installed){
-				$actual_host_name_parts   = explode('.', $actual_host_name);
-				$stripped_host_name_parts = explode('.', $stripped_host_name);
-				// get subsite
-				$result_subsite = db_query('SELECT name FROM '.$t_subsite.' WHERE name=\''.addslashes($actual_host_name_parts[0]).'\' OR aliases LIKE \'%'.addslashes($actual_host_name).'%\'');
-				// subsite found, set invalid_subsite to false
+				$result_subsite = db_query('SELECT name FROM '.$t_subsite.' WHERE name=\''.addslashes($CMS_SUBSITE).'\'');
+				// via get and doesn't match
 				if(count($result_subsite) > 0){
-					$row_subsite = $result_subsite[0];
-					// using subdomain, not using alias
-					if($row_subsite['name'] == $actual_host_name_parts[0]){
-						$USE_SUBDOMAIN = TRUE;
-						$CMS_SUBSITE = $actual_host_name_parts[0];
-					}else{ // using alias
-						$USE_ALIAS = TRUE;
-						$CMS_SUBSITE = $row_subsite['name'];
-					}
 					$INVALID_SUBSITE = FALSE;
 				}
 			}
+		}else{ // no __cms_subsite key in GET
+			// stripped host name is equal to actual host name. Seek no more, this is not subsite
+			if($stripped_host_name == $actual_host_name){
+				$USE_SUBDOMAIN = FALSE;
+				$CMS_SUBSITE = '';
+			}else{
+				$INVALID_SUBSITE = TRUE;
+				if($multisite_installed){
+					$actual_host_name_parts   = explode('.', $actual_host_name);
+					$stripped_host_name_parts = explode('.', $stripped_host_name);
+					// get subsite
+					$result_subsite = db_query('SELECT name FROM '.$t_subsite.' WHERE name=\''.addslashes($actual_host_name_parts[0]).'\' OR aliases LIKE \'%'.addslashes($actual_host_name).'%\'');
+					// subsite found, set invalid_subsite to false
+					if(count($result_subsite) > 0){
+						$row_subsite = $result_subsite[0];
+						// using subdomain, not using alias
+						if($row_subsite['name'] == $actual_host_name_parts[0]){
+							$USE_SUBDOMAIN = TRUE;
+							$CMS_SUBSITE = $actual_host_name_parts[0];
+						}else{ // using alias
+							$USE_ALIAS = TRUE;
+							$CMS_SUBSITE = $row_subsite['name'];
+						}
+						$INVALID_SUBSITE = FALSE;
+					}
+				}
+			}
 		}
-	}
 
-	// change the environment based on multisite
-	$ENVIRONMENT = $CMS_SUBSITE !='' ? 'site-'.$CMS_SUBSITE : 'main';
+		// change the environment based on multisite
+		$ENVIRONMENT = $CMS_SUBSITE !='' ? 'site-'.$CMS_SUBSITE : 'main';
+	}
 
 	define('ENVIRONMENT',       $ENVIRONMENT);
 	define('CMS_SUBSITE',       $CMS_SUBSITE);
