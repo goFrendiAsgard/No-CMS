@@ -1185,8 +1185,6 @@ class CMS_Controller extends MX_Controller
             } elseif ($option == '_name' || $option == '_code') {
                 $widget_name = $arr[2];
             }
-            //$slug = $arr[1];
-            //var_dump(array($slug, $widget_name));
             $html = $this->__cms_build_widget($slug, $widget_name);
         }
 

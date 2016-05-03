@@ -4,20 +4,22 @@ class Setting extends CMS_Controller{
     protected $theme = 'neutral';
 
     private function update_static_content($widget_name, $content){
-        $content = $this->cms_parse_keyword($content);
+        $parsed_content = $this->cms_parse_keyword($content);
         $no_change = FALSE;
+        $seek_no_longer = FALSE;
         // see if there are changes
         $widgets = $this->cms_widgets(NULL, $widget_name);
         foreach($widgets as $slug => $widget_list){
             foreach($widget_list as $widget){
                 if($widget['widget_name'] == $widget_name){
-                    if($widget['content'] == $content){
+                    if($widget['content'] == $parsed_content){
                         $no_change = TRUE;
                     }
+                    $seek_no_longer = TRUE;
                     break;
                 }
             }
-            if($no_change){
+            if($seek_no_longer){
                 break;
             }
         }

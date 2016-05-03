@@ -83,7 +83,6 @@ class CMS_Module extends CMS_Controller
         $module_list = $this->cms_get_module_list();
         foreach ($module_list as $module_info) {
             if ($module_info['module_path'] == $module_path) {
-                var_dump($module_info);
                 $this->NAME = $module_info['module_name'];
                 $this->IS_ACTIVE = $module_info['active'];
                 $this->IS_OLD = $module_info['old'];
