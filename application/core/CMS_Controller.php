@@ -59,10 +59,12 @@ class CMS_Controller extends MX_Controller
         $this->load->helper('html');
         $this->load->helper('form');
         $this->load->helper('string');
+        $this->load->library('user_agent');
+        $this->load->driver('session');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
+        $this->load->library('unit_test');
         $this->form_validation->CI = &$this;
-        //$this->load->driver('session');
 
         $this->JQUERY_PATH = base_url('assets/grocery_crud/js/jquery-1.11.1.min.js');
 
@@ -971,12 +973,32 @@ class CMS_Controller extends MX_Controller
 
             // Profiler
             if(!$this->input->is_ajax_request() && ! $this->__cms_dynamic_widget && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
-                $this->output->enable_profiler(TRUE);
-            }else{
-                $this->output->enable_profiler(FALSE);
+                // get configuration from main site
+                $show_benchmark = FALSE;
+                $developer_addr = '';
+                $t_config = $this->cms_complete_main_site_table_name('main_config', '');
+                $query = $this->db->select('config_name, value')
+                    ->from($t_config)
+                    ->where('config_name', 'site_show_benchmark')
+                    ->or_where('config_name', 'site_developer_addr')
+                    ->get();
+                foreach($query->result() as $row){
+                    if($row->config_name == 'site_show_benchmark'){
+                        $show_benchmark = strtoupper(trim($row->value)) == 'TRUE';
+                    }
+                    if($row->config_name == 'site_developer_addr'){
+                        $developer_addr = $row->value;
+                    }
+                }
+                // set profiler if the site accessed from developer machine and site_show_benchmark is active
+                if($show_benchmark && ($_SERVER['REMOTE_ADDR'] == $developer_addr || preg_match('/'.$developer_addr.'/si', $_SERVER['REMOTE_ADDR']))){
+                    $this->output->enable_cms_profiler(TRUE);
+                    $this->output->set_cms_data($data);
+                    $this->output->cms_profile = $this->__cms_profile($data);
+                }
             }
 
-            echo $result;
+            $this->cms_show_html($result);
             // load view introduce rendering problem if profiler activated, thus I use echo for now
             // $this->cms_show_html($result);
         }

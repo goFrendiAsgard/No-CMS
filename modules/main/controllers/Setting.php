@@ -106,7 +106,7 @@ class Setting extends CMS_Controller{
                 'site_background_color', 'site_background_position', 'site_background_size',
                 'site_background_repeat', 'site_background_origin', 'site_background_clip',
                 'site_background_attachment', 'site_background_blur', 'site_text_color',
-                'site_show_benchmark', 'cms_signup_activation', 'cms_email_protocol',
+                'cms_signup_activation', 'cms_email_protocol',
                 'cms_email_reply_address', 'cms_email_reply_name', 'cms_email_forgot_subject',
                 'cms_email_forgot_message', 'cms_email_signup_subject', 'cms_email_signup_message',
                 'cms_email_useragent', 'cms_email_mailpath', 'cms_email_smtp_host', 'cms_email_smtp_user',
@@ -114,6 +114,10 @@ class Setting extends CMS_Controller{
                 'cms_google_analytic_property_id','cms_internet_connectivity','cms_subsite_configs','cms_subsite_modules',
             );
             // only for non-subsite
+            if(CMS_SUBSITE == ''){
+                $configuration_list[] = 'site_show_benchmark';
+                $configuration_list[] = 'site_developer_addr';
+            }
             if(CMS_SUBSITE == '' && $this->cms_is_module_active('gofrendi.noCMS.multisite')){
                 $configuration_list[] = 'cms_add_subsite_on_register';
                 $configuration_list[] = 'cms_subsite_use_subdomain';

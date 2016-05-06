@@ -1,0 +1,227 @@
+<?php if (!defined('BASEPATH')) { exit('No direct script access allowed');}
+    if(!function_exists('escape_html')){
+        function escape_html($str){
+            $search = array(PHP_EOL, '  ');
+            $replace = array('<br />', '&nbsp;&nbsp;');
+            $str = str_replace($search, $replace, htmlentities($str));
+            return $str;
+        }
+    }
+
+    if(!function_exists('print_value')){
+        function print_value($val){
+            if(is_int($val) || is_float($val) || is_null($val)){
+                echo $val;
+            }else if(is_string($val)){
+                echo escape_html($val);
+            }else if(is_bool($val)){
+                echo $val? 'TRUE' : 'FALSE';
+            }else{
+                echo escape_html(print_r($val, TRUE));
+            }
+        }
+    }
+
+    if(!function_exists('print_elapsed_time')){
+        function print_elapsed_time($seconds){
+            $seconds = 0.0 + $seconds;
+            echo number_format($seconds, 4) . ' seconds';
+        }
+    }
+
+    if(!function_exists('print_sql')){
+        function print_sql($sql, $sql_keywords){
+            $search = array();
+            $replace = array();
+            $sql = escape_html($sql);
+            foreach($sql_keywords as $keyword){
+                $search[] = $keyword;
+                $replace[] = '<b>'.$keyword.'</b>';
+            }
+            echo str_replace($search, $replace, $sql);
+        }
+    }
+
+    if(!function_exists('parse_unit_test_result')){
+        function parse_unit_test_result($result){
+            if($result == 'Passed'){
+                return '<span class="label label-success">'.$result.'</label>';
+            }else{
+                return '<span class="label label-danger">'.$result.'</label>';
+            }
+        }
+    }
+?>
+<style type="text/css">
+    .padding-left-40{
+        padding-left : 40px!important;
+    }
+    ._profiler-container td{
+        font-family : monospace;
+        overflow-x : auto;
+        overflow-y : hidden;
+    }
+    ._profiler-container td{
+        word-break : break-all;
+        word-wrap : break-word;
+    }
+</style>
+<div class="_profiler-container container well">
+    <h3 class="_profiler-toggle-all-controller">Profiler</h3>
+    <table class="table col-12-md _profiler-toggle-all">
+        <!-- This row contains nothing, and only used to ensure the width of every column is fixed -->
+        <tr style="height:0px; padding:0px;">
+            <td style="height:0px; padding:0px;" class="col-md-3"></td>
+            <td style="height:0px; padding:0px;" class="col-md-9"></td>
+        </tr>
+        <!-- GENERAL -->
+        <tr class="_profiler-toggle-general-controller"><th colspan="2"><div class="btn btn-default btn-lg">General Information</div></th></tr>
+        <tr class="_profiler-toggle-general"> <!-- URI -->
+            <th class="padding-left-40">URI</th>
+            <td><?php echo $uri_string; ?></td>
+        </tr>
+        <tr class="_profiler-toggle-general"> <!--class_name -->
+            <th class="padding-left-40">Class Name</th>
+            <td><?php echo $class_name; ?></td>
+        </tr>
+        <tr class="_profiler-toggle-general"> <!--method_name -->
+            <th class="padding-left-40">Method Name</th>
+            <td><?php echo $method_name; ?></td>
+        </tr>
+        <!-- BENCHMARK -->
+        <tr class="_profiler-toggle-benchmark-controller"><th colspan="2"><div class="btn btn-default btn-lg">Benchmark</div></th></tr>
+        <tr class="_profiler-toggle-benchmark"> <!--Memory Usage -->
+            <th class="padding-left-40">Total Memory Usage</th>
+            <td ><b><?php echo $memory_usage; ?></b></td>
+        </tr>
+        <tr class="_profiler-toggle-benchmark">
+            <th class="padding-left-40">Total Elapsed Time</th> <!-- elapsed_time -->
+            <td ><b><?php echo $elapsed_time.' seconds'; ?></b></td>
+        </tr>
+        <?php foreach($profiles as $key=>$val){ // print profiles ?>
+            <tr class="_profiler-toggle-benchmark">
+                <th class="padding-left-40"><?php echo ucwords(str_replace('_', ' ', $key)); ?></th>
+                <td ><?php print_elapsed_time($val); ?></td>
+            </tr>
+        <?php } ?>
+        <!-- MARKER -->
+        <tr class="_profiler-toggle-marker-controller"><th colspan="2"><div class="btn btn-default btn-lg">Time Marker (Total : <?php echo count($markers); ?>)</div></th></tr>
+        <?php foreach($markers as $key=>$val){ // markers ?>
+            <tr class="_profiler-toggle-marker">
+                <th class="padding-left-40"><?php echo ucwords(str_replace('_', ' ', $key)); ?></th>
+                <td ><?php echo number_format($val, 4); ?></td>
+            </tr>
+        <?php } ?>
+        <!-- UNIT TEST -->
+        <tr class="_profiler-toggle-unit-test-controller"><th colspan="2"><div class="btn btn-default btn-lg">Unit Test (Total : <?php echo count($unit_result); ?>)</div></th></tr>
+        <?php
+        foreach($unit_result as $unit){
+            foreach($unit as $key=>$val){
+                if($key == 'Test Name'){
+                    echo '<tr class="_profiler-toggle-unit-test"><th colspan="2" class="padding-left-40">'.$val.'</th></td>';
+                }else{
+        ?>
+                    <tr class="_profiler-toggle-unit-test">
+                        <th class="padding-left-40">&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $key; ?></th>
+                        <td><?php
+                            if($key=="Result"){
+                                echo parse_unit_test_result($val);
+                            } else{
+                                print_value($val);
+                            }
+                        ?></td>
+                    </tr>
+        <?php }}} ?>
+        <!-- VARIABLES -->
+        <tr><th class="_profiler-toggle-variable-controller" colspan="2"><div class="btn btn-default btn-lg">Variables (Total : <?php echo count($variables); ?>)</div></th></tr>
+        <?php foreach($variables as $key=>$val){ // variables ?>
+            <tr class="_profiler-toggle-variable">
+                <th class="padding-left-40"><?php echo $key; ?></th>
+                <td><?php print_value($val); ?></td>
+            </tr>
+        <?php } ?>
+        <!-- QUERIES -->
+        <tr class="_profiler-toggle-query-controller"><th colspan="2"><div class="btn btn-default btn-lg">Queries (Total : <?php echo count($db_queries) ?>)</div></th></tr>
+        <?php foreach($db_queries as $key=>$val){ // query ?>
+            <tr class="_profiler-toggle-query">
+                <td class="padding-left-40" colspan="2">
+                    <div ><?php print_elapsed_time( $db_query_times[$key]);?></div>
+                    <?php print_sql($val, $sql_keywords); ?>
+                </th>
+            </tr>
+        <?php } ?>
+        <!-- SERVER -->
+        <tr class="_profiler-toggle-server-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_SERVER (Total : <?php echo count($server); ?>)</div></th></tr>
+        <?php foreach($server as $key=>$val){ // server ?>
+            <tr class="_profiler-toggle-server">
+                <th class="padding-left-40"><?php echo $key; ?></th>
+                <td><?php print_value($val); ?></td>
+            </tr>
+        <?php } ?>
+        <!-- COOKIE -->
+        <tr class="_profiler-toggle-cookie-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_COOKIE (Total : <?php echo count($cookie); ?>)</div></th></tr>
+        <?php foreach($cookie as $key=>$val){ // cookie ?>
+            <tr class="_profiler-toggle-cookie">
+                <th class="padding-left-40"><?php echo $key; ?></th>
+                <td><?php print_value($val); ?></td>
+            </tr>
+        <?php } ?>
+        <!-- SESSION -->
+        <tr class="_profiler-toggle-session-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_SESSION (Total : <?php echo count($session); ?>)</div></th></tr>
+        <?php foreach($session as $key=>$val){ // session ?>
+            <tr class="_profiler-toggle-session">
+                <th class="padding-left-40"><?php echo $key; ?></th>
+                <td><?php print_value($val); ?></td>
+            </tr>
+        <?php } ?>
+        <!-- POST -->
+        <tr class="_profiler-toggle-post-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_POST (Total : <?php echo count($post); ?>)</div></th></tr>
+        <?php foreach($post as $key=>$val){ // post ?>
+            <tr class="_profiler-toggle-post">
+                <th class="padding-left-40"><?php echo $key; ?></th>
+                <td><?php print_value($val); ?></td>
+            </tr>
+        <?php } ?>
+        <!-- GET -->
+        <tr class="_profiler-toggle-get-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_GET (Total : <?php echo count($get); ?>)</div></th></tr>
+        <?php foreach($get as $key=>$val){ // get ?>
+            <tr class="_profiler-toggle-get">
+                <th class="padding-left-40"><?php echo $key; ?></th>
+                <td><?php print_value($val); ?></td>
+            </tr>
+        <?php } ?>
+        <!-- TOTAL -->
+        <tr class="_profiler-toggle-config-controller"><th colspan="2"><div class="btn btn-default btn-lg">CodeIgniter's configuration (Total : <?php echo count($config); ?>)</div></th></tr>
+        <?php foreach($config as $key=>$val){ // config ?>
+            <tr class="_profiler-toggle-config">
+                <th class="padding-left-40"><?php echo $key; ?></th>
+                <td><?php print_value($val); ?></td>
+            </tr>
+        <?php } ?>
+    </table>
+</div>
+
+<script type="text/javascript">
+    if(typeof($) == 'function'){ //JQuery exists
+        var keys = ['all', 'general', 'benchmark', 'marker', 'unit-test', 'query', 'server', 'cookie', 'session', 'post', 'get', 'config', 'variable'];
+        var shown_keys = ['all', 'general', 'benchmark', 'unit-test'];
+        $.map(keys, function(key){
+            var $controller = $('._profiler-toggle-'+key+'-controller');
+            var $component = $('._profiler-toggle-'+key);
+            $controller.click(function(){
+                $component.toggle();
+            });
+            // is it shown?
+            var shown = false;
+            for(var i=0; i<shown_keys.length; i++){
+                if(shown_keys[i] == key){
+                    shown = true;
+                    break;
+                }
+            }
+            if(!shown){
+                $component.hide();
+            }
+        });
+    }
+</script>

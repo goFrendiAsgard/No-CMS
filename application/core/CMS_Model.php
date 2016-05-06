@@ -49,6 +49,7 @@ class CMS_Model extends CI_Model
         $this->load->driver('session');
         $this->load->helper('cms_helper');
         $this->load->library('form_validation');
+        $this->load->library('unit_test');
 
         // for the first-time installation, it might not load main configuration even if the main configuration
         // is already exists. Thus we need to explicitly code it

@@ -3,7 +3,7 @@
 class CMS_AutoUpdate_Model extends CMS_Model
 {
     // TODO: change this
-    private $CURRENT_VERSION = '1.0.8';
+    private $CURRENT_VERSION = '1.0.9';
     private static $module_updated = false;
 
     public function __construct()
@@ -640,6 +640,10 @@ class CMS_AutoUpdate_Model extends CMS_Model
             'custom_script' =>  array('type' => 'TEXT', 'null'=>TRUE),
         );
         $this->dbforge->add_column(cms_table_name('main_navigation'), $fields);
+    }
+
+    private function __update_to_1_0_9(){
+        $this->cms_add_config('site_developer_addr', '127.0.0.1', 'Developer Address');
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)

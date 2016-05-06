@@ -140,22 +140,31 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label col-md-3" for="site_show_benchmark">Show Benchmark</label>
-                    <div class="controls col-md-9">
-                        <select id="site_show_benchmark" name="site_show_benchmark" class="form-control">
-                        <?php
-                            $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
-                            foreach($option_list as $key=>$value){
-                                $selected = $config_list['site_show_benchmark'] == $key ? 'selected' : '';
-                                echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
-                            }
-                        ?>
-                        </select>
-                        <p class="help-block">Show technical benchmark, such as POST data, database queries executed, etc. Only use it for technical purpose</p>
+                <?php if(CMS_SUBSITE == '') { ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-3" for="site_show_benchmark">Show Profiler</label>
+                        <div class="controls col-md-9">
+                            <select id="site_show_benchmark" name="site_show_benchmark" class="form-control">
+                            <?php
+                                $option_list = array('TRUE'=>'Yes', 'FALSE'=>'No');
+                                foreach($option_list as $key=>$value){
+                                    $selected = $config_list['site_show_benchmark'] == $key ? 'selected' : '';
+                                    echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
+                                }
+                            ?>
+                            </select>
+                            <p class="help-block">Show technical benchmark, such as POST data, database queries executed, etc. Only accessible from developer's address</p>
+                        </div>
                     </div>
-                </div>
 
+                    <div class="form-group">
+                        <label class="control-label col-md-3" for="site_developer_addr">Developer Address</label>
+                        <div class="controls col-md-9">
+                            <input id="site_developer_addr" name="site_developer_addr" class="form-control" value="<?php echo $config_list['site_developer_addr']; ?>" />
+                            <p class="help-block">Developer address, you can use regex, default to 127.0.0.1</p>
+                        </div>
+                    </div>
+                <?php } ?>
 
                 <?php if(CMS_SUBSITE == '' && $multisite_active){ ?>
                         <hr /><h3>Multisite and Registration</h3>

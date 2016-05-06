@@ -3,7 +3,7 @@ class Install_model extends CI_Model{
 
     private $__config_file = array();
 
-    private $VERSION        = '1.0.8';
+    private $VERSION        = '1.0.9';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -1239,6 +1239,7 @@ class Install_model extends CI_Model{
                 array('site_background_attachment', '', 'Background Attachment'),
                 array('site_background_blur', '', 'Background Blur'),
                 array('site_show_benchmark', 'FALSE', 'Show Benchmark'),
+                array('site_developer_addr', '127.0.0.1', 'Developer Address'),
                 array('site_text_color', '', 'Text Color'),
                 array('max_menu_depth', '5', 'Depth of menu recursive'),
                 array('cms_email_reply_address', '{{ admin_email }}', 'Email address'),
