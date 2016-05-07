@@ -342,7 +342,7 @@ class CMS_Module extends CMS_Controller
             $old_minor_version = $old_version_component[1];
             $old_rev_version = $old_version_component[2];
             // upgrade by using do_upgrade_to_x_x_x function
-            if($old_major_version != $new_major_version || $old_minor_version != $new_minor_version || $old_rev_version != $new_rev_version){
+            if($old_major_version != $current_major_version || $old_minor_version != $current_minor_version || $old_rev_version != $current_rev_version){
                 // update
                 if($old_major_version <= $current_major_version){
                     for($i = $old_major_version; $i <= $current_major_version; $i++){

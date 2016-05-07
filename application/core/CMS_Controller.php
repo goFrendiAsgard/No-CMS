@@ -1001,7 +1001,7 @@ class CMS_Controller extends MX_Controller
                     }
                 }
                 // set profiler if the site accessed from developer machine and site_show_benchmark is active
-                if($show_benchmark && ($_SERVER['REMOTE_ADDR'] == $developer_addr || preg_match('/'.$developer_addr.'/si', $_SERVER['REMOTE_ADDR']))){
+                if($show_benchmark && ($_SERVER['REMOTE_ADDR'] == '127.0.0.1' || $_SERVER['REMOTE_ADDR'] == '::1' || $_SERVER['REMOTE_ADDR'] == $developer_addr || preg_match('/'.$developer_addr.'/si', $_SERVER['REMOTE_ADDR']))){
                     $this->output->enable_cms_profiler(TRUE);
                     $this->output->set_cms_data($data);
                 }

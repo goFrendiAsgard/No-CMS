@@ -3862,8 +3862,9 @@ class CMS_Model extends CI_Model
             $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
                 ->where('url', $url)->get();
             if ($query->num_rows() > 0) {
-                throw(new Exception('Navigation with the same url already exists'));
-                return;
+                $dont_insert = true;
+                $row = $query->row();
+                $navigation_id = $row->navigation_id;
             }
         }
 

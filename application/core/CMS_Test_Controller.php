@@ -15,9 +15,8 @@ class CMS_Test_Controller extends CMS_Controller{
             $developer_addr = $row_config->value;
         }
         // if developer address is match to remote address, then enable cms profiler, otherwise show 404
-        if($_SERVER['REMOTE_ADDR'] == $developer_addr || preg_match('/'.$developer_addr.'/si', $_SERVER['REMOTE_ADDR'])){
+        if($_SERVER['REMOTE_ADDR'] == '127.0.0.1' || $_SERVER['REMOTE_ADDR'] == '::1' || $_SERVER['REMOTE_ADDR'] == $developer_addr || preg_match('/'.$developer_addr.'/si', $_SERVER['REMOTE_ADDR'])){
             $this->output->enable_cms_profiler(TRUE);
-
         }else{
             show_404();
         }
