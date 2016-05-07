@@ -53,8 +53,14 @@
     }
 ?>
 <style type="text/css">
+    .small-font{
+        font-size:small;
+    }
     .padding-left-40{
         padding-left : 40px!important;
+    }
+    .padding-left-20{
+        padding-left : 20px!important;
     }
     ._profiler-container td{
         font-family : monospace;
@@ -88,6 +94,36 @@
             <th class="padding-left-40">Method Name</th>
             <td><?php echo $method_name; ?></td>
         </tr>
+        <!-- UNIT TEST -->
+        <tr class="_profiler-toggle-unit-test-controller"><th colspan="2"><div class="btn btn-default btn-lg">Unit Test (Total : <?php echo count($unit_result); ?>)</div></th></tr>
+        <?php
+        foreach($unit_result as $unit){
+            $test_name = $unit['Test Name'];
+            $expected_datatype = $unit['Expected Datatype'];
+            $test_datatype = $unit['Test Datatype'];
+            $result = $unit['Result'];
+            $file_name = $unit['File Name'];
+            $line_number = $unit['Line Number'];
+            $notes = $unit['Notes'];
+            echo '<tr class="_profiler-toggle-unit-test">';
+            echo '  <td colspan="2">';
+            echo '      <table class="table">';
+            echo '          <tr>';
+            echo '              <th class="col-md-7"><b>'.$test_name . '</b></th>';
+            echo '              <td class="col-md-2" rowspan="2"><b>Expected Datatype:</b><br />'.$expected_datatype.'</td>';
+            echo '              <td class="col-md-2" rowspan="2"><b>Test Datatype:</b><br />'.$test_datatype.'</td>';
+            echo '              <td class="col-md-1" rowspan="2">'.parse_unit_test_result($result).'</td>';
+            echo '          </tr>';
+            echo '          <tr>';
+            echo '              <td class="padding-left-20 small-font">'.$file_name.' (Line : '.$line_number.')</td>';
+            echo '          <tr>';
+            echo '              <td class="padding-left-40" colspan="4">'.$notes.'</td>';
+            echo '          </tr>';
+            echo '      </table>';
+            echo '  </td>';
+            echo '</tr>';
+        }
+        ?>
         <!-- BENCHMARK -->
         <tr class="_profiler-toggle-benchmark-controller"><th colspan="2"><div class="btn btn-default btn-lg">Benchmark</div></th></tr>
         <tr class="_profiler-toggle-benchmark"> <!--Memory Usage -->
@@ -112,26 +148,6 @@
                 <td ><?php echo number_format($val, 4); ?></td>
             </tr>
         <?php } ?>
-        <!-- UNIT TEST -->
-        <tr class="_profiler-toggle-unit-test-controller"><th colspan="2"><div class="btn btn-default btn-lg">Unit Test (Total : <?php echo count($unit_result); ?>)</div></th></tr>
-        <?php
-        foreach($unit_result as $unit){
-            foreach($unit as $key=>$val){
-                if($key == 'Test Name'){
-                    echo '<tr class="_profiler-toggle-unit-test"><th colspan="2" class="padding-left-40">'.$val.'</th></td>';
-                }else{
-        ?>
-                    <tr class="_profiler-toggle-unit-test">
-                        <th class="padding-left-40">&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $key; ?></th>
-                        <td><?php
-                            if($key=="Result"){
-                                echo parse_unit_test_result($val);
-                            } else{
-                                print_value($val);
-                            }
-                        ?></td>
-                    </tr>
-        <?php }}} ?>
         <!-- VARIABLES -->
         <tr><th class="_profiler-toggle-variable-controller" colspan="2"><div class="btn btn-default btn-lg">Variables (Total : <?php echo count($variables); ?>)</div></th></tr>
         <?php foreach($variables as $key=>$val){ // variables ?>
