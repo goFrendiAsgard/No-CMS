@@ -97,14 +97,43 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         $this->CRUD->columns = $this->COLUMN_NAMES;
         // assign add fields
         $add_fields = $this->COLUMN_NAMES;
-        $add_fields[] = '_created_at';
-        $add_fields[] = '_created_by';
+        if(!in_array('_created_at', $add_fields)){ $add_fields[] = '_created_at'; }
+        if(!in_array('_created_by', $add_fields)){ $add_fields[] = '_created_by'; }
         $this->CRUD->add_fields = $add_fields;
         // assign edit fields
         $edit_fields = $this->COLUMN_NAMES;
-        $edit_fields[] = '_updated_at';
-        $edit_fields[] = '_updated_by';
+        if(!in_array('_updated_at', $edit_fields)){ $edit_fields[] = '_updated_at'; }
+        if(!in_array('_updated_by', $edit_fields)){ $edit_fields[] = '_updated_by'; }
         $this->CRUD->edit_fields = $edit_fields;
+
+        // get missing_field_list
+        $existing_field_list = $this->db->list_fields($this->cms_complete_table_name($this->TABLE_NAME));
+        $missing_field_list = array();
+        foreach($add_fields as $field_name){
+            if(!in_array($field_name, $existing_field_list)){
+                $missing_fields_list[] = $field_name;
+            }
+        }
+        foreach($edit_fields as $field_name){
+            if(!in_array($field_name, $existing_field_list)){
+                $missing_fields_list[] = $field_name;
+            }
+        }
+        // prepare to alter table and add missing fields
+        $missing_fields = array();
+        foreach($missing_field_list as $field_name){
+            if($field_name == 'created_at' || $field_name == 'updated_at'){
+                $missing_fields[$field_name] = array('type' => 'TIMESTAMP', 'null' => true);
+            }else if($field_name == 'created_by' || $field_name == 'updated_by'){
+                $missing_fields[$field_name] = array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true);
+            }else{
+                $missing_fields[$field_name] = array('type' => 'VARCHAR', 'constraint' => 50, 'null' => true);
+            }
+        }
+        if(count($missing_fields) > 0){
+            $this->load->dbforge();
+            $this->dbforge->add_column($this->cms_complete_table_name($this->TABLE_NAME), $missing_fields);
+        }
 
         // display as
         foreach($this->DISPLAY_AS as $field=>$caption){

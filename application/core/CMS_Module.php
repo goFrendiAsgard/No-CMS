@@ -453,7 +453,7 @@ class CMS_Module extends CMS_Controller
         foreach ($this->CONFIGS as $config) {
             $config_name = $this->__get_from_array($config, 'config_name', '');
             $value = $this->__get_from_array($config, 'value', '');
-            $this->cms_add_config($config_name, $value);
+            $this->cms_add_config_if_not_exists($config_name, $value);
         }
 
         // ADD NAVIGATIONS & BACKEND NAVIGATIONS
@@ -489,7 +489,7 @@ class CMS_Module extends CMS_Controller
             if(strpos($notif_url, $module_path.'/') !== 0 && $url != $module_path){
                 $notif_url = $module_path.'/'.$notif_url;
             }
-            $this->cms_add_navigation(
+            $this->cms_add_navigation_if_not_exists(
                     $this->cms_complete_navigation_name($navigation_name),
                     $title,
                     $url,
@@ -512,14 +512,14 @@ class CMS_Module extends CMS_Controller
             $description = $this->__get_from_array($privilege, 'description', '');
             $title = $this->__get_from_array($privilege, 'title', '');
             $authorization_id = $this->__get_from_array($privilege, 'authorization_id', '4');
-            $this->cms_add_privilege($this->cms_complete_navigation_name($privilege_name), $title, $authorization_id, $description);
+            $this->cms_add_privilege_if_not_exists($this->cms_complete_navigation_name($privilege_name), $title, $authorization_id, $description);
         }
 
         // ADD GROUPS
         foreach ($this->GROUPS as $group) {
             $group_name = $this->__get_from_array($group, 'group_name', '');
             $description = $this->__get_from_array($group, 'description', '');
-            $this->cms_add_group($group_name, $description);
+            $this->cms_add_group_if_not_exists($group_name, $description);
         }
 
         // ASSIGN NAVIGATIONS
@@ -551,29 +551,28 @@ class CMS_Module extends CMS_Controller
             }
         }
 
-        // CREATE TABLES
-        foreach ($this->TABLES as $table_name => $data) {
-            $table_exists = $this->db->table_exists($this->t($table_name));
-            // fields
-            if(!$table_exists){
-                $key = $this->__get_from_array($data, 'key', 'id');
-                $fields = $this->__get_from_array($data, 'fields', array());
-                foreach($fields as $field_name=>$type){
-                    if(is_string($type) && property_exists($this, $type)){
-                        $fields[$field_name] = $this->{$type};
-                    }
-                }
-                $fields['_created_at'] = $this->TYPE_DATETIME_NULL;
-                $fields['_updated_at'] = $this->TYPE_DATETIME_NULL;
-                $fields['_created_by'] = $this->TYPE_INT_SIGNED_NULL;
-                $fields['_updated_by'] = $this->TYPE_INT_SIGNED_NULL;
-                $this->dbforge->add_field($fields);
-                $this->dbforge->add_key($key, true);
-                $this->dbforge->create_table($this->t($table_name));
-            }
-        }
-
         if($mode == 'insert'){
+            // CREATE TABLES
+            foreach ($this->TABLES as $table_name => $data) {
+                $table_exists = $this->db->table_exists($this->t($table_name));
+                // fields
+                if(!$table_exists){
+                    $key = $this->__get_from_array($data, 'key', 'id');
+                    $fields = $this->__get_from_array($data, 'fields', array());
+                    foreach($fields as $field_name=>$type){
+                        if(is_string($type) && property_exists($this, $type)){
+                            $fields[$field_name] = $this->{$type};
+                        }
+                    }
+                    $fields['_created_at'] = $this->TYPE_DATETIME_NULL;
+                    $fields['_updated_at'] = $this->TYPE_DATETIME_NULL;
+                    $fields['_created_by'] = $this->TYPE_INT_SIGNED_NULL;
+                    $fields['_updated_by'] = $this->TYPE_INT_SIGNED_NULL;
+                    $this->dbforge->add_field($fields);
+                    $this->dbforge->add_key($key, true);
+                    $this->dbforge->create_table($this->t($table_name));
+                }
+            }
             // INSERT DATA
             foreach ($this->DATA as $table_name => $data) {
                 if(!is_array($data) || count($data) == 0){

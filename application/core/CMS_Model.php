@@ -3817,8 +3817,16 @@ class CMS_Model extends CI_Model
         return false;
     }
 
-    public function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = null, $index = null, $description = null, $bootstrap_glyph = null,
-    $default_theme = null, $default_layout = null, $notif_url = null, $hidden = 0, $static_content = '')
+    public function cms_add_navigation_if_not_exists($navigation_name, $title, $url, $authorization_id = 1, $parent_name = null, $index = null, $description = null, $bootstrap_glyph = null, $default_theme = null, $default_layout = null, $notif_url = null, $hidden = 0, $static_content = '')
+    {
+        $query = $this->db->select('navigation_id')->from(cms_table_name('main_navigation'))
+            ->where('navigation_name', $navigation_name)->get();
+        if ($query->num_rows() == 0) {
+            $this->cms_add_navigation($navigation_name, $title, $url, $authorization_id, $parent_name, $index, $description, $bootstrap_glyph, $default_theme, $default_layout, $notif_url, $hidden, $static_content);
+        }
+    }
+
+    public function cms_add_navigation($navigation_name, $title, $url, $authorization_id = 1, $parent_name = null, $index = null, $description = null, $bootstrap_glyph = null, $default_theme = null, $default_layout = null, $notif_url = null, $hidden = 0, $static_content = '')
     {
         //get parent's navigation_id
         $query = $this->db->select('navigation_id, navigation_name')
@@ -3895,6 +3903,7 @@ class CMS_Model extends CI_Model
             $this->db->insert(cms_table_name('main_navigation'), $data);
         }
     }
+
     public function cms_remove_navigation($navigation_name)
     {
         //get navigation_id
@@ -3925,6 +3934,18 @@ class CMS_Model extends CI_Model
             $this->db->delete(cms_table_name('main_navigation'), $where);
         }
     }
+
+    public function cms_add_privilege_if_not_exists($privilege_name, $title, $authorization_id = 1, $description = null)
+    {
+        $query = $this->db->select('privilege_id')
+            ->from(cms_table_name('main_privilege'))
+            ->where('privilege_name', $privilege_name)
+            ->get();
+        if ($query->num_rows() > 0) {
+            $this->cms_add_privilege($privilege_name, $title, $authorization_id, $description);
+        }
+    }
+
     public function cms_add_privilege($privilege_name, $title, $authorization_id = 1, $description = null)
     {
         $data = array(
@@ -3945,6 +3966,7 @@ class CMS_Model extends CI_Model
             $this->db->insert(cms_table_name('main_privilege'), $data);
         }
     }
+
     public function cms_remove_privilege($privilege_name)
     {
         $query = $this->db->select('privilege_id')
@@ -3968,6 +3990,16 @@ class CMS_Model extends CI_Model
                 'privilege_id' => $privilege_id,
             );
             $this->db->delete(cms_table_name('main_privilege'), $where);
+        }
+    }
+
+    public function cms_add_group_if_not_exists($group_name, $description){
+        $query = $this->db->select('group_id')
+            ->from(cms_table_name('main_group'))
+            ->where('group_name', $group_name)
+            ->get();
+        if ($query->num_rows() == 0) {
+            $this->cms_add_group($group_name, $description);
         }
     }
 
@@ -4017,6 +4049,17 @@ class CMS_Model extends CI_Model
                 'group_id' => $group_id,
             );
             $this->db->delete(cms_table_name('main_group'), $where);
+        }
+    }
+
+    public function cms_add_widget_if_not_exists($widget_name, $title = null, $authorization_id = 1, $url = null, $slug = null, $index = null, $description = null)
+    {
+        $query = $this->db->select('widget_id')
+            ->from(cms_table_name('main_widget'))
+            ->where('widget_name', $widget_name)
+            ->get();
+        if ($query->num_rows() == 0) {
+            $this-> cms_add_widget($widget_name, $title, $authorization_id, $url, $slug, $index, $description);
         }
     }
 
@@ -4166,6 +4209,17 @@ class CMS_Model extends CI_Model
         file_put_contents($extended_route_config, $content);
     }
 
+    public function cms_add_route_if_not_exists($key, $value, $description = '')
+    {
+        $query = $this->db->select('key')
+            ->from(cms_table_name('main_route'))
+            ->where('key', $key)
+            ->get();
+        if ($query->num_rows() == 0) {
+            $this->cms_add_route($key, $value, $description);
+        }
+    }
+
     public function cms_add_route($key, $value, $description = '')
     {
         $query = $this->db->select('key')
@@ -4187,6 +4241,17 @@ class CMS_Model extends CI_Model
         $this->db->delete(cms_table_name('main_route'),
             array('key' => $key));
         $this->cms_reconfig_route();
+    }
+
+    public function cms_add_config_if_not_exists($config_name, $value, $description = null)
+    {
+        $query = $this->db->select('config_id')
+            ->from(cms_table_name('main_config'))
+            ->where('config_name', $config_name)
+            ->get();
+        if ($query->num_rows() == 0) {
+            $this->cms_add_config($config_name, $value, $description);
+        }
     }
 
     public function cms_add_config($config_name, $value, $description = null)

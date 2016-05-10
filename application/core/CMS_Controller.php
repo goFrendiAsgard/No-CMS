@@ -481,9 +481,12 @@ class CMS_Controller extends MX_Controller
     private function cms_ck_adjust_script()
     {
         $base_url = base_url();
+        $site_logo = $this->cms_get_config('site_logo');
+        $site_favicon = $this->cms_get_config('site_favicon');
         $save_base_url = str_replace('/', '\\/', $base_url);
+        $save_site_logo = str_replace('/', '\\/', $site_logo);
+        $save_site_favicon = str_replace('/', '\\/', $site_favicon);
         $ck_editor_adjust_script = '
-
             var BOOTSTRAP_INCLUSION = "<link href=\"'.$base_url.'assets/bootstrap/css/bootstrap.min.css\" id=\"ck_adjust_style\" rel=\"stylesheet\" type=\"text/css\" />";
             BOOTSTRAP_INCLUSION += "<script src=\"'.$this->JQUERY_PATH.'\" type=\"text/javascript\"><\/script>";
 
@@ -501,6 +504,17 @@ class CMS_Controller extends MX_Controller
                             BOOTSTRAP_INCLUSION,
                             ""
                         );
+                        /* site_favicon */
+                        content = content.replace(
+                            /(src=".*?)('.$save_site_favicon.')(.*?")/gi,
+                            "$1{"+"{ site_favicon }}$3"
+                        );
+                        /* site_logo */
+                        content = content.replace(
+                            /(src=".*?)('.$save_site_logo.')(.*?")/gi,
+                            "$1{"+"{ site_logo }}$3"
+                        );
+                        /* base_url */
                         content = content.replace(
                             /(src=".*?)('.$save_base_url.')(.*?")/gi,
                             "$1{"+"{ base_url }}$3"
@@ -509,7 +523,20 @@ class CMS_Controller extends MX_Controller
                     }
                     /* ck-editor mode */
                     else if ($ck_iframe.length > 0){
-                        var re = new RegExp(\'(src=".*?)({\'+\'{ base_url }})(.*?")\',"gi");
+                        /* translate site_favicon */
+                        re = new RegExp(\'(src=".*?)({\'+\'{ site_favicon }})(.*?")\',"gi");
+                        content = content.replace(
+                            re,
+                            "$1'.$site_favicon.'$3"
+                        );
+                        /* translate site_logo */
+                        re = new RegExp(\'(src=".*?)({\'+\'{ site_logo }})(.*?")\',"gi");
+                        content = content.replace(
+                            re,
+                            "$1'.$site_logo.'$3"
+                        );
+                        /* translate base_url */
+                        re = new RegExp(\'(src=".*?)({\'+\'{ base_url }})(.*?")\',"gi");
                         content = content.replace(
                             re,
                             "$1'.$base_url.'$3"
