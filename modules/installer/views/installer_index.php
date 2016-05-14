@@ -72,8 +72,8 @@
                                         <?php if($mysql_installed){ ?>
                                             <option value="mysql">MySQL/MariaDB (with mysql driver)</option>
                                         <?php } ?>
-                                        <?php if($mysqli_installed){ ?>
-                                            <option value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
+                                        <?php if($mysqli_installed){ // default to this ?>
+                                            <option selected value="mysqli">MySQL/MariaDB (with mysqli driver)</option>
                                         <?php } ?>
                                         <?php if($pdo_mysql_installed){ ?>
                                             <option value="pdo_mysql">MySQL/MariaDB (with PDO driver)</option>
