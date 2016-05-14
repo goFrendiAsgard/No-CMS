@@ -111,12 +111,12 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         $missing_field_list = array();
         foreach($add_fields as $field_name){
             if(!in_array($field_name, $existing_field_list)){
-                $missing_fields_list[] = $field_name;
+                $missing_field_list[] = $field_name;
             }
         }
         foreach($edit_fields as $field_name){
             if(!in_array($field_name, $existing_field_list)){
-                $missing_fields_list[] = $field_name;
+                $missing_field_list[] = $field_name;
             }
         }
         // prepare to alter table and add missing fields

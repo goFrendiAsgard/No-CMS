@@ -681,6 +681,9 @@ class CMS_Model extends CI_Model
         if (strpos($str, '<?php') !== false && strpos($str, '$route') !== false) {
             @file_put_contents($file_name, $str);
             @chmod($file_name, 0555);
+            if(function_exists('opcache_invalidate')){
+                opcache_invalidate($file_name);
+            }
         }
     }
 
