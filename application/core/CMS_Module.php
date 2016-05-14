@@ -23,7 +23,6 @@ class CMS_Module extends CMS_Controller
     protected $OLD_VERSION = '';
     protected $ERROR_MESSAGE = '';
     protected $PUBLIC = true;
-    protected $SUBSITE_ALLOWED = array();
 
     // These should be overridden by module developer
     protected $BACKEND_NAVIGATIONS = array(); // manage blah blah blah, has privileges too, associative array
@@ -117,7 +116,7 @@ class CMS_Module extends CMS_Controller
             'version' => $this->VERSION,
             'old_version' => $this->OLD_VERSION,
             'public' => $this->PUBLIC,
-            'subsite_allowed' => $this->SUBSITE_ALLOWED,
+            'published' => $this->PUBLISHED,
         );
         echo json_encode($result);
     }
@@ -162,7 +161,7 @@ class CMS_Module extends CMS_Controller
             'dependencies' => $this->DEPENDENCIES,
         );
 
-        if (CMS_SUBSITE != '' && !$this->PUBLIC && !in_array(CMS_SUBSITE, $this->SUBSITE_ALLOWED)) {
+        if (CMS_SUBSITE != '' && !$this->PUBLISHED) {
             $result['message'][] = 'The module is not published for '.CMS_SUBSITE.' subsite';
             $result['success'] = false;
         }
@@ -231,7 +230,7 @@ class CMS_Module extends CMS_Controller
             'dependencies' => array(),
         );
 
-        if (CMS_SUBSITE != '' && !$this->PUBLIC && !in_array(CMS_SUBSITE, $this->SUBSITE_ALLOWED)) {
+        if (CMS_SUBSITE != '' && !$this->PUBLISHED) {
             $result['message'][] = 'The module is not published for '.CMS_SUBSITE.' subsite';
             $result['success'] = false;
         }
@@ -303,7 +302,7 @@ class CMS_Module extends CMS_Controller
             'dependencies' => array(),
         );
 
-        if (!$bypass && CMS_SUBSITE != '' && !$this->PUBLIC && !in_array(CMS_SUBSITE, $this->SUBSITE_ALLOWED)) {
+        if (!$bypass && CMS_SUBSITE != '' && !$this->PUBLISHED) {
             $result['message'][] = 'The module is not published for '.CMS_SUBSITE.' subsite';
             $result['success'] = false;
         }
@@ -603,21 +602,30 @@ class CMS_Module extends CMS_Controller
                 $fields['_created_by'] = $this->TYPE_INT_SIGNED_NULL;
                 $fields['_updated_by'] = $this->TYPE_INT_SIGNED_NULL;
 
-                $field_list = $this->db->list_fields($this->t($table_name));
-                // missing fields and modified field
-                $modified_fields = array();
-                $missing_fields = array();
-                foreach($fields as $key=>$value){
-                    if(!in_array($key, $field_list)){
-                        $missing_fields[$key] = $value;
-                    }else{
-                        $modified_fields[$key] = $value;
+                $table_exists = $this->db->table_exists($this->t($table_name));
+                // create table if not exists or modify table if exists
+                if(!$table_exists){
+                    $key = $this->__get_from_array($data, 'key', 'id');
+                    $this->dbforge->add_field($fields);
+                    $this->dbforge->add_key($key, true);
+                    $this->dbforge->create_table($this->t($table_name));
+                }else{
+                    $field_list = $this->db->list_fields($this->t($table_name));
+                    // missing fields and modified field
+                    $modified_fields = array();
+                    $missing_fields = array();
+                    foreach($fields as $key=>$value){
+                        if(!in_array($key, $field_list)){
+                            $missing_fields[$key] = $value;
+                        }else{
+                            $modified_fields[$key] = $value;
+                        }
                     }
+                    // add missing fields
+                    $this->dbforge->add_column($this->t($table_name), $missing_fields);
+                    // modify fields
+                    $this->dbforge->modify_column($this->t($table_name), $modified_fields);
                 }
-                // add missing fields
-                $this->dbforge->add_column($this->t($table_name), $missing_fields);
-                // modify fields
-                $this->dbforge->modify_column($this->t($table_name), $modified_fields);
             }
             // INSERT OR UPDATE DATA
             foreach ($this->DATA as $table_name => $data) {

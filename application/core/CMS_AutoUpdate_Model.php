@@ -505,11 +505,6 @@ class CMS_AutoUpdate_Model extends CMS_Model
             }
             // description file
             $description_file = FCPATH.'themes/'.$directory.'/description.txt';
-            $subsite_auth_file = FCPATH.'themes/'.$directory.'/subsite_auth.php';
-            $public = TRUE;
-            if(file_exists($subsite_auth_file)){
-                include($subsite_auth_file);
-            }
             $description = file_get_contents($description_file);
             $content = json_encode(array('public'=> $public, 'description' => $description));
             if(!is_writeable($description_file)){
