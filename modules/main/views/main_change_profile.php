@@ -106,7 +106,8 @@ echo $asset->compile_js();
     			dateFormat: 'yy-mm-dd',
     			showButtonPanel: true,
     			changeMonth: true,
-    			changeYear: true
+    			changeYear: true,
+				yearRange: "-150:+0"
     	});
 
     	$('.datepicker-input-clear').button();

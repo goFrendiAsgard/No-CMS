@@ -20,8 +20,18 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
         }
     }
 
+    protected function _preg_replace_callback_identifiers($arr){
+        return '{'. $this->db->protect_identifiers($arr[1]).'}';
+    }
+
     public function protect_identifiers($value)
     {
+        $use_template = strpos($value,'{') !== false;
+        if($use_template){
+            return preg_replace_callback('/\{(.*?)\}/si',
+                array($this, '_preg_replace_callback_identifiers'),
+                $value);
+        }
         return $this->db->protect_identifiers($value);
     }
 
@@ -54,8 +64,8 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
                         "}"
                     ),
                     array(
-                        "' || COALESCE(".$replacement,
-                        ", '') || '"
+                        "' || COALESCE(".$prefix_replacement,
+                        $suffix_replacement.", '') || '"
                     ),
                     str_replace("'","\\'",$template)
                 ).
@@ -119,7 +129,6 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
         $this->db->select($select, false);
         $results = $this->db->get($this->table_name)->result();
 
-
         //log_message('error', $this->db->last_query());
 
         // add information from additional_fields
@@ -128,7 +137,6 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
                 $results[$i]->{$alias} = $results[$i]->{$real_field};
             }
         }
-
         return $results;
     }
 
@@ -155,7 +163,6 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
             {
                 $field .= $this->protect_identifiers($selection_table.'.'.$title_field_selection_table);
             }
-
             //Sorry Codeigniter but you cannot help me with the subquery!
             $select .= ", ".
               $this->build_relation_n_n_subquery($field, $selection_table, $relation_table, $primary_key_alias_to_selection_table, $primary_key_selection_table, $primary_key_alias_to_this_table, $field_name);

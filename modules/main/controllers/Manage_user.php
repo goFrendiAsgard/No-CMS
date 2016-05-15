@@ -36,10 +36,11 @@ class Manage_user extends CMS_Predefined_Callback_CRUD_Controller {
         $crud = parent::make_crud();
 
         if (CMS_SUBSITE == '') {
-            $crud->where('subsite is NULL');
+            $crud->where('(subsite is NULL OR subsite = \'\')');
         } else {
             $crud->where('(subsite is NULL OR subsite=\''.addslashes(CMS_SUBSITE).'\')');
         }
+        $crud->order_by('subsite', 'desc');
         $crud->set_subject('User');
 
         ////////////////////////////////////////////////////////////////////////
@@ -175,7 +176,7 @@ class Manage_user extends CMS_Predefined_Callback_CRUD_Controller {
             // if the user is not belonged to this site, then the site admin
             // is only able to modify group
             if($user_row->subsite != CMS_SUBSITE){
-                $crud->edit_fields('user_name', 'active', 'groups');
+                $crud->edit_fields('user_name', 'active', 'group_user');
 
                 $crud->callback_edit_field('user_name', array(
                     $this,
@@ -283,7 +284,7 @@ class Manage_user extends CMS_Predefined_Callback_CRUD_Controller {
             ->from($this->t('main_group'))
             ->limit(20)
             ->get();
-        $html = '<select id="field-group_user" name="group_user[]" multiple="multiple" size="8" class="form-control" data-placeholder="Select users">';
+        $html = '<select id="field-group_user" name="group_user[]" multiple="multiple" size="8" class="form-control" data-placeholder="Select groups">';
         // add old values
         foreach($value as $key=>$val){
             $html .= '<option selected value = "'.$key.'" >'.$val.'</option>';
