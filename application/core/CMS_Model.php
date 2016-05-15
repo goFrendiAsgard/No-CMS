@@ -757,7 +757,7 @@ class CMS_Model extends CI_Model
             $pp = $user_record->profile_picture;
             if($pp == NULL && $this->cms_is_connect('www.gravatar.com')){
                 // take from gravatar
-                $pp = 'http://www.gravatar.com/avatar/'.md5($user_record->email).'?s=32&r=pg&d=identicon';
+                $pp = 'http://www.gravatar.com/avatar/'.md5($user_record->email).'?s=256&r=pg&d=identicon';
             }else if($pp == NULL){
                 // take from default profile picture
                 $pp = $real_base_url.'assets/nocms/images/default-profile-picture.png';
