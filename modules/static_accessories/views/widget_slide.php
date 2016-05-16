@@ -2,17 +2,18 @@
 $li_indicator_list = array();
 $div_item_list = array();
 $edit_link = '';
-if($show_edit){
-    $edit_link = '<div>'.
-        '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide"><i class="glyphicon glyphicon-pencil">&nbsp;</i>Edit Slideshow</a>'.
-        '</div>';
-}
 for($i=0; $i<count($slide_list); $i++){
     $slide = $slide_list[$i];
     if($i==0){
         $class = 'active';
     }else{
         $class = '';
+    }
+    if($show_edit){
+        $edit_link = '<div>'.
+                '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide/index/edit/'.$slide['slide_id'].'"><i class="glyphicon glyphicon-pencil">&nbsp;</i> Current Slide</a>&nbsp;'.
+                '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide/index"><i class="glyphicon glyphicon-pencil">&nbsp;</i>Manage Slideshow</a>'.
+            '</div>';
     }
     $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';
     $div_item_list[] =
@@ -77,6 +78,8 @@ for($i=0; $i<count($slide_list); $i++){
         }else{
             $('.carousel-inner .item-image').css('background-position', '0 ' + SLIDE_IMAGE_TOP + 'px');
         }
+
+        $('.__editing_widget_static_accessories_slideshow').hide();
     });
 
     $(window).resize(function(){__load_slide();});

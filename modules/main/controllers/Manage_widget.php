@@ -61,7 +61,7 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->display_as('description','Description');
         $crud->display_as('url','Url');
         $crud->display_as('authorization_id','Authorization');
-        $crud->display_as('active','Active');
+        $crud->display_as('active','Shown when called by slug');
         $crud->display_as('index','Index');
         $crud->display_as('is_static','Is Static');
         $crud->display_as('static_content','Static Content');

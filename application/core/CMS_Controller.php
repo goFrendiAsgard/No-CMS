@@ -689,7 +689,6 @@ class CMS_Controller extends MX_Controller
         // privilege is absolute
         $this->cms_guard_page(NULL, $privilege_required);
 
-
         /*
          * CHECK IF THE PAGE IS STATIC  **********************************************************************************
          */
@@ -710,11 +709,6 @@ class CMS_Controller extends MX_Controller
                 // static_content should contains string
                 if (!$static_content) {
                     $static_content = '';
-                }
-                if ($this->cms_editing_mode() && $this->cms_allow_navigate('main_navigation_management')) {
-                    $static_content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/manage_navigation/index/edit/'.$row_navigation->navigation_id.'">'.
-                        '<i class="glyphicon glyphicon-pencil"></i> Edit Page'.
-                        '</a></div>'.$static_content;
                 }
                 $data['cms_content'] = $static_content;
                 $view_url = 'CMS_View';
@@ -841,6 +835,28 @@ class CMS_Controller extends MX_Controller
         // save used_theme
         $this->session->set_userdata('__cms_used_theme', $theme);
 
+        // editing_mode_content
+        $editing_mode_content = '';
+        if ($this->cms_editing_mode()) {
+            $editing_mode_content = '<div class="row" style="padding-top:10px; padding-bottom:10px; text-align:right;">';
+            if($this->cms_allow_navigate('main_layout_management') && $this->cms_have_privilege('edit_main_layout')){
+                $row_layout = $this->cms_get_record(cms_table_name('main_layout'), 'layout_name', $layout);
+                if($row_layout != NULL){
+                    // edit layout
+                    $editing_mode_content .= '<a class="btn btn-default" href="{{ SITE_URL }}main/manage_layout/index/edit/'.$row_layout->layout_id.'">'.
+                        '<i class="glyphicon glyphicon-edit"></i> Edit Layout'.
+                    '</a>';
+                }
+            }
+            if($this->cms_allow_navigate('main_navigation_management') && $this->cms_have_privilege('edit_main_navigation')){
+                // edit page
+                $editing_mode_content .= '<a style="margin-left:10px;" class="btn btn-default" href="{{ SITE_URL }}main/manage_navigation/index/edit/'.$row_navigation->navigation_id.'">'.
+                    '<i class="glyphicon glyphicon-pencil"></i> Edit Page'.
+                '</a>';
+            }
+            $editing_mode_content .= '</div>';
+        }
+
         // IT'S SHOW TIME
         if ($only_content || $this->__cms_dynamic_widget || (isset($_REQUEST['_only_content'])) || $this->input->is_ajax_request()) {
             $result = $this->load->view($view_url, $data, TRUE);
@@ -861,7 +877,7 @@ class CMS_Controller extends MX_Controller
             $layout_metadata = '';
             $layout_js = '';
             $layout_css = '';
-            $layout_body = $this->load->view($view_url, $data, TRUE);
+            $layout_body = $editing_mode_content . $this->load->view($view_url, $data, TRUE);
 
             // set keyword metadata
             if ($keyword != '') {

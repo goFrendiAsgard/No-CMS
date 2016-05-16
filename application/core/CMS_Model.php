@@ -1255,15 +1255,22 @@ class CMS_Model extends CI_Model
                 }
             }
 
+            $editing_mode_content = '';
+            if ($this->cms_editing_mode() && $this->cms_allow_navigate('main_widget_management') && $this->cms_have_privilege('edit_main_widget')) {
+                $editing_mode_content = '<div class="__editing_widget_'.str_replace(' ', '_', $row->widget_name).'">'.
+                    '<a style="margin-bottom:2px; margin-top:2px;" class="btn btn-default btn-xs pull-right" href="{{ SITE_URL }}main/manage_widget/index/edit/'.$row->widget_id.'">'.
+                        '<i class="glyphicon glyphicon-pencil"></i> <strong>'.ucwords(str_replace('_', ' ', $row->widget_name)). '</strong>'.
+                    '</a><div style="clear:both"></div>'.
+                '</div>';
+            }
+
             // generate widget content
             $content = '';
             if ($row->is_static == 1) {
-                $content = $row->static_content;
-                if (substr($row->widget_name, 0, 8) != 'section_' && $content != '' && $this->cms_editing_mode() && $this->cms_allow_navigate('main_widget_management')) {
-                    $content = '<div class="row" style="padding-top:10px; padding-bottom:10px;"><a class="btn btn-primary pull-right" href="{{ SITE_URL }}main/manage_widget/index/edit/'.$row->widget_id.'">'.
-                        '<i class="glyphicon glyphicon-pencil"></i>'.
-                        '</a></div>'.$content;
+                if(trim($row->static_content) != ''){
+                    $content .= $editing_mode_content;
                 }
+                $content .= $row->static_content;
             } else {
                 // url
                 $url = $row->url;
@@ -1293,6 +1300,10 @@ class CMS_Model extends CI_Model
                     // add the content
                     if (isset($response)) {
                         $response = preg_replace('#(href|src|action)="([^:"]*)(?:")#', '$1="'.$url.'/$2"', $response);
+                        // add editing mode content
+                        if(trim($row->response) != ''){
+                            $content .= $editing_mode_content;
+                        }
                         $content .= $response;
                     }
                 } else {
@@ -1318,6 +1329,10 @@ class CMS_Model extends CI_Model
                         $response = '<script type="text/javascript">';
                         $response .= '$(document).ready(function(){$("#__cms_widget_'.$row->widget_id.'").load("'.site_url($url).'?__cms_dynamic_widget=TRUE");});';
                         $response .= '</script>';
+                    }
+                    // add editing mode content
+                    if(trim($response) != ''){
+                        $content .= $editing_mode_content;
                     }
                     $content .= $response;
                 }

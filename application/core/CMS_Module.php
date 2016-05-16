@@ -326,55 +326,43 @@ class CMS_Module extends CMS_Controller
             $module_path = $this->cms_module_path();
             $this->__build_all('upgrade');
 
-            // get current major, minor and rev version
+            // get current version and old version components
             $current_version_component = explode('-', $this->VERSION);
             $current_version_component = $current_version_component[0];
             $current_version_component = explode('.', $current_version_component);
-            $current_major_version = $current_version_component[0];
-            $current_minor_version = $current_version_component[1];
-            $current_rev_version = $current_version_component[2];
-            // get old major, minor and rev version
             $old_version_component = explode('-', $this->OLD_VERSION);
             $old_version_component = $old_version_component[0];
             $old_version_component = explode('.', $old_version_component);
-            $old_major_version = $old_version_component[0];
-            $old_minor_version = $old_version_component[1];
-            $old_rev_version = $old_version_component[2];
-            // upgrade by using do_upgrade_to_x_x_x function
-            if($old_major_version != $current_major_version || $old_minor_version != $current_minor_version || $old_rev_version != $current_rev_version){
-                // update
-                if($old_major_version <= $current_major_version){
-                    for($i = $old_major_version; $i <= $current_major_version; $i++){
-                        // determine max minor version
-                        $max_minor_version = 9;
-                        $min_minor_version = 0;
-                        if($i == $current_major_version){
-                            $max_minor_version = $current_minor_version;
-                        }
-                        if($i == $old_major_version){
-                            $min_minor_version = $old_minor_version;
-                        }
-                        // do until max minor version
-                        for($j=$min_minor_version; $j <= $max_minor_version; $j++){
-                            // determine max minor version
-                            $max_rev_version = 9;
-                            $min_rev_version = 0;
-                            if($i == $current_major_version && $j == $max_minor_version){
-                                $max_rev_version = $current_rev_version;
-                            }
-                            if($i == $old_major_version && $j == $old_minor_version){
-                                $min_rev_version = $old_rev_version + 1;
-                            }
-                            if($min_rev_version > 9){
-                                break;
-                            }
-                            // do until max rev version
-                            for($k=$min_rev_version; $k<=$max_rev_version; $k++){
-                                $method = 'do_upgrade_to_'.$i.'_'.$j.'_'.$k;
-                                if(method_exists($this, $method)){
-                                    call_user_func_array(array($this, $method), array());
-                                }
-                            }
+
+            // the version should contains 3 parts, major, minor, and rev
+            if(count($old_version_component) >=3 && count($current_version_component) >=3){
+                $current_major_version = $current_version_component[0];
+                $current_minor_version = $current_version_component[1];
+                $current_rev_version = $current_version_component[2];
+                $old_major_version = $old_version_component[0];
+                $old_minor_version = $old_version_component[1];
+                $old_rev_version = $old_version_component[2];
+                // each part of the old and current version should be numeric
+                if(is_numeric($current_major_version) && is_numeric($current_minor_version) && is_numeric($current_rev_version) && is_numeric($old_major_version) && is_numeric($old_minor_version) && is_numeric($old_rev_version)){
+                    $factor = 100;
+                    // if the assumption is false, than make a new factor
+                    while($current_major_version > $factor || $current_minor_version > $factor || $current_rev_version > $factor || $old_major_version > $factor || $old_minor_version > $factor || $old_rev_version > $factor ){
+                        $factor *= 10;
+                    }
+                    $major_factor = pow($factor, 2);
+                    $minor_factor = pow($factor, 1);
+                    $current_int = $current_major_version * $major_factor + $current_minor_version * $minor_factor + $current_rev_version;
+                    $old_int = $old_major_version * $major_factor + $old_minor_version * $minor_factor + $old_rev_version;
+                    for($i=$old_int+1; $i<=$current_int; $i++){
+                        // get back major version, minor version, and rev version
+                        $major_version = floor($i / $major_factor);
+                        $minor_version = floor(($i- $major_version*$major_factor) / $minor_factor);
+                        $rev_version = ($i - $major_version*$major_factor - $minor_version*$minor_factor);
+                        // get method name
+                        $method = 'do_upgrade_to_'.$major_version.'_'.$minor_version.'_'.$rev_version;
+                        // call the method if exists
+                        if(method_exists($this, $method)){
+                            call_user_func_array(array($this, $method), array());
                         }
                     }
                 }

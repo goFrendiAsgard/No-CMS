@@ -3,7 +3,7 @@ class Install_model extends CI_Model{
 
     private $__config_file = array();
 
-    private $VERSION        = '1.0.9';
+    private $VERSION        = '1.1.0';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -1189,6 +1189,9 @@ class Install_model extends CI_Model{
                     NULL),
                 array('fb_comment', 'Facebook Comments', '', '',
                     1, 1, 32, 1, '<div id="fb-root"></div>' . PHP_EOL . '<script>(function(d, s, id) {' . PHP_EOL . '  var js, fjs = d.getElementsByTagName(s)[0];' . PHP_EOL . '  if (d.getElementById(id)) return;' . PHP_EOL . '  js = d.createElement(s), js.id = id;' . PHP_EOL . '  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=278375612355057&version=v2.0";' . PHP_EOL . '  fjs.parentNode.insertBefore(js, fjs),' . PHP_EOL . '}(document, \'script\', \'facebook-jssdk\')),</script>' . PHP_EOL . '<div class="fb-comments" data-href="{{ site_url }}" data-numposts="5" data-colorscheme="light" width="100%"></div>',
+                    NULL),
+                array('user_button', 'User Button', '', 'main/widget_user_button',
+                    1, 1, 33, 0, NULL,
                     NULL),
             ));
 
