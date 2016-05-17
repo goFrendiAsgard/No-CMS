@@ -946,7 +946,9 @@ class Main extends CMS_Controller
                             <li class="dropdown">
                                 <a href="{{ site_url }}main/manage_quicklink">Quicklink</a>
                             </li>
-                            <li class="dropdown" id="__editing_widget_section_top_fix_container"></li>
+                            <li class="dropdown">
+                                <a id="__editing_section_top_fix_link" href="#">Top Section</a>
+                            </li>
                             <li role="separator" class="divider"></li>
                             <li><a href="{{ site_url }}factory_reset"><i class="glyphicon glyphicon-repeat"></i> Factory Reset</a></li>
                         </ul>
@@ -1133,10 +1135,7 @@ class Main extends CMS_Controller
 
                 // MAIN PROGRAM
                 $(document).ready(function(){
-                    // change caption
-                    $(".__editing_widget_section_top_fix a").html("Top Section").removeClass("pull-right").removeClass("btn-xs").removeClass("btn").removeClass("btn-default");
-                    // move
-                    $(".__editing_widget_section_top_fix a").prependTo($("#__editing_widget_section_top_fix_container"));
+                    $("#__editing_section_top_fix_link").attr("href", $(".__editing_widget_section_top_fix a").attr("href"));
 
                     // override bootstrap default behavior on dropdown click
                     $("a.dropdown-toggle span.anchor-text").on("click touchstart", function(event){

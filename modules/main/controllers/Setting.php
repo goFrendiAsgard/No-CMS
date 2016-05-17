@@ -223,6 +223,7 @@ class Setting extends CMS_Controller{
         $data['multisite_active'] = $this->cms_is_module_active('gofrendi.noCMS.multisite');
         $data['third_party_config'] = $third_party_config;
         $data['changed'] = count($_POST)>0;
+        $data['selected_tab_id'] = isset($_POST['selected_tab_id'])? $_POST['selected_tab_id'] : 'tab-general';
         $this->cms_invalidate_cache();
         $this->view('setting_index', $data, 'main_setting');
     }

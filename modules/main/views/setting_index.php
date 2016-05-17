@@ -52,15 +52,19 @@
 <div class="alert alert-info">Changes applied</div>
 <?php } ?>
 <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab1" data-toggle="tab"><i class="glyphicon glyphicon-cog"></i> Configurations</a></li>
-        <li><a href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-eye-open"></i> Appearance</a></li>
-        <li><a href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-envelope"></i> Email Setting</a></li>
-        <li><a href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Images</a></li>
-        <li><a href="#tab5" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Page Partials</a></li>
-        <li><a href="#tab6" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
+    <ul id="tab-control" class="nav nav-tabs">
+        <li class="active"><a id="tab-general" href="#tab1" data-toggle="tab"><i class="glyphicon glyphicon-cog"></i> Configurations</a></li>
+        <li><a id="tab-appearance" href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-eye-open"></i> Appearance</a></li>
+        <li><a id="tab-email-setting" href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-envelope"></i> Email Setting</a></li>
+        <li><a id="tab-images" href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Images</a></li>
+        <li><a id="tab-page-partials" href="#tab5" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Page Partials</a></li>
+        <li><a id="tab-third-party-authentication" href="#tab6" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
     </ul>
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
+
+
+        <input type="hidden" id="selected_tab_id" name="selected_tab_id" value="<?php echo $selected_tab_id; ?>" />
+
         <div class="tab-content">
 
             <div class="tab-pane active" id="tab1">
@@ -872,11 +876,13 @@
     }
 
     $(document).ready(function(){
-        // when calling chosen, the select should be visible, that's why I need to do this:
-        //$('#tab3').removeClass('active');
-        //$('#tab1').addClass('active');
+        var selected_tab_id = $('#selected_tab_id').val();
+        if(selected_tab_id != ''){
+            $('#'+selected_tab_id).trigger('click');
+        }
+
+        // chosen
         $("#tab1 .chosen-select").chosen({width: "300px"});
-        //$('#tab1 .text-area-section').autosize();
 
         // add widget or whatever to the section at current caret
         $('.btn-tag-add').click(function(event){
@@ -895,6 +901,17 @@
         _adjust_input_visibility();
         $('#cms_signup_activation, #cms_email_protocol').change(_adjust_input_visibility);
     });
+
+    // save selected tab id whenever the link clicked
+    $('#tab-control a').click(function(){
+        $('#selected_tab_id').val($(this).attr('id'));
+    });
+    $('#tab-control a').keypress(function(key){
+        if(key==13){
+            $('#selected_tab_id').val($(this).attr('id'));
+        }
+    })
+
     // textarea autosize later
     $("a[href='#tab3']").on('shown.bs.tab', function(e) {
         $("#tab3 .text-area-html").ace({

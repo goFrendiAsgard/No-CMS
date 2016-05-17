@@ -44,6 +44,9 @@ for($i=0; $i<count($slide_list); $i++){
     #slideshow-widget{
         margin-bottom:20px;
     }
+    .__editing_widget_static_accessories_slideshow{
+        display:none;
+    }
 </style>
 <div class="carousel slide <?php echo $slide_hide_on_smallscreen=='TRUE'? 'hidden-sm hidden-xs' : ''; ?>" id="slideshow-widget">
     <!-- Indicators -->
@@ -78,8 +81,6 @@ for($i=0; $i<count($slide_list); $i++){
         }else{
             $('.carousel-inner .item-image').css('background-position', '0 ' + SLIDE_IMAGE_TOP + 'px');
         }
-
-        $('.__editing_widget_static_accessories_slideshow').hide();
     });
 
     $(window).resize(function(){__load_slide();});
