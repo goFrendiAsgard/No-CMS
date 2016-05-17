@@ -1368,7 +1368,7 @@ class Main extends CMS_Controller
     public function widget_user_button(){
         if($this->cms_user_id() > 0){
             echo '<a class="btn btn-primary btn-sm" href="{{ site_url }}main/change_profile">'.
-                '<img style="max-height:64px" src="'.$this->cms_get_profile_picture().'" />'.
+                '<img style="max-height:32px; margin-right:20px;" src="'.$this->cms_get_profile_picture($this->cms_user_id()).'" />'.
                 'Change Profile</a>';
         }else{
             echo '<a class="btn btn-primary btn-sm" href="{{ site_url }}main/login">Login</a>';
