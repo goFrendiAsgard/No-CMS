@@ -54,7 +54,6 @@ modules/static_accessories/assets/images/slides/main*.jpg
 modules/static_accessories/assets/images/slides/coba*.jpg
 
 # my private modules
-modules/gis
 modules/typing_defense
 modules/loanword_searchengine
 modules/stiki_ibk

@@ -469,4 +469,16 @@ class Grocery_crud_generic_model  extends Grocery_crud_model  {
         $this->db->having( $key, $value, $escape);
     }
 
+    function db_relation_n_n_update($field_info, $post_data ,$main_primary_key){
+        // addition by gofrendi: eliminate the possibility of empty primary key on n_n relation
+        $new_post_data = array();
+        foreach($post_data as $primary_key_value){
+            if($primary_key_value != ''){
+                $new_post_data[] = $primary_key_value;
+            }
+        }
+        $post_data = $new_post_data;
+        return parent::db_relation_n_n_update($field_info, $post_data, $main_primary_key);
+    }
+
 }
