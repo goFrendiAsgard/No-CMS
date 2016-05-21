@@ -845,14 +845,20 @@ class CMS_Controller extends MX_Controller
                 if($row_layout != NULL){
                     // edit layout
                     $editing_mode_content .= '<a class="btn btn-default" href="{{ SITE_URL }}main/manage_layout/index/edit/'.$row_layout->layout_id.'?from='.$this->cms_get_origin_uri_string().'">'.
-                        '<i class="glyphicon glyphicon-edit"></i> Edit Layout'.
+                        '<i class="glyphicon glyphicon-edit"></i> Edit Current Layout'.
                     '</a>';
                 }
             }
             if($this->cms_allow_navigate('main_navigation_management') && $this->cms_have_privilege('edit_main_navigation')){
                 // edit page
                 $editing_mode_content .= '<a style="margin-left:10px;" class="btn btn-default" href="{{ SITE_URL }}main/manage_navigation/index/edit/'.$row_navigation->navigation_id.'?from='.$this->cms_get_origin_uri_string().'">'.
-                    '<i class="glyphicon glyphicon-pencil"></i> Edit Page'.
+                    '<i class="glyphicon glyphicon-pencil"></i> Edit Current Page'.
+                '</a>';
+            }
+            if(isset($_GET['from'])){
+                // Go back
+                $editing_mode_content .= '<a style="margin-left:10px;" class="btn btn-default" href="{{ SITE_URL }}'.$_GET['from'].'">'.
+                    '<i class="glyphicon glyphicon-circle-arrow-left"></i> Back'.
                 '</a>';
             }
             $editing_mode_content .= '</div>';
