@@ -167,6 +167,21 @@ class Extended_grocery_crud extends Grocery_CRUD{
         return $value;
     }
 
+    // OVERRIDE: state_url
+    protected function state_url($url = '', $is_list_page = false)
+	{
+        $state_url = parent::state_url($url, $is_list_page);
+        if(isset($_GET['from'])){
+    		// list "from" to "list_url"
+    		if(strpos($state_url, '?') !== FALSE){
+    			$state_url .= '&from='.$_GET['from'];
+    		}else{
+    			$state_url .= '?from='.$_GET['from'];
+    		}
+    	}
+        return $state_url;
+    }
+
     public function callback_show_edit($callback = null)
 	{
 		$this->callback_show_edit = $callback;

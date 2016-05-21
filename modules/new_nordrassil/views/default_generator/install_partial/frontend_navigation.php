@@ -1,0 +1,15 @@
+            // Browse {{ table_caption }}
+            array(
+                'navigation_name'   => '{{ front_navigation_name }}',
+                'url'               => '{{ front_controller_name }}',
+                'authorization_id'  => PRIV_EVERYONE,
+                'default_layout'    => NULL,
+                'title'             => 'Browse {{ table_caption }}',
+                'parent_name'       => '{{ navigation_parent_name }}',
+                'index'             => NULL,
+                'description'       => NULL,
+                'bootstrap_glyph'   => NULL,
+                'notification_url'  => NULL,
+                'hidden'            => NULL,
+                'static_content'    => NULL,
+            ),

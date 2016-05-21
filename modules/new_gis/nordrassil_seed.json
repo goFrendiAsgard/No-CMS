@@ -1,0 +1,619 @@
+{
+    "name": "new_gis",
+    "db_server": "localhost",
+    "db_port": "3306",
+    "db_schema": "gis",
+    "db_user": "root",
+    "db_password": "toor",
+    "db_table_prefix": "gis",
+    "template": "No-CMS Module",
+    "tables": [
+        {
+            "name": "gis_alaska_airport",
+            "caption": "Alaska Airport",
+            "data": 0,
+            "columns": [
+                {
+                    "caption": "OGR FID",
+                    "name": "OGR_FID",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "SHAPE",
+                    "name": "SHAPE",
+                    "data_type": "geometry",
+                    "data_size": "11",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Cat",
+                    "name": "cat",
+                    "data_type": "decimal",
+                    "data_size": "10"
+                },
+                {
+                    "caption": "Na3",
+                    "name": "na3",
+                    "data_type": "varchar",
+                    "data_size": "80"
+                },
+                {
+                    "caption": "Elev",
+                    "name": "elev",
+                    "data_type": "double",
+                    "data_size": "32"
+                },
+                {
+                    "caption": "F Code",
+                    "name": "f_code",
+                    "data_type": "varchar",
+                    "data_size": "80"
+                },
+                {
+                    "caption": "Iko",
+                    "name": "iko",
+                    "data_type": "varchar",
+                    "data_size": "80"
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "data_type": "varchar",
+                    "data_size": "80"
+                },
+                {
+                    "caption": "Use",
+                    "name": "use",
+                    "data_type": "varchar",
+                    "data_size": "80"
+                }
+            ]
+        },
+        {
+            "name": "gis_map",
+            "caption": "Map",
+            "data": [
+                {
+                    "map_id": "1",
+                    "map_name": "Alaska",
+                    "map_desc": "A map of Alaska",
+                    "latitude": "60.293165",
+                    "longitude": "-158.959803",
+                    "gmap_roadmap": "1",
+                    "gmap_satellite": "1",
+                    "gmap_hybrid": "1",
+                    "zoom": "5",
+                    "height": "500px",
+                    "width": "100%"
+                },
+                {
+                    "map_id": "2",
+                    "map_name": "Sorong",
+                    "map_desc": "Map of Sorong, Papua, Indonesia",
+                    "latitude": "-0.87863315453434",
+                    "longitude": "131.2604984393",
+                    "gmap_roadmap": "0",
+                    "gmap_satellite": "0",
+                    "gmap_hybrid": "1",
+                    "zoom": "18",
+                    "height": "500px",
+                    "width": "100%"
+                }
+            ],
+            "columns": [
+                {
+                    "caption": "Map Id",
+                    "name": "map_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Map Name",
+                    "name": "map_name",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Map Desc",
+                    "name": "map_desc",
+                    "data_type": "varchar",
+                    "data_size": "45"
+                },
+                {
+                    "caption": "Latitude",
+                    "name": "latitude",
+                    "data_type": "double",
+                    "data_size": "22",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Longitude",
+                    "name": "longitude",
+                    "data_type": "double",
+                    "data_size": "22",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Gmap Roadmap",
+                    "name": "gmap_roadmap",
+                    "data_type": "tinyint",
+                    "data_size": "3",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Gmap Satellite",
+                    "name": "gmap_satellite",
+                    "data_type": "tinyint",
+                    "data_size": "3",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Gmap Hybrid",
+                    "name": "gmap_hybrid",
+                    "data_type": "tinyint",
+                    "data_size": "3",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Zoom",
+                    "name": "zoom",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Height",
+                    "name": "height",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Width",
+                    "name": "width",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Layer",
+                    "name": "layer",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail one to many",
+                    "relation_table_name": "gis_layer",
+                    "relation_table_column_name": "map_id"
+                },
+                {
+                    "caption": "Cloudmade Basemap",
+                    "name": "cloudmade_basemap",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail one to many",
+                    "relation_table_name": "gis_cloudmade_basemap",
+                    "relation_table_column_name": "map_id"
+                }
+            ]
+        },
+        {
+            "name": "gis_cloudmade_basemap",
+            "caption": "Cloudmade Basemap",
+            "data": [
+                {
+                    "basemap_id": "1",
+                    "map_id": "1",
+                    "basemap_name": "Open Street Map",
+                    "url": "http:\/\/{s}.tile.cloudmade.com\/BC9A493B41014CAABB98F0471D759707\/997\/256\/{z}\/{x}\/{y}.png",
+                    "max_zoom": "18",
+                    "attribution": "Map data \u00a9 2011 OpenStreetMap contributo"
+                },
+                {
+                    "basemap_id": "2",
+                    "map_id": "1",
+                    "basemap_name": "Night View",
+                    "url": "http:\/\/{s}.tile.cloudmade.com\/BC9A493B41014CAABB98F0471D759707\/999\/256\/{z}\/{x}\/{y}.png",
+                    "max_zoom": "18",
+                    "attribution": "Map data \u00a9 2011 OpenStreetMap contributo"
+                },
+                {
+                    "basemap_id": "3",
+                    "map_id": "1",
+                    "basemap_name": "Map Box",
+                    "url": "http:\/\/a.tiles.mapbox.com\/v3\/mapbox.world-bright\/{z}\/{x}\/{y}.png",
+                    "max_zoom": "18",
+                    "attribution": ""
+                }
+            ],
+            "options": {
+                "dont_make_form": true
+            },
+            "columns": [
+                {
+                    "caption": "Basemap Id",
+                    "name": "basemap_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Map Id",
+                    "name": "map_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "gis_map",
+                    "lookup_column_name": "map_name",
+                    "lookup_table_primary_key": "map_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Basemap Name",
+                    "name": "basemap_name",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "role": null,
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Url",
+                    "name": "url",
+                    "data_type": "varchar",
+                    "data_size": "100",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Max Zoom",
+                    "name": "max_zoom",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Attribution",
+                    "name": "attribution",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "options": {
+                        "required": true
+                    }
+                }
+            ]
+        },
+        {
+            "name": "gis_layer",
+            "caption": "Layer",
+            "data": [
+                {
+                    "layer_id": "1",
+                    "map_id": "1",
+                    "layer_name": "All Airports",
+                    "group_name": "",
+                    "layer_desc": "Airports in all alaska",
+                    "z_index": "0",
+                    "shown": "1",
+                    "radius": "4",
+                    "fill_color": "#ff7800",
+                    "color": "#000000",
+                    "weight": "1",
+                    "opacity": "1",
+                    "fill_opacity": "0.8",
+                    "image_url": null,
+                    "json_sql": null,
+                    "json_shape_column": null,
+                    "json_popup_content": null,
+                    "json_label": null,
+                    "use_json_url": "1",
+                    "json_url": "{{ site_url }}$cms_module_path\/alaska_airport\/geojson",
+                    "searchable": "1",
+                    "search_sql": "SELECT `name`, `use`, `elev`, x(`shape`) as `x`, y(`shape`) as `y` \nFROM gis_alaska_airport\nWHERE name LIKE '%@keyword%';",
+                    "search_result_content": "<b>@name<\/b><br \/>\nUsage : @use<br \/>\nElevation : @elev<br \/>\nCoordinate: (@x,@y)",
+                    "search_result_x_column": "x",
+                    "search_result_y_column": "y",
+                    "use_search_url": "0",
+                    "search_url": null
+                },
+                {
+                    "layer_id": "2",
+                    "map_id": "1",
+                    "layer_name": "Civilian\/Public",
+                    "group_name": "Airports by usage",
+                    "layer_desc": "Civilian\/Public Airport",
+                    "z_index": "0",
+                    "shown": "0",
+                    "radius": "20",
+                    "fill_color": "#ff7800",
+                    "color": "#000000",
+                    "weight": "1",
+                    "opacity": "1",
+                    "fill_opacity": "0.8",
+                    "image_url": "{{ base_url }}modules\/$cms_module_path\/assets\/images\/black_plane.png",
+                    "json_sql": "SELECT `cat`, `name`, `use`, `elev`, astext(`shape`) as `shape`, x(`shape`) as `lat`, y(`shape`) as `long` \nFROM gis_alaska_airport \nWHERE `use`='Civilian\/Public' AND (MBRIntersects(`shape`,geomfromtext('@map_region'))=1) AND (@map_zoom > 3) ;",
+                    "json_shape_column": "shape",
+                    "json_popup_content": "<b>Civilian Airport<\/b><br \/>Name: @name<br \/>Latitude: @lat<br \/>Longitude:@long",
+                    "json_label": "@name",
+                    "use_json_url": "0",
+                    "json_url": null,
+                    "searchable": "0",
+                    "search_sql": null,
+                    "search_result_content": null,
+                    "search_result_x_column": null,
+                    "search_result_y_column": null,
+                    "use_search_url": "0",
+                    "search_url": null
+                },
+                {
+                    "layer_id": "3",
+                    "map_id": "1",
+                    "layer_name": "Military",
+                    "group_name": "Airports by usage",
+                    "layer_desc": "Military Airport",
+                    "z_index": "0",
+                    "shown": "0",
+                    "radius": "4",
+                    "fill_color": "#ff0000",
+                    "color": "#000000",
+                    "weight": "1",
+                    "opacity": "1",
+                    "fill_opacity": "0.8",
+                    "image_url": null,
+                    "json_sql": "SELECT `cat`, `name`, `use`, `elev`, astext(`shape`) as `shape`, x(`shape`) as `lat`, y(`shape`) as `long` \nFROM gis_alaska_airport \nWHERE `use`='Military' AND (MBRIntersects(`shape`,geomfromtext('@map_region'))=1) AND (@map_zoom > 3) ;",
+                    "json_shape_column": "shape",
+                    "json_popup_content": "<b>Military Airport<\/b><br \/>@name<br \/>Latitude: @lat<br \/>Longitude:@long",
+                    "json_label": "@name",
+                    "use_json_url": "0",
+                    "json_url": null,
+                    "searchable": "0",
+                    "search_sql": null,
+                    "search_result_content": null,
+                    "search_result_x_column": null,
+                    "search_result_y_column": null,
+                    "use_search_url": "0",
+                    "search_url": null
+                }
+            ],
+            "columns": [
+                {
+                    "caption": "Layer Id",
+                    "name": "layer_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Map Id",
+                    "name": "map_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "gis_map",
+                    "lookup_column_name": "map_name",
+                    "lookup_table_primary_key": "map_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Layer Name",
+                    "name": "layer_name",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Group Name",
+                    "name": "group_name",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Layer Desc",
+                    "name": "layer_desc",
+                    "data_type": "varchar",
+                    "data_size": "45"
+                },
+                {
+                    "caption": "Z Index",
+                    "name": "z_index",
+                    "data_type": "tinyint",
+                    "data_size": "3",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Shown",
+                    "name": "shown",
+                    "data_type": "tinyint",
+                    "data_size": "3",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Radius",
+                    "name": "radius",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Fill Color",
+                    "name": "fill_color",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Color",
+                    "name": "color",
+                    "data_type": "varchar",
+                    "data_size": "45",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Weight",
+                    "name": "weight",
+                    "data_type": "double",
+                    "data_size": "22",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Opacity",
+                    "name": "opacity",
+                    "data_type": "double",
+                    "data_size": "22",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Fill Opacity",
+                    "name": "fill_opacity",
+                    "data_type": "double",
+                    "data_size": "22",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Image Url",
+                    "name": "image_url",
+                    "data_type": "varchar",
+                    "data_size": "100"
+                },
+                {
+                    "caption": "Json Sql",
+                    "name": "json_sql",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Json Shape Column",
+                    "name": "json_shape_column",
+                    "data_type": "varchar",
+                    "data_size": "100"
+                },
+                {
+                    "caption": "Json Popup Content",
+                    "name": "json_popup_content",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Json Label",
+                    "name": "json_label",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Use Json Url",
+                    "name": "use_json_url",
+                    "data_type": "tinyint",
+                    "data_size": "3",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Json Url",
+                    "name": "json_url",
+                    "data_type": "varchar",
+                    "data_size": "100"
+                },
+                {
+                    "caption": "Searchable",
+                    "name": "searchable",
+                    "data_type": "tinyint",
+                    "data_size": "3",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Search Sql",
+                    "name": "search_sql",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Search Result Content",
+                    "name": "search_result_content",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Search Result X Column",
+                    "name": "search_result_x_column",
+                    "data_type": "varchar",
+                    "data_size": "100"
+                },
+                {
+                    "caption": "Search Result Y Column",
+                    "name": "search_result_y_column",
+                    "data_type": "varchar",
+                    "data_size": "100"
+                },
+                {
+                    "caption": "Use Search Url",
+                    "name": "use_search_url",
+                    "data_type": "tinyint",
+                    "data_size": "3",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Search Url",
+                    "name": "search_url",
+                    "data_type": "varchar",
+                    "data_size": "100"
+                }
+            ]
+        }
+    ]
+}

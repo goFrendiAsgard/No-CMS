@@ -70,13 +70,30 @@
                     <?php }
                     }
                     ?>
-                    <?php if(!$unset_read){?>
+                    <?php if(!$unset_read){// add "from" to "edit_url"
+                        if(isset($_GET['from'])){
+                            if(strpos($row->read_url, '?') !== FALSE){
+                                $row->read_url .= '&from='.$_GET['from'];
+                            }else{
+                                $row->read_url .= '?from='.$_GET['from'];
+                            }
+                        }
+                        ?>
                         &nbsp;
                         <a href='<?php echo $row->read_url?>' title='<?php echo $this->l('list_view')?> <?php echo $subject?>' class="edit_button btn btn-default">
                               <span class='read-icon'><i class="glyphicon glyphicon-list"></i>&nbsp;<?php echo $this->l('list_view')?></span>
                         </a>
                     <?php }?>
-                    <?php if(!$unset_edit &&  (!property_exists($row, '__show_edit') || (property_exists($row, '__show_edit') && $row->__show_edit)) ){?>&nbsp;
+                    <?php if(!$unset_edit &&  (!property_exists($row, '__show_edit') || (property_exists($row, '__show_edit') && $row->__show_edit)) ){
+                        // add "from" to "edit_url"
+                    	if(isset($_GET['from'])){
+                    		if(strpos($row->edit_url, '?') !== FALSE){
+                    			$row->edit_url .= '&from='.$_GET['from'];
+                    		}else{
+                    			$row->edit_url .= '?from='.$_GET['from'];
+                    		}
+                    	}
+                        ?>&nbsp;
                         <a href='<?php echo $row->edit_url?>' title='<?php echo $this->l('list_edit')?> <?php echo $subject?>' class="edit_button btn btn-default">
                               <span class='edit-icon'><i class="glyphicon glyphicon-pencil"></i>&nbsp;<?php echo $this->l('list_edit')?></span>
                         </a>

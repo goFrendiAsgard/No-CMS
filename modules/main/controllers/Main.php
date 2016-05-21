@@ -907,7 +907,7 @@ class Main extends CMS_Controller
             // factory reset
             if($first && $this->cms_user_is_super_admin()){
                 $result .= '<li role="separator" class="divider"></li>';
-                $result .= '<li><a href="{{ site_url }}factory_reset"><i class="glyphicon glyphicon-repeat"></i> Factory Reset</a></li>';
+                $result .= '<li><a href="{{ site_url }}factory_reset?from='.$this->cms_get_origin_uri_string().'"><i class="glyphicon glyphicon-repeat"></i> Factory Reset</a></li>';
             }
             $result .= '</ul>';
         }
@@ -938,19 +938,19 @@ class Main extends CMS_Controller
                             '<i class="glyphicon glyphicon-eye-open"></i> Toggle View'.
                         '</a>';
                     $edit_menu = '<li class="dropdown hidden-xs" id="__edit_menu">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="http://localtest.me/No-CMS/main/management" style="padding-left: 15px; padding-right: 10px;"><i class="glyphicon glyphicon-pencil"></i> Edit <span class="caret"></span></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="http://localtest.me/No-CMS/main/management" style="padding-left: 15px; padding-right: 10px; font-size:small;"><i class="glyphicon glyphicon-pencil"></i> Edit <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li class="dropdown">
-                                <a href="{{ site_url }}main/manage_navigation">Navigation</a>
+                                <a href="{{ site_url }}main/manage_navigation?from='.$this->cms_get_origin_uri_string().'">Navigation</a>
                             </li>
                             <li class="dropdown">
-                                <a href="{{ site_url }}main/manage_quicklink">Quicklink</a>
+                                <a href="{{ site_url }}main/manage_quicklink?from='.$this->cms_get_origin_uri_string().'">Quicklink</a>
                             </li>
                             <li class="dropdown">
                                 <a id="__editing_section_top_fix_link" href="#">Top Section</a>
                             </li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="{{ site_url }}factory_reset"><i class="glyphicon glyphicon-repeat"></i> Factory Reset</a></li>
+                            <li><a href="{{ site_url }}factory_reset?from='.$this->cms_get_origin_uri_string().'"><i class="glyphicon glyphicon-repeat"></i> Factory Reset</a></li>
                         </ul>
                     </li>';
                 } else {
@@ -1048,7 +1048,7 @@ class Main extends CMS_Controller
                         /*padding-top: 50px;*/
                     }
                 }
-                .__editing_widget_top_navigation, .__editing_widget_top_navigation_inverse, .__editing_widget_top_navigation_default, .__editing_widget_top_navigation_inverse_fixed, .__editing_widget_top_navigation_default_fixed, .__editing_widget_top_navigation_inverse_static, .__editing_widget_top_navigation_default_static, .__editing_widget_section_top_fix{
+                .__editing_widget_top_navigation, .__editing_widget_top_navigation_inverse, .__editing_widget_top_navigation_default, .__editing_widget_top_navigation_inverse_fixed, .__editing_widget_top_navigation_default_fixed, .__editing_widget_top_navigation_inverse_static, .__editing_widget_top_navigation_default_static, .__editing_widget_section_top_fix, .__editing_widget_navigation_right_partial{
                     display:none;
                 }
                 .glyphicon-none:before {
@@ -1135,7 +1135,9 @@ class Main extends CMS_Controller
 
                 // MAIN PROGRAM
                 $(document).ready(function(){
-                    $("#__editing_section_top_fix_link").attr("href", $(".__editing_widget_section_top_fix a").attr("href"));
+                    if($(".__editing_widget_section_top_fix a").length > 0){
+                        $("#__editing_section_top_fix_link").attr("href", $(".__editing_widget_section_top_fix a").attr("href"));
+                    }
 
                     // override bootstrap default behavior on dropdown click
                     $("a.dropdown-toggle span.anchor-text").on("click touchstart", function(event){
@@ -1366,12 +1368,19 @@ class Main extends CMS_Controller
     }
 
     public function widget_user_button(){
+        echo '<style type="text/css">.__editing_widget_user_button{display:none;}</style>';
         if($this->cms_user_id() > 0){
-            echo '<a class="btn btn-primary btn-sm" href="{{ site_url }}main/change_profile">'.
-                '<img style="max-height:32px; margin-right:20px;" src="'.$this->cms_get_profile_picture($this->cms_user_id()).'" />'.
-                'Change Profile</a>';
+            echo '<div class="user-button btn-group">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img style="max-height:16px; margin-right:5px;" src="'.$this->cms_get_profile_picture($this->cms_user_id()).'" /> '.$this->cms_user_name().' <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="{{ site_url }}main/change_profile">Change Profile</a></li>
+                        <li><a href="{{ site_url }}main/logout">Logout</a></li>
+                    </ul>
+                </div>';
         }else{
-            echo '<a class="btn btn-primary btn-sm" href="{{ site_url }}main/login">Login</a>';
+            echo '<a class="user-button-login btn btn-primary btn-sm" href="{{ site_url }}main/login">Login</a>';
         }
     }
 }

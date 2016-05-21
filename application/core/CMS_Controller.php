@@ -131,6 +131,7 @@ class CMS_Controller extends MX_Controller
         if(method_exists($this->{$this->__cms_base_model_name}, $method)){
             return call_user_func_array(array($this->{$this->__cms_base_model_name}, $method), $args);
         }else{
+            log_message('error', 'Method '.$method.' is not defined in '.$this->__cms_base_model_name);
             return NULL;
         }
     }
@@ -843,14 +844,14 @@ class CMS_Controller extends MX_Controller
                 $row_layout = $this->cms_get_record(cms_table_name('main_layout'), 'layout_name', $layout);
                 if($row_layout != NULL){
                     // edit layout
-                    $editing_mode_content .= '<a class="btn btn-default" href="{{ SITE_URL }}main/manage_layout/index/edit/'.$row_layout->layout_id.'">'.
+                    $editing_mode_content .= '<a class="btn btn-default" href="{{ SITE_URL }}main/manage_layout/index/edit/'.$row_layout->layout_id.'?from='.$this->cms_get_origin_uri_string().'">'.
                         '<i class="glyphicon glyphicon-edit"></i> Edit Layout'.
                     '</a>';
                 }
             }
             if($this->cms_allow_navigate('main_navigation_management') && $this->cms_have_privilege('edit_main_navigation')){
                 // edit page
-                $editing_mode_content .= '<a style="margin-left:10px;" class="btn btn-default" href="{{ SITE_URL }}main/manage_navigation/index/edit/'.$row_navigation->navigation_id.'">'.
+                $editing_mode_content .= '<a style="margin-left:10px;" class="btn btn-default" href="{{ SITE_URL }}main/manage_navigation/index/edit/'.$row_navigation->navigation_id.'?from='.$this->cms_get_origin_uri_string().'">'.
                     '<i class="glyphicon glyphicon-pencil"></i> Edit Page'.
                 '</a>';
             }

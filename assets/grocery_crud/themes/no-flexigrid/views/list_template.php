@@ -24,6 +24,20 @@
 	/** Jquery UI */
 	$this->load_js_jqueryui();
 
+	if(isset($_GET['from'])){
+		// add "from" to "add_url"
+		if(strpos($add_url, '?') !== FALSE){
+			$add_url .= '&from='.$_GET['from'];
+		}else{
+			$add_url .= '?from='.$_GET['from'];
+		}
+		// add "from" to "ajax_list_url"
+		if(strpos($ajax_list_url, '?') !== FALSE){
+			$ajax_list_url .= '&from='.$_GET['from'];
+		}else{
+			$ajax_list_url .= '?from='.$_GET['from'];
+		}
+	}
 ?>
 <script type='text/javascript'>
 	var base_url = '<?php echo base_url();?>';
@@ -48,7 +62,7 @@ if($success_message !== null){?>
     <?php echo form_open( $ajax_list_url, 'method="post" id="filtering_form" class="filtering_form" autocomplete = "off" data-ajax-list-info-url="'.$ajax_list_info_url.'"'); ?>
 
     <div class="quickSearchBox form-inline row" id='quickSearchBox'>
-        
+
         <?php if(isset($search_form_components)) echo $search_form_components; ?>
 
         <?php if(isset($unset_default_search) && $unset_default_search) echo '<div style="display:none">'; ?>

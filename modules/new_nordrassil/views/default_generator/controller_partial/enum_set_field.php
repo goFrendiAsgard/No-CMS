@@ -1,0 +1,1 @@
+        $crud->field_type('{{ field_name }}', '{{ value_selection_mode }}', array({{ value_selection_item }}));

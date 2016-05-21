@@ -395,8 +395,12 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         if ($can_be_expanded) {
             $html .= ' | <a href="#" class="expand-collapse-children" target="'.$row->navigation_id.'"><i class="glyphicon glyphicon-chevron-up"></i> Collapse</a>';
         }
+        $from = '';
+        if(isset($_GET['from'])){
+            $from .= '?from='.$_GET['from'];
+        }
         // add children
-        $html .= ' | <a href="'.site_url($this->cms_module_path().'/manage_navigation/index/'.$row->navigation_id).'/add">'.
+        $html .= ' | <a href="'.site_url($this->cms_module_path().'/manage_navigation/index/'.$row->navigation_id).'/add'.$from.'">'.
             '<i class="glyphicon glyphicon-plus"></i> '.$this->cms_lang('Add Child')
             .'</a>';
 

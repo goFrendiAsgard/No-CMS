@@ -338,7 +338,10 @@ function build_md_event_script($md_key, $insert_url, $update_url){
                 $("#no-datamd_table_'.$md_key.'").hide();
                 $("#md_table_'.$md_key.'").show();
                 // Get input
-                var inputs = add_table_row_'.$md_key.'(data);
+                var inputs = [];
+                if(typeof(add_table_row_'.$md_key.') === "function"){
+                    inputs = add_table_row_'.$md_key.'(data);
+                }
                 // Build row
                 var html = \'<tr id="md_field_'.$md_key.'_tr_\'+RECORD_INDEX_'.$md_key.'+\'" class="md_field_'.$md_key.'_tr">\';
                 for(var i=0; i<inputs.length; i++){
@@ -346,8 +349,18 @@ function build_md_event_script($md_key, $insert_url, $update_url){
                     var input = inputs[i];
                     html += \'<td>\' + input + \'</td>\';
                 }
-                // Build delete button
+                // Build action list
+                var actions = [];
+                if(typeof(add_table_row_'.$md_key.'_action) === "function"){
+                    actions = add_table_row_'.$md_key.'_action(data);
+                }
                 html += \'<td>\';
+                // build action buttons
+                for(var i=0; i<actions.length; i++){
+                    var action = actions[i];
+                    html += action;
+                }
+                // Build delete button
                 html += \'<span class="delete-icon btn btn-default md_field_'.$md_key.'_delete" record_index="\'+RECORD_INDEX_'.$md_key.'+\'">\';
                 html += \'<i class="glyphicon glyphicon-minus-sign"></i>\';
                 html += \'</span>\';

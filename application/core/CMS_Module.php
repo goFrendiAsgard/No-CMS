@@ -469,11 +469,11 @@ class CMS_Module extends CMS_Controller
             }
             // adjust url and notif url
             $url = $this->cms_parse_keyword($url);
-            if(strpos($url, $module_path.'/') !== 0 && $url != $module_path){
+            if(strpos($url, $module_path.'/') !== 0 && $url != $module_path && $url != ''){
                 $url = $module_path.'/'.$url;
             }
             $notif_url = $this->cms_parse_keyword($notif_url);
-            if(strpos($notif_url, $module_path.'/') !== 0 && $url != $module_path){
+            if(strpos($notif_url, $module_path.'/') !== 0 && $url != $module_path && $notif_url != ''){
                 $notif_url = $module_path.'/'.$notif_url;
             }
             $this->cms_add_navigation_if_not_exists(

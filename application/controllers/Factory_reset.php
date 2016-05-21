@@ -31,7 +31,11 @@ class Factory_reset extends CMS_Controller{
             $this->_reset_navigation();
             $this->_reset_configuration();
             $this->_reset_layout();
-            redirect('main/index');
+            if(isset($_GET['from'])){
+                redirect($_GET['from']);
+            }else{
+                redirect('main/index');
+            }
         }else{
             // show the form
             $data = array(
@@ -58,7 +62,12 @@ class Factory_reset extends CMS_Controller{
                     1, 1, 2, 1, '{{ widget_name:top_navigation }}',
                     NULL),
                 array('section_banner', 'Banner Section', '', '',
-                    1, 1, 3, 1, '<div class="jumbotron hidden-xs hidden-sm" style="margin-top:10px;">'.PHP_EOL.'  <img src ="{{ site_logo }}" style="max-width:20%; float:left; margin-right:10px; margin-bottom:10px;" />'.PHP_EOL.'  <h1>{{ site_name }}</h1>'.PHP_EOL.'  <p>{{ site_slogan }}</p>'.PHP_EOL.'  <div style="clear:both;"></div>'.PHP_EOL.'</div>',
+                    1, 1, 3, 1, '<div id="div-section-banner" class="jumbotron hidden-xs hidden-sm" style="margin-top:10px;">'.PHP_EOL.'  <img src ="{{ site_logo }}" style="max-width:20%; float:left; margin-right:10px; margin-bottom:10px;" />'.PHP_EOL.'  <h1>{{ site_name }}</h1>'.PHP_EOL.'  <p>{{ site_slogan }}</p>'.PHP_EOL.'  <div style="clear:both;"></div>'.PHP_EOL.'</div>'.PHP_EOL.
+                    '<script type="text/javascript">'.PHP_EOL.
+                    '    $(document).ready(function(){'.PHP_EOL.
+                    '        $(\'#div-section-banner\').prepend($(\'.__editing_widget_section_banner\'));'.PHP_EOL.
+                    '    });'.PHP_EOL.
+                    '</script>',
                     NULL),
                 array('section_left', 'Left Section', '', '',
                     1, 1, 4, 1, '',
@@ -67,7 +76,12 @@ class Factory_reset extends CMS_Controller{
                     1, 1, 5, 1, '{{ widget_slug:sidebar }}<hr />{{ widget_slug:advertisement }}',
                     NULL),
                 array('section_bottom', 'Bottom Section', '', '',
-                    1, 1, 6, 1, '<div class="container well">' . PHP_EOL . '    <div class="col-md-4">' . PHP_EOL .'        <h3>{{ site_name }}</h3>' . PHP_EOL .'        <p>{{ site_slogan }}</p>' . PHP_EOL .'    </div>' . PHP_EOL .'    <div class="col-md-8">' . PHP_EOL .'        <h3>About Us</h3>' . PHP_EOL .'        <p>We are {{ site_name }}</p>' . PHP_EOL .'    </div>' . PHP_EOL .'    <div class="col-md-12">{{ site_footer }}</div>' . PHP_EOL . '</div>',
+                    1, 1, 6, 1, '<div id="div-section-bottom" class="container well">' . PHP_EOL . '    <div class="col-md-4">' . PHP_EOL .'        <h3>{{ site_name }}</h3>' . PHP_EOL .'        <p>{{ site_slogan }}</p>' . PHP_EOL .'    </div>' . PHP_EOL .'    <div class="col-md-8">' . PHP_EOL .'        <h3>About Us</h3>' . PHP_EOL .'        <p>We are {{ site_name }}</p>' . PHP_EOL .'    </div>' . PHP_EOL .'    <div class="col-md-12">{{ site_footer }}</div>' . PHP_EOL . '</div>'. PHP_EOL .
+                    '<script type="text/javascript">'.PHP_EOL.
+                    '    $(document).ready(function(){'.PHP_EOL.
+                    '        $(\'#div-section-bottom\').prepend($(\'.__editing_widget_section_bottom\'));'.PHP_EOL.
+                    '    });'.PHP_EOL.
+                    '</script>',
                     NULL),
                 array('left_navigation', 'Left Navigation', '', 'main/widget_left_nav',
                     1, 1, 7, 0, NULL,

@@ -11,8 +11,9 @@ for($i=0; $i<count($slide_list); $i++){
     }
     if($show_edit){
         $edit_link = '<div>'.
-                '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide/index/edit/'.$slide['slide_id'].'"><i class="glyphicon glyphicon-pencil">&nbsp;</i> Current Slide</a>&nbsp;'.
-                '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide/index"><i class="glyphicon glyphicon-pencil">&nbsp;</i>Manage Slideshow</a>'.
+                '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide/index/edit/'.$slide['slide_id'].'?from='.
+                $origin_uri_string.'"><i class="glyphicon glyphicon-pencil">&nbsp;</i> Current Slide</a>&nbsp;'.
+                '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide/index?from='.$origin_uri_string.'"><i class="glyphicon glyphicon-pencil">&nbsp;</i>Manage Slideshow</a>'.
             '</div>';
     }
     $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';

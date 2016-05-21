@@ -261,6 +261,14 @@ class CMS_Model extends CI_Model
         self::$__cms_model_properties['is_language_dictionary_cached'] = false;
     }
 
+    public function cms_get_origin_uri_string(){
+        if(isset($_GET['from'])){
+            return $_GET['from'];
+        }else{
+            return $this->uri->uri_string();
+        }
+    }
+
     /*
     * @ usage $this->t('purchase')
     */
@@ -1256,9 +1264,9 @@ class CMS_Model extends CI_Model
             }
 
             $editing_mode_content = '';
-            if ($this->cms_editing_mode() && $this->cms_allow_navigate('main_widget_management') && $this->cms_have_privilege('edit_main_widget')) {
+            if ($this->cms_editing_mode() && $this->cms_allow_navigate('main_widget_management') && $this->cms_have_privilege('edit_main_widget') && $row->widget_name != 'section_custom_script' && $row->widget_name != 'section_custom_style') {
                 $editing_mode_content = '<div class="__editing_widget_'.str_replace(' ', '_', $row->widget_name).'">'.
-                    '<a style="margin-bottom:2px; margin-top:2px;" class="btn btn-default btn-xs pull-right" href="{{ SITE_URL }}main/manage_widget/index/edit/'.$row->widget_id.'">'.
+                    '<a style="margin-bottom:2px; margin-top:2px;" class="btn btn-default btn-xs pull-right" href="{{ SITE_URL }}main/manage_widget/index/edit/'.$row->widget_id.'?from='.$this->cms_get_origin_uri_string().'">'.
                         '<i class="glyphicon glyphicon-pencil"></i> <strong>'.ucwords(str_replace('_', ' ', $row->widget_name)). '</strong>'.
                     '</a><div style="clear:both"></div>'.
                 '</div>';
@@ -3977,7 +3985,7 @@ class CMS_Model extends CI_Model
             ->from(cms_table_name('main_privilege'))
             ->where('privilege_name', $privilege_name)
             ->get();
-        if ($query->num_rows() > 0) {
+        if ($query->num_rows() == 0) {
             $this->cms_add_privilege($privilege_name, $title, $authorization_id, $description);
         }
     }

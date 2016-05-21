@@ -17,6 +17,7 @@ class Static_accessories_widget extends CMS_Controller {
         foreach($CONFIGURATION_LIST as $configuration){
             $data[$configuration] = $this->cms_get_config('static_accessories_'.$configuration);
         }
+        $data['origin_uri_string'] = $this->cms_get_origin_uri_string();
 
         if(count($data['slide_list'])>0){
             $this->view($this->cms_module_path().'/widget_slide', $data);

@@ -58,7 +58,9 @@ echo $output;
             height: "200px"
         });
         var decorator = $("#field-static_content").data("ace");
-        var aceInstance = decorator.editor.ace;
-        aceInstance.setFontSize("16px");
+        if(typeof(decorator) != 'undefined'){
+            var aceInstance = decorator.editor.ace;
+            aceInstance.setFontSize("16px");
+        }
     });
 </script>
