@@ -2692,7 +2692,7 @@ class CMS_Model extends CI_Model
                 stripos($description, $keyword) !== false
             ))) {
                 // Subsite should not be allowed to install multisite
-                if(CMS_SUBSITE != '' && $module_name == 'gofrendi.noCMS.multisite'){
+                if(CMS_SUBSITE != '' && ($module_name == 'gofrendi.noCMS.multisite' || $module_name == 'gofrendi.noCMS.nordrassil')){
                     continue;
                 }
                 // if module_name in existing_module_name skip it
