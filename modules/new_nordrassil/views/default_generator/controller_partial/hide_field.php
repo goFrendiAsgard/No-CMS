@@ -1,1 +1,0 @@
-        $crud->field_type('{{ field_name }}', 'hidden');

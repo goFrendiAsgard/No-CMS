@@ -567,18 +567,22 @@ class Main extends CMS_Controller
     public function index()
     {
         $this->cms_guard_page('main_index');
-        $data = array(
-            'submenu_screen' => $this->cms_submenu_screen(null),
-        );
+        $navigation = $this->cms_navigation('main_index');
+        $data = array();
+        if($navigation->is_static != 1){
+            $data['submenu_screen'] = $this->cms_submenu_screen(null);
+        }
         $this->view('main/main_index', $data, 'main_index');
     }
 
     public function management()
     {
         $this->cms_guard_page('main_management');
-        $data = array(
-            'submenu_screen' => $this->cms_submenu_screen('main_management'),
-        );
+        $navigation = $this->cms_navigation('main_management');
+        $data = array();
+        if($navigation->is_static != 1){
+            $data['submenu_screen'] = $this->cms_submenu_screen('main_management');
+        }
         $this->view('main/main_management', $data, 'main_management');
     }
 
@@ -896,7 +900,14 @@ class Main extends CMS_Controller
                     $text = '<a href="'.$navigation['url'].'">'.$icon.
                         $navigation['title'].$badge.'</a>';
 
-                    if (count($navigation['child']) > 0 && $navigation['have_allowed_children']) {
+                    $all_child_hidden = TRUE;
+                    foreach($navigation['child'] as $child){
+                        if($child['hidden'] != 1){
+                            $all_child_hidden = FALSE;
+                            break;
+                        }
+                    }
+                    if (count($navigation['child']) > 0 && !$all_child_hidden && $navigation['have_allowed_children']) {
                         $result .= '<li class="dropdown-submenu">'.
                             $text.$this->widget_top_nav($caption, false, $no_complete_menu, $no_quicklink, $inverse, $navigation['child'], $notif).'</li>';
                     } else {
@@ -1322,7 +1333,14 @@ class Main extends CMS_Controller
                 $quicklink['url'] = '#';
             }
             // create li based on child availability
-            if (count($quicklink['child']) == 0 || !$quicklink['have_allowed_children']) {
+            $all_child_hidden = TRUE;
+            foreach($quicklink['child'] as $child){
+                if($child['hidden'] != 1){
+                    $all_child_hidden = FALSE;
+                    break;
+                }
+            }
+            if (count($quicklink['child']) == 0 || !$quicklink['have_allowed_children'] || (count($quicklink['child'])>0 && $all_child_hidden)) {
                 $html .= '<li class="'.$active.'">';
                 $html .= anchor($quicklink['url'], '<span>'.$icon.$quicklink['title'].$badge.'</span>');
                 $html .= '</li>';

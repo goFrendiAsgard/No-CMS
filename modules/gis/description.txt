@@ -1,0 +1,9 @@
+{
+    "dependencies"    : [],
+    "name"            : "gofrendi.gis.core",
+    "description"     : "GIS Module",
+    "version"         : "0.1.0",
+    "activate"        : "info/activate",
+    "deactivate"      : "info/deactivate",
+    "upgrade"         : "info/upgrade"
+}

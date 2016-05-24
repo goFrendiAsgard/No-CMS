@@ -841,10 +841,11 @@ class CMS_Controller extends MX_Controller
         if ($this->cms_editing_mode()) {
             $editing_mode_content = '<div class="row" style="padding-top:10px; padding-bottom:10px; text-align:right;">';
             if($this->cms_allow_navigate('main_layout_management') && $this->cms_have_privilege('edit_main_layout')){
-                $row_layout = $this->cms_get_record(cms_table_name('main_layout'), 'layout_name', $layout);
-                if($row_layout != NULL){
+                // get row layout
+                $layout_id = $this->cms_get_layout_id($layout);
+                if($layout_id != NULL){
                     // edit layout
-                    $editing_mode_content .= '<a class="btn btn-default" href="{{ SITE_URL }}main/manage_layout/index/edit/'.$row_layout->layout_id.'?from='.$this->cms_get_origin_uri_string().'">'.
+                    $editing_mode_content .= '<a class="btn btn-default" href="{{ SITE_URL }}main/manage_layout/index/edit/'.$layout_id.'?from='.$this->cms_get_origin_uri_string().'">'.
                         '<i class="glyphicon glyphicon-edit"></i> Edit Current Layout'.
                     '</a>';
                 }
@@ -1037,19 +1038,8 @@ class CMS_Controller extends MX_Controller
                 $show_benchmark = FALSE;
                 $developer_addr = '';
                 $t_config = $this->cms_complete_main_site_table_name('main_config', '');
-                $query = $this->db->select('config_name, value')
-                    ->from($t_config)
-                    ->where('config_name', 'site_show_benchmark')
-                    ->or_where('config_name', 'site_developer_addr')
-                    ->get();
-                foreach($query->result() as $row){
-                    if($row->config_name == 'site_show_benchmark'){
-                        $show_benchmark = strtoupper(trim($row->value)) == 'TRUE';
-                    }
-                    if($row->config_name == 'site_developer_addr'){
-                        $developer_addr = $row->value;
-                    }
-                }
+                $show_benchmark = $this->cms_get_config('site_show_benchmark');
+                $developer_addr = $this->cms_get_config('site_developer_addr');
                 // set profiler if the site accessed from developer machine and site_show_benchmark is active
                 if($show_benchmark && ($_SERVER['REMOTE_ADDR'] == '127.0.0.1' || $_SERVER['REMOTE_ADDR'] == '::1' || $_SERVER['REMOTE_ADDR'] == $developer_addr || preg_match('/'.$developer_addr.'/si', $_SERVER['REMOTE_ADDR']))){
                     $this->output->enable_cms_profiler(TRUE);
@@ -1058,8 +1048,6 @@ class CMS_Controller extends MX_Controller
             }
 
             $this->cms_show_html($result);
-            // load view introduce rendering problem if profiler activated, thus I use echo for now
-            // $this->cms_show_html($result);
         }
     }
 

@@ -266,12 +266,27 @@ function cms_function(){
     }
 }
 
-function build_md_html_table($md_key, $detail_table_caption, $field_captions = array()){
+function build_md_html_table($md_key, $detail_table_caption, $field_captions = array(), $build_action_column=TRUE, $allow_add=TRUE, $action_html = ''){
     $th = '';
     foreach($field_captions as $caption){
         $th .= '<th>'.$caption.'</th>';
     }
-    $th .= '<th>{{ language:Action }}';
+    if($build_action_column){
+        $th .= '<th>{{ language:Action }}';
+    }
+
+    $action = '';
+    if($action_html != ''){
+        $action .= $action_html;
+    }
+    if($allow_add){
+        $action .= '<span id="md_field_'.$md_key.'_add" class="add btn btn-default">
+                <i class="glyphicon glyphicon-plus-sign"></i> Add '.$detail_table_caption.'
+            </span>';
+    }
+    if($action != ''){
+        $action = '<div class="fbuton">' . $action . '</div>';
+    }
 
     $html =
         '<style type="text/css">
@@ -292,12 +307,7 @@ function build_md_html_table($md_key, $detail_table_caption, $field_captions = a
                 <tbody>
                     <!-- the data presentation be here -->
                 </tbody>
-            </table>
-            <div class="fbutton">
-                <span id="md_field_'.$md_key.'_add" class="add btn btn-default">
-                    <i class="glyphicon glyphicon-plus-sign"></i> Add '.$detail_table_caption.'
-                </span>
-            </div>
+            </table>'.$action.'
             <br />
             <!-- This is the real input. If you want to catch the data, please json_decode this input\'s value -->
             <input id="md_real_field_'.$md_key.'_col" name="md_real_field_'.$md_key.'_col" type="hidden" />
@@ -329,7 +339,7 @@ function build_md_global_variable_script($md_key, $primary_key_name, $date_forma
     return $js;
 }
 
-function build_md_event_script($md_key, $insert_url, $update_url){
+function build_md_event_script($md_key, $insert_url, $update_url, $allow_delete = TRUE){
     $js =
         '$(document).ready(function(){
 
@@ -349,22 +359,30 @@ function build_md_event_script($md_key, $insert_url, $update_url){
                     var input = inputs[i];
                     html += \'<td>\' + input + \'</td>\';
                 }
+                // determine "allow_delete"
+                var allow_delete = '.($allow_delete?'true':'false').';
                 // Build action list
                 var actions = [];
                 if(typeof(add_table_row_'.$md_key.'_action) === "function"){
                     actions = add_table_row_'.$md_key.'_action(data);
                 }
-                html += \'<td>\';
                 // build action buttons
+                var html_action = \'\';
                 for(var i=0; i<actions.length; i++){
                     var action = actions[i];
-                    html += action;
+                    html_action = action;
                 }
-                // Build delete button
-                html += \'<span class="delete-icon btn btn-default md_field_'.$md_key.'_delete" record_index="\'+RECORD_INDEX_'.$md_key.'+\'">\';
-                html += \'<i class="glyphicon glyphicon-minus-sign"></i>\';
-                html += \'</span>\';
-                html += \'</td>\';
+                if(html_action != \'\' || allow_delete){
+                    html += \'<td>\';
+                    html += html_action;
+                    if(allow_delete){
+                        // Build delete button
+                        html += \'<span class="delete-icon btn btn-default md_field_'.$md_key.'_delete" record_index="\'+RECORD_INDEX_'.$md_key.'+\'">\';
+                        html += \'<i class="glyphicon glyphicon-minus-sign"></i>\';
+                        html += \'</span>\';
+                    }
+                    html += \'</td>\';
+                }
                 // End of row
                 html += \'</tr>\';
                 // Add row to table

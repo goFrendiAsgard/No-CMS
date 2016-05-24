@@ -3,7 +3,7 @@ class Install_model extends CI_Model{
 
     private $__config_file = array();
 
-    private $VERSION        = '1.1.0';
+    private $VERSION        = '1.1.1';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -726,7 +726,7 @@ class Install_model extends CI_Model{
         $fields = array(
                 'privilege_id'      => $type_primary_key,
                 'privilege_name'    => $type_varchar_small_strict,
-                'title'             => $type_varchar_small_strict,
+                'title'             => $type_varchar_small,
                 'description'       => $type_text,
                 'authorization_id'  => $type_foreign_key_default_1,
             );

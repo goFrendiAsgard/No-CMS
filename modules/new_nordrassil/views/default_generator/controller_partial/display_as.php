@@ -1,1 +1,0 @@
-        $crud->display_as('{{ column_name }}','{{ column_caption }}');

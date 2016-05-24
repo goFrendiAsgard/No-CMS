@@ -167,20 +167,22 @@ class Extended_grocery_crud extends Grocery_CRUD{
         return $value;
     }
 
-    // OVERRIDE: state_url
-    protected function state_url($url = '', $is_list_page = false)
+    // OVERRIDE: getListSuccessUrl
+    protected function getListSuccessUrl($primary_key = null)
 	{
-        $state_url = parent::state_url($url, $is_list_page);
+        $list_success_url = parent::getListSuccessUrl($primary_key);
         if(isset($_GET['from'])){
-    		// list "from" to "list_url"
-    		if(strpos($state_url, '?') !== FALSE){
-    			$state_url .= '&from='.$_GET['from'];
-    		}else{
-    			$state_url .= '?from='.$_GET['from'];
-    		}
+            if(strpos($list_success_url, '&from=') === FALSE && strpos($list_success_url, '?from=') === FALSE){
+        		// list "from" to "list_url"
+        		if(strpos($list_success_url, '?') !== FALSE){
+        			$list_success_url .= '&from='.$_GET['from'];
+        		}else{
+        			$list_success_url .= '?from='.$_GET['from'];
+        		}
+            }
     	}
-        return $state_url;
-    }
+        return $list_success_url;
+	}
 
     public function callback_show_edit($callback = null)
 	{

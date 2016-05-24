@@ -26,16 +26,20 @@
 
 	if(isset($_GET['from'])){
 		// add "from" to "add_url"
-		if(strpos($add_url, '?') !== FALSE){
-			$add_url .= '&from='.$_GET['from'];
-		}else{
-			$add_url .= '?from='.$_GET['from'];
+		if(strpos($add_url, '&from=') === FALSE && strpos($add_url, '?from=') === FALSE){
+			if(strpos($add_url, '?') !== FALSE){
+				$add_url .= '&from='.$_GET['from'];
+			}else{
+				$add_url .= '?from='.$_GET['from'];
+			}
 		}
 		// add "from" to "ajax_list_url"
-		if(strpos($ajax_list_url, '?') !== FALSE){
-			$ajax_list_url .= '&from='.$_GET['from'];
-		}else{
-			$ajax_list_url .= '?from='.$_GET['from'];
+		if(strpos($ajax_list_url, '&from=') === FALSE && strpos($ajax_list_url, '?from=') === FALSE){
+			if(strpos($ajax_list_url, '?') !== FALSE){
+				$ajax_list_url .= '&from='.$_GET['from'];
+			}else{
+				$ajax_list_url .= '?from='.$_GET['from'];
+			}
 		}
 	}
 ?>

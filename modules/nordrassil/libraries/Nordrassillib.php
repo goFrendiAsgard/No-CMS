@@ -2,7 +2,7 @@
 class Nordrassillib{
 	public function __construct(){
 		$this->ci =& get_instance();
-		$this->ci->load->model('nordrassil/data/nds_model');
+		$this->ci->load->model('nordrassil/nds_model');
 		$this->available_data_type = $this->ci->nds_model->available_data_type;
 		$this->type_without_length = $this->ci->nds_model->type_without_length;
 		$this->auto_increment_data_type = $this->ci->nds_model->auto_increment_data_type;

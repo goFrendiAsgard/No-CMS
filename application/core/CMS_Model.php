@@ -78,6 +78,7 @@ class CMS_Model extends CI_Model
                 'quicklink' => array(),         // cache already built quicklink
                 'widget' => array(),            // cache raw query
                 'layout' => array(),            // cache as associative array layout_name => template
+                'layout_id' => array(),         // cache as associative array layout_name => layout_id
                 'super_admin' => null,
                 'group_name' => array(),
                 'group_id' => array(),
@@ -207,7 +208,7 @@ class CMS_Model extends CI_Model
                     } elseif (substr($file, 0, 7) == '_secret' || substr($file, 0, 6) == '_token') {
                         $file = APPPATH.'config/tmp/'.$file;
                         if (file_exists($file) && filemtime($file) < strtotime('-1 hour')) {
-                            unlink($file);
+                            @unlink($file);
                         }
                     }
                 }
@@ -254,19 +255,42 @@ class CMS_Model extends CI_Model
     }
 
     public function cms_invalidate_cache(){
+        self::$__cms_model_properties['is_super_admin'] = false;
         self::$__cms_model_properties['is_config_cached'] = false;
+        self::$__cms_model_properties['is_module_name_cached'] = false;
+        self::$__cms_model_properties['is_module_path_cached'] = false;
+        self::$__cms_model_properties['is_module_version_cached'] = false;
+        self::$__cms_model_properties['is_user_last_active_extended'] = false;
+        self::$__cms_model_properties['is_navigation_cached'] = false;
+        self::$__cms_model_properties['is_quicklink_cached'] = false;
         self::$__cms_model_properties['is_widget_cached'] = false;
+        self::$__cms_model_properties['is_language_dictionary_cached'] = false;
+        self::$__cms_model_properties['is_group_name_cached'] = false;
+        self::$__cms_model_properties['is_group_id_cached'] = false;
+        self::$__cms_model_properties['is_super_admin_cached'] = false;
+        self::$__cms_model_properties['is_route_cached'] = false;
         self::$__cms_model_properties['is_user_language_cached'] = false;
         self::$__cms_model_properties['is_user_theme_cached'] = false;
-        self::$__cms_model_properties['is_language_dictionary_cached'] = false;
+        self::$__cms_model_properties['is_layout_cached'] = false;
+        self::$__cms_model_properties['is_private_themes_cached'] = false;
+        self::$__cms_model_properties['is_private_modules_cached'] = false;
+    }
+
+    public function cms_get_model_static_properties($key){
+        return self::$__cms_model_properties[$key];
     }
 
     public function cms_get_origin_uri_string(){
         if(isset($_GET['from'])){
-            return $_GET['from'];
+            $origin_uri_string = $_GET['from'];
         }else{
-            return $this->uri->uri_string();
+            $origin_uri_string = $this->uri->uri_string();
         }
+        // if origin_uri_sting == '', use default controller instead
+        if($origin_uri_string == ''){
+            $origin_uri_string = $this->cms_get_default_controller();
+        }
+        return $origin_uri_string;
     }
 
     /*
@@ -1078,6 +1102,19 @@ class CMS_Model extends CI_Model
         }
 
         return $result;
+    }
+
+    public function cms_navigation($navigation_name){
+        if (!self::$__cms_model_properties['is_navigation_cached']) {
+            // cache navigations
+            $this->cms_navigations();
+        }
+        foreach(self::$__cms_model_properties['navigation'] as $navigation){
+            if($navigation->navigation_name == $navigation_name){
+                return $navigation;
+            }
+        }
+        return NULL;
     }
 
     /**
@@ -3228,12 +3265,13 @@ class CMS_Model extends CI_Model
 
     private function __cms_cache_layout(){
         if (!self::$__cms_model_properties['is_layout_cached']) {
-            $query = $this->db->select('layout_name, template')
+            $query = $this->db->select('layout_id, layout_name, template')
                 ->from(cms_table_name('main_layout'))
                 ->get();
             foreach ($query->result() as $row) {
                 // save to cache
                 self::$__cms_model_properties['layout'][$row->layout_name] = $row->template;
+                self::$__cms_model_properties['layout_id'][$row->layout_name] = $row->layout_id;
             }
             self::$__cms_model_properties['is_layout_cached'] = true;
         }
@@ -3251,6 +3289,11 @@ class CMS_Model extends CI_Model
     public function cms_get_layout_template($layout){
         $this->__cms_cache_layout();
         return self::$__cms_model_properties['layout'][$layout];
+    }
+
+    public function cms_get_layout_id($layout){
+        $this->__cms_cache_layout();
+        return self::$__cms_model_properties['layout_id'][$layout];
     }
 
     public function cms_layout_exists($layout){

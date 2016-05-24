@@ -3,7 +3,7 @@
 class CMS_AutoUpdate_Model extends CMS_Model
 {
     // TODO: change this
-    private $CURRENT_VERSION = '1.1.0';
+    private $CURRENT_VERSION = '1.1.1';
     private static $module_updated = false;
 
     public function __construct()
@@ -639,6 +639,17 @@ class CMS_AutoUpdate_Model extends CMS_Model
 
     private function __update_to_1_1_0(){
         $this->cms_add_widget('user_button', 'User Button', $this->PRIV_EVERYONE, 'main/widget_user_button');
+    }
+
+    private function __update_to_1_1_1(){
+        $fields = array(
+                'title' =>array(
+                    'type' => 'VARCHAR',
+                    'constraint' => '50',
+                    'null' => TRUE,
+                )
+            );
+        $this->dbforge->modify_column(cms_table_name('main_privilege'), $fields);
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)

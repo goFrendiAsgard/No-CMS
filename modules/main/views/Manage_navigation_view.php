@@ -1,24 +1,24 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+    // from_url
+    $from_url = '';
+    if(isset($_GET['from'])){
+		$from_url = '?from='.$_GET['from'];
+	}
+
     // show navigation path
     if(count($navigation_path)>0){
         echo '<div style="padding-bottom:10px;">';
-        echo '<a class="btn btn-primary" href="'.site_url('main/manage_navigation').'">First Level Navigation</a>';
+        echo '<a class="btn btn-primary" href="'.site_url('main/manage_navigation').$from_url.'">First Level Navigation</a>';
         for($i=0; $i<count($navigation_path)-1; $i++){
             $navigation = $navigation_path[$i];
-            echo '&nbsp;<a class="btn btn-primary" href="'.site_url('main/manage_navigation/index/'.$navigation['navigation_id']).'">'.
+            echo '&nbsp;<a class="btn btn-primary" href="'.site_url('main/manage_navigation/index/'.$navigation['navigation_id']) . $from_url . '">'.
                 $navigation['navigation_name'].' ('.$navigation['title'].')'.'</a>';
         }
         echo '</div>';
     }
     // show grid/form
     echo $output;
-
-    $from_url = '';
-    if(isset($_GET['from'])){
-		$from_url = '?from='.$_GET['from'];
-	}
-
 ?>
 <script type="text/javascript" src="{{ module_base_url }}assets/scripts/navigation.js"></script>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/ace.js"></script>
