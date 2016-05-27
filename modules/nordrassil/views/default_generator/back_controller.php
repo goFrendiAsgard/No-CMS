@@ -211,6 +211,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
     }
 
     public function _before_delete($primary_key){
+{{ detail_before_delete }}
         return TRUE;
     }
 

@@ -67,7 +67,7 @@
     // Function to get default value
     function <?php echo $fn_default_row; ?>(){
         return {
-            <?php echo trim($default_record); ?>
+            <?php echo trim($default_record).PHP_EOL; ?>
         };
     }
 

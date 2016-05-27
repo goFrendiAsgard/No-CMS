@@ -43,7 +43,7 @@
             '<?php echo $detail_foreign_key_name; ?>', // DETAIL FK NAME
             $primary_key, // PARENT PRIMARY KEY VALUE
             $data, // DATA
-            $real_column_list=array(<?php echo implode(', ', $quoted_real_column_names); ?>), // REAL DETAIL COLUMN NAMES
-            $set_column_list=array(<?php echo implode(', ', $quoted_set_column_names); ?>), // SET DETAIL COLUMN NAMES
+            array(<?php echo implode(', ', $quoted_real_column_names); ?>), // REAL DETAIL COLUMN NAMES
+            array(<?php echo implode(', ', $quoted_set_column_names); ?>), // SET DETAIL COLUMN NAMES
             $many_to_many_config_list=array(<?php echo $many_to_many_script; ?>)
         );

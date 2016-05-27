@@ -93,16 +93,17 @@ class Ajax extends CMS_Controller{
     }
 
     public function users($keyword = ''){
-        $query = $this->db->select('user_id, user_name')
+        $query = $this->db->select('user_id, user_name, real_name')
             ->from($this->cms_user_table_name())
             ->like('user_name', $keyword)
+            ->or_like('real_name', $keyword)
             ->limit(20)
             ->get();
         $result = array();
         foreach($query->result() as $row){
             $result[] = array(
                 'value' => $row->user_id,
-                'caption' => $row->user_name,
+                'caption' => $row->user_name.' - '.$row->real_name,
             );
         }
         echo json_encode($result);
