@@ -25,11 +25,11 @@ class {{ controller_name }} extends CMS_Secure_Controller {
             'have_add_privilege'        => $this->cms_have_privilege($this->n('add_{{ stripped_table_name }}')),
             'have_edit_privilege'       => $this->cms_have_privilege($this->n('edit_{{ stripped_table_name }}')),
             'have_delete_privilege'     => $this->cms_have_privilege($this->n('delete_{{ stripped_table_name }}')),
-            'backend_url'               => site_url($this->cms_module_path().'/{{ back_controller_import_name }}/index'),
-            'module_path'               => $this->cms_module_path(),
+            'backend_url'               => site_url($module_path.'/{{ back_controller_import_name }}/index'),
+            'module_path'               => $module_path,
             'first_data'                => Modules::run($module_path.'/{{ front_controller_import_name }}/get_data', 0, '')
         );
-        $this->view($this->cms_module_path().'/{{ front_view_import_name }}',$data,
+        $this->view($module_path.'/{{ front_view_import_name }}',$data,
             $this->n('{{ navigation_name }}'));
     }
 
@@ -41,9 +41,8 @@ class {{ controller_name }} extends CMS_Secure_Controller {
         if($keyword == '' && $post_keyword != NULL) $keyword = $post_keyword;
         if($page == 0 && $post_page != NULL) $page = $post_page;
         // get data from model
-        $this->load->model($this->cms_module_path().'/{{ front_model_import_name }}');
-        $this->{{ model_name }} = new {{ model_name }}();
-        $result = $this->{{ model_name }}->get_data($keyword, $page);
+        $this->load->model($module_path.'/{{ front_model_import_name }}');
+        $result = $this->{{ front_model_import_name }}->get_data($keyword, $page);
         $data = array(
             'result'                 =>$result,
             'allow_navigate_backend' => $this->cms_allow_navigate($this->n('{{ backend_navigation_name }}')),
