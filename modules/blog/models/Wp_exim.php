@@ -26,7 +26,11 @@ class Wp_exim extends CMS_Model{
         if($navigation_row != NULL){
             $navigation_index = $navigation_row->index;
         }
+        // page can be children of another page, we need to note down the actual id inserted to database
+        $page_real_id_list = array();
+        // import article and page
         foreach($wp_post_list as $wp_post){
+            $page_real_id = NULL;
             // start to import
             $title              = $this->get_from_array($wp_post, 'title'); // Hello world
             $link               = $this->get_from_array($wp_post, 'link'); // http://domain/y/m/d/hello-world/
@@ -52,12 +56,8 @@ class Wp_exim extends CMS_Model{
             $comments           = $this->get_from_array($wp_post, 'comments', array());
             // this is blog article
             if($post_type == 'post'){
-                // get author
-                $user = $this->cms_get_record($this->cms_user_table_name(), 'user_name', $creator);
-                if($user === NULL){
-                    $this->cms_do_register($creator, NULL, $creator, '');
-                    $user = $this->cms_get_record($this->cms_user_table_name(), 'user_name', $creator);
-                }
+                // current user become the author
+                $user = $this->cms_get_record($this->cms_user_table_name(), 'user_id', $this->cms_user_id());
                 // get article title and url
                 $article_title = $title;
                 $article_url = url_title($title);
@@ -123,29 +123,20 @@ class Wp_exim extends CMS_Model{
                     $user_id = $comment['user_id'];
                     $content = $comment['content'];
                     $parent = $comment['parent'];
-                    // adjust user id
-                    if($user_id == 0){
-                        $user_id = NULL;
-                    }else{
-                        $user = $this->cms_get_record($this->cms_user_table_name(), 'user_name', $author);
-                        if($user === NULL){
-                            $this->cms_do_register($author, $author_email, $author, '');
-                            $user = $this->cms_get_record($this->cms_user_table_name(), 'user_name', $author);
-                        }
-                        $user_id = $user->user_id;
-                        $author = '';
-                        $author_email = '';
-                    }
                     // adjust parent
                     if($parent != 0 && array_key_exists($parent_comment_id, $comment_id_map)){
                         $parent_comment_id = $comment_id_map[$parent];
                     }else{
                         $parent_comment_id = NULL;
                     }
+                    // adjust length
+                    $author = substr($author, 0, 255);
+                    $author_email = substr($author_email, 0, 255);
+                    $author_url = substr($author_url, 0, 255);
                     // insert
                     $this->db->insert($this->t('comment'), array(
                         'date' => $date,
-                        'author_user_id' => $user_id,
+                        'author_user_id' => NULL,
                         'name' => $author,
                         'email' => $author_email,
                         'website' => $author_url,
@@ -160,19 +151,32 @@ class Wp_exim extends CMS_Model{
                     $commend_id_map[$comment_id] = $new_comment_id;
                 }
             }else{ // this is static page
+                if(trim($title) == ''){
+                    $title = 'Page';
+                }
+                // assembly navigation_name
                 $navigation_name = url_title($title);
                 // if there is already the same navigation name then keep trying find a new one
                 $new_navigation_name = $navigation_name;
                 $i = 1;
                 while($this->cms_record_exists(cms_table_name('main_navigation'), 'navigation_name', $new_navigation_name)){
                     $new_navigation_name = $navigation_name . $i;
+                    // the navigation name should not be more than 100 character
+                    if(strlen($new_navigation_name) > 100){
+                        $navigation_name = substr($navigation_name,0, 100-strlen($i));
+                        $new_navigation_name = $navigation_name;
+                        $i=0;
+                    }
                     $i++;
                 }
                 $navigation_name = $new_navigation_name;
+                // the title length should be 50
+                $title = substr($title, 0, 50);
                 // add navigation
                 $this->db->insert(cms_table_name('main_navigation'), array(
                     'navigation_name' => $navigation_name,
                     'title' => $title,
+                    'page_title' => $title,
                     'authorization_id' => PRIV_EVERYONE,
                     'description' => $description,
                     'active' => 1,
@@ -182,10 +186,27 @@ class Wp_exim extends CMS_Model{
                     'static_content' => $content_encoded,
                     'index' => $navigation_index
                 ));
+                $page_real_id = $this->db->insert_id();
                 $navigation_index ++;
             }
+            // append page real id list
+            $page_real_id_list[$post_id] = $page_real_id;
         }
-
+        // adjust parent id for newly pages
+        for($i=0; $i<count($wp_post_list); $i++){
+            $wp_post        = $wp_post_list[$i];
+            $post_id    = $this->get_from_array($wp_post, 'post_id');
+            $post_parent    = $this->get_from_array($wp_post, 'post_parent');
+            $post_type      = $this->get_from_array($wp_post, 'post_type', 'post');
+            if($post_type == 'post' || ($post_parent == 0)){
+                continue;
+            }
+            // update
+            $this->db->update(cms_table_name('main_navigation'),
+                array('parent_id'=>$page_real_id_list[$post_parent]),
+                array('navigation_id'=>$page_real_id_list[$post_id])
+            );
+        }
         return array('success'=>$success, 'message'=>$message);
     }
 

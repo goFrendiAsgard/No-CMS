@@ -1470,9 +1470,24 @@ class CMS_Model extends CI_Model
                 break;
             }
         }
+        $force_quit = FALSE;
         while ($parent_navigation_id != null && $parent_navigation_id != '' && $parent_navigation_id > 0) {
             foreach ($navigations as $navigation) {
                 if ($navigation->navigation_id == $parent_navigation_id) {
+                    // infinite recursion detected, don't continue
+                    foreach($result as $existing_parent_navigation){
+                        if($navigation->navigation_name == $existing_parent_navigation['navigation_name']){
+                            $force_quit = TRUE;
+                            break;
+                        }
+                    }
+                    if($navigation_name == $navigation->navigation_name){
+                        $force_quit = TRUE;
+                    }
+                    if($force_quit){
+                        break;
+                    }
+                    // no infinite recursion detected, continue
                     $result[] = array(
                             'navigation_id' => $navigation->navigation_id,
                             'navigation_name' => $navigation->navigation_name,
@@ -1483,6 +1498,10 @@ class CMS_Model extends CI_Model
                     $parent_navigation_id = $navigation->parent_id;
                     break;
                 }
+            }
+            // infinite recursion has been detected, just quit
+            if($force_quit){
+                break;
             }
         }
         //result should be in reverse order
