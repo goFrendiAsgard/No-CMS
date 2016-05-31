@@ -14,7 +14,7 @@ class Info extends CMS_Module {
             array(
                 'navigation_name'   => 'index',
                 'url'               => 'nordrassil',
-                'authorization_id'  => PRIV_EVERYONE,
+                'authorization_id'  => PRIV_AUTHORIZED,
                 'default_layout'    => 'default-one-column',
                 'title'             => 'Nordrassil (Module Generator)',
                 'parent_name'       => 'main_management',

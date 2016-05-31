@@ -825,6 +825,11 @@ class CMS_Controller extends MX_Controller
             $layout = $this->cms_get_config('site_layout');
         }
 
+        // GET SHOW BENCHMARK
+        $developer_addr = $this->cms_get_config('site_developer_addr');
+        // benchmark only shown if this page is not ajax request, not a widget, configuration site_show_benchmark == TRUE, and the site is accessed from developer's machine
+        $show_benchmark = !$this->input->is_ajax_request() && ! $this->__cms_dynamic_widget && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE' && ($_SERVER['REMOTE_ADDR'] == '127.0.0.1' || $_SERVER['REMOTE_ADDR'] == '::1' || $_SERVER['REMOTE_ADDR'] == $developer_addr || preg_match('/'.$developer_addr.'/si', $_SERVER['REMOTE_ADDR']));
+
         // ADJUST THEME
         if (!file_exists(FCPATH.'themes/'.$theme) || !is_dir(FCPATH.'themes/'.$theme)) {
             $theme = 'neutral';
@@ -975,6 +980,11 @@ class CMS_Controller extends MX_Controller
                 });
             },300000);';
             $asset->add_internal_js($login_code);
+            // normal users should see warning when he/she attempt to access developer console
+            if(!$show_benchmark){
+                $console_warning = 'console.log("%cStop"+"%c\nThis is a browser feature intended for developers. If someone told you to copy-paste anything here, it might be a self-xss attempt", "color:red; font-weight:bold; font-size:200%;", "font-size:150%;font-weight:bold;");';
+                $asset->add_internal_js($console_warning);
+            }
 
             // google analytic
             $analytic_property_id = $this->cms_get_config('cms_google_analytic_property_id');
@@ -1031,22 +1041,11 @@ class CMS_Controller extends MX_Controller
         if ($return_as_string) {
             return $result;
         } else {
-
             // Profiler
-            if(!$this->input->is_ajax_request() && ! $this->__cms_dynamic_widget && strtoupper(trim($this->cms_get_config('site_show_benchmark'))) == 'TRUE'){
-                // get configuration from main site
-                $show_benchmark = FALSE;
-                $developer_addr = '';
-                $t_config = $this->cms_complete_main_site_table_name('main_config', '');
-                $show_benchmark = $this->cms_get_config('site_show_benchmark');
-                $developer_addr = $this->cms_get_config('site_developer_addr');
-                // set profiler if the site accessed from developer machine and site_show_benchmark is active
-                if($show_benchmark && ($_SERVER['REMOTE_ADDR'] == '127.0.0.1' || $_SERVER['REMOTE_ADDR'] == '::1' || $_SERVER['REMOTE_ADDR'] == $developer_addr || preg_match('/'.$developer_addr.'/si', $_SERVER['REMOTE_ADDR']))){
-                    $this->output->enable_cms_profiler(TRUE);
-                    $this->output->set_cms_data($data);
-                }
+            if($show_benchmark){
+                $this->output->enable_cms_profiler(TRUE);
+                $this->output->set_cms_data($data);
             }
-
             $this->cms_show_html($result);
         }
     }

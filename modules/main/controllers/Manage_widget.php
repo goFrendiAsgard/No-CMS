@@ -11,7 +11,8 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'main_widget';
-    protected $COLUMN_NAMES = array('widget_name', 'title', 'description', 'url', 'authorization_id', 'active', 'index', 'is_static', 'static_content', 'slug', 'group_widget');
+    protected $COLUMN_NAMES = array('widget_name', 'title', 'description', 'active', 'index', 'is_static',
+    'url', 'static_content', 'authorization_id', 'slug', 'group_widget');
     protected $PRIMARY_KEY = 'widget_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
