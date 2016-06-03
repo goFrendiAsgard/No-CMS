@@ -14,6 +14,38 @@ class CMS_Model extends CI_Model
     public $PRIV_AUTHORIZED = PRIV_AUTHORIZED;
     public $PRIV_EXCLUSIVE_AUTHORIZED = PRIV_EXCLUSIVE_AUTHORIZED;
 
+    // Types
+    protected $TYPE_INT_UNSIGNED_AUTO_INCREMENT = array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'auto_increment' => true);
+    protected $TYPE_INT_UNSIGNED_NOTNULL = array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => false);
+    protected $TYPE_INT_SIGNED_NOTNULL = array('type' => 'INT', 'constraint' => 20, 'null' => false);
+    protected $TYPE_INT_UNSIGNED_NULL = array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true);
+    protected $TYPE_INT_SIGNED_NULL = array('type' => 'INT', 'constraint' => 20, 'null' => true);
+    protected $TYPE_DATETIME_NOTNULL = array('type' => 'TIMESTAMP', 'null' => false);
+    protected $TYPE_DATE_NOTNULL = array('type' => 'DATE', 'null' => false);
+    protected $TYPE_DATETIME_NULL = array('type' => 'TIMESTAMP', 'null' => true);
+    protected $TYPE_DATE_NULL = array('type' => 'DATE', 'null' => true);
+    protected $TYPE_FLOAT_NOTNULL = array('type' => 'FLOAT', 'null' => false);
+    protected $TYPE_DOUBLE_NOTNULL = array('type' => 'DOUBLE', 'null' => false);
+    protected $TYPE_FLOAT_NULL = array('type' => 'FLOAT', 'null' => true);
+    protected $TYPE_DOUBLE_NULL = array('type' => 'DOUBLE', 'null' => true);
+    protected $TYPE_TEXT = array('type' => 'TEXT', 'null' => true);
+    protected $TYPE_VARCHAR_5_NOTNULL = array('type' => 'VARCHAR', 'constraint' => 5, 'null' => false);
+    protected $TYPE_VARCHAR_10_NOTNULL = array('type' => 'VARCHAR', 'constraint' => 10, 'null' => false);
+    protected $TYPE_VARCHAR_20_NOTNULL = array('type' => 'VARCHAR', 'constraint' => 20, 'null' => false);
+    protected $TYPE_VARCHAR_50_NOTNULL = array('type' => 'VARCHAR', 'constraint' => 50, 'null' => false);
+    protected $TYPE_VARCHAR_100_NOTNULL = array('type' => 'VARCHAR', 'constraint' => 100, 'null' => false);
+    protected $TYPE_VARCHAR_150_NOTNULL = array('type' => 'VARCHAR', 'constraint' => 150, 'null' => false);
+    protected $TYPE_VARCHAR_200_NOTNULL = array('type' => 'VARCHAR', 'constraint' => 200, 'null' => false);
+    protected $TYPE_VARCHAR_250_NOTNULL = array('type' => 'VARCHAR', 'constraint' => 250, 'null' => false);
+    protected $TYPE_VARCHAR_5_NULL = array('type' => 'VARCHAR', 'constraint' => 5, 'null' => true);
+    protected $TYPE_VARCHAR_10_NULL = array('type' => 'VARCHAR', 'constraint' => 10, 'null' => true);
+    protected $TYPE_VARCHAR_20_NULL = array('type' => 'VARCHAR', 'constraint' => 20, 'null' => true);
+    protected $TYPE_VARCHAR_50_NULL = array('type' => 'VARCHAR', 'constraint' => 50, 'null' => true);
+    protected $TYPE_VARCHAR_100_NULL = array('type' => 'VARCHAR', 'constraint' => 100, 'null' => true);
+    protected $TYPE_VARCHAR_150_NULL = array('type' => 'VARCHAR', 'constraint' => 150, 'null' => true);
+    protected $TYPE_VARCHAR_200_NULL = array('type' => 'VARCHAR', 'constraint' => 200, 'null' => true);
+    protected $TYPE_VARCHAR_250_NULL = array('type' => 'VARCHAR', 'constraint' => 250, 'null' => true);
+
     public $__controller_module_path = null;
     protected static $__cms_model_properties;
 
@@ -4483,6 +4515,57 @@ class CMS_Model extends CI_Model
             $query = preg_replace('/\{\{ complete_table_name:(.*) \}\}/si', $table_prefix == '' ? '$1' : $table_prefix.'_'.'$1', $query);
             $query = preg_replace('/\{\{ module_prefix \}\}/si', $module_prefix, $query);
             $this->db->query($query);
+        }
+    }
+
+    public function cms_adjust_tables($tables, $table_prefix = ''){
+        $this->load->dbforge();
+        // default fields
+        $default_fields = array(
+            '_created_at' => array('type' => 'TIMESTAMP', 'null' => true),
+            '_updated_at' => array('type' => 'TIMESTAMP', 'null' => true),
+            '_created_by' => array('type' => 'INT', 'constraint' => 20, 'null' => true),
+            '_updated_by' => array('type' => 'INT', 'constraint' => 20, 'null' => true),
+        );
+        // build tables
+        foreach ($tables as $table_name => $data) {
+            $table_name = $table_prefix . $table_name;
+            $table_exists = $this->db->table_exists($table_name);
+            $key = array_key_exists('key', $data)? $data['key'] : 'id';
+            $fields = array_key_exists('fields', $data)? $data['fields'] : 'data';
+            foreach($fields as $field_name=>$type){
+                if(is_string($type) && property_exists($this, $type)){
+                    $fields[$field_name] = $this->{$type};
+                }
+            }
+            // add default fields
+            foreach($default_fields as $field_name => $field_data){
+                if(!array_key_exists($field_name, $fields)){
+                    $fields[$field_name] = $field_data;
+                }
+            }
+            // create table if not exists
+            if(!$table_exists){
+                $this->dbforge->add_field($fields);
+                $this->dbforge->add_key($key, true);
+                $this->dbforge->create_table($table_name);
+            }else{
+                $field_list = $this->db->list_fields($this->t($table_name));
+                // missing fields and modified field
+                $modified_fields = array();
+                $missing_fields = array();
+                foreach($fields as $key=>$value){
+                    if(!in_array($key, $field_list)){
+                        $missing_fields[$key] = $value;
+                    }else{
+                        $modified_fields[$key] = $value;
+                    }
+                }
+                // add missing fields
+                $this->dbforge->add_column($table_name, $missing_fields);
+                // modify fields
+                $this->dbforge->modify_column($table_name, $modified_fields);
+            }
         }
     }
 

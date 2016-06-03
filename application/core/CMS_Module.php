@@ -538,28 +538,10 @@ class CMS_Module extends CMS_Controller
             }
         }
 
+        // ADJUST TABLES
+        $this->cms_adjust_tables($this->TABLES, $this->t(''));
+        // ADJUST DATA
         if($mode == 'insert'){
-            // CREATE TABLES
-            foreach ($this->TABLES as $table_name => $data) {
-                $table_exists = $this->db->table_exists($this->t($table_name));
-                // fields
-                if(!$table_exists){
-                    $key = $this->__get_from_array($data, 'key', 'id');
-                    $fields = $this->__get_from_array($data, 'fields', array());
-                    foreach($fields as $field_name=>$type){
-                        if(is_string($type) && property_exists($this, $type)){
-                            $fields[$field_name] = $this->{$type};
-                        }
-                    }
-                    $fields['_created_at'] = $this->TYPE_DATETIME_NULL;
-                    $fields['_updated_at'] = $this->TYPE_DATETIME_NULL;
-                    $fields['_created_by'] = $this->TYPE_INT_SIGNED_NULL;
-                    $fields['_updated_by'] = $this->TYPE_INT_SIGNED_NULL;
-                    $this->dbforge->add_field($fields);
-                    $this->dbforge->add_key($key, true);
-                    $this->dbforge->create_table($this->t($table_name));
-                }
-            }
             // INSERT DATA
             foreach ($this->DATA as $table_name => $data) {
                 if(!is_array($data) || count($data) == 0){
@@ -577,44 +559,6 @@ class CMS_Module extends CMS_Controller
                 $this->db->insert_batch($this->t($table_name), $data);
             }
         }else{
-            // TABLES
-            foreach($this->TABLES as $table_name => $data){
-                $fields = $this->__get_from_array($data, 'fields', array());
-                foreach($fields as $field_name=>$type){
-                    if(is_string($type) && property_exists($this, $type)){
-                        $fields[$field_name] = $this->{$type};
-                    }
-                }
-                $fields['_created_at'] = $this->TYPE_DATETIME_NULL;
-                $fields['_updated_at'] = $this->TYPE_DATETIME_NULL;
-                $fields['_created_by'] = $this->TYPE_INT_SIGNED_NULL;
-                $fields['_updated_by'] = $this->TYPE_INT_SIGNED_NULL;
-
-                $table_exists = $this->db->table_exists($this->t($table_name));
-                // create table if not exists or modify table if exists
-                if(!$table_exists){
-                    $key = $this->__get_from_array($data, 'key', 'id');
-                    $this->dbforge->add_field($fields);
-                    $this->dbforge->add_key($key, true);
-                    $this->dbforge->create_table($this->t($table_name));
-                }else{
-                    $field_list = $this->db->list_fields($this->t($table_name));
-                    // missing fields and modified field
-                    $modified_fields = array();
-                    $missing_fields = array();
-                    foreach($fields as $key=>$value){
-                        if(!in_array($key, $field_list)){
-                            $missing_fields[$key] = $value;
-                        }else{
-                            $modified_fields[$key] = $value;
-                        }
-                    }
-                    // add missing fields
-                    $this->dbforge->add_column($this->t($table_name), $missing_fields);
-                    // modify fields
-                    $this->dbforge->modify_column($this->t($table_name), $modified_fields);
-                }
-            }
             // INSERT OR UPDATE DATA
             foreach ($this->DATA as $table_name => $data) {
                 $table = $this->__get_from_array($this->TABLES, $table_name, array());
