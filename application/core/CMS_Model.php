@@ -4532,7 +4532,7 @@ class CMS_Model extends CI_Model
             $table_name = $table_prefix . $table_name;
             $table_exists = $this->db->table_exists($table_name);
             $key = array_key_exists('key', $data)? $data['key'] : 'id';
-            $fields = array_key_exists('fields', $data)? $data['fields'] : 'data';
+            $fields = array_key_exists('fields', $data)? $data['fields'] : array();
             foreach($fields as $field_name=>$type){
                 if(is_string($type) && property_exists($this, $type)){
                     $fields[$field_name] = $this->{$type};
@@ -4550,7 +4550,7 @@ class CMS_Model extends CI_Model
                 $this->dbforge->add_key($key, true);
                 $this->dbforge->create_table($table_name);
             }else{
-                $field_list = $this->db->list_fields($this->t($table_name));
+                $field_list = $this->db->list_fields($table_name);
                 // missing fields and modified field
                 $modified_fields = array();
                 $missing_fields = array();

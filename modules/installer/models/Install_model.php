@@ -183,37 +183,39 @@ class Install_model extends CI_Model{
 
             if($is_mysql){
                 $db = @$this->load->database($db_config, TRUE);
-
-                if($db->conn_id != FALSE){
-                    // try to connect without specify the database
+                if($db->conn_id === FALSE){
+                    // try to connect by using default database
                     $neutral_db_config = $db_config;
                     $neutral_db_config['database'] = '';
                     $neutral_db_config['dsn'] = str_replace(';dbname='.$this->db_name, '', $neutral_db_config['dsn']);
                     $db = @$this->load->database($neutral_db_config, TRUE);
-                    @$this->load->dbforge($db);
 
-                    // DROP PREVIOUSLY CREATED DATABASE IN CASE OF USER CHANGE THE DATABASE
-                    if(isset($_COOKIE['created_db']) && $_COOKIE['created_db'] != '' && $_COOKIE['created_db'] != $this->db_name){
-                        @$this->dbforge->drop_database($_COOKIE['created_db'], TRUE);
-                        unset($_COOKIE['created_db']);
-                    }
+                    if($db->conn_id !== FALSE){
+                        @$this->load->dbforge($db);
 
-                    // CREATE DATABASE IN CASE OF IT IS NOT EXISTS
-                    if(!isset($_COOKIE['created_db']) || $_COOKIE['created_db'] != $this->db_name ){
-                        // check first before creating
-                        $query = $this->db->query('SHOW DATABASES');
-                        foreach($query->result() as $row){
-                            if($row->Database == $this->db_name){
-                                $found = TRUE;
-                                break;
-                            }
+                        // DROP PREVIOUSLY CREATED DATABASE IN CASE OF USER CHANGE THE DATABASE
+                        if(isset($_COOKIE['created_db']) && $_COOKIE['created_db'] != '' && $_COOKIE['created_db'] != $this->db_name){
+                            @$this->dbforge->drop_database($_COOKIE['created_db'], TRUE);
+                            unset($_COOKIE['created_db']);
                         }
-                        // not, exists? create
-                        if(!found){
-                            $result = @$this->dbforge->create_database($this->db_name, TRUE);
-                            // save the created database
-                            if($result){
-                                setcookie('created_db', $this->db_name, time() + (600), "/");
+
+                        // CREATE DATABASE IN CASE OF IT IS NOT EXISTS
+                        if(!isset($_COOKIE['created_db']) || $_COOKIE['created_db'] != $this->db_name){
+                            // check first before creating
+                            $query = $db->query('SHOW DATABASES');
+                            foreach($query->result() as $row){
+                                if($row->Database == $this->db_name){
+                                    $found = TRUE;
+                                    break;
+                                }
+                            }
+                            // not, exists? create
+                            if(!$found){
+                                $result = @$this->dbforge->create_database($this->db_name, TRUE);
+                                // save the created database
+                                if($result){
+                                    setcookie('created_db', $this->db_name, time() + (600), "/");
+                                }
                             }
                         }
                     }

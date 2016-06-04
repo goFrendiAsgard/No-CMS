@@ -245,24 +245,31 @@ class CMS_AutoUpdate_Model extends CMS_Model
     private function __update_to_0_7_6()
     {
         // new table : cms_main_route
-        $fields = array(
-                'route_id' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE),
-                'key' => array('type' => 'TEXT'),
-                'value' => array('type' => 'TEXT'),
-                'description' => array('type' => 'TEXT'),
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('route_id', TRUE);
-        $this->dbforge->create_table(cms_table_name('main_route'));
-
-        // modify table : cms_main_navigation
-        $fields = array('hidden' => array('type' => 'INT', 'default' => '0'));
-        $this->dbforge->add_column(cms_table_name('main_navigation'), $fields);
+        $t_route = cms_table_name('main_route');
+        $t_navigation = cms_table_name('main_navigation');
+        $this->cms_adjust_tables(array(
+            $t_route => array(
+                'key' => 'route_id',
+                'fields' =>  array(
+                        'route_id' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE),
+                        'key' => array('type' => 'TEXT'),
+                        'value' => array('type' => 'TEXT'),
+                        'description' => array('type' => 'TEXT'),
+                )
+            ),
+            $t_navigation => array(
+                'fields' => array('hidden' => array('type' => 'INT', 'default' => '0'))
+            ),
+        ));
 
         // modify table : cms_main_user
         if (CMS_SUBSITE == '') {
-            $fields = array('subsite' => array('type' => 'VARCHAR', 'constraint' => 100, 'null' => TRUE));
-            $this->dbforge->add_column($this->cms_user_table_name(), $fields);
+            $t_user = $this->cms_user_table_name();
+            $this->cms_adjust_tables(array(
+                $t_user => array(
+                    'fields' => array('subsite' => array('type' => 'VARCHAR', 'constraint' => 100, 'null' => TRUE))
+                )
+            ));
         }
 
         // add navigation
@@ -378,40 +385,38 @@ class CMS_AutoUpdate_Model extends CMS_Model
             );
     }
 
-    private function __update_to_0_7_8(){
-
-    }
-
     private function __update_to_0_7_9()
     {
-        $fields = array(
-                'description' => array(
-                        'type' => 'TEXT',
-                        'null' => TRUE,
-                    ),
-            );
-        $this->dbforge->modify_column(cms_table_name('main_route'), $fields);
+        $t_route = cms_table_name('main_route');
+        $this->cms_adjust_tables(array(
+            $t_route => array(
+                'fields' => array(
+                    'description' => array('type' => 'TEXT','null' => TRUE,),
+                ),
+            ),
+        ));
     }
 
     private function __update_to_0_8_0()
     {
-        $fields = array(
-                'config_name' => array(
-                        'type' => 'varchar',
-                        'constraint' => 100,
-                    ),
-            );
-        $this->dbforge->modify_column(cms_table_name('main_config'), $fields);
+        $t_config = cms_table_name('main_config');
+        $this->cms_adjust_tables(array(
+            $t_config => array(
+                'fields' =>  array(
+                    'config_name' => array('type' => 'varchar','constraint' => 100)
+                )
+            )
+        ));
     }
 
     private function __update_to_0_8_1(){
         // make extended route inclussion absolute
         $pattern = 'include(\'extended_routes.php\');';
         if (CMS_SUBSITE == '') {
-            $path = APPPATH.'/config/main/routes.php';
+            $path = APPPATH.'config/main/routes.php';
             $replace = 'include(APPPATH.\'config/main/extended_routes.php\');';
         } else {
-            $path = APPPATH.'/config/site-'.CMS_SUBSITE.'/routes.php';
+            $path = APPPATH.'config/site-'.CMS_SUBSITE.'/routes.php';
             $replace = 'include(APPPATH.\'config/site-'.CMS_SUBSITE.'/extended_routes.php\');';
         }
         file_put_contents($path, str_replace($pattern, $replace, file_get_contents($path)));
@@ -435,13 +440,17 @@ class CMS_AutoUpdate_Model extends CMS_Model
 
     private function __update_to_1_0_2(){
         if(CMS_SUBSITE == ''){
-            $fields = array(
-                'birthdate'         => array("type"=>'date', "null"=>TRUE),
-                'sex'               => array('type' => 'VARCHAR', 'constraint' => '50', 'null' => TRUE),
-                'profile_picture'   => array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
-                'self_description'  => array('type' => 'TEXT', 'null' => TRUE),
-            );
-            $this->dbforge->add_column($this->cms_user_table_name(), $fields);
+            $t_user = $this->cms_user_table_name();
+            $this->cms_adjust_tables(array(
+                $t_user => array(
+                    'fields' =>   array(
+                        'birthdate'         => array("type"=>'date', "null"=>TRUE),
+                        'sex'               => array('type' => 'VARCHAR', 'constraint' => '50', 'null' => TRUE),
+                        'profile_picture'   => array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
+                        'self_description'  => array('type' => 'TEXT', 'null' => TRUE),
+                    )
+                )
+            ));
         }
     }
 
@@ -514,19 +523,18 @@ class CMS_AutoUpdate_Model extends CMS_Model
     }
 
     private function __update_to_1_0_7(){
-        // add new table
-        $fields = array(
-                'layout_id' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE),
-                'layout_name' => array('type' => 'VARCHAR', 'constraint' => '50', 'null' => FALSE),
-                'template' => array('type' => 'TEXT'),
-                '_created_at' => array('type' => 'TIMESTAMP', 'null' => true),
-                '_updated_at' => array('type' => 'TIMESTAMP', 'null' => true),
-                '_created_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
-                '_updated_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
-        );
-        $this->dbforge->add_field($fields);
-        $this->dbforge->add_key('layout_id', TRUE);
-        $this->dbforge->create_table(cms_table_name('main_layout'));
+        // add new tables
+        $t_main_layout = cms_table_name('main_layout');
+        $this->cms_adjust_tables(array(
+            $t_main_layout => array(
+                'key' => 'layout_id',
+                'fields' => array(
+                    'layout_id'   => array('type' => 'INT', 'constraint' => 20, 'unsigned' => TRUE, 'auto_increment' => TRUE),
+                    'layout_name' => array('type' => 'VARCHAR', 'constraint' => '50', 'null' => FALSE),
+                    'template'    => array('type' => 'TEXT'),
+                )
+            ),
+        ));
         // add new navigation
         $this->cms_add_navigation('main_layout_management', 'Layout Management', 'main/layout_management', 4, 'main_management', NULL, NULL, NULL,
         NULL, 'default-one-column');
@@ -547,13 +555,10 @@ class CMS_AutoUpdate_Model extends CMS_Model
         }
         // add some new fields for new standard
         if(CMS_SUBSITE == ''){
-            $fields = array(
-                '_created_at' => array('type' => 'TIMESTAMP', 'null' => true),
-                '_updated_at' => array('type' => 'TIMESTAMP', 'null' => true),
-                '_created_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
-                '_updated_by' => array('type' => 'INT', 'constraint' => 20, 'unsigned' => true, 'null' => true),
-            );
-            $this->dbforge->add_column($this->cms_user_table_name(), $fields);
+            $t_user = $this->cms_user_table_name();
+            $this->cms_adjust_tables(array(
+                $t_user => array(),
+            ));
         }
 
         // add layouts
@@ -626,11 +631,15 @@ class CMS_AutoUpdate_Model extends CMS_Model
     }
 
     private function __update_to_1_0_8(){
-        $fields = array(
-            'custom_style' => array('type' => 'TEXT', 'null'=>TRUE),
-            'custom_script' =>  array('type' => 'TEXT', 'null'=>TRUE),
-        );
-        $this->dbforge->add_column(cms_table_name('main_navigation'), $fields);
+        $t_main_navigation = cms_table_name('main_navigation');
+        $this->cms_adjust_tables(array(
+            $t_main_navigation => array(
+                'fields' => array(
+                    'custom_style' => array('type' => 'TEXT', 'null'=>TRUE),
+                    'custom_script' =>  array('type' => 'TEXT', 'null'=>TRUE),
+                )
+            ),
+        ));
     }
 
     private function __update_to_1_0_9(){
@@ -642,14 +651,14 @@ class CMS_AutoUpdate_Model extends CMS_Model
     }
 
     private function __update_to_1_1_1(){
-        $fields = array(
-                'title' =>array(
-                    'type' => 'VARCHAR',
-                    'constraint' => '50',
-                    'null' => TRUE,
+        $t_main_privilege = cms_table_name('main_privilege');
+        $this->cms_adjust_tables(array(
+            $t_main_privilege => array(
+                'fields' => array(
+                    'title' =>array('type' => 'VARCHAR', 'constraint' => '50', 'null' => TRUE)
                 )
-            );
-        $this->dbforge->modify_column(cms_table_name('main_privilege'), $fields);
+            ),
+        ));
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)
