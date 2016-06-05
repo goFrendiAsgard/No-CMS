@@ -211,7 +211,7 @@ class Article_model extends  CMS_Model{
         $where_category = isset($category) && ($category!="")? "article_id IN
             (SELECT article_id FROM ".$this->t('category_article').", ".$this->t('category')."
             WHERE ".$this->t('category').".category_id = ".$this->t('category_article').".category_id
-            AND category_name ='".addslashes($category)."'
+            AND category_name ='".addslashes(urldecode($category))."'
             )" : "(1=1)";
 
         $where_featured = $featured? 'featured=1' : '(1=1)';

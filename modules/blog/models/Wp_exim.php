@@ -29,6 +29,7 @@ class Wp_exim extends CMS_Model{
         // page can be children of another page, we need to note down the actual id inserted to database
         $page_real_id_list = array();
         // import article and page
+        $this->db->trans_start();
         foreach($wp_post_list as $wp_post){
             $page_real_id = NULL;
             // start to import
@@ -96,6 +97,7 @@ class Wp_exim extends CMS_Model{
                 // categories
                 foreach($categories as $category){
                     $category_name = $category['name'];
+                    $category_name = substr($category_name, 0, 50);
                     if($category_name == 'Uncategorized'){
                         continue;
                     }
@@ -207,6 +209,7 @@ class Wp_exim extends CMS_Model{
                 array('navigation_id'=>$page_real_id_list[$post_id])
             );
         }
+        $this->db->trans_complete();
         return array('success'=>$success, 'message'=>$message);
     }
 

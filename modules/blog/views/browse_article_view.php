@@ -80,7 +80,7 @@
             <?php
                 foreach($categories as $key=>$value){
                     $selected = '';
-                    if($key == $chosen_category){
+                    if($key == urldecode($chosen_category)){
                         $selected = 'selected = "selected"';
                     }
                     echo '<option value="'.$key.'" '.$selected.'>'.$value.'</option>';
@@ -207,7 +207,7 @@
                     }else{
                         $url = $module_url.'/index?category='.$category['name'];
                     }
-                    echo '<a href="'.site_url($url).'"><span class="label label-primary">'.$category['name'].'</span></a>&nbsp;';
+                    echo '<a href="'.site_url($url).'"><span class="label label-primary">'.$category['name'].'</span></a> ';
                 }
                 // also get related article
                 if(count($article['related_article'])>0){
@@ -252,7 +252,7 @@
             foreach($article['comments'] as $comment){
                 echo '<div class="comment-item well" style="margin-left:'.($comment['level']*20).'px;">';
                 echo '<div class="comment-header">';
-                echo '<img style="margin-right:20px; margin-bottom:5px; margin-top:5px; float:left;" src="'.$comment['gravatar_url'].'" />';
+                echo '<img style="margin-right:20px; margin-bottom:5px; margin-top:5px; float:left; width:50px;" src="'.$comment['gravatar_url'].'" />';
                 echo '<span stylel="float:left;">';
                 echo $comment['name'].', '.$comment['date'].br();
                 if($comment['website'] != ''){

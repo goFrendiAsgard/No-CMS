@@ -15,7 +15,7 @@ foreach($articles as $article){
 
     // photos
     if(count($article['photos'])>0){
-        echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';            
+        echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';
         foreach($article['photos'] as $photo){
             echo '<a class="photo_'.$article['id'].'" photo_id="'.$photo['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
             echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
@@ -23,7 +23,7 @@ foreach($articles as $article){
             echo '</a>';
         }
         echo '<div id="big_photo_'.$article['id'].'" class="row"></div>';
-        echo '</div>';            
+        echo '</div>';
         echo '<script type="text/javascript">
             $(".photo_'.$article['id'].'").click(function(event){
                 LOADING = true;
@@ -38,7 +38,7 @@ foreach($articles as $article){
                 $("html, body").animate({
                     scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
                 }, 1000, "swing", function(){LOADING = false});
-                $(".photo_'.$article['id'].'").css("opacity", 1);            
+                $(".photo_'.$article['id'].'").css("opacity", 1);
                 $(this).css("opacity", 0.3);
                 event.preventDefault();
             });
@@ -54,7 +54,7 @@ foreach($articles as $article){
     echo '<div>';
     echo $article['content'];
     echo '<div style="clear:both;"></div>';
-    echo '</div>'; 
+    echo '</div>';
 
     // categories
     if(count($article['categories'])>0){
@@ -71,10 +71,10 @@ foreach($articles as $article){
             }else{
                 $url = $module_url.'/index?category='.$category['name'];
             }
-            echo '<a href="'.site_url($url).'"><span class="label label-primary">'.$category['name'].'</span></a>&nbsp;';
+            echo '<a href="'.site_url($url).'"><span class="label label-primary">'.$category['name'].'</span></a> ';
         }
         echo '</div>';
-    }   
+    }
 
     $comment_count = $article['comment_count'];
     $comment_count_caption = '';
@@ -84,7 +84,7 @@ foreach($articles as $article){
         default : $comment_count_caption = ' ('.$comment_count.' comments)';
     }
 
-    echo '<div class="edit_delete_record_container">';    
+    echo '<div class="edit_delete_record_container">';
     echo anchor($article_url,
                 'read more'.$comment_count_caption, array("class"=>"btn btn-primary"));
     if($allow_navigate_backend){
