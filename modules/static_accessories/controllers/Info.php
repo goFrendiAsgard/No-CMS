@@ -123,6 +123,7 @@ class Info extends CMS_Module {
                 'slide_id'             => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'image_url'            => array("type" => 'varchar',    "constraint" => 100, "null" => TRUE),
                 'content'              => array("type" => 'text',       "null" => TRUE),
+                'slug'                 => array("type" => 'text',       "null" => TRUE),
             ),
         ),
         // tab_content
@@ -132,6 +133,7 @@ class Info extends CMS_Module {
                 'tab_id'               => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
                 'caption'              => array("type" => 'varchar',    "constraint" => 50,  "null" => TRUE),
                 'content'              => array("type" => 'text',       "null" => TRUE),
+                'slug'                 => array("type" => 'text',       "null" => TRUE),
             ),
         ),
         // visitor_counter

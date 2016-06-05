@@ -1,4 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+if($slug === NULL){
+    $slug_sufix = '';
+}else{
+    $slug_sufix = '_'.$slug;
+}
+
 $li_indicator_list = array();
 $div_item_list = array();
 $edit_link = '';
@@ -28,28 +34,28 @@ for($i=0; $i<count($slide_list); $i++){
 ?>
 <style type="text/css">
     <?php if($slide_height+0 == $slide_height){?>
-    div.carousel-inner div.item{
+    div#slideshow-widget<?php echo $slug_sufix; ?> div.carousel-inner div.item{
         height: <?php echo $slide_height; ?>px;
         max-height:<?php echo $slide_height; ?>px;
     }
     <?php } ?>
-    div.carousel-inner{
+    div#slideshow-widget<?php echo $slug_sufix; ?> div.carousel-inner{
         opacity:0.85;
     }
-    .carousel-inner .item-image{
+    div#slideshow-widget<?php echo $slug_sufix; ?> .carousel-inner .item-image{
         margin:auto;
         background-color:black;
         height:100%;
         background-size: <?php echo trim($slide_image_size)==''? 'cover' : $slide_image_size; ?>;
     }
-    #slideshow-widget{
+    div#slideshow-widget<?php echo $slug_sufix; ?> #slideshow-widget{
         margin-bottom:20px;
     }
-    .__editing_widget_static_accessories_slideshow{
+    div#slideshow-widget<?php echo $slug_sufix; ?> .__editing_widget_static_accessories_slideshow{
         display:none;
     }
 </style>
-<div class="carousel slide <?php echo $slide_hide_on_smallscreen=='TRUE'? 'hidden-sm hidden-xs' : ''; ?>" id="slideshow-widget">
+<div class="carousel slide <?php echo $slide_hide_on_smallscreen=='TRUE'? 'hidden-sm hidden-xs' : ''; ?>" id="slideshow-widget<?php echo $slug_sufix; ?>">
     <!-- Indicators -->
     <ol class="carousel-indicators">
         <?php foreach($li_indicator_list as $li_indicator){ echo $li_indicator;} ?>
@@ -65,42 +71,42 @@ for($i=0; $i<count($slide_list); $i++){
     <a class="right carousel-control" href="#slideshow-widget" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
 </div>
 <script type ="text/javascript">
-    var SLIDE_PARALLAX = '<?php echo addslashes($slide_parallax); ?>' == 'TRUE';
-    var SLIDE_IMAGE_TOP = '<?php echo addslashes($slide_image_top); ?>';
-    if(SLIDE_IMAGE_TOP == ''){
-        SLIDE_IMAGE_TOP = 0;
+    var SLIDE_PARALLAX<?php echo $slug_sufix; ?> = '<?php echo addslashes($slide_parallax); ?>' == 'TRUE';
+    var SLIDE_IMAGE_TOP<?php echo $slug_sufix; ?> = '<?php echo addslashes($slide_image_top); ?>';
+    if(SLIDE_IMAGE_TOP<?php echo $slug_sufix; ?> == ''){
+        SLIDE_IMAGE_TOP<?php echo $slug_sufix; ?> = 0;
     }else{
-        SLIDE_IMAGE_TOP = parseInt(SLIDE_IMAGE_TOP);
+        SLIDE_IMAGE_TOP<?php echo $slug_sufix; ?> = parseInt(SLIDE_IMAGE_TOP<?php echo $slug_sufix; ?>);
     }
 
     $(document).ready(function(){
-        $('#slideshow-widget').carousel('cycle');
-        __load_slide();
+        $('#slideshow-widget<?php echo $slug_sufix; ?>').carousel('cycle');
+        __load_slide<?php echo $slug_sufix; ?>();
 
-        if(SLIDE_PARALLAX){
-            __adjust_image_top();
+        if(SLIDE_PARALLAX<?php echo $slug_sufix; ?>){
+            __adjust_image_top<?php echo $slug_sufix; ?>();
         }else{
-            $('.carousel-inner .item-image').css('background-position', '0 ' + SLIDE_IMAGE_TOP + 'px');
+            $('#slideshow-widget<?php echo $slug_sufix; ?> .carousel-inner .item-image').css('background-position', '0 ' + SLIDE_IMAGE_TOP<?php echo $slug_sufix; ?> + 'px');
         }
     });
 
-    $(window).resize(function(){__load_slide();});
+    $(window).resize(function(){__load_slide<?php echo $slug_sufix; ?>();});
 
-    if(SLIDE_PARALLAX){
+    if(SLIDE_PARALLAX<?php echo $slug_sufix; ?>){
         $(window).scroll(function(){
-            __adjust_image_top();
+            __adjust_image_top<?php echo $slug_sufix; ?>();
         });
     }
 
-    function __adjust_image_top(){
-        var top = $(window).scrollTop() + SLIDE_IMAGE_TOP;
-        $('.carousel-inner .item-image').css('background-position', '0 ' + top + 'px');
+    function __adjust_image_top<?php echo $slug_sufix; ?>(){
+        var top = $(window).scrollTop() + SLIDE_IMAGE_TOP<?php echo $slug_sufix; ?>;
+        $('#slideshow-widget<?php echo $slug_sufix; ?> .carousel-inner .item-image').css('background-position', '0 ' + top + 'px');
     }
 
-    function __load_slide(){
+    function __load_slide<?php echo $slug_sufix; ?>(){
         var body_width = $('body').width();
         if(body_width>=978){
-            $('.item-image').each(function(){
+            $('#slideshow-widget<?php echo $slug_sufix; ?> .item-image').each(function(){
                 if($(this).attr('src') !== ''){
                     $(this).css('background-image', 'url("' + $(this).attr('real-src')+'")');
                 }

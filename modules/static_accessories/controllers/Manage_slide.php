@@ -9,7 +9,7 @@ class Manage_slide extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'slide';
-    protected $COLUMN_NAMES = array('image_url', 'content');
+    protected $COLUMN_NAMES = array('image_url', 'content', 'slug');
     protected $PRIMARY_KEY = 'slide_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -44,6 +44,7 @@ class Manage_slide extends CMS_CRUD_Controller {
         // caption of each columns
         $crud->display_as('image_url','Image Url');
         $crud->display_as('content','Content');
+        $crud->display_as('slug','Slug');
 
         ////////////////////////////////////////////////////////////////////////
         // This function will automatically detect every methods in this controller and link it to corresponding column
@@ -108,8 +109,7 @@ class Manage_slide extends CMS_CRUD_Controller {
         // eg:
         //      $crud->field_type( $field_name , $field_type, $value  );
         ////////////////////////////////////////////////////////////////////////
-
-
+        $crud->unset_texteditor('slug');
         $crud->set_field_upload('image_url', 'modules/'.$this->cms_module_path().'/assets/images/slides');
 
 
@@ -156,6 +156,9 @@ class Manage_slide extends CMS_CRUD_Controller {
     }
 
     public function index(){
+        $this->load->model($this->cms_module_path().'/slide_model');
+        // get slug list
+        $slug_list = $this->slide_model->get_slug();
         // get configuration list
         $CONFIGURATION_LIST = array(
             'static_accessories_slide_height',
@@ -165,10 +168,19 @@ class Manage_slide extends CMS_CRUD_Controller {
             'static_accessories_slide_image_top',
         );
         foreach($CONFIGURATION_LIST as $configuration){
+            // main configuration
             if($this->input->post($configuration) != NULL){
                 $this->cms_set_config($configuration, $this->input->post($configuration));
             }
+            // per slug configuration
+            foreach($slug_list as $slug){
+                if($this->input->post($configuration.'_'.$slug) != NULL){
+                    $this->cms_set_config($configuration.'_'.$slug, $this->input->post($configuration.'_'.$slug));
+                }
+            }
         }
+        // let's the config be invalidated
+        $this->cms_invalidate_cache();
 
         // create crud
         $crud = $this->make_crud();
@@ -178,9 +190,20 @@ class Manage_slide extends CMS_CRUD_Controller {
         $output = $render['output'];
         $config = $render['config'];
         $output->state = $this->STATE;
+        $output->slug_list = $slug_list;
         $output->config = array();
         foreach($CONFIGURATION_LIST as $configuration){
+            // main configuration
             $output->config[$configuration] = $this->cms_get_config($configuration);
+            // per slug configuration
+            foreach($slug_list as $slug){
+                $slug_config_value = $this->cms_get_config($configuration.'_'.$slug);
+                if($slug_config_value === NULL){
+                    $output->config[$configuration.'_'.$slug] = $this->cms_get_config($configuration);
+                }else{
+                    $output->config[$configuration.'_'.$slug] = $slug_config_value;
+                }
+            }
         }
 
         // show the view

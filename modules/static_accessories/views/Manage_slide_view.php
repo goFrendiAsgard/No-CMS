@@ -1,6 +1,12 @@
 <?php
     if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $is_list_view = $state == 'list' || $state == 'success';
+    $config_suffix_list = array('');
+    $label_suffix_list = array('');
+    foreach($slug_list as $slug){
+        $config_suffix_list[] = '_'. $slug;
+        $label_suffix_list[] = ' For "'. ucwords($slug).'" Slug';
+    }
 ?>
 
 <style type="text/css">
@@ -30,60 +36,71 @@
         </div>
         <div class="tab-pane" id="tab2">
             <form method="post" class="form form-horizontal">
-                <div class="form-group">
-                    <label class="control-label col-md-4">Slideshow Height (px) </label>
-                    <div class="controls col-md-8">
-                        <input class="form-control" name="static_accessories_slide_height"
-                            value="<?php echo $config['static_accessories_slide_height']; ?>" />
-                        <p class="help-block">Height in pixel or left it blank</p>
+                <?php
+                for($i=0; $i<count($config_suffix_list); $i++){
+                    $config_suffix = $config_suffix_list[$i];
+                    $label_suffix = $label_suffix_list[$i];
+                    if($i == 0){
+                        echo '<h4>Default</h4>';
+                    }else{
+                        echo '<h4>'.ucwords($slug_list[$i-1]).' Slug</h4>';
+                    }
+                ?>
+                    <div class="form-group">
+                        <label class="control-label col-md-4">Slideshow Height <?php echo $label_suffix; ?> (px) </label>
+                        <div class="controls col-md-8">
+                            <input class="form-control" name="static_accessories_slide_height<?php echo $config_suffix; ?>"
+                                value="<?php echo $config['static_accessories_slide_height'.$config_suffix]; ?>" />
+                            <p class="help-block">Height in pixel or left it blank</p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4">parallax </label>
-                    <div class="controls col-md-8">
-                        <select class="form-control" name="static_accessories_slide_parallax">
-                        <?php
-                            $options = array('TRUE' => 'True', 'FALSE' => 'False');
-                            foreach($options as $key=>$value){
-                                $selected = $config['static_accessories_slide_parallax'] == $key? 'selected' : '';
-                                echo '<option '.$selected.' value="'.$key.'">'.$value.'</option>';
-                            }
-                        ?>
-                        </select>
-                        <p class="help-block">True for parallax</p>
+                    <div class="form-group">
+                        <label class="control-label col-md-4">Parallax <?php echo $label_suffix; ?> </label>
+                        <div class="controls col-md-8">
+                            <select class="form-control" name="static_accessories_slide_parallax<?php echo $config_suffix; ?>">
+                            <?php
+                                $options = array('TRUE' => 'True', 'FALSE' => 'False');
+                                foreach($options as $key=>$value){
+                                    $selected = $config['static_accessories_slide_parallax'.$config_suffix] == $key? 'selected' : '';
+                                    echo '<option '.$selected.' value="'.$key.'">'.$value.'</option>';
+                                }
+                            ?>
+                            </select>
+                            <p class="help-block">True for parallax</p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4">Hide on Smallscreen </label>
-                    <div class="controls col-md-8">
-                        <select class="form-control" name="static_accessories_slide_hide_on_smallscreen">
-                        <?php
-                            $options = array('TRUE' => 'True', 'FALSE' => 'False');
-                            foreach($options as $key=>$value){
-                                $selected = $config['static_accessories_slide_hide_on_smallscreen'] == $key? 'selected' : '';
-                                echo '<option '.$selected.' value="'.$key.'">'.$value.'</option>';
-                            }
-                        ?>
-                        </select>
-                        <p class="help-block">True for parallax</p>
+                    <div class="form-group">
+                        <label class="control-label col-md-4">Hide on Smallscreen <?php echo $label_suffix; ?> </label>
+                        <div class="controls col-md-8">
+                            <select class="form-control" name="static_accessories_slide_hide_on_smallscreen<?php echo $config_suffix; ?>">
+                            <?php
+                                $options = array('TRUE' => 'True', 'FALSE' => 'False');
+                                foreach($options as $key=>$value){
+                                    $selected = $config['static_accessories_slide_hide_on_smallscreen'.$config_suffix] == $key? 'selected' : '';
+                                    echo '<option '.$selected.' value="'.$key.'">'.$value.'</option>';
+                                }
+                            ?>
+                            </select>
+                            <p class="help-block">True for parallax</p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4">Image Size </label>
-                    <div class="controls col-md-8">
-                        <input class="form-control" name="static_accessories_slide_image_size"
-                            value="<?php echo $config['static_accessories_slide_image_size']; ?>" />
-                        <p class="help-block">Image size (e.g: "cover", "contain", "auto", "50%")</p>
+                    <div class="form-group">
+                        <label class="control-label col-md-4">Image Size <?php echo $label_suffix; ?> </label>
+                        <div class="controls col-md-8">
+                            <input class="form-control" name="static_accessories_slide_image_size<?php echo $config_suffix; ?>"
+                                value="<?php echo $config['static_accessories_slide_image_size'.$config_suffix]; ?>" />
+                            <p class="help-block">Image size (e.g: "cover", "contain", "auto", "50%")</p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-md-4">Image Top </label>
-                    <div class="controls col-md-8">
-                        <input class="form-control" name="static_accessories_slide_image_top"
-                            value="<?php echo $config['static_accessories_slide_image_top']; ?>" />
-                        <p class="help-block">Image top in pixel or left it blank</p>
+                    <div class="form-group">
+                        <label class="control-label col-md-4">Image Top <?php echo $label_suffix; ?> </label>
+                        <div class="controls col-md-8">
+                            <input class="form-control" name="static_accessories_slide_image_top<?php echo $config_suffix; ?>"
+                                value="<?php echo $config['static_accessories_slide_image_top'.$config_suffix]; ?>" />
+                            <p class="help-block">Image top in pixel or left it blank</p>
+                        </div>
                     </div>
-                </div>
+                <?php } ?>
                 <div class="form-group">
                     <div class="controls col-md-12">
                         <button name="apply" class="btn btn-primary">Save Configuration</button>

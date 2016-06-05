@@ -855,7 +855,7 @@ class CMS_Controller extends MX_Controller
                     '</a>';
                 }
             }
-            if($this->cms_allow_navigate('main_navigation_management') && $this->cms_have_privilege('edit_main_navigation')){
+            if($row_navigation != NULL && $this->cms_allow_navigate('main_navigation_management') && $this->cms_have_privilege('edit_main_navigation')){
                 // edit page
                 $editing_mode_content .= '<a style="margin-left:10px;" class="btn btn-default" href="{{ SITE_URL }}main/manage_navigation/index/edit/'.$row_navigation->navigation_id.'?from='.$this->cms_get_origin_uri_string().'">'.
                     '<i class="glyphicon glyphicon-pencil"></i> Edit Current Page'.
