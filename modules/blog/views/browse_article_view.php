@@ -72,6 +72,25 @@
     <?php echo $submenu_screen; ?>
 </div>
 <?php } ?>
+<!-- Modal -->
+<div class="modal fade col-xs-12" id="photo-modal" role="dialog">
+    <div class="modal-dialog col-xs-12" style="width:100%!important;">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:100%!important;">
+            <div class="modal-header">
+                <button style="padding:5px;" type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 id="chat-status-title" class="modal-title">Image</h4>
+            </div>
+            <div id="photo-modal-body" class="modal-body">
+                <p>Requests</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <form id="search-form" class="form-inline col-xs-12" role="form" style="margin-bottom:20px;">
     <div class="form-group">
@@ -100,40 +119,46 @@
 </form>
 
 <?php if($allow_navigate_backend){?>
+<!-- Quick Write Form -->
 <div class="col-xs-12" style="margin-bottom:20px;">
     <h4>{{ language: Quick Write }}</h4>
-    <form method="post" action="<?php echo $backend_url; ?>/add/">
-        <input id="new_article_title" name="title" class="col-xs-12 form-control" placeholder="{{ language:Title }}" style="margin-bottom:10px;" />
-        <textarea id="new_article_content" name="content" class="col-xs-12 form-control" placeholder="{{ language:Content }}" style="resize:none;"></textarea>
-        <div class="form-inline pull-right" style="margin-top:20px;">
-            <div class="form-group">
-                <?php if($can_publish){ ?>
-                    <select id="new_article_status" name="status" class="form-control">
-                        <option value="published" selected>Published</option>
-                        <option value="draft">Draft</option>
-                    </select>
-                <?php } ?>
+    <form  method="post" action="<?php echo $backend_url; ?>/add/">
+        <div class="col-xs-12" style="margin-bottom:10px;">
+            <input id="new_article_title" name="title" class="form-control" placeholder="{{ language:Title }}" />
+        </div>
+        <div class="col-xs-12" style="margin-bottom:10px;">
+            <textarea id="new_article_content" name="content" class="form-control" placeholder="{{ language:Content }}" style="resize:none;"></textarea>
+        </div>
+
+        <?php if($can_publish){ ?>
+            <div class="col-xs-12 col-md-6" style="margin-bottom:10px;">
+                <select id="new_article_status" name="status" class="form-control">
+                    <option value="published" selected>Published</option>
+                    <option value="draft">Draft</option>
+                </select>
             </div>
-            <div class="form-group">&nbsp;
-                <button id="new_article_save" class="btn btn-primary">
-                    <i class="glyphicon glyphicon-share-alt"></i> {{ language:Save }}
-                </button>
-            </div>
-            <div class="form-group">&nbsp;
-                <button id="new_article_edit" class="btn btn-primary">
-                    <i class="glyphicon glyphicon-pencil"></i> {{ language:Switch Full Mode }}
-                </button>
-            </div>
+        <?php } ?>
+        <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
+            <button id="new_article_save" class="col-xs-12 btn btn-primary">
+                <i class="glyphicon glyphicon-share-alt"></i> {{ language:Save }}
+            </button>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
+            <button id="new_article_edit" class="col-xs-12 btn btn-primary">
+                <i class="glyphicon glyphicon-pencil"></i> {{ language:Detail Edit }}
+            </button>
         </div>
     </form>
 </div>
 <?php } ?>
-
+<!-- Record contents -->
 <div id="record_content" class="col-xs-12">
     <?php
         if($first_data != NULL){
+            // A lot of articles
             echo $first_data;
         }else if(isset($article) && $article !== FALSE){
+            // Single Article
             echo '<h2>'.$article['title'].'</h2>';
             echo '('.$article['author'].', '.$article['date'].')'.br();
 
@@ -141,37 +166,12 @@
                 // photos
                 echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';
                 foreach($article['photos'] as $photo){
-                    echo '<a class="photo_'.$article['id'].'" photo_id="'.$photo['id'].'" href="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'">';
+                    echo '<a data-toggle="modal" data-target="#photo-modal" class="photo_link" photo_id="'.$photo['id'].'" img="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'" href="#">';
                     echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
                     echo '<div id="photo_caption_'.$photo['id'].'" class="photo_caption">'.$photo['caption'].'</div>';
                     echo '</a>';
                 }
-                echo '<div id="big_photo_'.$article['id'].'" class="row"></div>';
                 echo '</div>';
-                echo '<script type="text/javascript">
-                    $(".photo_'.$article['id'].'").click(function(event){
-                        LOADING = true;
-                        var photo_caption = $("#photo_caption_"+$(this).attr("photo_id")).html();
-                        $("#big_photo_'.$article['id'].'").hide();
-                        $("#big_photo_'.$article['id'].'").html(
-                            "<div class=\"col-md-12\" style=\"text-align:right; margin-bottom:10px;\"><a id=\"close_big_photo_'.$article['id'].'\" class=\"btn btn-danger\" href=\"#\"><i class=\"glyphicon glyphicon-remove\"></i></a></div>"+
-                            "<div class=\"col-md-12 lead\" style=\"text-align:left;\">" + photo_caption + "</div>"+
-                            "<img class=\"col-md-12\" src=\"" + $(this).attr("href") + "\" />"
-                        );
-                        $("#big_photo_'.$article['id'].'").fadeIn();
-                        $("html, body").animate({
-                            scrollTop: $("#small_photo_'.$article['id'].'").offset().top - 60
-                        }, 1000, "swing", function(){LOADING = false});
-                        $(".photo_'.$article['id'].'").css("opacity", 1);
-                        $(this).css("opacity", 0.3);
-                        event.preventDefault();
-                    });
-                    $("#close_big_photo_'.$article['id'].'").live("click", function(event){
-                        event.preventDefault();
-                        $(".photo_'.$article['id'].'").css("opacity", 1);
-                        $("#big_photo_'.$article['id'].'").fadeOut();
-                    });
-                </script>';
             }
 
 
@@ -545,6 +545,16 @@
             event.preventDefault();
         });
 
+        // big photo
+        $('.photo_link').live('click', function(event){
+            var img = $(this).attr('img');
+            var photo_id = $(this).attr('photo_id');
+            var caption = $('#photo_caption_'+photo_id).html();
+            $('#photo-modal-body').html('<div style="text-align:center">'+
+                '<img style="max-width:100%;" src="'+img+'" />'+
+                '</div>'+
+                '<div style="margin-top:20px;" class="col-xs-12">'+caption+'</div><div style="clear:both;"></div>');
+        });
 
     });
 
