@@ -105,8 +105,7 @@ class Teldrassil extends CMS_Secure_Controller {
             // copy images
             $preview_name = FCPATH.'themes/'.$theme_name.'/preview.png';
             copy($file_name, $preview_name);
-            $this->load->library('image_moo');
-            $this->image_moo->load($preview_name)->resize(769,395, TRUE)->save($preview_name, TRUE);
+            $this->cms_resize_image($preview_name, 769, 395);
             file_put_contents(FCPATH.'themes/'.$theme_name.'/assets/css/bootstrap.min.css',
                 $this->get_css($font, $colors));
             // create description file

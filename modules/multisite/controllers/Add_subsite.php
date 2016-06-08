@@ -93,8 +93,7 @@ class Add_subsite extends CMS_Secure_Controller {
 
             $subsite = $this->install_model->subsite;
             $logo_file_name = FCPATH.'assets/nocms/images/custom_logo/'.$subsite.$_FILES['logo']['name'];
-            $this->load->library('image_moo');
-            $this->image_moo->load($upload_path.$file_name)->resize(800,125)->save($logo_file_name,TRUE);
+            $this->cms_resize_image($upload_path.$file_name, 800, 125, $logo_file_name);
             $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$subsite.$_FILES['logo']['name'];
         }
 

@@ -22,7 +22,7 @@ for($i=0; $i<count($slide_list); $i++){
                 '<a class="btn btn-primary" href="{{ MODULE_SITE_URL }}manage_slide/index?from='.$origin_uri_string.'"><i class="glyphicon glyphicon-pencil">&nbsp;</i>Manage Slideshow</a>'.
             '</div>';
     }
-    $li_indicator_list[] = '<li data-target="#slideshow-widget" data-slide-to="'.$i.'" class="'.$class.'"></li>';
+    $li_indicator_list[] = '<li data-target="#slideshow-widget<?php echo $slug_sufix; ?>" data-slide-to="'.$i.'" class="'.$class.'"></li>';
     $div_item_list[] =
             '<div class="item '.$class.'">'.
             '<div class="item-image" real-src="'.base_url('modules/'.$module_path.'/assets/images/slides/'.$slide['image_url']).'" alt=""></div>'.
@@ -87,6 +87,12 @@ for($i=0; $i<count($slide_list); $i++){
             __adjust_image_top<?php echo $slug_sufix; ?>();
         }else{
             $('#slideshow-widget<?php echo $slug_sufix; ?> .carousel-inner .item-image').css('background-position', '0 ' + SLIDE_IMAGE_TOP<?php echo $slug_sufix; ?> + 'px');
+        }
+
+        // assuming editing widget is the previous 2 element
+        var editing_widget = $("#slideshow-widget<?php echo $slug_sufix; ?>").prev().prev();
+        if(editing_widget.length > 0){
+            editing_widget.hide();
         }
     });
 

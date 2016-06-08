@@ -273,13 +273,12 @@ class Info extends CMS_Module {
     }
 
     private function duplicate_file($original_file_name){
-        $this->load->library('image_moo');
         $image_path = FCPATH . 'modules/' . $this->cms_module_path().'/assets/uploads/';
         $file_name = (CMS_SUBSITE==''?'main_':CMS_SUBSITE) . $original_file_name;
         copy($image_path.$original_file_name, $image_path.$file_name);
 
         $thumbnail_name = 'thumb_'.$file_name;
-        $this->image_moo->load($image_path.$file_name)->resize(800,75)->save($image_path.$thumbnail_name,true);
+        $this->cms_resize_image($image_path.$file_name, 800, 75, $image_path.$thumbnail_name);
 
         return $file_name;
     }

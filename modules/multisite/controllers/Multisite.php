@@ -98,8 +98,8 @@ class Multisite extends CMS_Secure_Controller {
 
                 $new_logo_file = FCPATH.'assets/nocms/images/custom_logo/'.$site_name.$_FILES['logo']['name'];
                 $new_logo_config = '{{ base_url }}assets/nocms/images/custom_logo/'.$site_name.$_FILES['logo']['name'];
-                $this->load->library('image_moo');
-                $this->image_moo->load($upload_path.$file_name)->resize(800,125)->save($new_logo_file,true);
+
+                $this->cms_resize_image($upload_path.$file_name, 800, 125, $new_logo_file);
                 $this->db->update($this->subsite_model->get_subsite_config_table_name($site_name),
                     array('value'=>$new_logo_config),
                     array('config_name'=>'site_logo'));

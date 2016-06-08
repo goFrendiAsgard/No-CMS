@@ -294,15 +294,6 @@
                           <p class="help-block">Background attachment (e.g: "scroll", "fixed", "local")</p>
                       </div>
                 </div>
-                <!--
-                <div class="form-group">
-                      <label class="control-label col-md-3" for="site_background_blur">Background Blur</label>
-                      <div class="controls col-md-9">
-                          <input type="text" id="site_background_blur" name="site_background_blur" value="<?php echo $config_list['site_background_blur'] ?>" class="form-control">
-                          <p class="help-block">Background blur (e.g: "5")</p>
-                      </div>
-                </div>
-                -->
             </div>
 
             <div class="tab-pane" id="tab3">
@@ -536,7 +527,7 @@
                         <p class="help-block">HTML of right section</p>
                     </div>
                 </div>
-                <div class="form-group" style="height:260px;">
+                <div class="form-group">
                     <label class="control-label col-md-3" for="section_bottom">
                         Bottom Section<br />
                         <img src="<?php echo base_url('modules/main/assets/images/settings/section_bottom.png'); ?>" />

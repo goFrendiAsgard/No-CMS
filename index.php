@@ -503,7 +503,7 @@ switch (ERROR_REPORTING)
 					if(count($result_subsite) > 0){
 						$row_subsite = $result_subsite[0];
 						// using subdomain, not using alias
-						if($row_subsite['name'] == $actual_host_name_parts[0]){
+						if($row_subsite['name'] == $actual_host_name_parts[0] && $actual_host_name == $row_subsite['name'].'.'.domain($actual_host_name)){
 							$USE_SUBDOMAIN = TRUE;
 							$CMS_SUBSITE = $actual_host_name_parts[0];
 						}else{ // using alias

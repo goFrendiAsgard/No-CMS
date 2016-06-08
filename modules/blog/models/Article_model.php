@@ -415,7 +415,7 @@ class Article_model extends  CMS_Model{
         $this->load->helper('url');
 
         // get profile picture
-        $pp = $this->cms_get_profile_picture($user_id);
+        $pp = $this->cms_get_profile_picture($user_id, 50);
 
         $result = array(
                 "comment_id" => $row->comment_id,

@@ -802,7 +802,15 @@ class CMS_Model extends CI_Model
         return $is_conn;
     }
 
-    public function cms_get_profile_picture($user_id){
+    private function __cms_get_new_pp_name($pp, $resolution){
+        $pp_part = explode('/', $pp);
+        $file_name = $pp_part[count($pp_part)-1];
+        $new_pp_path = $pp.'_dir';
+        mkdir($new_pp_path);
+        $new_pp = $new_pp_path.'/'.$resolution.'_'.$file_name;
+        return $new_pp;
+    }
+    public function cms_get_profile_picture($user_id, $resolution = 256){
         if (array_key_exists($user_id, self::$__cms_model_properties['profile_pictures'])) {
             return self::$__cms_model_properties['profile_pictures'][$user_id];
         }
@@ -816,18 +824,31 @@ class CMS_Model extends CI_Model
         // determine pp
         $pp = '';
         if($user_record === null){
-            $pp = $real_base_url.'assets/nocms/images/default-profile-picture.png';
+            $pp = 'assets/nocms/images/default-profile-picture.png';
+            $new_pp = $this->__cms_get_new_pp_name($pp, $resolution);
+            if(!file_exists(FCPATH.$new_pp)){
+                $this->cms_resize_image(FCPATH.$pp, $resolution, $resolution, FCPATH.$new_pp);
+            }
+            $pp = $real_base_url.$new_pp;
         }else{
             $pp = $user_record->profile_picture;
             if($pp == NULL && $this->cms_is_connect('www.gravatar.com')){
                 // take from gravatar
-                $pp = 'http://www.gravatar.com/avatar/'.md5($user_record->email).'?s=256&r=pg&d=identicon';
-            }else if($pp == NULL){
-                // take from default profile picture
-                $pp = $real_base_url.'assets/nocms/images/default-profile-picture.png';
+                $pp = 'http://www.gravatar.com/avatar/'.md5($user_record->email).'?s='.$resolution.'&r=pg&d=identicon';
             }else{
-                // take from table
-                $pp = $real_base_url.'assets/nocms/images/profile_picture/'.$user_record->profile_picture;
+                if($pp != NULL){
+                    // take from table
+                    $pp = 'assets/nocms/images/profile_picture/'.$user_record->profile_picture;
+                }
+                if($pp == NULL || !file_exists(FCPATH.$pp)){
+                    // take from default profile picture
+                    $pp = 'assets/nocms/images/default-profile-picture.png';
+                }
+                $new_pp = $this->__cms_get_new_pp_name($pp, $resolution);
+                if(!file_exists(FCPATH.$new_pp)){
+                    $this->cms_resize_image(FCPATH.$pp, $resolution, $resolution, FCPATH.$new_pp);
+                }
+                $pp = $real_base_url.$new_pp;
             }
         }
         // cache profile picture
@@ -1334,7 +1355,7 @@ class CMS_Model extends CI_Model
 
             $editing_mode_content = '';
             if ($this->cms_editing_mode() && $this->cms_allow_navigate('main_widget_management') && $this->cms_have_privilege('edit_main_widget') && $row->widget_name != 'section_custom_script' && $row->widget_name != 'section_custom_style') {
-                $editing_mode_content = '<div class="__editing_widget_'.str_replace(' ', '_', $row->widget_name).'">'.
+                $editing_mode_content = '<div class="__editing_widget __editing_widget_'.str_replace(' ', '_', $row->widget_name).'">'.
                     '<a style="margin-bottom:2px; margin-top:2px;" class="btn btn-default btn-xs pull-right" href="{{ SITE_URL }}main/manage_widget/index/edit/'.$row->widget_id.'?from='.$this->cms_get_origin_uri_string().'">'.
                         '<i class="glyphicon glyphicon-pencil"></i> <strong>'.ucwords(str_replace('_', ' ', $row->widget_name)). '</strong>'.
                     '</a><div style="clear:both"></div>'.
@@ -3142,10 +3163,12 @@ class CMS_Model extends CI_Model
         return $success;
     }
 
-    public function cms_resize_image($file_name, $nWidth, $nHeight)
+    public function cms_resize_image($file_name, $nWidth, $nHeight, $new_file_name = NULL)
     {
         // original code: http://stackoverflow.com/questions/16977853/resize-images-with-transparency-in-php
-
+        if($new_file_name === NULL){
+            $new_file_name = $file_name;
+        }
 
         // read image
         $im = @imagecreatefrompng($file_name);
@@ -3174,10 +3197,10 @@ class CMS_Model extends CI_Model
                 $srcWidth, $srcHeight);
 
             // write new image
-            imagepng($newImg, $file_name);
+            imagepng($newImg, $new_file_name);
         } else {
             $this->load->library('image_moo');
-            $this->image_moo->load($file_name)->resize($nWidth, $nHeight)->save($file_name, true);
+            $this->image_moo->load($file_name)->resize($nWidth, $nHeight)->save($new_file_name, true);
         }
     }
 

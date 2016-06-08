@@ -520,7 +520,7 @@ class Main extends CMS_Controller
                 'theme' => $theme,
                 'language' => $language,
                 'sex' => $sex,
-                'birthdate' => $birthdate,
+                'birthdate' => trim($birthdate) == ''? NULL :$birthdate,
                 'self_description' => $self_description,
                 'profile_picture' => $profile_picture,
             );
@@ -1067,7 +1067,7 @@ class Main extends CMS_Controller
                     color: transparent !important;
                 }
             </style>
-            <div id="_top_navigation" class="navbar '.$navbar_class.'" role="navigation">
+            <div id="_top_navigation" class="navbar '.$navbar_class.'" role="navigation" style="margin-bottom:0;">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
