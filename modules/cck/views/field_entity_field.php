@@ -1,6 +1,13 @@
+<style type="text/css">
+    #md_table_field th:last-child, #md_table_field td:last-child{
+        text-align:right;
+        width:150px!important;
+    }
+</style>
 <?php
+    $manage_field_link = '<a class="btn btn-default save-on-click" href="{{ module_site_url }}manage_field/index/'.$primary_key.'"><i class="glyphicon glyphicon-list"></i> Manage Field</a>&nbsp;';
     // Generate HTML. Parameters: column_name, caption, array_of_field_captions
-    $HTML = build_md_html_table('field', 'Field', array('Name', 'Id Template', 'Add Input', 'Edit Input', 'View Html', 'Shown On Add', 'Shown On Edit', 'Shown On Delete', 'Option'));
+    $HTML = build_md_html_table('field', 'Field', array('Name', 'Template (Leave blank for custom)'), TRUE, TRUE, $manage_field_link);
     // Generate global variable and event-binding
     $JS   = build_md_global_variable_script('field', 'id', $date_format, $result, $options);
     $JS  .= build_md_event_script('field', '{{ module_site_url }}manage_entity/index/insert', '{{ module_site_url }}manage_entity/index/update');
@@ -16,13 +23,6 @@
         return {
             name : '',
             id_template : '',
-            add_input : '',
-            edit_input : '',
-            view_html : '',
-            shown_on_add : '',
-            shown_on_edit : '',
-            shown_on_delete : '',
-            option : '',
         };
     }
 
@@ -33,7 +33,7 @@
         var input_prefix = 'md_field_field_col';
         var row_index    = RECORD_INDEX_field;
         var inputs       = new Array();
-        
+
         // FIELD "name"
         var input_id    = input_prefix + 'name' + row_index;
         var field_value = get_object_property_as_str(value, 'name');
@@ -48,50 +48,33 @@
         html += '</select>';
         inputs.push(html);
 
-        // FIELD "add_input"
-        var input_id    = input_prefix + 'add_input' + row_index;
-        var field_value = get_object_property_as_str(value, 'add_input');
-        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+'" column_name="add_input" type="text" value="'+field_value+'"/>';
-        inputs.push(html);
-
-        // FIELD "edit_input"
-        var input_id    = input_prefix + 'edit_input' + row_index;
-        var field_value = get_object_property_as_str(value, 'edit_input');
-        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+'" column_name="edit_input" type="text" value="'+field_value+'"/>';
-        inputs.push(html);
-
-        // FIELD "view_html"
-        var input_id    = input_prefix + 'view_html' + row_index;
-        var field_value = get_object_property_as_str(value, 'view_html');
-        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+'" column_name="view_html" type="text" value="'+field_value+'"/>';
-        inputs.push(html);
-
-        // FIELD "shown_on_add"
-        var input_id    = input_prefix + 'shown_on_add' + row_index;
-        var field_value = get_object_property_as_str(value, 'shown_on_add');
-        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' numeric" column_name="shown_on_add" type="text" value="'+field_value+'"/>';
-        inputs.push(html);
-
-        // FIELD "shown_on_edit"
-        var input_id    = input_prefix + 'shown_on_edit' + row_index;
-        var field_value = get_object_property_as_str(value, 'shown_on_edit');
-        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' numeric" column_name="shown_on_edit" type="text" value="'+field_value+'"/>';
-        inputs.push(html);
-
-        // FIELD "shown_on_delete"
-        var input_id    = input_prefix + 'shown_on_delete' + row_index;
-        var field_value = get_object_property_as_str(value, 'shown_on_delete');
-        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+' numeric" column_name="shown_on_delete" type="text" value="'+field_value+'"/>';
-        inputs.push(html);
-
-        // FIELD "option"
-        var input_id    = input_prefix + 'option' + row_index;
-        var field_value = get_object_property_as_str(value, 'option');
-        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+'" column_name="option" type="text" value="'+field_value+'"/>';
-        inputs.push(html);
-
         // Return inputs
         return inputs;
     }
+
+    function add_table_row_field_action(value){
+        actions = []
+        for(var i=0; i<DATA_field.update.length; i++){
+            row = DATA_field.update[i];
+            if(row.data == value){
+                actions.push('<a class="btn btn-default save-on-click" href="{{ module_site_url }}manage_field/index/<?php echo $primary_key; ?>/edit/' + row.primary_key + '"><i class="glyphicon glyphicon-pencil"></i> Edit</a>&nbsp;');
+                break;
+            }
+        }
+        return actions;
+    }
+
+    // submit the form, save the next url, and when the ajax is complete, do redirection
+    var _next_url = '';
+    $(".save-on-click").live('click', function(event){
+        $('#crudForm').trigger('submit');
+        _next_url = $(this).attr('href');
+        event.preventDefault();
+    });
+    $(document).ajaxComplete(function(event){
+        if(_next_url != ''){
+            window.location = _next_url;
+        }
+    });
 
 </script>

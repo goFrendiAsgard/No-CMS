@@ -9,7 +9,7 @@ class Manage_entity extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'entity';
-    protected $COLUMN_NAMES = array('name', 'per_user_limitation', 'max_record_per_user', 'id_authorization_view', 'group_entity_view', 'id_authorization_add', 'group_entity_add', 'id_authorization_edit', 'group_entity_edit', 'id_authorization_delete', 'group_entity_delete', 'id_authorization_browse', 'group_entity_browse', 'field');
+    protected $COLUMN_NAMES = array('name', 'per_user_limitation', 'max_record_per_user', 'id_authorization_view', 'group_entity_view', 'id_authorization_add', 'group_entity_add', 'id_authorization_edit', 'group_entity_edit', 'id_authorization_delete', 'group_entity_delete', 'id_authorization_browse', 'group_entity_browse', 'field', 'per_record_html');
     protected $PRIMARY_KEY = 'id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -36,7 +36,7 @@ class Manage_entity extends CMS_CRUD_Controller {
         $crud->set_subject('Entity');
 
         // displayed columns on list, edit, and add, uncomment to use
-        //$crud->columns('name', 'max_record_per_user', 'per_user_limitation', 'id_authorization_view', 'id_authorization_add', 'id_authorization_edit', 'id_authorization_delete', 'id_authorization_browse', 'field', 'group_entity_add', 'group_entity_edit', 'group_entity_view', 'group_entity_browse', 'group_entity_delete');
+        $crud->columns('name');
         //$crud->edit_fields('name', 'max_record_per_user', 'per_user_limitation', 'id_authorization_view', 'id_authorization_add', 'id_authorization_edit', 'id_authorization_delete', 'id_authorization_browse', 'field', 'group_entity_add', 'group_entity_edit', 'group_entity_view', 'group_entity_browse', 'group_entity_delete', '_updated_by', '_updated_at');
         //$crud->add_fields('name', 'max_record_per_user', 'per_user_limitation', 'id_authorization_view', 'id_authorization_add', 'id_authorization_edit', 'id_authorization_delete', 'id_authorization_browse', 'field', 'group_entity_add', 'group_entity_edit', 'group_entity_view', 'group_entity_browse', 'group_entity_delete', '_created_by', '_created_at');
         //$crud->set_read_fields('name', 'max_record_per_user', 'per_user_limitation', 'id_authorization_view', 'id_authorization_add', 'id_authorization_edit', 'id_authorization_delete', 'id_authorization_browse', 'field', 'group_entity_add', 'group_entity_edit', 'group_entity_view', 'group_entity_browse', 'group_entity_delete');
@@ -56,6 +56,7 @@ class Manage_entity extends CMS_CRUD_Controller {
         $crud->display_as('group_entity_view','View Group');
         $crud->display_as('group_entity_browse','Browse Group');
         $crud->display_as('group_entity_delete','Delete Group');
+        $crud->display_as('per_record_html','Per Record HTML');
 
         ////////////////////////////////////////////////////////////////////////
         // This function will automatically detect every methods in this controller and link it to corresponding column
@@ -150,6 +151,7 @@ class Manage_entity extends CMS_CRUD_Controller {
         //      $crud->field_type( $field_name , $field_type, $value  );
         ////////////////////////////////////////////////////////////////////////
         $crud->field_type('per_user_limitation', 'true_false');
+        $crud->unset_texteditor('per_record_html');
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)
@@ -236,6 +238,7 @@ class Manage_entity extends CMS_CRUD_Controller {
                 $set_column_option_list, // SET OPTIONS
                 $enum_column_option_list // ENUM OPTIONS
             );
+        $data['primary_key'] = $primary_key;
         // Parse the data to the view
         return $this->load->view($this->cms_module_path().'/field_entity_field',$data, TRUE);
     }
@@ -265,7 +268,7 @@ class Manage_entity extends CMS_CRUD_Controller {
             'id_entity', // DETAIL FK NAME
             $primary_key, // PARENT PRIMARY KEY VALUE
             $data, // DATA
-            array('id', 'name', 'id_template', 'add_input', 'edit_input', 'view_html', 'shown_on_add', 'shown_on_edit', 'shown_on_delete'), // REAL DETAIL COLUMN NAMES
+            array('id', 'name', 'id_template'), // REAL DETAIL COLUMN NAMES
             array(), // SET DETAIL COLUMN NAMES
             $many_to_many_config_list=array()
         );

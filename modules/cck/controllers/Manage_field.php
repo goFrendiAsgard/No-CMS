@@ -21,7 +21,7 @@ class Manage_field extends CMS_CRUD_Controller {
     protected $UNSET_PRINT = FALSE;
     protected $UNSET_EXPORT = FALSE;
 
-    protected function make_crud(){
+    protected function make_crud($id_entity = NULL){
         $crud = parent::make_crud();
 
         ////////////////////////////////////////////////////////////////////////
@@ -31,6 +31,13 @@ class Manage_field extends CMS_CRUD_Controller {
         //      $this->STATE_INFO
         //      $this->PK_VALUE
         ////////////////////////////////////////////////////////////////////////
+        if($id_entity != NULL){
+            $crud->where($this->t('field').'.id_entity', $id_entity);
+            // displayed columns on list
+            $crud->columns('name', 'id_template');
+        }else{
+            $crud->columns('name', 'id_template', 'id_entity');
+        }
 
         // set subject
         $crud->set_subject('Field');
@@ -43,8 +50,8 @@ class Manage_field extends CMS_CRUD_Controller {
 
         // caption of each columns
         $crud->display_as('name','Name');
-        $crud->display_as('id_template','Id Template');
-        $crud->display_as('id_entity','Id Entity');
+        $crud->display_as('id_template','Template');
+        $crud->display_as('id_entity','Entity');
         $crud->display_as('input','Input');
         $crud->display_as('view','View');
         $crud->display_as('shown_on_add','Shown On Add');
@@ -74,7 +81,11 @@ class Manage_field extends CMS_CRUD_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        $crud->required_fields('name', 'id_entity');
+        if($id_entity == NULL){
+            $crud->required_fields('name', 'id_entity');
+        }else{
+            $crud->required_fields('name');
+        }
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -99,7 +110,11 @@ class Manage_field extends CMS_CRUD_Controller {
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         ////////////////////////////////////////////////////////////////////////
         $crud->set_relation('id_template', $this->t('template'), 'name');
-        $crud->set_relation('id_entity', $this->t('entity'), 'name');
+        if($id_entity == NULL){
+            $crud->set_relation('id_entity', $this->t('entity'), 'name');
+        }else{
+            $crud->field_type('id_entity', 'hidden', $id_entity);
+        }
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here
@@ -116,8 +131,11 @@ class Manage_field extends CMS_CRUD_Controller {
         // eg:
         //      $crud->field_type( $field_name , $field_type, $value  );
         ////////////////////////////////////////////////////////////////////////
-
-
+        $crud->field_type('shown_on_add', 'true_false');
+        $crud->field_type('shown_on_edit', 'true_false');
+        $crud->field_type('shown_on_delete', 'true_false');
+        $crud->unset_texteditor('input');
+        $crud->unset_texteditor('view');
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -129,6 +147,8 @@ class Manage_field extends CMS_CRUD_Controller {
         //        'Second Tab Caption' => $how_many_field_on_second_tab,
         //     ));
         ////////////////////////////////////////////////////////////////////////
+
+        $crud->set_field_one_third_width(array('shown_on_add', 'shown_on_edit', 'shown_on_delete'));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)
@@ -162,14 +182,21 @@ class Manage_field extends CMS_CRUD_Controller {
         return $crud;
     }
 
-    public function index(){
+    public function index($id_entity = NULL){
         // create crud
-        $crud = $this->make_crud();
+        if(!is_numeric($id_entity)){
+            $id_entity = NULL;
+        }
+        $crud = $this->make_crud($id_entity);
 
         // render
         $render = $this->render_crud($crud);
         $output = $render['output'];
         $config = $render['config'];
+
+        if(isset($id_entity) && is_numeric($id_entity)){
+            $output->id_entity = $id_entity;
+        }
 
         // show the view
         $this->view($this->cms_module_path().'/Manage_field_view', $output,
@@ -227,7 +254,7 @@ class Manage_field extends CMS_CRUD_Controller {
             'id_field', // DETAIL FK NAME
             $primary_key, // PARENT PRIMARY KEY VALUE
             $data, // DATA
-            array('id', 'name', 'shown', 'card_html'), // REAL DETAIL COLUMN NAMES
+            array('id', 'name', 'shown'), // REAL DETAIL COLUMN NAMES
             array(), // SET DETAIL COLUMN NAMES
             $many_to_many_config_list=array()
         );

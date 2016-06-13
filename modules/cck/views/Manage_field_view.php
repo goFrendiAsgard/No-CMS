@@ -46,5 +46,10 @@ echo $output;
 
     $(document).ready(function(){
         // TODO: Put your custom code here
+        $('.breadcrumb a').each(function(){
+            if($(this).attr('href') == '{{ module_site_url }}manage_field'){
+                $(this).attr('href', '{{ module_site_url }}manage_field/index/<?php echo $id_entity; ?>');
+            }
+        });
     });
 </script>

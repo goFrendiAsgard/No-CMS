@@ -208,7 +208,7 @@ class Manage_column extends Nds_Special_CRUD_Controller {
         return $crud;
     }
 
-    public function index($table_id){
+    public function index($table_id = NULL){
         // create crud
         if(!is_numeric($table_id)){
             $table_id = NULL;
