@@ -131,6 +131,7 @@ class Manage_privilege extends CMS_Predefined_Callback_CRUD_Controller {
         //        'Second Tab Caption' => $how_many_field_on_second_tab,
         //     ));
         ////////////////////////////////////////////////////////////////////////
+        $crud->set_field_half_width(array('authorization_id', 'group_privilege'));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)

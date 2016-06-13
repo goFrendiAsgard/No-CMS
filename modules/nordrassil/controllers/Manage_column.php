@@ -141,6 +141,8 @@ class Manage_column extends Nds_Special_CRUD_Controller {
             $crud->field_type('table_id', 'hidden', $table_id);
         }
 
+        $crud->set_field_half_width(array('name', 'caption'));
+
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here
         // (documentation: http://www.grocerycrud.com/documentation/options_functions/set_relation_n_n)

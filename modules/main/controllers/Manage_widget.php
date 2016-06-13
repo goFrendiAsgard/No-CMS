@@ -12,7 +12,7 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'main_widget';
     protected $COLUMN_NAMES = array('widget_name', 'title', 'description', 'active', 'index', 'is_static',
-    'url', 'static_content', 'authorization_id', 'slug', 'group_widget');
+    'url', 'static_content', 'slug', 'authorization_id', 'group_widget');
     protected $PRIMARY_KEY = 'widget_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -157,7 +157,7 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->unset_texteditor('static_content');
         $crud->unset_texteditor('description');
 
-        $crud->set_field_half_width(array('active', 'is_static'));
+        $crud->set_field_half_width(array('active', 'is_static', 'authorization_id', 'group_widget'));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)

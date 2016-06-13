@@ -54,7 +54,7 @@
 ?>
 <style type="text/css">
     .small-font{
-        font-size:small;
+        font-size : small;
     }
     .padding-left-40{
         padding-left : 40px!important;
@@ -71,17 +71,32 @@
         word-break : break-all;
         word-wrap : break-word;
     }
+    ._controller{
+        cursor : pointer;
+    }
+    #_js_input{
+        margin-top:10px;
+        border:none;
+    }
 </style>
 <div class="_profiler-container container well">
-    <h3 class="_profiler-toggle-all-controller">Profiler</h3>
+    <h3 class="_profiler-toggle-all-controller _controller">Profiler</h3>
     <table class="table col-12-md _profiler-toggle-all">
         <!-- This row contains nothing, and only used to ensure the width of every column is fixed -->
         <tr style="height:0px; padding:0px;">
             <td style="height:0px; padding:0px;" class="col-md-3"></td>
             <td style="height:0px; padding:0px;" class="col-md-9"></td>
         </tr>
+        <!-- JS Console -->
+        <tr><th class="_profiler-toggle-js-log-controller _controller" colspan="2">Javascript Log</th></tr>
+        <tr class="_profiler-toggle-js-log">
+            <td class="padding-left-40" colspan="2">
+                <div id="console-log-div"></div>
+                <input id="_js_input" class="col-xs-12" placeholder="Type any javascript code here."></input>
+            </td>
+        </tr>
         <!-- GENERAL -->
-        <tr class="_profiler-toggle-general-controller"><th colspan="2"><div class="btn btn-default btn-lg">General Information</div></th></tr>
+        <tr class="_profiler-toggle-general-controller _controller"><th colspan="2">General Information</th></tr>
         <tr class="_profiler-toggle-general"> <!-- URI -->
             <th class="padding-left-40">URI</th>
             <td><?php echo $uri_string; ?></td>
@@ -95,7 +110,7 @@
             <td><?php echo $method_name; ?></td>
         </tr>
         <!-- UNIT TEST -->
-        <tr class="_profiler-toggle-unit-test-controller"><th colspan="2"><div class="btn btn-default btn-lg">Unit Test (Total : <?php echo count($unit_result); ?>)</div></th></tr>
+        <tr class="_profiler-toggle-unit-test-controller _controller"><th colspan="2">Unit Test (Total : <?php echo count($unit_result); ?>)</th></tr>
         <?php
         foreach($unit_result as $unit){
             $test_name = $unit['Test Name'];
@@ -125,7 +140,7 @@
         }
         ?>
         <!-- BENCHMARK -->
-        <tr class="_profiler-toggle-benchmark-controller"><th colspan="2"><div class="btn btn-default btn-lg">Benchmark</div></th></tr>
+        <tr class="_profiler-toggle-benchmark-controller _controller"><th colspan="2">Benchmark</th></tr>
         <tr class="_profiler-toggle-benchmark"> <!--Memory Usage -->
             <th class="padding-left-40">Total Memory Usage</th>
             <td ><b><?php echo $memory_usage; ?></b></td>
@@ -141,7 +156,7 @@
             </tr>
         <?php } ?>
         <!-- MARKER -->
-        <tr class="_profiler-toggle-marker-controller"><th colspan="2"><div class="btn btn-default btn-lg">Time Marker (Total : <?php echo count($markers); ?>)</div></th></tr>
+        <tr class="_profiler-toggle-marker-controller _controller"><th colspan="2">Time Marker (Total : <?php echo count($markers); ?>)</th></tr>
         <?php foreach($markers as $key=>$val){ // markers ?>
             <tr class="_profiler-toggle-marker">
                 <th class="padding-left-40"><?php echo ucwords(str_replace('_', ' ', $key)); ?></th>
@@ -149,7 +164,7 @@
             </tr>
         <?php } ?>
         <!-- VARIABLES -->
-        <tr><th class="_profiler-toggle-variable-controller" colspan="2"><div class="btn btn-default btn-lg">Variables (Total : <?php echo count($variables); ?>)</div></th></tr>
+        <tr><th class="_profiler-toggle-variable-controller _controller" colspan="2">Variables (Total : <?php echo count($variables); ?>)</th></tr>
         <?php foreach($variables as $key=>$val){ // variables ?>
             <tr class="_profiler-toggle-variable">
                 <th class="padding-left-40"><?php echo $key; ?></th>
@@ -157,7 +172,7 @@
             </tr>
         <?php } ?>
         <!-- QUERIES -->
-        <tr class="_profiler-toggle-query-controller"><th colspan="2"><div class="btn btn-default btn-lg">Queries (Total : <?php echo count($db_queries) ?>)</div></th></tr>
+        <tr class="_profiler-toggle-query-controller _controller"><th colspan="2">Queries (Total : <?php echo count($db_queries) ?>)</th></tr>
         <?php foreach($db_queries as $key=>$val){ // query ?>
             <tr class="_profiler-toggle-query">
                 <td class="padding-left-40" colspan="2">
@@ -167,7 +182,7 @@
             </tr>
         <?php } ?>
         <!-- SERVER -->
-        <tr class="_profiler-toggle-server-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_SERVER (Total : <?php echo count($server); ?>)</div></th></tr>
+        <tr class="_profiler-toggle-server-controller _controller"><th colspan="2">$_SERVER (Total : <?php echo count($server); ?>)</th></tr>
         <?php foreach($server as $key=>$val){ // server ?>
             <tr class="_profiler-toggle-server">
                 <th class="padding-left-40"><?php echo $key; ?></th>
@@ -175,7 +190,7 @@
             </tr>
         <?php } ?>
         <!-- COOKIE -->
-        <tr class="_profiler-toggle-cookie-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_COOKIE (Total : <?php echo count($cookie); ?>)</div></th></tr>
+        <tr class="_profiler-toggle-cookie-controller _controller"><th colspan="2">$_COOKIE (Total : <?php echo count($cookie); ?>)</th></tr>
         <?php foreach($cookie as $key=>$val){ // cookie ?>
             <tr class="_profiler-toggle-cookie">
                 <th class="padding-left-40"><?php echo $key; ?></th>
@@ -183,7 +198,7 @@
             </tr>
         <?php } ?>
         <!-- SESSION -->
-        <tr class="_profiler-toggle-session-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_SESSION (Total : <?php echo count($session); ?>)</div></th></tr>
+        <tr class="_profiler-toggle-session-controller _controller"><th colspan="2">$_SESSION (Total : <?php echo count($session); ?>)</th></tr>
         <?php foreach($session as $key=>$val){ // session ?>
             <tr class="_profiler-toggle-session">
                 <th class="padding-left-40"><?php echo $key; ?></th>
@@ -191,7 +206,7 @@
             </tr>
         <?php } ?>
         <!-- POST -->
-        <tr class="_profiler-toggle-post-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_POST (Total : <?php echo count($post); ?>)</div></th></tr>
+        <tr class="_profiler-toggle-post-controller _controller"><th colspan="2">$_POST (Total : <?php echo count($post); ?>)</th></tr>
         <?php foreach($post as $key=>$val){ // post ?>
             <tr class="_profiler-toggle-post">
                 <th class="padding-left-40"><?php echo $key; ?></th>
@@ -199,7 +214,7 @@
             </tr>
         <?php } ?>
         <!-- GET -->
-        <tr class="_profiler-toggle-get-controller"><th colspan="2"><div class="btn btn-default btn-lg">$_GET (Total : <?php echo count($get); ?>)</div></th></tr>
+        <tr class="_profiler-toggle-get-controller _controller"><th colspan="2">$_GET (Total : <?php echo count($get); ?>)</th></tr>
         <?php foreach($get as $key=>$val){ // get ?>
             <tr class="_profiler-toggle-get">
                 <th class="padding-left-40"><?php echo $key; ?></th>
@@ -207,7 +222,7 @@
             </tr>
         <?php } ?>
         <!-- TOTAL -->
-        <tr class="_profiler-toggle-config-controller"><th colspan="2"><div class="btn btn-default btn-lg">CodeIgniter's configuration (Total : <?php echo count($config); ?>)</div></th></tr>
+        <tr class="_profiler-toggle-config-controller _controller"><th colspan="2">CodeIgniter's configuration (Total : <?php echo count($config); ?>)</th></tr>
         <?php foreach($config as $key=>$val){ // config ?>
             <tr class="_profiler-toggle-config">
                 <th class="padding-left-40"><?php echo $key; ?></th>
@@ -219,8 +234,8 @@
 
 <script type="text/javascript">
     if(typeof($) == 'function'){ //JQuery exists
-        var keys = ['all', 'general', 'benchmark', 'marker', 'unit-test', 'query', 'server', 'cookie', 'session', 'post', 'get', 'config', 'variable'];
-        var shown_keys = ['all', 'general', 'benchmark', 'unit-test'];
+        var keys = ['all', 'js-log', 'general', 'benchmark', 'marker', 'unit-test', 'query', 'server', 'cookie', 'session', 'post', 'get', 'config', 'variable'];
+        var shown_keys = ['all', 'js-log', 'general', 'benchmark', 'unit-test'];
         $.map(keys, function(key){
             var $controller = $('._profiler-toggle-'+key+'-controller');
             var $component = $('._profiler-toggle-'+key);
@@ -240,4 +255,11 @@
             }
         });
     }
+    $('#_js_input').keyup(function(event){
+        if(event.keyCode == 13){
+            console.log(eval($('#_js_input').val()));
+            $('#_js_input').val('');
+        }
+    });
 </script>
+<script type="text/javascript" src="<?php echo base_url('assets/nocms/js/console-log-div.js') ?>"></script>

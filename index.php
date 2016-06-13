@@ -388,7 +388,7 @@ switch (ERROR_REPORTING)
 			// do query based on dbdriver
 			$result = array();
 			if(strtolower($dbdriver) == 'mysql'){
-				$conn = mysql_connect($hostname, $username, $password);
+				$conn = @mysql_connect($hostname, $username, $password);
 				if(!$conn){
 					return FALSE;
 				}
@@ -399,7 +399,7 @@ switch (ERROR_REPORTING)
 				}
 				mysql_close($conn);
 			}else if(strtolower($dbdriver) == 'mysqli'){
-				$conn = mysqli_connect($hostname, $username, $password);
+				$conn = @mysqli_connect($hostname, $username, $password);
 				if(!$conn){
 					return FALSE;
 				}
@@ -416,8 +416,9 @@ switch (ERROR_REPORTING)
 					$stmt = $conn->prepare($sql);
 				    $stmt->execute();
 				    // set the resulting array to associative
-				    $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
-				    return $stmt->fetchAll();
+				    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+				    $result = $stmt->fetchAll();
+					$conn = NULL;
 				}catch(PDOException $e){
 				    return FALSE;
 	    		}
@@ -460,6 +461,10 @@ switch (ERROR_REPORTING)
 			include($cms_config_file);
 			$cms_table_prefix = trim($config['__cms_table_prefix'])==''? '' : $config['__cms_table_prefix'].'_';
 			$result_module = db_query('SELECT module_path FROM '.$cms_table_prefix.'main_module WHERE module_name=\'gofrendi.noCMS.multisite\'');
+			// connection failed
+			if($result_module === FALSE){
+				die('Database Connection Failed');
+			}
 			// if multisite module is not installed then the subsite is valid, and it is not subdomain
 			if(count($result_module) > 0){
 				// get module path

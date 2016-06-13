@@ -121,6 +121,8 @@ class Manage_table extends Nds_Special_CRUD_Controller {
             $crud->field_type('project_id', 'hidden', $project_id);
         }
 
+        $crud->set_field_half_width(array('name', 'caption'));
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here

@@ -1295,13 +1295,6 @@ class CMS_Model extends CI_Model
         $login = $user_name ? '(1=1)' : '(1=2)';
         $super_user = $this->cms_user_is_super_admin() ? '(1=1)' : '(1=2)';
 
-        /*
-        $slug_where = isset($slug)?
-            "(((slug LIKE '".addslashes($slug)."') OR (slug LIKE '%".addslashes($slug)."%')) AND active=1)" :
-            "1=1";
-        $widget_name_where = isset($widget_name)? "widget_name LIKE '".addslashes($widget_name)."'" : "1=1";
-        */
-
         if (!self::$__cms_model_properties['is_widget_cached']) {
             $SQL = 'SELECT
                         widget_id, widget_name, is_static, title,
@@ -1409,24 +1402,26 @@ class CMS_Model extends CI_Model
                     $url_segment = explode('/', $url);
                     $module_path = $url_segment[0];
                     $response = '';
-                    // ensure self::$__cms_model_properties['module_name'] exists. This variable's keys are all available module path
-                    $this->cms_module_name();
-                    if ($module_path == 'main' || (array_key_exists($module_path, self::$__cms_model_properties['module_name']) && self::$__cms_model_properties['module_name'][$module_path] != '')) {
-                        $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
-                        $_REQUEST['__cms_dynamic_widget_module'] = $module_path;
-                        $url = trim($url, '/');
-                        $response = @Modules::run($url);
-                        if (strlen($response) == 0) {
-                            $response = @Modules::run($url.'/index');
+                    if($url !== NULL && trim($url) != ''){
+                        // ensure self::$__cms_model_properties['module_name'] exists. This variable's keys are all available module path
+                        $this->cms_module_name();
+                        if ($module_path == 'main' || (array_key_exists($module_path, self::$__cms_model_properties['module_name']) && self::$__cms_model_properties['module_name'][$module_path] != '')) {
+                            $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
+                            $_REQUEST['__cms_dynamic_widget_module'] = $module_path;
+                            $url = trim($url, '/');
+                            $response = @Modules::run($url);
+                            if (strlen($response) == 0) {
+                                $response = @Modules::run($url.'/index');
+                            }
+                            unset($_REQUEST['__cms_dynamic_widget']);
+                            unset($_REQUEST['__cms_dynamic_widget_module']);
                         }
-                        unset($_REQUEST['__cms_dynamic_widget']);
-                        unset($_REQUEST['__cms_dynamic_widget_module']);
-                    }
-                    // fallback, Modules::run failed, use AJAX instead
-                    if (strlen($response) == 0) {
-                        $response = '<script type="text/javascript">';
-                        $response .= '$(document).ready(function(){$("#__cms_widget_'.$row->widget_id.'").load("'.site_url($url).'?__cms_dynamic_widget=TRUE");});';
-                        $response .= '</script>';
+                        // fallback, Modules::run failed, use AJAX instead
+                        if (strlen($response) == 0) {
+                            $response = '<script type="text/javascript">';
+                            $response .= '$(document).ready(function(){$("#__cms_widget_'.$row->widget_id.'").load("'.site_url($url).'?__cms_dynamic_widget=TRUE");});';
+                            $response .= '</script>';
+                        }
                     }
                     // add editing mode content
                     if(trim($response) != ''){

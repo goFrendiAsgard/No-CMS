@@ -1,0 +1,711 @@
+{
+    "name": "cck",
+    "db_server": "localhost",
+    "db_port": "3306",
+    "db_schema": "cck",
+    "db_user": "root",
+    "db_password": "toor",
+    "db_table_prefix": null,
+    "template": "No-CMS Module",
+    "tables": [
+        {
+            "name": "authorization",
+            "caption": "Authorization",
+            "options": {
+                "dont_make_form": true
+            },
+            "columns": [
+                {
+                    "caption": "Authorization Id",
+                    "name": "authorization_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "data_type": "varchar",
+                    "data_size": "255",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Entity",
+                    "name": "entity",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail one to many",
+                    "relation_table_name": "entity",
+                    "relation_table_column_name": "id_authorization_view"
+                }
+            ]
+        },
+        {
+            "name": "template",
+            "caption": "Template",
+            "columns": [
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "data_type": "varchar",
+                    "data_size": "255",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Add Input",
+                    "name": "add_input",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Edit Input",
+                    "name": "edit_input",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "View Html",
+                    "name": "view_html",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Field",
+                    "name": "field",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail one to many",
+                    "relation_table_name": "field",
+                    "relation_table_column_name": "id_template"
+                }
+            ]
+        },
+        {
+            "name": "entity",
+            "caption": "Entity",
+            "columns": [
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "data_type": "varchar",
+                    "data_size": "255",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Max Record Per User",
+                    "name": "max_record_per_user",
+                    "data_type": "int",
+                    "data_size": "10"
+                },
+                {
+                    "caption": "Per User Limitation",
+                    "name": "per_user_limitation",
+                    "data_type": "int",
+                    "data_size": "10"
+                },
+                {
+                    "caption": "Id Authorization View",
+                    "name": "id_authorization_view",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "authorization",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "authorization_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id Authorization Add",
+                    "name": "id_authorization_add",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "authorization",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "authorization_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id Authorization Edit",
+                    "name": "id_authorization_edit",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "authorization",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "authorization_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id Authorization Delete",
+                    "name": "id_authorization_delete",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "authorization",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "authorization_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id Authorization Browse",
+                    "name": "id_authorization_browse",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "authorization",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "authorization_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Field",
+                    "name": "field",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail one to many",
+                    "relation_table_name": "field",
+                    "relation_table_column_name": "id_entity"
+                },
+                {
+                    "caption": "Group Entity Add",
+                    "name": "group_entity_add",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_add",
+                    "relation_table_column_name": "entity_id",
+                    "relation_selection_column_name": "id_group",
+                    "selection_table_name": "group",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "group_id"
+                },
+                {
+                    "caption": "Group Entity Edit",
+                    "name": "group_entity_edit",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_edit",
+                    "relation_table_column_name": "entity_id",
+                    "relation_selection_column_name": "id_group",
+                    "selection_table_name": "group",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "group_id"
+                },
+                {
+                    "caption": "Group Entity View",
+                    "name": "group_entity_view",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_view",
+                    "relation_table_column_name": "entity_id",
+                    "relation_selection_column_name": "id_group",
+                    "selection_table_name": "group",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "group_id"
+                },
+                {
+                    "caption": "Group Entity Browse",
+                    "name": "group_entity_browse",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_browse",
+                    "relation_table_column_name": "entity_id",
+                    "relation_selection_column_name": "id_group",
+                    "selection_table_name": "group",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "group_id"
+                },
+                {
+                    "caption": "Group Entity Delete",
+                    "name": "group_entity_delete",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_delete",
+                    "relation_table_column_name": "entity_id",
+                    "relation_selection_column_name": "id_group",
+                    "selection_table_name": "group",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "group_id"
+                }
+            ]
+        },
+        {
+            "name": "field",
+            "caption": "Field",
+            "columns": [
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "data_type": "varchar",
+                    "data_size": "255",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id Template",
+                    "name": "id_template",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "template",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id Entity",
+                    "name": "id_entity",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "entity",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Add Input",
+                    "name": "add_input",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Edit Input",
+                    "name": "edit_input",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "View Html",
+                    "name": "view_html",
+                    "data_type": "text",
+                    "data_size": "65535"
+                },
+                {
+                    "caption": "Shown On Add",
+                    "name": "shown_on_add",
+                    "data_type": "int",
+                    "data_size": "10"
+                },
+                {
+                    "caption": "Shown On Edit",
+                    "name": "shown_on_edit",
+                    "data_type": "int",
+                    "data_size": "10"
+                },
+                {
+                    "caption": "Shown On Delete",
+                    "name": "shown_on_delete",
+                    "data_type": "int",
+                    "data_size": "10"
+                },
+                {
+                    "caption": "Option",
+                    "name": "option",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail one to many",
+                    "relation_table_name": "option",
+                    "relation_table_column_name": "id_field"
+                }
+            ]
+        },
+        {
+            "name": "group",
+            "caption": "Group",
+            "options": {
+                "dont_make_form": true
+            },
+            "columns": [
+                {
+                    "caption": "Group Id",
+                    "name": "group_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "data_type": "varchar",
+                    "data_size": "255",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Group Entity Add",
+                    "name": "group_entity_add",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_add",
+                    "relation_table_column_name": "id_group",
+                    "relation_selection_column_name": "entity_id",
+                    "selection_table_name": "entity",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "id"
+                },
+                {
+                    "caption": "Group Entity Edit",
+                    "name": "group_entity_edit",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_edit",
+                    "relation_table_column_name": "id_group",
+                    "relation_selection_column_name": "entity_id",
+                    "selection_table_name": "entity",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "id"
+                },
+                {
+                    "caption": "Group Entity View",
+                    "name": "group_entity_view",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_view",
+                    "relation_table_column_name": "id_group",
+                    "relation_selection_column_name": "entity_id",
+                    "selection_table_name": "entity",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "id"
+                },
+                {
+                    "caption": "Group Entity Browse",
+                    "name": "group_entity_browse",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_browse",
+                    "relation_table_column_name": "id_group",
+                    "relation_selection_column_name": "entity_id",
+                    "selection_table_name": "entity",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "id"
+                },
+                {
+                    "caption": "Group Entity Delete",
+                    "name": "group_entity_delete",
+                    "data_type": null,
+                    "data_size": null,
+                    "role": "detail many to many",
+                    "relation_table_name": "group_entity_delete",
+                    "relation_table_column_name": "id_group",
+                    "relation_selection_column_name": "entity_id",
+                    "selection_table_name": "entity",
+                    "selection_column_name": "name",
+                    "selection_table_primary_key": "id"
+                }
+            ]
+        },
+        {
+            "name": "group_entity_add",
+            "caption": "Group Entity Add",
+            "options": {
+                "dont_make_form": true
+            },
+            "columns": [
+                {
+                    "caption": "Group Group Id",
+                    "name": "id_group",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "group",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "group_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Entity Id",
+                    "name": "entity_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "entity",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                }
+            ]
+        },
+        {
+            "name": "group_entity_browse",
+            "caption": "Group Entity Browse",
+            "options": {
+                "dont_make_form": true
+            },
+            "columns": [
+                {
+                    "caption": "Group Group Id",
+                    "name": "id_group",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "group",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "group_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Entity Id",
+                    "name": "entity_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "entity",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                }
+            ]
+        },
+        {
+            "name": "group_entity_delete",
+            "caption": "Group Entity Delete",
+            "options": {
+                "dont_make_form": true
+            },
+            "columns": [
+                {
+                    "caption": "Group Group Id",
+                    "name": "id_group",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "group",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "group_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Entity Id",
+                    "name": "entity_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "entity",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                }
+            ]
+        },
+        {
+            "name": "group_entity_edit",
+            "caption": "Group Entity Edit",
+            "options": {
+                "dont_make_form": true
+            },
+            "columns": [
+                {
+                    "caption": "Group Group Id",
+                    "name": "id_group",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "group",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "group_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Entity Id",
+                    "name": "entity_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "entity",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                }
+            ]
+        },
+        {
+            "name": "group_entity_view",
+            "caption": "Group Entity View",
+            "options": {
+                "dont_make_form": true
+            },
+            "columns": [
+                {
+                    "caption": "Group Group Id",
+                    "name": "id_group",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "group",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "group_id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Entity Id",
+                    "name": "entity_id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "entity",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                }
+            ]
+        },
+        {
+            "name": "option",
+            "caption": "Option",
+            "columns": [
+                {
+                    "caption": "Id",
+                    "name": "id",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "primary"
+                },
+                {
+                    "caption": "Name",
+                    "name": "name",
+                    "data_type": "varchar",
+                    "data_size": "255",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Shown",
+                    "name": "shown",
+                    "data_type": "varchar",
+                    "data_size": "255",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Id Field",
+                    "name": "id_field",
+                    "data_type": "int",
+                    "data_size": "10",
+                    "role": "lookup",
+                    "lookup_table_name": "field",
+                    "lookup_column_name": "name",
+                    "lookup_table_primary_key": "id",
+                    "options": {
+                        "required": true
+                    }
+                },
+                {
+                    "caption": "Card Html",
+                    "name": "card_html",
+                    "data_type": "text",
+                    "data_size": "65535"
+                }
+            ]
+        }
+    ]
+}

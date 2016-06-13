@@ -51,7 +51,7 @@ class CMS_Controller extends MX_Controller
             include(APPPATH.'config/main/database.php');
             $this->load->database($db['default']);
         }else{
-            $this->load->database();
+            @$this->load->database();
         }
 
         // load helpers and libraries

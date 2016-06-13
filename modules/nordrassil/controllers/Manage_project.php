@@ -14,7 +14,7 @@ class Manage_project extends Nds_Special_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'project';
-    protected $COLUMN_NAMES = array('template_id', 'name', 'db_server', 'db_port', 'db_schema', 'db_user', 'db_password', 'db_table_prefix', 'project_option', 'table');
+    protected $COLUMN_NAMES = array('name', 'template_id', 'db_server', 'db_port', 'db_schema', 'db_user', 'db_password', 'db_table_prefix', 'project_option', 'table');
     protected $PRIMARY_KEY = 'project_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -131,7 +131,7 @@ class Manage_project extends Nds_Special_CRUD_Controller {
         // eg:
         //      $crud->field_type( $field_name , $field_type, $value  );
         ////////////////////////////////////////////////////////////////////////
-
+        $crud->set_field_half_width(array('template_id', 'name'));
 
 
 

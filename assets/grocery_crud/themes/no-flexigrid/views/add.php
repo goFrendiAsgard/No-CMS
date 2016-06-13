@@ -123,12 +123,25 @@
                 }else{
                     $width_accumulator += $width_addition;
                 }
+
+                $form_field_box_class = '';
+                $input_box_class = '';
+                if($width_addition < 1){
+                    if($width_accumulator == $width_addition){
+                        //$input_box_class .= ' first-input-box';
+                        $form_field_box_class .= ' first-form-field-box';
+                    }
+                    if($width_accumulator >= 0.9 && $width_addition < 1){
+                        $form_field_box_class .= ' last-form-field-box';
+                        $input_box_class .= ' last-input-box';
+                    }
+                }
         ?>
-                    <div class='form-field-box form-group col-md-<?php echo $box_width; ?> <?php echo $even_odd; ?>' id="<?php echo $field->field_name; ?>_field_box">
-                        <label for="field-<?php echo $field->field_name; ?>" class='form-display-as-box col-md-<?php echo $label_width; ?>' id="<?php echo $field->field_name; ?>_display_as_box">
+                    <div class='form-field-box form-group col-xs-12 col-md-<?php echo $box_width; ?> <?php echo $even_odd; ?> <?php echo $form_field_box_class; ?>' id="<?php echo $field->field_name; ?>_field_box">
+                        <label for="field-<?php echo $field->field_name; ?>" class='form-display-as-box col-xs-12 col-md-<?php echo $label_width; ?>' id="<?php echo $field->field_name; ?>_display_as_box">
                             {{ language:<?php echo $input_fields[$field->field_name]->display_as; ?> }}<?php echo ($input_fields[$field->field_name]->required)? "<span class='required'>*</span> " : ""; ?>
                         </label>
-                        <div class='form-input-box col-md-<?php echo $input_width; ?>' id="<?php echo $field->field_name; ?>_input_box">
+                        <div class='form-input-box col-xs-12 col-md-<?php echo $input_width; ?> <?php echo $input_box_class; ?>' id="<?php echo $field->field_name; ?>_input_box">
                             <?php echo $input_fields[$field->field_name]->input?>
                         </div>
                     </div>
@@ -153,7 +166,7 @@
             <div id='report-error' class='report-div error alert alert-danger container col-md-12'></div>
             <div id='report-success' class='report-div success alert alert-success container col-md-12'></div>
         </div>
-        <div class="pDiv container col-md-12">
+        <div class="pDiv col-md-12">
             <div class='form-button-box'>
                 <input id="form-button-save" type='submit' value='<?php echo $this->l('form_save'); ?>'  class="btn btn-default btn-large"/>
             </div>

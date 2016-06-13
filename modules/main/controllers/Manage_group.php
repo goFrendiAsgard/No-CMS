@@ -134,6 +134,7 @@ class Manage_group extends CMS_Predefined_Callback_CRUD_Controller {
         //      $crud->field_type( $field_name , $field_type, $value  );
         ////////////////////////////////////////////////////////////////////////
         $crud->unset_texteditor('description');
+        $crud->set_field_half_width(array('group_user', 'group_navigation', 'group_privilege', 'group_widget'));
 
 
 

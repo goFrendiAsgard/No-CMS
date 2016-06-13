@@ -220,6 +220,8 @@ class Manage_article extends CMS_CRUD_Controller {
             $crud->field_type('publish_date', 'datetime');
         }
 
+        $crud->set_field_half_width(array('featured', 'allow_comment'));
+
 
 
         ////////////////////////////////////////////////////////////////////////
