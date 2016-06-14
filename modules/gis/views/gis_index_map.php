@@ -327,7 +327,7 @@
 			}); // end of search button click
 
 			// result_link
-			$('a.result_link').live('click',function(){
+			$('body').on('click', 'a.result_link',function(){
 				var longitude = $(this).parent().children('.result_longitude').val();
 				var latitude = $(this).parent().children('.result_latitude').val();
 				var newLocation = new L.LatLng(latitude, longitude);

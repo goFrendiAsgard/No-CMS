@@ -66,7 +66,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <p class="footer well row-fluid col-sm-12">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
     </div>
-    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery-1.11.1.min.js');?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/'.JQUERY_FILE_NAME);?>"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js');?>"></script>
 
 </body>

@@ -1,6 +1,6 @@
 // addition by gofrendi
 function __add_form_control_class(){
-    $('.flexigrid input[type!="button"][type!="checkbox"][type!="submit"], .flexigrid select[class!="multiselect"], .flexigrid textarea').each(function(){
+    $('.flexigrid input[type!="button"][type!="checkbox"][type!="radio"][type!="submit"], .flexigrid select[class!="multiselect"], .flexigrid textarea').each(function(){
         if(!$(this).hasClass('form-control')){
             $(this).addClass('form-control');
         }
@@ -212,7 +212,7 @@ $(document).ready(function(){
     $('.ui-helper-clearfix .selected ul, .ui-helper-clearfix .available ul').css('height','110px');
     // add & delete on detail table
     __mutate_add_icon();
-    $('.fbutton .add').live('click', function(){
+    $('body').on('click', '.fbutton .add', function(){
         __mutate_delete_icon();
     });
     $('.flexigrid tbody').bind("DOMSubtreeModified",function(){
@@ -222,6 +222,6 @@ $(document).ready(function(){
 $(document).ajaxComplete(function(){
     __add_form_control_class();
 });
-$(window).load(function(){
+$(window).on('load',function(){
     $('.connected-list').css('height', '75px');
 });

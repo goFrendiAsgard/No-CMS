@@ -531,6 +531,9 @@ switch (ERROR_REPORTING)
 	define('USE_ALIAS',         $USE_ALIAS);
 	define('T_SUBSITE',			$t_subsite);
 
+	// JQuery File name
+	define('JQUERY_FILE_NAME', 'jquery-3.0.0.min.js');
+
 	// No-CMS privilege constants
 	define('PRIV_EVERYONE',             1);
 	define('PRIV_NOT_AUTHENTICATED',    2);

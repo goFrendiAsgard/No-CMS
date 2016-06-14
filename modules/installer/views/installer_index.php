@@ -508,7 +508,7 @@
             </form>
         </div>
     </div>
-    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery-1.11.1.min.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/'.JQUERY_FILE_NAME); ?>"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js'); ?>"></script>
     <script type="text/javascript">
         var REQUEST;
@@ -586,7 +586,7 @@
         });
 
         // from error message
-        $(".a-change-tab").live('click', function(){
+        $('body').on('click', '.a-change-tab', function(){
             var tab = $(this).attr('tab');
             var component = $(this).attr('component');
             $("ul.nav-tabs li").removeClass('active');

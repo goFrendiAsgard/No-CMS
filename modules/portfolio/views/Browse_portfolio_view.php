@@ -105,7 +105,7 @@
         adjust_load_more_button();
 
         // delete click
-        $('.delete_record').live('click',function(){
+        $('body').on('click', '.delete_record',function(){
             var url = $(this).attr('href');
             var primary_key = $(this).attr('primary_key');
             if (confirm("Do you really want to delete?")) {

@@ -29,6 +29,6 @@
             }
         ?>
     </div>
-    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/jquery-1.11.1.min.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('assets/grocery_crud/js/'.JQUERY_FILE_NAME); ?>"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/bootstrap/js/bootstrap.min.js'); ?>"></script>
 </body>

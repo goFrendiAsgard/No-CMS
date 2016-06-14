@@ -136,7 +136,7 @@ v0.6.6
 + (done, tested) Secure comment
 + (done, tested) Blog writer (which is not super admin) can only edit/delete his own article
 + (done, tested) working `overflow-x` and smaller `chzn-results`
-+ (done, tested) fix hardcoded sql that contain ```
++ (done, tested) fix hardcoded sql
 + (done, tested) Fix layout for small device.
 + (done, tested) Fix bug: when screen resized to smaller width, the button cannot be clicked
 + (done, tested) Use newest CodeIgniter 3.0.0 and modify the rule so that the old naming convention still works (Thanks Ivan)
@@ -178,7 +178,7 @@ v0.7.0
 + (done, tested) Subsite activation also works for user activation by mail.
 + (done, tested) Fix "template" for relation_field_title
 + (done, tested) Now "one-to-many" can has "datetime"
-+ (done, tested) Replace ":" with "_" for database backup file name
++ (done, tested) Replace ":" with `_` for database backup file name
 + (done, tested) Fix subquery, add parantheses for search_where in `Extended_Grocery_CRUD.php`
 + (done, tested) Fix twitter authentication by ask email manually.
 + (done, tested) Add missing `event` parameter, so that dropdown menu is also works in firefox.
@@ -207,7 +207,7 @@ v0.7.3
 + (done, tested) new mechanism for master-detail
 + (done, tested) add search module and theme capability
 
-v1.0.0 (inner: 0.7.5)
+v1.0.0
 + (done, tested) Using CI 3
 + (done, tested) New module mechanism, reduce AJAX and unnecessary queries.
 + (done, tested) Route management
@@ -216,3 +216,13 @@ v1.0.0 (inner: 0.7.5)
 + (done, tested) Create routes for blog to make url cleaner
 + (done, tested) Add caption to blog's photo
 + (done, tested) Add moderation setting
+
+v1.1.1
++ (done, tested) Using CI 3.0.6
++ (done, tested) Using Jquery 3.0.0
++ (done, tested) Using Grocery-CRUD 1.5.5
++ (done, tested) Better nordrassil
++ (done, tested) Add `edit anywhere`
++ (done, tested) Separated Layout and themes
++ (done, tested) New profiler
++ (done, tested) Better unit-test

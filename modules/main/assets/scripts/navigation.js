@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	// grid, toggle active/inactive
-	$(".navigation_active").live('click', function(event){
+	$('body').on('click', '.navigation_active', function(event){
         event.preventDefault();
         var $this = $(this);
 		var str = $this.children('span').html();
@@ -22,7 +22,7 @@ $(document).ready(function(){
 	// remove sorting
     $('.field-sorting').removeClass('field-sorting');
 	// expand or collapse
-	$(".expand-collapse-children").live('click', function(event){
+	$('body').on('click', '.expand-collapse-children', function(event){
 	    event.preventDefault();
 	    var target = $(this).attr('target');
         $('#child-'+target).toggle();

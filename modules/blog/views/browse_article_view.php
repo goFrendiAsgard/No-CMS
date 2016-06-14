@@ -461,7 +461,7 @@
         });
 
         // delete click
-        $('.delete_record').live('click',function(){
+        $('body').on('click', '.delete_record',function(){
             var url = $(this).attr('href');
             var primary_key = $(this).attr('primary_key');
             if (confirm("Do you really want to delete?")) {
@@ -546,7 +546,7 @@
         });
 
         // big photo
-        $('.photo_link').live('click', function(event){
+        $('body').on('click', '.photo_link', function(event){
             var img = $(this).attr('img');
             var photo_id = $(this).attr('photo_id');
             var caption = $('#photo_caption_'+photo_id).html();

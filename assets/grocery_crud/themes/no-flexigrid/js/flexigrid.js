@@ -267,7 +267,7 @@ function displaying_and_pages(this_container)
 
 // addition by gofrendi
 function add_form_control_class(){
-    $('.flexigrid input[type!="button"][type!="checkbox"], .flexigrid select').addClass('form-control');
+    $('.flexigrid input[type!="button"][type!="checkbox"][type!="radio"], .flexigrid select').addClass('form-control');
     $('#crud_search').removeClass('form-control');
 }
 $(document).ready(function(){

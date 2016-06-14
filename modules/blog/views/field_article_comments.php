@@ -177,7 +177,7 @@
         /////////////////////////////////////////////////////////////////////////////
         // md_field_comments_delete.click (Delete row)
         /////////////////////////////////////////////////////////////////////////////
-        $('.md_field_comments_delete').live('click', function(){
+        $('body').on('click', '.md_field_comments_delete', function(){
             var record_index = $(this).attr('record_index');
             // remove the component
             $('#md_field_comments_tr_'+record_index).remove();

@@ -227,7 +227,7 @@
         });
 
         // from error message
-        $(".a-change-tab").live('click', function(){
+        $('body').on('click', '.a-change-tab', function(){
             var tab = $(this).attr('tab');
             var component = $(this).attr('component');
             $("ul.nav-tabs li").removeClass('active');

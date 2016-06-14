@@ -16,7 +16,7 @@
  * @package    	grocery CRUD
  * @copyright  	Copyright (c) 2010 through 2014, John Skoumbourdis
  * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
- * @version    	1.5.2
+ * @version    	1.5.4
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -468,22 +468,22 @@ class grocery_CRUD_Field_Types
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.5.2
+ * @version    	1.5.4
  * @link		http://www.grocerycrud.com/documentation
  */
 class grocery_CRUD_Model_Driver extends grocery_CRUD_Field_Types
 {
 	/**
-	 * @var grocery_CRUD_Model
+	 * @var Grocery_crud_model
 	 */
 	public $basic_model = null;
 
 	protected function set_default_Model()
 	{
 		$ci = &get_instance();
-		$ci->load->model('grocery_CRUD_Model');
+		$ci->load->model('Grocery_crud_model');
 
-		$this->basic_model = new grocery_CRUD_Model();
+		$this->basic_model = new Grocery_crud_model();
 	}
 
 	protected function get_total_results()
@@ -536,7 +536,7 @@ class grocery_CRUD_Model_Driver extends grocery_CRUD_Field_Types
 	public function set_model($model_name)
 	{
 		$ci = &get_instance();
-		$ci->load->model('grocery_CRUD_Model');
+		$ci->load->model('Grocery_crud_model');
 
 		$ci->load->model($model_name);
 
@@ -823,7 +823,6 @@ class grocery_CRUD_Model_Driver extends grocery_CRUD_Field_Types
 					$row = $this->basic_model->get_row();
 
 					if(!isset($row->$field_name)) {
-						log_message('error', print_r($row, TRUE));
 						throw new Exception("The field name doesn't exist in the database. ".
 								 			"Please use the unique fields only for fields ".
 											"that exist in the database");
@@ -1518,7 +1517,7 @@ class grocery_CRUD_Model_Driver extends grocery_CRUD_Field_Types
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.5.2
+ * @version    	1.5.4
  */
 class grocery_CRUD_Layout extends grocery_CRUD_Model_Driver
 {
@@ -1952,10 +1951,10 @@ class grocery_CRUD_Layout extends grocery_CRUD_Model_Driver
 			if(!$this->unset_back_to_list && !$this->_is_ajax())
 			{
 				$success_message .= " <a href='".$this->getListUrl()."'>".$this->l('form_go_back_to_list')."</a>";
-
 			}
 
 			$success_message .= '</p>';
+
 			echo json_encode(array(
 					'success' => true ,
 					'insert_primary_key' => $insert_result,
@@ -2192,21 +2191,25 @@ class grocery_CRUD_Layout extends grocery_CRUD_Model_Driver
 
 	protected function get_true_false_input($field_info,$value)
 	{
-		$this->set_css($this->default_css_path.'/jquery_plugins/uniform/uniform.default.css');
-		$this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery.uniform.min.js');
-		$this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.uniform.config.js');
-
 		$value_is_null = empty($value) && $value !== '0' && $value !== 0 ? true : false;
 
 		$input = "<div class='pretty-radio-buttons'>";
 
 		$true_string = is_array($field_info->extras) && array_key_exists(1,$field_info->extras) ? $field_info->extras[1] : $this->default_true_false_text[1];
 		$checked = $value === '1' || ($value_is_null && $field_info->default === '1') ? "checked = 'checked'" : "";
-		$input .= "<label><input id='field-{$field_info->name}-true' class='radio-uniform'  type='radio' name='{$field_info->name}' value='1' $checked /> ".$true_string."</label> ";
+		$input .=
+			"<div class=\"radio\"><label>
+				<input id='field-{$field_info->name}-true' type=\"radio\" name=\"{$field_info->name}\" value=\"1\" $checked />
+				$true_string
+			 </label> </div>";
 
 		$false_string =  is_array($field_info->extras) && array_key_exists(0,$field_info->extras) ? $field_info->extras[0] : $this->default_true_false_text[0];
 		$checked = $value === '0' || ($value_is_null && $field_info->default === '0') ? "checked = 'checked'" : "";
-		$input .= "<label><input id='field-{$field_info->name}-false' class='radio-uniform' type='radio' name='{$field_info->name}' value='0' $checked /> ".$false_string."</label>";
+		$input .=
+			"<div class=\"radio\"><label>
+				<input id='field-{$field_info->name}-false' type=\"radio\" name=\"{$field_info->name}\" value=\"0\" $checked />
+				$false_string
+			 </label> </div>";
 
 		$input .= "</div>";
 
@@ -2978,7 +2981,7 @@ class grocery_CRUD_Layout extends grocery_CRUD_Model_Driver
  *
  * @package    	grocery CRUD
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
- * @version    	1.5.2
+ * @version    	1.5.4
  */
 class grocery_CRUD_States extends grocery_CRUD_Layout
 {
@@ -3407,7 +3410,7 @@ class grocery_CRUD_States extends grocery_CRUD_Layout
  * @package    	grocery CRUD
  * @copyright  	Copyright (c) 2010 through 2014, John Skoumbourdis
  * @license    	https://github.com/scoumbourdis/grocery-crud/blob/master/license-grocery-crud.txt
- * @version    	1.5.2
+ * @version    	1.5.4
  * @author     	John Skoumbourdis <scoumbourdisj@gmail.com>
  */
 
@@ -3430,9 +3433,10 @@ class Grocery_CRUD extends grocery_CRUD_States
 	 *
 	 * @var	string
 	 */
-	const	VERSION = "1.5.2";
+	const	VERSION = "1.5.4";
 
-	const	JQUERY 			= "jquery-1.11.1.min.js";
+	//const	JQUERY 			= "jquery-1.11.1.min.js";
+	const 	JQUERY 			= JQUERY_FILE_NAME;
 	const	JQUERY_UI_JS 	= "jquery-ui-1.10.3.custom.min.js";
 	const	JQUERY_UI_CSS 	= "jquery-ui-1.10.1.custom.min.css";
 
@@ -4597,6 +4601,7 @@ class Grocery_CRUD extends grocery_CRUD_States
 			case 9://insert_validation
 
 				$validation_result = $this->db_insert_validation();
+
 				$this->validation_layout($validation_result);
 			break;
 

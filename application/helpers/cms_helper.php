@@ -420,7 +420,7 @@ function build_md_event_script($md_key, $insert_url, $update_url, $allow_delete 
 
 
             // DELETE EVENT
-            $(\'.md_field_'.$md_key.'_delete\').live(\'click\', function(){
+            $(\'body\').on(\'click\', \'.md_field_'.$md_key.'_delete\', function(){
                 var record_index = $(this).attr(\'record_index\');
                 // remove the component
                 $(\'#md_field_'.$md_key.'_tr_\'+record_index).remove();
@@ -455,7 +455,7 @@ function build_md_event_script($md_key, $insert_url, $update_url, $allow_delete 
 
 
             // CHANGE EVENT
-            $(\'.md_field_'.$md_key.'_col\').live(\'change\', function(){
+            $(\'body\').on(\'change\', \'.md_field_'.$md_key.'_col\', function(){
                 var value = $(this).val();
                 var column_name = $(this).attr(\'column_name\');
                 var record_index = $(this).attr(\'record_index\');

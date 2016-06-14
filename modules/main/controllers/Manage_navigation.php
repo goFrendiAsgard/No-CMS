@@ -438,11 +438,11 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         }
         $html = '<div class="pretty-radio-buttons">
             <label>
-                <input id="field-add_to_quicklink-true" class="radio-uniform form-control" type="radio" name="quicklink" value="1" '.$active_checked.'>
+                <input id="field-add_to_quicklink-true" class="radio-uniform" type="radio" name="quicklink" value="1" '.$active_checked.'>
                 active
             </label>
             <label>
-                <input id="field-add_to_quicklink-false" class="radio-uniform form-control" type="radio" name="quicklink" value="0" '.$inactive_checked.'>
+                <input id="field-add_to_quicklink-false" class="radio-uniform" type="radio" name="quicklink" value="0" '.$inactive_checked.'>
                 inactive
             </label>
         </div>';

@@ -16,12 +16,12 @@ echo $output;
     });
 
     // CHECK ALL
-    $('.checkall').live('click', function(){
+    $('body').on('click', '.checkall', function(){
         $(this).parents('table:eq(0)').find(':checkbox').attr('checked', this.checked);
     });
 
     // DELETE ALL
-    $('.delete_all_button').live('click', function(event){
+    $('body').on('click', '.delete_all_button', function(event){
         event.preventDefault();
         var list = new Array();
         $('input[type=checkbox]').each(function() {

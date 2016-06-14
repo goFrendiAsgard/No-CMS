@@ -62,7 +62,7 @@
         return actions;
     }
 
-    $(".save-on-click").live('click', function(event){
+    $('body').on('click', '.save-on-click', function(event){
         $("#form-button-save").trigger('click');
     });
 

@@ -222,7 +222,7 @@
         /////////////////////////////////////////////////////////////////////////////
         // md_field_photos_delete.click (Delete row)
         /////////////////////////////////////////////////////////////////////////////
-        $('.md_field_photos_delete').live('click', function(){
+        $('body').on('click', '.md_field_photos_delete', function(){
             var record_index = $(this).attr('record_index');
             // remove the component
             $('#md_field_photos_tr_'+record_index).remove();
@@ -259,7 +259,7 @@
         /////////////////////////////////////////////////////////////////////////////
         // md_field_photos_col.change (Edit cell)
         /////////////////////////////////////////////////////////////////////////////
-        $('.md_field_photos_col').live('change', function(){
+        $('body').on('change', '.md_field_photos_col', function(){
             var value = $(this).val();
             var old_value = null;
             var column_name = $(this).attr('column_name');

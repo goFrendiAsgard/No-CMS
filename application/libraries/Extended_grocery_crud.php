@@ -752,9 +752,6 @@ class Extended_grocery_crud extends Grocery_CRUD{
 
     protected function get_true_false_input($field_info,$value)
     {
-        $this->set_css($this->default_css_path.'/jquery_plugins/uniform/uniform.default.css');
-        $this->set_js_lib($this->default_javascript_path.'/jquery_plugins/jquery.uniform.min.js');
-        $this->set_js_config($this->default_javascript_path.'/jquery_plugins/config/jquery.uniform.config.js');
 
         $value_is_null = empty($value) && $value !== '0' && $value !== 0 ? true : false;
 

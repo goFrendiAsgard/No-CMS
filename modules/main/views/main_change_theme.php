@@ -87,7 +87,7 @@
         __adjust_component('.thumbnail div.caption');
     }
 
-    $(window).load(function(){
+    $(window).on('load', function(){
         adjust_thumbnail();
     });
     $(window).resize(function(){

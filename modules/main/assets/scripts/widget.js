@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$(".widget_active").live('click', function(event){
+	$('body').on('click', '.widget_active', function(event){
         event.preventDefault();
         var $this = $(this);
 	    var str = $this.children('span').html();
