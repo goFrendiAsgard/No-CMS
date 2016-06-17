@@ -213,7 +213,7 @@ class CMS_Controller extends MX_Controller
                 __adjust_component(".thumbnail_submenu div.caption");
                 __adjust_component(".thumbnail_submenu");
             }
-            $(window).on(\'load\',(function(){
+            $(window).on(\'load\', function(){
                 __adjust_thumbnail_submenu();
                 // resize
                 $(window).resize(function(){
@@ -271,7 +271,7 @@ class CMS_Controller extends MX_Controller
                 $badge_id = '__cms_notif_submenu_screen_'.$navigation_id;
                 $badge = '&nbsp;<span id="'.$badge_id.'" class="badge"></span>';
                 $badge .= '<script type="text/javascript">
-                        $(window).on(\'load\',(function(){
+                        $(window).on(\'load\', function(){
                             setInterval(function(){
                                 $.ajax({
                                     dataType:"json",
