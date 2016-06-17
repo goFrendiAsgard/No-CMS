@@ -214,7 +214,8 @@ class Manage_slide extends CMS_CRUD_Controller {
 
 
     public function _after_insert_or_update($post_array, $primary_key){
-
+        $this->load->model($this->cms_module_path().'/slide_model');
+        $this->slide_model->adjust_widget();
         return TRUE;
     }
 

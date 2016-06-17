@@ -30,4 +30,12 @@ class Slide_model extends CMS_Model{
         }
         return $slug_list;
     }
+
+    public function adjust_widget(){
+        foreach($this->get_slug() as $slug){
+            $url = $this->cms_module_path().'/static_accessories_widget/slide/'.$slug;
+            $widget_name = $this->n('slideshow_'.$slug);
+            $this->cms_add_widget_if_not_exists($widget_name, 'Slide '.$slug, 1, $url, NULL, NULL, NULL);
+        }
+    }
 }

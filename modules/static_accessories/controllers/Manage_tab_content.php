@@ -171,7 +171,8 @@ class Manage_tab_content extends CMS_CRUD_Controller {
 
 
     public function _after_insert_or_update($post_array, $primary_key){
-
+        $this->load->model($this->cms_module_path().'/tab_model');
+        $this->tab_model->adjust_widget();
         return TRUE;
     }
 
