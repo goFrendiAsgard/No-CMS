@@ -806,7 +806,10 @@ class CMS_Model extends CI_Model
         $pp_part = explode('/', $pp);
         $file_name = $pp_part[count($pp_part)-1];
         $new_pp_path = $pp.'_dir';
-        mkdir($new_pp_path);
+        // make pp path
+        if(!file_exists($new_pp_path)){
+            mkdir($new_pp_path);
+        }
         $new_pp = $new_pp_path.'/'.$resolution.'_'.$file_name;
         return $new_pp;
     }

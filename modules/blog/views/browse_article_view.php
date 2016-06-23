@@ -49,20 +49,25 @@
         min-height: 75px!important;
         margin-top: 10px!important;
     }
-    .photo_thumbnail{
+    .photo_thumbnail, .photo_more{
         width : 150px;
         height : 75px;
+        margin:5px;
+        display:inline-block;
+    }
+    .photo_thumbnail{
         background-color : black;
         background-repeat : no-repeat;
         background-position:center;
-        margin:5px;
-        display:inline-block;
     }
     .small_photo{
         text-align:center;
     }
     .photo_caption{
         display:none;
+    }
+    .photo_link{
+        display:inline-block;
     }
 </style>
 
@@ -79,11 +84,12 @@
         <div class="modal-content" style="width:100%!important;">
             <div class="modal-header">
                 <button style="padding:5px;" type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 id="chat-status-title" class="modal-title">Image</h4>
+                <h4 id="photo-modal-title" class="modal-title" style="display:inline-block;">Image</h4>
+                <button id="btn-prev-photo" class="btn btn-default" style="padding:5px">&lt;</button>
+                <button id="btn-next-photo" class="btn btn-default" style="padding:5px">&gt;</button>
+                <div style="clear:both"></div>
             </div>
-            <div id="photo-modal-body" class="modal-body">
-                <p>Requests</p>
-            </div>
+            <div id="photo-modal-body" class="modal-body"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
@@ -165,11 +171,15 @@
             if(count($article['photos'])>0){
                 // photos
                 echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';
+                $index = 0;
                 foreach($article['photos'] as $photo){
-                    echo '<a data-toggle="modal" data-target="#photo-modal" class="photo_link" photo_id="'.$photo['id'].'" img="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'" href="#">';
+                    $is_first = $index == 0 ? 1 : 0;
+                    $is_last = $index == (count($article['photos'])-1) ? 1 : 0;
+                    echo '<a data-toggle="modal" data-target="#photo-modal" class="photo_link" article_id="'.$article['id'].'" index="'.$index.'" photo_id="'.$photo['id'].'" img="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'" is_first="'.$is_first.'" is_last="'.$is_last.'" href="#">';
                     echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
                     echo '<div id="photo_caption_'.$photo['id'].'" class="photo_caption">'.$photo['caption'].'</div>';
                     echo '</a>';
+                    $index++;
                 }
                 echo '</div>';
             }
@@ -546,16 +556,45 @@
         });
 
         // big photo
-        $('body').on('click', '.photo_link', function(event){
-            var img = $(this).attr('img');
-            var photo_id = $(this).attr('photo_id');
+        var _PREV_PHOTO_COMPONENT = null;
+        var _NEXT_PHOTO_COMPONENT = null;
+        function _load_photo_by_link($component){
+            var img = $component.attr('img');
+            var photo_id = $component.attr('photo_id');
             var caption = $('#photo_caption_'+photo_id).html();
+            var photo_index = parseInt($component.attr('index'));
+            var title = '{{ language: Image }} #' + (photo_index+1);
+            var article_id = $component.attr('article_id');
+            var is_first = $component.attr('is_first') == '1';
+            var is_last = $component.attr('is_last') == '1';
+            // set next photo component and prev photo component
+            if(is_last){
+                _NEXT_PHOTO_COMPONENT = $('.photo_link[article_id='+article_id+'][is_first=1]');
+            }else{
+                _NEXT_PHOTO_COMPONENT = $('.photo_link[article_id='+article_id+'][index='+(photo_index+1)+']');
+            }
+            if(is_first){
+                _PREV_PHOTO_COMPONENT = $('.photo_link[article_id='+article_id+'][is_last=1]');
+            }else{
+                _PREV_PHOTO_COMPONENT = $('.photo_link[article_id='+article_id+'][index='+(photo_index-1)+']');
+            }
+            $('#photo-modal-title').html(title);
             $('#photo-modal-body').html('<div style="text-align:center">'+
                 '<img style="max-width:100%;" src="'+img+'" />'+
                 '</div>'+
                 '<div style="margin-top:20px;" class="col-xs-12">'+caption+'</div><div style="clear:both;"></div>');
+        }
+        // photo_link.click
+        $('body').on('click', '.photo_link', function(event){
+            _load_photo_by_link($(this));
         });
-
+        // prev and next
+        $('#btn-prev-photo').click(function(){
+            _load_photo_by_link(_PREV_PHOTO_COMPONENT);
+        });
+        $('#btn-next-photo').click(function(){
+            _load_photo_by_link(_NEXT_PHOTO_COMPONENT);
+        });
     });
 
 </script>

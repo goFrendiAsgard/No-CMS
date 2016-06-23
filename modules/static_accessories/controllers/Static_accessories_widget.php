@@ -23,6 +23,15 @@ class Static_accessories_widget extends CMS_Controller {
             // get config
             if($config_value === NULL){
                 $config_value = $this->cms_get_config('static_accessories_'.$configuration);
+                // default value
+                if($configuration == 'slide_height'){
+                    if($config_value == NULL || trim($config_value) == ''){
+                        $config_value = 400;
+                    }
+                    if(is_numeric($config_value)){
+                        $config_value .= 'px';
+                    }
+                }
             }
             $data[$configuration] = $config_value;
         }

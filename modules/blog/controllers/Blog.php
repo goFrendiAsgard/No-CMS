@@ -178,8 +178,14 @@ class Blog extends CMS_Secure_Controller {
         // get data from model
         $this->load->model($this->cms_module_path().'/article_model');
         $result = $this->article_model->get_articles($page, $limit, $category, $archive, $keyword);
+        // get max slid image from configuration. The default is 6
+        $blog_max_slide_image = $this->cms_get_config('blog_max_slide_image');
+        if(!is_numeric($blog_max_slide_image) || $blog_max_slide_image < 0){
+            $blog_max_slide_image = 6;
+        }
         $data = array(
             'articles'=>$result,
+            'blog_max_slide_image' => $blog_max_slide_image,
             'allow_navigate_backend' => $this->cms_allow_navigate($this->n('manage_article')),
             'backend_url' => site_url($this->cms_module_path().'/manage_article/index'),
             'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),

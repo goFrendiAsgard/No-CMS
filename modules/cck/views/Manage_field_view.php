@@ -1,6 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 echo $output;
 ?>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/ace.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/theme-eclipse.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/mode-html.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/jquery-ace.min.js"></script>
 <script type="text/javascript">
     $(document).ajaxComplete(function () {
         //ADD COMPONENTS
@@ -45,7 +49,33 @@ echo $output;
     });
 
     $(document).ready(function(){
-        // TODO: Put your custom code here
+        // field input
+        $("#field-input").ace({
+            theme: "eclipse",
+            lang: "html",
+            width: "100%",
+            height: "150px"
+        });
+        var decorator = $("#field-input").data("ace");
+        if(typeof(decorator) != 'undefined'){
+            var aceInstance = decorator.editor.ace;
+            aceInstance.setFontSize("16px");
+        }
+
+        // field view
+        $("#field-view").ace({
+            theme: "eclipse",
+            lang: "html",
+            width: "100%",
+            height: "150px"
+        });
+        var decorator = $("#field-view").data("ace");
+        if(typeof(decorator) != 'undefined'){
+            var aceInstance = decorator.editor.ace;
+            aceInstance.setFontSize("16px");
+        }
+
+        // Adjust breadcrumb
         $('.breadcrumb a').each(function(){
             if($(this).attr('href') == '{{ module_site_url }}manage_field'){
                 $(this).attr('href', '{{ module_site_url }}manage_field/index/<?php echo $id_entity; ?>');

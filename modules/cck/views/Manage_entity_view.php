@@ -1,6 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 echo $output;
 ?>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/ace.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/theme-eclipse.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/mode-html.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/jquery-ace.min.js"></script>
 <script type="text/javascript">
     $(document).ajaxComplete(function () {
         //ADD COMPONENTS
@@ -45,6 +49,19 @@ echo $output;
     });
 
     $(document).ready(function(){
+        // field per_record_html
+        $("#field-per_record_html").ace({
+            theme: "eclipse",
+            lang: "html",
+            width: "100%",
+            height: "150px"
+        });
+        var decorator = $("#field-per_record_html").data("ace");
+        if(typeof(decorator) != 'undefined'){
+            var aceInstance = decorator.editor.ace;
+            aceInstance.setFontSize("16px");
+        }
+
         // define verb_list and call adjust_authorization_input
         var authorization_verb_list = ['browse', 'view', 'add', 'edit', 'delete'];
         // define event

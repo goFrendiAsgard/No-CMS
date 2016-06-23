@@ -109,7 +109,8 @@ class Info extends CMS_Module {
     // CONFIGURATIONS
     //////////////////////////////////////////////////////////////////////////////
     protected $CONFIGS = array(
-            array('config_name' => 'blog_moderation', 'value' => 'FALSE')
+            array('config_name' => 'blog_moderation', 'value' => 'FALSE'),
+            array('config_name' => 'blog_max_slide_image', 'value' => 6),
         );
 
     //////////////////////////////////////////////////////////////////////////////

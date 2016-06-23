@@ -551,7 +551,7 @@ class CMS_Module extends CMS_Controller
                 for($i=0; $i<count($data); $i++){
                     foreach($data[$i] as $data_key=>$data_value){
                         if(is_string($data_value)){
-                            $data_value = str_replace(array('\n', '\r\n', '\n\r'), PHP_EOL, $data_value);
+                            $data_value = str_replace(array('\\n', '\\r\\n', '\\n\\r'), PHP_EOL, $data_value);
                             $data[$i][$data_key] = $data_value;
                         }
                     }
