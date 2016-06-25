@@ -48,6 +48,9 @@ echo $output;
         // TODO: Put your custom code here
     });
 
+    var INPUT_CHANGED_BY_SYSTEM = false;
+    var VIEW_CHANGED_BY_SYSTEM = false;
+
     $(document).ready(function(){
         // field input
         $("#field-input").ace({
@@ -60,6 +63,19 @@ echo $output;
         if(typeof(decorator) != 'undefined'){
             var aceInstance = decorator.editor.ace;
             aceInstance.setFontSize("16px");
+            aceInstance.getSession().on('change', function() {
+                if(INPUT_CHANGED_BY_SYSTEM){ // not changed by user, probably AJAX CALL etc
+                    return true;
+                }
+                if($('#field-input').val() == ''){
+                    $('#field-custom_input').val('FALSE');
+                    $('#input_changing_status').show();
+                    set_input_to_default();
+                }else{
+                    $('#field-custom_input').val('TRUE');
+                    $('#input_changing_status').hide();
+                }
+            });
         }
 
         // field view
@@ -73,6 +89,19 @@ echo $output;
         if(typeof(decorator) != 'undefined'){
             var aceInstance = decorator.editor.ace;
             aceInstance.setFontSize("16px");
+            aceInstance.getSession().on('change', function() {
+                if(VIEW_CHANGED_BY_SYSTEM){ // not changed by user, probably AJAX CALL etc
+                    return true;
+                }
+                if($('#field-view').val() == ''){
+                    $('#field-custom_view').val('FALSE');
+                    $('#view_changing_status').show();
+                    set_view_to_default();
+                }else{
+                    $('#field-custom_view').val('TRUE');
+                    $('#view_changing_status').hide();
+                }
+            });
         }
 
         // Adjust breadcrumb
@@ -82,4 +111,22 @@ echo $output;
             }
         });
     });
+
+    /*
+    function set_per_record_html_to_default(){
+        PER_RECORD_HTML_CHANGED_BY_SYSTEM = true;
+        $.ajax({
+            'url' : '{{ module_site_url }}ajax/default_per_record_html_pattern/'+ID_ENTITY,
+            'success' : function(response){
+                var decorator = $("#field-per_record_html").data("ace");
+                if(typeof(decorator) != 'undefined'){
+                    var aceInstance = decorator.editor.ace;
+                    PER_RECORD_HTML_CHANGED_BY_SYSTEM = true; // this to avoid infinite recursive caused by onchange event
+                    aceInstance.session.setValue(response);
+                    PER_RECORD_HTML_CHANGED_BY_SYSTEM = false;
+                }
+            }
+        });
+    }
+    */
 </script>

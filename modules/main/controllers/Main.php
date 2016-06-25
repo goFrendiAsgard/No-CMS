@@ -493,12 +493,14 @@ class Main extends CMS_Controller
         $profile_picture = $row->profile_picture;
 
         //set validation rule
+        $success = TRUE;
         $this->form_validation->set_rules('email', 'E mail', 'required|valid_email');
         $this->form_validation->set_rules('real_name', 'Real Name', 'required');
-        $this->form_validation->set_rules('password', 'Password', 'matches[confirm_password]');
-        $this->form_validation->set_rules('confirm_password', 'Password Confirmation');
+        if(!$this->form_validation->run() || $password != $confirm_password){
+            $success = FALSE;
+        }
 
-        if ($this->form_validation->run()) {
+        if ($success) {
             if(isset($_FILES['profile_picture'])){
                 try{
                     // profile picture

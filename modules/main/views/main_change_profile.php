@@ -25,7 +25,7 @@ echo $asset->compile_js();
         var email =  $('input[name="email"]').val();
         var password = $('input[name="password"]').val();
         var confirm_password = $('input[name="confirm_password"]').val();
-        var change_password_checked = $('input[name="change_password"]').attr("checked")=='checked';
+        var change_password_checked = $('input[name="change_password"]:checked').length > 0;
         $("#img_ajax_loader").show();
         if(REQUEST_EXISTS){
         	REQUEST.abort();

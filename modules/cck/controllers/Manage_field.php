@@ -9,7 +9,7 @@ class Manage_field extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'field';
-    protected $COLUMN_NAMES = array('name', 'id_template', 'id_entity', 'input', 'view', 'shown_on_add', 'shown_on_edit', 'shown_on_delete', 'option');
+    protected $COLUMN_NAMES = array('name', 'id_template', 'id_entity', 'input', 'view', 'shown_on_add', 'shown_on_edit', 'shown_on_view', 'option', 'custom_input', 'custom_view');
     protected $PRIMARY_KEY = 'id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -56,7 +56,7 @@ class Manage_field extends CMS_CRUD_Controller {
         $crud->display_as('view','View');
         $crud->display_as('shown_on_add','Shown On Add');
         $crud->display_as('shown_on_edit','Shown On Edit');
-        $crud->display_as('shown_on_delete','Shown On Delete');
+        $crud->display_as('shown_on_view','Shown On View');
         $crud->display_as('option','Option');
 
         ////////////////////////////////////////////////////////////////////////
@@ -133,9 +133,25 @@ class Manage_field extends CMS_CRUD_Controller {
         ////////////////////////////////////////////////////////////////////////
         $crud->field_type('shown_on_add', 'true_false');
         $crud->field_type('shown_on_edit', 'true_false');
-        $crud->field_type('shown_on_delete', 'true_false');
+        $crud->field_type('shown_on_view', 'true_false');
         $crud->unset_texteditor('input');
         $crud->unset_texteditor('view');
+
+        $custom_input = 'FALSE';
+        $custom_view = 'FALSE';
+        if($this->PK_VALUE > 0){
+            $current_field = $this->cms_get_record($this->t('field'), 'id', $this->PK_VALUE);
+            if($current_field != NULL ){
+                if(trim($current_field->custom_input) != ''){
+                    $custom_input = 'TRUE';
+                }
+                if(trim($current_field->custom_view) != ''){
+                    $custom_view = 'TRUE';
+                }
+            }
+        }
+        $crud->field_type('custom_input', 'hidden', $custom_input);
+        $crud->field_type('custom_view', 'hidden', $custom_view);
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -148,7 +164,7 @@ class Manage_field extends CMS_CRUD_Controller {
         //     ));
         ////////////////////////////////////////////////////////////////////////
 
-        $crud->set_field_one_third_width(array('shown_on_add', 'shown_on_edit', 'shown_on_delete'));
+        $crud->set_field_one_third_width(array('shown_on_add', 'shown_on_edit', 'shown_on_view'));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)

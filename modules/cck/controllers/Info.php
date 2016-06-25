@@ -155,7 +155,7 @@ class Info extends CMS_Module {
                 'view'                 => array("type" => 'text',       "null" => TRUE),
                 'shown_on_add'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
                 'shown_on_edit'        => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
-                'shown_on_delete'      => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
+                'shown_on_view'        => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
                 'option'               => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
             ),
         ),
