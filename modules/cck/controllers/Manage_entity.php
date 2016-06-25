@@ -21,6 +21,11 @@ class Manage_entity extends CMS_CRUD_Controller {
     protected $UNSET_PRINT = FALSE;
     protected $UNSET_EXPORT = FALSE;
 
+    public function __construct(){
+        parent::__construct();
+        $this->load->model($this->cms_module_path().'/cck_model');
+    }
+
     protected function make_crud(){
         $crud = parent::make_crud();
 
@@ -288,6 +293,14 @@ class Manage_entity extends CMS_CRUD_Controller {
     }
 
     public function _before_insert_or_update($post_array, $primary_key=NULL){
+        // if per_per_record_html is equal to the default then no changes should be done
+        if($post_array['custom_per_record_html'] == 'TRUE'){
+            $per_record_html = $post_array['per_record_html'];
+            $default_pattern = $this->cck_model->get_default_per_record_html_pattern($primary_key);
+            if($this->cck_model->remove_white_spaces($per_record_html) == $this->cck_model->remove_white_spaces($default_pattern)){
+                $post_array['per_record_html'] = '';
+            }
+        }
         return $post_array;
     }
 

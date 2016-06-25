@@ -21,6 +21,11 @@ class Manage_field extends CMS_CRUD_Controller {
     protected $UNSET_PRINT = FALSE;
     protected $UNSET_EXPORT = FALSE;
 
+    public function __construct(){
+        parent::__construct();
+        $this->load->model($this->cms_module_path().'/cck_model');
+    }
+
     protected function make_crud($id_entity = NULL){
         $crud = parent::make_crud();
 
@@ -141,11 +146,12 @@ class Manage_field extends CMS_CRUD_Controller {
         $custom_view = 'FALSE';
         if($this->PK_VALUE > 0){
             $current_field = $this->cms_get_record($this->t('field'), 'id', $this->PK_VALUE);
+            log_message('error', print_r($current_field, TRUE));
             if($current_field != NULL ){
-                if(trim($current_field->custom_input) != ''){
+                if(trim($current_field->input) != ''){
                     $custom_input = 'TRUE';
                 }
-                if(trim($current_field->custom_view) != ''){
+                if(trim($current_field->view) != ''){
                     $custom_view = 'TRUE';
                 }
             }
@@ -279,6 +285,23 @@ class Manage_field extends CMS_CRUD_Controller {
     }
 
     public function _before_insert_or_update($post_array, $primary_key=NULL){
+        log_message('error', print_r(array($post_array), TRUE));
+        // if view is equal to the default then no changes should be done
+        if($post_array['custom_view'] == 'TRUE'){
+            $view = $post_array['view'];
+            $default_pattern = $this->cck_model->get_view_pattern_by_template($post_array['id_template']);
+            if($this->cck_model->remove_white_spaces($view) == $this->cck_model->remove_white_spaces($default_pattern)){
+                $post_array['view'] = '';
+            }
+        }
+        // if input is equal to the default then no changes should be done
+        if($post_array['custom_input'] == 'TRUE'){
+            $input = $post_array['input'];
+            $default_pattern = $this->cck_model->get_input_pattern_by_template($post_array['id_template']);
+            if($this->cck_model->remove_white_spaces($input) == $this->cck_model->remove_white_spaces($default_pattern)){
+                $post_array['input'] = '';
+            }
+        }
         return $post_array;
     }
 

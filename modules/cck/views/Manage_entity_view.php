@@ -52,12 +52,6 @@ echo $output;
     var ID_ENTITY = '<?php echo $id_entity; ?>';
 
     $(document).ready(function(){
-        // is custom per record html edited?
-        var custom_per_record_html = $('#field-custom_per_record_html').val() == 'TRUE';
-        if(!custom_per_record_html){
-            $('#per_record_html_input_box').prepend('<div id="per_record_html_changing_status" class="alert alert-info">Filled automatically. Will be updated when Entity saved. <i>Do not edit unless you are sure.</i></div>');
-            set_per_record_html_to_default();
-        }
 
         // field per_record_html
         $("#field-per_record_html").ace({
@@ -85,6 +79,13 @@ echo $output;
             });
         }
 
+        // is custom per record html edited?
+        var custom_per_record_html = $('#field-custom_per_record_html').val() == 'TRUE';
+        if(!custom_per_record_html){
+            $('#per_record_html_input_box').prepend('<div id="per_record_html_changing_status" class="alert alert-info">Filled automatically. Will be updated when Entity saved. <i>Do not edit unless you are sure.</i></div>');
+            set_per_record_html_to_default();
+        }   
+
         // define verb_list and call adjust_authorization_input
         var authorization_verb_list = ['browse', 'view', 'add', 'edit', 'delete'];
         // define event
@@ -98,7 +99,6 @@ echo $output;
     });
 
     function set_per_record_html_to_default(){
-        PER_RECORD_HTML_CHANGED_BY_SYSTEM = true;
         $.ajax({
             'url' : '{{ module_site_url }}ajax/default_per_record_html_pattern/'+ID_ENTITY,
             'success' : function(response){

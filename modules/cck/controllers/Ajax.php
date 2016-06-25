@@ -7,15 +7,15 @@ class Ajax extends CMS_Controller{
         $this->load->model($this->cms_module_path().'/cck_model');
     }
 
-    public function default_per_record_html_pattern($id_entity){
+    public function default_per_record_html_pattern($id_entity=NULL){
         echo $this->cck_model->get_default_per_record_html_pattern($id_entity);
     }
 
-    public function input_pattern_by_template($id_template){
+    public function input_pattern_by_template($id_template=NULL){
         echo $this->cck_model->get_input_pattern_by_template($id_template);
     }
 
-    public function view_pattern_by_template($id_template){
+    public function view_pattern_by_template($id_template=NULL){
         echo $this->cck_model->get_view_pattern_by_template($id_template);
     }
 

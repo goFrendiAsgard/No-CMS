@@ -25,9 +25,16 @@ class Cck_model  extends CMS_Model{
         parent::__construct();
     }
 
+    public function remove_white_spaces($string){
+        //return  preg_replace('/[ \t]+/', ' ', preg_replace('/\s*$^\s*/m', "\n", $string));
+        // turn all kind of EOL into PHP_EOL, turn multiple tabs and multiple spaces into single space
+        $search = array( PHP_EOL, '\n', '\r\n');
+        return preg_replace('!\s+!', ' ', trim(str_replace($search, PHP_EOL, $string)) );
+    }
+
     public function get_default_per_record_html_pattern($id_entity){
         $entity = $this->cms_get_record($this->t('entity'), 'id', $id_entity);
-        if($entity != NULL && $entity->per_record_html != NULL){
+        if($entity == NULL){
             return '';
         }else{
             $field_list = $this->cms_get_record_list($this->t('field'), 'id_entity', $entity->id);
