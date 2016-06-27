@@ -146,7 +146,6 @@ class Manage_field extends CMS_CRUD_Controller {
         $custom_view = 'FALSE';
         if($this->PK_VALUE > 0){
             $current_field = $this->cms_get_record($this->t('field'), 'id', $this->PK_VALUE);
-            log_message('error', print_r($current_field, TRUE));
             if($current_field != NULL ){
                 if(trim($current_field->input) != ''){
                     $custom_input = 'TRUE';
@@ -281,11 +280,13 @@ class Manage_field extends CMS_CRUD_Controller {
             $many_to_many_config_list=array()
         );
 
+        // adjust tables
+        $this->cck_model->adjust_physical_table($post_array['id_entity']);
+
         return TRUE;
     }
 
     public function _before_insert_or_update($post_array, $primary_key=NULL){
-        log_message('error', print_r(array($post_array), TRUE));
         // if view is equal to the default then no changes should be done
         if($post_array['custom_view'] == 'TRUE'){
             $view = $post_array['view'];
@@ -293,6 +294,8 @@ class Manage_field extends CMS_CRUD_Controller {
             if($this->cck_model->remove_white_spaces($view) == $this->cck_model->remove_white_spaces($default_pattern)){
                 $post_array['view'] = '';
             }
+        }else{
+            $post_array['view'] = '';
         }
         // if input is equal to the default then no changes should be done
         if($post_array['custom_input'] == 'TRUE'){
@@ -301,6 +304,8 @@ class Manage_field extends CMS_CRUD_Controller {
             if($this->cck_model->remove_white_spaces($input) == $this->cck_model->remove_white_spaces($default_pattern)){
                 $post_array['input'] = '';
             }
+        }else{
+            $post_array['input'] = '';
         }
         return $post_array;
     }

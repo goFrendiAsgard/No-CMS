@@ -164,7 +164,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -173,7 +173,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -182,7 +182,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -191,7 +191,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -200,7 +200,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'       => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -217,9 +217,10 @@ class Info extends CMS_Module {
     );
     protected $DATA = array(
         'template' => array(
-            array('name' => 'text', 'input' => '<input id="field-{{ code }}" name="{{ code }}" value="{{ value }}" />', 'view' => '{{ value }}'),
-            array('name' => 'textarea', 'input' => '<textarea id="field-{{ code }}" name="{{ code }}">{{ value }}</textarea>', 'view' => '{{ value }}'),
-            array('name' => 'dropdown', 'input' => '<select id="field-{{ code }}" name="{{ code }}">\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
+            array('id' => 1, 'name' => 'text', 'input' => '<input id="field-{{ code }}" name="{{ code }}" value="{{ value }}" />', 'view' => '{{ value }}'),
+            array('id' => 2, 'name' => 'textarea', 'input' => '<textarea id="field-{{ code }}" name="{{ code }}">{{ value }}</textarea>', 'view' => '{{ value }}'),
+            array('id' => 3, 'name' => 'dropdown', 'input' => '<select id="field-{{ code }}" name="{{ code }}">\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
+            array('id' => 4, 'name' => 'multiselect', 'input' => '<select id="field-{{ code }}" name="{{ code }}[]">\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
         ),
     );
 
