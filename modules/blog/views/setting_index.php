@@ -27,6 +27,14 @@
     </div>
 
     <div class="form-group">
+        <label class="control-label col-md-4" for="blog_max_slide_image">Maximum Slide Image</label>
+        <div class="controls col-md-8">
+            <input id="blog_max_slide_image" name="blog_max_slide_image" class="form-control" value="<?php echo $config_list['blog_max_slide_image']; ?>" />
+            <p class="help-block">Maximum slide image count on preview</p>
+        </div>
+    </div>
+
+    <div class="form-group">
         <div class="controls col-md-8 col-md-offset-4">
             <button class="btn btn-primary btn-lg">Apply Changes</button>
         </div>

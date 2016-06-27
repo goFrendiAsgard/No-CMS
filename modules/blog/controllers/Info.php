@@ -109,7 +109,8 @@ class Info extends CMS_Module {
     // CONFIGURATIONS
     //////////////////////////////////////////////////////////////////////////////
     protected $CONFIGS = array(
-            array('config_name' => 'blog_moderation', 'value' => 'FALSE')
+            array('config_name' => 'blog_moderation', 'value' => 'FALSE'),
+            array('config_name' => 'blog_max_slide_image', 'value' => 6),
         );
 
     //////////////////////////////////////////////////////////////////////////////
@@ -233,14 +234,14 @@ class Info extends CMS_Module {
             array('status' => 'scheduled'),
         ),
         'photo' => array(
-            array('photo_id' => '1', 'article_id' => '1', 'url' => 'main_01.jpg', 'index' => '1', 'caption' => 'Caption for the #1 photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... Nemurenai yoru nando sugitemo nee uketomete. Ima sugu aitai namida tomaranai furetakute. Suki dakara furushikute'),
-            array('photo_id' => '2', 'article_id' => '1', 'url' => 'main_02.jpg', 'index' => '2', 'caption' => 'Caption for the #2 photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... Nemurenai yoru nando sugitemo nee uketomete. Ima sugu aitai namida tomaranai furetakute. Suki dakara furushikute'),
-            array('photo_id' => '3', 'article_id' => '1', 'url' => 'main_03.jpg', 'index' => '3', 'caption' => 'Caption for the #3 photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... Nemurenai yoru nando sugitemo nee uketomete. Ima sugu aitai namida tomaranai furetakute. Suki dakara furushikute'),
-            array('photo_id' => '4', 'article_id' => '1', 'url' => 'main_04.jpg', 'index' => '4', 'caption' => 'Caption for the #4 photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... Nemurenai yoru nando sugitemo nee uketomete. Ima sugu aitai namida tomaranai furetakute. Suki dakara furushikute'),
-            array('photo_id' => '5', 'article_id' => '1', 'url' => 'main_05.jpg', 'index' => '5', 'caption' => 'Caption for the #5 photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... Nemurenai yoru nando sugitemo nee uketomete. Ima sugu aitai namida tomaranai furetakute. Suki dakara furushikute'),
-            array('photo_id' => '6', 'article_id' => '1', 'url' => 'main_06.jpg', 'index' => '6', 'caption' => 'Caption for the #6 photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... Nemurenai yoru nando sugitemo nee uketomete. Ima sugu aitai namida tomaranai furetakute. Suki dakara furushikute'),
-            array('photo_id' => '7', 'article_id' => '1', 'url' => 'main_07.jpg', 'index' => '7', 'caption' => 'Caption for the #7 photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... Nemurenai yoru nando sugitemo nee uketomete. Ima sugu aitai namida tomaranai furetakute. Suki dakara furushikute'),
-            array('photo_id' => '8', 'article_id' => '1', 'url' => 'main_08.jpg', 'index' => '8', 'caption' => 'Caption for the #8 photo.<br /> Kimi no kokoro ni tsutsumareta ai wo chikai... Nemurenai yoru nando sugitemo nee uketomete. Ima sugu aitai namida tomaranai furetakute. Suki dakara furushikute'),
+            array('photo_id' => '1', 'article_id' => '1', 'url' => 'main_01.jpg', 'index' => '1', 'caption' => 'Caption for the #1 photo.'),
+            array('photo_id' => '2', 'article_id' => '1', 'url' => 'main_02.jpg', 'index' => '2', 'caption' => 'Caption for the #2 photo.'),
+            array('photo_id' => '3', 'article_id' => '1', 'url' => 'main_03.jpg', 'index' => '3', 'caption' => 'Caption for the #3 photo.'),
+            array('photo_id' => '4', 'article_id' => '1', 'url' => 'main_04.jpg', 'index' => '4', 'caption' => 'Caption for the #4 photo.'),
+            array('photo_id' => '5', 'article_id' => '1', 'url' => 'main_05.jpg', 'index' => '5', 'caption' => 'Caption for the #5 photo.'),
+            array('photo_id' => '6', 'article_id' => '1', 'url' => 'main_06.jpg', 'index' => '6', 'caption' => 'Caption for the #6 photo.'),
+            array('photo_id' => '7', 'article_id' => '1', 'url' => 'main_07.jpg', 'index' => '7', 'caption' => 'Caption for the #7 photo.'),
+            array('photo_id' => '8', 'article_id' => '1', 'url' => 'main_08.jpg', 'index' => '8', 'caption' => 'Caption for the #8 photo.'),
         ),
         'comment' => array(
             array('comment_id' => '1', 'article_id' => '1', 'date' => '2013-03-25 09:53:16', 'author_user_id' => '1', 'name' => '', 'email' => '', 'website' => '', 'content' => 'Great comment for great article', 'parent_comment_id' => NULL, 'read' => '0', 'approved' => '1'),

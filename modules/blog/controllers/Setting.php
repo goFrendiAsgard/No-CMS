@@ -3,7 +3,7 @@
 class Setting extends CMS_Secure_Controller {
 
     public function index(){
-        $config_key   = array('blog_moderation');
+        $config_key   = array('blog_moderation', 'blog_max_slide_image');
         $config_list  = array();
         $changed      = FALSE;
         // save

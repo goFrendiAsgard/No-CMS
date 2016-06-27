@@ -35,8 +35,8 @@ for($i=0; $i<count($slide_list); $i++){
 <style type="text/css">
     <?php if($slide_height+0 == $slide_height){?>
     div#slideshow-widget<?php echo $slug_sufix; ?> div.carousel-inner div.item{
-        height: <?php echo $slide_height; ?>px;
-        max-height:<?php echo $slide_height; ?>px;
+        height: <?php echo $slide_height; ?>;
+        max-height:<?php echo $slide_height; ?>;
     }
     <?php } ?>
     div#slideshow-widget<?php echo $slug_sufix; ?> div.carousel-inner{

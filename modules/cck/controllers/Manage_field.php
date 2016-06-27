@@ -9,7 +9,7 @@ class Manage_field extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'field';
-    protected $COLUMN_NAMES = array('name', 'id_template', 'id_entity', 'input', 'view', 'shown_on_add', 'shown_on_edit', 'shown_on_delete', 'option');
+    protected $COLUMN_NAMES = array('name', 'id_template', 'id_entity', 'input', 'view', 'shown_on_add', 'shown_on_edit', 'shown_on_view', 'option', 'custom_input', 'custom_view');
     protected $PRIMARY_KEY = 'id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -20,6 +20,11 @@ class Manage_field extends CMS_CRUD_Controller {
     protected $UNSET_BACK_TO_LIST = FALSE;
     protected $UNSET_PRINT = FALSE;
     protected $UNSET_EXPORT = FALSE;
+
+    public function __construct(){
+        parent::__construct();
+        $this->load->model($this->cms_module_path().'/cck_model');
+    }
 
     protected function make_crud($id_entity = NULL){
         $crud = parent::make_crud();
@@ -56,7 +61,7 @@ class Manage_field extends CMS_CRUD_Controller {
         $crud->display_as('view','View');
         $crud->display_as('shown_on_add','Shown On Add');
         $crud->display_as('shown_on_edit','Shown On Edit');
-        $crud->display_as('shown_on_delete','Shown On Delete');
+        $crud->display_as('shown_on_view','Shown On View');
         $crud->display_as('option','Option');
 
         ////////////////////////////////////////////////////////////////////////
@@ -133,9 +138,26 @@ class Manage_field extends CMS_CRUD_Controller {
         ////////////////////////////////////////////////////////////////////////
         $crud->field_type('shown_on_add', 'true_false');
         $crud->field_type('shown_on_edit', 'true_false');
-        $crud->field_type('shown_on_delete', 'true_false');
+        $crud->field_type('shown_on_view', 'true_false');
         $crud->unset_texteditor('input');
         $crud->unset_texteditor('view');
+
+        $custom_input = 'FALSE';
+        $custom_view = 'FALSE';
+        if($this->PK_VALUE > 0){
+            $current_field = $this->cms_get_record($this->t('field'), 'id', $this->PK_VALUE);
+            log_message('error', print_r($current_field, TRUE));
+            if($current_field != NULL ){
+                if(trim($current_field->input) != ''){
+                    $custom_input = 'TRUE';
+                }
+                if(trim($current_field->view) != ''){
+                    $custom_view = 'TRUE';
+                }
+            }
+        }
+        $crud->field_type('custom_input', 'hidden', $custom_input);
+        $crud->field_type('custom_view', 'hidden', $custom_view);
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -148,7 +170,7 @@ class Manage_field extends CMS_CRUD_Controller {
         //     ));
         ////////////////////////////////////////////////////////////////////////
 
-        $crud->set_field_one_third_width(array('shown_on_add', 'shown_on_edit', 'shown_on_delete'));
+        $crud->set_field_one_third_width(array('shown_on_add', 'shown_on_edit', 'shown_on_view'));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)
@@ -263,6 +285,23 @@ class Manage_field extends CMS_CRUD_Controller {
     }
 
     public function _before_insert_or_update($post_array, $primary_key=NULL){
+        log_message('error', print_r(array($post_array), TRUE));
+        // if view is equal to the default then no changes should be done
+        if($post_array['custom_view'] == 'TRUE'){
+            $view = $post_array['view'];
+            $default_pattern = $this->cck_model->get_view_pattern_by_template($post_array['id_template']);
+            if($this->cck_model->remove_white_spaces($view) == $this->cck_model->remove_white_spaces($default_pattern)){
+                $post_array['view'] = '';
+            }
+        }
+        // if input is equal to the default then no changes should be done
+        if($post_array['custom_input'] == 'TRUE'){
+            $input = $post_array['input'];
+            $default_pattern = $this->cck_model->get_input_pattern_by_template($post_array['id_template']);
+            if($this->cck_model->remove_white_spaces($input) == $this->cck_model->remove_white_spaces($default_pattern)){
+                $post_array['input'] = '';
+            }
+        }
         return $post_array;
     }
 

@@ -155,7 +155,7 @@ class Info extends CMS_Module {
                 'view'                 => array("type" => 'text',       "null" => TRUE),
                 'shown_on_add'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
                 'shown_on_edit'        => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
-                'shown_on_delete'      => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
+                'shown_on_view'        => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
                 'option'               => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
             ),
         ),
@@ -217,9 +217,9 @@ class Info extends CMS_Module {
     );
     protected $DATA = array(
         'template' => array(
-            array('name' => 'text', 'input' => '<input id="field-{name}" name="{name}" value="{value}" />', 'view' => '{value}'),
-            array('name' => 'textarea', 'input' => '<textarea id="field-{name}" name="{name}">{value}</textarea>', 'view' => '{value}'),
-            array('name' => 'dropdown', 'input' => '<select id="field-{name}" name="{name}">\n{foreach_option}\n    <option {if_selected:selected} value={option.value}>{option.caption}</option>\n{end_foreach}\n</select>', 'view' => '{selected_value}'),
+            array('name' => 'text', 'input' => '<input id="field-{{ code }}" name="{{ code }}" value="{{ value }}" />', 'view' => '{{ value }}'),
+            array('name' => 'textarea', 'input' => '<textarea id="field-{{ code }}" name="{{ code }}">{{ value }}</textarea>', 'view' => '{{ value }}'),
+            array('name' => 'dropdown', 'input' => '<select id="field-{{ code }}" name="{{ code }}">\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
         ),
     );
 

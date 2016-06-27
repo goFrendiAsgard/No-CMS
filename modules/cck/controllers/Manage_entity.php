@@ -9,7 +9,7 @@ class Manage_entity extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'entity';
-    protected $COLUMN_NAMES = array('name', 'per_user_limitation', 'max_record_per_user', 'id_authorization_view', 'group_entity_view', 'id_authorization_add', 'group_entity_add', 'id_authorization_edit', 'group_entity_edit', 'id_authorization_delete', 'group_entity_delete', 'id_authorization_browse', 'group_entity_browse', 'field', 'per_record_html');
+    protected $COLUMN_NAMES = array('name', 'per_user_limitation', 'max_record_per_user', 'id_authorization_view', 'group_entity_view', 'id_authorization_add', 'group_entity_add', 'id_authorization_edit', 'group_entity_edit', 'id_authorization_delete', 'group_entity_delete', 'id_authorization_browse', 'group_entity_browse', 'field', 'per_record_html', 'custom_per_record_html');
     protected $PRIMARY_KEY = 'id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -20,6 +20,11 @@ class Manage_entity extends CMS_CRUD_Controller {
     protected $UNSET_BACK_TO_LIST = FALSE;
     protected $UNSET_PRINT = FALSE;
     protected $UNSET_EXPORT = FALSE;
+
+    public function __construct(){
+        parent::__construct();
+        $this->load->model($this->cms_module_path().'/cck_model');
+    }
 
     protected function make_crud(){
         $crud = parent::make_crud();
@@ -153,6 +158,16 @@ class Manage_entity extends CMS_CRUD_Controller {
         $crud->field_type('per_user_limitation', 'true_false');
         $crud->unset_texteditor('per_record_html');
 
+        // set hidden field to let the view know whether per_record_html is custom or default.
+        $custom_per_record_html = 'FALSE';
+        if($this->PK_VALUE > 0){
+            $current_entity = $this->cms_get_record($this->t('entity'), 'id', $this->PK_VALUE);
+            if($current_entity != NULL && trim($current_entity->per_record_html) != ''){
+                $custom_per_record_html = 'TRUE';
+            }
+        }
+        $crud->field_type('custom_per_record_html', 'hidden', $custom_per_record_html);
+
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)
         // usage:
@@ -204,6 +219,7 @@ class Manage_entity extends CMS_CRUD_Controller {
         $render = $this->render_crud($crud);
         $output = $render['output'];
         $config = $render['config'];
+        $output->id_entity = $this->PK_VALUE;
 
         // show the view
         $this->view($this->cms_module_path().'/Manage_entity_view', $output,
@@ -277,6 +293,14 @@ class Manage_entity extends CMS_CRUD_Controller {
     }
 
     public function _before_insert_or_update($post_array, $primary_key=NULL){
+        // if per_per_record_html is equal to the default then no changes should be done
+        if($post_array['custom_per_record_html'] == 'TRUE'){
+            $per_record_html = $post_array['per_record_html'];
+            $default_pattern = $this->cck_model->get_default_per_record_html_pattern($primary_key);
+            if($this->cck_model->remove_white_spaces($per_record_html) == $this->cck_model->remove_white_spaces($default_pattern)){
+                $post_array['per_record_html'] = '';
+            }
+        }
         return $post_array;
     }
 

@@ -16,11 +16,21 @@ foreach($articles as $article){
     // photos
     if(count($article['photos'])>0){
         echo '<div id="small_photo_'.$article['id'].'" class="small_photo well">';
+        $index = 0;
         foreach($article['photos'] as $photo){
-            echo '<a data-toggle="modal" data-target="#photo-modal" class="photo_link" photo_id="'.$photo['id'].'" img="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'" href="#">';
+            if($index == $blog_max_slide_image){
+                echo '<a href="'.site_url($article_url).'">';
+                echo '<div class="photo_more well"><span class="col-xs-12" style="padding-left:10px; padding-right:10px;"><i class="glyphicon glyphicon-plus"></i> {{ language:Read More }}</span></div>';
+                echo '</a>';
+                break;
+            }
+            $is_first = $index == 0 ? 1 : 0;
+            $is_last = $index == ($blog_max_slide_image-1) ? 1 : 0;
+            echo '<a data-toggle="modal" data-target="#photo-modal" class="photo_link" article_id="'.$article['id'].'" index="'.$index.'" photo_id="'.$photo['id'].'" img="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'" is_first="'.$is_first.'" is_last="'.$is_last.'" href="#">';
             echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
             echo '<div id="photo_caption_'.$photo['id'].'" class="photo_caption">'.$photo['caption'].'</div>';
             echo '</a>';
+            $index ++;
         }
         echo '</div>';
     }
@@ -61,7 +71,7 @@ foreach($articles as $article){
 
     echo '<div class="edit_delete_record_container">';
     echo anchor($article_url,
-                'read more'.$comment_count_caption, array("class"=>"btn btn-primary"));
+                '<i class="glyphicon glyphicon-plus"></i> {{ language:Read More }}'.$comment_count_caption, array("class"=>"btn btn-primary"));
     if($allow_navigate_backend){
         if($is_super_admin || $article['author_user_id'] == $user_id){
             echo '&nbsp;';
