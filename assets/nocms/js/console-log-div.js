@@ -41,11 +41,15 @@
     }());
 
     function printToDiv() {
-        var msg = Array.prototype.slice.call(arguments, 0)
-            .map(toString)
-            .join('\n ');
-        var text = logTo.textContent;
-        logTo.textContent = text + msg + '\n';
+        try{
+            var msg = Array.prototype.slice.call(arguments, 0)
+                .map(toString)
+                .join('\n ');
+            var text = logTo.textContent;
+            logTo.textContent = text + msg + '\n';
+        }catch(err){
+            // do nothing
+        }
     }
 
     function logWithCopy() {

@@ -83,7 +83,7 @@
         <!-- Modal content-->
         <div class="modal-content" style="width:100%!important;">
             <div class="modal-header">
-                <button style="padding:5px;" type="button" class="close" data-dismiss="modal">&times;</button>
+                <button id="btn-close-photo" style="padding:5px;" type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 id="photo-modal-title" class="modal-title" style="display:inline-block;">Image</h4>
                 <button id="btn-prev-photo" class="btn btn-default" style="padding:5px">&lt;</button>
                 <button id="btn-next-photo" class="btn btn-default" style="padding:5px">&gt;</button>
@@ -594,6 +594,19 @@
         });
         $('#btn-next-photo').click(function(){
             _load_photo_by_link(_NEXT_PHOTO_COMPONENT);
+        });
+
+        $(document).on('keydown',  function (e) {
+            if($('#photo-modal').is(':visible')) {
+                var key = e.which;
+                if (key == 27) { // escape
+                    $('#btn-close-photo').trigger('click');
+                }else if(key == 37){
+                    _load_photo_by_link(_PREV_PHOTO_COMPONENT);
+                }else if(key == 39){
+                    _load_photo_by_link(_NEXT_PHOTO_COMPONENT);
+                }
+            }
         });
     });
 

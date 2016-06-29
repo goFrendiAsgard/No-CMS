@@ -28,6 +28,7 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
     protected $UNSET_BACK_TO_LIST = FALSE;
     protected $UNSET_PRINT = FALSE;
     protected $UNSET_EXPORT = FALSE;
+    protected $AUTOMATICALLY_USE_PRIVILEGES = TRUE;
 
     protected function make_crud()
     {
@@ -42,45 +43,47 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
         $this->PK_VALUE = isset($this->STATE_INFO->primary_key)? $this->STATE_INFO->primary_key : NULL;
 
         // unset jquery (we use No-CMS's default jquery)
-        $this->CRUD->unset_jquery();
+        if($this->UNSET_JQUERY){
+            $this->CRUD->unset_jquery();
+        }
 
         // privilege to read
-        if($this->UNSET_READ || !$this->cms_have_privilege($this->cms_complete_navigation_name('read_' . $this->TABLE_NAME))){
+        if($this->UNSET_READ || ($this->AUTOMATICALLY_USE_PRIVILEGES && !$this->cms_have_privilege($this->cms_complete_navigation_name('read_' . $this->TABLE_NAME)))){
             $this->CRUD->unset_read();
         }
 
         // privilege to add
-        if($this->UNSET_ADD || !$this->cms_have_privilege($this->cms_complete_navigation_name('add_' . $this->TABLE_NAME))){
+        if($this->UNSET_ADD || ($this->AUTOMATICALLY_USE_PRIVILEGES && !$this->cms_have_privilege($this->cms_complete_navigation_name('add_' . $this->TABLE_NAME)))){
             $this->CRUD->unset_add();
         }
 
         // privilege to edit
-        if($this->UNSET_EDIT || !$this->cms_have_privilege($this->cms_complete_navigation_name('edit_' . $this->TABLE_NAME))){
+        if($this->UNSET_EDIT || ($this->AUTOMATICALLY_USE_PRIVILEGES && !$this->cms_have_privilege($this->cms_complete_navigation_name('edit_' . $this->TABLE_NAME)))){
             $this->CRUD->unset_edit();
         }
 
         // privilege to delete
-        if($this->UNSET_DELETE || !$this->cms_have_privilege($this->cms_complete_navigation_name('delete_' . $this->TABLE_NAME))){
+        if($this->UNSET_DELETE || ($this->AUTOMATICALLY_USE_PRIVILEGES && !$this->cms_have_privilege($this->cms_complete_navigation_name('delete_' . $this->TABLE_NAME)))){
             $this->CRUD->unset_delete();
         }
 
         // privilege to list (uncomment if you need it)
-        if($this->UNSET_LIST || !$this->cms_have_privilege($this->cms_complete_navigation_name('list_' . $this->TABLE_NAME))){
+        if($this->UNSET_LIST || ($this->AUTOMATICALLY_USE_PRIVILEGES && !$this->cms_have_privilege($this->cms_complete_navigation_name('list_' . $this->TABLE_NAME)))){
             $this->CRUD->unset_list();
         }
 
         // privilege to back_to_list
-        if($this->UNSET_BACK_TO_LIST || !$this->cms_have_privilege($this->cms_complete_navigation_name('back_to_list_' . $this->TABLE_NAME))){
+        if($this->UNSET_BACK_TO_LIST || ($this->AUTOMATICALLY_USE_PRIVILEGES && !$this->cms_have_privilege($this->cms_complete_navigation_name('back_to_list_' . $this->TABLE_NAME)))){
             $this->CRUD->unset_back_to_list();
         }
 
         // privilege to print
-        if($this->UNSET_PRINT || !$this->cms_have_privilege($this->cms_complete_navigation_name('print_' . $this->TABLE_NAME))){
+        if($this->UNSET_PRINT || ($this->AUTOMATICALLY_USE_PRIVILEGES && !$this->cms_have_privilege($this->cms_complete_navigation_name('print_' . $this->TABLE_NAME)))){
             $this->CRUD->unset_print();
         }
 
         // privilege to export
-        if($this->UNSET_EXPORT || !$this->cms_have_privilege($this->cms_complete_navigation_name('export_' . $this->TABLE_NAME))){
+        if($this->UNSET_EXPORT || ($this->AUTOMATICALLY_USE_PRIVILEGES && !$this->cms_have_privilege($this->cms_complete_navigation_name('export_' . $this->TABLE_NAME)))){
             $this->CRUD->unset_export();
         }
 

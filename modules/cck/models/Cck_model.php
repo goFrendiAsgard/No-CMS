@@ -108,17 +108,17 @@ class Cck_model  extends CMS_Model{
         }
         // navigation: browse
         $browse_navigation_name = $this->n('entity_'.$id_entity.'_browse');
-        $this->cms_add_navigation($browse_navigation_name, $entity->name, $this->cms_module_path().'/browse/'.$id_entity, $entity->id_authorization_browse, $entity->id_authorization_browse);
+        $this->cms_add_navigation($browse_navigation_name, ucwords($entity->name), $this->cms_module_path().'/browse/index/'.$id_entity, $entity->id_authorization_browse, $entity->id_authorization_browse);
         // adjust group navigation
         $this->adjust_navigation_group($browse_navigation_name, $this->t('group_entity_browse'), $id_entity);
         // navigation: manage
         $manage_navigation_name = $this->n('entity_'.$id_entity.'_manage');
-        $this->cms_add_navigation($manage_navigation_name, $entity->name, $this->cms_module_path().'/manage/index/'.$id_entity, $entity->id_authorization_view, $browse_navigation_name);
+        $this->cms_add_navigation($manage_navigation_name, 'Manage '.ucwords($entity->name), $this->cms_module_path().'/manage/index/'.$id_entity, $entity->id_authorization_view, $browse_navigation_name, NULL, NULL, NULL, NULL, 'default-one-column');
         // adjust group navigation
         $this->adjust_navigation_group($manage_navigation_name, $this->t('group_entity_view'), $id_entity);
         // navigation: add
         $add_navigation_name = $this->n('entity_'.$id_entity.'_add');
-        $this->cms_add_navigation($add_navigation_name, $entity->name, $this->cms_module_path().'/manage/index/'.$id_entity.'/add', $entity->id_authorization_add, $browse_navigation_name);
+        $this->cms_add_navigation($add_navigation_name, 'New '.ucwords($entity->name), $this->cms_module_path().'/manage/index/'.$id_entity.'/add', $entity->id_authorization_add, $browse_navigation_name, NULL, NULL, NULL, NULL, 'default-one-column');
         // adjust group navigation
         $this->adjust_navigation_group($add_navigation_name, $this->t('group_entity_add'), $id_entity);
         // adjust privileges for operations
