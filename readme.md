@@ -39,7 +39,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v1.1.1, June, 14, 2016
+- v1.1.1, June, 29, 2016
 
 
 Server Requirements
