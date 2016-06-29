@@ -43,6 +43,11 @@ class Manage extends CMS_CRUD_Controller {
     protected function make_crud($id_entity=NULL){
         $this->TABLE_NAME = 'data_'.$id_entity;
 
+        // get entity and fields
+        $entity = $this->cms_get_record($this->t('entity'), 'id', $id_entity);
+        $field_list = $this->cms_get_record_list($this->t('field'), 'id_entity', $id_entity);
+
+        // call parent's make_crud
         $crud = parent::make_crud();
 
         ////////////////////////////////////////////////////////////////////////
@@ -52,17 +57,35 @@ class Manage extends CMS_CRUD_Controller {
         //      $this->STATE_INFO
         //      $this->PK_VALUE
         ////////////////////////////////////////////////////////////////////////
-        // get entity and fields
-        $entity = $this->cms_get_record($this->t('entity'), 'id', $id_entity);
-        $field_list = $this->cms_get_record_list($this->t('field'), 'id_entity', $id_entity);
+
+        // handle redirect etc
+        if($entity->per_user_limitation == 1){
+            // get max record per user and determine whether record count per user is limited or not
+            $max_record_per_user = is_numeric($entity->max_record_per_user)? $entity->max_record_per_user : 0;
+            $unlimited_record_per_user = $max_record_per_user <= 0;
+            if(!$unlimited_record_per_user){
+                // get actual table name
+                $table_name = $this->t('data_'.$id_entity);
+                // get record count of respective uer
+                $this->db->where('_created_by', $this->cms_user_id());
+                $record_count = $this->db->count_all_results($table_name);
+                if($record_count >= $max_record_per_user && $this->STATE == 'add'){
+                    redirect($this->cms_module_path().'/manage/index/'.$id_entity);
+                }
+            }
+            // only able to see their own record, except super admin
+            if(!$this->cms_user_is_super_admin()){
+                $crud->where('_created_by', $this->cms_user_id());
+            }
+        }
 
         // set subject
         $crud->set_subject(ucwords($entity->name));
 
         // get fields, determine display as
         $view_field_name_list = array();
-        $add_field_name_list = array();
-        $edit_field_name_list = array();
+        $add_field_name_list = array('_created_by', '_created_at');
+        $edit_field_name_list = array('_updated_by', '_updated_at');
         foreach($field_list as $field){
             if($field->shown_on_add){
                 $add_field_name_list[] = 'field_'.$field->id;
@@ -154,6 +177,12 @@ class Manage extends CMS_CRUD_Controller {
     }
 
     public function _before_insert_or_update($post_array, $primary_key=NULL){
+        foreach($post_array as $key=>$value){
+            if(is_array($value)){
+                $value = implode(PHP_EOL, $value);
+                $post_array[$key] = $value;
+            }
+        }
         return $post_array;
     }
 
