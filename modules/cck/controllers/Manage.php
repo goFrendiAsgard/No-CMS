@@ -40,6 +40,11 @@ class Manage extends CMS_CRUD_Controller {
         }
     }
 
+    private function randomize_string($value){
+        $time = date('Y:m:d H:i:s');
+        return substr(md5($value.$time),0,6);
+    }
+
     protected function make_crud($id_entity=NULL){
         $this->TABLE_NAME = 'data_'.$id_entity;
 
@@ -181,6 +186,13 @@ class Manage extends CMS_CRUD_Controller {
             if(is_array($value)){
                 $value = implode(PHP_EOL, $value);
                 $post_array[$key] = $value;
+            }else if(isset($_FILES[$key])){
+                $tmp_name = $_FILES[$key]['tmp_name'];
+                $file_name = $_FILES[$key]['name'];
+                $file_name = $this->randomize_string($file_name).$file_name;
+                $upload_path = FCPATH.'modules/'.$this->cms_module_path().'/assets/uploads/';
+                move_uploaded_file($tmp_name, $upload_path.$file_name);
+                $post_array[$key] = $file_name;
             }
         }
         return $post_array;

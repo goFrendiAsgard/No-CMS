@@ -221,6 +221,7 @@ class Info extends CMS_Module {
             array('id' => 2, 'name' => 'textarea', 'input' => '<textarea id="field-{{ code }}" name="{{ code }}">{{ value }}</textarea>', 'view' => '{{ value }}'),
             array('id' => 3, 'name' => 'dropdown', 'input' => '<select id="field-{{ code }}" name="{{ code }}">\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
             array('id' => 4, 'name' => 'multiselect', 'input' => '<select id="field-{{ code }}" name="{{ code }}[]" multiselect>\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
+            array('id' => 5, 'name' => 'file', 'input' => '<a href="{{ module_base_url }}assets/uploads/{{ value }}">{{ value }}</a><br />\n<input id="field-{{ code }}" name="{{ code }}" type="file"" />', 'view' => '<a href="{{ module_base_url }}assets/uploads/{{ value }}">{{ value }}</a>')
         ),
     );
 
