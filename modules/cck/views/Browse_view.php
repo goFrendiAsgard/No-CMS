@@ -38,6 +38,15 @@
     var STOP_REQUEST           = false;
     var REQUEST;
 
+    function remove_empty_elements(){
+        $('.remove-if-empty').each(function(){
+            console.log($(this));
+            if($(this).attr('real-value') == ''){
+                $(this).remove();
+            }
+        });
+    }
+
 
     function adjust_load_more_button(){
         if(screen.width >= 1024){
@@ -76,6 +85,9 @@
                     STOP_REQUEST = true;
                 }
 
+                // remove empty element
+                remove_empty_elements();
+
                 // show bottom contents
                 var bottom_content = 'No more <?php echo ucwords($entity_name) ?> to show.';
                 if(ALLOW_NAVIGATE_BACKEND && HAVE_ADD_PRIVILEGE){
@@ -103,6 +115,8 @@
     $(document).ready(function(){
         fetch_more_data();
         adjust_load_more_button();
+        // remove empty element
+        remove_empty_elements();
 
         // delete click
         $('body').on('click', '.delete_record',function(){

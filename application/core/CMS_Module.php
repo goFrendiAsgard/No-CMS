@@ -541,20 +541,25 @@ class CMS_Module extends CMS_Controller
         // ADJUST TABLES
         $this->cms_adjust_tables($this->TABLES, $this->t(''));
         // ADJUST DATA
+        foreach ($this->DATA as $table_name => $data) {
+            if(!is_array($data) || count($data) == 0){
+                continue;
+            }
+            // add PHP_EOL
+            for($i=0; $i<count($data); $i++){
+                foreach($data[$i] as $data_key=>$data_value){
+                    if(is_string($data_value)){
+                        $data_value = str_replace(array('\\n', '\\r\\n', '\\n\\r'), PHP_EOL, $data_value);
+                        $this->DATA[$table_name][$i][$data_key] = $data_value;
+                    }
+                }
+            }
+        }
         if($mode == 'insert'){
             // INSERT DATA
             foreach ($this->DATA as $table_name => $data) {
                 if(!is_array($data) || count($data) == 0){
                     continue;
-                }
-                // add PHP_EOL
-                for($i=0; $i<count($data); $i++){
-                    foreach($data[$i] as $data_key=>$data_value){
-                        if(is_string($data_value)){
-                            $data_value = str_replace(array('\\n', '\\r\\n', '\\n\\r'), PHP_EOL, $data_value);
-                            $data[$i][$data_key] = $data_value;
-                        }
-                    }
                 }
                 $this->db->insert_batch($this->t($table_name), $data);
             }

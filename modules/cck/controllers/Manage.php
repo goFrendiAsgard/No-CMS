@@ -51,6 +51,8 @@ class Manage extends CMS_CRUD_Controller {
         // get entity and fields
         $entity = $this->cms_get_record($this->t('entity'), 'id', $id_entity);
         $field_list = $this->cms_get_record_list($this->t('field'), 'id_entity', $id_entity);
+        $this->ENTITY = $entity;
+        $this->FIELD_LIST = $field_list;
 
         // call parent's make_crud
         $crud = parent::make_crud();
@@ -182,11 +184,16 @@ class Manage extends CMS_CRUD_Controller {
     }
 
     public function _before_insert_or_update($post_array, $primary_key=NULL){
-        foreach($post_array as $key=>$value){
-            if(is_array($value)){
-                $value = implode(PHP_EOL, $value);
+        // get field list
+        $field_code_list = array();
+        foreach($this->FIELD_LIST as $field){
+            $field_code_list[] = 'field_'.$field->id;
+        }
+        foreach($field_code_list as $key){
+            if(array_key_exists($key, $post_array) && is_array($post_array[$key])){
+                $value = implode(PHP_EOL, $post_array[$key]);
                 $post_array[$key] = $value;
-            }else if(isset($_FILES[$key])){
+            }else if(array_key_exists($key, $_FILES) && $_FILES[$key]['name'] != ''){
                 $tmp_name = $_FILES[$key]['tmp_name'];
                 $file_name = $_FILES[$key]['name'];
                 $file_name = $this->randomize_string($file_name).$file_name;

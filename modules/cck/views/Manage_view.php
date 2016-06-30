@@ -41,10 +41,20 @@ echo $output;
     });
 
     $(document).ajaxComplete(function(){
-        // TODO: Put your custom code here
+        remove_empty_elements();
     });
 
     $(document).ready(function(){
-        // TODO: Put your custom code here
+        remove_empty_elements();
     });
+
+    function remove_empty_elements(){
+        // remove empty element
+        $('.remove-if-empty').each(function(){
+            console.log($(this));
+            if($(this).attr('real-value') == ''){
+                $(this).remove();
+            }
+        });
+    }
 </script>

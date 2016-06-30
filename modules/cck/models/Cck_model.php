@@ -301,6 +301,8 @@ class Cck_model  extends CMS_Model{
                 $string = str_replace($current_pattern, $option_string, $string);
             }
         }
+        // parse keyword
+        $string = $this->cms_parse_keyword($string);
         return $string;
     }
 
