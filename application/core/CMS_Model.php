@@ -3620,6 +3620,27 @@ class CMS_Model extends CI_Model
             $replacement[] = $module_base_url;
             $pattern[] = '/\{\{ module_name \}\}/si';
             $replacement[] = $module_name;
+            // also allow these syntaxes: {{ module_path:module_name }}, {{ module_site_url:module_name }}, and {{ module_base_url:module_name }}
+            foreach($this->cms_get_module_list() as $module){
+                if($module['active'] && $module['published']){
+                    $module_name = $module['module_name'];
+                    $module_path = $module['module_path'];
+                    $module_site_url = site_url($module_path);
+                    $module_base_url = base_url('modules/'.$module_path);
+                    if ($module_site_url[strlen($module_site_url) - 1] != '/') {
+                        $module_site_url .= '/';
+                    }
+                    if ($module_base_url[strlen($module_base_url) - 1] != '/') {
+                        $module_base_url .= '/';
+                    }
+                    $pattern[] = '/\{\{ module_path:'.$module_name.' \}\}/si';
+                    $replacement[] = $module_path;
+                    $pattern[] = '/\{\{ module_site_url:'.$module_name.' \}\}/si';
+                    $replacement[] = $module_site_url;
+                    $pattern[] = '/\{\{ module_base_url:'.$module_name.' \}\}/si';
+                    $replacement[] = $module_base_url;
+                }
+            }
 
             // language
             $pattern[] = '/\{\{ language \}\}/si';

@@ -2,7 +2,7 @@
 	class Map_model extends CMS_Model{
 
 		public function get_map($map_id=NULL){
-			if(isset($map_id)){
+			if(isset($map_id) && is_numeric($map_id)){
 				$SQL = "SELECT * FROM ".$this->t('map')." WHERE map_id = ".addslashes($map_id);
 				$query = $this->db->query($SQL);
 				if($query->num_rows()>0){

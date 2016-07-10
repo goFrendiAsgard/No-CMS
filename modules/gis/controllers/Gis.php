@@ -26,10 +26,19 @@ class Gis extends CMS_Secure_Controller {
     		if(isset($latitude)) $map["latitude"] = $latitude;
     		if(isset($zoom)) $map["zoom"] = $zoom;
     		$data = array(
-	    			"map"=> $map,
-	    			"gis_path"=> $this->cms_module_path('gofrendi.gis.core')
-				);
-    		$this->view($this->cms_module_path().'/gis_index_map', $data, $this->n('index'));
+    			"map"=> $map,
+    			"gis_path"=> $this->cms_module_path('gofrendi.gis.core')
+			);
+            // determine the correct navigation name
+            $navigation_name = $this->n('index');
+            if(is_numeric($map_id)){
+                $url = $this->cms_module_path('gofrendi.gis.core').'/index/'.$map_id;
+                $navigation = $this->cms_get_record(cms_table_name('main_navigation'), 'url', $url);
+                if($navigation != NULL){
+                    $navigation_name = $navigation->navigation_name;
+                }
+            }
+    		$this->view($this->cms_module_path().'/gis_index_map', $data, $navigation_name);
     	}
     }
 
@@ -54,8 +63,8 @@ class Gis extends CMS_Secure_Controller {
     	$keyword = addslashes($keyword);
 
     	// load model and library
-    	$this->load->Model($this->cms_module_path().'/map_model');
-		$this->load->Model($this->cms_module_path().'/geoformat');
+    	$this->load->model($this->cms_module_path().'/map_model');
+		$this->load->model($this->cms_module_path().'/geoformat');
 
     	// get parameter from model
     	$config = $this->map_model->get_layer_search_parameter($layer_id);
@@ -84,10 +93,21 @@ class Gis extends CMS_Secure_Controller {
     		$real_lat_column = $row[$lat_column];
     		$real_long_column = $row[$long_column];
 
+            // code to distinguish record. Since we cannot determine the primary key, we will use the record itself as the code
+            $code = '';
+            foreach($row as $key=>$val){
+                // no dash for the first key-val pair
+                if($code != ''){
+                    $code .= '-';
+                }
+                $code .= $key.'-'. (string)$val;
+            }
+
     		$data[] = array(
     				"result_content" => $real_result_content,
     				"latitude" => $real_lat_column,
-    				"longitude" => $real_long_column
+    				"longitude" => $real_long_column,
+                    "code" => $code,
     			);
     	}
     	$this->cms_show_json($data);

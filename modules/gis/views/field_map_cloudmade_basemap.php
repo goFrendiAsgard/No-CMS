@@ -1,6 +1,6 @@
 <?php
     // Generate HTML. Parameters: column_name, caption, array_of_field_captions
-    $HTML = build_md_html_table('cloudmade_basemap', 'Cloudmade Basemap', array('Basemap Name', 'Url', 'Max Zoom', 'Attribution'));
+    $HTML = build_md_html_table('cloudmade_basemap', 'Basemap', array('Basemap Name', 'Url', 'Max Zoom', 'Attribution'));
     // Generate global variable and event-binding
     $JS   = build_md_global_variable_script('cloudmade_basemap', 'basemap_id', $date_format, $result, $options);
     $JS  .= build_md_event_script('cloudmade_basemap', '{{ module_site_url }}manage_map/index/insert', '{{ module_site_url }}manage_map/index/update');

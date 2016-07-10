@@ -141,6 +141,8 @@ class Info extends CMS_Module {
                 'width'                => array("type" => 'varchar',    "constraint" => 45,  "null" => TRUE),
                 'layer'                => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
                 'cloudmade_basemap'    => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
+                'custom_form'          => array("type" => 'text',       "null" => TRUE),
+                'custom_javascript'    => array("type" => 'text',       "null" => TRUE),
             ),
         ),
         // cloudmade_basemap

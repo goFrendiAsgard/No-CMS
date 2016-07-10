@@ -49,6 +49,22 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         'main_third_party_auth',
         'main_404');
 
+    protected $default_navigation_id_list = array();
+
+    public function __construct(){
+        parent::__construct();
+        $navigation_list = $this->cms_get_record_list(cms_table_name('main_navigation'));
+        foreach($navigation_list as $navigation){
+            if(in_array($navigation->navigation_name, $this->default_navigations)){
+                $this->default_navigation_id_list[] = $navigation->navigation_id;
+                // completed, no need to seek anymore
+                if(count($this->default_navigation_id_list) >= $this->default_navigations){
+                    break;
+                }
+            }
+        }
+    }
+
     protected function make_crud($parent_id = NULL){
         $crud = parent::make_crud();
         $crud->order_by('index', 'asc');
@@ -116,21 +132,12 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        $editable = TRUE;
-        $query = $this->db->select('navigation_name')
-            ->from(cms_table_name('main_navigation'))
-            ->where('navigation_id', $this->PK_VALUE)
-            ->get();
-        if($query->num_rows() > 0){
-            $row = $query->row();
-            if(in_array($row->navigation_name, $this->default_navigations)){
-                $crud->field_type('navigation_name', 'readonly');
-                $crud->required_fields('title');
-                $editable = FALSE;
-            }
-        }
+        $editable = !in_array($this->PK_VALUE, $this->default_navigation_id_list);
         if($editable){
             $crud->required_fields('navigation_name', 'title');
+        }else{
+            $crud->field_type('navigation_name', 'readonly');
+            $crud->required_fields('title');
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -497,17 +504,8 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
     }
 
     public function _show_delete($primary_key){
-        $query = $this->db->select('navigation_name')
-            ->from(cms_table_name('main_navigation'))
-            ->where('navigation_id', $primary_key)
-            ->get();
-        if($query->num_rows() > 0){
-            $row = $query->row();
-            if(in_array($row->navigation_name, $this->default_navigations)){
-                return FALSE;
-            }
-        }
-        return TRUE;
+        // default navigation cannot be deleted
+        return !in_array($primary_key, $this->default_navigation_id_list);
     }
 
     public function _allow_edit($primary_key){

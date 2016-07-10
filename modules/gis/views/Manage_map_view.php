@@ -1,6 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 echo $output;
 ?>
+<script type="text/javascript" src="{{ module_base_url }}assets/scripts/navigation.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/ace.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/theme-eclipse.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/mode-javascript.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/ace/mode-html.js"></script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/jquery-ace/jquery-ace.min.js"></script>
 <script type="text/javascript">
     $(document).ajaxComplete(function () {
         //ADD COMPONENTS
@@ -45,6 +51,30 @@ echo $output;
     });
 
     $(document).ready(function(){
-        // TODO: Put your custom code here
+        // custom javascript
+        $("#field-custom_javascript").ace({
+            theme: "eclipse",
+            lang: "javascript",
+            width: "100%",
+            height: "100px"
+        });
+        var decorator = $("#field-custom_javascript").data("ace");
+        if(typeof(decorator) != 'undefined'){
+            var aceInstance = decorator.editor.ace;
+            aceInstance.setFontSize("16px");
+        }
+
+        // custom form
+        $("#field-custom_form").ace({
+            theme: "eclipse",
+            lang: "html",
+            width: "100%",
+            height: "100px"
+        });
+        var decorator = $("#field-custom_form").data("ace");
+        if(typeof(decorator) != 'undefined'){
+            var aceInstance = decorator.editor.ace;
+            aceInstance.setFontSize("16px");
+        }
     });
 </script>

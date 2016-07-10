@@ -9,7 +9,7 @@ class Manage_map extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'map';
-    protected $COLUMN_NAMES = array('map_name', 'map_desc', 'latitude', 'longitude', 'gmap_roadmap', 'gmap_satellite', 'gmap_hybrid', 'zoom', 'height', 'width', 'layer', 'cloudmade_basemap');
+    protected $COLUMN_NAMES = array('map_name', 'map_desc', 'latitude', 'longitude', 'gmap_roadmap', 'gmap_satellite', 'gmap_hybrid', 'zoom', 'height', 'width', 'layer', 'cloudmade_basemap', 'custom_form', 'custom_javascript');
     protected $PRIMARY_KEY = 'map_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -53,7 +53,9 @@ class Manage_map extends CMS_CRUD_Controller {
         $crud->display_as('height','Height');
         $crud->display_as('width','Width');
         $crud->display_as('layer','Layer');
-        $crud->display_as('cloudmade_basemap','Cloudmade Basemap');
+        $crud->display_as('cloudmade_basemap','Basemap');
+        $crud->display_as('custom_form', 'Custom Form');
+        $crud->display_as('custom_javascript', 'Custom Javascript');
 
         $crud->set_field_half_width(array('longitude', 'latitude'));
         $crud->set_field_one_third_width(array('gmap_roadmap', 'gmap_satellite', 'gmap_hybrid', 'zoom', 'height', 'width'));
@@ -124,6 +126,8 @@ class Manage_map extends CMS_CRUD_Controller {
         $crud->field_type('gmap_hybrid', 'true_false');
         $crud->field_type('gmap_satellite', 'true_false');
         $crud->field_type('gmap_roadmap', 'true_false');
+        $crud->unset_texteditor('custom_form');
+        $crud->unset_texteditor('custom_javascript');
 
 
         ////////////////////////////////////////////////////////////////////////
@@ -135,6 +139,12 @@ class Manage_map extends CMS_CRUD_Controller {
         //        'Second Tab Caption' => $how_many_field_on_second_tab,
         //     ));
         ////////////////////////////////////////////////////////////////////////
+        $crud->set_outside_tab(10);
+        $crud->set_tabs(array(
+            'Layers' => 1,
+            'Basemaps' => 1,
+            'Custom HTML and Javascript' => 2,
+        ));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)
@@ -256,8 +266,8 @@ class Manage_map extends CMS_CRUD_Controller {
                 'map_id', // DETAIL FK NAME
                 $row->map_id, // CURRENT TABLE PK VALUE
                 array( // CAPTIONS
-                    'single_caption'    => 'Cloudmade Basemap',
-                    'multiple_caption'  => 'Cloudmade Basemaps',
+                    'single_caption'    => 'Basemap',
+                    'multiple_caption'  => 'Basemaps',
                     'zero_caption'      => 'No Cloudmade Basemap',
                 )
             );

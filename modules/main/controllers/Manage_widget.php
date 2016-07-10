@@ -34,6 +34,22 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
         'section_bottom',
     );
 
+    protected $default_widget_id_list = array();
+
+    public function __construct(){
+        parent::__construct();
+        $widget_list = $this->cms_get_record_list(cms_table_name('main_widget'));
+        foreach($widget_list as $widget){
+            if(in_array($widget->widget_name, $this->default_widgets)){
+                $this->default_widget_id_list[] = $widget->widget_id;
+                // completed, no need to seek anymore
+                if(count($this->default_widget_id_list) >= $this->default_widgets){
+                    break;
+                }
+            }
+        }
+    }
+
     protected function make_crud(){
         $crud = parent::make_crud();
         $crud->order_by('index, slug', 'asc');
@@ -91,21 +107,12 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        $editable = TRUE;
-        $query = $this->db->select('widget_name')
-            ->from(cms_table_name('main_widget'))
-            ->where('widget_id', $this->PK_VALUE)
-            ->get();
-        if($query->num_rows() > 0){
-            $row = $query->row();
-            if(in_array($row->widget_name, $this->default_widgets)){
-                $crud->field_type('widget_name', 'readonly');
-                $crud->field_type('description', 'readonly');
-                $editable = FALSE;
-            }
-        }
+        $editable = !in_array($this->PK_VALUE, $this->default_widget_id_list);
         if($editable){
             $crud->required_fields('widget_name');
+        }else{
+            $crud->field_type('widget_name', 'readonly');
+            $crud->field_type('description', 'readonly');
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -358,17 +365,8 @@ class Manage_widget extends CMS_Predefined_Callback_CRUD_Controller {
     }
 
     public function _show_delete($primary_key){
-        $query = $this->db->select('widget_name')
-            ->from(cms_table_name('main_widget'))
-            ->where('widget_id', $primary_key)
-            ->get();
-        if($query->num_rows() > 0){
-            $row = $query->row();
-            if(in_array($row->widget_name, $this->default_widgets)){
-                return FALSE;
-            }
-        }
-        return TRUE;
+        // default widgets cannot be deleted
+        return !in_array($primary_key, $this->default_widget_id_list);
     }
 
     public function _allow_edit($primary_key){
