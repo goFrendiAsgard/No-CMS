@@ -258,7 +258,7 @@ class Install_model extends CI_Model{
         	if(file_exists(APPPATH.'config/main/database.php')){
         	    // multisite, can use GET or subdomain
         		$cms_config_file = APPPATH.'config/main/cms_config.php';
-        		if(file_exists(APPPATH.'config/main/database.php') && file_exists($cms_config_file)){
+        		if(file_exists($cms_config_file)){
         			include($cms_config_file);
         			$cms_table_prefix = trim($config['__cms_table_prefix'])==''? '' : $config['__cms_table_prefix'].'_';
         			$query = $this->db->select('module_path')
@@ -1457,32 +1457,32 @@ class Install_model extends CI_Model{
         // copy everything from /application/config/first-time into /application/config/ or /application/config/site-subsite
         if($this->is_subsite){
             mkdir(APPPATH.'config/site-'.$this->subsite);
+            $file_list = array('cms_config.php', 'config.php', 'hybridauthlib.php', 'routes.php', 'index.html');
         }else{
             mkdir(APPPATH.'config/main');
+            $file_list = scandir(APPPATH.'config/first-time', 1);
         }
-        $file_list = scandir(APPPATH.'config/first-time', 1);
+
         foreach($file_list as $file){
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
-                if($file == 'database.php' && $this->is_subsite){
-                    continue;
-                }
                 copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
             }
         }
 
-        // ckeditor config
-        copy(APPPATH.'config/first-time/third_party_config/ckeditor_config.js',
-            FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js');
-        $this->replace_tag(FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js', 'BASE_URL', base_url());
-
-        // kcfinder config
-        copy(APPPATH.'config/first-time/third_party_config/kcfinder_config.php',
-            FCPATH.'assets/kcfinder/config.php');
-        $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'BASE_URL', base_url());
-        $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
-
-        // database config
         if(!$this->is_subsite){
+
+            // ckeditor config
+            copy(APPPATH.'config/first-time/third_party_config/ckeditor_config.js',
+                FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js');
+            $this->replace_tag(FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js', 'BASE_URL', base_url());
+
+            // kcfinder config
+            copy(APPPATH.'config/first-time/third_party_config/kcfinder_config.php',
+                FCPATH.'assets/kcfinder/config.php');
+            $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'BASE_URL', base_url());
+            $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
+
+            // databse configuration
             $file_name = APPPATH.'config/'.$this->complete_config_file_name('database.php');
             $key_prefix = "'";
             $key_suffix = "'";
@@ -1497,9 +1497,6 @@ class Install_model extends CI_Model{
             $this->change_config($file_name, "username", $this->db_username, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
             $this->change_config($file_name, "password", $this->db_password, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
             $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        } else {
-            $file = 'database.php';
-            copy(APPPATH.'config/main/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
         }
 
         // cms_config
