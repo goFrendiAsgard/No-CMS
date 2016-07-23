@@ -70,37 +70,7 @@ class Cck_model  extends CMS_Model{
         }
     }
 
-    private function adjust_privilege_group($privilege_name, $lookup_table, $id_entity){
-        $privilege = $this->cms_get_record(cms_table_name('main_privilege'), 'privilege_name', $privilege_name);
-        // current group
-        $current_group_list = $this->cms_get_record_list(cms_table_name('main_group_privilege'), 'privilege_id', $privilege->privilege_id);
-        $current_group_id_list = array();
-        foreach($current_group_list as $record){
-            $current_group_id_list[] = $record->group_id;
-        }
-        // target group
-        $target_group_list = $this->cms_get_record_list($lookup_table, 'id_entity', $id_entity);
-        $target_group_id_list = array();
-        foreach($target_group_list as $record){
-            $target_group_id_list[] = $record->id_group;
-        }
-        // insert
-        foreach($target_group_id_list as $group_id){
-            if(!in_array($group_id, $current_group_list)){
-                $this->db->insert(cms_table_name('main_group_privilege'),
-                    array('privilege_id' => $privilege->id, 'group_id' => $group_id));
-            }
-        }
-        // delete
-        foreach($current_group_id_list as $group_id){
-            if(!in_array($group_id, $target_group_list)){
-                $this->db->delete(cms_table_name('main_group_privilege'),
-                    array('privilege_id' => $privilege->id, 'group_id' => $group_id));
-            }
-        }
-    }
-
-    public function adjust_navigation_and_privilege($id_entity){
+    public function adjust_navigation($id_entity){
         // get record
         $entity = $this->cms_get_record($this->t('entity'), 'id', $id_entity);
         if($entity == NULL){
@@ -121,29 +91,10 @@ class Cck_model  extends CMS_Model{
         $this->cms_add_navigation($add_navigation_name, 'New '.ucwords($entity->name), $this->cms_module_path().'/manage/index/'.$id_entity.'/add', $entity->id_authorization_add, $browse_navigation_name, NULL, NULL, NULL, NULL, 'default-one-column');
         // adjust group navigation
         $this->adjust_navigation_group($add_navigation_name, $this->t('group_entity_add'), $id_entity);
-        // adjust privileges for operations
-        $verb_list = array('read', 'add', 'edit', 'delete', 'list', 'back_to_list', 'export', 'print');
-        foreach($verb_list as $verb){
-            // determine authorization for each verb privilege
-            $authorization_id = 4;
-            if(in_array($verb, array('list', 'back_to_list'))){
-                $authorization_id = $entity->id_authorization_view;
-            }else if($verb == 'add'){
-                $authorization_id = $entity->id_authorization_add;
-            }else if($verb == 'edit'){
-                $authorization_id = $entity->id_authorization_edit;
-            }else if($verb == 'delete'){
-                $authorization_id = $entity->id_authorization_delete;
-            }
-            // adjust privilege
-            $privilege_name = $this->n($verb.'_data_'.$id_entity);
-            $this->cms_add_privilege($privilege_name, $verb.' '.$entity->name, $authorization_id);
-            // adjust group privilege
-            $this->adjust_privilege_group($privilege_name, $this->t('group_entity_view'), $id_entity);
-        }
+
     }
 
-    public function delete_navigation_and_privilege($id_entity){
+    public function delete_navigation($id_entity){
         // get record
         $entity = $this->cms_get_record($this->t('entity'), 'id', $id_entity);
         if($entity == NULL){
@@ -158,13 +109,6 @@ class Cck_model  extends CMS_Model{
         // navigation: add
         $add_navigation_name = $this->n('entity_'.$id_entity.'_add');
         $this->cms_remove_navigation($add_navigation_name);
-        // adjust privileges for operations
-        $verb_list = array('read', 'add', 'edit', 'delete', 'list', 'back_to_list', 'export', 'print');
-        foreach($verb_list as $verb){
-            // adjust privilege
-            $privilage_name = $this->n($verb.'_data_'.$id_entity);
-            $this->cms_remove_privilege($privilage_name);
-        }
     }
 
     public function remove_white_spaces($string){

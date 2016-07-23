@@ -292,7 +292,7 @@ class Manage_entity extends CMS_CRUD_Controller {
         // adjust tables
         $this->cck_model->adjust_physical_table($primary_key);
         // adjust navigation and privilege
-        $this->cck_model->adjust_navigation_and_privilege($primary_key); 
+        $this->cck_model->adjust_navigation($primary_key); 
         return TRUE;
     }
 
@@ -347,7 +347,7 @@ class Manage_entity extends CMS_CRUD_Controller {
         $this->db->delete($this->t('field'),
             array('id_entity'=>$primary_key));
         // delete navigation and privilege
-        $this->cck_model->delete_navigation_and_privilege($primary_key);
+        $this->cck_model->delete_navigation($primary_key);
         return TRUE;
     }
 
