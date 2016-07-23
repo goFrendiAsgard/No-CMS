@@ -3,7 +3,7 @@
 class CMS_AutoUpdate_Model extends CMS_Model
 {
     // TODO: change this
-    private $CURRENT_VERSION = '1.1.1';
+    private $CURRENT_VERSION = '1.1.2';
     private static $module_updated = false;
 
     public function __construct()
@@ -659,6 +659,35 @@ class CMS_AutoUpdate_Model extends CMS_Model
                 )
             ),
         ));
+    }
+
+    private function __update_to_1_1_2(){
+        // modify navigation table
+        $t_main_navigation = cms_table_name('main_navigation');
+        $this->cms_adjust_tables(array(
+            $t_main_navigation => array(
+                'fields' => array(
+                    'page_twitter_card' =>array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
+                    'page_image' =>array('type' => 'TEXT', 'null' => TRUE),
+                    'page_author' =>array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
+                    'page_type' =>array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
+                    'page_fb_admin' =>array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
+                    'page_twitter_publisher_handler' =>array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
+                    'page_twitter_author_handler' =>array('type' => 'VARCHAR', 'constraint' => '255', 'null' => TRUE),
+                )
+            ),
+        ));
+
+        // insert new configurations
+        $this->cms_add_config('meta_keyword', '', 'keyword for SEO');
+        $this->cms_add_config('meta_description', '', 'Description for SEO');
+        $this->cms_add_config('meta_twitter_card', 'summary', 'Twitter Card for SEO');
+        $this->cms_add_config('meta_author', '', 'Author for SEO');
+        $this->cms_add_config('meta_image', '', 'Image for SEO');
+        $this->cms_add_config('meta_type', 'article', 'Type for SEO');
+        $this->cms_add_config('meta_fb_admin', '', 'FB Admin for SEO');
+        $this->cms_add_config('meta_twitter_publisher_handler', '', 'Twitter publisher handler for SEO');
+        $this->cms_add_config('meta_twitter_author_handler', '', 'Twitter author handler for SEO');
     }
 
     // TODO : Write your upgrade function here (__update_to_x_y_x)

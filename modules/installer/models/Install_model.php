@@ -3,7 +3,7 @@ class Install_model extends CI_Model{
 
     private $__config_file = array();
 
-    private $VERSION        = '1.1.1';
+    private $VERSION        = '1.1.2';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -711,8 +711,15 @@ class Install_model extends CI_Model{
                 'notif_url'         => $type_varchar_large,
                 'children'          => $type_varchar_large,
                 'hidden'            => $type_boolean_false,
-                'custom_style'        => $type_text,
+                'custom_style'      => $type_text,
                 'custom_script'     => $type_text,
+                'page_twitter_card' => $type_varchar_large,
+                'page_image'        => $type_text,
+                'page_author'       => $type_varchar_large,
+                'page_type'         => $type_varchar_large,
+                'page_fb_admin'     => $type_varchar_large,
+                'page_twitter_publisher_handler' => $type_varchar_large,
+                'page_twitter_author_handler' => $type_varchar_large,
             );
         $sql_list[] = $this->create_table('main_navigation',$fields);
 
@@ -1287,6 +1294,15 @@ class Install_model extends CI_Model{
                 array('cms_subsite_modules','blog,contact_us,static_accessories','Comma Separated Format, Modules that is going to be installed by default for new Subsite'),
                 array('cms_subsite_configs','{}','JSON Format, Configuration value for new subsite'),
                 array('cms_internet_connectivity','UNKNOWN','Is the server connected to the internet?'),
+                array('meta_keyword', '', 'Keyword for SEO'),
+                array('meta_description', '', 'Description for SEO'),
+                array('meta_twitter_card', 'summary', 'Twitter Card for SEO'),
+                array('meta_author', '', 'Author for SEO'),
+                array('meta_image', '', 'Image for SEO'),
+                array('meta_type', 'article', 'Type for SEO'),
+                array('meta_fb_admin', '', 'FB Admin for SEO'),
+                array('meta_twitter_publisher_handler', '', 'Twitter publisher handler for SEO'),
+                array('meta_twitter_author_handler', '', 'Twitter author handler for SEO'),
             );
         for($i=0; $i<count($config_data); $i++){
             foreach($this->configs as $key=>$val){

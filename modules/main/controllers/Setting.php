@@ -74,6 +74,21 @@ class Setting extends CMS_Controller{
                 // do nothing
             }
         }
+        if($this->input->post('remove_meta_image') == 1){
+            $this->cms_set_config('meta_image', '');
+        }else if(isset($_FILES['meta_image'])){
+            try{
+                $meta_image = $_FILES['meta_image'];
+                if(isset($meta_image['tmp_name']) && $meta_image['tmp_name'] != '' && getimagesize($meta_image['tmp_name']) !== FALSE){
+                    $file_name = FCPATH.'assets/nocms/images/custom_meta_image/'.CMS_SUBSITE.$meta_image['name'];
+                    move_uploaded_file($meta_image['tmp_name'], $file_name);
+                    $this->cms_set_config('meta_image', '{{ base_url }}assets/nocms/images/custom_meta_image/'.CMS_SUBSITE.$meta_image['name']);
+                }
+            }catch(Exception $e){
+                // do nothing
+            }
+        }
+
 
         if($this->input->post('remove_background_image') == 1){
             $this->cms_set_config('site_background_image', '');
@@ -112,6 +127,8 @@ class Setting extends CMS_Controller{
                 'cms_email_useragent', 'cms_email_mailpath', 'cms_email_smtp_host', 'cms_email_smtp_user',
                 'cms_email_smtp_pass', 'cms_email_smtp_port', 'cms_email_smtp_timeout',
                 'cms_google_analytic_property_id','cms_internet_connectivity','cms_subsite_configs','cms_subsite_modules',
+                'meta_twitter_card', 'meta_keyword', 'meta_description', 'meta_author', 'meta_type', 'meta_fb_admin',
+                'meta_twitter_publisher_handler', 'meta_twitter_author_handler',
             );
             // only for non-subsite
             if(CMS_SUBSITE == ''){

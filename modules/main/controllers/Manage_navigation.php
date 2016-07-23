@@ -11,7 +11,7 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'main_navigation';
-    protected $COLUMN_NAMES = array('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'url', 'authorization_id', 'active', 'index', 'is_static', 'static_content', 'custom_style', 'custom_script', 'only_content', 'default_theme', 'default_layout', 'notif_url', 'children', 'hidden', 'group_navigation');
+    protected $COLUMN_NAMES = array('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'url', 'authorization_id', 'active', 'index', 'is_static', 'static_content', 'custom_style', 'custom_script', 'only_content', 'default_theme', 'default_layout', 'notif_url', 'children', 'hidden', 'group_navigation', 'page_twitter_card', 'page_image', 'page_author', 'page_type', 'page_fb_admin', 'page_twitter_publisher_handler', 'page_twitter_author_handler');
     protected $PRIMARY_KEY = 'navigation_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -82,18 +82,16 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
 
         // displayed columns on list, edit, and add, uncomment to use
         $crud->columns('navigation_name');
-        $crud->edit_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'custom_style', 'custom_script',  'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'group_navigation', 'index', '_updated_by', '_updated_at');
-        $crud->add_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'custom_style', 'custom_script', 'notif_url', 'default_theme', 'default_layout', 'authorization_id', 'group_navigation', 'index', '_created_by', '_created_at');
+        $crud->edit_fields('navigation_name', 'parent_id', 'bootstrap_glyph', 'title', 'page_title', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'authorization_id', 'group_navigation', 'custom_style', 'custom_script', 'default_theme', 'default_layout', 'page_keyword', 'description', 'page_type', 'page_author', 'page_fb_admin', 'page_twitter_card', 'page_twitter_author_handler', 'page_twitter_publisher_handler', 'page_image', 'index', '_updated_by', '_updated_at');
+        $crud->add_fields('navigation_name', 'parent_id', 'bootstrap_glyph', 'title', 'page_title', 'active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static', 'static_content', 'url', 'notif_url', 'authorization_id', 'group_navigation', 'custom_style', 'custom_script', 'default_theme', 'default_layout', 'page_keyword', 'description', 'page_type', 'page_author', 'page_fb_admin', 'page_twitter_card', 'page_twitter_author_handler', 'page_twitter_publisher_handler', 'page_image', 'index', '_created_by', '_created_at');
         //$crud->set_read_fields('navigation_name', 'parent_id', 'title', 'bootstrap_glyph', 'page_title', 'page_keyword', 'description', 'url', 'authorization_id', 'active', 'index', 'is_static', 'static_content', 'only_content', 'default_theme', 'default_layout', 'notif_url', 'children', 'hidden', 'quicklink', 'group_navigation');
 
         // caption of each columns
         $crud->display_as('navigation_name','Navigation Name');
         $crud->display_as('parent_id','Parent');
-        $crud->display_as('title','Title');
+        $crud->display_as('title','Menu Title');
         $crud->display_as('bootstrap_glyph','Bootstrap Glyph');
         $crud->display_as('page_title','Page Title');
-        $crud->display_as('page_keyword','Page Keyword');
-        $crud->display_as('description','Description');
         $crud->display_as('url','Url');
         $crud->display_as('authorization_id','Authorization');
         $crud->display_as('active','Active');
@@ -109,6 +107,15 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->display_as('group_navigation','Groups');
         $crud->display_as('custom_style','Custom Style (CSS)');
         $crud->display_as('custom_script','Custom Script (Javascript)');
+        $crud->display_as('page_keyword', 'Meta Keyword');
+        $crud->display_as('description', 'Meta Description');
+        $crud->display_as('page_author', 'Meta Author');
+        $crud->display_as('page_type', 'Meta Type');
+        $crud->display_as('page_fb_admin', 'Meta FB Admin');
+        $crud->display_as('page_twitter_card', 'Meta Twitter Card');
+        $crud->display_as('page_twitter_author_handler', 'Meta Twitter Author Handler');
+        $crud->display_as('page_twitter_publisher_handler', 'Meta Twitter Publisher Handler');
+        $crud->display_as('page_image', 'Meta Image');
 
         ////////////////////////////////////////////////////////////////////////
         // This function will automatically detect every methods in this controller and link it to corresponding column
@@ -197,6 +204,7 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->unset_texteditor('description');
         $crud->unset_texteditor('custom_style');
         $crud->unset_texteditor('custom_script');
+        $crud->set_field_upload('page_image', 'modules/main/assets/uploads');
         $crud->field_type('only_content', 'true_false');
         $crud->field_type('active', 'true_false');
         $crud->field_type('is_static', 'true_false');
@@ -205,7 +213,7 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         $crud->field_type('index', 'hidden');
 
         $crud->set_field_one_third_width(array('active', 'add_to_quicklink', 'hidden', 'only_content', 'is_static'));
-        $crud->set_field_half_width(array('title', 'bootstrap_glyph', 'authorization_id', 'group_navigation', 'page_title', 'page_keyword', 'default_theme', 'default_layout'));
+        $crud->set_field_half_width(array('title', 'bootstrap_glyph', 'authorization_id', 'group_navigation', 'default_theme', 'default_layout', 'page_author', 'page_fb_admin', 'page_twitter_publisher_handler', 'page_twitter_author_handler'));
 
 
         if (!array_key_exists('search_text', $this->input->post()) || $this->input->post('search_text') == '') {
@@ -233,6 +241,12 @@ class Manage_navigation extends CMS_Predefined_Callback_CRUD_Controller {
         //        'Second Tab Caption' => $how_many_field_on_second_tab,
         //     ));
         ////////////////////////////////////////////////////////////////////////
+        $crud->set_outside_tab(10);
+        $crud->set_tabs(array(
+            'General' => 5,
+            'Custom' => 4,
+            'SEO' => 8,
+        ));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)

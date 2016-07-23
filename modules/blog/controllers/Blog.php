@@ -140,6 +140,12 @@ class Blog extends CMS_Secure_Controller {
             $config['keyword'] = $article['keyword'];
             $config['description'] = $article['description'];
             $config['author'] = $article['author'];
+            $config['type'] = 'article';
+            $config['twitter_card'] = 'summary';
+            if(count($article['photos'])>0){
+                $photo = $article['photos'][0];
+                $config['image'] = base_url('modules/'.$module_path.'/assets/uploads/'.$photo['url']);
+            }
 
             $article_id = $article['id'];
             if(!isset($_SESSION['__blog_visited'])){
