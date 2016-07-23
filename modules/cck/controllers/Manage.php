@@ -20,10 +20,21 @@ class Manage extends CMS_CRUD_Controller {
     protected $UNSET_BACK_TO_LIST = FALSE;
     protected $UNSET_PRINT = FALSE;
     protected $UNSET_EXPORT = FALSE;
+    protected $AUTOMATICALLY_USE_PRIVILEGES = FALSE;
 
     public function __construct(){
         parent::__construct();
         $this->load->model($this->cms_module_path().'/cck_model');
+    }
+
+    protected function is_group_id_in_table($group_id_list, $id_entity, $table_name){
+        $record_list = $this->cms_get_record_list($table_name, 'id_entity', $id_entity);
+        foreach($record_list as $record){
+            if(in_array($record->id_group, $group_id_list)){
+                return TRUE;
+            }
+        }
+        return FALSE;
     }
 
     public function __call($method, $args){
@@ -53,7 +64,24 @@ class Manage extends CMS_CRUD_Controller {
         $field_list = $this->cms_get_record_list($this->t('field'), 'id_entity', $id_entity);
         $this->ENTITY = $entity;
         $this->FIELD_LIST = $field_list;
-
+        // unset add, edit, delete
+        $group_id_list = $this->cms_user_group_id();
+        if($entity->id_authorization_add>3 && !$this->cms_user_is_super_admin() && !$this->is_group_id_in_table($group_id_list, $id_entity, $this->t('group_entity_add'))){
+            $this->UNSET_ADD = TRUE;
+        }
+        if($entity->id_authorization_edit>3 && !$this->cms_user_is_super_admin() && !$this->is_group_id_in_table($group_id_list, $id_entity, $this->t('group_entity_edit'))){
+            $this->UNSET_EDIT = TRUE;
+        }
+        if($entity->id_authorization_delete>3 && !$this->cms_user_is_super_admin() && !$this->is_group_id_in_table($group_id_list, $id_entity, $this->t('group_entity_delete'))){
+            $this->UNSET_DELETE = TRUE;
+        }
+        if($entity->id_authorization_view>3 && !$this->cms_user_is_super_admin() && !$this->is_group_id_in_table($group_id_list, $id_entity, $this->t('group_entity_view'))){
+            $this->UNSET_LIST = TRUE;
+            $this->UNSET_BACK_TO_LIST = TRUE;
+            $this->UNSET_PRINT = TRUE;
+            $this->UNSET_EXPORT = TRUE;
+        }
+ 
         // call parent's make_crud
         $crud = parent::make_crud();
 
