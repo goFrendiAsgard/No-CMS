@@ -142,9 +142,20 @@ class Blog extends CMS_Secure_Controller {
             $config['author'] = $article['author'];
             $config['type'] = 'article';
             $config['twitter_card'] = 'summary';
+            // if article has several photos, take the first one as meta image
             if(count($article['photos'])>0){
                 $photo = $article['photos'][0];
                 $config['image'] = base_url('modules/'.$module_path.'/assets/uploads/'.$photo['url']);
+            }else{ // if article doesn't have any photo, take it from article content
+                preg_match('/<img.*?src="(.*?)"/', $article['content'], $matches);
+                if(count($matches) == 2){
+                    $image = $matches[1];
+                    $image = $this->cms_parse_keyword($image);
+                    if(strpos($image, 'http') !== 0){
+                        $image = base_url($image);
+                    }
+                    $config['image'] = $image;
+                }
             }
 
             $article_id = $article['id'];
