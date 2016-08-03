@@ -584,6 +584,9 @@ switch (ERROR_REPORTING)
 	}
 	date_default_timezone_set($timezone);
 
+    // disable safe mode
+    ini_set('safe_mode', 'Off');
+
 	$session_save_path = session_save_path();
 	if($session_save_path == ''){
 	    // in case of session_save_path is not defined
