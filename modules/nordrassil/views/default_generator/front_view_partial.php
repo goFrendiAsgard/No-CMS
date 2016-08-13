@@ -34,57 +34,31 @@
             $captions[] = $column_caption;
         }
     }
+    // defining record_template
+    $record_template  = '<div id="record_{{ record:'.$primary_key.' }}" class="record_container panel panel-default">'.PHP_EOL;
+    $record_template .= '    <div class="panel-body">'.PHP_EOL;
+    for($i=0; $i<count($fields); $i++){
+        $record_template .= '        <!-- '.strtoupper($captions[$i]).' -->'.PHP_EOL;    
+        $record_template .= '        <div class="row">'.PHP_EOL;
+        $record_template .= '            <div class="col-md-4"><b>'.$captions[$i].'</b></div>'.PHP_EOL;
+        $record_template .= '            <div class="col-md-8">{{ record:'.$fields[$i].' }}</div>'.PHP_EOL;
+        $record_template .= '        </div>'.PHP_EOL;
+    }
+    $record_template .= '        <div class="edit_delete_record_container pull-right">{{ backend_urls }}</div>'.PHP_EOL;
+    $record_template .= '        <div style="clear:both;"></div>'.PHP_EOL;
+    $record_template .= '    </div>'.PHP_EOL;
+    $record_template .= '</div>';
+
 ?>
 &lt;?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-$contents = '';
+$record_template = isset($record_template)? $record_template: '<?php echo $record_template; ?>';
+$config = array(
+        'record_template' => $record_template,
+        'backend_url'     => $backend_url,
+        'primary_key'     => '<?php echo $primary_key; ?>',
+        'allow_edit'      => $have_edit_privilege && $allow_navigate_backend,
+        'allow_delete'    => $have_delete_privilege && $allow_navigate_backend,
+    );
 foreach($result as $record){
-    $contents .= '<div id="record_'.$record-><?php echo $primary_key; ?>.'" class="record_container panel panel-default">';
-    $contents .= '<div class="panel-body">';
-
-    // TABLE
-    $contents .= '<table class="table table-hover">';
-    $contents .= '<tbody>';
-
-    // COLUMNS
-<?php
-    for($i=0; $i<count($fields); $i++){
-        //echo '    $contents .= \'<b>'.$captions[$i].' :</b> \'.$record->'.$fields[$i].'.\'  <br />\'; '.PHP_EOL;
-        echo '    //'. strtoupper($captions[$i]) . PHP_EOL;
-        echo '    $contents .= \'<tr>\';'.PHP_EOL;
-        echo '    $contents .= \'<th>'.$captions[$i].'</th>\';'.PHP_EOL;
-        echo '    $contents .= \'<td>\' . $record->'.$fields[$i].' . \'</td>\';'.PHP_EOL;
-        echo '    $contents .= \'</tr>\';'.PHP_EOL;
-    }
-?>
-
-    $contents .= '</tbody>';
-    $contents .= '</table>';
-
-
-    // EDIT AND DELETE BUTTON
-    if($allow_navigate_backend && ($have_edit_privilege || $have_delete_privilege)){
-
-        $contents .= '<div class="edit_delete_record_container pull-right">';
-
-        // EDIT BUTTON
-        if($have_edit_privilege){
-            $contents .= '<a href="'.$backend_url.'/edit/'.$record-><?php echo $primary_key; ?>.'" class="btn edit_record btn-default" primary_key = "'.$record-><?php echo $primary_key; ?>.'"><i class="glyphicon glyphicon-pencil"></i> Edit</a>';
-            $contents .= '&nbsp;';
-        }
-        // DELETE BUTTON
-        if($have_delete_privilege){
-            $contents .= '<a href="'.$backend_url.'/delete/'.$record-><?php echo $primary_key; ?>.'" class="btn delete_record btn-danger" primary_key = "'.$record-><?php echo $primary_key; ?>.'"><i class="glyphicon glyphicon-remove"></i> Delete</a>';
-        }
-
-        $contents .= '</div>';
-
-        $contents .= '<div style="clear:both;"></div>';
-    }
-
-    // end of div record
-    $contents .= '</div>';
-    $contents .= '</div>';
+    echo parse_record($record, $config);
 }
-
-echo $contents;

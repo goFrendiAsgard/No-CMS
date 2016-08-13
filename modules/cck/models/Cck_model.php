@@ -124,12 +124,13 @@ class Cck_model  extends CMS_Model{
             return '';
         }else{
             $field_list = $this->cms_get_record_list($this->t('field'), 'id_entity', $entity->id);
-            $html = '<div class="row">'.PHP_EOL;
+            $html = '';
             foreach($field_list as $field){
-                $html .= '    <div class="col-md-4"><strong>'.$field->name.'</strong></div>'.PHP_EOL;
+                $html .= '<div class="row">'.PHP_EOL;
+                $html .= '    <div class="col-md-4"><strong>'.ucwords(str_replace('_', ' ', $field->name)).'</strong></div>'.PHP_EOL;
                 $html .= '    <div class="col-md-8">{{ '.$field->name.'.view }}</div>'.PHP_EOL;
+                $html .= '</div>'.PHP_EOL;
             }
-            $html .= '</div>';
             return $html;
         }
 

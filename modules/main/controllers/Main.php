@@ -842,7 +842,7 @@ class Main extends CMS_Controller
                     $active = 'active';
                 }
                 // make text
-                $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
+                $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;&nbsp;';
                 if ($navigation['allowed'] && $navigation['active']) {
                     $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$icon.$navigation['title'].$badge.'</a>';
                 } else {
@@ -886,7 +886,7 @@ class Main extends CMS_Controller
                 if (($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']) {
                     $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == '' ? 'glyphicon-none' : $navigation['bootstrap_glyph'];
                     // make text
-                    $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
+                    $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;&nbsp;';
                     $badge = '';
                     if ($navigation['notif_url'] != '') {
                         $badge_id = '__cms_notif_top_nav_'.$navigation['navigation_id'];
@@ -1307,7 +1307,7 @@ class Main extends CMS_Controller
             }
             if ($quicklink['bootstrap_glyph'] != '' || !$first) {
                 $icon_class = $icon_class == '' ? 'icon-white' : $icon_class;
-                $icon = '<span class="glyphicon '.$icon_class.'"></span>&nbsp;';
+                $icon = '<span class="glyphicon '.$icon_class.'"></span>&nbsp;&nbsp;';
             }
             // create badge if needed
             $badge = '';
