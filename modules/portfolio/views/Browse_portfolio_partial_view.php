@@ -6,35 +6,35 @@ foreach($result as $record){
     $contents .= '<div class="panel-body">';
 
     // TABLE
-    $contents .= '<table class="table table-hover">';
+    $contents .= '<table class="table">';
     $contents .= '<tbody>';
 
     // COLUMNS
     //NAME
     $contents .= '<tr>';
-    $contents .= '<td class="row" rowspan="3">';
-    $contents .= '<img class="col-md-12" src="{{ MODULE_BASE_URL }}assets/uploads/' . $record->image . '" />';
+        $contents .= '<td class="row col-md-5" rowspan="3">';
+            $contents .= '<img class="col-md-12" src="{{ MODULE_BASE_URL }}assets/uploads/' . $record->image . '" />';
 
-    $contents .= '<div class="col-md-12" style="padding-top:10px;">';
-    if(trim($record->url) != ''){
-        $contents .= '<a target="blank" class="btn btn-primary" href="' . $record->url . '"><i class="glyphicon glyphicon-link"></i> Visit</a>&nbsp;';
-    }
-    $contents .= '<a target="blank" class="btn btn-primary" href="{{ MODULE_BASE_URL }}assets/uploads/' . $record->image .'"><i class="glyphicon glyphicon-image"></i> Show</a>';
-    $contents .= '</div>';
+            $contents .= '<div class="col-md-12" style="padding-top:10px;">';
+            if(trim($record->url) != ''){
+                $contents .= '<a target="blank" class="btn btn-primary" href="' . $record->url . '"><i class="glyphicon glyphicon-link"></i> Visit</a>&nbsp;';
+            }
+            $contents .= '<a target="blank" class="btn btn-primary" href="{{ MODULE_BASE_URL }}assets/uploads/' . $record->image .'"><i class="glyphicon glyphicon-image"></i> Show</a>';
+            $contents .= '</div>';
 
-    $contents .= '</td>';
-    $contents .= '<th>Name</th>';
-    $contents .= '<td>' . $record->name . '</td>';
+        $contents .= '</td>';
+        $contents .= '<th class="col-md-3">Name</th>';
+        $contents .= '<td class="col-md-4">' . $record->name . '</td>';
     $contents .= '</tr>';
     //CATEGORY
     $contents .= '<tr>';
-    $contents .= '<th>Category</th>';
-    $contents .= '<td>' . $record->category_name . '</td>';
+        $contents .= '<th>Category</th>';
+        $contents .= '<td>' . $record->category_name . '</td>';
     $contents .= '</tr>';
     //DESCRIPTION
     $contents .= '<tr>';
-    $contents .= '<th>Description</th>';
-    $contents .= '<td>' . $record->description . '</td>';
+        $contents .= '<th>Description</th>';
+        $contents .= '<td>' . $record->description . '</td>';
     $contents .= '</tr>';
 
     $contents .= '</tbody>';

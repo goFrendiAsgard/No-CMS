@@ -551,3 +551,57 @@ function rcopy($src, $dst) {
         copy ( $src, $dst );
     }
 }
+
+function parse_record($record, $config=array()){
+    $record = (array)$record; // cast to associative array
+    $record_template = array_key_exists('record_template', $config)? $config['record_template']: '';
+    $backend_url = array_key_exists('backend_url', $config)? $config['backend_url']: NULL;
+    $allow_edit = array_key_exists('allow_edit', $config)? $config['allow_edit']: FALSE;
+    $allow_delete = array_key_exists('allow_delete', $config)? $config['allow_delete']: FALSE;
+    $primary_key = array_key_exists('primary_key', $config)? $config['primary_key']: 'id';
+    // determine if new record template should be created or not
+    $create_record_template = $record_template == '';
+    // create default record template if necessary
+    if($create_record_template){
+        $record_template = '<div id="record_{{ record:'.$primary_key.' }}" class="record_container panel panel-default">';
+        $record_template .= '<div class="panel-body">';
+    }
+    // build search and replace
+    $search = array();
+    $replace = array();
+    foreach(array_keys($record) as $key){
+        $search[] = '{{ record:'.$key.' }}';
+        $replace[] = $record[$key];
+        // add default record template if necessary
+        if($create_record_template){
+            $record_template .= '<div class="row">';
+            $record_template .= '<div class="col-md-4"><strong>'. ucwords(str_replace('_', ' ', $key)) . '</strong></div>';
+            $record_template .= '<div class="col-md-8">{{ record:'.$key.' }}</div>';
+            $record_template .= '</div>';
+        }
+    }
+    // add default record template if necessary
+    if($create_record_template){
+        $record_template .= '<div class="edit_delete_record_container pull-right">{{ backend_urls }}</div>';
+        $record_template .= '<div style="clear:both;"></div>';
+        $record_template .= '</div>'; // end of div.panel-body
+        $record_template .= '</div>'; // end of div.record_container
+    }
+    // build backend urls
+    $backend_urls = '';
+    if($backend_url != ''){
+        if($allow_edit){
+            $backend_urls .= '<a href="'.$backend_url.'/edit/'.$record[$primary_key].'" class="btn btn-default edit_record" primary_key="'.$record[$primary_key].'">Edit</a>';
+            if($allow_delete){
+                $backend_urls .= '&nbsp;';
+            }
+        }
+        if($allow_delete){
+            $backend_urls .= '<a href="'.$backend_url.'/delete/'.$record[$primary_key].'" class="btn btn-danger delete_record" primary_key="'.$record[$primary_key].'">Delete</a>';
+        }
+    }
+    // add search and replace pattern
+    $search[] = '{{ backend_urls }}';
+    $replace[] = $backend_urls;
+    return str_replace($search, $replace, $record_template);
+}
