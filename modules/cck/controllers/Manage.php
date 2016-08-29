@@ -227,6 +227,7 @@ class Manage extends CMS_CRUD_Controller {
                 $file_name = $this->randomize_string($file_name).$file_name;
                 $upload_path = FCPATH.'modules/'.$this->cms_module_path().'/assets/uploads/';
                 move_uploaded_file($tmp_name, $upload_path.$file_name);
+                @chmod($upload_path.$file_name, 644);
                 $post_array[$key] = $file_name;
             }
         }

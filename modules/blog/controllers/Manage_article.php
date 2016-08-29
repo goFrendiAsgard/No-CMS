@@ -416,6 +416,7 @@ class Manage_article extends CMS_CRUD_Controller {
             $file_name = $_FILES['md_field_photos_col_url_'.$record_index]['name'];
             $file_name = $this->randomize_string($file_name).$file_name;
             move_uploaded_file($tmp_name, $upload_path.$file_name);
+            @chmod($upload_path.$file_name, 644);
             $data['insert'][$i]['data']['url'] = $file_name;
 
             $thumbnail_name = 'thumb_'.$file_name;

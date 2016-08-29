@@ -346,12 +346,7 @@ class Install_model extends CI_Model{
             // ckeditor config
             if (!is_writable(FCPATH.'assets/grocery_crud/texteditor/ckeditor')){
                 $success = FALSE;
-                $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor';
-            }
-            // assets/caches
-            if (!is_writable(FCPATH.'assets/caches')) {
-                $success  = FALSE;
-                $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
+                $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor is not writable';
             }
         }
 
@@ -513,11 +508,6 @@ class Install_model extends CI_Model{
             if (!is_writable(APPPATH.'logs')) {
                 $success  = FALSE;
                 $error_list[] = APPPATH."logs is not writable";
-            }
-            // helper directory
-            if (!is_writable(APPPATH.'helpers')) {
-                $success  = FALSE;
-                $error_list[] = APPPATH."helpers is not writable";
             }
         }
         return array(

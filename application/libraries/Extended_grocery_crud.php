@@ -166,6 +166,67 @@ class Extended_grocery_crud extends Grocery_CRUD{
     {
         return $value;
     }
+    
+    // OVERRIDE: the parent class has this method as private, you should change it into protected
+    // this should add chmod 644 to the file
+    protected function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
+        $file = new stdClass();
+        $file->name = $this->trim_file_name($name, $type);
+        $file->size = intval($size);
+        $file->type = $type;
+        $error = $this->has_error($uploaded_file, $file, $error);
+        if (!$error && $file->name) {
+            $file_path = $this->options['upload_dir'].$file->name;
+            $append_file = !$this->options['discard_aborted_uploads'] &&
+                is_file($file_path) && $file->size > filesize($file_path);
+            clearstatcache();
+            if ($uploaded_file && is_uploaded_file($uploaded_file)) {
+                // multipart/formdata uploads (POST method uploads)
+                if ($append_file) {
+                    file_put_contents(
+                        $file_path,
+                        fopen($uploaded_file, 'r'),
+                        FILE_APPEND
+                    );
+                } else {
+                    move_uploaded_file($uploaded_file, $file_path);
+                    @chmod($file_path, 644);
+                }
+            } else {
+                // Non-multipart uploads (PUT method support)
+                file_put_contents(
+                    $file_path,
+                    fopen('php://input', 'r'),
+                    $append_file ? FILE_APPEND : 0
+                );
+            }
+            $file_size = filesize($file_path);
+            if ($file_size === $file->size) {
+            		if ($this->options['orient_image']) {
+            		    $this->orient_image($file_path);
+            		}
+                $file->url = $this->options['upload_url'].rawurlencode($file->name);
+                foreach($this->options['image_versions'] as $version => $options) {
+                    if ($this->create_scaled_image($file->name, $options)) {
+                        $file->{$version.'_url'} = $options['upload_url']
+                            .rawurlencode($file->name);
+                    }
+                }
+            } else if ($this->options['discard_aborted_uploads']) {
+                unlink($file_path);
+                $file->error = "It seems that this user doesn't have permissions to upload to this folder";
+            }
+            $file->size = $file_size;
+            $file->delete_url = $this->options['script_url']
+                .'?file='.rawurlencode($file->name);
+            $file->delete_type = 'DELETE';
+        } else {
+            $file->error = $error;
+        }
+        return $file;
+    }
+
+
 
     // OVERRIDE: getListSuccessUrl
     protected function getListSuccessUrl($primary_key = null)

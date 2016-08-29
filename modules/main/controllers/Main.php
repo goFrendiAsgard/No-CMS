@@ -509,7 +509,9 @@ class Main extends CMS_Controller
                         $pp_file_name = $this->cms_user_id().'_'.$pp['name'];
                         $file_name = FCPATH.'assets/nocms/images/profile_picture/'.$pp_file_name;
                         move_uploaded_file($pp['tmp_name'], $file_name);
+                        @chmod($file_name, 644);
                         $this->cms_resize_image($file_name, 512, 512);
+                        @chmod($file_name, 644);
                         // profile picture is pp_file_name
                         $profile_picture = $pp_file_name;
                     }
