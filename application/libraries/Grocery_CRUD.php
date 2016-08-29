@@ -5463,7 +5463,7 @@ class UploadHandler
       	return $success;
     }
 
-    private function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
+    protected function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
         $file = new stdClass();
         $file->name = $this->trim_file_name($name, $type);
         $file->size = intval($size);

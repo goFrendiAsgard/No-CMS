@@ -3196,6 +3196,7 @@ class CMS_Model extends CI_Model
 
             // write new image
             imagepng($newImg, $new_file_name);
+            @chmod(644, $new_file_name);
         } else {
             $this->load->library('image_moo');
             $this->image_moo->load($file_name)->resize($nWidth, $nHeight)->save($new_file_name, true);

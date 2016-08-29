@@ -95,6 +95,7 @@ class Multisite extends CMS_Secure_Controller {
                 $file_name = $_FILES['logo']['name'];
                 $file_name = $this->randomize_string($file_name).$file_name;
                 move_uploaded_file($tmp_name, $upload_path.$file_name);
+                @chmod($upload_path.$file_name, 644);
 
                 $new_logo_file = FCPATH.'assets/nocms/images/custom_logo/'.$site_name.$_FILES['logo']['name'];
                 $new_logo_config = '{{ base_url }}assets/nocms/images/custom_logo/'.$site_name.$_FILES['logo']['name'];
@@ -268,7 +269,9 @@ class Multisite extends CMS_Secure_Controller {
                         try{
                             $file_name = FCPATH.'assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
                             move_uploaded_file($site_logo['tmp_name'], $file_name);
+                            @chmod($file_name, 644);
                             $this->cms_resize_image($file_name, 800, 125);
+                            @chmod($file_name, 644);
                             $configs['site_logo'] = '{{ base_url }}assets/nocms/images/custom_logo/'.$user_name.$site_logo['name'];
                         }catch(Exception $e){
                             // do nothing
@@ -281,7 +284,9 @@ class Multisite extends CMS_Secure_Controller {
                         try{
                             $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
                             move_uploaded_file($site_favicon['tmp_name'], $file_name);
+                            @chmod($file_name, 644);
                             $this->cms_resize_image($file_name, 64, 64);
+                            @chmod($file_name, 644);
                             $configs['site_favicon'] = '{{ base_url }}assets/nocms/images/custom_favicon/'.$user_name.$site_favicon['name'];
                         }catch(Exception $e){
                             // do nothing

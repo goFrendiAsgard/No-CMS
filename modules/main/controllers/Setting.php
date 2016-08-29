@@ -54,7 +54,9 @@ class Setting extends CMS_Controller{
                 if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
                     $file_name = FCPATH.'assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name'];
                     move_uploaded_file($site_logo['tmp_name'], $file_name);
+                    @chmod($file_name, 644);
                     $this->cms_resize_image($file_name, 800, 125);
+                    @chmod($file_name, 644);
                     $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
                 }
             }catch(Exception $e){
@@ -67,7 +69,9 @@ class Setting extends CMS_Controller{
                 if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
                     $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name'];
                     move_uploaded_file($site_favicon['tmp_name'], $file_name);
+                    @chmod($file_name, 644);
                     $this->cms_resize_image($file_name, 64, 64);
+                    @chmod($file_name, 644);
                     $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
                 }
             }catch(Exception $e){
@@ -82,6 +86,7 @@ class Setting extends CMS_Controller{
                 if(isset($meta_image['tmp_name']) && $meta_image['tmp_name'] != '' && getimagesize($meta_image['tmp_name']) !== FALSE){
                     $file_name = FCPATH.'assets/nocms/images/custom_meta_image/'.CMS_SUBSITE.$meta_image['name'];
                     move_uploaded_file($meta_image['tmp_name'], $file_name);
+                    @chmod($file_name, 644);
                     $this->cms_set_config('meta_image', '{{ base_url }}assets/nocms/images/custom_meta_image/'.CMS_SUBSITE.$meta_image['name']);
                 }
             }catch(Exception $e){
@@ -98,6 +103,7 @@ class Setting extends CMS_Controller{
                 if(isset($site_background_image['tmp_name']) && $site_background_image['tmp_name'] != '' && getimagesize($site_background_image['tmp_name']) !== FALSE){
                     $file_name = FCPATH.'assets/nocms/images/custom_background/'.CMS_SUBSITE.$site_background_image['name'];
                     move_uploaded_file($site_background_image['tmp_name'], $file_name);
+                    @chmod($file_name, 644);
                     $this->cms_set_config('site_background_image', '{{ base_url }}assets/nocms/images/custom_background/'.CMS_SUBSITE.$site_background_image['name']);
                 }
             }catch(Exception $e){

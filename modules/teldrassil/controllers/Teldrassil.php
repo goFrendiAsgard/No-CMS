@@ -47,6 +47,7 @@ class Teldrassil extends CMS_Secure_Controller {
             $file_name = FCPATH.'modules/'.$module_path.'/assets/uploads/'.$rand.'_'.$_FILES['file_name']['name'];
             $url_name = base_url('modules/'.$module_path.'/assets/uploads/'.$rand.'_'.$_FILES['file_name']['name']);
             move_uploaded_file($_FILES['file_name']['tmp_name'], $file_name);
+            @chmod($file_name, 644);
             $this->load->helper($module_path.'/image');
             try{
                 $color_options = find_dominant_color($file_name, 20);
@@ -143,7 +144,7 @@ class Teldrassil extends CMS_Secure_Controller {
             $this->n('index'));
     }
 
-    private function directory_copy($srcdir, $dstdir){
+    private function directory_copy($srcdir, $dstdir, $mode = 0755){
         $this->load->helper('directory');
         //preparing the paths
         $srcdir=rtrim($srcdir,'/');
@@ -159,11 +160,11 @@ class Teldrassil extends CMS_Secure_Controller {
         {
             if(is_numeric($object_key)){
                 copy($srcdir.'/'.$object_value, $dstdir.'/'.$object_value);//This is a File not a directory
-                chmod($dstdir.'/'.$object_value, 0777);
+                chmod($dstdir.'/'.$object_value, $mode);
             }
             else{
                 $this->directory_copy($srcdir.'/'.$object_key, $dstdir.'/'.$object_key);//this is a directory
-                chmod($dstdir.'/'.$object_key, 0777);
+                chmod($dstdir.'/'.$object_key, $mode);
             }
         }
 
