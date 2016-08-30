@@ -39,7 +39,7 @@ No-CMS come with several batteries included:
 Release Information
 ===================
 
-- v1.1.1, June, 29, 2016
+- v1.1.1, Aug, 30, 2016
 
 
 Server Requirements
@@ -84,3 +84,63 @@ I made No-CMS, but you can make it better. There are many way you can do to make
 - __Translation:__ I know several programming languages, but human natural languages is much more harder to learn. If you want your native language to be available in No-CMS, please do some translation and submit a pull request on github. However, if github scare you, do not worry. Just email me directly.
 
 - __Tell your friends:__ If you think No-CMS is great, tell your friend. With more users & contributors, No-CMS will surely become better since there will be many people test it on different environments.
+
+Post Installation
+=================
+In production server, please run `post-installation.sh` in order to set correct directory/file access permission to your files. This is important for security purpose.
+
+Reset Installation
+==================
+To reset installation, please run this:
+
+```bash
+#!/bin/bash
+sudo chmod 777 . -R
+sudo rm -f ./application/config/.saved
+sudo rm -f ./application/config/*.php
+sudo echo "<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');" > ./application/config/constants.php
+sudo rm -Rf ./session
+sudo rm -f ./application/logs/log*.php
+sudo rm -f ./application/logs/hybridauth.log
+sudo touch ./application/logs/hybridauth.log
+sudo rm -f ./application/config/tmp/*.php
+sudo rm -f ./assets/grocery_crud/texteditor/ckeditor/config.js
+sudo rm -f ./assets/kcfinder/config.php
+sudo rm -Rf ./assets/kcfinder/upload/main-*
+sudo rm -Rf ./assets/kcfinder/upload/site-*
+sudo rm -f ./.htaccess
+sudo rm -f ./hostname.php
+sudo rm -Rf ./application/config/site-*
+sudo rm -Rf ./application/config/main
+sudo rm -f ./modules/*/config/module_config_*.php
+sudo rm -f modules/*/controllers/Info_*.php
+sudo chmod 777 .
+sudo chmod 755 * -R
+sudo chmod 777 application/config -R
+sudo chmod 777 application/logs -R
+sudo chmod 755 assets/kcfinder -R
+sudo chmod 777 assets/kcfinder
+sudo chmod 777 assets/kcfinder/upload
+sudo chmod 755 assets/kcfinder/upload/.htaccess
+sudo chmod 755 assets/kcfinder/upload/index.html
+sudo chmod 755 assets/grocery_crud/texteditor/ckeditor -R
+sudo chmod 777 assets/grocery_crud/texteditor/ckeditor
+sudo chmod 777 assets/uploads -R
+sudo chmod 755 assets/uploads/index.html
+sudo chmod 755 assets/uploads/.htaccess
+sudo chmod 777 assets/nocms/images -R
+sudo chmod 644 assets/nocms/images/*.png
+sudo chmod 755 assets/nocms/images/*/.htaccess
+sudo chmod 755 assets/nocms/images/*/index.html
+sudo chmod 777 modules/*/assets/uploads -R
+sudo chmod 755 modules/*/assets/uploads/.htaccess
+sudo chmod 755 modules/*/assets/uploads/index.html
+sudo chmod 644 modules/*/assets/uploads/*.jpg
+sudo chmod 644 modules/*/assets/uploads/*.png
+sudo chmod 755 modules/*/controllers -R
+sudo chmod 777 modules/*/controllers
+sudo chmod 777 modules/artificial_intelligence/assets/data -R
+sudo chmod 666 modules/artificial_intelligence/assets/data/1_*_Default
+```
+
+The bash script will delete your configuration uploaded files and everything. Thus, you should do the installation from scractch. __warning__ : A new salt will be generated, thus your previous user-password will be unusable
