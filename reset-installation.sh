@@ -1,5 +1,6 @@
 #!/bin/bash
 sudo chmod 777 . -R
+sudo rm -f ./application/config/.saved
 sudo rm -f ./application/config/*.php
 sudo echo "<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');" > ./application/config/constants.php
 sudo rm -Rf ./session
@@ -40,6 +41,7 @@ sudo chmod 755 modules/*/assets/uploads/.htaccess
 sudo chmod 755 modules/*/assets/uploads/index.html
 sudo chmod 644 modules/*/assets/uploads/*.jpg
 sudo chmod 644 modules/*/assets/uploads/*.png
+sudo chmod 755 modules/*/controllers -R
 sudo chmod 777 modules/*/controllers
 sudo chmod 777 modules/artificial_intelligence/assets/data -R
 sudo chmod 666 modules/artificial_intelligence/assets/data/1_*_Default

@@ -284,6 +284,8 @@ class CMS_Model extends CI_Model
 
         // extend user last active status
         $this->__cms_extend_user_last_active($this->cms_user_id());
+        // securing directories and files
+        $this->__cms_securing();
     }
 
     public function cms_invalidate_cache(){
@@ -324,6 +326,57 @@ class CMS_Model extends CI_Model
         }
         return $origin_uri_string;
     }
+    
+    public function cms_chmod_r($path, $mode){
+        if(file_exists($path)){
+            @chmod($path, $mode);
+            $dir = new DirectoryIterator($path);
+            foreach($dir as $item){
+                @chmod($item->getPathName(), $mode);
+                if($item->isDir() && !$item->isDot()){
+                    $this->cms_chmod_r($item->getPathName(), $mode);
+                }
+            }
+        }
+    }
+
+    private function __cms_securing(){
+        // see, whether it is necessary or not to chmoding all the files
+        if(!file_exists(APPPATH.'/config/.saved')){
+            // by default everything should be in 0755
+            $this->cms_chmod_r(FCPATH, 0755);
+            // config directory
+            $this->cms_chmod_r(APPPATH.'config', 0755);
+            @chmod(APPPATH.'config', 0777);
+            // log directory
+            $this->cms_chmod_r(APPPATH.'logs', 0666);
+            // kcfinder
+            $this->cms_chmod_r(FCPATH.'assets/kcfinder/upload', 0666);
+            @chmod(FCPATH.'assets/kcfinder/upload', 0777);
+            @chmod(FCPATH.'assets/kcfinder/upload/.htaccess', 0755);
+            @chmod(FCPATH.'assets/kcfinder/upload/index.html', 0755);
+            // uploads directory
+            $this->cms_chmod_r(FCPATH.'assets/uploads', 0666);
+            @chmod(FCPATH.'assets/uploads/.htaccess', 0755);
+            @chmod(FCPATH.'assets/uploads/index.html', 0755);
+            // nocms assets
+            $this->cms_chmod_r(FCPATH.'assets/nocms/images', 0666);
+            foreach(array('custom_background', 'custom_favicon', 'custom_logo', 'custom_meta_image', 'default-profile-picture', 'icons', 'profile_picture') as $subdir){
+                @chmod(FCPATH.'assets/nocms/images/'.$subdir.'/.htaccess', 0755);
+                @chmod(FCPATH.'assets/nocms/images/'.$subdir.'/index.html', 0755);
+            }
+            foreach($this->cms_get_module_list() as $module){
+                $module_path = $module['module_path'];
+                @chmod(FCPATH.'modules/'.$module_path.'/controllers', 0777);
+                $this->cms_chmod_r(FCPATH.'modules/'.$module_path.'/assets/uploads', 0666);
+                @chmod(FCPATH.'modules/'.$module_path.'/assets/uploads/.htaccess', 0755);
+                @chmod(FCPATH.'modules/'.$module_path.'/assets/uploads/index.html', 0755);
+            } 
+            // all done, put .saved file
+            file_put_contents(APPPATH.'/config/.saved', 'The existance of this file means that recursive chmod has been performed to secure all files and directories');
+        }
+    }
+
 
     /*
     * @ usage $this->t('purchase')
