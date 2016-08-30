@@ -26,3 +26,9 @@ __PS:__ Git user can do this instead of typical download-and-extract:
 ```
     git clone https://github.com/goFrendiAsgard/No-CMS.git
 ```
+
+Post Installation
+=================
+In production server, please run `post-installation.sh` in order to set correct directory/file access permission to your files. This is important for security purpose.
+
+

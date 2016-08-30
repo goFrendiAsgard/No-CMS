@@ -53,6 +53,9 @@ modules/*/controllers/Info_*.php
 modules/static_accessories/assets/images/slides/main*.jpg
 modules/static_accessories/assets/images/slides/coba*.jpg
 
+# Reset installation script
+reset-installation.sh
+
 # my private modules
 modules/typing_defense
 modules/loanword_searchengine

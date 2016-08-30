@@ -1488,7 +1488,7 @@ class Install_model extends CI_Model{
             $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'BASE_URL', base_url());
             $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
 
-            // databse configuration
+            // database configuration
             $file_name = APPPATH.'config/'.$this->complete_config_file_name('database.php');
             $key_prefix = "'";
             $key_suffix = "'";
