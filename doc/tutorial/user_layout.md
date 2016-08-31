@@ -10,6 +10,12 @@ There are some special tags you can use in layouts:
 * `{{ layout:css }}` This tag will be rendered and replaced by No-CMS and theme's predefined css (See `css.php` in your `themes/your-theme/views`)
 * `{{ layout:body }}` This tag will be rendered and replaced by current page's content. You should ensure your layout contains this tag.
 
+Also there are several `keyword` that resemble laravel's blade template engine
+* `@extends(parent_layout_name)` This will allow current layout to inherit from `parent_layout_name`.
+* `@section(section_name)` To start a section
+* `@end_section` To end a section
+* `@parent` To call parent's section inside particular section
+
 Example
 =======
 
