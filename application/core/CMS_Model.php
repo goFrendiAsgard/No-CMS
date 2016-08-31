@@ -326,7 +326,7 @@ class CMS_Model extends CI_Model
         }
         return $origin_uri_string;
     }
-    
+
     public function cms_chmod_r($path, $mode){
         if(file_exists($path)){
             @chmod($path, $mode);
@@ -371,7 +371,7 @@ class CMS_Model extends CI_Model
                 $this->cms_chmod_r(FCPATH.'modules/'.$module_path.'/assets/uploads', 0666);
                 @chmod(FCPATH.'modules/'.$module_path.'/assets/uploads/.htaccess', 0755);
                 @chmod(FCPATH.'modules/'.$module_path.'/assets/uploads/index.html', 0755);
-            } 
+            }
             // all done, put .saved file
             file_put_contents(APPPATH.'/config/.saved', 'The existance of this file means that recursive chmod has been performed to secure all files and directories');
         }
@@ -3412,9 +3412,79 @@ class CMS_Model extends CI_Model
         return $result;
     }
 
+    // get section of layout, indicated by @section
+    private function __cms_get_layout_section_list($template){
+        $found = preg_match_all('/@section\((.*?)\)(.*?)@end_section/si', $template, $matches);
+        $section_list = array();
+        $section_name_list = $matches[1];
+        $section_content_list = $matches[2];
+        for($i=0; $i<count($section_name_list); $i++){
+            $section_list[$section_name_list[$i]] = $section_content_list[$i];
+        }
+        return $section_list;
+    }
+
+    // get parent of a layout (indicated by @extends keyword
+    private function __cms_get_parent_layout_name($template){
+        $this->__cms_cache_layout();
+        $template_list = self::$__cms_model_properties['layout'];
+        // look for extends word
+        preg_match('/@extends\((.*?)\)/si', $template, $matches);
+        if(count($matches) >= 2){
+            $parent_template_name = $matches[1];
+            if(array_key_exists($parent_template_name, $template_list)){
+                return $parent_template_name;
+            }
+            return NULL;
+        }
+        return NULL;
+    }
+
+    private function __cms_parse_layout($template, $current_level=0, $max_level=100){
+        $this->__cms_cache_layout();
+        $template_list = self::$__cms_model_properties['layout'];
+        // get section list, as well as parent's template name
+        $section_list = $this->__cms_get_layout_section_list($template);
+        $parent_template_name = $this->__cms_get_parent_layout_name($template);
+        if($parent_template_name !== NULL){
+            if(array_key_exists($parent_template_name, $template_list)){
+                // get parent's template as well as parent's section list
+                $parent_template = $template_list[$parent_template_name];
+                $parent_section_list = $this->__cms_get_layout_section_list($parent_template);
+                // do replacement
+                foreach($section_list as $name=>$section){
+                    if(array_key_exists($name, $parent_section_list)){
+                        $parent_section = array_key_exists($name, $parent_section_list)? $parent_section_list[$name] : '';
+                        $section = str_ireplace('@parent', $parent_section, $section);
+                        $parent_template = str_ireplace('@section('.$name.')'.$parent_section.'@end_section', '@section('.$name.')'.$section.'@end_section', $parent_template);
+                    }else if($this->__cms_get_parent_layout_name($parent_template) !== NULL){
+                        $parent_template .= '@section('.$name.')'.$section_list[$name].'@end_section';
+                    }
+                }
+                // recurseive call until it's done
+                if($current_level == $max_level){
+                    $template = $parent_template;
+                }else{
+                    $template = $this->__cms_parse_layout($parent_template, $current_level+1, $max_level);
+                }
+            }
+        }else{
+            // clear all extends and section parts
+            $pattern_list = array('/@extends\(.*?\)/si', '/@end_section/si', '/@section\(.*?\)/si');
+            $replace = '';
+            foreach($pattern_list as $pattern){
+                $template = preg_replace($pattern, $replace, $template);
+            }
+        }
+        return $template;
+    }
+
     public function cms_get_layout_template($layout){
         $this->__cms_cache_layout();
-        return self::$__cms_model_properties['layout'][$layout];
+        $template = self::$__cms_model_properties['layout'][$layout];
+        $template = $this->__cms_parse_layout($template);
+        $template = trim($template);
+        return $template;
     }
 
     public function cms_get_layout_id($layout){
