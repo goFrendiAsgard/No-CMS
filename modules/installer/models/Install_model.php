@@ -255,28 +255,28 @@ class Install_model extends CI_Model{
             $t_subsite = '';
             $multisite_installed = FALSE;
             // find out whether multisite is installed or not. If multisite is installed, set multisite_installed
-        	if(file_exists(APPPATH.'config/main/database.php')){
-        	    // multisite, can use GET or subdomain
-        		$cms_config_file = APPPATH.'config/main/cms_config.php';
-        		if(file_exists($cms_config_file)){
-        			include($cms_config_file);
-        			$cms_table_prefix = trim($config['__cms_table_prefix'])==''? '' : $config['__cms_table_prefix'].'_';
-        			$query = $this->db->select('module_path')
+            if(file_exists(APPPATH.'config/main/database.php')){
+                // multisite, can use GET or subdomain
+                $cms_config_file = APPPATH.'config/main/cms_config.php';
+                if(file_exists($cms_config_file)){
+                    include($cms_config_file);
+                    $cms_table_prefix = trim($config['__cms_table_prefix'])==''? '' : $config['__cms_table_prefix'].'_';
+                    $query = $this->db->select('module_path')
                         ->from($cms_table_prefix.'main_module')
                         ->where('module_name', 'gofrendi.noCMS.multisite')
                         ->get();
-        			// if multisite module is not installed then the subsite is valid, and it is not subdomain
-        			if($query->num_rows() > 0){
+                    // if multisite module is not installed then the subsite is valid, and it is not subdomain
+                    if($query->num_rows() > 0){
                         $row = $query->row();
-        				// get module path
-        				$multisite_path = $row->module_path;
-        				// get multisite table prefix
-        				$multisite_config_file = 'modules/'.$multisite_path.'/config/module_config.php';
-        				if(file_exists($multisite_config_file)){
-        					include($multisite_config_file);
-        					$multisite_table_prefix = trim($config['__cms_table_prefix'])==''? $cms_table_prefix : $cms_table_prefix.$config['module_table_prefix'].'_';
-        					// renew multisite_installed and t_subsite
-        					$t_subsite = $multisite_table_prefix.'subsite';
+                        // get module path
+                        $multisite_path = $row->module_path;
+                        // get multisite table prefix
+                        $multisite_config_file = 'modules/'.$multisite_path.'/config/module_config.php';
+                        if(file_exists($multisite_config_file)){
+                            include($multisite_config_file);
+                            $multisite_table_prefix = trim($config['__cms_table_prefix'])==''? $cms_table_prefix : $cms_table_prefix.$config['module_table_prefix'].'_';
+                            // renew multisite_installed and t_subsite
+                            $t_subsite = $multisite_table_prefix.'subsite';
                             $multisite_installed = TRUE;
                         }
                     }
@@ -1451,11 +1451,7 @@ class Install_model extends CI_Model{
     public function build_configuration($config = array()){
         if(!$this->is_subsite){
             // create hostname.php
-            if($_SERVER['SERVER_PORT'] != 80){
-                $hostname = $_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'];
-            }else{
-                $hostname  = $_SERVER['HTTP_HOST'];
-            }
+            $hostname = $_SERVER['HTTP_HOST'];
             $content   = '<?php'.PHP_EOL;
             $content  .= '$hostname = "'.$hostname.'";'.PHP_EOL;
             @file_put_contents(FCPATH.'/hostname.php', $content);

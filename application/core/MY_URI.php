@@ -64,5 +64,4 @@ class MY_URI extends CI_URI {
 		// Do some final cleaning of the URI and return it
 		return $this->_remove_relative_directory($uri);
 	}
-
 }

@@ -13,6 +13,26 @@ class MY_Config extends CI_Config {
 		{
 			if (isset($_SERVER['HTTP_HOST']))
 			{
+                // Edited by Go Frendi, in case of user use other port but not ipv6
+                $is_ipv6 = FALSE;
+                if (strpos($_SERVER['HTTP_HOST'], ':') !== FALSE){
+                    $parts = explode(':', $_SERVER['HTTP_HOST']);
+                    $is_ipv6 = TRUE;
+                    foreach($parts as $part){
+                        if(!is_numeric($part) || strpos($part, '.') !== FALSE){
+                            $is_ipv6 = FALSE;
+                            break;
+                        }
+                    }
+                }
+                if($is_ipv6){
+                   	$server_addr = '['.$_SERVER['HTTP_HOST'].']';
+				}
+				else
+				{
+					$server_addr = $_SERVER['HTTP_HOST'];
+				}
+                /*
 				if (strpos($_SERVER['HTTP_HOST'], ':') !== FALSE)
 				{
 					$server_addr = '['.$_SERVER['HTTP_HOST'].']';
@@ -21,7 +41,7 @@ class MY_Config extends CI_Config {
 				{
 					$server_addr = $_SERVER['HTTP_HOST'];
 				}
-
+                 */
 				$base_url = (is_https() ? 'https' : 'http').'://'.$server_addr
 					.substr($_SERVER['SCRIPT_NAME'], 0, strpos($_SERVER['SCRIPT_NAME'], basename($_SERVER['SCRIPT_FILENAME'])));
 			}

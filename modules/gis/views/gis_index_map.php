@@ -104,7 +104,8 @@
 <?php
 // only load google's stuff if needed
 if ($map["gmap_roadmap"] || $map["gmap_satellite"] || $map["gmap_hybrid"]){
-	echo '<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.2&sensor=false"></script>';
+    $key = isset($gmap_api_key) && $gmap_api_key != ''? '?key='.$gmap_api_key : '';
+	echo '<script type="text/javascript" src="http://maps.google.com/maps/api/js'.$key.'"></script>';
 	echo '<script type="text/javascript" src="{{ module_base_url }}assets/js/leaflet-google/Google.js"></script>';
 }
 for($i=0; $i<count($map["scripts"]); $i++){
