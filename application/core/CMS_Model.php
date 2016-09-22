@@ -349,18 +349,18 @@ class CMS_Model extends CI_Model
             $this->cms_chmod_r(APPPATH.'config', 0755);
             @chmod(APPPATH.'config', 0777);
             // log directory
-            $this->cms_chmod_r(APPPATH.'logs', 0666);
+            $this->cms_chmod_r(APPPATH.'logs', 0777);
             // kcfinder
-            $this->cms_chmod_r(FCPATH.'assets/kcfinder/upload', 0666);
+            $this->cms_chmod_r(FCPATH.'assets/kcfinder/upload', 0777);
             @chmod(FCPATH.'assets/kcfinder/upload', 0777);
             @chmod(FCPATH.'assets/kcfinder/upload/.htaccess', 0755);
             @chmod(FCPATH.'assets/kcfinder/upload/index.html', 0755);
             // uploads directory
-            $this->cms_chmod_r(FCPATH.'assets/uploads', 0666);
+            $this->cms_chmod_r(FCPATH.'assets/uploads', 0777);
             @chmod(FCPATH.'assets/uploads/.htaccess', 0755);
             @chmod(FCPATH.'assets/uploads/index.html', 0755);
             // nocms assets
-            $this->cms_chmod_r(FCPATH.'assets/nocms/images', 0666);
+            $this->cms_chmod_r(FCPATH.'assets/nocms/images', 0777);
             foreach(array('custom_background', 'custom_favicon', 'custom_logo', 'custom_meta_image', 'default-profile-picture', 'icons', 'profile_picture') as $subdir){
                 @chmod(FCPATH.'assets/nocms/images/'.$subdir.'/.htaccess', 0755);
                 @chmod(FCPATH.'assets/nocms/images/'.$subdir.'/index.html', 0755);
@@ -368,9 +368,12 @@ class CMS_Model extends CI_Model
             foreach($this->cms_get_module_list() as $module){
                 $module_path = $module['module_path'];
                 @chmod(FCPATH.'modules/'.$module_path.'/controllers', 0777);
-                $this->cms_chmod_r(FCPATH.'modules/'.$module_path.'/assets/uploads', 0666);
+                // upload directory
+                $this->cms_chmod_r(FCPATH.'modules/'.$module_path.'/assets/uploads', 0777);
                 @chmod(FCPATH.'modules/'.$module_path.'/assets/uploads/.htaccess', 0755);
                 @chmod(FCPATH.'modules/'.$module_path.'/assets/uploads/index.html', 0755);
+                // db backup directory
+                $this->cms_chmod_r(FCPATH.'modules/'.$module_path.'/assets/db', 0666);
             }
             // all done, put .saved file
             file_put_contents(APPPATH.'/config/.saved', 'The existance of this file means that recursive chmod has been performed to secure all files and directories');

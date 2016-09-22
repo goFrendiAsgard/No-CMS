@@ -27,7 +27,8 @@ class Gis extends CMS_Secure_Controller {
     		if(isset($zoom)) $map["zoom"] = $zoom;
     		$data = array(
     			"map"=> $map,
-    			"gis_path"=> $this->cms_module_path('gofrendi.gis.core')
+    			"gis_path"=> $this->cms_module_path('gofrendi.gis.core'),
+                "gmap_api_key" => $this->cms_get_config('gmap_api_key'),
 			);
             // determine the correct navigation name
             $navigation_name = $this->n('index');

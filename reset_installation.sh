@@ -41,6 +41,7 @@ sudo chmod 755 modules/*/assets/uploads/.htaccess
 sudo chmod 755 modules/*/assets/uploads/index.html
 sudo chmod 644 modules/*/assets/uploads/*.jpg
 sudo chmod 644 modules/*/assets/uploads/*.png
+sudo chmod 777 modules/*/assets/db -R
 sudo chmod 755 modules/*/controllers -R
 sudo chmod 777 modules/*/controllers
 sudo chmod 777 modules/artificial_intelligence/assets/data -R

@@ -79,7 +79,9 @@ class Info extends CMS_Module {
     //////////////////////////////////////////////////////////////////////////////
     // CONFIGURATIONS
     //////////////////////////////////////////////////////////////////////////////
-    protected $CONFIGS = array();
+    protected $CONFIGS = array(
+        array('config_name' => 'gmap_api_key', 'value' => ''),
+    );
 
     //////////////////////////////////////////////////////////////////////////////
     // PRIVILEGES
@@ -320,5 +322,4 @@ class Info extends CMS_Module {
         $this->cms_remove_navigation("gis_layer");
         $this->cms_remove_navigation("gis_index");
     }
-
 }
