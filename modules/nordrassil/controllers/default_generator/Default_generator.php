@@ -115,6 +115,56 @@ class Default_generator extends CMS_Controller{
         return $this->php_class_file_name($this->back_controller_class_name($stripped_table_name).'_view', $without_extension);
     }
 
+    private function strip_table_prefix($table_name){
+        if(!isset($this->project_db_table_prefix) || $this->project_db_table_prefix == ''){
+            return $table_name;
+        }
+        if(strpos($table_name, $this->project_db_table_prefix) === 0){
+            $table_name = substr($table_name, strlen($this->project_db_table_prefix));
+        }
+        if($table_name[0]=='_'){
+            $table_name = substr($table_name,1);
+        }
+        return $table_name;
+    }
+
+    private function get_record_template($columns){
+        $fields = array();
+        $captions = array();
+        $primary_key = '';
+        foreach($columns as $column){
+            $column_name = $column['name'];
+            $column_role = $column['role'];
+            $column_caption = $column['caption'];
+            if($column_role == 'primary'){
+                $primary_key = $column_name;
+            }else if($column_role == ''){
+                $fields[] = $column_name;
+                $captions[] = $column_caption;
+            }else if($column_role == 'lookup'){
+                $lookup_table_name = $column['lookup_table_name'];
+                $lookup_table_name = $this->strip_table_prefix($lookup_table_name);
+                $lookup_column_name = $column['lookup_column_name'];
+                $fields[] = $lookup_table_name.'_'.$lookup_column_name;
+                $captions[] = $column_caption;
+            }
+        }
+        $record_template  = '<div id="record_{{ record:'.$primary_key.' }}" class="record_container panel panel-default">'.PHP_EOL;
+        $record_template .= '    <div class="panel-body">'.PHP_EOL;
+        for($i=0; $i<count($fields); $i++){
+            $record_template .= '        <!-- '.strtoupper($captions[$i]).' -->'.PHP_EOL;    
+            $record_template .= '        <div class="row">'.PHP_EOL;
+            $record_template .= '            <div class="col-md-4"><b>'.$captions[$i].'</b></div>'.PHP_EOL;
+            $record_template .= '            <div class="col-md-8">{{ record:'.$fields[$i].' }}</div>'.PHP_EOL;
+            $record_template .= '        </div>'.PHP_EOL;
+        }
+        $record_template .= '        <div class="edit_delete_record_container pull-right">{{ backend_urls }}</div>'.PHP_EOL;
+        $record_template .= '        <div style="clear:both;"></div>'.PHP_EOL;
+        $record_template .= '    </div>'.PHP_EOL;
+        $record_template .= '</div>';
+        return $record_template;
+    }
+
     public function index($project_id){
         $project = $this->nds->get_project($project_id);
         $this->project_id = $project_id;
@@ -260,6 +310,7 @@ class Default_generator extends CMS_Controller{
                 'front_controller_import_name',
                 'back_controller_import_name',
                 'stripped_table_name',
+                'record_template_configuration_name',
             );
             $replacement = array(
                 $save_project_name,
@@ -275,12 +326,14 @@ class Default_generator extends CMS_Controller{
                 underscore(humanize($this->front_controller_class_name($stripped_table_name))),
                 underscore(humanize($this->back_controller_class_name($stripped_table_name))),
                 $stripped_table_name,
+                $this->front_navigation_name($stripped_table_name).'_template',
             );
             // prepare data
             $data = array(
                 'table_name' => $stripped_table_name,
                 'columns' => $columns,
                 'table_prefix' => $this->project_db_table_prefix,
+                'record_template' => $this->get_record_template($columns),
             );
             // controller
             $str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern,$replacement);
@@ -633,6 +686,7 @@ class Default_generator extends CMS_Controller{
         $default_group_name = $project_caption.' Manager';
         $backend_navigations = PHP_EOL;
         $frontend_navigations = PHP_EOL;
+        $frontend_configurations = PHP_EOL;
         $group_backend_privileges = array();
         $group_backend_navigations = array();
         foreach($tables as $table){
@@ -643,6 +697,8 @@ class Default_generator extends CMS_Controller{
                     'stripped_table_name',
                     'default_group_name',
                     'front_navigation_name',
+                    'record_template_configuration_name',
+                    'record_template',
                     'back_navigation_name',
                     'front_controller_name',
                     'back_controller_name',
@@ -653,6 +709,9 @@ class Default_generator extends CMS_Controller{
                     $stripped_table_name,
                     $default_group_name,
                     $this->front_navigation_name($stripped_table_name),
+                    $this->front_navigation_name($stripped_table_name).'_template',
+                    // get the template and chop it so that it looks beautiful on Info.php
+                    implode('\'.PHP_EOL.' . PHP_EOL . '                            \'', explode(PHP_EOL, $this->get_record_template($table['columns']))),
                     $this->back_navigation_name($stripped_table_name),
                     underscore(humanize($this->front_controller_class_name($stripped_table_name))),
                     underscore(humanize($this->back_controller_class_name($stripped_table_name))),
@@ -677,6 +736,11 @@ class Default_generator extends CMS_Controller{
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_navigation',NULL,
                     $pattern, $replacement);
                 $frontend_navigations .= trim($str, PHP_EOL).PHP_EOL;
+                // configuration name for frontend template
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_configuration',NULL,
+                    $pattern, $replacement);
+                $frontend_configurations .= trim($str, PHP_EOL).PHP_EOL;
+
             }
         }
         $group_backend_privileges = 'array('.PHP_EOL.implode('', $group_backend_privileges).'            )';
@@ -798,6 +862,7 @@ class Default_generator extends CMS_Controller{
             'default_group_name',
             'backend_navigations',
             'frontend_navigations',
+            'frontend_configurations',
             'group_backend_privileges',
             'group_backend_navigations',
             'namespace',
@@ -817,6 +882,7 @@ class Default_generator extends CMS_Controller{
             $default_group_name,
             $backend_navigations,
             $frontend_navigations,
+            $frontend_configurations,
             $group_backend_privileges,
             $group_backend_navigations,
             underscore($this->cms_user_name()).'.'.underscore($this->project_name),

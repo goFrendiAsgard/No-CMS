@@ -50,6 +50,7 @@ class {{ controller_name }} extends CMS_Secure_Controller {
             'have_edit_privilege'    => $this->cms_have_privilege($this->n('edit_{{ stripped_table_name }}')),
             'have_delete_privilege'  => $this->cms_have_privilege($this->n('delete_{{ stripped_table_name }}')),
             'backend_url'            => site_url($module_path.'/{{ back_controller_import_name }}/index'),
+            'record_template'        => $this->cms_get_config('{{ record_template_configuration_name }}', TRUE),
         );
         $config = array('only_content'=>TRUE);
         $this->view($module_path.'/{{ front_view_partial_import_name }}',$data,

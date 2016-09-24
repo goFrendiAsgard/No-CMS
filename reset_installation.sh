@@ -36,6 +36,7 @@ sudo chmod 777 assets/nocms/images -R
 sudo chmod 644 assets/nocms/images/*.png
 sudo chmod 755 assets/nocms/images/*/.htaccess
 sudo chmod 755 assets/nocms/images/*/index.html
+sudo chmod 777 modules
 sudo chmod 777 modules/*/assets/uploads -R
 sudo chmod 755 modules/*/assets/uploads/.htaccess
 sudo chmod 755 modules/*/assets/uploads/index.html
