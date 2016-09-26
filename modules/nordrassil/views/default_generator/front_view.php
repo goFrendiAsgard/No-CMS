@@ -41,6 +41,9 @@
         if($allow_navigate_backend && $have_add_privilege){
             echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record"><i class="glyphicon glyphicon-plus"></i> Add</a>'.PHP_EOL;
         }
+        if($have_edit_template_privilege){
+            echo '<a href="template_config" class="btn btn-default add_record"><i class="glyphicon glyphicon-cog"></i> Edit Record Template</a>'.PHP_EOL;
+        }
     ?&gt;
 </div>
 <div id="record_content">&lt;?php echo $first_data ?&gt;</div>
