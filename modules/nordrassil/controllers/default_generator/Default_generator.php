@@ -71,6 +71,14 @@ class Default_generator extends CMS_Controller{
     private function front_navigation_name($stripped_table_name){
         return 'browse_'.underscore($stripped_table_name);
     }
+    
+    private function front_record_template_configuration_name($stripped_table_name){
+        return $this->save_project_name.'_'.underscore($stripped_table_name).'_record_template';
+    }
+
+    private function front_record_template_privilege_name($stripped_table_name){
+        return 'edit_'.underscore($stripped_table_name).'_record_template';
+    }
 
     private function back_navigation_name($stripped_table_name){
         return 'manage_'.underscore($stripped_table_name);
@@ -107,6 +115,9 @@ class Default_generator extends CMS_Controller{
     }
     private function front_view_file_name($stripped_table_name, $without_extension = FALSE){
         return $this->php_class_file_name($this->front_controller_class_name($stripped_table_name).'_view', $without_extension);
+    }
+    private function front_config_view_file_name($stripped_table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->front_controller_class_name($stripped_table_name).'_template_config_view', $without_extension);
     }
     private function front_view_partial_file_name($stripped_table_name, $without_extension = FALSE){
         return $this->php_class_file_name($this->front_controller_class_name($stripped_table_name).'_partial_view', $without_extension);
@@ -152,7 +163,7 @@ class Default_generator extends CMS_Controller{
         $record_template  = '<div id="record_{{ record:'.$primary_key.' }}" class="record_container panel panel-default">'.PHP_EOL;
         $record_template .= '    <div class="panel-body">'.PHP_EOL;
         for($i=0; $i<count($fields); $i++){
-            $record_template .= '        <!-- '.strtoupper($captions[$i]).' -->'.PHP_EOL;    
+            $record_template .= '        <!-- '.strtoupper($captions[$i]).' -->'.PHP_EOL;
             $record_template .= '        <div class="row">'.PHP_EOL;
             $record_template .= '            <div class="col-md-4"><b>'.$captions[$i].'</b></div>'.PHP_EOL;
             $record_template .= '            <div class="col-md-8">{{ record:'.$fields[$i].' }}</div>'.PHP_EOL;
@@ -306,11 +317,13 @@ class Default_generator extends CMS_Controller{
                 'backend_navigation_name',
                 'front_view_import_name',
                 'front_view_partial_import_name',
+                'front_config_view_name',
                 'front_model_import_name',
                 'front_controller_import_name',
                 'back_controller_import_name',
                 'stripped_table_name',
                 'record_template_configuration_name',
+                'record_template_privilege_name',
             );
             $replacement = array(
                 $save_project_name,
@@ -322,11 +335,13 @@ class Default_generator extends CMS_Controller{
                 $backend_navigation_name,
                 ucfirst(underscore(humanize($this->front_view_file_name($stripped_table_name, TRUE)))),
                 ucfirst(underscore(humanize($this->front_view_partial_file_name($stripped_table_name, TRUE)))),
+                ucfirst(underscore(humanize($this->front_config_view_file_name($stripped_table_name, TRUE)))),
                 underscore(humanize($this->front_model_class_name($stripped_table_name))),
                 underscore(humanize($this->front_controller_class_name($stripped_table_name))),
                 underscore(humanize($this->back_controller_class_name($stripped_table_name))),
                 $stripped_table_name,
-                $this->front_navigation_name($stripped_table_name).'_template',
+                $this->front_record_template_configuration_name($stripped_table_name),
+                $this->front_record_template_privilege_name($stripped_table_name),
             );
             // prepare data
             $data = array(
@@ -347,8 +362,10 @@ class Default_generator extends CMS_Controller{
             // partial view
             $str = $this->nds->read_view('nordrassil/default_generator/front_view_partial.php',$data,$pattern,$replacement);
             $this->nds->write_file($this->project_path.'views/'.$this->front_view_partial_file_name($stripped_table_name), $str);
+            // config view
+            $str = $this->nds->read_view('nordrassil/default_generator/front_view_config.php',$data,$pattern,$replacement);
+            $this->nds->write_file($this->project_path.'views/'.$this->front_config_view_file_name($stripped_table_name), $str);
         }
-
     }
 
     private function create_back_controller_and_view(){
@@ -650,7 +667,6 @@ class Default_generator extends CMS_Controller{
             $this->nds->write_file($this->project_path.'views/'.$this->back_view_file_name($stripped_table_name), $str);
 
         }
-
     }
 
     private function create_main_controller_and_view(){
@@ -687,6 +703,7 @@ class Default_generator extends CMS_Controller{
         $backend_navigations = PHP_EOL;
         $frontend_navigations = PHP_EOL;
         $frontend_configurations = PHP_EOL;
+        $frontend_privileges = PHP_EOL;
         $group_backend_privileges = array();
         $group_backend_navigations = array();
         foreach($tables as $table){
@@ -697,6 +714,7 @@ class Default_generator extends CMS_Controller{
                     'stripped_table_name',
                     'default_group_name',
                     'front_navigation_name',
+                    'record_template_privilege_name',
                     'record_template_configuration_name',
                     'record_template',
                     'back_navigation_name',
@@ -709,7 +727,8 @@ class Default_generator extends CMS_Controller{
                     $stripped_table_name,
                     $default_group_name,
                     $this->front_navigation_name($stripped_table_name),
-                    $this->front_navigation_name($stripped_table_name).'_template',
+                    $this->front_record_template_privilege_name($stripped_table_name),
+                    $this->front_record_template_configuration_name($stripped_table_name),
                     // get the template and chop it so that it looks beautiful on Info.php
                     implode('\'.PHP_EOL.' . PHP_EOL . '                            \'', explode(PHP_EOL, $this->get_record_template($table['columns']))),
                     $this->back_navigation_name($stripped_table_name),
@@ -740,6 +759,10 @@ class Default_generator extends CMS_Controller{
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_configuration',NULL,
                     $pattern, $replacement);
                 $frontend_configurations .= trim($str, PHP_EOL).PHP_EOL;
+                // privilege name for frontend template
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_privilege',NULL,
+                    $pattern, $replacement);
+                $frontend_privileges .= trim($str, PHP_EOL).PHP_EOL;
 
             }
         }
@@ -863,6 +886,7 @@ class Default_generator extends CMS_Controller{
             'backend_navigations',
             'frontend_navigations',
             'frontend_configurations',
+            'frontend_privileges',
             'group_backend_privileges',
             'group_backend_navigations',
             'namespace',
@@ -883,6 +907,7 @@ class Default_generator extends CMS_Controller{
             $backend_navigations,
             $frontend_navigations,
             $frontend_configurations,
+            $frontend_privileges,
             $group_backend_privileges,
             $group_backend_navigations,
             underscore($this->cms_user_name()).'.'.underscore($this->project_name),
@@ -907,7 +932,6 @@ class Default_generator extends CMS_Controller{
 
         $str = $this->nds->read_view('default_generator/description.txt', NULL, $pattern, $replacement);
         $this->nds->write_file($project_path.'description.txt', $str);
-
     }
 
     private function create_config(){

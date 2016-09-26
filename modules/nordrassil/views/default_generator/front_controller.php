@@ -15,6 +15,8 @@ class {{ controller_name }} extends CMS_Secure_Controller {
         $URL_MAP[$module_path] = $navigation_name;
         $URL_MAP[$module_path.'/{{ front_controller_import_name }}/get_data'] = $navigation_name;
         $URL_MAP[$module_path.'/get_data'] = $navigation_name;
+        $URL_MAP[$module_path.'/{{ front_controller_import_name }}/config'] = $navigation_name;
+        $URL_MAP[$module_path.'/config'] = $navigation_name;
         return $URL_MAP;
     }
 
@@ -44,17 +46,36 @@ class {{ controller_name }} extends CMS_Secure_Controller {
         $this->load->model($module_path.'/{{ front_model_import_name }}');
         $result = $this->{{ front_model_import_name }}->get_data($keyword, $page);
         $data = array(
-            'result'                 =>$result,
-            'allow_navigate_backend' => $this->cms_allow_navigate($this->n('{{ backend_navigation_name }}')),
-            'have_add_privilege'     => $this->cms_have_privilege($this->n('add_{{ stripped_table_name }}')),
-            'have_edit_privilege'    => $this->cms_have_privilege($this->n('edit_{{ stripped_table_name }}')),
-            'have_delete_privilege'  => $this->cms_have_privilege($this->n('delete_{{ stripped_table_name }}')),
-            'backend_url'            => site_url($module_path.'/{{ back_controller_import_name }}/index'),
-            'record_template'        => $this->cms_get_config('{{ record_template_configuration_name }}', TRUE),
+            'result'                       =>$result,
+            'allow_navigate_backend'       => $this->cms_allow_navigate($this->n('{{ backend_navigation_name }}')),
+            'have_add_privilege'           => $this->cms_have_privilege($this->n('add_{{ stripped_table_name }}')),
+            'have_edit_privilege'          => $this->cms_have_privilege($this->n('edit_{{ stripped_table_name }}')),
+            'have_delete_privilege'        => $this->cms_have_privilege($this->n('delete_{{ stripped_table_name }}')),
+            'have_edit_template_privilege' => $this->cms_have_privilege($this->n('{{ record_template_privilege_name }}')),
+            'backend_url'                  => site_url($module_path.'/{{ back_controller_import_name }}/index'),
+            'record_template'              => $this->cms_get_config('{{ record_template_configuration_name }}', TRUE),
         );
         $config = array('only_content'=>TRUE);
         $this->view($module_path.'/{{ front_view_partial_import_name }}',$data,
            $this->n('{{ navigation_name }}'), $config);
+    }
+
+    public function template_config(){
+        $module_path = $this->cms_module_path();
+        // redirect if doesn't have privilege
+        if(!$this->cms_have_privilege($this->n('{{ record_template_privilege_name }}'))){
+            redirect($module_path . '/{{ front_controller_import_name }}');    
+        }
+        // save changes
+        if($this->input->post('template') !== NULL){
+            $this->cms_set_config('{{ record_template_configuration_name }}', $this->input->post('template'));
+            redirect($module_path . '/{{ front_controller_import_name }}');    
+        }else{
+            $this->load->library('cms_asset');
+            $data = array('value' => $this->cms_get_config('{{ record_template_configuration_name }}', TRUE));
+            $this->view($module_path.'/{{ front_config_view_name }}',$data,
+                $this->n('{{ navigation_name }}'));
+        }
     }
 
 }
