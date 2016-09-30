@@ -176,6 +176,18 @@ class Default_generator extends CMS_Controller{
         return $record_template;
     }
 
+    private function get_front_tables(){
+        // filter tables, just the everything without "dont_make_form" option
+        $selected_tables = array();
+        for($i=0; $i<count($this->tables); $i++){
+            $table = $this->tables[$i];
+            if($table['options']['make_frontpage']){
+                $selected_tables[] = $table;
+            }
+        }
+        return $selected_tables;
+    }
+
     public function index($project_id){
         $project = $this->nds->get_project($project_id);
         $this->project_id = $project_id;
@@ -284,15 +296,7 @@ class Default_generator extends CMS_Controller{
     }
 
     private function create_front_controller_and_view(){
-        // filter tables, just the everything without "dont_make_form" option
-        $selected_tables = array();
-        for($i=0; $i<count($this->tables); $i++){
-            $table = $this->tables[$i];
-            if($table['options']['make_frontpage']){
-                $selected_tables[] = $table;
-            }
-        }
-        $tables = $selected_tables;
+        $tables = $this->get_front_tables();
 
         $this->load->helper('inflector');
         // get save_project_name
@@ -306,42 +310,23 @@ class Default_generator extends CMS_Controller{
             $navigation_name = $this->front_navigation_name($stripped_table_name);
             $backend_navigation_name = $this->back_navigation_name($stripped_table_name);
             $columns = $table['columns'];
-
             $pattern = array(
-                'project_name',
-                'controller_name',
-                'model_name',
-                'table_name',
-                'navigation_name',
-                'table_caption',
-                'backend_navigation_name',
-                'front_view_import_name',
-                'front_view_partial_import_name',
-                'front_config_view_name',
-                'front_model_import_name',
-                'front_controller_import_name',
-                'back_controller_import_name',
-                'stripped_table_name',
-                'record_template_configuration_name',
-                'record_template_privilege_name',
-            );
-            $replacement = array(
-                $save_project_name,
-                $controller_name,
-                $model_name,
-                $stripped_table_name,
-                $navigation_name,
-                $table_caption,
-                $backend_navigation_name,
-                ucfirst(underscore(humanize($this->front_view_file_name($stripped_table_name, TRUE)))),
-                ucfirst(underscore(humanize($this->front_view_partial_file_name($stripped_table_name, TRUE)))),
-                ucfirst(underscore(humanize($this->front_config_view_file_name($stripped_table_name, TRUE)))),
-                underscore(humanize($this->front_model_class_name($stripped_table_name))),
-                underscore(humanize($this->front_controller_class_name($stripped_table_name))),
-                underscore(humanize($this->back_controller_class_name($stripped_table_name))),
-                $stripped_table_name,
-                $this->front_record_template_configuration_name($stripped_table_name),
-                $this->front_record_template_privilege_name($stripped_table_name),
+                'project_name'          => $save_project_name,
+                'controller_name'       => $controller_name,
+                'model_name'            => $model_name,
+                'table_name'            => $stripped_table_name,
+                'navigation_name'       => $navigation_name,
+                'table_caption'         => $table_caption,
+                'backend_navigation_name'   => $backend_navigation_name,
+                'front_view_import_name'    => ucfirst(underscore(humanize($this->front_view_file_name($stripped_table_name, TRUE)))),
+                'front_view_partial_import_name' => ucfirst(underscore(humanize($this->front_view_partial_file_name($stripped_table_name, TRUE)))),
+                'front_config_view_name'         => ucfirst(underscore(humanize($this->front_config_view_file_name($stripped_table_name, TRUE)))),
+                'front_model_import_name'        => underscore(humanize($this->front_model_class_name($stripped_table_name))),
+                'front_controller_import_name'   => underscore(humanize($this->front_controller_class_name($stripped_table_name))),
+                'back_controller_import_name'    => underscore(humanize($this->back_controller_class_name($stripped_table_name))),
+                'stripped_table_name'            => $stripped_table_name,
+                'record_template_configuration_name' => $this->front_record_template_configuration_name($stripped_table_name),
+                'record_template_privilege_name' => $this->front_record_template_privilege_name($stripped_table_name),
             );
             // prepare data
             $data = array(
@@ -351,19 +336,19 @@ class Default_generator extends CMS_Controller{
                 'record_template' => $this->get_record_template($columns),
             );
             // controller
-            $str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'controllers/'.$this->front_controller_file_name($stripped_table_name), $str);
             // model
-            $str = $this->nds->read_view('nordrassil/default_generator/front_model.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_model.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'models/'.$this->front_model_file_name($stripped_table_name), $str);
             // main view
-            $str = $this->nds->read_view('nordrassil/default_generator/front_view.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_view.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'views/'.$this->front_view_file_name($stripped_table_name), $str);
             // partial view
-            $str = $this->nds->read_view('nordrassil/default_generator/front_view_partial.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_view_partial.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'views/'.$this->front_view_partial_file_name($stripped_table_name), $str);
             // config view
-            $str = $this->nds->read_view('nordrassil/default_generator/front_view_config.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_view_config.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'views/'.$this->front_config_view_file_name($stripped_table_name), $str);
         }
     }
@@ -371,14 +356,7 @@ class Default_generator extends CMS_Controller{
     private function create_back_controller_and_view(){
         // filter tables, just the everything without "dont_make_form" option
         $all_tables = $this->tables;
-        $selected_tables = array();
-        for($i=0; $i<count($this->tables); $i++){
-            $table = $this->tables[$i];
-            if(!$table['options']['dont_make_form']){
-                $selected_tables[] = $table;
-            }
-        }
-        $tables = $selected_tables;
+        $tables = $this->get_front_tables();
 
         $this->load->helper('inflector');
         // get save_project_name
@@ -598,64 +576,37 @@ class Default_generator extends CMS_Controller{
             }
             // create pattern & replacement
             $pattern = array(
-                'navigation_name',
-                'table_name',
-                'table_caption',
-                'controller_name',
-                'model_name',
-                'model_import_name',
-                'view_import_name',
-                'field_list',
-                'add_field_list',
-                'edit_field_list',
-                'display_as',
-                'set_relation',
-                'set_relation_n_n',
-                'hide_field',
-                'enum_set_field',
-                'directory',
-                'detail_callback_call',
-                'detail_callback_declaration',
-                'detail_before_delete',
-                'detail_after_insert_or_update',
-                'required_fields',
-                'unique_fields',
-                'set_rules',
-                'upload',
-                'primary_key'
-            );
-            $replacement = array(
-                $this->back_navigation_name($stripped_table_name),
-                $stripped_table_name,
-                $table_caption,
-                $this->back_controller_class_name($stripped_table_name),
-                $this->back_model_class_name($stripped_table_name),
-                $this->back_model_file_name($stripped_table_name, TRUE),
-                $this->back_view_file_name($stripped_table_name, TRUE),
-                $field_list,
-                $add_field_list,
-                $edit_field_list,
-                $display_as,
-                $set_relation,
-                $set_relation_n_n,
-                $hide_field,
-                $enum_set_field,
-                $save_project_name,
-                $detail_callback_call,
-                $detail_callback_declaration,
-                $detail_before_delete,
-                $detail_after_insert_or_update,
-                $required_fields,
-                $unique_fields,
-                $set_rules,
-                $upload,
-                $primary_key
+                'navigation_name'   => $this->back_navigation_name($stripped_table_name),
+                'table_name'        => $stripped_table_name,
+                'table_caption'     => $table_caption,
+                'controller_name'   => $this->back_controller_class_name($stripped_table_name),
+                'model_name'        => $this->back_model_class_name($stripped_table_name),
+                'model_import_name' => $this->back_model_file_name($stripped_table_name, TRUE),
+                'view_import_name'  => $this->back_view_file_name($stripped_table_name, TRUE),
+                'field_list'        => $field_list,
+                'add_field_list'    => $add_field_list,
+                'edit_field_list'   => $edit_field_list,
+                'display_as'        => $display_as,
+                'set_relation'      => $set_relation,
+                'set_relation_n_n'  => $set_relation_n_n,
+                'hide_field'        => $hide_field,
+                'enum_set_field'    => $enum_set_field,
+                'directory'         => $save_project_name,
+                'detail_callback_call'          => $detail_callback_call,
+                'detail_callback_declaration'   => $detail_callback_declaration,
+                'detail_before_delete'          => $detail_before_delete,
+                'detail_after_insert_or_update' => $detail_after_insert_or_update,
+                'required_fields'   => $required_fields,
+                'unique_fields'     => $unique_fields,
+                'set_rules'         => $set_rules,
+                'upload'            => $upload,
+                'primary_key'       => $primary_key
             );
             // controllers
-            $str = $this->nds->read_view('nordrassil/default_generator/back_controller.php',NULL,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/back_controller.php',NULL,$pattern);
             $this->nds->write_file($this->project_path.'controllers/'.$this->back_controller_file_name($stripped_table_name), $str);
             // models
-            $str = $this->nds->read_view('nordrassil/default_generator/back_model.php',NULL,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/back_model.php',NULL,$pattern);
             $this->nds->write_file($this->project_path.'models/'.$this->back_model_file_name($stripped_table_name), $str);
             // views
             $data = array(
@@ -663,7 +614,7 @@ class Default_generator extends CMS_Controller{
                 'front_controller_import_name' => underscore(humanize($this->front_controller_class_name($stripped_table_name))),
                 'controller_name' => $this->back_controller_file_name($stripped_table_name),
             );
-            $str = $this->nds->read_view('nordrassil/default_generator/back_view.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/back_view.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'views/'.$this->back_view_file_name($stripped_table_name), $str);
 
         }
@@ -671,22 +622,16 @@ class Default_generator extends CMS_Controller{
 
     private function create_main_controller_and_view(){
         $pattern = array(
-            'navigation_parent_name',
-            'directory',
-            'main_controller',
-            'project_name',
-        );
-        $replacement = array(
-            'index',
-            ucfirst(strtolower(underscore($this->project_name))),
-            ucfirst(strtolower(underscore($this->project_name))),
-            $this->project_name,
+            'navigation_parent_name' => 'index',
+            'directory'              => ucfirst(strtolower(underscore($this->project_name))),
+            'main_controller'        => ucfirst(strtolower(underscore($this->project_name))),
+            'project_name'           => $this->project_name,
         );
         // main controller
-        $str = $this->nds->read_view('nordrassil/default_generator/main_controller', NULL, $pattern, $replacement);
+        $str = $this->nds->read_view('nordrassil/default_generator/main_controller', NULL, $pattern);
         $this->nds->write_file($this->project_path.'controllers/'.ucfirst(underscore($this->project_name)).'.php', $str);
         // main view
-        $str = $this->nds->read_view('nordrassil/default_generator/main_view', NULL, $pattern, $replacement);
+        $str = $this->nds->read_view('nordrassil/default_generator/main_view', NULL, $pattern);
         $this->nds->write_file($this->project_path.'views/'.ucfirst(underscore($this->project_name)).'_index.php', $str);
     }
 
