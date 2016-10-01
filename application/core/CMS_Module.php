@@ -94,6 +94,13 @@ class CMS_Module extends CMS_Controller
                 break;
             }
         }
+        for($i=0; $i<count($this->CONFIGS); $i++){
+            $config = $this->CONFIGS[$i];
+            if($config['value'] === NULL){
+               $config_name = $config['config_name'];
+               $this->CONFIGS[$i]['value'] = $this->cms_get_module_config($config_name);
+            }
+        }
         // load dbforge to be used later
         $this->load->dbforge();
     }
@@ -745,13 +752,13 @@ class CMS_Module extends CMS_Controller
             $parent_id = $row->module_id;
 
             $SQL = '
-	            SELECT module_name, module_path
-	            FROM
-	                '.cms_table_name('main_module_dependency').',
-	                '.cms_table_name('main_module').'
-	            WHERE
-	                '.cms_table_name('main_module').'.module_id = '.cms_table_name('main_module_dependency').'.module_id AND
-	                parent_id='.$parent_id;
+                SELECT module_name, module_path
+                FROM
+                   '.cms_table_name('main_module_dependency').',
+                   '.cms_table_name('main_module').'
+               WHERE
+                   '.cms_table_name('main_module').'.module_id = '.cms_table_name('main_module_dependency').'.module_id AND
+                   parent_id='.$parent_id;
             $query = $this->db->query($SQL);
             $result = array();
             foreach ($query->result() as $row) {

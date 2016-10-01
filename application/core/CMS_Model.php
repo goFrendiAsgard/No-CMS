@@ -658,6 +658,17 @@ class CMS_Model extends CI_Model
         return cms_table_name($table_name, $table_prefix);
     }
 
+    public function cms_get_module_config($configuration_name, $module_name = NULL){
+        $module_path = $this->cms_module_path($module_name);
+        if($module_path != 'main' && $module_path != ''){
+            include FCPATH.'modules/'.$module_path.'/config/module_config.php';
+            if(array_key_exists($configuration_name, $config)){
+                return $config[$configuration_name];
+            }
+        }
+        return NULL;
+    }
+
     /**
      * @author go frendi
      *

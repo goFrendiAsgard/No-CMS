@@ -354,9 +354,7 @@ class Default_generator extends CMS_Controller{
     }
 
     private function create_back_controller_and_view(){
-        // filter tables, just the everything without "dont_make_form" option
-        $all_tables = $this->tables;
-        $tables = $this->get_front_tables();
+        $tables = $this->tables;
 
         $this->load->helper('inflector');
         // get save_project_name
@@ -480,7 +478,7 @@ class Default_generator extends CMS_Controller{
                     $detail_foreign_key_name = $column['relation_table_column_name'];
                     $detail_primary_key_name = '';
                     $detail_table = array();
-                    foreach($all_tables as $detail_table_candidate){
+                    foreach($tables as $detail_table_candidate){
                         if($detail_table_candidate['name'] == $column['relation_table_name']){
                             $detail_table = $detail_table_candidate;
                             $detail_columns = $detail_table['columns'];
@@ -655,42 +653,29 @@ class Default_generator extends CMS_Controller{
             $table_name = $table['name'];
             $stripped_table_name = $table['stripped_name'];
             $table_caption = $table['caption'];
-            $pattern =  array(
-                    'stripped_table_name',
-                    'default_group_name',
-                    'front_navigation_name',
-                    'record_template_privilege_name',
-                    'record_template_configuration_name',
-                    'record_template',
-                    'back_navigation_name',
-                    'front_controller_name',
-                    'back_controller_name',
-                    'table_caption',
-                    'navigation_parent_name',
-                );
-            $replacement = array(
-                    $stripped_table_name,
-                    $default_group_name,
-                    $this->front_navigation_name($stripped_table_name),
-                    $this->front_record_template_privilege_name($stripped_table_name),
-                    $this->front_record_template_configuration_name($stripped_table_name),
+            $pattern = array(
+                    'stripped_table_name'   => $stripped_table_name,
+                    'default_group_name'    => $default_group_name,
+                    'front_navigation_name' => $this->front_navigation_name($stripped_table_name),
+                    'record_template_privilege_name'        => $this->front_record_template_privilege_name($stripped_table_name),
+                    'record_template_configuration_name'    => $this->front_record_template_configuration_name($stripped_table_name),
                     // get the template and chop it so that it looks beautiful on Info.php
-                    implode('\'.PHP_EOL.' . PHP_EOL . '                            \'', explode(PHP_EOL, $this->get_record_template($table['columns']))),
-                    $this->back_navigation_name($stripped_table_name),
-                    underscore(humanize($this->front_controller_class_name($stripped_table_name))),
-                    underscore(humanize($this->back_controller_class_name($stripped_table_name))),
-                    $table_caption,
-                    'index',
+                    'record_template'       => implode('\'.PHP_EOL.' . PHP_EOL . '                            \'', explode(PHP_EOL, $this->get_record_template($table['columns']))),
+                    'back_navigation_name'  => $this->back_navigation_name($stripped_table_name),
+                    'front_controller_name' => underscore(humanize($this->front_controller_class_name($stripped_table_name))),
+                    'back_controller_name'  => underscore(humanize($this->back_controller_class_name($stripped_table_name))),
+                    'table_caption'         => $table_caption,
+                    'navigation_parent_name'=>  'index',
                 );
             // back
             if(!$table['options']['dont_make_form']){
                 // backend navigation
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/backend_navigation',NULL,
-                    $pattern, $replacement);
+                    $pattern);
                 $backend_navigations .= trim($str, PHP_EOL).PHP_EOL;
                 // backend privilege
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/group_backend_privilege',NULL,
-                    $pattern, $replacement);
+                    $pattern);
                 $group_backend_privileges[] = $str;
                 // group backend navigation
                 $group_backend_navigations[] = '\''. addslashes($stripped_table_name) .'\'';
@@ -698,15 +683,15 @@ class Default_generator extends CMS_Controller{
             // front
             if($table['options']['make_frontpage']){
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_navigation',NULL,
-                    $pattern, $replacement);
+                    $pattern);
                 $frontend_navigations .= trim($str, PHP_EOL).PHP_EOL;
                 // configuration name for frontend template
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_configuration',NULL,
-                    $pattern, $replacement);
+                    $pattern);
                 $frontend_configurations .= trim($str, PHP_EOL).PHP_EOL;
                 // privilege name for frontend template
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_privilege',NULL,
-                    $pattern, $replacement);
+                    $pattern);
                 $frontend_privileges .= trim($str, PHP_EOL).PHP_EOL;
 
             }
@@ -883,9 +868,25 @@ class Default_generator extends CMS_Controller{
         ////////////////////////////////////////////////////////////////
         // create config
         ////////////////////////////////////////////////////////////////
-        $pattern = array('table_prefix', 'module_prefix');
-        $replacement = array($this->config_table_prefix, $this->config_module_prefix);
-        $str = $this->nds->read_view('default_generator/module_config', NULL, $pattern, $replacement);
+        $pattern = array(
+            'table_prefix' => $this->config_table_prefix,
+            'module_prefix' => $this->config_module_prefix,
+        );
+        // get template for front tables
+        $data = array(
+            'record_template_configuration' => array(),
+        );
+        $tables = $this->get_front_tables();
+        foreach($tables as $table){
+            $table_name = $table['name'];
+            $stripped_table_name = $table['stripped_name'];
+            $configuration_name = $this->front_record_template_configuration_name($stripped_table_name);
+            $configuration_value = $this->get_record_template($table['columns']);
+            // set record template configuration
+            $data['record_template_configuration'][$configuration_name] = $configuration_value;
+        }
+        // load
+        $str = $this->nds->read_view('default_generator/module_config', $data, $pattern);
         $this->nds->write_file($this->project_path.'config/module_config.php', $str);
     }
 
