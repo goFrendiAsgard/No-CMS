@@ -92,9 +92,27 @@ class Nordrassillib{
 	}
 	public function read_view($view_name, $data=NULL, $pattern=NULL, $replacement=NULL){
 		$string = $this->ci->load->view($view_name,$data,True);
+        // Since it is better to use associative array than two separated array,
+        // this function should check if pattern is associative and make two separated array (pattern and replacement) automatically
+        if(is_array($pattern) && $this->is_associative_array($pattern)){
+            $new_pattern = array();
+            $new_replacement = array();
+            foreach($pattern as $key=>$val){
+                $new_pattern[] = $key;
+                $new_replacement[] = $val;
+            }
+            $pattern = $new_pattern;
+            $replacement = $new_replacement;
+        }
 		$string = $this->replace($string, $pattern, $replacement);
 		$string = str_replace(array('&lt;?', '?&gt;'), array('<?', '?>'), $string);
 		return $string;
 	}
+
+    private function is_associative_array(array $arr)
+    {
+        if (array() === $arr) return false;
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
 }
 ?>
