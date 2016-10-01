@@ -29,7 +29,7 @@ class {{ controller_name }} extends CMS_Secure_Controller {
             'have_delete_privilege'     => $this->cms_have_privilege($this->n('delete_{{ stripped_table_name }}')),
             'backend_url'               => site_url($module_path.'/{{ back_controller_import_name }}/index'),
             'module_path'               => $module_path,
-            'first_data'                => Modules::run($module_path.'/{{ front_controller_import_name }}/get_data', 0, '')
+            'first_data'                => Modules::run($module_path.'/{{ front_controller_import_name }}/get_data', 0, ''),
         );
         $this->view($module_path.'/{{ front_view_import_name }}',$data,
             $this->n('{{ navigation_name }}'));
@@ -54,6 +54,7 @@ class {{ controller_name }} extends CMS_Secure_Controller {
             'have_edit_template_privilege' => $this->cms_have_privilege($this->n('{{ record_template_privilege_name }}')),
             'backend_url'                  => site_url($module_path.'/{{ back_controller_import_name }}/index'),
             'record_template'              => $this->cms_get_config('{{ record_template_configuration_name }}', TRUE),
+            'default_record_template'      => $this->cms_get_module_config('{{ record_template_configuration_name }}'),
         );
         $config = array('only_content'=>TRUE);
         $this->view($module_path.'/{{ front_view_partial_import_name }}',$data,
@@ -64,18 +65,20 @@ class {{ controller_name }} extends CMS_Secure_Controller {
         $module_path = $this->cms_module_path();
         // redirect if doesn't have privilege
         if(!$this->cms_have_privilege($this->n('{{ record_template_privilege_name }}'))){
-            redirect($module_path . '/{{ front_controller_import_name }}');    
+            redirect($module_path . '/{{ front_controller_import_name }}');
         }
         // save changes
         if($this->input->post('template') !== NULL){
             $this->cms_set_config('{{ record_template_configuration_name }}', $this->input->post('template'));
-            redirect($module_path . '/{{ front_controller_import_name }}');    
+            redirect($module_path . '/{{ front_controller_import_name }}');
         }else{
             $this->load->library('cms_asset');
-            $data = array('value' => $this->cms_get_config('{{ record_template_configuration_name }}', TRUE));
+            $data = array(
+                'record_template'         => $this->cms_get_config('{{ record_template_configuration_name }}', TRUE),
+                'default_record_template' => $this->cms_get_module_config('{{ record_template_configuration_name }}'),
+            );
             $this->view($module_path.'/{{ front_config_view_name }}',$data,
                 $this->n('{{ navigation_name }}'));
         }
     }
-
 }
