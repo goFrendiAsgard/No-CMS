@@ -610,7 +610,7 @@ switch (ERROR_REPORTING)
 	}
 =======
     // function to determine if address is IP address
-    function is_ip_address($address)
+    function __cms_is_ip_address($address)
     {
         // IP address consists of 4 parts, separated by dot. Every part is integer,
         // otherwise, it is not IP address
@@ -628,7 +628,7 @@ switch (ERROR_REPORTING)
     }
 
     // function to guess domain name
-    function domain($domain)
+    function __cms_domain($domain)
     {
         // is $hostname defined in hostname.php
         if(file_exists('hostname.php')){
@@ -652,7 +652,7 @@ switch (ERROR_REPORTING)
     }
 
     // function to get full url (protocol://domain:port)
-    function full_url($s, $use_forwarded_host=false)
+    function __cms_full_url($s, $use_forwarded_host=false)
     {
         $ssl        = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on') ? true:false;
         $sp         = strtolower($s['SERVER_PROTOCOL']);
@@ -665,7 +665,7 @@ switch (ERROR_REPORTING)
     }
 
     // function to run query and return associative array
-    function db_query($sql){
+    function __cms_db_query($sql){
         $db_config_file = APPPATH.'config/main/database.php';
         $cms_config_file = APPPATH.'config/main/cms_config.php';
         if(!file_exists($db_config_file) || !file_exists($cms_config_file)){
@@ -735,13 +735,13 @@ switch (ERROR_REPORTING)
     $multisite_installed = FALSE;    // is multisite module installed
     $t_subsite           = '';        // subsite table name
     $actual_host_name    = $_SERVER['HTTP_HOST'];    // actual host name (by request)
-    $address             = full_url($_SERVER);        // address with protocol & port
+    $address             = __cms_full_url($_SERVER);        // address with protocol & port
     $parsed_url          = parse_url($address);        // get part of the address as associative array
     $stripped_host_name  = $parsed_url['host'];        // the host
-    $check               = is_ip_address($stripped_host_name); // check whether stripped host name is IP or not
+    $check               = __cms_is_ip_address($stripped_host_name); // check whether stripped host name is IP or not
     // renew stripped_host_name if it is not IP address
     if ($check == FALSE){
-        $stripped_host_name = $stripped_host_name == '' ? domain($stripped_host_name) : domain($address);
+        $stripped_host_name = $stripped_host_name == '' ? __cms_domain($stripped_host_name) : __cms_domain($address);
     }
     // renew USE_SUBDOMAIN
     if($stripped_host_name == $actual_host_name){
@@ -757,7 +757,7 @@ switch (ERROR_REPORTING)
         if(file_exists(APPPATH.'config/main/database.php') && file_exists($cms_config_file)){
             include($cms_config_file);
             $cms_table_prefix = trim($config['__cms_table_prefix'])==''? '' : $config['__cms_table_prefix'].'_';
-            $result_module = db_query('SELECT module_path FROM '.$cms_table_prefix.'main_module WHERE module_name=\'gofrendi.noCMS.multisite\'');
+            $result_module = __cms_db_query('SELECT module_path FROM '.$cms_table_prefix.'main_module WHERE module_name=\'gofrendi.noCMS.multisite\'');
             // connection failed
             if($result_module === FALSE){
                 die('Database Connection Failed');
@@ -783,7 +783,7 @@ switch (ERROR_REPORTING)
             $CMS_SUBSITE = $_GET['__cms_subsite'];
             $INVALID_SUBSITE = TRUE; // set invalid subsite to true unless we find one in subsite table
             if($multisite_installed){
-                $result_subsite = db_query('SELECT name FROM '.$t_subsite.' WHERE name=\''.addslashes($CMS_SUBSITE).'\'');
+                $result_subsite = __cms_db_query('SELECT name FROM '.$t_subsite.' WHERE name=\''.addslashes($CMS_SUBSITE).'\'');
                 // via get and doesn't match
                 if(count($result_subsite) > 0){
                     $INVALID_SUBSITE = FALSE;
@@ -800,12 +800,12 @@ switch (ERROR_REPORTING)
                     $actual_host_name_parts   = explode('.', $actual_host_name);
                     $stripped_host_name_parts = explode('.', $stripped_host_name);
                     // get subsite
-                    $result_subsite = db_query('SELECT name FROM '.$t_subsite.' WHERE name=\''.addslashes($actual_host_name_parts[0]).'\' OR aliases LIKE \'%'.addslashes($actual_host_name).'%\'');
+                    $result_subsite = __cms_db_query('SELECT name FROM '.$t_subsite.' WHERE name=\''.addslashes($actual_host_name_parts[0]).'\' OR aliases LIKE \'%'.addslashes($actual_host_name).'%\'');
                     // subsite found, set invalid_subsite to false
                     if(count($result_subsite) > 0){
                         $row_subsite = $result_subsite[0];
                         // using subdomain, not using alias
-                        if($row_subsite['name'] == $actual_host_name_parts[0] && $actual_host_name == $row_subsite['name'].'.'.domain($actual_host_name)){
+                        if($row_subsite['name'] == $actual_host_name_parts[0] && $actual_host_name == $row_subsite['name'].'.'.__cms_domain($actual_host_name)){
                             $USE_SUBDOMAIN = TRUE;
                             $CMS_SUBSITE = $actual_host_name_parts[0];
                         }else{ // using alias
@@ -840,7 +840,7 @@ switch (ERROR_REPORTING)
 
     // is subsite is invalid then redirect to the main website.
     if( INVALID_SUBSITE || (CMS_SUBSITE != '' && !is_dir(APPPATH.'config/site-'.CMS_SUBSITE)) ){
-        $address = full_url($_SERVER);
+        $address = __cms_full_url($_SERVER);
         // determine redirection url
         if(USE_SUBDOMAIN){
             $address_part  = explode('.', $address);
