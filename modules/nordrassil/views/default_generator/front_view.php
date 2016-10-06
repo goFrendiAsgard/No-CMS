@@ -42,7 +42,7 @@
             echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record"><i class="glyphicon glyphicon-plus"></i> Add</a>'.PHP_EOL;
         }
         if($have_edit_template_privilege){
-            echo '<a href="{{ module_site_url }}{{ front_controller_import_name }}/template_config" class="btn btn-default add_record"><i class="glyphicon glyphicon-cog"></i> Edit Record Template</a>'.PHP_EOL;
+            echo '<a href="{{ module_site_url }}{{ front_controller_import_name }}/template_config" class="btn btn-default"><i class="glyphicon glyphicon-cog"></i> Edit Record Template</a>'.PHP_EOL;
         }
     ?&gt;
 </div>

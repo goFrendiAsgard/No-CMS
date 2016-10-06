@@ -6,55 +6,38 @@
  * @author No-CMS Module Generator
  */
 
-class Browse_portfolio extends CMS_Secure_Controller {
+class Browse_portfolio extends CMS_Front_Controller {
+    protected $CONTROLLER_PATH = 'browse_portfolio';
+    protected $NAVIGATION_NAME = 'browse_portfolio';
+    protected $BACK_CONTROLLER_PATH = 'manage_portfolio';
+    protected $BACK_NAVIGATION_NAME = 'manage_portfolio';
 
-    protected function do_override_url_map($URL_MAP){
-        $module_path = $this->cms_module_path();
-        $navigation_name = $this->n('browse_portfolio');
-        $URL_MAP[$module_path.'/browse_portfolio'] = $navigation_name;
-        $URL_MAP[$module_path] = $navigation_name;
-        $URL_MAP[$module_path.'/browse_portfolio/get_data'] = $navigation_name;
-        $URL_MAP[$module_path.'/get_data'] = $navigation_name;
-        return $URL_MAP;
-    }
+    protected $ADD_PRIVILEGE_NAME = 'add_portfolio';
+    protected $EDIT_PRIVILEGE_NAME = 'edit_portfolio';
+    protected $DELETE_PRIVILEGE_NAME = 'delete_portfolio';
+    protected $EDIT_TEMPLATE_PRIVILEGE_NAME = 'edit_portfolio_record_template';
+
+    protected $CONFIG_TEMPLATE_NAME = 'portfolio_record_template';
+
+    protected $VIEW_PATH = 'Browse_portfolio_view';
+    protected $PARTIAL_VIEW_PATH = 'Browse_portfolio_partial_view';
+    protected $CONFIG_VIEW_PATH = 'Browse_portfolio_template_config_view';
+
+    protected $MODEL_PATH = 'portfolio_model';
 
     public function index(){
         $module_path = $this->cms_module_path();
-        $data = array(
-            'allow_navigate_backend'    => $this->cms_allow_navigate($this->n('manage_portfolio')),
-            'have_add_privilege'        => $this->cms_have_privilege($this->n('add_portfolio')),
-            'have_edit_privilege'       => $this->cms_have_privilege($this->n('edit_portfolio')),
-            'have_delete_privilege'     => $this->cms_have_privilege($this->n('delete_portfolio')),
-            'backend_url'               => site_url($this->cms_module_path().'/manage_portfolio/index'),
-            'module_path'               => $this->cms_module_path(),
-            'first_data'                => Modules::run($module_path.'/browse_portfolio/get_data', 0, '')
-        );
-        $this->view($this->cms_module_path().'/Browse_portfolio_view',$data,
-            $this->n('browse_portfolio'));
+        $data = $this->_index();
+        $this->view($module_path.'/'.$this->VIEW_PATH, $data,
+            $this->n($this->NAVIGATION_NAME));
     }
 
     public function get_data($page = 0, $keyword = ''){
         $module_path = $this->cms_module_path();
-        // get page and keyword parameter
-        $post_keyword   = $this->input->post('keyword');
-        $post_page      = $this->input->post('page');
-        if($keyword == '' && $post_keyword != NULL) $keyword = $post_keyword;
-        if($page == 0 && $post_page != NULL) $page = $post_page;
-        // get data from model
-        $this->load->model($this->cms_module_path().'/portfolio_model');
-        $this->Portfolio_model = new Portfolio_model();
-        $result = $this->Portfolio_model->get_data($keyword, $page);
-        $data = array(
-            'result'                 =>$result,
-            'allow_navigate_backend' => $this->cms_allow_navigate($this->n('manage_portfolio')),
-            'have_add_privilege'     => $this->cms_have_privilege($this->n('add_portfolio')),
-            'have_edit_privilege'    => $this->cms_have_privilege($this->n('edit_portfolio')),
-            'have_delete_privilege'  => $this->cms_have_privilege($this->n('delete_portfolio')),
-            'backend_url'            => site_url($module_path.'/manage_portfolio/index'),
-        );
+        $data = $this->_get_data($page, $keyword);
         $config = array('only_content'=>TRUE);
-        $this->view($module_path.'/Browse_portfolio_partial_view',$data,
-           $this->n('browse_portfolio'), $config);
+        $this->view($module_path.'/'.$this->PARTIAL_VIEW_PATH, $data,
+            $this->n($this->NAVIGATION_NAME), $config);
     }
 
 }
