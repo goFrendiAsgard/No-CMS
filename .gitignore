@@ -30,6 +30,7 @@ assets/caches/*.js
 assets/caches/*.css
 modules/*/config/module_config_*.php
 application/config/main
+application/config/.saved
 application/config/site-*
 application/config/tmp/*.php
 /.htaccess
@@ -52,9 +53,6 @@ modules/*/controllers/Info_*.php
 # Some pictures
 modules/static_accessories/assets/images/slides/main*.jpg
 modules/static_accessories/assets/images/slides/coba*.jpg
-
-# Reset installation script
-reset-installation.sh
 
 # my private modules
 modules/typing_defense
