@@ -40,7 +40,7 @@ class CMS_Front_Controller extends CMS_Secure_Controller {
             'have_add_privilege'           => $this->cms_have_privilege($this->n($this->ADD_PRIVILEGE_NAME)),
             'have_edit_privilege'          => $this->cms_have_privilege($this->n($this->EDIT_PRIVILEGE_NAME)),
             'have_delete_privilege'        => $this->cms_have_privilege($this->n($this->DELETE_PRIVILEGE_NAME)),
-            'have_edit_template_privilege' => $this->cms_have_privilege($this->n('edit_city_record_template')),
+            'have_edit_template_privilege' => $this->cms_have_privilege($this->n($this->EDIT_TEMPLATE_PRIVILEGE_NAME)),
             'backend_url'                  => site_url($module_path.'/'.$this->BACK_CONTROLLER_PATH.'/index'),
             'module_path'                  => $module_path,
             'first_data'                   => Modules::run($module_path.'/'.$this->CONTROLLER_PATH.'/get_data', 0, ''),
