@@ -12,9 +12,6 @@ class Article_model extends  CMS_Model{
 
     public function __construct(){
         parent::__construct();
-        /*
-        $this->page_break_separator = "/<div(\s)*style(\s)*=(\s)*\"page-break-after(\s)*:(\s)*always(;)*\"(\s)*>(\s)*<span(\s)*style(\s)*=(\s)*\"display(\s)*:(\s)*none(;)*\">(\s)*&nbsp;(\s)*<\/span>(\s)*<\/div>/i";
-        */
         if(self::$__article_properties == NULL){
             self::$__article_properties = array();
         }

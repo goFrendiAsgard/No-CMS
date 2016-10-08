@@ -121,6 +121,14 @@
         <button name="submit" value="Search" id="btn_search" class="btn btn-primary">
             <i class="glyphicon glyphicon-search"></i> Search
         </button>
+        <?php
+            if($allow_navigate_backend){
+                echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record"><i class="glyphicon glyphicon-plus"></i> Add</a>'.PHP_EOL;
+            }
+            if($have_edit_template_privilege){
+                echo '<a href="{{ module_site_url }}blog/template_config" class="btn btn-default add_record"><i class="glyphicon glyphicon-cog"></i> Edit Record Template</a>'.PHP_EOL;
+            }
+        ?>
     </div>
 </form>
 
@@ -194,7 +202,7 @@
             // edit and delete button
             if($allow_navigate_backend){
                 echo '<div class="edit_delete_record_container">';
-                if($is_super_admin || $article['author_user_id'] == $user_id){
+                if($is_super_admin || $is_blog_editor || $is_blog_author || ($is_blog_contributor && $article['author_user_id'] == $user_id)){
                     echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn btn-default edit_record" primary_key = "'.$article['id'].'">Edit</a>';
                     echo '&nbsp;';
                     echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn btn-danger delete_record" primary_key = "'.$article['id'].'">Delete</a>';

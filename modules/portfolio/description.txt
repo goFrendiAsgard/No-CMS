@@ -2,7 +2,7 @@
     "dependencies"    : [],
     "name"            : "goFrendi.noCMS.portfolio",
     "description"     : "Portfolio",
-    "version"         : "0.0.0",
+    "version"         : "0.0.1",
     "activate"        : "info/activate",
     "deactivate"      : "info/deactivate",
     "upgrade"         : "info/upgrade",

@@ -80,12 +80,27 @@ class Info extends CMS_Module {
     //////////////////////////////////////////////////////////////////////////////
     // CONFIGURATIONS
     //////////////////////////////////////////////////////////////////////////////
-    protected $CONFIGS = array();
+    protected $CONFIGS = array(
+
+            // Browse Portfolio
+            array(
+                'config_name'   => 'portfolio_record_template',
+                'value'         => NULL, // if set to NULL, the value will be taken from config/module_config.php
+            ),
+
+    );
 
     //////////////////////////////////////////////////////////////////////////////
     // PRIVILEGES
     //////////////////////////////////////////////////////////////////////////////
-    protected $PRIVILEGES = array();
+    protected $PRIVILEGES = array(
+
+            // Record Template Portfolio
+            array(
+                'privilege_name'   => 'edit_portfolio_record_template',
+                'authorization_id' => PRIV_AUTHORIZED,
+            ),
+    );
 
     //////////////////////////////////////////////////////////////////////////////
     // GROUPS

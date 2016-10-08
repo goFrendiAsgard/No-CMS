@@ -826,7 +826,7 @@ switch (ERROR_REPORTING)
     define('USE_SUBDOMAIN',     $USE_SUBDOMAIN);
     define('INVALID_SUBSITE',   $INVALID_SUBSITE);
     define('USE_ALIAS',         $USE_ALIAS);
-    define('T_SUBSITE',            $t_subsite);
+    define('T_SUBSITE',         $t_subsite);
 
     // JQuery File name
     define('JQUERY_FILE_NAME', 'jquery-3.0.0.min.js');

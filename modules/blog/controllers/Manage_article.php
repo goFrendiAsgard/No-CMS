@@ -21,7 +21,6 @@ class Manage_article extends CMS_CRUD_Controller {
     protected $UNSET_PRINT = FALSE;
     protected $UNSET_EXPORT = FALSE;
 
-    protected $super_admin_id = array(1);
     protected $group_id_list = array();
     protected $group_name_list = array();
 
@@ -30,44 +29,6 @@ class Manage_article extends CMS_CRUD_Controller {
         // get super_admin_id
         $this->group_name_list = $this->cms_user_group();
         $this->group_id_list = $this->cms_user_group_id();
-        $this->super_admin_id = array(1);
-        if(CMS_SUBSITE != ''){
-            // GET MAIN TABLE PREFIX
-            $main_config_file = APPPATH.'config/main/cms_config.php';
-            if(file_exists($main_config_file)){
-                include($main_config_file);
-                $main_table_prefix   = $config['__cms_table_prefix'];
-                $main_table_prefix   = $main_table_prefix == ''? '' : $main_table_prefix.'_';
-
-                // GET MODULE TABLE PREFIX
-                $query = $this->db->select('module_path')
-                    ->from($main_table_prefix.'main_module')
-                    ->where('module_name', 'gofrendi.noCMS.module')
-                    ->get();
-                if($query->num_rows()>0){
-                    $row = $query->row;
-                    $module_path = $row->module_path;
-                    $module_config_file = FCPATH.'modules/'.$module_path.'/config/module_config.php';
-                    if(!file_exists($module_config_file)){
-                        // get module table prefix
-                        include($module_config_file);
-                        $module_table_prefix = $config['module_table_prefix'];
-                        $module_table_prefix = $module_table_prefix == ''? '' : $module_table_prefix.'_';
-
-                        $subsite_table_ = $main_table_prefix.$module_table_prefix.'subsite';
-
-                        $query = $this->db->select('user_id')
-                            ->from($subsite_table)
-                            ->where('name', CMS_SUBSITE)
-                            ->get();
-                        if($query->num_rows() > 0){
-                            $row = $query->row();
-                            $this->super_admin_id[] = $row->user_id;
-                        }
-                    }
-                }
-            }
-        }
     }
 
     protected function make_crud(){
@@ -80,7 +41,7 @@ class Manage_article extends CMS_CRUD_Controller {
             );
         }
 
-        if(!in_array($this->cms_user_id(), $this->super_admin_id) && !in_array(1, $this->group_id_list) && !in_array('Blog Editor', $this->group_name_list)){
+        if(!$this->cms_user_is_super_admin() && !in_array('Blog Editor', $this->group_name_list)){
             $crud->where('author_user_id', $this->cms_user_id());
         }
 
@@ -167,7 +128,7 @@ class Manage_article extends CMS_CRUD_Controller {
         if($this->STATE == 'list' || $this->STATE == 'ajax_list' || $this->STATE == 'export' || $this->STATE == 'print' || $this->STATE == 'success'){
             $crud->set_relation('author_user_id', $this->cms_user_table_name(), 'user_name');
         }
-        if(in_array($this->cms_user_id(), $this->super_admin_id) || in_array(1, $this->group_id_list) || in_array('Blog Editor', $this->group_name_list) || in_array('Blog Author', $this->group_name_list)){
+        if($this->cms_user_is_super_admin() || in_array('Blog Editor', $this->group_name_list) || in_array('Blog Author', $this->group_name_list)){
             $crud->set_relation('status', $this->t('publication_status'), 'status');
         }
 
@@ -213,7 +174,7 @@ class Manage_article extends CMS_CRUD_Controller {
                 'Comments'  => 'glyphicon-comment',
             ));
 
-        if(!in_array($this->cms_user_id(), $this->super_admin_id) && !in_array(1, $this->group_id_list) && !in_array('Blog Editor', $this->group_name_list) && !in_array('Blog Author', $this->group_name_list)){
+        if(!$this->cms_user_is_super_admin() && !in_array('Blog Editor', $this->group_name_list) && !in_array('Blog Author', $this->group_name_list)){
             $crud->field_type('status', 'hidden', 'draft');
             $crud->field_type('publish_date', 'hidden');
         }else{
@@ -486,7 +447,7 @@ class Manage_article extends CMS_CRUD_Controller {
     }
 
     public function _allow_edit($primary_key){
-        if(in_array($this->cms_user_id(), $this->super_admin_id)  || in_array(1, $this->group_id_list) || in_array('Blog Editor', $this->group_name_list)  || in_array('Blog Author', $this->group_name_list)){
+        if($this->cms_user_is_super_admin() || in_array('Blog Editor', $this->group_name_list)  || in_array('Blog Author', $this->group_name_list)){
             return TRUE;
         }else if(in_array('Blog Contributor', $this->group_name_list)){
             return $this->cms_record_exists($this->t('article'), array(
