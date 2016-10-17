@@ -58,8 +58,8 @@ class Manage_article extends CMS_CRUD_Controller {
 
         // displayed columns on list, edit, and add, uncomment to use
         $crud->columns('article_title', 'author_user_id', 'status', 'publish_date', 'featured' , 'category_article', 'comments');
-        $crud->edit_fields('article_title', 'article_url', 'date', 'status', 'publish_date', 'author_user_id', 'content', 'category_article', 'keyword', 'description', 'featured', 'allow_comment', 'photos', 'comments',  '_updated_by', '_updated_at');
-        $crud->add_fields('article_title', 'article_url', 'date', 'status', 'publish_date', 'author_user_id', 'content', 'category_article', 'keyword', 'description', 'featured', 'allow_comment', 'photos', 'comments',  '_created_by', '_created_at');
+        $crud->edit_fields('article_title', 'date', 'status', 'publish_date', 'author_user_id', 'content', 'category_article', 'photos', 'keyword', 'description', 'article_url', 'featured', 'allow_comment', 'comments',  '_updated_by', '_updated_at');
+        $crud->add_fields('article_title', 'date', 'status', 'publish_date', 'author_user_id', 'content', 'category_article', 'photos', 'keyword', 'description', 'article_url', 'featured', 'allow_comment', 'comments',  '_created_by', '_created_at');
         //$crud->set_read_fields('article_title', 'article_url', 'keyword', 'description', 'date', 'author_user_id', 'content', 'allow_comment', 'status', 'visited', 'featured', 'publish_date', 'photo', 'comment', 'category_article');
 
         // caption of each columns
@@ -162,15 +162,15 @@ class Manage_article extends CMS_CRUD_Controller {
         $crud->unset_texteditor('keyword');
         $crud->unset_texteditor('description');
 
-        $crud->set_outside_tab(6);
+        $crud->set_outside_tab(5);
         $crud->set_tabs(array(
-                'Setting'   => 4,
                 'Photos'    => 1,
+                'Setting'   => 5,
                 'Comments'  => 1,
             ));
         $crud->set_tab_glyphicons(array(
-                'Setting'   => 'glyphicon-th-list',
                 'Photos'    => 'glyphicon-picture',
+                'Setting'   => 'glyphicon-th-list',
                 'Comments'  => 'glyphicon-comment',
             ));
 

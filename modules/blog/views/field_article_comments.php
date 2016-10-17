@@ -12,8 +12,7 @@
 <table id="md_table_comments" class="table table-striped table-bordered">
     <thead>
         <tr>
-            <th style="width:350px;">Comment Summary</th>
-            <th style="width:100px;">Action</th>
+            <th style="width:450px;">Comment Summary</th>
         </tr>
     </thead>
     <tbody>
@@ -129,18 +128,19 @@
         component += '<div">';
         component += comment_content;
         component += '</div>';
-        component += '</td>';
-
-
-
 
         /////////////////////////////////////////////////////////////////////////////
         // Delete Button
         /////////////////////////////////////////////////////////////////////////////
 
-        component += '<td>';
-        component += '<a class="btn btn-primary toggle_comment_approve" record_index="'+RECORD_INDEX_comments+'" href="#">' + caption + '</a><br /><br />';
-        component += '<input class="md_field_comments_delete btn btn-danger" record_index="'+RECORD_INDEX_comments+'" primary_key="" type="button" value="Delete" /></td>';
+        component += '<div style="clear:both;"></div>';
+        component += '<div class="pull-right">';
+        component += '<a class="btn btn-default toggle_comment_approve" record_index="'+RECORD_INDEX_comments+'" href="#">' + caption + '</a>&nbsp;';
+        component += '<input class="md_field_comments_delete btn btn-default" record_index="'+RECORD_INDEX_comments+'" primary_key="" type="button" value="Delete" />';
+        component += '</div>';
+        component += '<div style="clear:both;"></div>';
+        
+        component += '</td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////
