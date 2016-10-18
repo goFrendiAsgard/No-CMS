@@ -11,21 +11,22 @@
         background-repeat : no-repeat;
         background-position:center;
     }
-    .md_field_photos_col_index{
-        width : 50px;
-    }
     .md_field_photos_col_caption{
         width : 257px;
+    }
+    .md_field_photos_tr:last-child .move_down{
+        display:none!important;
+    }
+    .md_field_photos_tr:first-child .move_up{
+        display:none!important;
     }
 </style>
 
 <table id="md_table_photos" class="table table-striped table-bordered">
     <thead>
         <tr>
-            <th style="width:50px;">Index</th>
             <th style="width:150px;">Photo</th>
             <th style="width:300px;">Caption</th>
-            <th style="width:100px;">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -85,20 +86,6 @@
         var component = '<tr id="md_field_photos_tr_'+RECORD_INDEX_photos+'" class="md_field_photos_tr">';
 
         /////////////////////////////////////////////////////////////////////////////
-        //    FIELD "index"
-        /////////////////////////////////////////////////////////////////////////////
-        var field_value = 0;
-        if(typeof(value) != 'undefined' && value.hasOwnProperty('index')){
-            field_value = value.index;
-        }
-        component += '<td>';
-        component += '<input id="md_field_photos_col_index_'+RECORD_INDEX_photos+
-              '" record_index="'+RECORD_INDEX_photos+
-              '" class="md_field_photos_col md_field_photos_col_index form-control" column_name="index" type="text"'+
-              ' name="md_field_photos_col_index_'+RECORD_INDEX_photos+'" value="'+field_value+'" />';
-        component += '</td>';
-
-        /////////////////////////////////////////////////////////////////////////////
         //    FIELD "url"
         /////////////////////////////////////////////////////////////////////////////
         var field_value = '';
@@ -109,34 +96,55 @@
         if(field_value != ''){
             component += '<div class="_photo-preview" style="background-image:url(\''+UPLOAD_PATH+'thumb_'+field_value+'\')"></div>';
         }else{
+            component += '<span id="photo_file_name_'+RECORD_INDEX_photos+'" style="display:none;"></span>';
             component += '<input id="md_field_photos_col_url_'+RECORD_INDEX_photos+
                   '" record_index="'+RECORD_INDEX_photos+
-                  '" class="md_field_photos_col form-control" column_name="url" type="file"'+
+                  '" class="md_field_photos_col md_field_photos_col_url" column_name="url" type="file"'+
                   ' name="md_field_photos_col_url_'+RECORD_INDEX_photos+'" value="'+field_value+'"/>';
         }
 
         component += '</td>';
 
-        /////////////////////////////////////////////////////////////////////////////
-        //    FIELD "caption"
-        /////////////////////////////////////////////////////////////////////////////
-        var field_value = '';
-        if(typeof(value) != 'undefined' && value.hasOwnProperty('caption')){
-            field_value = value.caption;
-        }
         component += '<td>';
-        component += '<textarea id="md_field_photos_col_caption_'+RECORD_INDEX_photos+
-              '" record_index="'+RECORD_INDEX_photos+
-              '" class="md_field_photos_col md_field_photos_col_caption form-control" column_name="caption"'+
-              ' name="md_field_photos_col_caption_'+RECORD_INDEX_photos+'">'+field_value+'</textarea>';
+            /////////////////////////////////////////////////////////////////////////////
+            //    FIELD "caption"
+            /////////////////////////////////////////////////////////////////////////////
+            var field_value = '';
+            if(typeof(value) != 'undefined' && value.hasOwnProperty('caption')){
+                field_value = value.caption;
+            }
+            component += '<textarea id="md_field_photos_col_caption_'+RECORD_INDEX_photos+
+                  '" record_index="'+RECORD_INDEX_photos+
+                  '" class="md_field_photos_col md_field_photos_col_caption form-control" column_name="caption"'+
+                  ' name="md_field_photos_col_caption_'+RECORD_INDEX_photos+'">'+field_value+'</textarea><br />';
+
+            /////////////////////////////////////////////////////////////////////////////
+            //    FIELD "index"
+            /////////////////////////////////////////////////////////////////////////////
+            var field_value = 0;
+            if(typeof(value) != 'undefined' && value.hasOwnProperty('index')){
+                field_value = value.index;
+            }
+            component += '<input id="md_field_photos_col_index_'+RECORD_INDEX_photos+
+                  '" record_index="'+RECORD_INDEX_photos+
+                  '" class="md_field_photos_col md_field_photos_col_index" column_name="index" type="hidden"'+
+                  ' name="md_field_photos_col_index_'+RECORD_INDEX_photos+'" value="'+field_value+'" />';
+
+            component += '<div class="pull-right">';
+                /////////////////////////////////////////////////////////////////////////////
+                // Move Up and Move Down Button
+                /////////////////////////////////////////////////////////////////////////////
+                component += '<a href="#" id="move_up_'+RECORD_INDEX_photos+'" class="move_up btn btn-default" record_index="'+RECORD_INDEX_photos+'"><i class="glyphicon glyphicon-arrow-up"></i></a>&nbsp;';
+
+                component += '<a href="#" id="move_down_'+RECORD_INDEX_photos+'" class="move_down btn btn-default" record_index="'+RECORD_INDEX_photos+'"><i class="glyphicon glyphicon-arrow-down"></i></a>&nbsp;';
+
+                /////////////////////////////////////////////////////////////////////////////
+                // Delete Button
+                /////////////////////////////////////////////////////////////////////////////
+                component += '<input class="md_field_photos_delete btn btn-default" record_index="'+RECORD_INDEX_photos+'" primary_key="" type="button" value="Delete" />';
+            component += '</div>';
+
         component += '</td>';
-
-
-
-        /////////////////////////////////////////////////////////////////////////////
-        // Delete Button
-        /////////////////////////////////////////////////////////////////////////////
-        component += '<td><input class="md_field_photos_delete btn btn-default" record_index="'+RECORD_INDEX_photos+'" primary_key="" type="button" value="Delete" /></td>';
         component += '</tr>';
 
         /////////////////////////////////////////////////////////////////////////////
@@ -186,6 +194,93 @@
             add_table_row_photos(DATA_photos.update[i].data);
             RECORD_INDEX_photos++;
         }
+
+        /////////////////////////////////////////////////////////////////////////////
+        // preview before upload
+        /////////////////////////////////////////////////////////////////////////////
+        $(document).on('change', '.md_field_photos_col_url', function(event){
+            if(event.target.files && event.target.files[0]){
+                var record_index = $(this).attr('record_index');
+                var span = $('#photo_file_name_'+record_index);
+                span.html($(this).val());
+                span.show();
+                $(this).hide();
+            }
+        });
+
+        /////////////////////////////////////////////////////////////////////////////
+        // on move up
+        /////////////////////////////////////////////////////////////////////////////
+        $(document).on('click', 'a.move_up', function(event){
+            event.preventDefault();
+            //'md_field_photos_tr_'+RECORD_INDEX_photos
+            // current's
+            var current_record_index = $(this).attr('record_index');
+            var current_input = $('#md_field_photos_col_index_'+current_record_index);
+            var current_index = current_input.val();
+            var current_tr = $('#md_field_photos_tr_' + current_record_index);
+            // other's
+            var other_record_index = null;
+            var other_input = null;
+            var other_index = null;
+            // find other
+            var best_index = -1;
+            var found = false;
+            $('.md_field_photos_col_index').each(function(){
+                if($(this).val() < current_index){
+                    if(!found || $(this).val() > best_index){
+                        best_index = $(this).val();
+                        other_index = best_index;
+                        other_input = $(this);
+                        other_record_index = other_input.attr('record_index');
+                        found = true;
+                    }
+                }
+            });
+            // find, swap
+            if(found){
+                current_input.val(other_index);
+                other_input.val(current_index);
+                current_tr.prev().before(current_tr);
+            }
+        });
+
+        /////////////////////////////////////////////////////////////////////////////
+        // on move down
+        /////////////////////////////////////////////////////////////////////////////
+        $(document).on('click', 'a.move_down', function(event){
+            event.preventDefault();
+            //'md_field_photos_tr_'+RECORD_INDEX_photos
+            // current's
+            var current_record_index = $(this).attr('record_index');
+            var current_input = $('#md_field_photos_col_index_'+current_record_index);
+            var current_index = current_input.val();
+            var current_tr = $('#md_field_photos_tr_' + current_record_index);
+            // other's
+            var other_record_index = null;
+            var other_input = null;
+            var other_index = null;
+            // find other
+            var best_index = -1;
+            var found = false;
+            $('.md_field_photos_col_index').each(function(){
+                if($(this).val() > current_index){
+                    if(!found || $(this).val() < best_index){
+                        best_index = $(this).val();
+                        other_index = best_index;
+                        other_input = $(this);
+                        other_record_index = other_input.attr('record_index');
+                        found = true;
+                    }
+                }
+            });
+            // find, swap
+            if(found){
+                current_input.val(other_index);
+                other_input.val(current_index);
+                current_tr.next().after(current_tr);
+            }
+        });
 
 
         /////////////////////////////////////////////////////////////////////////////
