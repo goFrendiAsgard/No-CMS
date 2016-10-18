@@ -96,16 +96,14 @@
         if(field_value != ''){
             component += '<div class="_photo-preview" style="background-image:url(\''+UPLOAD_PATH+'thumb_'+field_value+'\')"></div>';
         }else{
+            component += '<span id="photo_file_name_'+RECORD_INDEX_photos+'" style="display:none;"></span>';
             component += '<input id="md_field_photos_col_url_'+RECORD_INDEX_photos+
                   '" record_index="'+RECORD_INDEX_photos+
-                  '" class="md_field_photos_col form-control" column_name="url" type="file"'+
+                  '" class="md_field_photos_col md_field_photos_col_url" column_name="url" type="file"'+
                   ' name="md_field_photos_col_url_'+RECORD_INDEX_photos+'" value="'+field_value+'"/>';
         }
 
         component += '</td>';
-
-
-
 
         component += '<td>';
             /////////////////////////////////////////////////////////////////////////////
@@ -197,7 +195,22 @@
             RECORD_INDEX_photos++;
         }
 
+        /////////////////////////////////////////////////////////////////////////////
+        // preview before upload
+        /////////////////////////////////////////////////////////////////////////////
+        $(document).on('change', '.md_field_photos_col_url', function(event){
+            if(event.target.files && event.target.files[0]){
+                var record_index = $(this).attr('record_index');
+                var span = $('#photo_file_name_'+record_index);
+                span.html($(this).val());
+                span.show();
+                $(this).hide();
+            }
+        });
+
+        /////////////////////////////////////////////////////////////////////////////
         // on move up
+        /////////////////////////////////////////////////////////////////////////////
         $(document).on('click', 'a.move_up', function(event){
             event.preventDefault();
             //'md_field_photos_tr_'+RECORD_INDEX_photos
@@ -232,7 +245,9 @@
             }
         });
 
+        /////////////////////////////////////////////////////////////////////////////
         // on move down
+        /////////////////////////////////////////////////////////////////////////////
         $(document).on('click', 'a.move_down', function(event){
             event.preventDefault();
             //'md_field_photos_tr_'+RECORD_INDEX_photos
