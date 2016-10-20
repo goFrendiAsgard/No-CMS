@@ -276,6 +276,7 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
                 if(in_array($key, $set_column_list)){
                     $data[$key] = implode(',', $value);
                 }else if(in_array($key, $real_column_list)){
+                    $value = $value == ''? NULL:$value;
                     $data[$key] = $value;
                 }
             }
@@ -336,6 +337,7 @@ class CMS_CRUD_Controller extends CMS_Secure_Controller
                 if(in_array($key, $set_column_list)){
                     $data[$key] = implode(',', $value);
                 }else if(in_array($key, $real_column_list)){
+                    $value = $value == ''? NULL:$value;
                     $data[$key] = $value;
                 }
             }

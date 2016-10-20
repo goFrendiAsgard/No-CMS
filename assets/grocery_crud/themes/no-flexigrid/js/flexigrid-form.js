@@ -1,6 +1,6 @@
 // addition by gofrendi
 function __add_form_control_class(){
-    $('.flexigrid input[type!="button"][type!="checkbox"][type!="radio"][type!="submit"], .flexigrid select[class!="multiselect"], .flexigrid textarea').each(function(){
+    $('.flexigrid input[type!="button"][type!="checkbox"][type!="radio"][type!="submit"][class!="ui-widget-content"], .flexigrid select[class!="multiselect"], .flexigrid textarea').each(function(){
         if(!$(this).hasClass('form-control')){
             $(this).addClass('form-control');
         }
@@ -177,7 +177,7 @@ function js_date_to_php(js_date){
 
 
 function php_date_to_js(php_date){
-    if(typeof(php_date)=='undefined' || php_date == ''){
+    if(typeof(php_date)=='undefined' || php_date == '' || php_date == null){
         return '';
     }
     var date_array = php_date.split('-');
@@ -221,7 +221,10 @@ $(document).ready(function(){
 });
 $(document).ajaxComplete(function(){
     __add_form_control_class();
+    // fix multiselect
+    $('.connected-list').css('height', 'auto');
 });
 $(window).on('load',function(){
-    $('.connected-list').css('height', '75px');
+    // fix multiselect
+    $('.connected-list').css('height', 'auto');
 });

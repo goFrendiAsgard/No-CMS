@@ -1,16 +1,16 @@
-&lt;?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of {{ controller_name }}
+ * Description of Manage_city
  *
  * @author No-CMS Module Generator
  */
-class {{ controller_name }} extends CMS_CRUD_Controller {
+class Manage_city extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
-    protected $TABLE_NAME = '{{ table_name }}';
-    protected $COLUMN_NAMES = array({{ field_list }});
-    protected $PRIMARY_KEY = '{{ primary_key }}';
+    protected $TABLE_NAME = 'city';
+    protected $COLUMN_NAMES = array('country_id', 'name', 'tourism', 'commodity', 'citizen');
+    protected $PRIMARY_KEY = 'city_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
     protected $UNSET_ADD = FALSE;
@@ -33,16 +33,20 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         ////////////////////////////////////////////////////////////////////////
 
         // set subject
-        $crud->set_subject('{{ table_caption }}');
+        $crud->set_subject('City');
 
         // displayed columns on list, edit, and add, uncomment to use
-        //$crud->columns({{ field_list }});
-        //$crud->edit_fields({{ edit_field_list }});
-        //$crud->add_fields({{ add_field_list }});
-        //$crud->set_read_fields({{ field_list }});
+        //$crud->columns('country_id', 'name', 'tourism', 'commodity', 'citizen');
+        //$crud->edit_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_updated_by', '_updated_at');
+        //$crud->add_fields('country_id', 'name', 'tourism', 'commodity', 'citizen', '_created_by', '_created_at');
+        //$crud->set_read_fields('country_id', 'name', 'tourism', 'commodity', 'citizen');
 
         // caption of each columns
-{{ display_as }}
+        $crud->display_as('country_id','Country');
+        $crud->display_as('name','Name');
+        $crud->display_as('tourism','Tourism');
+        $crud->display_as('commodity','Commodity');
+        $crud->display_as('citizen','Citizen');
 
         ////////////////////////////////////////////////////////////////////////
         // This function will automatically detect every methods in this controller and link it to corresponding column
@@ -66,7 +70,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        {{ required_fields }}
+        $crud->required_fields('name');
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -74,7 +78,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        {{ unique_fields }}
+        $crud->unique_fields('name');
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -82,7 +86,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->set_rules( $field_name , $caption, $filter );
         ////////////////////////////////////////////////////////////////////////
-{{ set_rules }}
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation (lookup) codes here
@@ -90,7 +94,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         ////////////////////////////////////////////////////////////////////////
-{{ set_relation }}
+        $crud->set_relation('country_id', $this->t('country'), 'name');
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here
@@ -99,7 +103,16 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         //      $crud->set_relation_n_n( $field_name, $relation_table, $selection_table, $primary_key_alias_to_this_table,
         //          $primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
         ////////////////////////////////////////////////////////////////////////
-{{ set_relation_n_n }}
+        $crud->set_relation_n_n('tourism',
+            $this->t('city_tourism'),
+            $this->t('tourism'),
+            'city_id', 'tourism_id',
+            'name', NULL);
+        $crud->set_relation_n_n('commodity',
+            $this->t('city_commodity'),
+            $this->t('commodity'),
+            'city_id', 'commodity_id',
+            'name', 'priority');
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put custom field type here
@@ -107,9 +120,9 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->field_type( $field_name , $field_type, $value  );
         ////////////////////////////////////////////////////////////////////////
-{{ enum_set_field }}
-{{ hide_field }}
-{{ upload }}
+
+
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)
@@ -166,11 +179,61 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         $config = $render['config'];
 
         // show the view
-        $this->view($this->cms_module_path().'/{{ view_import_name }}', $output,
-            $this->n('{{ navigation_name }}'), $config);
+        $this->view($this->cms_module_path().'/Manage_city_view', $output,
+            $this->n('manage_city'), $config);
     }
 
-{{ detail_callback_declaration }}
+
+    ////////////////////////////////////////////////////////////////////////////
+    // FIELD CALLBACK of citizen, used to render form input
+    ////////////////////////////////////////////////////////////////////////////
+    public function _callback_field_citizen($value, $primary_key){
+        // Prepare the data by using defined configurations and options
+        $data = $this->_one_to_many_callback_field_data(
+            'citizen', // Detail Table's name
+            'citizen_id', // Detail Table's primary key name
+            'city_id', // Detail Table's foreign key to current table
+            $primary_key, // Current table's primary key value
+            array(
+            'job_id' => array(
+                'selection_table'         => 'job',
+                'selection_pk_column'     => 'job_id',
+                'selection_lookup_column' => 'name',
+            ),
+        ), // Detail table's one-to-many field list
+            array(
+            'hobby' => array(
+                'selection_table'           => 'hobby',
+                'selection_pk_column'       => 'hobby_id',
+                'selection_lookup_column'   => 'name',
+                'relation_table'            => 'citizen_hobby',
+                'relation_column'           => 'citizen_id',
+                'relation_selection_column' => 'hobby_id',
+            ),
+        ), // Detail table's many-to-many field list
+            array(), // Detail table's "set" field list
+            array() // Detial table's "enum" field list
+        );
+        // Parse the data to the view
+        return $this->load->view($this->cms_module_path().'/field_city_citizen',$data, TRUE);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // COLUMN CALLBACK of citizen, Typically yield record count
+    ////////////////////////////////////////////////////////////////////////////
+    public function _callback_column_citizen($value, $row){
+        return $this->_humanized_record_count(
+            'citizen', // Detail Table's name
+            'city_id',  // Detail Table's foreign key to current table
+            $row->city_id, //  Current table's primary key value
+            array( // Captions
+                'single_caption'    => 'Citizen',
+                'multiple_caption'  => 'Citizens',
+                'zero_caption'      => 'No Citizen',
+            )
+        );
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////
     // After insert or update, return TRUE if success
@@ -178,7 +241,28 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
     // Typically contains scripts to save detail tables.
     ////////////////////////////////////////////////////////////////////////////
     public function _after_insert_or_update($post_array, $primary_key){
-{{ detail_after_insert_or_update }}
+        ////////////////////////////////////////////////////////////////////////
+        // SAVE CHANGES OF citizen
+        ////////////////////////////////////////////////////////////////////////
+        $data = json_decode($this->input->post('md_real_field_citizen_col'), TRUE);
+        $this->_save_one_to_many(
+            'citizen', // Current table's field name referencing to this table
+            'citizen', // Detail table's name
+            'citizen_id', // Detail table's primary key's name
+            'city_id', // Detail table's foreign key's name
+            $primary_key, // Current table's primary key's value
+            $data, // Data
+            array('citizen_id', 'name', 'birthdate', 'job_id'), // Detail table's normal field list
+            array(), // Detail table's "set" field list
+            array(
+                'hobby' => array( // Detail Table's "detail many to many" field list
+                    'relation_table' => 'citizen_hobby',
+                    'relation_column' => 'citizen_id',
+                    'relation_selection_column' => 'hobby_id',
+                ),
+            )
+        );
+
         return TRUE;
     }
 
@@ -264,7 +348,12 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
     // the data before delete operation. Typically delete detail table
     ////////////////////////////////////////////////////////////////////////////
     public function _before_delete($primary_key){
-{{ detail_before_delete }}
+        ////////////////////////////////////////////////////////////////////////
+        // ALSO DELETE CORESPONDING citizen
+        ////////////////////////////////////////////////////////////////////////
+        $this->db->delete($this->t('citizen'),
+              array('city_id'=>$primary_key));
+
         return TRUE;
     }
 

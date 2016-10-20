@@ -166,7 +166,7 @@ class Extended_grocery_crud extends Grocery_CRUD{
     {
         return $value;
     }
-    
+
     // OVERRIDE: the parent class has this method as private, you should change it into protected
     // this should add chmod 644 to the file
     protected function handle_file_upload($uploaded_file, $name, $size, $type, $error) {
@@ -1171,7 +1171,7 @@ class Extended_grocery_crud extends Grocery_CRUD{
             $width_style = $has_priority_field || $is_ie_7 ? '' : 'width:510px;';
 
             $select_title = str_replace('{field_display_as}',$field_info_type->display_as,$this->l('set_relation_title'));
-            $input = "<select id='field-{$field_info_type->name}' name='{$field_info_type->name}[]' multiple='multiple' size='8' class='$css_class form-control' data-placeholder='$select_title' style='$width_style' >";
+            $input = "<select id='field-{$field_info_type->name}' name='{$field_info_type->name}[]' multiple='multiple' size='8' class='$css_class' data-placeholder='$select_title' style='$width_style' >";
 
             if(!empty($unselected_values))
                 foreach($unselected_values as $id => $name)

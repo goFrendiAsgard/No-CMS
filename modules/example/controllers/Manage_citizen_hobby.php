@@ -1,16 +1,16 @@
-&lt;?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Description of {{ controller_name }}
+ * Description of Manage_citizen_hobby
  *
  * @author No-CMS Module Generator
  */
-class {{ controller_name }} extends CMS_CRUD_Controller {
+class Manage_citizen_hobby extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
-    protected $TABLE_NAME = '{{ table_name }}';
-    protected $COLUMN_NAMES = array({{ field_list }});
-    protected $PRIMARY_KEY = '{{ primary_key }}';
+    protected $TABLE_NAME = 'citizen_hobby';
+    protected $COLUMN_NAMES = array('citizen_id', 'hobby_id');
+    protected $PRIMARY_KEY = 'id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
     protected $UNSET_ADD = FALSE;
@@ -33,16 +33,17 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         ////////////////////////////////////////////////////////////////////////
 
         // set subject
-        $crud->set_subject('{{ table_caption }}');
+        $crud->set_subject('Citizen Hobby');
 
         // displayed columns on list, edit, and add, uncomment to use
-        //$crud->columns({{ field_list }});
-        //$crud->edit_fields({{ edit_field_list }});
-        //$crud->add_fields({{ add_field_list }});
-        //$crud->set_read_fields({{ field_list }});
+        //$crud->columns('citizen_id', 'hobby_id');
+        //$crud->edit_fields('citizen_id', 'hobby_id', '_updated_by', '_updated_at');
+        //$crud->add_fields('citizen_id', 'hobby_id', '_created_by', '_created_at');
+        //$crud->set_read_fields('citizen_id', 'hobby_id');
 
         // caption of each columns
-{{ display_as }}
+        $crud->display_as('citizen_id','Citizen Id');
+        $crud->display_as('hobby_id','Hobby Id');
 
         ////////////////////////////////////////////////////////////////////////
         // This function will automatically detect every methods in this controller and link it to corresponding column
@@ -66,7 +67,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->required_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        {{ required_fields }}
+        
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put required field validation codes here
@@ -74,7 +75,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->unique_fields( $field1, $field2, $field3, ... );
         ////////////////////////////////////////////////////////////////////////
-        {{ unique_fields }}
+        
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put field validation codes here
@@ -82,7 +83,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->set_rules( $field_name , $caption, $filter );
         ////////////////////////////////////////////////////////////////////////
-{{ set_rules }}
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation (lookup) codes here
@@ -90,7 +91,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->set_relation( $field_name , $related_table, $related_title_field , $where , $order_by );
         ////////////////////////////////////////////////////////////////////////
-{{ set_relation }}
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put set relation_n_n (detail many to many) codes here
@@ -99,7 +100,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         //      $crud->set_relation_n_n( $field_name, $relation_table, $selection_table, $primary_key_alias_to_this_table,
         //          $primary_key_alias_to_selection_table , $title_field_selection_table, $priority_field_relation );
         ////////////////////////////////////////////////////////////////////////
-{{ set_relation_n_n }}
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put custom field type here
@@ -107,9 +108,9 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         // eg:
         //      $crud->field_type( $field_name , $field_type, $value  );
         ////////////////////////////////////////////////////////////////////////
-{{ enum_set_field }}
-{{ hide_field }}
-{{ upload }}
+
+
+
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Put Tabs (if needed)
@@ -166,11 +167,11 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         $config = $render['config'];
 
         // show the view
-        $this->view($this->cms_module_path().'/{{ view_import_name }}', $output,
-            $this->n('{{ navigation_name }}'), $config);
+        $this->view($this->cms_module_path().'/Manage_citizen_hobby_view', $output,
+            $this->n('manage_citizen_hobby'), $config);
     }
 
-{{ detail_callback_declaration }}
+
 
     ////////////////////////////////////////////////////////////////////////////
     // After insert or update, return TRUE if success
@@ -178,7 +179,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
     // Typically contains scripts to save detail tables.
     ////////////////////////////////////////////////////////////////////////////
     public function _after_insert_or_update($post_array, $primary_key){
-{{ detail_after_insert_or_update }}
+
         return TRUE;
     }
 
@@ -264,7 +265,7 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
     // the data before delete operation. Typically delete detail table
     ////////////////////////////////////////////////////////////////////////////
     public function _before_delete($primary_key){
-{{ detail_before_delete }}
+
         return TRUE;
     }
 
