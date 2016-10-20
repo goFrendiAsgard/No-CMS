@@ -1,12 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-$asset = new CMS_Asset();
-$asset->add_cms_js("nocms/js/jquery-ace/ace/ace.js");
-$asset->add_cms_js("nocms/js/jquery-ace/ace/theme-eclipse.js");
-$asset->add_cms_js("nocms/js/jquery-ace/ace/mode-html.js");
-$asset->add_cms_js("nocms/js/jquery-ace/ace/mode-javascript.js");
-$asset->add_cms_js("nocms/js/jquery-ace/ace/mode-css.js");
-$asset->add_cms_js("nocms/js/jquery-ace/jquery-ace.min.js");
-echo $asset->compile_js();
+echo $ace_js;
 ?>
 <h3>Record Template</h3>
 <form method="post">

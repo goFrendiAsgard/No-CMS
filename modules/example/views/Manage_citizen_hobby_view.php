@@ -1,11 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 echo $output;
 ?>
-
 <script type="text/javascript">
     // This function will add checkboxes and "Delete selected" button.
     add_delete_all_feature(
-        '{{ MODULE_SITE_URL }}Manage_article/delete_selection', // url
+        '{{ MODULE_SITE_URL }}Manage_citizen_hobby/delete_selection', // url
         '{{ language:Delete Selected }}', // button caption
         '{{ language:Selected row deleted }}' // notification caption
     );

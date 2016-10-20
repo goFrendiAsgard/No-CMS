@@ -96,9 +96,18 @@ class CMS_Front_Controller extends CMS_Secure_Controller {
             redirect($module_path . '/'. $this->CONTROLLER_PATH);
         }else{
             $this->load->library('cms_asset');
+            $asset = new CMS_Asset();
+            $asset->add_cms_js("nocms/js/jquery-ace/ace/ace.js");
+            $asset->add_cms_js("nocms/js/jquery-ace/ace/theme-eclipse.js");
+            $asset->add_cms_js("nocms/js/jquery-ace/ace/mode-html.js");
+            $asset->add_cms_js("nocms/js/jquery-ace/ace/mode-javascript.js");
+            $asset->add_cms_js("nocms/js/jquery-ace/ace/mode-css.js");
+            $asset->add_cms_js("nocms/js/jquery-ace/jquery-ace.min.js");
+            $ace_js = $asset->compile_js();
             $data = array(
                 'record_template'         => $this->cms_get_config($this->CONFIG_TEMPLATE_NAME, TRUE),
                 'default_record_template' => $this->cms_get_module_config($this->CONFIG_TEMPLATE_NAME),
+                'ace_js'                  => $ace_js,
             );
             $this->view($module_path.'/'. $this->CONFIG_VIEW_PATH,$data,
                 $this->n($this->NAVIGATION_NAME));
