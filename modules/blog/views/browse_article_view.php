@@ -365,89 +365,18 @@
     var URL = '<?php echo site_url($module_path."/blog/get_data"); ?>';
     var ALLOW_NAVIGATE_BACKEND = <?php echo $allow_navigate_backend ? "true" : "false"; ?>;
     var BACKEND_URL = '<?php echo $backend_url; ?>';
-    var LOADING = false;
-    var REQUEST;
-    var RUNNING_REQUEST = false;
-    var SCROLL_WORK = true;
-
+    var LOAD_MESSAGE = 'Load more article &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />';
+    var REACH_END_MESSAGE  = 'No more article to show';
+    
     <?php if(isset($article)){
-        echo 'SCROLL_WORK = false;';
+        echo 'var SCROLL_WORK = false;';
     }
     ?>
 
-    function adjust_load_more_button(){
-        if(SCROLL_WORK){
-            if(screen.width >= 1024){
-                $('#btn_load_more').hide();
-                $('#record_content_bottom').show();
-            }else{
-                $('#btn_load_more').show();
-                $('#record_content_bottom').hide();
-            }
-        }else{
-            $('#btn_load_more').hide();
-        }
-    }
-
-
-    function fetch_more_data(async){
-        if(typeof(async) == 'undefined'){
-            async = true;
-        }
-        $('#record_content_bottom').html('Load more Article &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
-        var keyword = $('#input_search').val();
-        var category = $('#input_category').val();
-        // Don't start another request until the first one completed
-        if(RUNNING_REQUEST || !SCROLL_WORK){
-            return 0;
-        }
-        RUNNING_REQUEST = true;
-        REQUEST = $.ajax({
-            'url'  : URL,
-            'type' : 'POST',
-            'async': async,
-            'data' : {
-                'category' : category,
-                'archive' : '<?php echo isset($_GET["archive"])? $_GET["archive"] : ""; ?>',
-                'keyword' : keyword,
-                'page' : PAGE,
-            },
-            'success'  : function(response){
-                if(response.trim() == ''){
-                    SCROLL_WORK = false;
-                }
-                // show contents
-                $('#record_content').append(response);
-
-                // show bottom contents
-                var bottom_content = 'No more Article to show.';
-                if(ALLOW_NAVIGATE_BACKEND){
-                    bottom_content += '&nbsp; <a href="<?php echo $backend_url; ?>/add/" class="add_record btn btn-default">Add new</a>';
-                }
-                $('#record_content_bottom').html(bottom_content);
-                RUNNING_REQUEST = false;
-                PAGE ++;
-            },
-            'complete' : function(response){
-                RUNNING_REQUEST = false;
-            }
-        });
-
-    }
-
-    function reset_content(){
-        SCROLL_WORK = true;
-        $('#record_content_bottom').show();
-        $('#record_content').html('');
-        PAGE = 0;
-        fetch_more_data();
-        adjust_load_more_button();
-    }
-
-    // main program
+</script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/cms_front_view.js"></script>
+<script type="text/javascript">
     $(document).ready(function(){
-        adjust_load_more_button();
-
         $('#new_article_content').autosize();
         $('textarea[name="<?php echo $secret_code; ?>xcontent"]').autosize();
 
@@ -476,24 +405,6 @@
                 }
             });
             event.preventDefault();
-        });
-
-        // delete click
-        $('body').on('click', '.delete_record',function(){
-            var url = $(this).attr('href');
-            var primary_key = $(this).attr('primary_key');
-            if (confirm("Do you really want to delete?")) {
-                $.ajax({
-                    url : url,
-                    dataType : 'json',
-                    success : function(response){
-                        if(response.success){
-                            $('div#record_'+primary_key).remove();
-                        }
-                    }
-                });
-            }
-            return false;
         });
 
         // input keyup
@@ -539,27 +450,6 @@
             // hide this, and show that
             $(this).hide();
             $('#reply_comment_link_'+comment_id).show();
-            event.preventDefault();
-        });
-
-        // scroll
-        $(window).scroll(function(){
-            if(screen.width >= 1024 && !LOADING && SCROLL_WORK){
-                if($('#record_content_bottom').position().top <= $(window).scrollTop() + $(window).height() ){
-                    LOADING = true;
-                    fetch_more_data(true);
-                    LOADING = false;
-                }
-            }
-        });
-
-        $('#btn_load_more').click(function(event){
-            if(!LOADING && SCROLL_WORK){
-                LOADING = true;
-                fetch_more_data(true);
-                LOADING = false;
-            }
-            $(this).hide();
             event.preventDefault();
         });
 
@@ -617,5 +507,4 @@
             }
         });
     });
-
 </script>

@@ -19,28 +19,4 @@ echo $asset->compile_js();
     <div style="clear:both;"></div>
 </form>
 <textarea id="default_template" style="display:none;">&lt;?php echo $default_record_template; ?&gt;</textarea>
-<script type="text/javascript">
-    $(document).ready(function(){
-        // change texarea into ace code editor
-        $("#template").ace({
-            theme: "eclipse",
-            lang: "html",
-            width: "100%",
-            height: "400px"
-        });
-        $("#template").each(function(){
-            var decorator = $(this).data("ace");
-            var aceInstance = decorator.editor.ace;
-            aceInstance.setFontSize("16px");
-        });
-        // even if restore clicked
-        $('#btn-restore').click(function(event){
-            event.preventDefault();
-            $("#template").each(function(){
-                var decorator = $(this).data("ace");
-                var aceInstance = decorator.editor.ace;
-                aceInstance.setValue($('#default_template').val());
-            });
-        });
-    });
-</script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/cms_front_view_config.js"></script>
