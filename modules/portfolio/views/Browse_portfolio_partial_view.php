@@ -16,7 +16,7 @@ foreach($result as $record){
         $record->image_link = '';
     }
     if($record->url != ''){
-        $record->url = '<a href="'.$record->url.'" class="btn btn-default">Visit</a>';
+        $record->url = '<a target="blank" href="'.$record->url.'" class="btn btn-default">Visit</a>';
     }
     echo parse_record($record, $config);
 }
