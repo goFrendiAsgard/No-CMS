@@ -625,7 +625,7 @@ class Install_model extends CI_Model{
         );
         $type_varchar_large_strict = array(
             'type' => 'VARCHAR',
-            'constraint' => '100',
+            'constraint' => '255',
             'null' => FALSE,
         );
         $type_user_agent = array(
