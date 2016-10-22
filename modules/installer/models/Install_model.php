@@ -3,7 +3,7 @@ class Install_model extends CI_Model{
 
     private $__config_file = array();
 
-    private $VERSION        = '1.1.2';
+    private $VERSION        = '1.1.3';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -658,7 +658,7 @@ class Install_model extends CI_Model{
         // GROUP
         $fields = array(
                 'group_id'      => $type_primary_key,
-                'group_name'    => $type_varchar_small_strict,
+                'group_name'    => $type_varchar_large_strict,
                 'description'   => $type_text,
             );
         $sql_list[] = $this->create_table('main_group',$fields);
@@ -724,7 +724,7 @@ class Install_model extends CI_Model{
         // PRIVILEGE
         $fields = array(
                 'privilege_id'      => $type_primary_key,
-                'privilege_name'    => $type_varchar_small_strict,
+                'privilege_name'    => $type_varchar_large_strict,
                 'title'             => $type_varchar_small,
                 'description'       => $type_text,
                 'authorization_id'  => $type_foreign_key_default_1,
@@ -735,8 +735,8 @@ class Install_model extends CI_Model{
         if(!$this->is_subsite){
             $fields = array(
                     'user_id'           => $type_primary_key,
-                    'user_name'         => $type_varchar_small_strict,
-                    'email'             => $type_varchar_small,
+                    'user_name'         => $type_varchar_large_strict,
+                    'email'             => $type_varchar_large,
                     'password'          => $type_password,
                     'activation_code'   => $type_varchar_small,
                     'real_name'         => $type_varchar_large,

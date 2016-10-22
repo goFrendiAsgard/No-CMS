@@ -199,6 +199,13 @@ function is_numeric(input){
     return (input - 0) == input && input.length > 0;
 }
 
+if(typeof add_delete_all_feature != 'function'){
+    function add_delete_all_feature(url_delete_all, button_caption, notification_caption){
+        // Doing nothing. just to be here for the sake of compatibility to avoid reference error.
+        // Add all feature should only work on the view
+    }
+}
+
 // TODO: gonna be deprecated
 function IsNumeric(input){
     return is_numeric(input);
