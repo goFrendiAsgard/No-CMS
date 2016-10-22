@@ -263,7 +263,7 @@ function displaying_and_pages(this_container)
 	} else {
 		this_container.find('.page-ends-to').html( crud_page*per_page );
 	}
-} 
+}
 
 // additional code by gofrendi
 function add_delete_all_feature(url_delete_all, button_caption, notification_caption){

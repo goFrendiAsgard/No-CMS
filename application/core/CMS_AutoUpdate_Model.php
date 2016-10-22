@@ -3,7 +3,7 @@
 class CMS_AutoUpdate_Model extends CMS_Model
 {
     // TODO: change this
-    private $CURRENT_VERSION = '1.1.2';
+    private $CURRENT_VERSION = '1.1.3';
     private static $module_updated = false;
 
     public function __construct()
@@ -690,5 +690,25 @@ class CMS_AutoUpdate_Model extends CMS_Model
         $this->cms_add_config('meta_twitter_author_handler', '', 'Twitter author handler for SEO');
     }
 
+    private function __update_to_1_1_3(){
+        $t_user = cms_table_name('main_user');
+        $t_group = cms_table_name('main_group');
+        $t_privilege = cms_table_name('main_privilege');
+        $this->cms_adjust_tables(array(
+            $t_user => array(
+                'fields' => array(
+                    'user_name' => array('type' => 'VARCHAR', 'constraint' => 255, 'null' => FALSE),
+                    'email' => array('type' => 'VARCHAR', 'constraint' => 255, 'null' => FALSE)
+                )
+            ),
+            $t_group => array(
+                'fields' => array('group_name' => array('type' => 'VARCHAR', 'constraint' => 255, 'null' => FALSE))
+            ),
+            $t_privilege => array(
+                'fields' => array('privilege_name' => array('type' => 'VARCHAR', 'constraint' => 255, 'null' => FALSE))
+            )
+        ));
+
+    }
     // TODO : Write your upgrade function here (__update_to_x_y_x)
 }
