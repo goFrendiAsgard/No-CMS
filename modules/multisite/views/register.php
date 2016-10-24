@@ -32,145 +32,77 @@
 
                 echo '<div class="tab-pane active" id="tab1">';
                     echo '<h4>User Information</h4>';
-
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:User Name }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo form_input($secret_code.'user_name', $user_name,
-                        'id="'.$secret_code.'user_name" placeholder="User Name" class="form-control"');
-                    echo '</div>';
-                    echo '</div>';
-
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:Email }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo form_input($secret_code.'email', $email,
-                        'id="'.$secret_code.'email" placeholder="Email" class="form-control"');
-                    echo '</div>';
-                    echo '</div>';
-
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:Real Name }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo form_input($secret_code.'real_name', $real_name,
-                        'id="'.$secret_code.'real_name" placeholder="Real Name" class="form-control"');
-                    echo '</div>';
-                    echo '</div>';
-
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:Password }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo form_password($secret_code.'password', '',
-                        'id="'.$secret_code.'password" placeholder="Password" class="form-control"');
-                    echo '</div>';
-                    echo '</div>';
-
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:Confirm Password }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo form_password($secret_code.'confirm_password', '',
-                        'id="'.$secret_code.'confirm_password" placeholder="Password (again)" class="form-control"');
-                    echo '</div>';
-                    echo '</div>';
+                    echo build_register_input($secret_code, $user_name, $email, $real_name);
                 echo '</div>';
 
                 echo '<div class="tab-pane" id="tab2">';
                     echo '<h4>Site Information</h4>';
 
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:Site Title }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo form_input('site_title', '',
-                        'id="site_title" placeholder="Site Title" class="form-control"');
-                    echo '</div>';
-                    echo '</div>';
+                    echo create_labeled_form_input('site_title', '{{ language:Site Title }}',
+                        form_input('site_title', '', 'id="{{ id }}" placeholder="Site Title" class="form-control"')
+                    );
 
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:Site Slogan }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo form_input('site_slogan', '',
-                        'id="site_slogan" placeholder="Site Slogan" class="form-control"');
-                    echo '</div>';
-                    echo '</div>';
+                    echo create_labeled_form_input('site_logo', '{{ language:Site Logo }}',
+                        form_input('site_slogan', '', 'id="{{ id }}" placeholder="Site Slogan" class="form-control"')
+                    );
 
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:Site Logo }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo '<input type="file" name="site_logo" id="site_logo" class="form-control" />';
-                    echo '</div>';
-                    echo '</div>';
+                    echo create_labeled_form_input('site_logo', '{{ language:Site Logo }}',
+                        '<input type="file" name="site_logo" id="{{ id }}" class="form-control" />'
+                    );
 
-                    echo '<div class="form-group">';
-                    echo form_label('{{ language:Site Favicon }}', ' for="" class="control-label col-sm-4');
-                    echo '<div class="col-sm-8">';
-                    echo '<input type="file" name="site_favicon" id="site_favicon" class="form-control" />';
-                    echo '</div>';
-                    echo '</div>';
+                    echo create_labeled_form_input('site_favicon', '{{ language:Site Favicon }}',
+                        '<input type="file" name="site_favicon" id="{{ id }}" class="form-control" />'
+                    );
+
                 echo '</div>';
 
                 echo '<div class="tab-pane" id="tab3">';
                     echo '<h4>Site Appearance</h4>';
 
-                    echo'<div class="form-group">';
-                    echo'<label class="control-label col-md-4" for="homepage_layout">Homepage Layout</label>';
-                    echo'<div class="controls col-md-8">';
-                    echo'<select id="homepage_layout" name="homepage_layout" class="input form-control" placeholder="Homepage Layout">';
+                    $input = '<select id="{{ id }}" name="homepage_layout" class="input form-control" placeholder="Homepage Layout">';
                     foreach($layout_list as $homepage_layout){
                         $selected = $homepage_layout == 'slide'? 'selected' : '';
-                        echo '<option value="'.$homepage_layout.'" '.$selected.'>'.$homepage_layout.'</option>';
+                        $input .= '<option value="'.$homepage_layout.'" '.$selected.'>'.$homepage_layout.'</option>';
                     }
-                    echo'</select>';
-                    echo'</div>';
-                    echo'</div>';
+                    $input .= '</select>';
+                    echo create_labeled_form_input('homepage_layout', '{{ language:Homepage Layout }}', $input);
 
-                    echo'<div class="form-group">';
-                    echo'<label class="control-label col-md-4" for="default_layout">Default Layout</label>';
-                    echo'<div class="controls col-md-8">';
-                    echo'<select id="default_layout" name="default_layout" class="input form-control" placeholder="Default Layout">';
+                    $input = '<select id="default_layout" name="default_layout" class="input form-control" placeholder="Default Layout">';
                     foreach($layout_list as $default_layout){
                         $selected = $default_layout == 'default'? 'selected' : '';
-                        echo '<option value="'.$default_layout.'" '.$selected.'>'.$default_layout.'</option>';
+                        $input .= '<option value="'.$default_layout.'" '.$selected.'>'.$default_layout.'</option>';
                     }
-                    echo'</select>';
-                    echo'</div>';
-                    echo'</div>';
+                    $input .= '</select>';
+                    echo create_labeled_form_input('default_layout', '{{ language:Default Layout }}', $input);
 
-                    echo'<div class="form-group">';
-                    echo'<label class="control-label col-md-4" for="theme">Theme</label>';
-                    echo'<div class="controls col-md-8">';
-                    echo'<select id="theme" name="theme" class="input form-control" placeholder="Theme">';
+                    $input = '<select id="theme" name="theme" class="input form-control" placeholder="Theme">';
                     foreach($theme_list as $theme){
                         $selected = $theme == 'neutral'? 'selected' : '';
-                        echo '<option value="'.$theme.'" '.$selected.'>'.$theme.'</option>';
+                        $input .=  '<option value="'.$theme.'" '.$selected.'>'.$theme.'</option>';
                     }
-                    echo'</select>';
-                    echo'<p class="help-block">Theme used for the new site</p>';
-                    echo'<div>';
+                    $input .= '</select>';
+                    $input .= '<p class="help-block">Theme used for the new site</p>';
+                    $input .= '<div>';
                     foreach($theme_list as $theme){
-                        echo '<img style="width:100%; display:none;" class="img-theme" id="img-theme-'.str_replace(' ','_',$theme).'" real-src="{{ base_url }}themes/'.$theme.'/preview.png" />';
+                        $input .= '<img style="width:100%; display:none;" class="img-theme" id="img-theme-'.str_replace(' ','_',$theme).'" real-src="{{ base_url }}themes/'.$theme.'/preview.png" />';
                     }
-                    echo'</div>';
-                    echo'</div>';
-                    echo'</div>';
+                    $input .= '</div>';
+                    echo create_labeled_form_input('theme', '{{ language:Theme }}', $input);
 
-                    echo'<div class="form-group">';
-                    echo'<label class="control-label col-md-4" for="template">Template</label>';
-                    echo'<div class="controls col-md-8">';
-                    echo'<select id="template" name="template" class="input form-control" placeholder="template">';
+                    $input = '<select id="template" name="template" class="input form-control" placeholder="template">';
                     foreach($template_list as $template){
-                        echo '<option value="'.$template['name'].'">'.$template['name'].'</option>';
+                        $input .=  '<option value="'.$template['name'].'">'.$template['name'].'</option>';
                     }
-                    echo'</select>';
-                    echo'<p class="help-block">Template used for the new site</p>';
-                    echo'<div>';
+                    $input .= '</select>';
+                    $input .= '<p class="help-block">Template used for the new site</p>';
+                    $input .= '<div>';
                     foreach($template_list as $template){
                         $template_name = str_replace(' ','_',$template['name']);
-                        echo '<img style="width:100%; display:none;" class="img-template" id="img-template-'.$template_name.'" real-src="{{ module_base_url }}assets/uploads/'.$template['icon'].'" />';
-                        echo '<p style="display:none;" class="desc-template" id="desc-template-'.$template_name.'">'.$template['description'].'</p>';
+                        $input .=  '<img style="width:100%; display:none;" class="img-template" id="img-template-'.$template_name.'" real-src="{{ module_base_url }}assets/uploads/'.$template['icon'].'" />';
+                        $input .=  '<p style="display:none;" class="desc-template" id="desc-template-'.$template_name.'">'.$template['description'].'</p>';
                     }
-                    echo'</div>';
-                    echo'</div>';
-                    echo'</div>';
+                    $input .= '</div>';
+                    echo create_labeled_form_input('template', '{{ language:Template }}', $input);
                 echo '</div>';
 
                 // from hook
@@ -181,7 +113,7 @@
                     echo '</div>';
                 }
 
-                echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
+                echo '<div class="form-group"><div class="col-sm-12">';
                 echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
                 echo '<div id="message" class="alert alert-danger"></div>';
                 echo form_submit('register', $register_caption, 'id="btn-register" class="btn btn-primary" style="display:none;"');
@@ -286,7 +218,7 @@
             check_register();
         });
         $('input, select, textarea').change(function(){
-        	check_register();
+            check_register();
         });
 
         $('#<?php echo $secret_code; ?>user_name').keyup(function(){

@@ -8,8 +8,8 @@
     }
 </style>
 <script type="text/javascript">
-	var REQUEST_EXISTS = false;
-	var REQUEST = "";
+    var REQUEST_EXISTS = false;
+    var REQUEST = "";
     function check_register(){
         var user_name =  $('input[name="<?php echo $secret_code; ?>user_name"]').val();
         var email = $('input[name="<?php echo $secret_code; ?>email"]').val();
@@ -17,7 +17,7 @@
         var confirm_password = $('input[name="<?php echo $secret_code; ?>confirm_password"]').val();
         $("#img_ajax_loader").show();
         if(REQUEST_EXISTS){
-        	REQUEST.abort();
+            REQUEST.abort();
         }
         REQUEST_EXISTS = true;
         // build request data
@@ -35,7 +35,7 @@
             "data" : request_data,
             "dataType" : "json",
             "success" : function(data){
-            	if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
+                if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
                     $('input[name="register"]').show();
                     $('input[name="register"]').removeAttr('disabled');
                     console.log($('input[name="register"]'));
@@ -44,7 +44,7 @@
                     $('input[name="register"]').attr('disabled', 'disabled');
                 }
 
-            	// get message from server + local check
+                // get message from server + local check
                 var message = '';
                 if(data.message!=''){
                     message += data.message+'<br />';
@@ -83,7 +83,7 @@
             check_register();
         });
         $('input, select, textarea').change(function(){
-        	check_register();
+            check_register();
         });
 
         $('#<?php echo $secret_code; ?>user_name').keyup(function(){
@@ -102,50 +102,15 @@
     echo form_input(array('name'=>'password', 'value'=>'', 'class'=>'register_input'));
     echo form_input(array('name'=>'confirm_password', 'value'=>'', 'class'=>'register_input'));
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:User Name }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'user_name', $user_name,
-        'id="'.$secret_code.'user_name" placeholder="User Name" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Email }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'email', $email,
-        'id="'.$secret_code.'email" placeholder="Email" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Real Name }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'real_name', $real_name,
-        'id="'.$secret_code.'real_name" placeholder="Real Name" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Password }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_password($secret_code.'password', '',
-        'id="'.$secret_code.'password" placeholder="Password" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Confirm Password }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_password($secret_code.'confirm_password', '',
-        'id="'.$secret_code.'confirm_password" placeholder="Password (again)" class="form-control"');
-    echo '</div>';
-    echo '</div>';
+    echo build_register_input($secret_code, $user_name, $email, $real_name);
 
     // additional input from hook
-    echo $additional_input;
+    if(trim($additional_input) != ''){
+        echo '<hr />';
+        echo $additional_input;
+    }
 
-    echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
+    echo '<div class="form-group"><div class="col-sm-12">';
     echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
     echo '<div id="message" class="alert alert-danger"></div>';
     echo form_submit('register', $register_caption, 'id="btn-register" class="btn btn-primary" style="display:none;"');

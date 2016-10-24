@@ -605,3 +605,50 @@ function parse_record($record, $config=array()){
     $replace[] = $backend_urls;
     return str_replace($search, $replace, $record_template);
 }
+
+function create_labeled_form_input($id, $label, $input_html){
+    $input_html = str_replace('{{ id }}', $id, $input_html);
+    $html = '';
+    $html .= '<div class="form-group col-sm-12">';
+    $html .= form_label($label, $id, array('class' => 'control-label col-sm-4'));
+    $html .= '<div class="col-sm-8">';
+    $html .= $input_html;
+    $html .= '</div>';
+    $html .= '</div>';
+    return $html;
+}
+
+function build_register_input($secret_code, $user_name, $email, $real_name){
+    $html = '';
+
+    $id = $secret_code.'user_name';
+    $input_html = form_input($id, $user_name,
+        'id="{{ id }}" placeholder="User Name" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:User Name }}', $input_html);
+
+    $id = $secret_code.'real_name';
+    $input_html = form_input($id, $real_name,
+        'id="{{ id }}" placeholder="Real Name" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:Real Name }}', $input_html);
+
+    $id = $secret_code.'email';
+    $input_html = form_input($id, $email,
+        'id="{{ id }}" placeholder="Email" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:Email }}', $input_html);
+
+
+    $id = $secret_code.'password';
+    $input_html = form_password($id, '',
+        'id="{{ id }}" placeholder="Password" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:Password }}', $input_html);
+
+    // spacer
+    $html .= '<div class="form-group col-md-6">&nbsp;</div>';
+
+    $id = $secret_code.'confirm_password';
+    $input_html = form_password($id, '',
+        'id="{{ id }}" placeholder="Password (again)" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:Confirm Password }}', $input_html);
+
+    return $html;
+}
