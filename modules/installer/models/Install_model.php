@@ -1043,7 +1043,7 @@ class Install_model extends CI_Model{
                 array('main_register', NULL, 'Register', 'Register', NULL, 'New User Registration', 'main/register',
                     2, 7, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_change_profile', NULL, 'Change Profile', 'Change Profile', NULL, 'Change Current Profile', 'main/change_profile',
-                    3, 8, 1, 0, NULL, 0),
+                    3, 8, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_group_management', 4, 'Group Management', 'Group Management', NULL, 'Group Management', 'main/manage_group',
                     4, 0, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_user_management', 4, 'User Management', 'User Management', NULL, 'Manage User', 'main/manage_user',

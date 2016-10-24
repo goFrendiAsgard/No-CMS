@@ -6,9 +6,9 @@ $asset->add_cms_css('grocery_crud/css/ui/simple/jquery-ui-1.10.1.custom.min.css'
 echo $asset->compile_css();
 ?>
 <style type="text/css">
-	#message:empty{
-		display:none;
-	}
+    #message:empty{
+        display:none;
+    }
 </style>
 
 <?php
@@ -19,8 +19,8 @@ echo $asset->compile_js();
 ?>
 
 <script type="text/javascript">
-	var REQUEST_EXISTS = false;
-	var REQUEST = "";
+    var REQUEST_EXISTS = false;
+    var REQUEST = "";
     function check_change_profile(){
         var email =  $('input[name="email"]').val();
         var password = $('input[name="password"]').val();
@@ -28,7 +28,7 @@ echo $asset->compile_js();
         var change_password_checked = $('input[name="change_password"]:checked').length > 0;
         $("#img_ajax_loader").show();
         if(REQUEST_EXISTS){
-        	REQUEST.abort();
+            REQUEST.abort();
         }
         REQUEST_EXISTS = true;
         // build request data
@@ -59,12 +59,12 @@ echo $asset->compile_js();
                     message += data.message+'<br />';
                 }
                 if(change_password_checked){
-	                if(password == '' && change_password_checked){
-	                    message += '{{ language:Password is empty }}<br />';
-	                }
-	                if(password != confirm_password){
-	                    message += '{{ language:Confirm password doesn\'t match }}';
-	                }
+                    if(password == '' && change_password_checked){
+                        message += '{{ language:Password is empty }}<br />';
+                    }
+                    if(password != confirm_password){
+                        message += '{{ language:Confirm password doesn\'t match }}';
+                    }
                 }
 
                 if(message != $('#message').html()){
@@ -96,152 +96,107 @@ echo $asset->compile_js();
             check_change_profile();
         });
         $('input, select, textarea').change(function(){
-        	check_change_profile();
+            check_change_profile();
         });
         $('input[name="change_password"]').change(function(){toggle_password_input();});
         // turn select into chosen
         $('.chosen-select').chosen({allow_single_deselect:true, width:"100%", search_contains: true});
         // turn input into datepicker
-    	$('.datepicker-input').datepicker({
-    			dateFormat: 'yy-mm-dd',
-    			showButtonPanel: true,
-    			changeMonth: true,
-    			changeYear: true,
-				yearRange: "-150:+0"
-    	});
+        $('.datepicker-input').datepicker({
+                dateFormat: 'yy-mm-dd',
+                showButtonPanel: true,
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-150:+0"
+        });
 
-    	$('.datepicker-input-clear').button();
+        $('.datepicker-input-clear').button();
 
-    	$('.datepicker-input-clear').click(function(){
-    		$(this).parent().find('.datepicker-input').val("");
-    		return false;
-    	});
+        $('.datepicker-input-clear').click(function(){
+            $(this).parent().find('.datepicker-input').val("");
+            return false;
+        });
     })
 </script>
 <h3>{{ language:Change Profile }}</h3>
 <?php
     echo form_open_multipart('main/change_profile', 'class="ajax-check-form form form-horizontal"');
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Profile Picture }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
+    $input = '';
     if(trim($profile_picture) != ''){
-        echo '<img style="max-width:256px;" src="{{ BASE_URL }}assets/nocms/images/profile_picture/' . $profile_picture . '" />';
+        $input .= '<img style="max-width:256px;" src="{{ BASE_URL }}assets/nocms/images/profile_picture/' . $profile_picture . '" />';
     }
-    echo '<input type="file" id="profile_picture" name="profile_picture" class="form-control">';
-    echo '</div>';
-    echo '</div>';
+    $input .= '<input type="file" id="profile_picture" name="profile_picture" class="form-control">';
+    echo create_labeled_form_input('profile_picture', '{{ language:Profile Picture }}', $input);
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:User Name }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo $user_name;
-    echo '</div>';
-    echo '</div>';
+    echo create_labeled_form_input('user_name', '{{ language:User Name }}', $user_name);
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Email }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input('email', $email,
+    $input = form_input('email', $email,
         'id="email" placeholder="Email" class="form-control"');
-    echo '</div>';
-    echo '</div>';
+    echo create_labeled_form_input('email', '{{ language:Email }}', $input);
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Real Name }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input('real_name', $real_name,
+    $input = form_input('real_name', $real_name,
         'id="real_name" placeholder="Real Name" class="form-control"');
-    echo '</div>';
-    echo '</div>';
+    echo create_labeled_form_input('real_name', '{{ language:Real Name }}', $input);
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Birthdate }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input('birthdate', $birthdate,
+    $input = form_input('birthdate', $birthdate,
         'id="birthdate" placeholder="Birthdate" class="form-control datepicker-input"');
-    echo '</div>';
-    echo '</div>';
+    echo create_labeled_form_input('birthdate', '{{ language:Birthdate }}', $input);
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Sex }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
     $options = array('' => '{{ language:Not Set }}', 'male' => '{{ language:Male }}', 'female' => '{{ language:Female }}');
-    echo '<select name="sex" id="sex" class="form-control chosen-select">';
+    $input = '<select name="sex" id="sex" class="form-control chosen-select">';
     foreach($options as $key=>$val){
         $selected = '';
         if($key == $sex){
             $selected = 'selected';
         }
-        echo '<option value="'.$key.'" '.$selected.'>' . $val . '</option>';
+        $input .= '<option value="'.$key.'" '.$selected.'>' . $val . '</option>';
     }
-    echo '</select>';
-    echo '</div>';
-    echo '</div>';
+    $input .= '</select>';
+    echo create_labeled_form_input('sex', '{{ language:Sex }}', $input);
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Language }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo '<select name="language" id="language" class="form-control chosen-select">';
-    echo '<option value="">{{ language:Not Set }}</option>';
+    $input = '<select name="language" id="language" class="form-control chosen-select">';
+    $input .= '<option value="">{{ language:Not Set }}</option>';
     foreach($language_list as $language_option){
         $selected = '';
         if($language_option->code == $language){
             $selected = 'selected';
         }
-        echo '<option value="'.$language_option->code.'" '.$selected.'>' . $language_option->name . '</option>';
+        $input .= '<option value="'.$language_option->code.'" '.$selected.'>' . $language_option->name . '</option>';
     }
-    echo '</select>';
-    echo '</div>';
-    echo '</div>';
+    $input .= '</select>';
+    echo create_labeled_form_input('language', '{{ language:Language }}', $input);
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Theme }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo '<select name="theme" id="theme" class="form-control chosen-select">';
-    echo '<option value="">{{ language:Not Set }}</option>';
+    $input = '<select name="theme" id="theme" class="form-control chosen-select">';
+    $input .= '<option value="">{{ language:Not Set }}</option>';
     foreach($theme_list as $theme_option){
         $selected = '';
         if($theme_option['path'] == $theme){
             $selected = 'selected';
         }
-        echo '<option value="'.$theme_option['path'].'" '.$selected.'>' . ucfirst($theme_option['path']) . '</option>';
+        $input .= '<option value="'.$theme_option['path'].'" '.$selected.'>' . ucfirst($theme_option['path']) . '</option>';
     }
-    echo '</select>';
-    echo '</div>';
-    echo '</div>';
+    $input .= '</select>';
+    echo create_labeled_form_input('theme', '{{ language:Theme }}', $input);
 
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Self Description }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_textarea('self_description', $self_description,
+    $input = form_textarea('self_description', $self_description,
         'id="self_description" placeholder="Self Description" class="form-control"');
-    echo '</div>';
-    echo '</div>';
+    echo create_labeled_form_input('self_description', '{{ language:Self Description }}', $input);
 
     echo $additional_input;
 
-    echo '<div class="form-group">';
-    echo '<div class="col-sm-offset-4 col-sm-8">';
-    echo form_checkbox('change_password','True',FALSE);
-    echo form_label('{{ language:Change Password }}', ' for="" class="control-label');
-    echo '</div>';
-    echo '</div>';
+    $input = form_checkbox('change_password','True',FALSE, 'id="change_password"');
+    $input .= form_label('{{ language:Change Password }}', 'change_password', 'class="control-label');
+    echo create_labeled_form_input('change_password', '', $input);
 
-    echo '<div class="form-group password-input">';
-    echo form_label('{{ language:Password }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_password('password', '',
-        'id="password" placeholder="Password" class="form-control"');
-    echo '</div>';
-    echo '</div>';
+    echo '<div class="password-input">';
+        $input = form_password('password', '',
+            'id="password" placeholder="Password" class="form-control"');
+        echo create_labeled_form_input('password', '{{ language:Password }}', $input);
 
-    echo '<div class="form-group password-input">';
-    echo form_label('{{ language:Confirm Password }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_password('confirm_password', '',
-        'id="confirm_password" placeholder="Password (again)" class="form-control"');
-    echo '</div>';
+        $input = form_password('confirm_password', '',
+            'id="confirm_password" placeholder="Password (again)" class="form-control"');
+        echo create_labeled_form_input('confirm_password', '{{ language:Confirm Password }}', $input);
     echo '</div>';
 
     echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
