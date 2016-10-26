@@ -60,10 +60,23 @@
     var HAVE_ADD_PRIVILEGE     = &lt;?php echo $have_add_privilege ? "true" : "false"; ?&gt;;
     var LOAD_MESSAGE           = 'Load more {{ table_caption }} &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />';
     var REACH_END_MESSAGE      = 'No more {{ table_caption }} to show';
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // if SCROLL_WORK is false, the infinite scroll won't work.
+    // Uncomment the line below to disable scroll
+    ////////////////////////////////////////////////////////////////////////////////
+    // var SCROLL_WORK = false;
+
+    ////////////////////////////////////////////////////////////////////////////////
+    // Override this function to create custom AJAX's post data. The function should
+    // return json formatted data
+    ////////////////////////////////////////////////////////////////////////////////
+    // function prepare_search_post_data(data){
+    //     return data;
+    // }
 </script>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/cms_front_view.js"></script>
 <!-- End of reload script -->
-
 <script type="text/javascript">
 
     // main program

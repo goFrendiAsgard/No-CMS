@@ -9,7 +9,7 @@ class Manage_field extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'field';
-    protected $COLUMN_NAMES = array('name', 'id_template', 'id_entity', 'input', 'view', 'shown_on_add', 'shown_on_edit', 'shown_on_view', 'option', 'custom_input', 'custom_view');
+    protected $COLUMN_NAMES = array('name', 'id_template', 'id_entity', 'shown_on_add', 'shown_on_edit', 'shown_on_view', 'order_index', 'input', 'view',  'option', 'custom_input', 'custom_view');
     protected $PRIMARY_KEY = 'id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -36,12 +36,13 @@ class Manage_field extends CMS_CRUD_Controller {
         //      $this->STATE_INFO
         //      $this->PK_VALUE
         ////////////////////////////////////////////////////////////////////////
+        $crud->order_by('order_index');
         if($id_entity != NULL){
             $crud->where($this->t('field').'.id_entity', $id_entity);
             // displayed columns on list
-            $crud->columns('name', 'id_template');
+            $crud->columns('name', 'id_template', 'order_index');
         }else{
-            $crud->columns('name', 'id_template', 'id_entity');
+            $crud->columns('name', 'id_template', 'id_entity', 'order_index');
         }
 
         // set subject
@@ -62,6 +63,7 @@ class Manage_field extends CMS_CRUD_Controller {
         $crud->display_as('shown_on_add','Shown On Add');
         $crud->display_as('shown_on_edit','Shown On Edit');
         $crud->display_as('shown_on_view','Shown On View');
+        $crud->display_as('order_index', 'Order Index');
         $crud->display_as('option','Option');
 
         ////////////////////////////////////////////////////////////////////////
@@ -169,7 +171,7 @@ class Manage_field extends CMS_CRUD_Controller {
         //     ));
         ////////////////////////////////////////////////////////////////////////
 
-        $crud->set_field_one_third_width(array('shown_on_add', 'shown_on_edit', 'shown_on_view'));
+        $crud->set_field_half_width(array('shown_on_add', 'shown_on_edit', 'shown_on_view', 'order_index'));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)

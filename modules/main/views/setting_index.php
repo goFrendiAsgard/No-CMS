@@ -878,7 +878,7 @@
             </div>
 
         </div>
-        <button class="btn btn-primary btn-lg">Apply Changes</button>
+        <button class="btn btn-primary btn-lg pull-right">Apply Changes</button>
     </form>
 </div>
 <?php

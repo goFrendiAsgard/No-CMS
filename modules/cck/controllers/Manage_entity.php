@@ -255,6 +255,13 @@ class Manage_entity extends CMS_CRUD_Controller {
                 $enum_column_option_list // ENUM OPTIONS
             );
         $data['primary_key'] = $primary_key;
+        // sort $data['result'] based on order_index
+        $order_index = array();
+        foreach ($data['result'] as $key => $row)
+        {
+            $order_index[$key] = $row['order_index'];
+        }
+        array_multisort($order_index, SORT_ASC, $data['result']);
         // Parse the data to the view
         return $this->load->view($this->cms_module_path().'/field_entity_field',$data, TRUE);
     }
@@ -284,7 +291,7 @@ class Manage_entity extends CMS_CRUD_Controller {
             'id_entity', // DETAIL FK NAME
             $primary_key, // PARENT PRIMARY KEY VALUE
             $data, // DATA
-            array('id', 'name', 'id_template'), // REAL DETAIL COLUMN NAMES
+            array('id', 'name', 'id_template', 'order_index'), // REAL DETAIL COLUMN NAMES
             array(), // SET DETAIL COLUMN NAMES
             $many_to_many_config_list=array()
         );
@@ -292,7 +299,7 @@ class Manage_entity extends CMS_CRUD_Controller {
         // adjust tables
         $this->cck_model->adjust_physical_table($primary_key);
         // adjust navigation and privilege
-        $this->cck_model->adjust_navigation($primary_key); 
+        $this->cck_model->adjust_navigation($primary_key);
         return TRUE;
     }
 

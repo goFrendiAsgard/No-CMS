@@ -20,6 +20,11 @@ class CMS_Front_Controller extends CMS_Secure_Controller {
 
     protected $MODEL_PATH;           // model path
 
+    protected $SEARCH_POST_KEYS             = array('keyword');
+    protected $SEARCH_POST_DEFAULT_VALUES   = array(
+        'keyword' => '',
+    );
+
     protected function do_override_url_map($URL_MAP){
         $module_path = $this->cms_module_path();
         $navigation_name = $this->n($this->NAVIGATION_NAME);
@@ -53,16 +58,45 @@ class CMS_Front_Controller extends CMS_Secure_Controller {
             $this->n($this->NAVIGATION_NAME));
     }
 
-    protected function _get_data($page = 0, $keyword = ''){
+    // The first parameter of this function is page, followed by search parameters
+    protected function _get_data(){
         $module_path = $this->cms_module_path();
-        // get page and keyword parameter
-        $post_keyword   = $this->input->post('keyword');
-        $post_page      = $this->input->post('page');
-        if($keyword == '' && $post_keyword != NULL) $keyword = $post_keyword;
-        if($page == 0 && $post_page != NULL) $page = $post_page;
+        $arg_list = func_get_args();
+        if(count($arg_list) == 0){
+            $arg_list[] = 0;
+        }
+        $new_arg_list = array(); // when call 'get_data' from model, page should be the last parameter
+        // first argument is $page
+        $post_page = $this->input->post('page');
+        if($post_page != NULL){
+            $page = $post_page;
+        }else{
+            $page = count($arg_list)>0? $arg_list[0]:0;
+        }
+        // other arguments are search parameters
+        for($i=0; $i<count($this->SEARCH_POST_KEYS); $i++){
+            $key = $this->SEARCH_POST_KEYS[$i];
+            $arg_index = $i+1;
+            // default value
+            $default_value = array_key_exists($key, $this->SEARCH_POST_DEFAULT_VALUES)?
+                $this->SEARCH_POST_DEFAULT_VALUES[$key]: NULL;
+            if(count($arg_list)<$arg_index+1){
+                $arg_list[] = $default_value;
+            }
+            // post value
+            $post_value = $this->input->post($key);
+            if($post_value != NULL){
+                $arg_list[$arg_index] = $post_value;
+            }
+            // add to new_arg_list
+            $new_arg_list[] = $arg_list[$arg_index];
+        }
+        $new_arg_list[] = $page;
+
+
         // get data from model
         $this->load->model($module_path.'/'. $this->MODEL_PATH);
-        $result = $this->{$this->MODEL_PATH}->get_data($keyword, $page);
+        $result = call_user_func_array(array($this->{$this->MODEL_PATH}, 'get_data'), $new_arg_list);
         $data = array(
             'result'                       => $result,
             'allow_navigate_backend'       => $this->cms_allow_navigate($this->n($this->BACK_NAVIGATION_NAME)),
@@ -71,14 +105,16 @@ class CMS_Front_Controller extends CMS_Secure_Controller {
             'have_delete_privilege'        => $this->cms_have_privilege($this->n($this->DELETE_PRIVILEGE_NAME)),
             'have_edit_template_privilege' => $this->cms_have_privilege($this->n($this->EDIT_TEMPLATE_PRIVILEGE_NAME)),
             'backend_url'                  => site_url($module_path.'/'.$this->BACK_CONTROLLER_PATH.'/index'),
-
             'record_template'              => $this->cms_get_config($this->CONFIG_TEMPLATE_NAME, TRUE),
             'default_record_template'      => $this->cms_get_module_config($this->CONFIG_TEMPLATE_NAME),
         );
         return $data;
     }
-    public function get_data($page = 0, $keyword = ''){
-        $data = $this->_get_data($page, $keyword);
+    // The first parameter of this function is $page, followed by search parameters
+    public function get_data(){
+        $module_path = $this->cms_module_path();
+        $arg_list = func_get_args();
+        $data = call_user_func_array(array($this, '_get_data'), $arg_list);
         $config = array('only_content'=>TRUE);
         $this->view($module_path.'/'.$this->PARTIAL_VIEW_PATH, $data,
             $this->n($this->NAVIGATION_NAME), $config);

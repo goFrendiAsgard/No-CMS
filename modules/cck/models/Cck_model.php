@@ -124,13 +124,17 @@ class Cck_model  extends CMS_Model{
             return '';
         }else{
             $field_list = $this->cms_get_record_list($this->t('field'), 'id_entity', $entity->id);
-            $html = '';
+            $html = '<div id="{{ record_id }}" class="record_container panel panel-default">'.PHP_EOL; // record container
             foreach($field_list as $field){
-                $html .= '<div class="row">'.PHP_EOL;
-                $html .= '    <div class="col-md-4"><strong>'.ucwords(str_replace('_', ' ', $field->name)).'</strong></div>'.PHP_EOL;
-                $html .= '    <div class="col-md-8">{{ '.$field->name.'.view }}</div>'.PHP_EOL;
-                $html .= '</div>'.PHP_EOL;
+                // field container
+                $html .= '    <div class="row">'.PHP_EOL;
+                $html .= '        <div class="col-md-4"><strong>'.ucwords(str_replace('_', ' ', $field->name)).'</strong></div>'.PHP_EOL;
+                $html .= '        <div class="col-md-8">{{ '.$field->name.'.view }}</div>'.PHP_EOL;
+                $html .= '    </div>'.PHP_EOL;
             }
+            // edit + delete button
+            $html .= '    <div class="edit_delete_record_container pull-right">{{ backend_url }}</div>'.PHP_EOL;
+            $html .= '</div>'; // end of record container
             return $html;
         }
 

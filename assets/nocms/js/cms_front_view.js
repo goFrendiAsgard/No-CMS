@@ -13,25 +13,34 @@ var RUNNING_REQUEST        = false;
 var STOP_REQUEST           = false;
 var REQUEST;
 
+if(typeof prepare_search_post_data != 'function'){
+    function prepare_search_post_data(data){
+        return data;
+    }
+}
 function fetch_more_data(async){
     if(typeof(async) == 'undefined'){
         async = true;
     }
     $('#record_content_bottom').html(LOAD_MESSAGE);
-    var keyword = $('#input_search').val();
     // Don't send another request before the first one completed
     if(RUNNING_REQUEST || !SCROLL_WORK){
         return 0;
     }
+    // post data
+    var DATA = new Object();
+    DATA = prepare_search_post_data(DATA);
+    DATA['page'] = PAGE;
+    if(!('keyword' in DATA) && $('#input_search').length > 0){
+        DATA['keyword'] = $('#input_search').val();
+    }
+    // send the request
     RUNNING_REQUEST = true;
     REQUEST = $.ajax({
         'url'  : URL,
         'type' : 'POST',
         'async': async,
-        'data' : {
-            'keyword' : keyword,
-            'page' : PAGE,
-        },
+        'data' : DATA,
         'success'  : function(response){
             // show contents
             $('#record_content').append(response);
