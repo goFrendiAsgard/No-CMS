@@ -186,8 +186,6 @@ class Blog extends CMS_Front_Controller {
     }
 
     public function get_data($keyword = '', $page = 0, $category = '', $archive = ''){
-        // only accept ajax request
-        //if(!$first && !$this->input->is_ajax_request()) $this->cms_redirect();
         // get page and keyword parameter
         $post_keyword = $this->input->post('keyword');
         $post_page = $this->input->post('page');

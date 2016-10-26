@@ -691,7 +691,7 @@ class CMS_AutoUpdate_Model extends CMS_Model
     }
 
     private function __update_to_1_1_3(){
-        $t_user = cms_table_name('main_user');
+        $t_user = $this->cms_user_table_name();
         $t_group = cms_table_name('main_group');
         $t_privilege = cms_table_name('main_privilege');
         $this->cms_adjust_tables(array(

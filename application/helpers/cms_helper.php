@@ -642,9 +642,6 @@ function build_register_input($secret_code, $user_name, $email, $real_name){
         'id="{{ id }}" placeholder="Password" class="form-control"');
     $html .= create_labeled_form_input($id, '{{ language:Password }}', $input_html);
 
-    // spacer
-    $html .= '<div class="form-group col-md-6">&nbsp;</div>';
-
     $id = $secret_code.'confirm_password';
     $input_html = form_password($id, '',
         'id="{{ id }}" placeholder="Password (again)" class="form-control"');

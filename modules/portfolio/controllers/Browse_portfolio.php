@@ -25,6 +25,11 @@ class Browse_portfolio extends CMS_Front_Controller {
 
     protected $MODEL_PATH = 'portfolio_model';
 
+    protected $SEARCH_POST_KEYS             = array('keyword');
+    protected $SEARCH_POST_DEFAULT_VALUES   = array(
+        'keyword' => '',
+    );
+
     public function index(){
         $module_path = $this->cms_module_path();
         $data = $this->_index();
@@ -32,9 +37,10 @@ class Browse_portfolio extends CMS_Front_Controller {
             $this->n($this->NAVIGATION_NAME));
     }
 
-    public function get_data($page = 0, $keyword = ''){
+    public function get_data(){
         $module_path = $this->cms_module_path();
-        $data = $this->_get_data($page, $keyword);
+        $arg_list = func_get_args();
+        $data = call_user_func_array(array($this, '_get_data'), $arg_list);
         $config = array('only_content'=>TRUE);
         $this->view($module_path.'/'.$this->PARTIAL_VIEW_PATH, $data,
             $this->n($this->NAVIGATION_NAME), $config);

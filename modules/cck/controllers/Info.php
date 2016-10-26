@@ -151,6 +151,7 @@ class Info extends CMS_Module {
                 'name'                 => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
                 'id_template'          => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'order_index'          => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 0),
                 'input'                => array("type" => 'text',       "null" => TRUE),
                 'view'                 => array("type" => 'text',       "null" => TRUE),
                 'shown_on_add'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
@@ -244,5 +245,29 @@ class Info extends CMS_Module {
     // UPGRADE
     //////////////////////////////////////////////////////////////////////////////
     // TODO: write your upgrade function: do_upgrade_to_x_x_x
-
+    private function do_upgrade_to_0_0_8(){
+        $t_field = $this->t('field');
+        $this->cms_adjust_tables(array(
+            $t_field => array(
+                'fields' => array(
+                    'order_index' => array('type' => 'INT', 'constraint' => 11, 'null' => TRUE, 'default'=>0),
+                )
+            ),
+        ));
+        // update entity
+        $entity_list = $this->db->get($this->t('entity'))->result();
+        foreach($entity_list as $entity){
+            if(trim($entity->per_record_html) != ''){
+                $per_record_html = '<div id="{{ record_id }}" class="record_container panel panel-default">'.PHP_EOL; // record container
+                $per_record_html .= $entity->per_record_html;
+                $per_record_html .= '<div class="edit_delete_record_container pull-right">{{ backend_url }}</div>'.PHP_EOL;
+                $per_record_html .= '</div>'.PHP_EOL;
+                // update per_record_html template
+                $this->db->update($this->t('entity'),
+                    array('per_record_html' => $per_record_html),
+                    array('id' => $entity->id)
+                );
+            }
+        }
+    }
 }

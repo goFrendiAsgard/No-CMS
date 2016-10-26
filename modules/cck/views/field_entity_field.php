@@ -7,7 +7,7 @@
 <?php
     $manage_field_link = '<a class="btn btn-default save-on-click" href="{{ module_site_url }}manage_field/index/'.$primary_key.'"><i class="glyphicon glyphicon-list"></i> Manage Field</a>&nbsp;';
     // Generate HTML. Parameters: column_name, caption, array_of_field_captions
-    $HTML = build_md_html_table('field', 'Field', array('Name', 'Template (Leave blank for custom)'), TRUE, TRUE, $manage_field_link);
+    $HTML = build_md_html_table('field', 'Field', array('Order Index', 'Name', 'Template (Leave blank for custom)'), TRUE, TRUE, $manage_field_link);
     // Generate global variable and event-binding
     $JS   = build_md_global_variable_script('field', 'id', $date_format, $result, $options);
     $JS  .= build_md_event_script('field', '{{ module_site_url }}manage_entity/index/insert', '{{ module_site_url }}manage_entity/index/update');
@@ -34,6 +34,12 @@
         var row_index    = RECORD_INDEX_field;
         var inputs       = new Array();
 
+        // FIELD "order_index"
+        var input_id    = input_prefix + 'order_index' + row_index;
+        var field_value = get_object_property_as_str(value, 'order_index');
+        var html = '<input id="'+input_id+'" record_index="'+row_index+'" class="'+input_prefix+'" column_name="order_index" type="text" value="'+field_value+'"/>';
+        inputs.push(html);
+
         // FIELD "name"
         var input_id    = input_prefix + 'name' + row_index;
         var field_value = get_object_property_as_str(value, 'name');
@@ -53,7 +59,7 @@
     }
 
     function add_table_row_field_action(value){
-        actions = []
+        actions = [];
         for(var i=0; i<DATA_field.update.length; i++){
             row = DATA_field.update[i];
             if(row.data == value){

@@ -8,6 +8,7 @@
         margin:10px;
     }
     .edit_delete_record_container{
+        margin-bottom: 10px;
         margin-top: 10px;
     }
 </style>

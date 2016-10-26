@@ -94,9 +94,56 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
-
     </div>
 </div>
+<?php if($allow_navigate_backend){?>
+<!-- Quick Write Form -->
+<div class="modal fade" id="quickwrite-modal" role="dialog">
+    <div class="modal-dialog col-xs-12" style="width:100%!important;">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:100%!important;">
+            <div class="modal-header">
+                <button id="btn-close-quickwrite" style="padding:5px;" type="button" class="close" data-dismiss="modal">&times;</button>
+                <div style="clear:both"></div>
+            </div>
+            <div class="modal-body">
+                <h4>{{ language: Quick Write }}</h4>
+                <form  method="post" action="<?php echo $backend_url; ?>/add/">
+                    <div class="col-xs-12" style="margin-bottom:10px;">
+                        <input id="new_article_title" name="title" class="form-control" placeholder="{{ language:Title }}" />
+                    </div>
+                    <div class="col-xs-12" style="margin-bottom:10px;">
+                        <textarea id="new_article_content" name="content" class="form-control" placeholder="{{ language:Content }}" style="resize:none; min-height:100px;"></textarea>
+                    </div>
+
+                    <?php if($can_publish){ ?>
+                    <div class="col-xs-12 col-md-6" style="margin-bottom:10px;">
+                        <select id="new_article_status" name="status" class="form-control">
+                            <option value="published" selected>Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                    <?php } ?>
+                    <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
+                        <button id="new_article_save" class="col-xs-12 btn btn-primary" data-dismiss="modal">
+                            <i class="glyphicon glyphicon-share-alt"></i> {{ language:Save }}
+                        </button>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
+                        <button id="new_article_edit" class="col-xs-12 btn btn-primary">
+                            <i class="glyphicon glyphicon-pencil"></i> {{ language:More }}
+                        </button>
+                    </div>
+                </form>
+                <div style="clear:both;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
 
 <form id="form_search" class="form-inline col-xs-12" role="form" style="margin-bottom:20px;">
     <div class="form-group">
@@ -123,7 +170,7 @@
         </button>
         <?php
             if($allow_navigate_backend){
-                echo '<a href="'.$backend_url.'/add/" class="btn btn-default add_record"><i class="glyphicon glyphicon-plus"></i> Add</a>'.PHP_EOL;
+                echo '<a href="" class="btn btn-default add_record" data-toggle="modal" data-target="#quickwrite-modal"><i class="glyphicon glyphicon-plus"></i> Add</a>'.PHP_EOL;
             }
             if($have_edit_template_privilege){
                 echo '<a href="{{ module_site_url }}blog/template_config" class="btn btn-default add_record"><i class="glyphicon glyphicon-cog"></i> Edit Record Template</a>'.PHP_EOL;
@@ -132,39 +179,6 @@
     </div>
 </form>
 
-<?php if($allow_navigate_backend){?>
-<!-- Quick Write Form -->
-<div class="col-xs-12" style="margin-bottom:20px;">
-    <h4>{{ language: Quick Write }}</h4>
-    <form  method="post" action="<?php echo $backend_url; ?>/add/">
-        <div class="col-xs-12" style="margin-bottom:10px;">
-            <input id="new_article_title" name="title" class="form-control" placeholder="{{ language:Title }}" />
-        </div>
-        <div class="col-xs-12" style="margin-bottom:10px;">
-            <textarea id="new_article_content" name="content" class="form-control" placeholder="{{ language:Content }}" style="resize:none;"></textarea>
-        </div>
-
-        <?php if($can_publish){ ?>
-            <div class="col-xs-12 col-md-6" style="margin-bottom:10px;">
-                <select id="new_article_status" name="status" class="form-control">
-                    <option value="published" selected>Published</option>
-                    <option value="draft">Draft</option>
-                </select>
-            </div>
-        <?php } ?>
-        <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
-            <button id="new_article_save" class="col-xs-12 btn btn-primary">
-                <i class="glyphicon glyphicon-share-alt"></i> {{ language:Save }}
-            </button>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
-            <button id="new_article_edit" class="col-xs-12 btn btn-primary">
-                <i class="glyphicon glyphicon-pencil"></i> {{ language:Detail Edit }}
-            </button>
-        </div>
-    </form>
-</div>
-<?php } ?>
 <!-- Record contents -->
 <div id="record_content" class="col-xs-12">
     <?php
@@ -367,12 +381,17 @@
     var BACKEND_URL = '<?php echo $backend_url; ?>';
     var LOAD_MESSAGE = 'Load more article &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />';
     var REACH_END_MESSAGE  = 'No more article to show';
-    
+
     <?php if(isset($article)){
+        // if article only one, then no scroll
         echo 'var SCROLL_WORK = false;';
     }
     ?>
-
+    // prepare search post data
+    function prepare_search_post_data(data){
+        data['category'] = $('#input_category').val();
+        return data;
+    }
 </script>
 <script type="text/javascript" src="{{ base_url }}assets/nocms/js/cms_front_view.js"></script>
 <script type="text/javascript">
@@ -499,6 +518,7 @@
                 var key = e.which;
                 if (key == 27) { // escape
                     $('#btn-close-photo').trigger('click');
+                    $('#btn-close-quickwrite').trigger('click');
                 }else if(key == 37){
                     _load_photo_by_link(_PREV_PHOTO_COMPONENT);
                 }else if(key == 39){

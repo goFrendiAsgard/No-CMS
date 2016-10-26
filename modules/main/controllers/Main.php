@@ -212,10 +212,15 @@ class Main extends CMS_Controller
                 $this->view('main/main_login', $data, 'main_login');
             }
         } else {
+            // if identity is not empty then provide message that login is failed
+            $message = '';
+            if($identity != '' || $password != ''){
+                $message = '{{ language:Error }}: {{ language:Login Failed }}';
+            }
             //view login again
             $data = array(
                 'identity' => $identity,
-                'message' => '',
+                'message' => $message,
                 'providers' => $this->cms_third_party_providers(),
                 'login_caption' => $this->cms_lang('Login'),
                 'register_caption' => $this->cms_lang('Register'),
@@ -1109,10 +1114,15 @@ class Main extends CMS_Controller
                         while(need_transform && trial_left > 0){
                             need_transform = false;
                             trial_left --;
+                            var top_ref = 0;
+                            if(li_count > 0){
+                                top_ref = $(".navbar-nav > li")[0].offsetTop;
+                            }
                             for(var i=0; i<li_count; i++){
                                 var top = $(".navbar-nav > li")[i].offsetTop;
-                                if(top>$(".navbar-brand")[0].offsetTop){
+                                if(top>top_ref){
                                     need_transform = true;
+                                    break;
                                 }
                             }
                             if(need_transform){

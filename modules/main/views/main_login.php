@@ -3,6 +3,9 @@
     #login_message:empty{
         display:none;
     }
+    #login_message{
+        margin-top:20px;
+    }
 </style>
 <?php
     echo form_open('main/login');

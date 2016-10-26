@@ -61,6 +61,7 @@ class Manage extends CMS_CRUD_Controller {
 
         // get entity and fields
         $entity = $this->cms_get_record($this->t('entity'), 'id', $id_entity);
+        $this->db->order_by('order_index');
         $field_list = $this->cms_get_record_list($this->t('field'), 'id_entity', $id_entity);
         $this->ENTITY = $entity;
         $this->FIELD_LIST = $field_list;
