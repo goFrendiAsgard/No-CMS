@@ -45,5 +45,6 @@ sudo chmod 644 modules/*/assets/uploads/*.png
 sudo chmod 777 modules/*/assets/db -R
 sudo chmod 755 modules/*/controllers -R
 sudo chmod 777 modules/*/controllers
+sudo chmod 777 modules/*/config
 sudo chmod 777 modules/artificial_intelligence/assets/data -R
 sudo chmod 666 modules/artificial_intelligence/assets/data/1_*_Default

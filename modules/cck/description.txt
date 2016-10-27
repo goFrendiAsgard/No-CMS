@@ -6,5 +6,5 @@
     "activate"        : "info/activate",
     "deactivate"      : "info/deactivate",
     "upgrade"         : "info/upgrade",
-    "public"          : false
+    "public"          : true
 }

@@ -55,7 +55,7 @@
                         form_input('site_title', '', 'id="{{ id }}" placeholder="Site Title" class="form-control"')
                     );
 
-                    echo create_labeled_form_input('site_logo', '{{ language:Site Logo }}',
+                    echo create_labeled_form_input('site_slogan', '{{ language:Site Logo }}',
                         form_input('site_slogan', '', 'id="{{ id }}" placeholder="Site Slogan" class="form-control"')
                     );
 
@@ -159,7 +159,7 @@
                     echo '<div class="form-group col-sm-12" style="text-align:right;">';
                         echo '<a href="#tab2" data-toggle="tab" class="btn btn-primary btn-change-tab">{{ language:Previous }}</a>';
                         if(trim($additional_input) != ''){
-                            echo '<a href="#tab4" data-toggle="tab" class="btn btn-primary btn-change-tab">{{ language:Next }}</a>';
+                            echo '&nbsp;<a href="#tab4" data-toggle="tab" class="btn btn-primary btn-change-tab">{{ language:Next }}</a>';
                         }
 
                         echo '<span class="hidden-sm-hidden-xs">';
