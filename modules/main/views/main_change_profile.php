@@ -222,8 +222,7 @@ echo $asset->compile_js();
         echo $additional_input;
 
         $input = form_checkbox('change_password','True',FALSE, 'id="change_password"');
-        $input .= form_label('{{ language:Change Password }}', 'change_password', 'class="control-label');
-        echo create_labeled_form_input('change_password', '', $input);
+        echo create_labeled_form_input('change_password', '{{ language:Change Password }}', $input);
 
         echo '<div class="password-input">';
             $input = form_password('password', '',

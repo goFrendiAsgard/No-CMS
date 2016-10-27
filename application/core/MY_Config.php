@@ -1,6 +1,7 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-class MY_Config extends CI_Config {
+require APPPATH."third_party/MX/Config.php";
+class MY_Config extends MX_Config {
 
 	// Modified by Go Frendi, HTTP_HOST is more reliable than SERVER_ADDR
 	// in case of we have different sites in the same server.
@@ -67,7 +68,7 @@ class MY_Config extends CI_Config {
 		log_message('info', 'MY_Config Class Initialized');
 	}
 
-    public function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE)
+    public function load($file = '', $use_sections = FALSE, $fail_gracefully = FALSE, $_module = '')
 	{
 		$file = ($file === '') ? 'config' : str_replace('.php', '', $file);
 		$loaded = FALSE;
@@ -75,7 +76,7 @@ class MY_Config extends CI_Config {
 		foreach ($this->_config_paths as $path)
 		{
             require_once(APPPATH.'core/config_location.php');
-            $suggested_location = get_config_location($file); 
+            $suggested_location = get_config_location($file);
 
 			foreach (array($file, $suggested_location) as $location)
 			{
@@ -129,7 +130,8 @@ class MY_Config extends CI_Config {
 			return FALSE;
 		}
 
-		show_error('The configuration file '.$file.'.php does not exist.');
+        // last attempt, use the MX way
+        return parent::load($file, $use_sections, $fail_gracefully, $_module);
 	}
 
 }
