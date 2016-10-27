@@ -571,7 +571,11 @@ function parse_record($record, $config=array()){
     $replace = array();
     foreach(array_keys($record) as $key){
         $search[] = '{{ record:'.$key.' }}';
-        $replace[] = $record[$key];
+        if(is_array($record[$key]) || is_object($record[$key])){
+            $replace[] = '';
+        }else{
+            $replace[] = $record[$key];
+        }
         // add default record template if necessary
         if($create_record_template){
             $record_template .= '<div class="row">';
