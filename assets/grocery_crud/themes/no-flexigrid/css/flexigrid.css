@@ -685,14 +685,12 @@ textarea.texteditor, textarea.mini-texteditor
         display: table-cell!important;
     }
 }
-/* for half width and other custom width */
-@media (min-width: 992px){
-	/*
-	.form-field-box.col-md-1, .form-field-box.col-md-2, .form-field-box.col-md-3, .form-field-box.col-md-4, .form-field-box.col-md-5, .form-field-box.col-md-6, .form-field-box.col-md-7, .form-field-box.col-md-8, .form-field-box.col-md-9, .form-field-box.col-md-10, .form-field-box.col-md-11{
-	    padding-right:0;
-	}
-	*/
-	.last-input-box, .last-form-field-box, .first-form-field-box{
-		padding-right:0!important;
-	}
+#crudForm .form-horizontal .form-group{
+    margin-right:0!important;
+    margin-left:0!important;
+    padding-right:0;
+    padding-left:0;
+}
+#crud_page{
+    top:0;
 }

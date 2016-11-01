@@ -390,15 +390,15 @@ class CMS_Controller extends MX_Controller
         foreach($url_string_list as $url_string){
             $where[] = "'".addslashes($url_string)."' LIKE ".$url_pattern."
         		OR '/".addslashes($url_string)."/' LIKE ".$url_pattern."
-        		OR '/".addslashes($url_string)."' LIKE ".$url_pattern."
-        		OR '".addslashes($url_string)."/' LIKE ".$url_pattern;
+                OR '/".addslashes($url_string)."' LIKE ".$url_pattern."
+                OR '".addslashes($url_string)."/' LIKE ".$url_pattern;
         }
         $where = implode(' OR ', $where);
 
         $SQL = 'SELECT navigation_name
-        	FROM '.cms_table_name('main_navigation')."
-        	WHERE ".$where.'
-        	ORDER BY LENGTH(url) DESC';
+            FROM '.cms_table_name('main_navigation')."
+            WHERE ".$where.'
+            ORDER BY LENGTH(url) DESC';
         $query = $this->db->query($SQL);
 
         $navigation_name = NULL;
