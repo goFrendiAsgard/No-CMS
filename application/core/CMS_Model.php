@@ -1307,8 +1307,8 @@ class CMS_Model extends CI_Model
                     break;
                 }
             }
-            if ((!isset($row->url) || $row->url == '') && $row->is_static == 1) {
-                $url = 'main/static_page/'.$row->navigation_name;
+            if ((!isset($row->url) || $row->url == '' || strpos(strtoupper($row->url), 'HTTP://') !== false  || strpos(strtoupper($row->url), 'HTTPS://') !== false) && $row->is_static == 1) {
+                $url = site_url('main/static_page/'.$row->navigation_name);
             } else {
                 if (strpos(strtoupper($row->url), 'HTTP://') !== false || strpos(strtoupper($row->url), 'HTTPS://') !== false) {
                     $url = $row->url;
@@ -1479,9 +1479,21 @@ class CMS_Model extends CI_Model
                             $_REQUEST['__cms_dynamic_widget'] = 'TRUE';
                             $_REQUEST['__cms_dynamic_widget_module'] = $module_path;
                             $url = trim($url, '/');
-                            $response = @Modules::run($url);
-                            if (strlen($response) == 0) {
-                                $response = @Modules::run($url.'/index');
+                            // static page, show it directly
+                            if(strpos($url, 'main/static_page') === 0){
+                                $url_parts = explode('/', $url);
+                                $navigation_name = $url_parts[2];
+                                $navigation = $this->db->select('static_content')
+                                    ->from(cms_table_name('main_navigation'))
+                                    ->where('navigation_name', $navigation_name)
+                                    ->get()->row();
+                                $response = $navigation->static_content;
+                            }
+                            if(strlen($response) == 0){
+                                $response = @Modules::run($url);
+                                if (strlen($response) == 0) {
+                                    $response = @Modules::run($url.'/index');
+                                }
                             }
                             unset($_REQUEST['__cms_dynamic_widget']);
                             unset($_REQUEST['__cms_dynamic_widget_module']);
@@ -1522,7 +1534,6 @@ class CMS_Model extends CI_Model
                 );
             }
         }
-
         return $result;
     }
 
@@ -1577,12 +1588,13 @@ class CMS_Model extends CI_Model
         $parent_navigation_id = null;
         foreach ($navigations as $navigation) {
             if ($navigation->navigation_name == $navigation_name) {
+                $url = trim($navigation->url) != ''? $navigation->url : 'main/static_page/'.$navigation->navigation_name;
                 $result[] = array(
                         'navigation_id' => $navigation->navigation_id,
                         'navigation_name' => $navigation->navigation_name,
                         'title' => $this->cms_lang($navigation->title),
                         'description' => $navigation->description,
-                        'url' => $navigation->url,
+                        'url' => $url,
                     );
                 $parent_navigation_id = $navigation->parent_id;
                 break;
@@ -1606,12 +1618,13 @@ class CMS_Model extends CI_Model
                         break;
                     }
                     // no infinite recursion detected, continue
+                    $url = trim($navigation->url) != ''? $navigation->url : 'main/static_page/'.$navigation->navigation_name;
                     $result[] = array(
                             'navigation_id' => $navigation->navigation_id,
                             'navigation_name' => $navigation->navigation_name,
                             'title' => $this->cms_lang($navigation->title),
                             'description' => $navigation->description,
-                            'url' => $navigation->url,
+                            'url' => $url,
                         );
                     $parent_navigation_id = $navigation->parent_id;
                     break;

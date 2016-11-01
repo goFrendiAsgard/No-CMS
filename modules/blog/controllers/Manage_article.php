@@ -41,6 +41,7 @@ class Manage_article extends CMS_CRUD_Controller {
             );
         }
 
+        $crud->order_by('date', 'desc');
         if(!$this->cms_user_is_super_admin() && !in_array('Blog Editor', $this->group_name_list)){
             $crud->where('author_user_id', $this->cms_user_id());
         }

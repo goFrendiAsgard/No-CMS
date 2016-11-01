@@ -270,7 +270,7 @@ function add_delete_all_feature(url_delete_all, button_caption, notification_cap
     $(document).ajaxComplete(function () {
         //ADD COMPONENTS
         if($('.pDiv2 .delete_all_button').length == 0 && $('#flex1 tbody td .delete-row').length != 0) { //check if element already exists (for ajax refresh purposes)
-            $('.pDiv2').prepend('<div class="pGroup"><a class="delete_all_button btn btn-default" href="#"><i class="glyphicon glyphicon-remove"></i> '+button_caption+'</a></div>');
+            $('.pDiv2').prepend('<div class="pGroup"><a style="top:0;" class="delete_all_button btn btn-default" href="#"><i class="glyphicon glyphicon-remove"></i> '+button_caption+'</a></div>');
         }
         if($('#flex1 thead td .checkall').length == 0 && $('#flex1 tbody td .delete-row').length != 0){
             $('#flex1 thead tr').prepend('<td><input type="checkbox" class="checkall" /></td>');

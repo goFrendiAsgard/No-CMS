@@ -14,7 +14,18 @@ echo $output;
         // TODO: Put your custom code here
     });
 
+    function adjust_publish_date_view(){
+        if($('#field-status').val() == 'scheduled'){
+            $('#publish_date_field_box').show();
+        }else{
+            $('#publish_date_field_box').hide();
+        }
+    }
+
     $(document).ready(function(){
-        // TODO: Put your custom code here
+        adjust_publish_date_view();
+        $('#field-status').change(function(event){
+            adjust_publish_date_view();
+        });
     });
 </script>

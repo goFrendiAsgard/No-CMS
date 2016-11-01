@@ -918,7 +918,7 @@ class Main extends CMS_Controller
                     }
                     if (count($navigation['child']) > 0 && !$all_child_hidden && $navigation['have_allowed_children']) {
                         $result .= '<li class="dropdown-submenu">'.
-                            $text.$this->widget_top_nav($caption, false, $no_complete_menu, $no_quicklink, $inverse, $navigation['child'], $notif).'</li>';
+                            $text.$this->widget_top_nav($caption, false, $no_complete_menu, $no_quicklink, $navbar_class, $navigation['child'], $notif).'</li>';
                     } else {
                         $result .= '<li>'.$text.'</li>';
                     }
@@ -1209,7 +1209,7 @@ class Main extends CMS_Controller
                 });
                 '.$load_notif_script.'
             </script>';
-
+            $result = $this->cms_parse_keyword($result);
             $this->cms_show_html($result);
         } else {
             return $result;
