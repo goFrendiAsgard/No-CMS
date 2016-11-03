@@ -17,8 +17,24 @@ CKEDITOR.editorConfig = function( config )
     // config.uiColor = '#AADC6E';
     config.scayt_autoStartup = false;
     config.allowedContent = 'img form input param pre flash br a td p span font em strong table tr th td style  script iframe u s li ul div[*]{*}(*)';// add every html element you'll use in your eml tempate,I don't test if '*[*]{*}(*) will work for all html tag?
+    
+    config.extraPlugins = 'wpmore'; // Add 'WPMore' plugin - must be in plugins folder
+    config.toolbar = [
+        ['Source', 'WPMore'] // Add 'WPMore' button to toolbar
+    ];
+
+    // Use <br> as break and not enclose text in <p> when pressing <Enter> or <Shift+Enter>
     config.enterMode = CKEDITOR.ENTER_P;
     config.shiftEnterMode = CKEDITOR.ENTER_BR;
+    config.fillEmptyBlocks = false;    // Prevent filler nodes in all empty blocks
+
+    // Remove all formatting when pasting text copied from websites or Microsoft Word
+    //config.forcePasteAsPlainText = true;
+    //config.pasteFromWordRemoveFontStyles = true;
+    //config.pasteFromWordRemoveStyles = true;
+
+    //config.enterMode = CKEDITOR.ENTER_P;
+    //config.shiftEnterMode = CKEDITOR.ENTER_BR;
     config.forcePasteAsPlainText = false; // default so content won't be manipulated on load
     //config.basicEntities = true;
     //config.entities = true;
@@ -33,7 +49,6 @@ CKEDITOR.editorConfig = function( config )
     config.filebrowserUploadUrl = BASE_URL+'assets/kcfinder/upload.php?type=files';
     config.filebrowserImageUploadUrl = BASE_URL+'assets/kcfinder/upload.php?type=images';
     config.filebrowserFlashUploadUrl = BASE_URL+'assets/kcfinder/upload.php?type=flash';
-
 };
 
 
