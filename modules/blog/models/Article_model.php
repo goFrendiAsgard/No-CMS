@@ -253,6 +253,7 @@ class Article_model extends  CMS_Model{
                 (
                   SELECT COUNT(comment_id) FROM ".$this->t('comment')."
                   WHERE article_id = ".$this->t('article').".article_id
+                  AND approved = 1 
                 ) as comment_count,
                 ".$relevance." AS relevance
             FROM ".$this->t('article')."

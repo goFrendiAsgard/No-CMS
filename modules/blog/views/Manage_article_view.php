@@ -27,5 +27,21 @@ echo $output;
         $('#field-status').change(function(event){
             adjust_publish_date_view();
         });
+        <?php
+            echo 'var title = \''.str_replace('\'', '\\\'', $title).'\';';
+            echo 'var content = \''.str_replace('\'', '\\\'',
+                str_replace(array("\r","\n"),"", $content)).'\';';
+            echo 'var status = \''.str_replace('\'', '\\\'', $status).'\';';
+        ?>
+        if(title != ''){
+            $('#field-article_title').html(title);
+        }
+        if(content != ''){
+            CKEDITOR.instances['field-content'].setData(content);
+        }
+        if(status != ''){
+            $('#field-status').val(status);
+            $('#field-status').trigger("chosen:updated");
+        }
     });
 </script>
