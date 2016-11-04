@@ -142,3 +142,19 @@ Email sending
     | cms_email_priority        | Let it be `3`                                                                                                                                                                |
     | cms_email_bcc_batch_mode  | Let it be `FALSE`                                                                                                                                                            |
     | cms_email_bcc_batch_size  | Let it be `200`                                                                                                                                                              |
+
+How could I add a quicklink that run a javascript function?
+===========================================================
+
+Go to `CMS Management | Setting`, click `Page Partials` tab, paste this script into `custom script` textarea:
+
+```javascript
+$(document).ready(function(){
+    var additional_quicklink = '<li class="dropdown"><a id="qlink" href="#">Test</a></li>';
+    $('#_top_navigation>div.container>nav>ul.navbar-nav:first').append(additional_quicklink);
+    $('#qlink').click(function(event){
+        window.alert("Hi hi hi");
+        event.preventDefault(); 
+    });
+});
+```

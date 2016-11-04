@@ -54,11 +54,12 @@
 <div id="div-body" class="tabbable"> <!-- Only required for left/right tabs -->
     <ul id="tab-control" class="nav nav-tabs">
         <li class="active"><a id="tab-general" href="#tab1" data-toggle="tab"><i class="glyphicon glyphicon-cog"></i> Configurations</a></li>
-        <li><a id="tab-appearance" href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-eye-open"></i> Appearance</a></li>
-        <li><a id="tab-email-setting" href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-envelope"></i> Email Setting</a></li>
-        <li><a id="tab-images" href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Images</a></li>
-        <li><a id="tab-page-partials" href="#tab5" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Page Partials</a></li>
-        <li><a id="tab-third-party-authentication" href="#tab6" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
+        <li><a id="tab-seo" href="#tab2" data-toggle="tab"><i class="glyphicon glyphicon-globe"></i> SEO</a></li>
+        <li><a id="tab-appearance" href="#tab3" data-toggle="tab"><i class="glyphicon glyphicon-eye-open"></i> Appearance</a></li>
+        <li><a id="tab-email-setting" href="#tab4" data-toggle="tab"><i class="glyphicon glyphicon-envelope"></i> Email Setting</a></li>
+        <li><a id="tab-images" href="#tab5" data-toggle="tab"><i class="glyphicon glyphicon-picture"></i> Images</a></li>
+        <li><a id="tab-page-partials" href="#tab6" data-toggle="tab"><i class="glyphicon glyphicon-th-list"></i> Page Partials</a></li>
+        <li><a id="tab-third-party-authentication" href="#tab7" data-toggle="tab"><i class="glyphicon glyphicon-user"></i> Third Party Authentication</a></li>
     </ul>
     <form enctype="multipart/form-data" class="form form-horizontal" method="post">
 
@@ -229,6 +230,81 @@
             </div>
 
             <div class="tab-pane" id="tab2">
+                <h3>SEO</h3>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_keyword">Meta Keyword</label>
+                    <div class="controls col-md-9">
+                        <input type="text" id="meta_keyword" name="meta_keyword" value="<?php echo $config_list['meta_keyword']; ?>" class="form-control" />
+                        <p class="help-block">Meta Keyword</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_description">Meta Description</label>
+                    <div class="controls col-md-9">
+                        <textarea id="meta_description" name="meta_description" class="form-control">
+                            <?php echo $config_list['meta_description']; ?>
+                        </textarea>
+                        <p class="help-block">Meta Description</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_author">Meta Author</label>
+                    <div class="controls col-md-9">
+                        <input type="text" id="meta_author" name="meta_author" value="<?php echo $config_list['meta_author']; ?>" class="form-control" />
+                        <p class="help-block">Meta Author</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_image">Meta Image</label>
+                    <div class="controls col-md-9">
+                        <?php if(trim($config_list['meta_image']) != ''){?>
+                        <img id="img_background_image" style="max-width:100%" src="<?php echo $config_list['meta_image'] ?>">
+                        <?php } ?>
+                        <div style="padding-top:10px; padding-bottom:10px;">
+                            <input name="remove_meta_image" value="1" type="checkbox" /> Don't use meta image
+                        </div>
+                        <input type="file" id="meta_image" name="meta_image" class="form-control" />
+                        <p class="help-block">Meta Image</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_type">Meta Type</label>
+                    <div class="controls col-md-9">
+                        <input type="text" id="meta_type" name="meta_type" value="<?php echo $config_list['meta_type']; ?>" class="form-control" />
+                        <p class="help-block">Meta Type</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_fb_admin">Meta FB Admin</label>
+                    <div class="controls col-md-9">
+                        <input type="text" id="meta_fb_admin" name="meta_fb_admin" value="<?php echo $config_list['meta_fb_admin']; ?>" class="form-control" />
+                        <p class="help-block">Meta FB Admin</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_twitter_card">Meta Twitter Card</label>
+                    <div class="controls col-md-9">
+                        <input type="text" id="meta_twitter_card" name="meta_twitter_card" value="<?php echo $config_list['meta_twitter_card']; ?>" class="form-control" />
+                        <p class="help-block">Meta Twitter Card</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_twitter_publisher_handler">Meta Twitter Publisher Handler</label>
+                    <div class="controls col-md-9">
+                        <input type="text" id="meta_twitter_publisher_handler" name="meta_twitter_publisher_handler" value="<?php echo $config_list['meta_twitter_publisher_handler']; ?>" class="form-control" />
+                        <p class="help-block">Meta Twitter Publisher Handler</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3" for="meta_twitter_author_handler">Meta Twitter Author Handler</label>
+                    <div class="controls col-md-9">
+                        <input type="text" id="meta_twitter_author_handler" name="meta_twitter_author_handler" value="<?php echo $config_list['meta_twitter_author_handler']; ?>" class="form-control" />
+                        <p class="help-block">Meta Twitter Author Handler</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab3">
                 <h3>Appearance</h3>
                 <div class="form-group">
                     <label class="control-label col-md-3" for="site_layout">Default Layout</label>
@@ -296,7 +372,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="tab3">
+            <div class="tab-pane" id="tab4">
                 <h3>Email Setting</h3>
                 <div class="form-group">
                     <label class="control-label col-md-3" for="cms_email_protocol">Email Protocol</label>
@@ -406,7 +482,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="tab4">
+            <div class="tab-pane" id="tab5">
                 <h3>Images</h3>
                 <div class="form-group">
                     <label class="control-label col-md-3" for="site_logo">Site Logo</label>
@@ -439,7 +515,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="tab5">
+            <div class="tab-pane" id="tab6">
                 <h3>Style and Script</h3>
                 <div class="form-group">
                     <label class="control-label col-md-3" for="section_custom_style">
@@ -542,7 +618,7 @@
                 </div>
             </div>
 
-            <div class="tab-pane" id="tab6">
+            <div class="tab-pane" id="tab7">
                 <h3>Facebook</h3>
                 <div class="form-group">
                     <label class="control-label col-md-3" for="auth_enable_facebook">Enable Facebook</label>
@@ -802,7 +878,7 @@
             </div>
 
         </div>
-        <button class="btn btn-primary btn-lg">Apply Changes</button>
+        <button class="btn btn-primary btn-lg pull-right">Apply Changes</button>
     </form>
 </div>
 <?php
@@ -904,41 +980,41 @@
     })
 
     // textarea autosize later
-    $("a[href='#tab3']").on('shown.bs.tab', function(e) {
-        $("#tab3 .text-area-html").ace({
+    $("a[href='#tab4']").on('shown.bs.tab', function(e) {
+        $("#tab4 .text-area-html").ace({
             theme: "eclipse",
             lang: "html",
             width: "100%",
             height: "200px"
         });
-        $("#tab3 .text-area-section").each(function(){
+        $("#tab4 .text-area-section").each(function(){
             var decorator = $(this).data("ace");
             var aceInstance = decorator.editor.ace;
             aceInstance.setFontSize("16px");
         });
     });
-    $("a[href='#tab5']").on('shown.bs.tab', function(e) {
-        $("#tab5 .chosen-select").chosen({width: "300px"});
+    $("a[href='#tab6']").on('shown.bs.tab', function(e) {
+        $("#tab6 .chosen-select").chosen({width: "300px"});
 
-        $("#tab5 .text-area-html").ace({
+        $("#tab6 .text-area-html").ace({
             theme: "eclipse",
             lang: "html",
             width: "100%",
             height: "200px"
         });
-        $("#tab5 .text-area-css").ace({
+        $("#tab6 .text-area-css").ace({
             theme: "eclipse",
             lang: "css",
             width: "100%",
             height: "200px"
         });
-        $("#tab5 .text-area-js").ace({
+        $("#tab6 .text-area-js").ace({
             theme: "eclipse",
             lang: "javascript",
             width: "100%",
             height: "200px"
         });
-        $("#tab5 .text-area-section").each(function(){
+        $("#tab6 .text-area-section").each(function(){
             var decorator = $(this).data("ace");
             var aceInstance = decorator.editor.ace;
             aceInstance.setFontSize("16px");

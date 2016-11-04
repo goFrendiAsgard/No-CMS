@@ -20,7 +20,21 @@
             <script src="{{ BASE_URL }}assets/no_cms/js/respond.min.js"></script>
         <![endif]-->
 
+        @section(layout_top)
         {{ widget_name:section_top_fix }}
-        <div class="container">{{ layout:body }}</div>
+        @end_section
+
+        <div class="container">
+        @section(layout_body)
+            {{ layout:body }}
+        @end_section
+        </div>
+
+        @section(layout_bottom)
+        @end_section
+
+        @section(layout_script)
+        @end_section
+
     </body>
 </html>

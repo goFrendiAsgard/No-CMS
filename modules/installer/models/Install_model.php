@@ -3,7 +3,7 @@ class Install_model extends CI_Model{
 
     private $__config_file = array();
 
-    private $VERSION        = '1.1.1';
+    private $VERSION        = '1.1.3';
     public $is_subsite      = FALSE;
     public $subsite         = '';
     public $subsite_aliases = '';
@@ -255,28 +255,28 @@ class Install_model extends CI_Model{
             $t_subsite = '';
             $multisite_installed = FALSE;
             // find out whether multisite is installed or not. If multisite is installed, set multisite_installed
-        	if(file_exists(APPPATH.'config/main/database.php')){
-        	    // multisite, can use GET or subdomain
-        		$cms_config_file = APPPATH.'config/main/cms_config.php';
-        		if(file_exists(APPPATH.'config/main/database.php') && file_exists($cms_config_file)){
-        			include($cms_config_file);
-        			$cms_table_prefix = trim($config['__cms_table_prefix'])==''? '' : $config['__cms_table_prefix'].'_';
-        			$query = $this->db->select('module_path')
+            if(file_exists(APPPATH.'config/main/database.php')){
+                // multisite, can use GET or subdomain
+                $cms_config_file = APPPATH.'config/main/cms_config.php';
+                if(file_exists($cms_config_file)){
+                    include($cms_config_file);
+                    $cms_table_prefix = trim($config['__cms_table_prefix'])==''? '' : $config['__cms_table_prefix'].'_';
+                    $query = $this->db->select('module_path')
                         ->from($cms_table_prefix.'main_module')
                         ->where('module_name', 'gofrendi.noCMS.multisite')
                         ->get();
-        			// if multisite module is not installed then the subsite is valid, and it is not subdomain
-        			if($query->num_rows() > 0){
+                    // if multisite module is not installed then the subsite is valid, and it is not subdomain
+                    if($query->num_rows() > 0){
                         $row = $query->row();
-        				// get module path
-        				$multisite_path = $row->module_path;
-        				// get multisite table prefix
-        				$multisite_config_file = 'modules/'.$multisite_path.'/config/module_config.php';
-        				if(file_exists($multisite_config_file)){
-        					include($multisite_config_file);
-        					$multisite_table_prefix = trim($config['__cms_table_prefix'])==''? $cms_table_prefix : $cms_table_prefix.$config['module_table_prefix'].'_';
-        					// renew multisite_installed and t_subsite
-        					$t_subsite = $multisite_table_prefix.'subsite';
+                        // get module path
+                        $multisite_path = $row->module_path;
+                        // get multisite table prefix
+                        $multisite_config_file = 'modules/'.$multisite_path.'/config/module_config.php';
+                        if(file_exists($multisite_config_file)){
+                            include($multisite_config_file);
+                            $multisite_table_prefix = trim($config['__cms_table_prefix'])==''? $cms_table_prefix : $cms_table_prefix.$config['module_table_prefix'].'_';
+                            // renew multisite_installed and t_subsite
+                            $t_subsite = $multisite_table_prefix.'subsite';
                             $multisite_installed = TRUE;
                         }
                     }
@@ -346,12 +346,7 @@ class Install_model extends CI_Model{
             // ckeditor config
             if (!is_writable(FCPATH.'assets/grocery_crud/texteditor/ckeditor')){
                 $success = FALSE;
-                $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor';
-            }
-            // assets/caches
-            if (!is_writable(FCPATH.'assets/caches')) {
-                $success  = FALSE;
-                $error_list[] = "Asset cache directory (".FCPATH."assets/caches) is not writable";
+                $error_list[] = FCPATH.'assets/grocery_crud/texteditor/ckeditor is not writable';
             }
         }
 
@@ -514,11 +509,6 @@ class Install_model extends CI_Model{
                 $success  = FALSE;
                 $error_list[] = APPPATH."logs is not writable";
             }
-            // helper directory
-            if (!is_writable(APPPATH.'helpers')) {
-                $success  = FALSE;
-                $error_list[] = APPPATH."helpers is not writable";
-            }
         }
         return array(
                 'success' => $success,
@@ -635,7 +625,7 @@ class Install_model extends CI_Model{
         );
         $type_varchar_large_strict = array(
             'type' => 'VARCHAR',
-            'constraint' => '100',
+            'constraint' => '255',
             'null' => FALSE,
         );
         $type_user_agent = array(
@@ -668,7 +658,7 @@ class Install_model extends CI_Model{
         // GROUP
         $fields = array(
                 'group_id'      => $type_primary_key,
-                'group_name'    => $type_varchar_small_strict,
+                'group_name'    => $type_varchar_large_strict,
                 'description'   => $type_text,
             );
         $sql_list[] = $this->create_table('main_group',$fields);
@@ -711,8 +701,15 @@ class Install_model extends CI_Model{
                 'notif_url'         => $type_varchar_large,
                 'children'          => $type_varchar_large,
                 'hidden'            => $type_boolean_false,
-                'custom_style'        => $type_text,
+                'custom_style'      => $type_text,
                 'custom_script'     => $type_text,
+                'page_twitter_card' => $type_varchar_large,
+                'page_image'        => $type_text,
+                'page_author'       => $type_varchar_large,
+                'page_type'         => $type_varchar_large,
+                'page_fb_admin'     => $type_varchar_large,
+                'page_twitter_publisher_handler' => $type_varchar_large,
+                'page_twitter_author_handler' => $type_varchar_large,
             );
         $sql_list[] = $this->create_table('main_navigation',$fields);
 
@@ -727,7 +724,7 @@ class Install_model extends CI_Model{
         // PRIVILEGE
         $fields = array(
                 'privilege_id'      => $type_primary_key,
-                'privilege_name'    => $type_varchar_small_strict,
+                'privilege_name'    => $type_varchar_large_strict,
                 'title'             => $type_varchar_small,
                 'description'       => $type_text,
                 'authorization_id'  => $type_foreign_key_default_1,
@@ -738,8 +735,8 @@ class Install_model extends CI_Model{
         if(!$this->is_subsite){
             $fields = array(
                     'user_id'           => $type_primary_key,
-                    'user_name'         => $type_varchar_small_strict,
-                    'email'             => $type_varchar_small,
+                    'user_name'         => $type_varchar_large_strict,
+                    'email'             => $type_varchar_large,
                     'password'          => $type_password,
                     'activation_code'   => $type_varchar_small,
                     'real_name'         => $type_varchar_large,
@@ -1046,7 +1043,7 @@ class Install_model extends CI_Model{
                 array('main_register', NULL, 'Register', 'Register', NULL, 'New User Registration', 'main/register',
                     2, 7, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_change_profile', NULL, 'Change Profile', 'Change Profile', NULL, 'Change Current Profile', 'main/change_profile',
-                    3, 8, 1, 0, NULL, 0),
+                    3, 8, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_group_management', 4, 'Group Management', 'Group Management', NULL, 'Group Management', 'main/manage_group',
                     4, 0, 1, 0, NULL, 0, NULL, NULL, 'default-one-column'),
                 array('main_user_management', 4, 'User Management', 'User Management', NULL, 'Manage User', 'main/manage_user',
@@ -1287,6 +1284,15 @@ class Install_model extends CI_Model{
                 array('cms_subsite_modules','blog,contact_us,static_accessories','Comma Separated Format, Modules that is going to be installed by default for new Subsite'),
                 array('cms_subsite_configs','{}','JSON Format, Configuration value for new subsite'),
                 array('cms_internet_connectivity','UNKNOWN','Is the server connected to the internet?'),
+                array('meta_keyword', '', 'Keyword for SEO'),
+                array('meta_description', '', 'Description for SEO'),
+                array('meta_twitter_card', 'summary', 'Twitter Card for SEO'),
+                array('meta_author', '', 'Author for SEO'),
+                array('meta_image', '', 'Image for SEO'),
+                array('meta_type', 'article', 'Type for SEO'),
+                array('meta_fb_admin', '', 'FB Admin for SEO'),
+                array('meta_twitter_publisher_handler', '', 'Twitter publisher handler for SEO'),
+                array('meta_twitter_author_handler', '', 'Twitter author handler for SEO'),
             );
         for($i=0; $i<count($config_data); $i++){
             foreach($this->configs as $key=>$val){
@@ -1445,11 +1451,7 @@ class Install_model extends CI_Model{
     public function build_configuration($config = array()){
         if(!$this->is_subsite){
             // create hostname.php
-            if($_SERVER['SERVER_PORT'] != 80){
-                $hostname = $_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'];
-            }else{
-                $hostname  = $_SERVER['HTTP_HOST'];
-            }
+            $hostname = $_SERVER['HTTP_HOST'];
             $content   = '<?php'.PHP_EOL;
             $content  .= '$hostname = "'.$hostname.'";'.PHP_EOL;
             @file_put_contents(FCPATH.'/hostname.php', $content);
@@ -1457,32 +1459,32 @@ class Install_model extends CI_Model{
         // copy everything from /application/config/first-time into /application/config/ or /application/config/site-subsite
         if($this->is_subsite){
             mkdir(APPPATH.'config/site-'.$this->subsite);
+            $file_list = array('cms_config.php', 'config.php', 'hybridauthlib.php', 'routes.php', 'index.html');
         }else{
             mkdir(APPPATH.'config/main');
+            $file_list = scandir(APPPATH.'config/first-time', 1);
         }
-        $file_list = scandir(APPPATH.'config/first-time', 1);
+
         foreach($file_list as $file){
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
-                if($file == 'database.php' && $this->is_subsite){
-                    continue;
-                }
                 copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
             }
         }
 
-        // ckeditor config
-        copy(APPPATH.'config/first-time/third_party_config/ckeditor_config.js',
-            FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js');
-        $this->replace_tag(FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js', 'BASE_URL', base_url());
-
-        // kcfinder config
-        copy(APPPATH.'config/first-time/third_party_config/kcfinder_config.php',
-            FCPATH.'assets/kcfinder/config.php');
-        $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'BASE_URL', base_url());
-        $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
-
-        // database config
         if(!$this->is_subsite){
+
+            // ckeditor config
+            copy(APPPATH.'config/first-time/third_party_config/ckeditor_config.js',
+                FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js');
+            $this->replace_tag(FCPATH.'assets/grocery_crud/texteditor/ckeditor/config.js', 'BASE_URL', base_url());
+
+            // kcfinder config
+            copy(APPPATH.'config/first-time/third_party_config/kcfinder_config.php',
+                FCPATH.'assets/kcfinder/config.php');
+            $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'BASE_URL', base_url());
+            $this->replace_tag(FCPATH.'assets/kcfinder/config.php', 'FCPATH', addslashes(FCPATH));
+
+            // database configuration
             $file_name = APPPATH.'config/'.$this->complete_config_file_name('database.php');
             $key_prefix = "'";
             $key_suffix = "'";
@@ -1497,9 +1499,6 @@ class Install_model extends CI_Model{
             $this->change_config($file_name, "username", $this->db_username, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
             $this->change_config($file_name, "password", $this->db_password, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
             $this->change_config($file_name, "dbdriver", $db_driver, $key_prefix, $key_suffix, $value_prefix, $value_suffix, $equal_sign);
-        } else {
-            $file = 'database.php';
-            copy(APPPATH.'config/main/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
         }
 
         // cms_config

@@ -212,10 +212,15 @@ class Main extends CMS_Controller
                 $this->view('main/main_login', $data, 'main_login');
             }
         } else {
+            // if identity is not empty then provide message that login is failed
+            $message = '';
+            if($identity != '' || $password != ''){
+                $message = '{{ language:Error }}: {{ language:Login Failed }}';
+            }
             //view login again
             $data = array(
                 'identity' => $identity,
-                'message' => '',
+                'message' => $message,
                 'providers' => $this->cms_third_party_providers(),
                 'login_caption' => $this->cms_lang('Login'),
                 'register_caption' => $this->cms_lang('Register'),
@@ -509,7 +514,9 @@ class Main extends CMS_Controller
                         $pp_file_name = $this->cms_user_id().'_'.$pp['name'];
                         $file_name = FCPATH.'assets/nocms/images/profile_picture/'.$pp_file_name;
                         move_uploaded_file($pp['tmp_name'], $file_name);
+                        @chmod($file_name, 644);
                         $this->cms_resize_image($file_name, 512, 512);
+                        @chmod($file_name, 644);
                         // profile picture is pp_file_name
                         $profile_picture = $pp_file_name;
                     }
@@ -842,7 +849,7 @@ class Main extends CMS_Controller
                     $active = 'active';
                 }
                 // make text
-                $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
+                $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;&nbsp;';
                 if ($navigation['allowed'] && $navigation['active']) {
                     $text = '<a class="dropdown-toggle" href="'.$navigation['url'].'">'.$icon.$navigation['title'].$badge.'</a>';
                 } else {
@@ -886,7 +893,7 @@ class Main extends CMS_Controller
                 if (($navigation['allowed'] && $navigation['active']) || $navigation['have_allowed_children']) {
                     $navigation['bootstrap_glyph'] = $navigation['bootstrap_glyph'] == '' ? 'glyphicon-none' : $navigation['bootstrap_glyph'];
                     // make text
-                    $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;';
+                    $icon = '<span class="glyphicon '.$navigation['bootstrap_glyph'].'"></span>&nbsp;&nbsp;';
                     $badge = '';
                     if ($navigation['notif_url'] != '') {
                         $badge_id = '__cms_notif_top_nav_'.$navigation['navigation_id'];
@@ -911,7 +918,7 @@ class Main extends CMS_Controller
                     }
                     if (count($navigation['child']) > 0 && !$all_child_hidden && $navigation['have_allowed_children']) {
                         $result .= '<li class="dropdown-submenu">'.
-                            $text.$this->widget_top_nav($caption, false, $no_complete_menu, $no_quicklink, $inverse, $navigation['child'], $notif).'</li>';
+                            $text.$this->widget_top_nav($caption, false, $no_complete_menu, $no_quicklink, $navbar_class, $navigation['child'], $notif).'</li>';
                     } else {
                         $result .= '<li>'.$text.'</li>';
                     }
@@ -1107,10 +1114,15 @@ class Main extends CMS_Controller
                         while(need_transform && trial_left > 0){
                             need_transform = false;
                             trial_left --;
+                            var top_ref = 0;
+                            if(li_count > 0){
+                                top_ref = $(".navbar-nav > li")[0].offsetTop;
+                            }
                             for(var i=0; i<li_count; i++){
                                 var top = $(".navbar-nav > li")[i].offsetTop;
-                                if(top>$(".navbar-brand")[0].offsetTop){
+                                if(top>top_ref){
                                     need_transform = true;
+                                    break;
                                 }
                             }
                             if(need_transform){
@@ -1197,7 +1209,7 @@ class Main extends CMS_Controller
                 });
                 '.$load_notif_script.'
             </script>';
-
+            $result = $this->cms_parse_keyword($result);
             $this->cms_show_html($result);
         } else {
             return $result;
@@ -1307,7 +1319,7 @@ class Main extends CMS_Controller
             }
             if ($quicklink['bootstrap_glyph'] != '' || !$first) {
                 $icon_class = $icon_class == '' ? 'icon-white' : $icon_class;
-                $icon = '<span class="glyphicon '.$icon_class.'"></span>&nbsp;';
+                $icon = '<span class="glyphicon '.$icon_class.'"></span>&nbsp;&nbsp;';
             }
             // create badge if needed
             $badge = '';

@@ -1,15 +1,50 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <style type="text/css">
-    #message:empty{
+    .message:empty{
         display:none;
     }
     #btn-register, .register_input{
         display:none;
     }
 </style>
+<h3>{{ language:Register }}</h3>
+<?php
+    echo '<div class="col-md-8">';
+        echo form_open_multipart('main/register', 'id="form-register" class="ajax-check-form form form-horizontal"');
+        echo form_input(array('name'=>'user_name', 'value'=>'', 'class'=>'register_input'));
+        echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'register_input'));
+        echo form_input(array('name'=>'real_name', 'value'=>'', 'class'=>'register_input'));
+        echo form_input(array('name'=>'password', 'value'=>'', 'class'=>'register_input'));
+        echo form_input(array('name'=>'confirm_password', 'value'=>'', 'class'=>'register_input'));
+
+        echo build_register_input($secret_code, $user_name, $email, $real_name);
+
+        // additional input from hook
+        if(trim($additional_input) != ''){
+            echo '<hr />';
+            echo $additional_input;
+        }
+
+        echo '<div class="form-group col-sm-12 hidden-sm-hidden-xs">';
+            echo form_submit('register', $register_caption, 'id="btn-register" class="btn btn-primary pull-right" style="display:none;"');
+        echo '</div>';
+    echo '</div>';
+
+    // Submit button and error notification
+    echo '<div id="div-notification-container"class="col-md-4">';
+        echo '<div id="div-notification" class="col-sm-12">';
+            echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
+            echo '<div id="success-message" class="alert alert-success message hidden-xs hidden-sm"></div>';
+            echo '<div id="error-message" class="alert alert-danger message"></div>';
+            echo form_submit('register', $register_caption, 'id="btn-register" class="btn btn-primary btn-lg pull-right" style="display:none;"');
+        echo '</div>';
+    echo '</div>';
+
+    echo form_close();
+?>
 <script type="text/javascript">
-	var REQUEST_EXISTS = false;
-	var REQUEST = "";
+    var REQUEST_EXISTS = false;
+    var REQUEST = "";
     function check_register(){
         var user_name =  $('input[name="<?php echo $secret_code; ?>user_name"]').val();
         var email = $('input[name="<?php echo $secret_code; ?>email"]').val();
@@ -17,7 +52,7 @@
         var confirm_password = $('input[name="<?php echo $secret_code; ?>confirm_password"]').val();
         $("#img_ajax_loader").show();
         if(REQUEST_EXISTS){
-        	REQUEST.abort();
+            REQUEST.abort();
         }
         REQUEST_EXISTS = true;
         // build request data
@@ -35,16 +70,17 @@
             "data" : request_data,
             "dataType" : "json",
             "success" : function(data){
-            	if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
+                if(!data.error && !data.exists && user_name!='' && password!='' && password==confirm_password){
                     $('input[name="register"]').show();
                     $('input[name="register"]').removeAttr('disabled');
-                    console.log($('input[name="register"]'));
+                    $('#success-message').html('{{ language:Here you can register. Click the button once the data is complete }}');
                 }else{
                     $('input[name="register"]').hide();
                     $('input[name="register"]').attr('disabled', 'disabled');
+                    $('#success-message').html('');
                 }
 
-            	// get message from server + local check
+                // get message from server + local check
                 var message = '';
                 if(data.message!=''){
                     message += data.message+'<br />';
@@ -56,8 +92,8 @@
                     message += '{{ language:Confirm password doesn\'t match }}';
                 }
 
-                if(message != $('#message').html()){
-                    $('#message').html(message);
+                if(message != $('#error-message').html()){
+                    $('#error-message').html(message);
                 }
                 REQUEST_EXISTS = false;
                 $("#img_ajax_loader").hide();
@@ -74,6 +110,31 @@
     {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
+    
+    function adjust_div_notification(){
+        if($(window).width() >= 992){
+            var navbar_top = 0;
+            var navbar_relative_top = 0;
+            var navbar_height = 0;
+            var component_container_top = $('#div-notification-container').offset().top;
+            var component_container_width = $('#div-notification-container').width();
+            if($('.navbar-fixed-top').length > 0){
+                navbar_top = $('.navbar-fixed-top').offset().top;
+                navbar_relative_top = $('.navbar-fixed-top').position().top;
+                navbar_height = $('.navbar-fixed-top').height();
+            }
+            if(component_container_top < navbar_top + navbar_height){
+                var new_component_top = navbar_height + navbar_relative_top;
+                $('#div-notification').css({position:"fixed", top:new_component_top});
+            }else{
+                $('#div-notification').removeAttr('style');
+            }
+            // ensure that div-notification has exactly the same width as div-notification-container
+            $('#div-notification').width(component_container_width);
+        }else{
+            $('#div-notification').removeAttr('style');
+        }
+    }
 
     $(document).ready(function(){
 
@@ -83,7 +144,7 @@
             check_register();
         });
         $('input, select, textarea').change(function(){
-        	check_register();
+            check_register();
         });
 
         $('#<?php echo $secret_code; ?>user_name').keyup(function(){
@@ -91,66 +152,14 @@
             $('#site_title').val(capitaliseFirstLetter(value));
             $('#site_slogan').val('Website ' + capitaliseFirstLetter(value));
         });
+
+        $(document).on('scroll', function(){
+            adjust_div_notification();
+        });
+        adjust_div_notification();
+        $(window).resize(function(event){
+            adjust_div_notification();
+        });
+
     });
 </script>
-<h3>{{ language:Register }}</h3>
-<?php
-    echo form_open_multipart('main/register', 'id="form-register" class="ajax-check-form form form-horizontal"');
-    echo form_input(array('name'=>'user_name', 'value'=>'', 'class'=>'register_input'));
-    echo form_input(array('name'=>'email', 'value'=>'', 'class'=>'register_input'));
-    echo form_input(array('name'=>'real_name', 'value'=>'', 'class'=>'register_input'));
-    echo form_input(array('name'=>'password', 'value'=>'', 'class'=>'register_input'));
-    echo form_input(array('name'=>'confirm_password', 'value'=>'', 'class'=>'register_input'));
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:User Name }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'user_name', $user_name,
-        'id="'.$secret_code.'user_name" placeholder="User Name" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Email }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'email', $email,
-        'id="'.$secret_code.'email" placeholder="Email" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Real Name }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_input($secret_code.'real_name', $real_name,
-        'id="'.$secret_code.'real_name" placeholder="Real Name" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Password }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_password($secret_code.'password', '',
-        'id="'.$secret_code.'password" placeholder="Password" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    echo '<div class="form-group">';
-    echo form_label('{{ language:Confirm Password }}', ' for="" class="control-label col-sm-4');
-    echo '<div class="col-sm-8">';
-    echo form_password($secret_code.'confirm_password', '',
-        'id="'.$secret_code.'confirm_password" placeholder="Password (again)" class="form-control"');
-    echo '</div>';
-    echo '</div>';
-
-    // additional input from hook
-    echo $additional_input;
-
-    echo '<div class="form-group"><div class="col-sm-offset-4 col-sm-8">';
-    echo '<img id="img_ajax_loader" style="display:none;" src="'.base_url('assets/nocms/images/ajax-loader.gif').'" /><br />';
-    echo '<div id="message" class="alert alert-danger"></div>';
-    echo form_submit('register', $register_caption, 'id="btn-register" class="btn btn-primary" style="display:none;"');
-    echo '</div></div>';
-
-
-    echo form_close();
-?>

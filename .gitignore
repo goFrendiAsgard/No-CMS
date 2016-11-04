@@ -30,6 +30,7 @@ assets/caches/*.js
 assets/caches/*.css
 modules/*/config/module_config_*.php
 application/config/main
+application/config/.saved
 application/config/site-*
 application/config/tmp/*.php
 /.htaccess
@@ -62,7 +63,8 @@ modules/shop
 modules/artificial_intelligence/assets/data/1_*
 modules/simple_erp
 modules/ishare
-modules/lifeline
-modules/sepatu
+modules/lifelines
+modules/example
 modules/indonesia_area
 modules/market
+modules/angkot

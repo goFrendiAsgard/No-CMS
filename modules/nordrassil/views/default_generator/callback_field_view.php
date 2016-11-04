@@ -78,7 +78,7 @@
         var input_prefix = '<?php echo $column_input_class; ?>';
         var row_index    = <?php echo $var_record_index; ?>;
         var inputs       = new Array();
-        <?php
+<?php
         $date_exist = FALSE;
         for($i=0; $i<count($detail_column_names); $i++){
             $name = $detail_column_names[$i];
@@ -132,10 +132,9 @@
             }
             echo'        inputs.push(html);'.PHP_EOL;
         }
-        ?>
+?>
 
         // Return inputs
         return inputs;
     }
-
 </script>

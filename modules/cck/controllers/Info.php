@@ -14,7 +14,7 @@ class Info extends CMS_Module {
             array(
                 'navigation_name'   => 'index',
                 'url'               => 'cck',
-                'authorization_id'  => PRIV_EVERYONE,
+                'authorization_id'  => PRIV_AUTHORIZED,
                 'default_layout'    => NULL,
                 'title'             => 'CCK (Content Construction Kit)',
                 'parent_name'       => 'main_management',
@@ -151,6 +151,7 @@ class Info extends CMS_Module {
                 'name'                 => array("type" => 'varchar',    "constraint" => 255, "null" => TRUE),
                 'id_template'          => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'order_index'          => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 0),
                 'input'                => array("type" => 'text',       "null" => TRUE),
                 'view'                 => array("type" => 'text',       "null" => TRUE),
                 'shown_on_add'         => array("type" => 'int',        "constraint" => 10,  "null" => TRUE, 'default' => 1),
@@ -164,7 +165,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -173,7 +174,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -182,7 +183,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -191,7 +192,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'             => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -200,7 +201,7 @@ class Info extends CMS_Module {
             'key'    => 'id',
             'fields' => array(
                 'id_group'       => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
-                'entity_id'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
+                'id_entity'            => array("type" => 'int',        "constraint" => 10,  "null" => TRUE),
                 'id'                   => 'TYPE_INT_UNSIGNED_AUTO_INCREMENT',
             ),
         ),
@@ -217,9 +218,12 @@ class Info extends CMS_Module {
     );
     protected $DATA = array(
         'template' => array(
-            array('name' => 'text', 'input' => '<input id="field-{{ code }}" name="{{ code }}" value="{{ value }}" />', 'view' => '{{ value }}'),
-            array('name' => 'textarea', 'input' => '<textarea id="field-{{ code }}" name="{{ code }}">{{ value }}</textarea>', 'view' => '{{ value }}'),
-            array('name' => 'dropdown', 'input' => '<select id="field-{{ code }}" name="{{ code }}">\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
+            array('id' => 1, 'name' => 'text', 'input' => '<input id="field-{{ code }}" name="{{ code }}" value="{{ value }}" />', 'view' => '{{ value }}'),
+            array('id' => 2, 'name' => 'textarea', 'input' => '<textarea id="field-{{ code }}" name="{{ code }}">{{ value }}</textarea>', 'view' => '{{ value }}'),
+            array('id' => 3, 'name' => 'dropdown', 'input' => '<select id="field-{{ code }}" name="{{ code }}">\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
+            array('id' => 4, 'name' => 'multiselect', 'input' => '<select id="field-{{ code }}" name="{{ code }}[]" multiple>\n{{ foreach_option }}\n    <option {{ if_selected:selected }} value={{ option.value }}>{{ option.caption }}</option>\n{{ end_foreach }}\n</select>', 'view' => '{{ selected.caption }}'),
+            array('id' => 5, 'name' => 'file', 'input' => '<a real-value="{{ value }}" class="remove-if-empty" href="{{ module_base_url }}assets/uploads/{{ value }}" target="blank">{{ value }}</a><br />\n<input id="field-{{ code }}" name="{{ code }}" type="file"" />', 'view' => '<a real-value="{{ value }}" class="remove-if-empty" href="{{ module_base_url }}assets/uploads/{{ value }}" target="blank">{{ value }}</a>'),
+            array('id' => 6, 'name' => 'image', 'input' => '<a real-value="{{ value }}" class="remove-if-empty" href="{{ module_base_url }}assets/uploads/{{ value }}" target="blank"><img src="{{ module_base_url }}assets/uploads/{{ value }}" style="max-height:100px; max-width:100%;" /></a><br />\n<input id="field-{{ code }}" name="{{ code }}" type="file"" />', 'view' => '<a real-value="{{ value }}" class="remove-if-empty" href="{{ module_base_url }}assets/uploads/{{ value }}" target="blank"><img src="{{ module_base_url }}assets/uploads/{{ value }}" style="max-height:100px; max-width:100%;" /></a>'),
         ),
     );
 
@@ -241,5 +245,29 @@ class Info extends CMS_Module {
     // UPGRADE
     //////////////////////////////////////////////////////////////////////////////
     // TODO: write your upgrade function: do_upgrade_to_x_x_x
-
+    private function do_upgrade_to_0_0_8(){
+        $t_field = $this->t('field');
+        $this->cms_adjust_tables(array(
+            $t_field => array(
+                'fields' => array(
+                    'order_index' => array('type' => 'INT', 'constraint' => 11, 'null' => TRUE, 'default'=>0),
+                )
+            ),
+        ));
+        // update entity
+        $entity_list = $this->db->get($this->t('entity'))->result();
+        foreach($entity_list as $entity){
+            if(trim($entity->per_record_html) != ''){
+                $per_record_html = '<div id="{{ record_id }}" class="record_container panel panel-default">'.PHP_EOL; // record container
+                $per_record_html .= $entity->per_record_html;
+                $per_record_html .= '<div class="edit_delete_record_container pull-right">{{ backend_url }}</div>'.PHP_EOL;
+                $per_record_html .= '</div>'.PHP_EOL;
+                // update per_record_html template
+                $this->db->update($this->t('entity'),
+                    array('per_record_html' => $per_record_html),
+                    array('id' => $entity->id)
+                );
+            }
+        }
+    }
 }

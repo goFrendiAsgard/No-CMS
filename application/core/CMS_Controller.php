@@ -390,15 +390,15 @@ class CMS_Controller extends MX_Controller
         foreach($url_string_list as $url_string){
             $where[] = "'".addslashes($url_string)."' LIKE ".$url_pattern."
         		OR '/".addslashes($url_string)."/' LIKE ".$url_pattern."
-        		OR '/".addslashes($url_string)."' LIKE ".$url_pattern."
-        		OR '".addslashes($url_string)."/' LIKE ".$url_pattern;
+                OR '/".addslashes($url_string)."' LIKE ".$url_pattern."
+                OR '".addslashes($url_string)."/' LIKE ".$url_pattern;
         }
         $where = implode(' OR ', $where);
 
         $SQL = 'SELECT navigation_name
-        	FROM '.cms_table_name('main_navigation')."
-        	WHERE ".$where.'
-        	ORDER BY LENGTH(url) DESC';
+            FROM '.cms_table_name('main_navigation')."
+            WHERE ".$where.'
+            ORDER BY LENGTH(url) DESC';
         $query = $this->db->query($SQL);
 
         $navigation_name = NULL;
@@ -670,6 +670,14 @@ class CMS_Controller extends MX_Controller
         $custom_css = isset($config['css']) ? $config['css'] : '';
         $custom_js = isset($config['js']) ? $config['js'] : '';
 
+        $custom_twitter_card = isset($config['twitter_card']) ? $config['twitter_card'] : NULL;
+        $custom_author = isset($config['author']) ? $config['author'] : NULL;
+        $custom_image = isset($config['image']) ? $config['image'] : NULL;
+        $custom_type = isset($config['type']) ? $config['type'] : NULL;
+        $custom_fb_admin = isset($config['fb_admin']) ? $config['fb_admin'] : NULL;
+        $custom_twitter_publisher_handler = isset($config['twitter_publisher_handler']) ? $config['twitter_publisher_handler'] : NULL;
+        $custom_twitter_twitter_handler= isset($config['twitter_author_handler']) ? $config['twitter_author_handler'] : NULL;
+
         /*
          * GUESS $navigation_name THROUGH ITS URL  ***********************************************************************
          */
@@ -696,7 +704,7 @@ class CMS_Controller extends MX_Controller
         $data = (array) $data;
         $row_navigation = NULL;
         if ($navigation_name != NULL) {
-            $query = $this->db->select('navigation_id, title, page_title, page_keyword, description, default_theme, default_layout, only_content, is_static, static_content, custom_style, custom_script')
+            $query = $this->db->select('navigation_id, title, page_title, page_keyword, description, default_theme, default_layout, only_content, is_static, static_content, custom_style, custom_script, page_twitter_card, page_author, page_image, page_type, page_fb_admin, page_twitter_publisher_handler, page_twitter_author_handler')
                 ->from(cms_table_name('main_navigation'))
                 ->where(array('navigation_name' => $navigation_name))
                 ->get();
@@ -730,6 +738,12 @@ class CMS_Controller extends MX_Controller
         $page_keyword = NULL;
         $page_description = NULL;
         $page_author = NULL;
+        $page_twitter_card = NULL;
+        $page_image = NULL;
+        $page_type = NULL;
+        $page_fb_admin = NULL;
+        $page_twitter_publisher_handler = NULL;
+        $page_twitter_author_handler = NULL;
         $page_css = '';
         $page_js = '';
         if ($navigation_name_provided && $row_navigation != NULL) {
@@ -744,8 +758,15 @@ class CMS_Controller extends MX_Controller
             $page_title = isset($page_title) && $page_title !== NULL ? $page_title : '';
             // keyword
             $page_keyword = isset($row_navigation->page_keyword) && $row_navigation->page_keyword !== NULL ? $row_navigation->page_keyword : '';
-            // keyword
+            // description 
             $page_description = isset($row_navigation->description) && $row_navigation->description !== NULL ? $row_navigation->description : '';
+            $page_author = isset($row_navigation->page_author) && $row_navigation->page_author !== NULL ? $row_navigation->page_author : '';
+            // meta
+            $page_twitter_card = isset($row_navigation->page_twitter_card) && $row_navigation->page_twitter_card !== NULL ? $row_navigation->page_twitter_card : '';
+            $page_image = isset($row_navigation->page_image) && $row_navigation->page_image !== NULL ? $row_navigation->page_image : '';
+            $page_fb_admin = isset($row_navigation->page_fb_admin) && $row_navigation->page_fb_admin !== NULL ? $row_navigation->page_fb_admin : '';
+            $page_twitter_publisher_handler = isset($row_navigation->page_twitter_publisher_handler) && $row_navigation->page_twitter_publisher_handler !== NULL ? $row_navigation->page_twitter_publisher_handler : '';
+            $page_twitter_author_handler = isset($row_navigation->page_twitter_author_handler) && $row_navigation->page_twitter_author_handler !== NULL ? $row_navigation->page_twitter_author_handler : '';
             // only content
             if (!isset($only_content)) {
                 $only_content = ($row_navigation->only_content == 1);
@@ -793,7 +814,7 @@ class CMS_Controller extends MX_Controller
                 $keyword .= ', '.$custom_keyword;
             }
         } else {
-            $keyword = '';
+            $keyword = $this->cms_get_config('meta_keyword');
         }
 
         // ASSIGN DESCRIPTION
@@ -805,16 +826,71 @@ class CMS_Controller extends MX_Controller
                 $description .= ', '.$custom_description;
             }
         } else {
-            $description = '';
+            $description = $this->cms_get_config('meta_description');
         }
 
         // ASSIGN AUTHOR
         if (isset($custom_author) && $custom_author != NULL && $custom_author != '') {
             $author = $custom_author;
+        } elseif (isset($page_author) && $page_author !== NULL && $page_author != '') {
+            $author = $page_author;
         } else {
-            $super_admin = $this->{$this->__cms_base_model_name}->cms_get_super_admin();
-            $author = $super_admin['real_name'];
+            $author = $this->cms_get_config('meta_author');
+            if($author == '' || $author == NULL){
+                $super_admin = $this->{$this->__cms_base_model_name}->cms_get_super_admin();
+                $author = $super_admin['real_name'];
+             }
         }
+
+        if (isset($custom_twitter_card) && $custom_twitter_card != NULL && $custom_twitter_card != '') {
+            $twitter_card = $custom_twitter_card;
+        } elseif (isset($page_twitter_card) && $page_twitter_card !== NULL && $page_twitter_card != '') {
+            $twitter_card = $page_twitter_card;
+        } else {
+            $twitter_card = $this->cms_get_config('meta_twitter_card');
+        }
+        
+        if (isset($custom_image) && $custom_image != NULL && $custom_image != '') {
+            $image = $custom_image;
+        } elseif (isset($page_image) && $page_image !== NULL && $page_image != '') {
+            $image = '{{ base_url }}modules/main/assets/uploads/'.$page_image;
+        } else {
+            $image = $this->cms_get_config('meta_image');
+        }
+
+        if (isset($custom_type) && $custom_type != NULL && $custom_type != '') {
+            $type = $custom_type;
+        } elseif (isset($page_type) && $page_type !== NULL && $page_type != '') {
+            $type = $page_type;
+        } else {
+            $type = $this->cms_get_config('meta_type');
+        }
+
+
+        if (isset($custom_fb_admin) && $custom_fb_admin != NULL && $custom_fb_admin != '') {
+            $fb_admin = $custom_fb_admin;
+        } elseif (isset($page_fb_admin) && $page_fb_admin !== NULL && $page_fb_admin != '') {
+            $fb_admin = $page_fb_admin;
+        } else {
+            $fb_admin = $this->cms_get_config('meta_fb_admin');
+        }
+
+        if (isset($custom_twitter_publisher_handler) && $custom_twitter_publisher_handler != NULL && $custom_twitter_publisher_handler != '') {
+            $twitter_publisher_handler = $custom_twitter_publisher_handler;
+        } elseif (isset($page_twitter_publisher_handler) && $page_twitter_publisher_handler !== NULL && $page_twitter_publisher_handler != '') {
+            $twitter_publisher_handler = $page_twitter_publisher_handler;
+        } else {
+            $twitter_publisher_handler = $this->cms_get_config('meta_twitter_publisher_handler');
+        }
+        
+        if (isset($custom_twitter_author_handler) && $custom_twitter_author_handler != NULL && $custom_twitter_author_handler != '') {
+            $twitter_author_handler = $custom_twitter_author_handler;
+        } elseif (isset($page_twitter_author_handler) && $page_twitter_author_handler !== NULL && $page_twitter_author_handler != '') {
+            $twitter_author_handler = $page_twitter_author_handler;
+        } else {
+            $twitter_author_handler = $this->cms_get_config('meta_twitter_author_handler');
+        }
+
 
         // GET THE LAYOUT
         if (isset($custom_layout)) {
@@ -899,11 +975,41 @@ class CMS_Controller extends MX_Controller
             // set description metadata
             if ($description != '') {
                 $layout_metadata .= '<meta name="description" content="'.$description.'">';
+                $layout_metadata .= '<meta name="twitter:description" content="'.$description.'">';
+                $layout_metadata .= '<meta name="og:description" content="'.$description.'">';
             }
             // set author metadata
             if ($author != '') {
                 $layout_metadata .= '<meta name="author" content="'.$author.'">';
             }
+            // set image
+            if ($image != '') {
+                $layout_metadata .= '<meta name="twitter:image" content="'.$image.'">';
+                $layout_metadata .= '<meta name="og:image" content="'.$image.'">';
+            }
+            // set twitter_card
+            if ($twitter_card != '') {
+                $layout_metadata .= '<meta name="twitter:card" content="'.$twitter_card.'">';
+            }
+            // set type
+            if ($type != '') {
+                $layout_metadata .= '<meta name="og:type" content="'.$type.'">';
+            }
+            // set fb_admin
+            if ($fb_admin != '') {
+                $layout_metadata .= '<meta name="fb:admins" content="'.$fb_admin.'">';
+            }
+            // set twitter publisher handler
+            if ($twitter_publisher_handler != '') {
+                $layout_metadata .= '<meta name="twitter:site" content="'.$twitter_publisher_handler.'">';
+            }
+            // set twitter author handler
+            if ($twitter_author_handler != '') {
+                $layout_metadata .= '<meta name="twitter:site" content="'.$twitter_author_handler.'">';
+            }
+            // set title
+            $layout_metadata .= '<meta name="og:site_name" content="{{ site_name }}">';
+
 
             // add IE compatibility and width viewport
             $layout_metadata .= '<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">

@@ -126,27 +126,27 @@ class Manage_entity extends CMS_CRUD_Controller {
         $crud->set_relation_n_n('group_entity_add',
             $this->t('group_entity_add'),
             cms_table_name('main_group'),
-            'entity_id', 'id_group',
+            'id_entity', 'id_group',
             'group_name', NULL);
         $crud->set_relation_n_n('group_entity_edit',
             $this->t('group_entity_edit'),
             cms_table_name('main_group'),
-            'entity_id', 'id_group',
+            'id_entity', 'id_group',
             'group_name', NULL);
         $crud->set_relation_n_n('group_entity_view',
             $this->t('group_entity_view'),
             cms_table_name('main_group'),
-            'entity_id', 'id_group',
+            'id_entity', 'id_group',
             'group_name', NULL);
         $crud->set_relation_n_n('group_entity_browse',
             $this->t('group_entity_browse'),
             cms_table_name('main_group'),
-            'entity_id', 'id_group',
+            'id_entity', 'id_group',
             'group_name', NULL);
         $crud->set_relation_n_n('group_entity_delete',
             $this->t('group_entity_delete'),
             cms_table_name('main_group'),
-            'entity_id', 'id_group',
+            'id_entity', 'id_group',
             'group_name', NULL);
 
         ////////////////////////////////////////////////////////////////////////
@@ -255,6 +255,13 @@ class Manage_entity extends CMS_CRUD_Controller {
                 $enum_column_option_list // ENUM OPTIONS
             );
         $data['primary_key'] = $primary_key;
+        // sort $data['result'] based on order_index
+        $order_index = array();
+        foreach ($data['result'] as $key => $row)
+        {
+            $order_index[$key] = $row['order_index'];
+        }
+        array_multisort($order_index, SORT_ASC, $data['result']);
         // Parse the data to the view
         return $this->load->view($this->cms_module_path().'/field_entity_field',$data, TRUE);
     }
@@ -284,11 +291,15 @@ class Manage_entity extends CMS_CRUD_Controller {
             'id_entity', // DETAIL FK NAME
             $primary_key, // PARENT PRIMARY KEY VALUE
             $data, // DATA
-            array('id', 'name', 'id_template'), // REAL DETAIL COLUMN NAMES
+            array('id', 'name', 'id_template', 'order_index'), // REAL DETAIL COLUMN NAMES
             array(), // SET DETAIL COLUMN NAMES
             $many_to_many_config_list=array()
         );
 
+        // adjust tables
+        $this->cck_model->adjust_physical_table($primary_key);
+        // adjust navigation and privilege
+        $this->cck_model->adjust_navigation($primary_key);
         return TRUE;
     }
 
@@ -300,6 +311,8 @@ class Manage_entity extends CMS_CRUD_Controller {
             if($this->cck_model->remove_white_spaces($per_record_html) == $this->cck_model->remove_white_spaces($default_pattern)){
                 $post_array['per_record_html'] = '';
             }
+        }else{
+            $post_array['per_record_html'] = '';
         }
         return $post_array;
     }
@@ -339,7 +352,9 @@ class Manage_entity extends CMS_CRUD_Controller {
     public function _before_delete($primary_key){
         // delete corresponding field
         $this->db->delete($this->t('field'),
-              array('id_entity'=>$primary_key));
+            array('id_entity'=>$primary_key));
+        // delete navigation and privilege
+        $this->cck_model->delete_navigation($primary_key);
         return TRUE;
     }
 

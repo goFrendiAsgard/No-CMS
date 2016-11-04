@@ -74,10 +74,6 @@
     ._controller{
         cursor : pointer;
     }
-    #_js_input{
-        margin-top:10px;
-        border:none;
-    }
 </style>
 <div class="_profiler-container container well">
     <h3 class="_profiler-toggle-all-controller _controller">Profiler</h3>
@@ -86,14 +82,6 @@
         <tr style="height:0px; padding:0px;">
             <td style="height:0px; padding:0px;" class="col-md-3"></td>
             <td style="height:0px; padding:0px;" class="col-md-9"></td>
-        </tr>
-        <!-- JS Console -->
-        <tr><th class="_profiler-toggle-js-log-controller _controller" colspan="2">Javascript Log</th></tr>
-        <tr class="_profiler-toggle-js-log">
-            <td class="padding-left-40" colspan="2">
-                <div id="console-log-div"></div>
-                <input id="_js_input" class="col-xs-12" placeholder="Type any javascript code here."></input>
-            </td>
         </tr>
         <!-- GENERAL -->
         <tr class="_profiler-toggle-general-controller _controller"><th colspan="2">General Information</th></tr>
@@ -255,11 +243,4 @@
             }
         });
     }
-    $('#_js_input').keyup(function(event){
-        if(event.keyCode == 13){
-            console.log(eval($('#_js_input').val()));
-            $('#_js_input').val('');
-        }
-    });
 </script>
-<script type="text/javascript" src="<?php echo base_url('assets/nocms/js/console-log-div.js') ?>"></script>

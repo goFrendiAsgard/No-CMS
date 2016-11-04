@@ -72,6 +72,14 @@ class Default_generator extends CMS_Controller{
         return 'browse_'.underscore($stripped_table_name);
     }
 
+    private function front_record_template_configuration_name($stripped_table_name){
+        return $this->save_project_name.'_'.underscore($stripped_table_name).'_record_template';
+    }
+
+    private function front_record_template_privilege_name($stripped_table_name){
+        return 'edit_'.underscore($stripped_table_name).'_record_template';
+    }
+
     private function back_navigation_name($stripped_table_name){
         return 'manage_'.underscore($stripped_table_name);
     }
@@ -108,11 +116,76 @@ class Default_generator extends CMS_Controller{
     private function front_view_file_name($stripped_table_name, $without_extension = FALSE){
         return $this->php_class_file_name($this->front_controller_class_name($stripped_table_name).'_view', $without_extension);
     }
+    private function front_config_view_file_name($stripped_table_name, $without_extension = FALSE){
+        return $this->php_class_file_name($this->front_controller_class_name($stripped_table_name).'_template_config_view', $without_extension);
+    }
     private function front_view_partial_file_name($stripped_table_name, $without_extension = FALSE){
         return $this->php_class_file_name($this->front_controller_class_name($stripped_table_name).'_partial_view', $without_extension);
     }
     private function back_view_file_name($stripped_table_name, $without_extension = FALSE){
         return $this->php_class_file_name($this->back_controller_class_name($stripped_table_name).'_view', $without_extension);
+    }
+
+    private function strip_table_prefix($table_name){
+        if(!isset($this->project_db_table_prefix) || $this->project_db_table_prefix == ''){
+            return $table_name;
+        }
+        if(strpos($table_name, $this->project_db_table_prefix) === 0){
+            $table_name = substr($table_name, strlen($this->project_db_table_prefix));
+        }
+        if($table_name[0]=='_'){
+            $table_name = substr($table_name,1);
+        }
+        return $table_name;
+    }
+
+    private function get_record_template($columns){
+        $fields = array();
+        $captions = array();
+        $primary_key = '';
+        foreach($columns as $column){
+            $column_name = $column['name'];
+            $column_role = $column['role'];
+            $column_caption = $column['caption'];
+            if($column_role == 'primary'){
+                $primary_key = $column_name;
+            }else if($column_role == ''){
+                $fields[] = $column_name;
+                $captions[] = $column_caption;
+            }else if($column_role == 'lookup'){
+                $lookup_table_name = $column['lookup_table_name'];
+                $lookup_table_name = $this->strip_table_prefix($lookup_table_name);
+                $lookup_column_name = $column['lookup_column_name'];
+                $fields[] = $lookup_table_name.'_'.$lookup_column_name;
+                $captions[] = $column_caption;
+            }
+        }
+        $record_template  = '<div id="record_{{ record:'.$primary_key.' }}" class="record_container panel panel-default">'.PHP_EOL;
+        $record_template .= '    <div class="panel-body">'.PHP_EOL;
+        for($i=0; $i<count($fields); $i++){
+            $record_template .= '        <!-- '.strtoupper($captions[$i]).' -->'.PHP_EOL;
+            $record_template .= '        <div class="row">'.PHP_EOL;
+            $record_template .= '            <div class="col-md-4"><b>'.$captions[$i].'</b></div>'.PHP_EOL;
+            $record_template .= '            <div class="col-md-8">{{ record:'.$fields[$i].' }}</div>'.PHP_EOL;
+            $record_template .= '        </div>'.PHP_EOL;
+        }
+        $record_template .= '        <div class="edit_delete_record_container pull-right">{{ backend_urls }}</div>'.PHP_EOL;
+        $record_template .= '        <div style="clear:both;"></div>'.PHP_EOL;
+        $record_template .= '    </div>'.PHP_EOL;
+        $record_template .= '</div>';
+        return $record_template;
+    }
+
+    private function get_front_tables(){
+        // filter tables, just the everything without "dont_make_form" option
+        $selected_tables = array();
+        for($i=0; $i<count($this->tables); $i++){
+            $table = $this->tables[$i];
+            if($table['options']['make_frontpage']){
+                $selected_tables[] = $table;
+            }
+        }
+        return $selected_tables;
     }
 
     public function index($project_id){
@@ -223,15 +296,7 @@ class Default_generator extends CMS_Controller{
     }
 
     private function create_front_controller_and_view(){
-        // filter tables, just the everything without "dont_make_form" option
-        $selected_tables = array();
-        for($i=0; $i<count($this->tables); $i++){
-            $table = $this->tables[$i];
-            if($table['options']['make_frontpage']){
-                $selected_tables[] = $table;
-            }
-        }
-        $tables = $selected_tables;
+        $tables = $this->get_front_tables();
 
         $this->load->helper('inflector');
         // get save_project_name
@@ -245,36 +310,23 @@ class Default_generator extends CMS_Controller{
             $navigation_name = $this->front_navigation_name($stripped_table_name);
             $backend_navigation_name = $this->back_navigation_name($stripped_table_name);
             $columns = $table['columns'];
-
             $pattern = array(
-                'project_name',
-                'controller_name',
-                'model_name',
-                'table_name',
-                'navigation_name',
-                'table_caption',
-                'backend_navigation_name',
-                'front_view_import_name',
-                'front_view_partial_import_name',
-                'front_model_import_name',
-                'front_controller_import_name',
-                'back_controller_import_name',
-                'stripped_table_name',
-            );
-            $replacement = array(
-                $save_project_name,
-                $controller_name,
-                $model_name,
-                $stripped_table_name,
-                $navigation_name,
-                $table_caption,
-                $backend_navigation_name,
-                ucfirst(underscore(humanize($this->front_view_file_name($stripped_table_name, TRUE)))),
-                ucfirst(underscore(humanize($this->front_view_partial_file_name($stripped_table_name, TRUE)))),
-                underscore(humanize($this->front_model_class_name($stripped_table_name))),
-                underscore(humanize($this->front_controller_class_name($stripped_table_name))),
-                underscore(humanize($this->back_controller_class_name($stripped_table_name))),
-                $stripped_table_name,
+                'project_name'          => $save_project_name,
+                'controller_name'       => $controller_name,
+                'model_name'            => $model_name,
+                'table_name'            => $stripped_table_name,
+                'navigation_name'       => $navigation_name,
+                'table_caption'         => $table_caption,
+                'backend_navigation_name'   => $backend_navigation_name,
+                'front_view_import_name'    => ucfirst(underscore(humanize($this->front_view_file_name($stripped_table_name, TRUE)))),
+                'front_view_partial_import_name' => ucfirst(underscore(humanize($this->front_view_partial_file_name($stripped_table_name, TRUE)))),
+                'front_config_view_name'         => ucfirst(underscore(humanize($this->front_config_view_file_name($stripped_table_name, TRUE)))),
+                'front_model_import_name'        => underscore(humanize($this->front_model_class_name($stripped_table_name))),
+                'front_controller_import_name'   => underscore(humanize($this->front_controller_class_name($stripped_table_name))),
+                'back_controller_import_name'    => underscore(humanize($this->back_controller_class_name($stripped_table_name))),
+                'stripped_table_name'            => $stripped_table_name,
+                'record_template_configuration_name' => $this->front_record_template_configuration_name($stripped_table_name),
+                'record_template_privilege_name' => $this->front_record_template_privilege_name($stripped_table_name),
             );
             // prepare data
             $data = array(
@@ -283,32 +335,25 @@ class Default_generator extends CMS_Controller{
                 'table_prefix' => $this->project_db_table_prefix,
             );
             // controller
-            $str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_controller.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'controllers/'.$this->front_controller_file_name($stripped_table_name), $str);
             // model
-            $str = $this->nds->read_view('nordrassil/default_generator/front_model.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_model.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'models/'.$this->front_model_file_name($stripped_table_name), $str);
             // main view
-            $str = $this->nds->read_view('nordrassil/default_generator/front_view.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_view.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'views/'.$this->front_view_file_name($stripped_table_name), $str);
             // partial view
-            $str = $this->nds->read_view('nordrassil/default_generator/front_view_partial.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/front_view_partial.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'views/'.$this->front_view_partial_file_name($stripped_table_name), $str);
+            // config view
+            $str = $this->nds->read_view('nordrassil/default_generator/front_view_config.php',$data,$pattern);
+            $this->nds->write_file($this->project_path.'views/'.$this->front_config_view_file_name($stripped_table_name), $str);
         }
-
     }
 
     private function create_back_controller_and_view(){
-        // filter tables, just the everything without "dont_make_form" option
-        $all_tables = $this->tables;
-        $selected_tables = array();
-        for($i=0; $i<count($this->tables); $i++){
-            $table = $this->tables[$i];
-            if(!$table['options']['dont_make_form']){
-                $selected_tables[] = $table;
-            }
-        }
-        $tables = $selected_tables;
+        $tables = $this->tables;
 
         $this->load->helper('inflector');
         // get save_project_name
@@ -432,7 +477,7 @@ class Default_generator extends CMS_Controller{
                     $detail_foreign_key_name = $column['relation_table_column_name'];
                     $detail_primary_key_name = '';
                     $detail_table = array();
-                    foreach($all_tables as $detail_table_candidate){
+                    foreach($tables as $detail_table_candidate){
                         if($detail_table_candidate['name'] == $column['relation_table_name']){
                             $detail_table = $detail_table_candidate;
                             $detail_columns = $detail_table['columns'];
@@ -528,64 +573,37 @@ class Default_generator extends CMS_Controller{
             }
             // create pattern & replacement
             $pattern = array(
-                'navigation_name',
-                'table_name',
-                'table_caption',
-                'controller_name',
-                'model_name',
-                'model_import_name',
-                'view_import_name',
-                'field_list',
-                'add_field_list',
-                'edit_field_list',
-                'display_as',
-                'set_relation',
-                'set_relation_n_n',
-                'hide_field',
-                'enum_set_field',
-                'directory',
-                'detail_callback_call',
-                'detail_callback_declaration',
-                'detail_before_delete',
-                'detail_after_insert_or_update',
-                'required_fields',
-                'unique_fields',
-                'set_rules',
-                'upload',
-                'primary_key'
-            );
-            $replacement = array(
-                $this->back_navigation_name($stripped_table_name),
-                $stripped_table_name,
-                $table_caption,
-                $this->back_controller_class_name($stripped_table_name),
-                $this->back_model_class_name($stripped_table_name),
-                $this->back_model_file_name($stripped_table_name, TRUE),
-                $this->back_view_file_name($stripped_table_name, TRUE),
-                $field_list,
-                $add_field_list,
-                $edit_field_list,
-                $display_as,
-                $set_relation,
-                $set_relation_n_n,
-                $hide_field,
-                $enum_set_field,
-                $save_project_name,
-                $detail_callback_call,
-                $detail_callback_declaration,
-                $detail_before_delete,
-                $detail_after_insert_or_update,
-                $required_fields,
-                $unique_fields,
-                $set_rules,
-                $upload,
-                $primary_key
+                'navigation_name'   => $this->back_navigation_name($stripped_table_name),
+                'table_name'        => $stripped_table_name,
+                'table_caption'     => $table_caption,
+                'controller_name'   => $this->back_controller_class_name($stripped_table_name),
+                'model_name'        => $this->back_model_class_name($stripped_table_name),
+                'model_import_name' => $this->back_model_file_name($stripped_table_name, TRUE),
+                'view_import_name'  => $this->back_view_file_name($stripped_table_name, TRUE),
+                'field_list'        => $field_list,
+                'add_field_list'    => $add_field_list,
+                'edit_field_list'   => $edit_field_list,
+                'display_as'        => $display_as,
+                'set_relation'      => $set_relation,
+                'set_relation_n_n'  => $set_relation_n_n,
+                'hide_field'        => $hide_field,
+                'enum_set_field'    => $enum_set_field,
+                'directory'         => $save_project_name,
+                'detail_callback_call'          => $detail_callback_call,
+                'detail_callback_declaration'   => $detail_callback_declaration,
+                'detail_before_delete'          => $detail_before_delete,
+                'detail_after_insert_or_update' => $detail_after_insert_or_update,
+                'required_fields'   => $required_fields,
+                'unique_fields'     => $unique_fields,
+                'set_rules'         => $set_rules,
+                'upload'            => $upload,
+                'primary_key'       => $primary_key
             );
             // controllers
-            $str = $this->nds->read_view('nordrassil/default_generator/back_controller.php',NULL,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/back_controller.php',NULL,$pattern);
             $this->nds->write_file($this->project_path.'controllers/'.$this->back_controller_file_name($stripped_table_name), $str);
             // models
-            $str = $this->nds->read_view('nordrassil/default_generator/back_model.php',NULL,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/back_model.php',NULL,$pattern);
             $this->nds->write_file($this->project_path.'models/'.$this->back_model_file_name($stripped_table_name), $str);
             // views
             $data = array(
@@ -593,31 +611,24 @@ class Default_generator extends CMS_Controller{
                 'front_controller_import_name' => underscore(humanize($this->front_controller_class_name($stripped_table_name))),
                 'controller_name' => $this->back_controller_file_name($stripped_table_name),
             );
-            $str = $this->nds->read_view('nordrassil/default_generator/back_view.php',$data,$pattern,$replacement);
+            $str = $this->nds->read_view('nordrassil/default_generator/back_view.php',$data,$pattern);
             $this->nds->write_file($this->project_path.'views/'.$this->back_view_file_name($stripped_table_name), $str);
 
         }
-
     }
 
     private function create_main_controller_and_view(){
         $pattern = array(
-            'navigation_parent_name',
-            'directory',
-            'main_controller',
-            'project_name',
-        );
-        $replacement = array(
-            'index',
-            ucfirst(strtolower(underscore($this->project_name))),
-            ucfirst(strtolower(underscore($this->project_name))),
-            $this->project_name,
+            'navigation_parent_name' => 'index',
+            'directory'              => ucfirst(strtolower(underscore($this->project_name))),
+            'main_controller'        => ucfirst(strtolower(underscore($this->project_name))),
+            'project_name'           => $this->project_name,
         );
         // main controller
-        $str = $this->nds->read_view('nordrassil/default_generator/main_controller', NULL, $pattern, $replacement);
+        $str = $this->nds->read_view('nordrassil/default_generator/main_controller', NULL, $pattern);
         $this->nds->write_file($this->project_path.'controllers/'.ucfirst(underscore($this->project_name)).'.php', $str);
         // main view
-        $str = $this->nds->read_view('nordrassil/default_generator/main_view', NULL, $pattern, $replacement);
+        $str = $this->nds->read_view('nordrassil/default_generator/main_view', NULL, $pattern);
         $this->nds->write_file($this->project_path.'views/'.ucfirst(underscore($this->project_name)).'_index.php', $str);
     }
 
@@ -633,41 +644,35 @@ class Default_generator extends CMS_Controller{
         $default_group_name = $project_caption.' Manager';
         $backend_navigations = PHP_EOL;
         $frontend_navigations = PHP_EOL;
+        $frontend_configurations = PHP_EOL;
+        $frontend_privileges = PHP_EOL;
         $group_backend_privileges = array();
         $group_backend_navigations = array();
         foreach($tables as $table){
             $table_name = $table['name'];
             $stripped_table_name = $table['stripped_name'];
             $table_caption = $table['caption'];
-            $pattern =  array(
-                    'stripped_table_name',
-                    'default_group_name',
-                    'front_navigation_name',
-                    'back_navigation_name',
-                    'front_controller_name',
-                    'back_controller_name',
-                    'table_caption',
-                    'navigation_parent_name',
-                );
-            $replacement = array(
-                    $stripped_table_name,
-                    $default_group_name,
-                    $this->front_navigation_name($stripped_table_name),
-                    $this->back_navigation_name($stripped_table_name),
-                    underscore(humanize($this->front_controller_class_name($stripped_table_name))),
-                    underscore(humanize($this->back_controller_class_name($stripped_table_name))),
-                    $table_caption,
-                    'index',
+            $pattern = array(
+                    'stripped_table_name'   => $stripped_table_name,
+                    'default_group_name'    => $default_group_name,
+                    'front_navigation_name' => $this->front_navigation_name($stripped_table_name),
+                    'record_template_privilege_name'        => $this->front_record_template_privilege_name($stripped_table_name),
+                    'record_template_configuration_name'    => $this->front_record_template_configuration_name($stripped_table_name),
+                    'back_navigation_name'  => $this->back_navigation_name($stripped_table_name),
+                    'front_controller_name' => underscore(humanize($this->front_controller_class_name($stripped_table_name))),
+                    'back_controller_name'  => underscore(humanize($this->back_controller_class_name($stripped_table_name))),
+                    'table_caption'         => $table_caption,
+                    'navigation_parent_name'=>  'index',
                 );
             // back
             if(!$table['options']['dont_make_form']){
                 // backend navigation
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/backend_navigation',NULL,
-                    $pattern, $replacement);
+                    $pattern);
                 $backend_navigations .= trim($str, PHP_EOL).PHP_EOL;
                 // backend privilege
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/group_backend_privilege',NULL,
-                    $pattern, $replacement);
+                    $pattern);
                 $group_backend_privileges[] = $str;
                 // group backend navigation
                 $group_backend_navigations[] = '\''. addslashes($stripped_table_name) .'\'';
@@ -675,8 +680,17 @@ class Default_generator extends CMS_Controller{
             // front
             if($table['options']['make_frontpage']){
                 $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_navigation',NULL,
-                    $pattern, $replacement);
+                    $pattern);
                 $frontend_navigations .= trim($str, PHP_EOL).PHP_EOL;
+                // configuration name for frontend template
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_configuration',NULL,
+                    $pattern);
+                $frontend_configurations .= trim($str, PHP_EOL).PHP_EOL;
+                // privilege name for frontend template
+                $str = $this->nds->read_view('nordrassil/default_generator/install_partial/frontend_privilege',NULL,
+                    $pattern);
+                $frontend_privileges .= trim($str, PHP_EOL).PHP_EOL;
+
             }
         }
         $group_backend_privileges = 'array('.PHP_EOL.implode('', $group_backend_privileges).'            )';
@@ -793,64 +807,62 @@ class Default_generator extends CMS_Controller{
         }
         $backup_table = implode(','.PHP_EOL.'            ', $backup_table_list);
         $pattern = array(
-            'tables',
-            'data',
-            'default_group_name',
-            'backend_navigations',
-            'frontend_navigations',
-            'group_backend_privileges',
-            'group_backend_navigations',
-            'namespace',
-            'table_list',
-            'navigation_parent_name',
-            'main_controller',
-            'project_name',
-            'save_project_name',
-            'project_caption',
-            'drop_table_forge',
-            'create_table_forge',
-            'insert_table',
-        );
-        $replacement = array(
-            $table_list,
-            $data_list,
-            $default_group_name,
-            $backend_navigations,
-            $frontend_navigations,
-            $group_backend_privileges,
-            $group_backend_navigations,
-            underscore($this->cms_user_name()).'.'.underscore($this->project_name),
-            $backup_table,
-            'index',
-            underscore($this->project_name),
-            $this->project_name,
-            underscore($this->project_name),
-            humanize($this->project_name),
-            $this->nds->get_drop_table_forge($tables),
-            $this->nds->get_create_table_forge($tables, array(
+            'tables' => $table_list,
+            'data' => $data_list,
+            'default_group_name' => $default_group_name,
+            'backend_navigations' => $backend_navigations,
+            'frontend_navigations' => $frontend_navigations,
+            'frontend_configurations' => $frontend_configurations,
+            'frontend_privileges' => $frontend_privileges,
+            'group_backend_privileges' => $group_backend_privileges,
+            'group_backend_navigations' => $group_backend_navigations,
+            'namespace' => underscore($this->cms_user_name()).'.'.underscore($this->project_name),
+            'table_list' => $backup_table,
+            'navigation_parent_name' => 'index',
+            'main_controller' => underscore($this->project_name),
+            'project_name' => $this->project_name,
+            'save_project_name' => underscore($this->project_name),
+            'project_caption' => humanize($this->project_name),
+            'drop_table_forge' => $this->nds->get_drop_table_forge($tables),
+            'create_table_forge' => $this->nds->get_create_table_forge($tables, array(
                     '_created_at' => 'TYPE_DATETIME_NULL',
                     '_updated_at' => 'TYPE_DATETIME_NULL',
                     '_created_by' => 'TYPE_INT_SIGNED_NULL',
                     '_updated_by' => 'TYPE_INT_SIGNED_NULL',
                 )),
-            $this->nds->get_insert_table($tables),
+            'insert_table' => $this->nds->get_insert_table($tables),
         );
 
-        $str = $this->nds->read_view('default_generator/info_controller', NULL, $pattern, $replacement);
+        $str = $this->nds->read_view('default_generator/info_controller', NULL, $pattern);
         $this->nds->write_file($project_path.'controllers/Info.php', $str);
 
-        $str = $this->nds->read_view('default_generator/description.txt', NULL, $pattern, $replacement);
+        $str = $this->nds->read_view('default_generator/description.txt', NULL, $pattern);
         $this->nds->write_file($project_path.'description.txt', $str);
-
     }
 
     private function create_config(){
         ////////////////////////////////////////////////////////////////
         // create config
         ////////////////////////////////////////////////////////////////
-        $pattern = array('table_prefix', 'module_prefix');
-        $replacement = array($this->config_table_prefix, $this->config_module_prefix);
-        $str = $this->nds->read_view('default_generator/module_config', NULL, $pattern, $replacement);
+        $pattern = array(
+            'table_prefix' => $this->config_table_prefix,
+            'module_prefix' => $this->config_module_prefix,
+        );
+        // get template for front tables
+        $data = array(
+            'record_template_configuration' => array(),
+        );
+        $tables = $this->get_front_tables();
+        foreach($tables as $table){
+            $table_name = $table['name'];
+            $stripped_table_name = $table['stripped_name'];
+            $configuration_name = $this->front_record_template_configuration_name($stripped_table_name);
+            $configuration_value = $this->get_record_template($table['columns']);
+            // set record template configuration
+            $data['record_template_configuration'][$configuration_name] = $configuration_value;
+        }
+        // load
+        $str = $this->nds->read_view('default_generator/module_config', $data, $pattern);
         $this->nds->write_file($this->project_path.'config/module_config.php', $str);
     }
 

@@ -96,41 +96,37 @@
     }
 ?>
 
-    // returned on insert and edit
+    ////////////////////////////////////////////////////////////////////////////
+    // FIELD CALLBACK of {{ field_name }}, used to render form input
+    ////////////////////////////////////////////////////////////////////////////
     public function _callback_field_{{ field_name }}($value, $primary_key){
-        // Options for detail table's column with SET type
-        $set_column_option_list = array(<?php echo $set_script; ?>);
-        // Options for detail table's column with ENUM type
-        $enum_column_option_list = array(<?php echo $enum_script; ?>);
-        // Detail table's one-to-many columns configurations
-        $lookup_config_list = array(<?php echo $lookup_script; ?>);
-        // Detail table's many-to-many columns configurations
-        $many_to_many_config_list = array(<?php echo $many_to_many_script; ?>);
         // Prepare the data by using defined configurations and options
         $data = $this->_one_to_many_callback_field_data(
-                '<?php echo $detail_table_name; ?>', // DETAIL TABLE NAME
-                '<?php echo $detail_primary_key; ?>', // DETAIL PK NAME
-                '<?php echo $detail_foreign_key_name; ?>', // DETAIL FK NAME
-                $primary_key, // CURRENT TABLE PK VALUE
-                $lookup_config_list, // LOOKUP CONFIGS
-                $many_to_many_config_list, // MANY TO MANY CONFIGS
-                $set_column_option_list, // SET OPTIONS
-                $enum_column_option_list // ENUM OPTIONS
-            );
+            '<?php echo $detail_table_name; ?>', // Detail Table's name
+            '<?php echo $detail_primary_key; ?>', // Detail Table's primary key name
+            '<?php echo $detail_foreign_key_name; ?>', // Detail Table's foreign key to current table
+            $primary_key, // Current table's primary key value
+            array(<?php echo $lookup_script; ?>), // Detail table's one-to-many field list
+            array(<?php echo $many_to_many_script; ?>), // Detail table's many-to-many field list
+            array(<?php echo $set_script; ?>), // Detail table's "set" field list
+            array(<?php echo $enum_script; ?>) // Detial table's "enum" field list
+        );
         // Parse the data to the view
         return $this->load->view($this->cms_module_path().'/<?php echo $view_name; ?>',$data, TRUE);
     }
 
-    // returned on view
+    ////////////////////////////////////////////////////////////////////////////
+    // COLUMN CALLBACK of {{ field_name }}, Typically yield record count
+    ////////////////////////////////////////////////////////////////////////////
     public function _callback_column_{{ field_name }}($value, $row){
         return $this->_humanized_record_count(
-                '<?php echo $detail_table_name; ?>', // DETAIL TABLE NAME
-                '<?php echo $detail_foreign_key_name; ?>', // DETAIL FK NAME
-                $row-><?php echo $master_primary_key_name; ?>, // CURRENT TABLE PK VALUE
-                array( // CAPTIONS
-                    'single_caption'    => '<?php echo $detail_table['caption']; ?>',
-                    'multiple_caption'  => '<?php echo $detail_table['caption']; ?>s',
-                    'zero_caption'      => 'No <?php echo $detail_table['caption']; ?>',
-                )
-            );
+            '<?php echo $detail_table_name; ?>', // Detail Table's name
+            '<?php echo $detail_foreign_key_name; ?>',  // Detail Table's foreign key to current table
+            $row-><?php echo $master_primary_key_name; ?>, //  Current table's primary key value
+            array( // Captions
+                'single_caption'    => '<?php echo $detail_table['caption']; ?>',
+                'multiple_caption'  => '<?php echo $detail_table['caption']; ?>s',
+                'zero_caption'      => 'No <?php echo $detail_table['caption']; ?>',
+            )
+        );
     }

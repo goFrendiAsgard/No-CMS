@@ -153,6 +153,9 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
         return $crud;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Landing function
+    ////////////////////////////////////////////////////////////////////////////
     public function index(){
         // create crud
         $crud = $this->make_crud();
@@ -169,52 +172,106 @@ class {{ controller_name }} extends CMS_CRUD_Controller {
 
 {{ detail_callback_declaration }}
 
+    ////////////////////////////////////////////////////////////////////////////
+    // After insert or update, return TRUE if success
+    // Use this if you want to do something after insert/update.
+    // Typically contains scripts to save detail tables.
+    ////////////////////////////////////////////////////////////////////////////
     public function _after_insert_or_update($post_array, $primary_key){
 {{ detail_after_insert_or_update }}
         return TRUE;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Before insert or update, return new $post_array or FALSE if you want to
+    // cancel the operation.
+    // Use this if you need to preprocess and alter the data before insert or
+    // update operation.
+    ////////////////////////////////////////////////////////////////////////////
     public function _before_insert_or_update($post_array, $primary_key=NULL){
         return $post_array;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Return true if edit button is shown for this record,
+    // return false otherwise
+    ////////////////////////////////////////////////////////////////////////////
     public function _show_edit($primary_key){
         return TRUE;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Return true if delete button is shown for this record,
+    // return false otherwise
+    ////////////////////////////////////////////////////////////////////////////
     public function _show_delete($primary_key){
         return TRUE;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Return true if edit operation is allowed for this record,
+    // return false otherwise
+    ////////////////////////////////////////////////////////////////////////////
     public function _allow_edit($primary_key){
         return TRUE;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Return true if delete operation is allowed for this record,
+    // return false otherwise
+    ////////////////////////////////////////////////////////////////////////////
     public function _allow_delete($primary_key){
         return TRUE;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Before insert, return new $post_array or FALSE if you want to
+    // cancel the operation. Use this if you need to preprocess and alter
+    // the data before insert operation.
+    ////////////////////////////////////////////////////////////////////////////
     public function _before_insert($post_array){
         return $post_array;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // After insert, return TRUE if success
+    // Use this if you want to do something after insert.
+    ////////////////////////////////////////////////////////////////////////////
     public function _after_insert($post_array, $primary_key){
         return TRUE;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Before update, return new $post_array or FALSE if you want to
+    // cancel the operation. Use this if you need to preprocess and alter
+    // the data before update operation.
+    ////////////////////////////////////////////////////////////////////////////
     public function _before_update($post_array, $primary_key){
         return $post_array;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // After update, return TRUE if success
+    // Use this if you want to do something after update.
+    ////////////////////////////////////////////////////////////////////////////
     public function _after_update($post_array, $primary_key){
         return TRUE;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // Before delete, return new $post_array or FALSE if you want to
+    // cancel the operation. Use this if you need to preprocess and alter
+    // the data before delete operation. Typically delete detail table
+    ////////////////////////////////////////////////////////////////////////////
     public function _before_delete($primary_key){
 {{ detail_before_delete }}
         return TRUE;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // After delete, return TRUE if success
+    // Use this if you want to do something after delete.
+    ////////////////////////////////////////////////////////////////////////////
     public function _after_delete($primary_key){
         return TRUE;
     }

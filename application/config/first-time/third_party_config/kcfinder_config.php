@@ -16,7 +16,12 @@
 // you are using session configuration.
 // See http://kcfinder.sunhater.com/install for setting descriptions
 
-$_FCPATH = '{{ FCPATH }}';
+$_FCPATH = @dirname(@dirname(__DIR__));
+if($_FCPATH == ''){
+    $_FCPATH = '{{ FCPATH }}';
+}else{
+    $_FCPATH .= DIRECTORY_SEPARATOR;
+}
 
 // define basepath
 if(!defined('BASEPATH')){ define('BASEPATH',''); }
@@ -51,9 +56,9 @@ $_user_dir = $_cms_user_id !== NULL ?  $_cms_user_id : 'no_user';
 $_user_dir = $_cms_subsite == ''? '/main-'.$_user_dir : '/site-'.$_cms_subsite.'-'.$_user_id;
 
 if(!is_dir($_FCPATH."assets/kcfinder/upload".$_user_dir)){
-    mkdir($_FCPATH."assets/kcfinder/upload".$_user_dir);
-    chmod($_FCPATH."assets/kcfinder/upload".$_user_dir, 0777);
+    @mkdir($_FCPATH."assets/kcfinder/upload".$_user_dir);
 }
+@chmod($_FCPATH."assets/kcfinder/upload".$_user_dir, 0777);
 
 $_CONFIG = array(
     'disabled' => $_cms_user_id === NULL,

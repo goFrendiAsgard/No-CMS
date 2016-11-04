@@ -9,7 +9,7 @@ class Manage_layer extends CMS_CRUD_Controller {
 
     protected $URL_MAP = array();
     protected $TABLE_NAME = 'layer';
-    protected $COLUMN_NAMES = array('map_id', 'layer_name', 'group_name', 'layer_desc', 'z_index', 'shown', 'radius', 'fill_color', 'color', 'weight', 'opacity', 'fill_opacity', 'image_url', 'json_sql', 'json_shape_column', 'json_popup_content', 'json_label', 'use_json_url', 'json_url', 'searchable', 'search_sql', 'search_result_content', 'search_result_x_column', 'search_result_y_column', 'use_search_url', 'search_url');
+    protected $COLUMN_NAMES = array('map_id', 'layer_name', 'group_name', 'layer_desc', 'z_index', 'shown', 'radius', 'fill_color', 'color', 'weight', 'opacity', 'fill_opacity', 'image_url', 'use_json_url', 'json_url', 'json_sql', 'json_shape_column', 'json_popup_content', 'json_label', 'searchable', 'use_search_url', 'search_url', 'search_sql', 'search_result_content', 'search_result_x_column', 'search_result_y_column');
     protected $PRIMARY_KEY = 'layer_id';
     protected $UNSET_JQUERY = TRUE;
     protected $UNSET_READ = TRUE;
@@ -173,6 +173,11 @@ class Manage_layer extends CMS_CRUD_Controller {
         //        'Second Tab Caption' => $how_many_field_on_second_tab,
         //     ));
         ////////////////////////////////////////////////////////////////////////
+        $crud->set_outside_tab(12);
+        $crud->set_tabs(array(
+            'JSON' => 6,
+            'Search Options' => 7,
+        ));
 
         ////////////////////////////////////////////////////////////////////////
         // HINT: Create custom search form (if needed)

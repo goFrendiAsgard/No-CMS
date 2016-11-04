@@ -29,4 +29,4 @@
  
 .ui-multiselect input.search { height: 20px !important; padding: 2px !important; opacity: 0.5 !important; margin: 4px !important; width: 150px !important; }
 
-select.multiselect{ width:704px; }
+select.multiselect{ width:704px; min-height:100px;}

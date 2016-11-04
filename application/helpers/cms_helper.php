@@ -551,3 +551,105 @@ function rcopy($src, $dst) {
         copy ( $src, $dst );
     }
 }
+
+function parse_record($record, $config=array()){
+    $record = (array)$record; // cast to associative array
+    $record_template = array_key_exists('record_template', $config)? $config['record_template']: '';
+    $backend_url = array_key_exists('backend_url', $config)? $config['backend_url']: NULL;
+    $allow_edit = array_key_exists('allow_edit', $config)? $config['allow_edit']: FALSE;
+    $allow_delete = array_key_exists('allow_delete', $config)? $config['allow_delete']: FALSE;
+    $primary_key = array_key_exists('primary_key', $config)? $config['primary_key']: 'id';
+    // determine if new record template should be created or not
+    $create_record_template = $record_template == '';
+    // create default record template if necessary
+    if($create_record_template){
+        $record_template = '<div id="record_{{ record:'.$primary_key.' }}" class="record_container panel panel-default">';
+        $record_template .= '<div class="panel-body">';
+    }
+    // build search and replace
+    $search = array();
+    $replace = array();
+    foreach(array_keys($record) as $key){
+        $search[] = '{{ record:'.$key.' }}';
+        if(is_array($record[$key]) || is_object($record[$key])){
+            $replace[] = '';
+        }else{
+            $replace[] = $record[$key];
+        }
+        // add default record template if necessary
+        if($create_record_template){
+            $record_template .= '<div class="row">';
+            $record_template .= '<div class="col-md-4"><strong>'. ucwords(str_replace('_', ' ', $key)) . '</strong></div>';
+            $record_template .= '<div class="col-md-8">{{ record:'.$key.' }}</div>';
+            $record_template .= '</div>';
+        }
+    }
+    // add default record template if necessary
+    if($create_record_template){
+        $record_template .= '<div class="edit_delete_record_container pull-right">{{ backend_urls }}</div>';
+        $record_template .= '<div style="clear:both;"></div>';
+        $record_template .= '</div>'; // end of div.panel-body
+        $record_template .= '</div>'; // end of div.record_container
+    }
+    // build backend urls
+    $backend_urls = '';
+    if($backend_url != ''){
+        if($allow_edit){
+            $backend_urls .= '<a href="'.$backend_url.'/edit/'.$record[$primary_key].'" class="btn btn-default edit_record" primary_key="'.$record[$primary_key].'">Edit</a>';
+            if($allow_delete){
+                $backend_urls .= '&nbsp;';
+            }
+        }
+        if($allow_delete){
+            $backend_urls .= '<a href="'.$backend_url.'/delete/'.$record[$primary_key].'" class="btn btn-danger delete_record" primary_key="'.$record[$primary_key].'">Delete</a>';
+        }
+    }
+    // add search and replace pattern
+    $search[] = '{{ backend_urls }}';
+    $replace[] = $backend_urls;
+    return str_replace($search, $replace, $record_template);
+}
+
+function create_labeled_form_input($id, $label, $input_html){
+    $input_html = str_replace('{{ id }}', $id, $input_html);
+    $html = '';
+    $html .= '<div class="form-group col-sm-12">';
+    $html .= form_label($label, $id, array('class' => 'control-label col-sm-4'));
+    $html .= '<div class="col-sm-8">';
+    $html .= $input_html;
+    $html .= '</div>';
+    $html .= '</div>';
+    return $html;
+}
+
+function build_register_input($secret_code, $user_name, $email, $real_name){
+    $html = '';
+
+    $id = $secret_code.'user_name';
+    $input_html = form_input($id, $user_name,
+        'id="{{ id }}" placeholder="User Name" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:User Name }}', $input_html);
+
+    $id = $secret_code.'real_name';
+    $input_html = form_input($id, $real_name,
+        'id="{{ id }}" placeholder="Real Name" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:Real Name }}', $input_html);
+
+    $id = $secret_code.'email';
+    $input_html = form_input($id, $email,
+        'id="{{ id }}" placeholder="Email" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:Email }}', $input_html);
+
+
+    $id = $secret_code.'password';
+    $input_html = form_password($id, '',
+        'id="{{ id }}" placeholder="Password" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:Password }}', $input_html);
+
+    $id = $secret_code.'confirm_password';
+    $input_html = form_password($id, '',
+        'id="{{ id }}" placeholder="Password (again)" class="form-control"');
+    $html .= create_labeled_form_input($id, '{{ language:Confirm Password }}', $input_html);
+
+    return $html;
+}

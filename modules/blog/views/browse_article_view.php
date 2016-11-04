@@ -38,7 +38,7 @@
     textarea[name="<?php echo $secret_code; ?>xcontent"]{
         resize:none;
     }
-    #search-form .form-group{
+    #form_search .form-group{
         margin-right:10px;
     }
     .text-area-comment{
@@ -83,7 +83,7 @@
         <!-- Modal content-->
         <div class="modal-content" style="width:100%!important;">
             <div class="modal-header">
-                <button style="padding:5px;" type="button" class="close" data-dismiss="modal">&times;</button>
+                <button id="btn-close-photo" style="padding:5px;" type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 id="photo-modal-title" class="modal-title" style="display:inline-block;">Image</h4>
                 <button id="btn-prev-photo" class="btn btn-default" style="padding:5px">&lt;</button>
                 <button id="btn-next-photo" class="btn btn-default" style="padding:5px">&gt;</button>
@@ -94,11 +94,58 @@
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
-
     </div>
 </div>
+<?php if($allow_navigate_backend){?>
+<!-- Quick Write Form -->
+<div class="modal fade" id="quickwrite-modal" role="dialog">
+    <div class="modal-dialog col-xs-12" style="width:100%!important;">
+        <!-- Modal content-->
+        <div class="modal-content" style="width:100%!important;">
+            <div class="modal-header">
+                <button id="btn-close-quickwrite" style="padding:5px;" type="button" class="close" data-dismiss="modal">&times;</button>
+                <div style="clear:both"></div>
+            </div>
+            <div class="modal-body">
+                <h4>{{ language: Quick Write }}</h4>
+                <form  method="post" action="<?php echo $backend_url; ?>/add/">
+                    <div class="col-xs-12" style="margin-bottom:10px;">
+                        <input id="new_article_title" name="title" class="form-control" placeholder="{{ language:Title }}" />
+                    </div>
+                    <div class="col-xs-12" style="margin-bottom:10px;">
+                        <textarea id="new_article_content" name="content" class="form-control" placeholder="{{ language:Content }}" style="resize:none; min-height:100px;"></textarea>
+                    </div>
 
-<form id="search-form" class="form-inline col-xs-12" role="form" style="margin-bottom:20px;">
+                    <?php if($can_publish){ ?>
+                    <div class="col-xs-12 col-md-6" style="margin-bottom:10px;">
+                        <select id="new_article_status" name="status" class="form-control">
+                            <option value="published" selected>Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                    <?php } ?>
+                    <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
+                        <button id="new_article_save" class="col-xs-12 btn btn-primary" data-dismiss="modal">
+                            <i class="glyphicon glyphicon-share-alt"></i> {{ language:Save }}
+                        </button>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
+                        <button id="new_article_edit" class="col-xs-12 btn btn-primary">
+                            <i class="glyphicon glyphicon-pencil"></i> {{ language:More }}
+                        </button>
+                    </div>
+                </form>
+                <div style="clear:both;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
+
+<form id="form_search" class="form-inline col-xs-12" role="form" style="margin-bottom:20px;">
     <div class="form-group">
         <label class="sr-only" for="input_category">Category</label>
         <select id="input_category" class="select-category form-control">
@@ -121,42 +168,17 @@
         <button name="submit" value="Search" id="btn_search" class="btn btn-primary">
             <i class="glyphicon glyphicon-search"></i> Search
         </button>
+        <?php
+            if($allow_navigate_backend){
+                echo '<a href="" class="btn btn-default add_record" data-toggle="modal" data-target="#quickwrite-modal"><i class="glyphicon glyphicon-plus"></i> Add</a>'.PHP_EOL;
+            }
+            if($have_edit_template_privilege){
+                echo '<a href="{{ module_site_url }}blog/template_config" class="btn btn-default add_record"><i class="glyphicon glyphicon-cog"></i> Edit Record Template</a>'.PHP_EOL;
+            }
+        ?>
     </div>
 </form>
 
-<?php if($allow_navigate_backend){?>
-<!-- Quick Write Form -->
-<div class="col-xs-12" style="margin-bottom:20px;">
-    <h4>{{ language: Quick Write }}</h4>
-    <form  method="post" action="<?php echo $backend_url; ?>/add/">
-        <div class="col-xs-12" style="margin-bottom:10px;">
-            <input id="new_article_title" name="title" class="form-control" placeholder="{{ language:Title }}" />
-        </div>
-        <div class="col-xs-12" style="margin-bottom:10px;">
-            <textarea id="new_article_content" name="content" class="form-control" placeholder="{{ language:Content }}" style="resize:none;"></textarea>
-        </div>
-
-        <?php if($can_publish){ ?>
-            <div class="col-xs-12 col-md-6" style="margin-bottom:10px;">
-                <select id="new_article_status" name="status" class="form-control">
-                    <option value="published" selected>Published</option>
-                    <option value="draft">Draft</option>
-                </select>
-            </div>
-        <?php } ?>
-        <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
-            <button id="new_article_save" class="col-xs-12 btn btn-primary">
-                <i class="glyphicon glyphicon-share-alt"></i> {{ language:Save }}
-            </button>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-md-3" style="margin-bottom:10px;">
-            <button id="new_article_edit" class="col-xs-12 btn btn-primary">
-                <i class="glyphicon glyphicon-pencil"></i> {{ language:Detail Edit }}
-            </button>
-        </div>
-    </form>
-</div>
-<?php } ?>
 <!-- Record contents -->
 <div id="record_content" class="col-xs-12">
     <?php
@@ -194,7 +216,7 @@
             // edit and delete button
             if($allow_navigate_backend){
                 echo '<div class="edit_delete_record_container">';
-                if($is_super_admin || $article['author_user_id'] == $user_id){
+                if($is_super_admin || $is_blog_editor || $is_blog_author || ($is_blog_contributor && $article['author_user_id'] == $user_id)){
                     echo '<a href="'.$backend_url.'/edit/'.$article['id'].'" class="btn btn-default edit_record" primary_key = "'.$article['id'].'">Edit</a>';
                     echo '&nbsp;';
                     echo '<a href="'.$backend_url.'/delete/'.$article['id'].'" class="btn btn-danger delete_record" primary_key = "'.$article['id'].'">Delete</a>';
@@ -357,89 +379,23 @@
     var URL = '<?php echo site_url($module_path."/blog/get_data"); ?>';
     var ALLOW_NAVIGATE_BACKEND = <?php echo $allow_navigate_backend ? "true" : "false"; ?>;
     var BACKEND_URL = '<?php echo $backend_url; ?>';
-    var LOADING = false;
-    var REQUEST;
-    var RUNNING_REQUEST = false;
-    var SCROLL_WORK = true;
+    var LOAD_MESSAGE = 'Load more article &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />';
+    var REACH_END_MESSAGE  = 'No more article to show';
 
     <?php if(isset($article)){
-        echo 'SCROLL_WORK = false;';
+        // if article only one, then no scroll
+        echo 'var SCROLL_WORK = false;';
     }
     ?>
-
-    function adjust_load_more_button(){
-        if(SCROLL_WORK){
-            if(screen.width >= 1024){
-                $('#btn_load_more').hide();
-                $('#record_content_bottom').show();
-            }else{
-                $('#btn_load_more').show();
-                $('#record_content_bottom').hide();
-            }
-        }else{
-            $('#btn_load_more').hide();
-        }
+    // prepare search post data
+    function prepare_search_post_data(data){
+        data['category'] = $('#input_category').val();
+        return data;
     }
-
-
-    function fetch_more_data(async){
-        if(typeof(async) == 'undefined'){
-            async = true;
-        }
-        $('#record_content_bottom').html('Load more Article &nbsp;<img src="{{ BASE_URL }}assets/nocms/images/ajax-loader.gif" />');
-        var keyword = $('#input_search').val();
-        var category = $('#input_category').val();
-        // Don't start another request until the first one completed
-        if(RUNNING_REQUEST){
-            return 0;
-        }
-        RUNNING_REQUEST = true;
-        REQUEST = $.ajax({
-            'url'  : URL,
-            'type' : 'POST',
-            'async': async,
-            'data' : {
-                'category' : category,
-                'archive' : '<?php echo isset($_GET["archive"])? $_GET["archive"] : ""; ?>',
-                'keyword' : keyword,
-                'page' : PAGE,
-            },
-            'success'  : function(response){
-                if(response.trim() == ''){
-                    SCROLL_WORK = false;
-                }
-                // show contents
-                $('#record_content').append(response);
-
-                // show bottom contents
-                var bottom_content = 'No more Article to show.';
-                if(ALLOW_NAVIGATE_BACKEND){
-                    bottom_content += '&nbsp; <a href="<?php echo $backend_url; ?>/add/" class="add_record btn btn-default">Add new</a>';
-                }
-                $('#record_content_bottom').html(bottom_content);
-                RUNNING_REQUEST = false;
-                PAGE ++;
-            },
-            'complete' : function(response){
-                RUNNING_REQUEST = false;
-            }
-        });
-
-    }
-
-    function reset_content(){
-        SCROLL_WORK = true;
-        $('#record_content_bottom').show();
-        $('#record_content').html('');
-        PAGE = 0;
-        fetch_more_data();
-        adjust_load_more_button();
-    }
-
-    // main program
+</script>
+<script type="text/javascript" src="{{ base_url }}assets/nocms/js/cms_front_view.js"></script>
+<script type="text/javascript">
     $(document).ready(function(){
-        adjust_load_more_button();
-
         $('#new_article_content').autosize();
         $('textarea[name="<?php echo $secret_code; ?>xcontent"]').autosize();
 
@@ -468,24 +424,6 @@
                 }
             });
             event.preventDefault();
-        });
-
-        // delete click
-        $('body').on('click', '.delete_record',function(){
-            var url = $(this).attr('href');
-            var primary_key = $(this).attr('primary_key');
-            if (confirm("Do you really want to delete?")) {
-                $.ajax({
-                    url : url,
-                    dataType : 'json',
-                    success : function(response){
-                        if(response.success){
-                            $('div#record_'+primary_key).remove();
-                        }
-                    }
-                });
-            }
-            return false;
         });
 
         // input keyup
@@ -534,27 +472,6 @@
             event.preventDefault();
         });
 
-        // scroll
-        $(window).scroll(function(){
-            if(screen.width >= 1024 && !LOADING && SCROLL_WORK){
-                if($('#record_content_bottom').position().top <= $(window).scrollTop() + $(window).height() ){
-                    LOADING = true;
-                    fetch_more_data(true);
-                    LOADING = false;
-                }
-            }
-        });
-
-        $('#btn_load_more').click(function(event){
-            if(!LOADING && SCROLL_WORK){
-                LOADING = true;
-                fetch_more_data(true);
-                LOADING = false;
-            }
-            $(this).hide();
-            event.preventDefault();
-        });
-
         // big photo
         var _PREV_PHOTO_COMPONENT = null;
         var _NEXT_PHOTO_COMPONENT = null;
@@ -595,6 +512,19 @@
         $('#btn-next-photo').click(function(){
             _load_photo_by_link(_NEXT_PHOTO_COMPONENT);
         });
-    });
 
+        $(document).on('keydown',  function (e) {
+            if($('#photo-modal').is(':visible')) {
+                var key = e.which;
+                if (key == 27) { // escape
+                    $('#btn-close-photo').trigger('click');
+                    $('#btn-close-quickwrite').trigger('click');
+                }else if(key == 37){
+                    _load_photo_by_link(_PREV_PHOTO_COMPONENT);
+                }else if(key == 39){
+                    _load_photo_by_link(_NEXT_PHOTO_COMPONENT);
+                }
+            }
+        });
+    });
 </script>

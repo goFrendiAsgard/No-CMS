@@ -1,18 +1,20 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Installation script for
- *
  * @author No-CMS Module Generator
  */
-class Blog extends CMS_Secure_Controller {
+class Blog extends CMS_Front_Controller {
 
-    protected function do_override_url_map($URL_MAP){
-        $module_path = $this->cms_module_path();
-        $URL_MAP[$module_path] = $this->n('index');
-        $URL_MAP[$module_path.'/blog'] = $this->n('index');
-        $URL_MAP[$module_path.'/get_data'] = $this->n('index');
-        $URL_MAP[$module_path.'/blog/get_data'] = $this->n('index');
-        return $URL_MAP;
+    protected $CONFIG_TEMPLATE_NAME = 'blog_article_record_template';
+    protected $EDIT_TEMPLATE_PRIVILEGE_NAME = 'edit_article_record_template';
+    protected $CONFIG_VIEW_PATH = 'Browse_article_template_config_view';
+
+    protected $group_id_list = array();
+    protected $group_name_list = array();
+
+    public function __construct(){
+        parent::__construct();
+        $this->group_name_list = $this->cms_user_group();
+        $this->group_id_list = $this->cms_user_group_id();
     }
 
     private function __random_string($length=10){
@@ -122,14 +124,18 @@ class Blog extends CMS_Secure_Controller {
             "website" => $website,
             "content" => $content,
             "parent_comment_id" => $parent_comment_id,
-            'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
             'module_path' => $this->cms_module_path(),
             'user_id' => $this->cms_user_id(),
+            'is_super_admin' => $this->cms_user_is_super_admin(),
+            'is_blog_editor' => in_array('Blog Editor', $this->group_name_list),
+            'is_blog_author' => in_array('Blog Author', $this->group_name_list),
+            'is_blog_contributor' => in_array('Blog Contributor', $this->group_name_list),
             'form_url'=> $this->cms_module_path() == 'blog'?
                 site_url($this->cms_module_path().'/index/'.$article_url.'/#comment-form') :
                 site_url($this->cms_module_path().'/blog/index/'.$article_url.'/#comment-form'),
             'category_route_exists' => $this->cms_route_key_exists('blog/category/(:any)'),
             'can_publish' => in_array('Blog Editor', $user_group) || in_array('Blog Author', $user_group) || $this->cms_user_is_super_admin(),
+            'have_edit_template_privilege' => $this->cms_have_privilege($this->n($this->EDIT_TEMPLATE_PRIVILEGE_NAME)),
         );
 
         $config = array();
@@ -140,6 +146,23 @@ class Blog extends CMS_Secure_Controller {
             $config['keyword'] = $article['keyword'];
             $config['description'] = $article['description'];
             $config['author'] = $article['author'];
+            $config['type'] = 'article';
+            $config['twitter_card'] = 'summary';
+            // if article has several photos, take the first one as meta image
+            if(count($article['photos'])>0){
+                $photo = $article['photos'][0];
+                $config['image'] = base_url('modules/'.$module_path.'/assets/uploads/'.$photo['url']);
+            }else{ // if article doesn't have any photo, take it from article content
+                preg_match('/<img.*?src="(.*?)"/', $article['content'], $matches);
+                if(count($matches) == 2){
+                    $image = $matches[1];
+                    $image = $this->cms_parse_keyword($image);
+                    if(strpos($image, 'http') !== 0){
+                        $image = base_url($image);
+                    }
+                    $config['image'] = $image;
+                }
+            }
 
             $article_id = $article['id'];
             if(!isset($_SESSION['__blog_visited'])){
@@ -163,8 +186,6 @@ class Blog extends CMS_Secure_Controller {
     }
 
     public function get_data($keyword = '', $page = 0, $category = '', $archive = ''){
-        // only accept ajax request
-        //if(!$first && !$this->input->is_ajax_request()) $this->cms_redirect();
         // get page and keyword parameter
         $post_keyword = $this->input->post('keyword');
         $post_page = $this->input->post('page');
@@ -188,11 +209,16 @@ class Blog extends CMS_Secure_Controller {
             'blog_max_slide_image' => $blog_max_slide_image,
             'allow_navigate_backend' => $this->cms_allow_navigate($this->n('manage_article')),
             'backend_url' => site_url($this->cms_module_path().'/manage_article/index'),
-            'is_super_admin' => $this->cms_user_id() == 1 || in_array(1, $this->cms_user_group_id()),
+            'is_super_admin' => $this->cms_user_is_super_admin(),
+            'is_blog_editor' => in_array('Blog Editor', $this->group_name_list),
+            'is_blog_author' => in_array('Blog Author', $this->group_name_list),
+            'is_blog_contributor' => in_array('Blog Contributor', $this->group_name_list),
             'module_path' => $this->cms_module_path(),
             'user_id' => $this->cms_user_id(),
             'article_route_exists'=>$this->cms_route_key_exists('blog/(:any)\.html'),
             'category_route_exists' => $this->cms_route_key_exists('blog/category/(:any)'),
+            'record_template'         => $this->cms_get_config($this->CONFIG_TEMPLATE_NAME, TRUE),
+            'default_record_template' => $this->cms_get_module_config($this->CONFIG_TEMPLATE_NAME),
         );
         $config = array('only_content'=>TRUE);
         $this->view($this->cms_module_path().'/browse_article_partial_view',$data,

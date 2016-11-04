@@ -54,7 +54,9 @@ class Setting extends CMS_Controller{
                 if(isset($site_logo['tmp_name']) && $site_logo['tmp_name'] != '' && getimagesize($site_logo['tmp_name']) !== FALSE){
                     $file_name = FCPATH.'assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name'];
                     move_uploaded_file($site_logo['tmp_name'], $file_name);
+                    @chmod($file_name, 644);
                     $this->cms_resize_image($file_name, 800, 125);
+                    @chmod($file_name, 644);
                     $this->cms_set_config('site_logo', '{{ base_url }}assets/nocms/images/custom_logo/'.CMS_SUBSITE.$site_logo['name']);
                 }
             }catch(Exception $e){
@@ -67,13 +69,31 @@ class Setting extends CMS_Controller{
                 if(isset($site_favicon['tmp_name']) && $site_favicon['tmp_name'] != '' && getimagesize($site_favicon['tmp_name']) !== FALSE){
                     $file_name = FCPATH.'assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name'];
                     move_uploaded_file($site_favicon['tmp_name'], $file_name);
+                    @chmod($file_name, 644);
                     $this->cms_resize_image($file_name, 64, 64);
+                    @chmod($file_name, 644);
                     $this->cms_set_config('site_favicon', '{{ base_url }}assets/nocms/images/custom_favicon/'.CMS_SUBSITE.$site_favicon['name']);
                 }
             }catch(Exception $e){
                 // do nothing
             }
         }
+        if($this->input->post('remove_meta_image') == 1){
+            $this->cms_set_config('meta_image', '');
+        }else if(isset($_FILES['meta_image'])){
+            try{
+                $meta_image = $_FILES['meta_image'];
+                if(isset($meta_image['tmp_name']) && $meta_image['tmp_name'] != '' && getimagesize($meta_image['tmp_name']) !== FALSE){
+                    $file_name = FCPATH.'assets/nocms/images/custom_meta_image/'.CMS_SUBSITE.$meta_image['name'];
+                    move_uploaded_file($meta_image['tmp_name'], $file_name);
+                    @chmod($file_name, 644);
+                    $this->cms_set_config('meta_image', '{{ base_url }}assets/nocms/images/custom_meta_image/'.CMS_SUBSITE.$meta_image['name']);
+                }
+            }catch(Exception $e){
+                // do nothing
+            }
+        }
+
 
         if($this->input->post('remove_background_image') == 1){
             $this->cms_set_config('site_background_image', '');
@@ -83,6 +103,7 @@ class Setting extends CMS_Controller{
                 if(isset($site_background_image['tmp_name']) && $site_background_image['tmp_name'] != '' && getimagesize($site_background_image['tmp_name']) !== FALSE){
                     $file_name = FCPATH.'assets/nocms/images/custom_background/'.CMS_SUBSITE.$site_background_image['name'];
                     move_uploaded_file($site_background_image['tmp_name'], $file_name);
+                    @chmod($file_name, 644);
                     $this->cms_set_config('site_background_image', '{{ base_url }}assets/nocms/images/custom_background/'.CMS_SUBSITE.$site_background_image['name']);
                 }
             }catch(Exception $e){
@@ -112,6 +133,8 @@ class Setting extends CMS_Controller{
                 'cms_email_useragent', 'cms_email_mailpath', 'cms_email_smtp_host', 'cms_email_smtp_user',
                 'cms_email_smtp_pass', 'cms_email_smtp_port', 'cms_email_smtp_timeout',
                 'cms_google_analytic_property_id','cms_internet_connectivity','cms_subsite_configs','cms_subsite_modules',
+                'meta_twitter_card', 'meta_keyword', 'meta_description', 'meta_author', 'meta_type', 'meta_fb_admin',
+                'meta_twitter_publisher_handler', 'meta_twitter_author_handler',
             );
             // only for non-subsite
             if(CMS_SUBSITE == ''){

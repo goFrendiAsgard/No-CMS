@@ -2,9 +2,9 @@
     "dependencies"    : [],
     "name"            : "gofrendi.noCMS.cck",
     "description"     : "Content Construction Kit",
-    "version"         : "0.0.2",
+    "version"         : "0.0.8",
     "activate"        : "info/activate",
     "deactivate"      : "info/deactivate",
     "upgrade"         : "info/upgrade",
-    "public"          : false
+    "public"          : true
 }

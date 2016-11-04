@@ -265,14 +265,44 @@ function displaying_and_pages(this_container)
 	}
 }
 
-// addition by gofrendi
-function add_form_control_class(){
-    $('.flexigrid input[type!="button"][type!="checkbox"][type!="radio"], .flexigrid select').addClass('form-control');
-    $('#crud_search').removeClass('form-control');
+// additional code by gofrendi
+function add_delete_all_feature(url_delete_all, button_caption, notification_caption){
+    $(document).ajaxComplete(function () {
+        //ADD COMPONENTS
+        if($('.pDiv2 .delete_all_button').length == 0 && $('#flex1 tbody td .delete-row').length != 0) { //check if element already exists (for ajax refresh purposes)
+            $('.pDiv2').prepend('<div class="pGroup"><a style="top:0;" class="delete_all_button btn btn-default" href="#"><i class="glyphicon glyphicon-remove"></i> '+button_caption+'</a></div>');
+        }
+        if($('#flex1 thead td .checkall').length == 0 && $('#flex1 tbody td .delete-row').length != 0){
+            $('#flex1 thead tr').prepend('<td><input type="checkbox" class="checkall" /></td>');
+            $('#flex1 tbody tr').each(function(){
+                $(this).prepend('<td><input type="checkbox" value="' + $(this).attr('rowId') + '" /></td>');
+            });
+        }
+    });
+
+    // CHECK ALL
+    $('body').on('click', '.checkall', function(){
+        $(this).parents('table:eq(0)').find(':checkbox').attr('checked', this.checked);
+    });
+
+    // DELETE ALL
+    $('body').on('click', '.delete_all_button', function(event){
+        event.preventDefault();
+        var list = new Array();
+        $('input[type=checkbox]').each(function() {
+            if (this.checked) {
+                //create list of values that will be parsed to controller
+                list.push(this.value);
+            }
+        });
+        //send data to delete
+        $.post(url_delete_all, { data: JSON.stringify(list) }, function(data) {
+            for(i=0; i<list.length; i++){
+                //remove selection rows
+                $('#flex1 tr[rowId="' + list[i] + '"]').remove();
+            }
+            alert(notification_caption);
+        });
+    });
+
 }
-$(document).ready(function(){
-    add_form_control_class();
-});
-$(document).ajaxComplete(function(){
-    add_form_control_class();
-});

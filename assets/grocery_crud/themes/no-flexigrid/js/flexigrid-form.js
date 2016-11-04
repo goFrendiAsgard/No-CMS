@@ -1,6 +1,6 @@
 // addition by gofrendi
 function __add_form_control_class(){
-    $('.flexigrid input[type!="button"][type!="checkbox"][type!="radio"][type!="submit"], .flexigrid select[class!="multiselect"], .flexigrid textarea').each(function(){
+    $('.flexigrid input[type!="button"][type!="checkbox"][type!="radio"][type!="submit"][class!="ui-widget-content"], .flexigrid select[class!="multiselect"], .flexigrid textarea').each(function(){
         if(!$(this).hasClass('form-control')){
             $(this).addClass('form-control');
         }
@@ -177,7 +177,7 @@ function js_date_to_php(js_date){
 
 
 function php_date_to_js(php_date){
-    if(typeof(php_date)=='undefined' || php_date == ''){
+    if(typeof(php_date)=='undefined' || php_date == '' || php_date == null){
         return '';
     }
     var date_array = php_date.split('-');
@@ -197,6 +197,13 @@ function php_date_to_js(php_date){
 
 function is_numeric(input){
     return (input - 0) == input && input.length > 0;
+}
+
+if(typeof add_delete_all_feature != 'function'){
+    function add_delete_all_feature(url_delete_all, button_caption, notification_caption){
+        // Doing nothing. just to be here for the sake of compatibility to avoid reference error.
+        // Add all feature should only work on the view
+    }
 }
 
 // TODO: gonna be deprecated
@@ -221,7 +228,10 @@ $(document).ready(function(){
 });
 $(document).ajaxComplete(function(){
     __add_form_control_class();
+    // fix multiselect
+    $('.connected-list').css('height', 'auto');
 });
 $(window).on('load',function(){
-    $('.connected-list').css('height', '75px');
+    // fix multiselect
+    $('.connected-list').css('height', 'auto');
 });
