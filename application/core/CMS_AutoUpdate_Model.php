@@ -381,7 +381,7 @@ class CMS_AutoUpdate_Model extends CMS_Model
         $this->cms_add_navigation('main_404', '404 Not Found', 'not_found', 1,
                 null, 9, '404 Not found page', null,
                 null, 'default-one-column', null, 1,
-                '<h1>404 Page not found</h1><p>Sorry, the page does not exists.<br /><a class="btn btn-primary" href="{{ site_url }}">Please go back <i class="glyphicon glyphicon-home"></i></a></p>'
+                '<h1>{{ language:404 Page not found }}</h1><p>{{ language:Sorry, the page does not exists. }}<br /><a class="btn btn-primary" href="{{ site_url }}">{{ language:Please go back }} <i class="glyphicon glyphicon-home"></i></a></p>'
             );
     }
 
