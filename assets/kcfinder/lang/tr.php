@@ -3,6 +3,10 @@
 /** Turkish localization file for KCFinder
 * translation by: Kursad Olmez <kursad.olmez@gmail.com>
 **/
+/*
+ * Turkish localization file KCFinder
+ * translation update by Alpar Barlın (Garkok)
+ */
 
 $lang = array(
 
@@ -33,7 +37,7 @@ $lang = array(
     "Dosyanın sadece bir kısmı yüklendi. Yüklemeyi tekrar deneyin.",
 
     "No file was uploaded." =>
-    "Dosya yüklenmedi.",
+    "Herhangi bir dosya yüklenmedi.",
 
     "Missing a temporary folder." =>
     "Geçici dosya klasörü bulunamıyor. Klasörü kontrol edin.",
@@ -168,7 +172,7 @@ $lang = array(
     "Show:" => "Göster:",
     "Order by:" => "Sıralama:",
     "Thumbnails" => "Önizleme",
-    "List" => "Liste",
+    "List" => "Listele",
     "Name" => "Ad",
     "Size" => "Boyut",
     "Date" => "Tarih",
