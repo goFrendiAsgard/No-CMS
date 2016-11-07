@@ -59,4 +59,13 @@ class Blog_widget extends CMS_Controller {
         $data['archive_route_exists'] = $this->cms_route_key_exists('blog/category/(:any)');
         $this->view($this->cms_module_path().'/widget_archive', $data);
     }
+    
+    public function newest_hp($how_many=5){
+		$data = array();
+    	$data['articles'] = $this->article_model->get_articles(0, $how_many,
+    			NULL, NULL);
+        $data['module_path'] = $this->cms_module_path();
+        $data['article_route_exists'] = $this->cms_route_key_exists('blog/(:any)\.html');
+		$this->view($this->cms_module_path().'/widget_newest_hp', $data);
+	}
 }
