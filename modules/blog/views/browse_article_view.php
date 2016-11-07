@@ -198,7 +198,7 @@
                     $is_first = $index == 0 ? 1 : 0;
                     $is_last = $index == (count($article['photos'])-1) ? 1 : 0;
                     echo '<a data-toggle="modal" data-target="#photo-modal" class="photo_link" article_id="'.$article['id'].'" index="'.$index.'" photo_id="'.$photo['id'].'" img="'.base_url('modules/{{ module_path }}/assets/uploads/'.$photo['url']).'" is_first="'.$is_first.'" is_last="'.$is_last.'" href="#">';
-                    echo '<div class="photo_thumbnail" style="background-image:url('.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).');"></div>';
+                    echo '<div class="photo_thumbnail" style="background-image:url(\''.base_url('modules/{{ module_path }}/assets/uploads/thumb_'.$photo['url']).'\');"></div>';
                     echo '<div id="photo_caption_'.$photo['id'].'" class="photo_caption">'.$photo['caption'].'</div>';
                     echo '</a>';
                     $index++;
