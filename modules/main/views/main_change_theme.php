@@ -9,7 +9,7 @@
     <div class="form-group">
         <input class="form-control" type="text" name="keyword" size="20" placeholder="Keyword" value="<?php echo $keyword; ?>" />
     </div>&nbsp;
-    <button type="submit" class="btn btn-primary">Search</button>
+    <button type="submit" class="btn btn-primary">{{ language:Search }}</button>
 </form>
 <?php
     echo '<div class="row">';
@@ -34,9 +34,9 @@
         echo '<p>'.$theme['description'].'</p>';
 
         if($theme['used']){
-            echo '<p>Theme is in use</p>';
+            echo '<p>{{ language:Theme is in use }}</p>';
         }else{
-            echo '<p>Click to use this theme</p>';
+            echo '<p>{{ language:Click to use this theme }}</p>';
         }
         echo '</div>';
 
