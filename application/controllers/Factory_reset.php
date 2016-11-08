@@ -38,10 +38,24 @@ class Factory_reset extends CMS_Controller{
             }
         }else{
             // show the form
+            /* Note: A very crude way for translation addition, since we can't pass ->cms_lang to view 
+			 * (or I don't have capability, researching it)
+			 * If we change normal $this->view() to this controller, we stuck up with re-login loop, not able to see factory reset at all*/
             $data = array(
                 'input_user_name' => $this->input_user_name,
                 'input_password' => $this->input_password,
                 'user_name' => $user_name,
+                'title' => $this->cms_lang('Factory Reset'),
+                'quote' => $this->cms_lang('"Even in the midst of darkness, there is a little spark of hope"'),
+                'description1' => $this->cms_lang('Factory reset only reset some default layouts, widgets, navigations, privileges, and configurations.'),
+                'description2' => $this->cms_lang('Factory reset will not delete your static pages, custom widgets, or blog posts.'),
+                'description3' => $this->cms_lang('ou might need to re-configure some things after factory reset.'),
+                'description4' => $this->cms_lang('If you are okay with this, please let us know your super-admin\'s user name and password, and continue'),
+                'error1' => $this->cms_lang('Login Failed'),
+                'error2' => $this->cms_lang('You must login as Super Admin'),
+                'label_user' => $this->cms_lang('Super Admin\'s Username'),
+                'label_password' => $this->cms_lang('Super Admin\'s Password'),
+                'label_button' => $this->cms_lang('Click To Reset')		
             );
             $this->load->view('main/factory_reset_index', $data);
         }
