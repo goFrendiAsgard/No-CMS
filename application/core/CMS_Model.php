@@ -936,7 +936,7 @@ class CMS_Model extends CI_Model
      */
     public function cms_user_name($user_name = null)
     {
-        return $this->cms_ci_session('cms_user_name', $user_name);
+        return htmlentities($this->cms_ci_session('cms_user_name', $user_name));
     }
 
     /**
@@ -953,7 +953,7 @@ class CMS_Model extends CI_Model
         if($user_real_name == ''){
             $user_real_name = $this->cms_user_name();
         }
-        return $user_real_name;
+        return htmlentities($user_real_name);
     }
 
     /**
