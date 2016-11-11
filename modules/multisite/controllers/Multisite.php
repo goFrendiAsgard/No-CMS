@@ -236,8 +236,8 @@ class Multisite extends CMS_Secure_Controller {
         $this->load->model($module_path.'/subsite_model');
 
         //get user input
-        $user_name        = $this->input->post($previous_secret_code.'user_name');
-        $email            = $this->input->post($previous_secret_code.'email');
+        $user_name        = htmlentities($this->input->post($previous_secret_code.'user_name'));
+        $email            = htmlentities($this->input->post($previous_secret_code.'email'));
         $real_name        = $this->input->post($previous_secret_code.'real_name');
         $password         = $this->input->post($previous_secret_code.'password');
         $confirm_password = $this->input->post($previous_secret_code.'confirm_password');
