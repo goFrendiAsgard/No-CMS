@@ -976,7 +976,7 @@ class CMS_Controller extends MX_Controller
             if ($description != '') {
                 $layout_metadata .= '<meta name="description" content="'.$description.'">';
                 $layout_metadata .= '<meta name="twitter:description" content="'.$description.'">';
-                $layout_metadata .= '<meta name="og:description" content="'.$description.'">';
+                $layout_metadata .= '<meta property="og:description" content="'.$description.'">';
             }
             // set author metadata
             if ($author != '') {
@@ -985,7 +985,7 @@ class CMS_Controller extends MX_Controller
             // set image
             if ($image != '') {
                 $layout_metadata .= '<meta name="twitter:image" content="'.$image.'">';
-                $layout_metadata .= '<meta name="og:image" content="'.$image.'">';
+                $layout_metadata .= '<meta property="og:image" content="'.$image.'">';
             }
             // set twitter_card
             if ($twitter_card != '') {
@@ -993,11 +993,11 @@ class CMS_Controller extends MX_Controller
             }
             // set type
             if ($type != '') {
-                $layout_metadata .= '<meta name="og:type" content="'.$type.'">';
+                $layout_metadata .= '<meta property="og:type" content="'.$type.'">';
             }
             // set fb_admin
             if ($fb_admin != '') {
-                $layout_metadata .= '<meta name="fb:admins" content="'.$fb_admin.'">';
+                $layout_metadata .= '<meta property="fb:admins" content="'.$fb_admin.'">';
             }
             // set twitter publisher handler
             if ($twitter_publisher_handler != '') {
@@ -1008,7 +1008,7 @@ class CMS_Controller extends MX_Controller
                 $layout_metadata .= '<meta name="twitter:site" content="'.$twitter_author_handler.'">';
             }
             // set title
-            $layout_metadata .= '<meta name="og:site_name" content="{{ site_name }}">';
+            $layout_metadata .= '<meta property="og:site_name" content="{{ site_name }}">';
 
 
             // add IE compatibility and width viewport
