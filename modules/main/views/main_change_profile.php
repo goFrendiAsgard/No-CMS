@@ -48,7 +48,7 @@ echo $asset->compile_js();
                 ((!change_password_checked) || (change_password_checked && password!='' && password==confirm_password)) ){
                     $('input[name="change_profile"]').show();
                     $('input[name="change_profile"]').removeAttr('disabled');
-                    $('#success-message').html('{{ language:Here you can edit your user profile. Click the button once you\'ve finish editing your user profile }}');
+                    $('#success-message').html("{{ language:Here you can edit your user profile. }} {{ language:Click the button once you've finish editing your user profile. }}");
                 }else{
                     $('input[name="change_profile"]').hide();
                     $('input[name="change_profile"]').attr('disabled', 'disabled');
@@ -168,15 +168,15 @@ echo $asset->compile_js();
         echo create_labeled_form_input('user_name', '{{ language:User Name }}', $user_name);
 
         $input = form_input('email', $email,
-            'id="email" placeholder="Email" class="form-control"');
+            'id="email" placeholder="{{ language:Email }}" class="form-control"');
         echo create_labeled_form_input('email', '{{ language:Email }}', $input);
 
         $input = form_input('real_name', $real_name,
-            'id="real_name" placeholder="Real Name" class="form-control"');
+            'id="real_name" placeholder="{{ language:Real Name }}" class="form-control"');
         echo create_labeled_form_input('real_name', '{{ language:Real Name }}', $input);
 
         $input = form_input('birthdate', $birthdate,
-            'id="birthdate" placeholder="Birthdate" class="form-control datepicker-input"');
+            'id="birthdate" placeholder="{{ language:Birthdate }}" class="form-control datepicker-input"');
         echo create_labeled_form_input('birthdate', '{{ language:Birthdate }}', $input);
 
         $options = array('' => '{{ language:Not Set }}', 'male' => '{{ language:Male }}', 'female' => '{{ language:Female }}');
@@ -216,7 +216,7 @@ echo $asset->compile_js();
         echo create_labeled_form_input('theme', '{{ language:Theme }}', $input);
 
         $input = form_textarea('self_description', $self_description,
-            'id="self_description" placeholder="Self Description" class="form-control"');
+            'id="self_description" placeholder="{{ language:Self Description }}" class="form-control"');
         echo create_labeled_form_input('self_description', '{{ language:Self Description }}', $input);
 
         echo $additional_input;
@@ -230,7 +230,7 @@ echo $asset->compile_js();
             echo create_labeled_form_input('password', '{{ language:Password }}', $input);
 
             $input = form_password('confirm_password', '',
-                'id="confirm_password" placeholder="Password (again)" class="form-control"');
+                'id="confirm_password" placeholder="{{ language:Confirm Password }}" class="form-control"');
             echo create_labeled_form_input('confirm_password', '{{ language:Confirm Password }}', $input);
         echo '</div>';
 

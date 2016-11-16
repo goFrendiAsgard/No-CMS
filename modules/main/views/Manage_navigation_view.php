@@ -9,7 +9,7 @@
     // show navigation path
     if(count($navigation_path)>0){
         echo '<div style="padding-bottom:10px;">';
-        echo '<a class="btn btn-primary" href="'.site_url('main/manage_navigation').$from_url.'">First Level Navigation</a>';
+        echo '<a class="btn btn-primary" href="'.site_url('main/manage_navigation').$from_url.'">{{ language:First Level Navigation }}</a>';
         for($i=0; $i<count($navigation_path)-1; $i++){
             $navigation = $navigation_path[$i];
             echo '&nbsp;<a class="btn btn-primary" href="'.site_url('main/manage_navigation/index/'.$navigation['navigation_id']) . $from_url . '">'.

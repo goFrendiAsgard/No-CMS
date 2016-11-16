@@ -63,20 +63,20 @@
 </div>
 
 <div class="div-left">
-    <h1>Factory Reset</h1>
-    <p class="quote">"Even in the midst of darkness, there is a little spark of hope"</p>
+    <h1><?php echo $title; ?></h1>
+    <p class="quote"><?php echo $quote; ?></p>
 
-    <p class="description">Factory reset only reset some default layouts, widgets, navigations, privileges, and configurations. Factory reset will not delete your static pages, custom widgets, or blog posts. You might need to re-configure some things after factory reset. If you are okay with this, please let us know your super-admin's user name and password, and continue</p>
+    <p class="description"><?php echo $description1 . $description2 . $description3 . $description4; ?></p>
 
     <?php if($user_name != ''){ ?>
-        <p class="error"><b>Login Failed</b> You must login as Super Admin</p>
+        <p class="error"><b><?php echo $error1; ?></b> <?php echo $error2; ?></p>
     <?php } ?>
 
     <form method="post">
-        <label>Super Admin's Username</label><br />
+        <label><?php echo $label_user; ?></label><br />
         <input name="<?php echo $input_user_name; ?>" value="<?php echo $user_name; ?>" /><br />
-        <label>Super Admin's Password</label><br />
-        <input name="<?php echo $input_password ?>" type="password" /><br />
-        <button name="reset">Click To Reset</button>
+        <label><?php echo $label_password; ?></label><br />
+        <input name="<?php echo $input_password; ?>" type="password" /><br />
+        <button name="reset"><?php echo $label_button; ?></button>
     </form>
 </div>

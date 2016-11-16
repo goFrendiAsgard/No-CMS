@@ -89,7 +89,7 @@
                     message += '{{ language:Password is empty }}<br />';
                 }
                 if(password != confirm_password){
-                    message += '{{ language:Confirm password doesn\'t match }}';
+                    message += "{{ language:Confirm password doesn't match }}";
                 }
 
                 if(message != $('#error-message').html()){
