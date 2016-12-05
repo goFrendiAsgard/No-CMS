@@ -3249,7 +3249,10 @@ class CMS_Model extends CI_Model
         }
 
         // read image
-        $im = @imagecreatefrompng($file_name);
+        $im = NULL;
+        if(function_exists('imagecreatefrompng')){
+            $im = @imagecreatefrompng($file_name);
+        }
         if ($im) {
             $srcWidth = imagesx($im);
             $srcHeight = imagesy($im);
