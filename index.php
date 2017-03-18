@@ -55,6 +55,7 @@
  */
     define('ERROR_REPORTING', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
+
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING

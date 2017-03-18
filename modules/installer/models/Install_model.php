@@ -1459,7 +1459,7 @@ class Install_model extends CI_Model{
         // copy everything from /application/config/first-time into /application/config/ or /application/config/site-subsite
         if($this->is_subsite){
             mkdir(APPPATH.'config/site-'.$this->subsite);
-            $file_list = array('cms_config.php', 'config.php', 'hybridauthlib.php', 'routes.php', 'index.html');
+            $file_list = array('cms_config.php', 'hybridauthlib.php', 'routes.php', 'index.html');
         }else{
             mkdir(APPPATH.'config/main');
             $file_list = scandir(APPPATH.'config/first-time', 1);
@@ -1469,6 +1469,10 @@ class Install_model extends CI_Model{
             if(!is_dir(APPPATH.'config/first-time/'.$file)){
                 copy(APPPATH.'config/first-time/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
             }
+        }
+        if($this->is_subsite){
+            $file = 'config.php';
+            copy(APPPATH.'config/first-time/subsite/'.$file, APPPATH.'config/'.$this->complete_config_file_name($file));
         }
 
         if(!$this->is_subsite){
@@ -1673,6 +1677,7 @@ class Install_model extends CI_Model{
                     if(is_array($module_info) && array_key_exists('activate', $module_info)){
                         $url = trim($module_info['activate'],'/');
                         $response = '';
+
                         // subsite just run the module, it's faster
                         $url_part = explode('/', $url);
                         $controller_name = ucfirst($url_part[0]);
@@ -1689,6 +1694,7 @@ class Install_model extends CI_Model{
                         log_message('debug', 'start running controller');
                         $response = Modules::run($module.'/'.$new_url, $bypass);
                         log_message('debug', 'finish running controller');
+
                         // look if it is succeed or failed
                         $success = FALSE;
                         if($response != ''){

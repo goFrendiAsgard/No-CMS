@@ -80,6 +80,7 @@ class CMS_Model extends CI_Model
         $this->load->library('user_agent');
         $this->load->driver('session');
         $this->load->helper('cms_helper');
+        $this->load->helper('future_helper');
         $this->load->library('form_validation');
         $this->load->library('unit_test');
 
@@ -1490,6 +1491,20 @@ class CMS_Model extends CI_Model
                                 $response = $navigation->static_content;
                             }
                             if(strlen($response) == 0){
+
+                                // TODO: try to minimize error probability
+                                // - check route
+                                // - check if controller exists
+                                // - check recursively if directory exists
+                                // - check if method exists
+                                if(CMS_SUBSITE == ''){
+                                    include(APPPATH.'config/main/extended_routes.php');
+                                }else{
+                                    include(APPPATH.'config/site-'.CMS_SUBSITE.'/extended_routes.php');
+                                }
+                                // END of minimize error probability
+
+
                                 $response = @Modules::run($url);
                                 if (strlen($response) == 0) {
                                     $response = @Modules::run($url.'/index');
@@ -1498,7 +1513,7 @@ class CMS_Model extends CI_Model
                             unset($_REQUEST['__cms_dynamic_widget']);
                             unset($_REQUEST['__cms_dynamic_widget_module']);
                         }
-                        // fallback, Modules::run failed, use AJAX instead
+                        // fallback, Modules::run failed or module does not exists, use AJAX instead
                         if (strlen($response) == 0) {
                             $response = '<script type="text/javascript">';
                             $response .= '$(document).ready(function(){$("#__cms_widget_'.$row->widget_id.'").load("'.site_url($url).'?__cms_dynamic_widget=TRUE");});';
@@ -3176,7 +3191,7 @@ class CMS_Model extends CI_Model
             $where = array('user_id' => $user_id);
             $this->db->update($this->cms_complete_table_name('subsite', 'gofrendi.noCMS.multisite'), $data, $where);
             $this->load->model($this->cms_module_path('gofrendi.noCMS.multisite').'/subsite_model');
-            $this->subsite_model->update_configs();
+            //$this->subsite_model->update_configs();
             //$this->cms_reset_overridden_module_path();
         }
     }
