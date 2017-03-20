@@ -12,7 +12,7 @@
     }
 ?>
 &lt;?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-$record_template = isset($record_template)? $record_template: $default_record_template;
+$record_template = isset($record_template) && trim($record_template) != ''? $record_template: $default_record_template;
 $config = array(
         'record_template' => $record_template,
         'backend_url'     => $backend_url,
