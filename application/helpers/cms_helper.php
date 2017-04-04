@@ -696,7 +696,7 @@ if(! function_exists('create_labeled_form_input') )
     }
 }
 
-if(! function_exists('cms_module_prefix') )
+if(! function_exists('build_register_input') )
 {
     function build_register_input($secret_code, $user_name, $email, $real_name){
         $html = '';
