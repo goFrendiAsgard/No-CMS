@@ -403,6 +403,8 @@ if(! function_exists('build_md_event_script') )
     function build_md_event_script($md_key, $insert_url, $update_url, $allow_delete = TRUE){
         $js =
             '$(document).ready(function(){
+                // hide update/insert button
+                $("#form-button-save").hide(); 
 
                 function apply_add_table_row_'.$md_key.'(data){
                     // Hide div#no-data
