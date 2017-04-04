@@ -28,5 +28,5 @@ $lang['Donate No-CMS'] = 'Donate a No-CMS';
 
 $lang['Welcome'] = 'Benvenuto';
 
-$lang['Username already exists'] = 'Il nome utente già siste';
+$lang['Username already exists'] = 'Il nome utente già esiste';
 $lang['Username is empty'] = 'il nome utente è vuoto';
