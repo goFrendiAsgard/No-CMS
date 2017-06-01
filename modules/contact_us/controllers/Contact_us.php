@@ -68,11 +68,16 @@ class Contact_us extends CMS_Secure_Controller {
                     $data['email'] = $email;
                     $data['content'] = html_entity_decode($content);
                     $data['read'] = 0;
-                    $this->db->insert($this->t('message'), $data);
-                    $name = '';
-                    $email = '';
-                    $content = '';
-                    $show_success_message = TRUE;
+
+                    $last_row = $this->db->select_max('_created_at')->from($this->t('message'))->get()->row();
+                    $row = $this->db->like('content', $content)->where('_created_at', $last_row->_created_at)->get($this->t('message'))->row();
+                    if($row == NULL){
+                        $this->db->insert($this->t('message'), $data);
+                        $name = '';
+                        $email = '';
+                        $content = '';
+                        $show_success_message = TRUE;
+                    }
                 }
             }else{
                 show_404();

@@ -80,13 +80,17 @@ class Blog extends CMS_Front_Controller {
                 }
             }
             if($success !== FALSE){
-                $success = TRUE;
-                $this->article_model->add_comment($article_id, $name, $email, $website, $content, $parent_comment_id);
-                $name = '';
-                $email = '';
-                $website = '';
-                $content = '';
-                $parent_comment_id = NULL;
+                $last_row = $this->db->select_max('_created_at')->from($this->t('comment'))->get()->row();
+                $row = $this->db->like('content', $content)->where('_created_at', $last_row->_created_at)->get($this->t('comment'))->row();
+                if($row == NULL){
+                    $success = TRUE;
+                    $this->article_model->add_comment($article_id, $name, $email, $website, $content, $parent_comment_id);
+                    $name = '';
+                    $email = '';
+                    $website = '';
+                    $content = '';
+                    $parent_comment_id = NULL;
+                }
             }
         }
 
