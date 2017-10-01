@@ -939,7 +939,7 @@ class Main extends CMS_Controller
                 $result = '<li class="dropdown">'.
                     '<a class="dropdown-toggle" data-toggle="dropdown" href="{{ site_url }}">'.
                         '<span class="anchor-text">'.
-                            '<img id="navbar-logo" class="navbar-logo" src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" />'.
+                            '<img id="navbar-logo" alt="navbar-logo" class="navbar-logo" src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" />'.
                             '<span id="navbar-caption" class="navbar-caption">'.$caption.'</span>'.
                         '</span>&nbsp;'.
                         '<span class="caret"></span>'.
@@ -1086,7 +1086,7 @@ class Main extends CMS_Controller
                             <span class="icon-bar"></span>
                         </button>
                         <a class="navbar-brand hidden-lg hidden-md hidden-sm" href="{{ site_url }}">
-                            <img class="navbar-logo" src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" />
+                            <img class="navbar-logo"  alt="navbar-logo" src ="{{ site_favicon }}" style="max-height:20px; max-width:20px;" />
                         </a>
                     </div>
                     <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
@@ -1404,7 +1404,7 @@ class Main extends CMS_Controller
         if($this->cms_user_id() > 0){
             echo '<div class="user-button btn-group">
                     <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img style="max-height:16px; margin-right:5px;" src="'.$this->cms_get_profile_picture($this->cms_user_id()).'" /> '.$this->cms_user_name().' <span class="caret"></span>
+                        <img alt="site logo" style="max-height:16px; margin-right:5px;" src="'.$this->cms_get_profile_picture($this->cms_user_id()).'" /> '.$this->cms_user_name().' <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="{{ site_url }}main/change_profile">Change Profile</a></li>
