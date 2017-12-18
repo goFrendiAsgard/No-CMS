@@ -131,7 +131,6 @@ if(! function_exists('cms_run_controller'))
                 break;
             }
         }
-        
         $obj = cms_init_controller($class, $namespace, $filePath);
         if(method_exists($obj, $function)){
             // TODO : complete this

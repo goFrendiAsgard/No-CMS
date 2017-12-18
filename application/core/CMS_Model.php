@@ -708,7 +708,8 @@ class CMS_Model extends CI_Model
             self::$__cms_model_properties['session'][$key] = $this->session->userdata($key);
         }
 
-        return self::$__cms_model_properties['session'][$key];
+        $value = self::$__cms_model_properties['session'][$key];
+        return $value;
     }
 
     /**
