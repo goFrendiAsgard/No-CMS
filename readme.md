@@ -1,3 +1,5 @@
+__NOTE:__ I'm now focusing on [Chimera-Framework](https://github.com/chimera-framework). It will be a more modern replacement of No-CMS
+
 What is No-CMS?
 ================
 
