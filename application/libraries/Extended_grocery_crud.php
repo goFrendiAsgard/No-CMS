@@ -458,7 +458,7 @@ class Extended_grocery_crud extends Grocery_CRUD{
                 {
                     $state_info = $this->getStateInfo();
                     $primary_key = $this->get_primary_key();
-                    $field_name_value = $_POST[$field_name];
+                    $field_name_value = isset($_POST[$field_name]) ? $_POST[$field_name] : NULL;
 
                     $this->basic_model->where($primary_key,$state_info->primary_key);
                     $row = $this->basic_model->get_row();
